@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RiverSpend - Your Shop Your Flow</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Libreria per i coriandoli -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body { background-color: #e6f0fa; font-family: system-ui, -apple-system, sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="min-h-screen pb-12 text-slate-900">
+
+    <!-- Header & Navbar azzurrina -->
+    <div class="bg-[#023e8a] text-white rounded-b-[2.5rem] pb-8 shadow-xl">
+        <header class="p-4 text-center pt-6">
+            <h1 class="text-4xl font-black tracking-tight mb-1"><span class="text-[#00b4d8]">River</span><span class="text-[#ffb703]">Spend</span></h1>
+            <p class="text-sm text-[#90e0ef] italic font-medium mb-3">your shop your flow</p>
+            <div class="flex items-center justify-center gap-3 text-[10px] font-bold text-slate-200">
+                <span class="flex items-center gap-1 text-emerald-300">🌿 Spedito da RiverLogistics</span>
+                <span class="text-slate-400">•</span>
+                <span class="flex items-center gap-1 text-cyan-200">🛡️ Protezione Shield</span>
+            </div>
+        </header>
+
+        <div class="max-w-md mx-auto px-4 mt-2">
+            <!-- Profilo Utente -->
+            <div class="bg-[#03045e] border border-cyan-500/30 rounded-3xl p-4 shadow-inner text-center mb-5">
+                <p class="text-xs text-cyan-200 mb-3 font-semibold">Profilo Utente Attivo:</p>
+                <div class="flex justify-center gap-2 mb-2">
+                    <button class="px-4 py-2 rounded-full text-xs font-bold bg-white text-slate-900 flex items-center gap-1.5 shadow">
+                        Utente Blu <span class="w-3 h-3 rounded-full bg-blue-500 inline-block"></span>
+                    </button>
+                    <button class="px-4 py-2 rounded-full text-xs font-bold bg-[#0077b6] text-white flex items-center gap-1.5">
+                        Utente Rosso <span class="w-3 h-3 rounded-full bg-red-400 inline-block"></span>
+                    </button>
+                </div>
+                <div class="flex justify-center">
+                    <button class="px-4 py-2 rounded-full text-xs font-bold bg-[#0077b6] text-white flex items-center gap-1.5">
+                        Utente Giallo <span class="w-3 h-3 rounded-full bg-amber-300 inline-block"></span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Bottoni Principali -->
+            <div class="grid grid-cols-2 gap-3 mb-3">
+                <button onclick="openModal('vendi')" class="bg-[#0077b6] hover:bg-[#023e8a] text-white font-bold py-3.5 px-3 rounded-xl text-sm shadow active:scale-95 transition border border-cyan-400/30">+ Vendi / Proponi</button>
+                <button onclick="openModal('carrello')" class="bg-[#0096c7] hover:bg-[#0077b6] text-white font-bold py-3.5 px-3 rounded-xl text-sm shadow active:scale-95 transition border border-cyan-300/30">🛒 Carrello (<span id="cartCount">0</span>)</button>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 mb-3">
+                <button onclick="openModal('piggyBank')" class="bg-[#d90429] hover:bg-[#b7091c] text-white font-bold py-3.5 px-3 rounded-xl text-sm shadow active:scale-95 transition">🐷 PiggyBank</button>
+                <button onclick="openModal('riverClub')" class="bg-[#560bad] hover:bg-[#3f0375] text-white font-bold py-3.5 px-3 rounded-xl text-sm shadow active:scale-95 transition">⭐ RiverClub</button>
+            </div>
+
+            <div class="mb-3">
+                <button onclick="openModal('shield')" class="w-full bg-[#2b9348] hover:bg-[#1b6b32] text-white font-bold py-3.5 px-3 rounded-xl text-sm shadow active:scale-95 transition">📊 Calcolatore Shield</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Catalogo Prodotti -->
+    <div class="max-w-md mx-auto px-4 mt-6">
+        <h2 class="text-lg font-black text-slate-800 mb-4 flex items-center gap-2">🔥 In Evidenza nel Fiume</h2>
+        <div class="grid grid-cols-2 gap-4 mb-6">
+            <div class="bg-white p-3 rounded-2xl shadow-sm border border-cyan-100 flex flex-col justify-between">
+                <div>
+                    <div class="bg-cyan-50 rounded-xl h-28 flex items-center justify-center mb-3"><span class="text-4xl">📦</span></div>
+                    <span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">🌿 Spedito da RiverSpend</span>
+                    <h3 class="font-bold text-sm text-slate-800 mt-1 mb-1">Smartwatch Test</h3>
+                    <p class="text-base font-black text-slate-900 mb-3">€ 29.99</p>
+                </div>
+                <button onclick="aggiungiAlCarrello('Smartwatch Test', 29.99)" class="w-full bg-[#ffb703] hover:bg-[#e0a102] text-slate-900 font-bold py-2 rounded-xl text-xs shadow transition">Aggiungi</button>
+            </div>
+            <div class="bg-white p-3 rounded-2xl shadow-sm border border-cyan-100 flex flex-col justify-between">
+                <div>
+                    <div class="bg-cyan-50 rounded-xl h-28 flex items-center justify-center mb-3"><span class="text-4xl">📦</span></div>
+                    <span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">🌿 Spedito da RiverSpend</span>
+                    <h3 class="font-bold text-sm text-slate-800 mt-1 mb-1">Trinciapollo</h3>
+                    <p class="text-base font-black text-slate-900 mb-3">€ 10.00</p>
+                </div>
+                <button onclick="aggiungiAlCarrello('Trinciapollo', 10.00)" class="w-full bg-[#ffb703] hover:bg-[#e0a102] text-slate-900 font-bold py-2 rounded-xl text-xs shadow transition">Aggiungi</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modale Unificato -->
+    <div id="modalOverlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white text-slate-900 w-full max-w-sm rounded-[32px] p-5 shadow-2xl relative max-h-[90vh] overflow-y-auto no-scrollbar">
+            <button onclick="closeModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600 font-bold text-xl bg-slate-100 rounded-full w-8 h-8 flex items-center justify-center">✕</button>
+            
+            <!-- 1. PIGGYBANK -->
+            <div id="contentPiggy" class="hidden">
+                <div id="piggyNormalView">
+                    <h3 class="text-xl font-bold flex items-center gap-2 mb-4 mt-1">🐷 PiggyBank RiverSpend</h3>
+                    <div class="border border-red-100 bg-red-50/40 p-4 rounded-3xl mb-4">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="text-sm font-bold text-[#d90429]">🎯 Obiettivo: E-Bike Smart</span>
+                            <span id="piggyPercent" class="text-sm font-bold text-slate-600">33%</span>
+                        </div>
+                        <p class="text-2xl font-black text-slate-900 mb-2">€ <span id="piggyCurrent">300.00</span> <span class="text-lg text-slate-500 font-bold">/ € 900.00</span></p>
+                        <div class="w-full bg-red-200/50 rounded-full h-2 mb-3">
+                            <div id="piggyBar" class="bg-gradient-to-r from-red-500 to-emerald-400 h-2 rounded-full transition-all duration-300" style="width: 33%"></div>
+                        </div>
+                        <div class="flex gap-2 mb-2">
+                            <button onclick="aggiungiPiggy(20)" class="flex-1 py-2 border border-red-200 text-[#d90429] rounded-xl text-sm font-bold bg-white shadow-sm">+ €20</button>
+                            <button onclick="aggiungiPiggy(50)" class="flex-1 py-2 border border-red-200 text-[#d90429] rounded-xl text-sm font-bold bg-white shadow-sm">+ €50</button>
+                            <button onclick="aggiungiPiggy(100)" class="flex-1 py-2 border border-red-200 text-[#d90429] rounded-xl text-sm font-bold bg-white shadow-sm">+ €100</button>
+                        </div>
+                    </div>
+                    <div class="border border-slate-100 bg-slate-50 p-4 rounded-3xl">
+                        <span class="text-sm font-bold flex items-center gap-1 mb-1 text-slate-700">🎁 Cashback Accumulato</span>
+                        <p class="text-3xl font-black text-[#d90429] mb-1">€ <span id="piggyCash">12.50</span></p>
+                        <button onclick="spostaCashback()" class="w-full bg-[#d90429] text-white font-bold py-3 rounded-xl text-sm shadow-md mt-2">Sposta Cashback nell'Obiettivo 🎯</button>
+                    </div>
+                </div>
+
+                <!-- Schermata di Traguardo Raggiunto (Con Coriandoli) -->
+                <div id="piggySuccessView" class="hidden text-center py-6">
+                    <span class="text-6xl mb-3 inline-block">🎉</span>
+                    <h3 class="text-2xl font-black text-[#d90429] mb-2">Congratulazioni!</h3>
+                    <p class="text-sm text-slate-600 mb-6 font-medium">Hai raggiunto il tuo obiettivo PiggyBank! Il salvadanaio è stato azzerato ed è pronto per un nuovo traguardo.</p>
+                    <button onclick="resetPiggyView()" class="w-full bg-[#d90429] text-white font-bold py-3 rounded-xl text-sm shadow-md">Nuovo Obiettivo 🚀</button>
+                </div>
+            </div>
+
+            <!-- 2. RIVERCLUB -->
+            <div id="contentRiver" class="hidden">
+                <h3 class="text-xl font-bold flex items-center gap-2 mb-3 mt-1">⭐ RiverClub Mondiale</h3>
+                <div class="bg-[#240046] rounded-3xl p-4 mb-4 text-white shadow-lg">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="bg-amber-400 text-slate-900 text-xs font-black px-3 py-0.5 rounded-full">LIVELLO ARGENTO 🥈</span>
+                    </div>
+                    <p class="text-xs text-purple-200 mb-1">I tuoi RiverPoints:</p>
+                    <p class="text-4xl font-black text-amber-400 mb-2"><span id="riverPts">1250</span> <span class="text-base text-white font-bold">pts</span></p>
+                    <div class="w-full bg-purple-900 rounded-full h-1.5 mb-1">
+                        <div id="riverBar" class="bg-gradient-to-r from-cyan-400 to-amber-400 h-1.5 rounded-full" style="width: 41%"></div>
+                    </div>
+                    <p class="text-right text-[10px] text-purple-300"><span id="riverPtsText">1250</span> / 3000 pts al livello Oro</p>
+                </div>
+                
+                <div class="space-y-2 text-xs">
+                    <div class="p-3 bg-purple-50 rounded-2xl border border-purple-100 flex justify-between items-center">
+                        <div><b>1.000 pts</b> <p class="text-[10px] text-slate-500">Guadagni € 0,10 di credito</p></div>
+                        <button onclick="riscattaPremio(1000, 0.10)" class="bg-purple-600 text-white font-bold px-3 py-1.5 rounded-xl shadow">Riscatta</button>
+                    </div>
+                    <div class="p-3 bg-purple-50 rounded-2xl border border-purple-100 flex justify-between items-center">
+                        <div><b>10.000 pts</b> <p class="text-[10px] text-slate-500">Sconto € 5,00 immediato</p></div>
+                        <button onclick="riscattaPremio(10000, 5.00)" class="bg-purple-600 text-white font-bold px-3 py-1.5 rounded-xl shadow">Riscatta</button>
+                    </div>
+                    <div class="p-3 bg-purple-50 rounded-2xl border border-purple-100 flex justify-between items-center">
+                        <div><b>800.000 pts</b> <p class="text-[10px] text-slate-500">✈️ Viaggio in Giappone per 2</p></div>
+                        <button onclick="riscattaPremio(800000, 0)" class="bg-amber-500 text-slate-900 font-bold px-3 py-1.5 rounded-xl shadow">Richiedi</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. CARRELLO -->
+            <div id="contentCarrello" class="hidden">
+                <h3 class="text-xl font-bold flex items-center gap-2 mb-4 mt-1">🛒 Il tuo Carrello</h3>
+                <div id="cartItemsList" class="space-y-2 mb-4 max-h-48 overflow-y-auto"></div>
+                <div class="border-t pt-3 mb-4 flex justify-between items-center font-black text-lg">
+                    <span>Totale:</span>
+                    <span id="cartTotal">€ 0.00</span>
+                </div>
+                <button onclick="checkout()" class="w-full bg-[#0096c7] text-white font-bold py-3 rounded-xl text-sm shadow-md">Procedi al Checkout 🚀</button>
+            </div>
+
+            <!-- 4. VENDI -->
+            <div id="contentVendi" class="hidden">
+                <h3 class="text-xl font-bold flex items-center gap-2 mb-4 mt-1">➕ Pubblica Prodotto</h3>
+                <div class="space-y-3 mb-4">
+                    <input type="text" id="newTitle" placeholder="Titolo Prodotto" class="w-full border rounded-xl p-2.5 text-sm">
+                    <input type="number" id="newPrice" placeholder="Prezzo (€)" class="w-full border rounded-xl p-2.5 text-sm">
+                </div>
+                <button onclick="pubblicaProdotto()" class="w-full bg-[#0077b6] text-white font-bold py-3 rounded-xl text-sm shadow-md">Pubblica Ora</button>
+            </div>
+
+            <!-- 5. SHIELD -->
+            <div id="contentShield" class="hidden">
+                <h3 class="text-xl font-bold flex items-center gap-2 mb-4 mt-1">📊 Calcolatore Shield</h3>
+                <div class="space-y-3 mb-4">
+                    <input type="number" id="shieldPrice" value="50" oninput="calcolaShield()" class="w-full border rounded-xl p-2.5 text-sm">
+                    <div class="bg-slate-50 p-3 rounded-2xl text-xs space-y-1.5 border">
+                        <div class="flex justify-between"><span>Commissione Shield:</span> <span id="resComm" class="font-bold">€3.20</span></div>
+                        <div class="flex justify-between"><span>Spedizione:</span> <span class="font-bold">€3.90</span></div>
+                        <div class="flex justify-between border-t pt-1 font-bold"><span>Totale Acquirente:</span> <span id="resTotal">€57.10</span></div>
+                        <div class="flex justify-between text-emerald-600 font-bold border-t pt-1"><span>Netto Venditore:</span> <span id="resNet">€50.00</span></div>
+                    </div>
+                </div>
+                <button onclick="closeModal()" class="w-full bg-[#2b9348] text-white font-bold py-3 rounded-xl text-sm shadow-md">Chiudi</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let cart = [];
+        let pCurr = 300.00, pTarget = 900.00, pCash = 12.50, rPts = 1250;
+
+        function openModal(type) {
+            document.getElementById('modalOverlay').classList.remove('hidden');
+            document.getElementById('contentPiggy').classList.add('hidden');
+            document.getElementById('contentRiver').classList.add('hidden');
+            document.getElementById('contentCarrello').classList.add('hidden');
+            document.getElementById('contentVendi').classList.add('hidden');
+            document.getElementById('contentShield').classList.add('hidden');
+
+            if(type === 'piggyBank') {
+                document.getElementById('contentPiggy').classList.remove('hidden');
+                document.getElementById('piggyNormalView').classList.remove('hidden');
+                document.getElementById('piggySuccessView').classList.add('hidden');
+                aggiornaPiggyUI();
+            } else if(type === 'riverClub') {
+                document.getElementById('contentRiver').classList.remove('hidden');
+                aggiornaRiverUI();
+            } else if(type === 'carrello') {
+                document.getElementById('contentCarrello').classList.remove('hidden');
+                aggiornaCarrelloUI();
+            } else if(type === 'vendi') {
+                document.getElementById('contentVendi').classList.remove('hidden');
+            } else if(type === 'shield') {
+                document.getElementById('contentShield').classList.remove('hidden');
+                calcolaShield();
+            }
+        }
+
+        function closeModal() { document.getElementById('modalOverlay').classList.add('hidden'); }
+
+        function aggiungiAlCarrello(nome, prezzo) {
+            cart.push({ nome, prezzo });
+            document.getElementById('cartCount').innerText = cart.length;
+            alert(nome + " aggiunto al carrello!");
+        }
+
+        function aggiornaCarrelloUI() {
+            let list = document.getElementById('cartItemsList'), total = 0;
+            list.innerHTML = cart.length === 0 ? '<p class="text-xs text-slate-400 text-center py-4">Il carrello è vuoto</p>' : '';
+            cart.forEach(item => {
+                total += item.prezzo;
+                list.innerHTML += `<div class="flex justify-between text-xs bg-slate-50 p-2 rounded-xl border"><span>${item.nome}</span><b>€ ${item.prezzo.toFixed(2)}</b></div>`;
+            });
+            document.getElementById('cartTotal').innerText = '€ ' + total.toFixed(2);
+        }
+
+        function checkout() {
+            alert("Checkout completato!");
+            cart = [];
+            document.getElementById('cartCount').innerText = 0;
+            closeModal();
+        }
+
+        function aggiornaPiggyUI() {
+            let perc = Math.min(100, Math.round((pCurr / pTarget) * 100));
+            document.getElementById('piggyCurrent').innerText = pCurr.toFixed(2);
+            document.getElementById('piggyPercent').innerText = perc + '%';
+            document.getElementById('piggyBar').style.width = perc + '%';
+            document.getElementById('piggyCash').innerText = pCash.toFixed(2);
+            
+            if(pCurr >= pTarget) {
+                // Sparo dei coriandoli con canvas-confetti
+                confetti({
+                    particleCount: 120,
+                    spread: 80,
+                    origin: { y: 0.5 }
+                });
+                
+                // Mostra la schermata di successo personalizzata nel modale
+                document.getElementById('piggyNormalView').classList.add('hidden');
+                document.getElementById('piggySuccessView').classList.remove('hidden');
+            }
+        }
+
+        function aggiungiPiggy(val) {
+            pCurr += val;
+            aggiornaPiggyUI();
+        }
+
+        function resetPiggyView() {
+            pCurr = 0.00;
+            document.getElementById('piggyNormalView').classList.remove('hidden');
+            document.getElementById('piggySuccessView').classList.add('hidden');
+            aggiornaPiggyUI();
+        }
+
+        function spostaCashback() {
+            if(pCash > 0) {
+                pCurr += pCash;
+                pCash = 0;
+                aggiornaPiggyUI();
+            }
+        }
+
+        function aggiornaRiverUI() {
+            let perc = Math.min(100, Math.round((rPts / 3000) * 100));
+            document.getElementById('riverPts').innerText = rPts;
+            document.getElementById('riverPtsText').innerText = rPts;
+            document.getElementById('riverBar').style.width = perc + '%';
+        }
+
+        function riscattaPremio(costo, valore) {
+            if(rPts >= costo) {
+                rPts -= costo;
+                aggiornaRiverUI();
+                if(valore > 0) alert("Premio riscattato! Accredito di € " + valore.toFixed(2));
+                else alert("Congratulazioni! Hai richiesto il Viaggio in Giappone ✈️");
+            } else {
+                alert("Punti insufficienti per questo premio!");
+            }
+        }
+
+        function pubblicaProdotto() {
+            alert("Prodotto pubblicato!");
+            closeModal();
+        }
+
+        function calcolaShield() {
+            let p = parseFloat(document.getElementById('shieldPrice').value) || 0;
+            let comm = 0.70 + (p * 0.05);
+            let tot = p + comm + 3.90;
+            document.getElementById('resComm').innerText = '€ ' + comm.toFixed(2);
+            document.getElementById('resTotal').innerText = '€ ' + tot.toFixed(2);
+            document.getElementById('resNet').innerText = '€ ' + p.toFixed(2);
+        }
+    </script>
+</body>
+</html>
