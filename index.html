@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RiverSpend - your shop your flow</title>
+    <title>RiverSpend - Next Gen App</title>
     <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -14,59 +14,188 @@
     <script type="text/babel">
         function App() {
             const [profile, setProfile] = React.useState('Blu');
-            const [cartCount, setCartCount] = React.useState(0);
-            const [toast, setToast] = React.useState('');
+            const [view, setView] = React.useState('home'); // home, cart, piggy, club, shield, sell
+            const [cart, setCart] = React.useState([]);
+            const [piggyBalance, setPiggyBalance] = React.useState(120.00);
+            const [depositAmount, setDepositAmount] = React.useState('');
+            const [shieldCapital, setShieldCapital] = React.useState(1000);
+            const [shieldRisk, setShieldRisk] = React.useState(5);
+            const [newProduct, setNewProduct] = React.useState({ name: '', price: '' });
 
-            const showMsg = (msg) => {
-                setToast(msg);
-                setTimeout(() => setToast(''), 2000);
+            // Aggiungi al carrello
+            const addToCart = (product) => {
+                setCart(prev => {
+                    const existing = prev.find(item => item.id === product.id);
+                    if (existing) {
+                        return prev.map(item => item.id === product.id ? { ...item, qty: item.qty + 1 } : item);
+                    }
+                    return [...prev, { ...product, qty: 1 }];
+                });
+                alert(product.name + " aggiunto al carrello!");
             };
+
+            const cartTotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            const cartItemsCount = cart.reduce((sum, item) => sum + item.qty, 0);
 
             return (
                 <main style={{ width: '100%', maxWidth: '450px', padding: '15px', display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: '100vh', boxSizing: 'border-box' }}>
-                    <h1 style={{ color: '#ffcc00', margin: '10px 0 0 0', fontSize: '32px', fontWeight: '800' }}>RiverSpend</h1>
+                    
+                    {/* Header */}
+                    <h1 style={{ color: '#ffcc00', margin: '10px 0 0 0', fontSize: '32px', fontWeight: '800', cursor: 'pointer' }} onClick={() => setView('home')}>RiverSpend</h1>
                     <div style={{ fontStyle: 'italic', fontSize: '14px', color: '#e0e0e0', marginBottom: '15px' }}>your shop your flow</div>
-                    <div style={{ fontSize: '12px', marginBottom: '25px', color: '#d1e7dd', background: 'rgba(255,255,255,0.1)', padding: '6px 12px', borderRadius: '20px' }}>🌱 Spedito da RiverLogistics &bull; 🛡️ Protezione Shield</div>
+                    <div style={{ fontSize: '12px', marginBottom: '20px', color: '#d1e7dd', background: 'rgba(255,255,255,0.1)', padding: '6px 12px', borderRadius: '20px' }}>🌱 Spedito da RiverLogistics &bull; 🛡️ Protezione Shield</div>
 
+                    {/* Profilo Utente */}
                     <div style={{ backgroundColor: '#002366', width: '100%', borderRadius: '20px', padding: '15px', boxSizing: 'border-box', textAlign: 'center', marginBottom: '20px', boxShadow: '0 4px 15px rgba(0,0,0,0.3)' }}>
                         <p style={{ margin: '0 0 10px 0', fontSize: '14px', fontWeight: '600' }}>Profilo Utente Attivo: <span style={{ color: '#ffcc00' }}>{profile}</span></p>
-                        <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginBottom: '10px' }}>
-                            <button onClick={() => { setProfile('Blu'); showMsg('Profilo Blu attivo'); }} style={{ border: 'none', padding: '8px 18px', borderRadius: '20px', fontWeight: 'bold', fontSize: '13px', cursor: 'pointer', background: profile === 'Blu' ? '#ffcc00' : '#ffffff', color: '#0040aa' }}>Utente Blu 🔵</button>
-                            <button onClick={() => { setProfile('Rosso'); showMsg('Profilo Rosso attivo'); }} style={{ border: 'none', padding: '8px 18px', borderRadius: '20px', fontWeight: 'bold', fontSize: '13px', cursor: 'pointer', background: profile === 'Rosso' ? '#ffcc00' : '#dc3545', color: profile === 'Rosso' ? '#000' : 'white' }}>Utente Rosso 🔴</button>
-                        </div>
-                        <div style={{ display: 'flex', justifyContent: 'center' }}>
-                            <button onClick={() => { setProfile('Giallo'); showMsg('Profilo Giallo attivo'); }} style={{ border: 'none', padding: '8px 18px', borderRadius: '20px', fontWeight: 'bold', fontSize: '13px', cursor: 'pointer', background: '#ffc107', color: '#000' }}>Utente Giallo 🟡</button>
+                        <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                            <button onClick={() => setProfile('Blu')} style={{ border: 'none', padding: '6px 14px', borderRadius: '20px', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer', background: profile === 'Blu' ? '#ffcc00' : '#ffffff', color: '#0040aa' }}>Blu 🔵</button>
+                            <button onClick={() => setProfile('Rosso')} style={{ border: 'none', padding: '6px 14px', borderRadius: '20px', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer', background: profile === 'Rosso' ? '#ffcc00' : '#dc3545', color: profile === 'Rosso' ? '#000' : 'white' }}>Rosso 🔴</button>
+                            <button onClick={() => setProfile('Giallo')} style={{ border: 'none', padding: '6px 14px', borderRadius: '20px', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer', background: profile === 'Giallo' ? '#ffcc00' : '#ffc107', color: '#000' }}>Giallo 🟡</button>
                         </div>
                     </div>
 
-                    <button onClick={() => showMsg('Sezione Vendi aperta')} style={{ width: '100%', background: '#0088cc', border: 'none', padding: '14px', borderRadius: '12px', color: 'white', fontSize: '16px', fontWeight: 'bold', marginBottom: '12px', cursor: 'pointer' }}>+ Vendi / Proponi</button>
-                    <button onClick={() => showMsg('Carrello aperto')} style={{ width: '100%', background: '#0088cc', border: 'none', padding: '14px', borderRadius: '12px', color: 'white', fontSize: '16px', fontWeight: 'bold', marginBottom: '12px', cursor: 'pointer' }}>🛒 Carrello ({cartCount})</button>
-                    <button onClick={() => showMsg('PiggyBank aperto')} style={{ width: '100%', background: '#dc3545', border: 'none', padding: '14px', borderRadius: '12px', color: 'white', fontSize: '16px', fontWeight: 'bold', marginBottom: '12px', cursor: 'pointer' }}>🐷 PiggyBank</button>
-                    <button onClick={() => showMsg('RiverClub aperto')} style={{ width: '100%', background: '#6f42c1', border: 'none', padding: '14px', borderRadius: '12px', color: 'white', fontSize: '16px', fontWeight: 'bold', marginBottom: '12px', cursor: 'pointer' }}>⭐ RiverClub</button>
-                    <button onClick={() => showMsg('Calcolatore Shield aperto')} style={{ width: '100%', background: '#28a745', border: 'none', padding: '14px', borderRadius: '12px', color: 'white', fontSize: '16px', fontWeight: 'bold', marginBottom: '12px', cursor: 'pointer' }}>📊 Calcolatore Shield</button>
+                    {/* Navigazione Principale */}
+                    {view !== 'home' && (
+                        <button onClick={() => setView('home')} style={{ width: '100%', background: '#495057', border: 'none', padding: '10px', borderRadius: '10px', color: 'white', fontWeight: 'bold', marginBottom: '15px', cursor: 'pointer' }}>
+                            ⬅️ Torna alla Home
+                        </button>
+                    )}
 
-                    <div style={{ alignSelf: 'flex-start', fontSize: '18px', fontWeight: 'bold', margin: '20px 0 10px 5px' }}>🔥 In Evidenza nel Fiume</div>
+                    {view === 'home' && (
+                        <>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%' }}>
+                                <button onClick={() => setView('sell')} style={{ width: '100%', background: '#0088cc', border: 'none', padding: '14px', borderRadius: '12px', color: 'white', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer' }}>+ Vendi / Proponi</button>
+                                <button onClick={() => setView('cart')} style={{ width: '100%', background: '#0088cc', border: 'none', padding: '14px', borderRadius: '12px', color: 'white', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer' }}>🛒 Carrello ({cartItemsCount}) - € {cartTotal.toFixed(2)}</button>
+                                <button onClick={() => setView('piggy')} style={{ width: '100%', background: '#dc3545', border: 'none', padding: '14px', borderRadius: '12px', color: 'white', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer' }}>🐷 PiggyBank (€ {piggyBalance.toFixed(2)})</button>
+                                <button onClick={() => setView('club')} style={{ width: '100%', background: '#6f42c1', border: 'none', padding: '14px', borderRadius: '12px', color: 'white', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer' }}>⭐ RiverClub (Status: VIP)</button>
+                                <button onClick={() => setView('shield')} style={{ width: '100%', background: '#28a745', border: 'none', padding: '14px', borderRadius: '12px', color: 'white', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer' }}>📊 Calcolatore Shield</button>
+                            </div>
 
-                    <div style={{ display: 'flex', gap: '15px', width: '100%' }}>
-                        <div style={{ background: 'white', color: '#333', borderRadius: '12px', padding: '12px', width: '50%', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                            <div style={{ fontSize: '30px', marginBottom: '8px' }}>⌚</div>
-                            <div style={{ fontSize: '13px', fontWeight: 'bold', marginBottom: '5px' }}>Watch Test</div>
-                            <div style={{ fontSize: '13px', color: '#28a745', fontWeight: 'bold', marginBottom: '8px' }}>€ 29,99</div>
-                            <button onClick={() => { setCartCount(c => c + 1); showMsg('Watch Test aggiunto al carrello!'); }} style={{ background: '#28a745', color: 'white', border: 'none', padding: '6px 0', width: '100%', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}>Aggiungi</button>
-                        </div>
-                        <div style={{ background: 'white', color: '#333', borderRadius: '12px', padding: '12px', width: '50%', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                            <div style={{ fontSize: '30px', marginBottom: '8px' }}>💊</div>
-                            <div style={{ fontSize: '13px', fontWeight: 'bold', marginBottom: '5px' }}>Trinciapollo</div>
-                            <div style={{ fontSize: '13px', color: '#28a745', fontWeight: 'bold', marginBottom: '8px' }}>€ 10,00</div>
-                            <button onClick={() => { setCartCount(c => c + 1); showMsg('Trinciapollo aggiunto al carrello!'); }} style={{ background: '#28a745', color: 'white', border: 'none', padding: '6px 0', width: '100%', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}>Aggiungi</button>
-                        </div>
-                    </div>
+                            <div style={{ alignSelf: 'flex-start', fontSize: '18px', fontWeight: 'bold', margin: '25px 0 10px 5px' }}>🔥 In Evidenza nel Fiume</div>
 
-                    {toast && (
-                        <div style={{ position: 'fixed', bottom: '20px', background: '#10b981', color: 'white', padding: '10px 20px', borderRadius: '30px', fontWeight: 'bold', fontSize: '13px', boxShadow: '0 4px 12px rgba(0,0,0,0.3)', zIndex: 1000 }}>
-                            {toast}
+                            <div style={{ display: 'flex', gap: '15px', width: '100%' }}>
+                                <div style={{ background: 'white', color: '#333', borderRadius: '12px', padding: '12px', width: '50%', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                    <div style={{ fontSize: '30px', marginBottom: '8px' }}>⌚</div>
+                                    <div style={{ fontSize: '13px', fontWeight: 'bold', marginBottom: '5px' }}>Watch Test</div>
+                                    <div style={{ fontSize: '13px', color: '#28a745', fontWeight: 'bold', marginBottom: '8px' }}>€ 29,99</div>
+                                    <button onClick={() => addToCart({ id: 1, name: 'Watch Test', price: 29.99 })} style={{ background: '#28a745', color: 'white', border: 'none', padding: '8px 0', width: '100%', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}>Aggiungi</button>
+                                </div>
+                                <div style={{ background: 'white', color: '#333', borderRadius: '12px', padding: '12px', width: '50%', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                    <div style={{ fontSize: '30px', marginBottom: '8px' }}>💊</div>
+                                    <div style={{ fontSize: '13px', fontWeight: 'bold', marginBottom: '5px' }}>Trinciapollo</div>
+                                    <div style={{ fontSize: '13px', color: '#28a745', fontWeight: 'bold', marginBottom: '8px' }}>€ 10,00</div>
+                                    <button onClick={() => addToCart({ id: 2, name: 'Trinciapollo', price: 10.00 })} style={{ background: '#28a745', color: 'white', border: 'none', padding: '8px 0', width: '100%', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}>Aggiungi</button>
+                                </div>
+                            </div>
+                        </>
+                    )}
+
+                    {/* VISTA: CARRELLO */}
+                    {view === 'cart' && (
+                        <div style={{ width: '100%', background: '#002366', padding: '20px', borderRadius: '15px', boxSizing: 'border-box' }}>
+                            <h2>🛒 Il tuo Carrello</h2>
+                            {cart.length === 0 ? <p>Il carrello è vuoto.</p> : (
+                                <div>
+                                    {cart.map(item => (
+                                        <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', borderBottom: '1px solid rgba(255,255,255,0.2)', paddingBottom: '8px' }}>
+                                            <span>{item.name} (x{item.qty})</span>
+                                            <span>€ {(item.price * item.qty).toFixed(2)}</span>
+                                        </div>
+                                    ))}
+                                    <h3 style={{ marginTop: '15px' }}>Totale: € {cartTotal.toFixed(2)}</h3>
+                                    <button onClick={() => { alert('Ordine completato con successo!'); setCart([]); }} style={{ width: '100%', background: '#28a745', color: 'white', border: 'none', padding: '12px', borderRadius: '8px', fontWeight: 'bold', marginTop: '10px', cursor: 'pointer' }}>Procedi all'Acquisto</button>
+                                </div>
+                            )}
                         </div>
                     )}
+
+                    {/* VISTA: PIGGY BANK */}
+                    {view === 'piggy' && (
+                        <div style={{ width: '100%', background: '#721c24', padding: '20px', borderRadius: '15px', boxSizing: 'border-box' }}>
+                            <h2>🐷 PiggyBank Salvadanaio</h2>
+                            <p style={{ fontSize: '20px', fontWeight: 'bold' }}>Saldo attuale: € {piggyBalance.toFixed(2)}</p>
+                            <input 
+                                type="number" 
+                                placeholder="Importo da aggiungere" 
+                                value={depositAmount} 
+                                onChange={e => setDepositAmount(e.target.value)}
+                                style={{ width: '100%', padding: '10px', borderRadius: '8px', border: 'none', marginBottom: '10px', boxSizing: 'border-box' }}
+                            />
+                            <button onClick={() => {
+                                const val = parseFloat(depositAmount);
+                                if (!isNaN(val) && val > 0) {
+                                    setPiggyBalance(prev => prev + val);
+                                    setDepositAmount('');
+                                    alert('Fondi aggiunti al salvadanaio!');
+                                }
+                            }} style={{ width: '100%', background: '#ffc107', color: '#000', border: 'none', padding: '12px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>Deposita Denaro</button>
+                        </div>
+                    )}
+
+                    {/* VISTA: RIVER CLUB */}
+                    {view === 'club' && (
+                        <div style={{ width: '100%', background: '#4a154b', padding: '20px', borderRadius: '15px', boxSizing: 'border-box' }}>
+                            <h2>⭐ RiverClub VIP</h2>
+                            <p>Benvenuto nel club esclusivo per il profilo <strong>{profile}</strong>.</p>
+                            <p>Vantaggi attivi: Spedizione prioritaria gratuita, Cashback del 5% su ogni acquisto e protezione Shield avanzata inclusa.</p>
+                        </div>
+                    )}
+
+                    {/* VISTA: CALCOLATORE SHIELD */}
+                    {view === 'shield' && (
+                        <div style={{ width: '100%', background: '#1e7e34', padding: '20px', borderRadius: '15px', boxSizing: 'border-box' }}>
+                            <h2>📊 Calcolatore Protezione Shield</h2>
+                            <label style={{ fontSize: '13px' }}>Capitale / Valore Spesa (€):</label>
+                            <input 
+                                type="number" 
+                                value={shieldCapital} 
+                                onChange={e => setShieldCapital(Number(e.target.value))}
+                                style={{ width: '100%', padding: '8px', borderRadius: '6px', border: 'none', marginBottom: '10px', boxSizing: 'border-box' }}
+                            />
+                            <label style={{ fontSize: '13px' }}>Tasso di rischio (%): {shieldRisk}%</label>
+                            <input 
+                                type="range" min="1" max="20" value={shieldRisk} 
+                                onChange={e => setShieldRisk(Number(e.target.value))}
+                                style={{ width: '100%', marginBottom: '15px' }}
+                            />
+                            <div style={{ background: 'rgba(0,0,0,0.2)', padding: '12px', borderRadius: '8px', textAlign: 'center' }}>
+                                <p style={{ margin: 0, fontSize: '14px' }}>Costo Copertura Shield Consigliato:</p>
+                                <h3 style={{ margin: '5px 0 0 0', color: '#ffcc00' }}>€ {(shieldCapital * (shieldRisk / 100)).toFixed(2)}</h3>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* VISTA: VENDI */}
+                    {view === 'sell' && (
+                        <div style={{ width: '100%', background: '#0056b3', padding: '20px', borderRadius: '15px', boxSizing: 'border-box' }}>
+                            <h2>➕ Vendi / Proponi Articolo</h2>
+                            <input 
+                                type="text" 
+                                placeholder="Nome prodotto" 
+                                value={newProduct.name}
+                                onChange={e => setNewProduct({...newProduct, name: e.target.value})}
+                                style={{ width: '100%', padding: '10px', borderRadius: '8px', border: 'none', marginBottom: '10px', boxSizing: 'border-box' }}
+                            />
+                            <input 
+                                type="number" 
+                                placeholder="Prezzo (€)" 
+                                value={newProduct.price}
+                                onChange={e => setNewProduct({...newProduct, price: e.target.value})}
+                                style={{ width: '100%', padding: '10px', borderRadius: '8px', border: 'none', marginBottom: '15px', boxSizing: 'border-box' }}
+                            />
+                            <button onClick={() => {
+                                if(newProduct.name && newProduct.price) {
+                                    alert('Prodotto "' + newProduct.name + '" pubblicato con successo nel Fiume!');
+                                    setNewProduct({ name: '', price: '' });
+                                    setView('home');
+                                } else {
+                                    alert('Compila tutti i campi');
+                                }
+                            }} style={{ width: '100%', background: '#ffcc00', color: '#000', border: 'none', padding: '12px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>Pubblica Subito</button>
+                        </div>
+                    )}
+
                 </main>
             );
         }
