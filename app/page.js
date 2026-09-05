@@ -1,8 +1,8 @@
-export default function UltimateRed() {
+export default function Home() {
   return (
-    <div style={{ background: 'darkred', color: 'white', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', fontSize: '30px', fontWeight: 'bold', textAlign: 'center', padding: '20px' }}>
-      <h1>BLOCCO RIMOSSO CON SUCCESSO</h1>
-      <p>Se vedi questo schermo rosso scuro, abbiamo finalmente sfondato il muro.</p>
-    </div>
+    <main style={{ padding: '50px', textAlign: 'center', fontFamily: 'sans-serif', background: '#eef9ef', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+      <h1 style={{ color: '#2e7d32', fontSize: '36px', marginBottom: '20px' }}>SITO SBLOCCATO E ONLINE!</h1>
+      <p style={{ fontSize: '18px', color: '#333' }}>Il vecchio blocco è stato superato. Adesso il codice risponde perfettamente.</p>
+    </main>
   );
 }
