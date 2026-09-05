@@ -3,200 +3,233 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RiverSpend - your shop your flow</title>
+    <title>RiverSpend - Next Gen</title>
     <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent: #3b82f6;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --success: #10b981;
+        }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: #0040aa;
+            background-color: var(--bg-color);
+            color: var(--text);
             margin: 0;
-            padding: 15px;
+            padding: 20px;
             display: flex;
             justify-content: center;
-            color: #ffffff;
         }
-        .main-container {
+        .app-container {
             width: 100%;
-            max-width: 450px;
+            max-width: 480px;
             display: flex;
             flex-direction: column;
-            align-items: center;
+            gap: 16px;
         }
-        h1 {
-            color: #ffcc00;
-            margin: 10px 0 0 0;
-            font-size: 32px;
-            font-weight: 800;
-            letter-spacing: -1px;
-        }
-        .subtitle {
-            font-style: italic;
-            font-size: 14px;
-            color: #e0e0e0;
-            margin-bottom: 15px;
-        }
-        .badges {
-            font-size: 12px;
-            margin-bottom: 25px;
-            color: #d1e7dd;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 6px 12px;
-            border-radius: 20px;
-        }
-        .user-card {
-            background-color: #002366;
-            width: 100%;
-            border-radius: 20px;
-            padding: 15px;
-            box-sizing: border-box;
+        header {
             text-align: center;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
-        .user-card p {
-            margin: 0 0 10px 0;
-            font-size: 14px;
-            font-weight: 600;
-        }
-        .user-btn-row {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
             margin-bottom: 10px;
         }
-        .pill-btn {
-            border: none;
-            padding: 8px 18px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 13px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
+        h1 {
+            font-size: 28px;
+            font-weight: 800;
+            margin: 0;
+            background: linear-gradient(45deg, #60a5fa, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
-        .btn-blue { background: #ffffff; color: #0040aa; }
-        .btn-red { background: #dc3545; color: white; }
-        .btn-yellow { background: #ffc107; color: #000; }
-
+        .subtitle {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .profile-section {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .profile-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        .profile-btn {
+            flex: 1;
+            padding: 8px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text);
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .profile-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+        .action-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
         .action-btn {
-            width: 100%;
-            background: #0088cc;
+            background: #2563eb;
+            color: white;
             border: none;
             padding: 14px;
             border-radius: 12px;
-            color: white;
-            font-size: 16px;
             font-weight: bold;
-            margin-bottom: 12px;
+            font-size: 14px;
             cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-            text-align: center;
-        }
-        .btn-piggy { background: #dc3545; }
-        .btn-club { background: #6f42c1; }
-        .btn-shield { background: #28a745; }
-
-        .section-title {
-            align-self: flex-start;
-            font-size: 18px;
-            font-weight: bold;
-            margin: 20px 0 10px 5px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .products-grid {
-            display: flex;
-            gap: 15px;
-            width: 100%;
-        }
-        .product-card {
-            background: white;
-            color: #333;
-            border-radius: 12px;
-            padding: 12px;
-            width: 50%;
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .product-img {
-            width: 100%;
-            height: 90px;
-            background: #f1f1f1;
-            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 30px;
-            margin-bottom: 8px;
+            gap: 8px;
+            transition: opacity 0.2s;
         }
-        .product-name {
-            font-size: 13px;
+        .action-btn:active { opacity: 0.8; }
+        .btn-full { grid-column: span 2; }
+        .btn-secondary { background: #334155; }
+        
+        .section-title {
+            font-size: 16px;
             font-weight: bold;
-            margin: 0 0 5px 0;
-            text-align: center;
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        .product-price {
-            font-size: 13px;
-            color: #28a745;
-            font-weight: bold;
-            margin-bottom: 8px;
+        .products-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
-        .add-btn {
-            background: #28a745;
+        .product-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .product-info h4 { margin: 0 0 4px 0; font-size: 14px; }
+        .product-info span { font-size: 12px; color: var(--success); font-weight: bold; }
+        .add-cart-btn {
+            background: var(--success);
             color: white;
             border: none;
-            padding: 6px 0;
-            width: 100%;
-            border-radius: 6px;
+            padding: 8px 14px;
+            border-radius: 8px;
             font-weight: bold;
+            font-size: 12px;
             cursor: pointer;
+        }
+        #notification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #10b981;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 13px;
+            transition: transform 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        #notification.show {
+            transform: translateX(-50%) translateY(0);
         }
     </style>
 </head>
 <body>
 
-<div class="main-container">
-    <h1>RiverSpend</h1>
-    <div class="subtitle">your shop your flow</div>
-    <div class="badges">🌱 Spedito da RiverLogistics &bull; 🛡️ Protezione Shield</div>
+<div class="app-container">
+    <header>
+        <h1>RiverSpend</h1>
+        <div class="subtitle">Nuova Architettura Dinamica &bull; Attivo</div>
+    </header>
 
-    <div class="user-card">
-        <p>Profilo Utente Attivo:</p>
-        <div class="user-btn-row">
-            <button class="pill-btn btn-blue">Utente Blu 🔵</button>
-            <button class="pill-btn btn-red">Utente Rosso 🔴</button>
-        </div>
-        <div style="display: flex; justify-content: center;">
-            <button class="pill-btn btn-yellow">Utente Giallo 🟡</button>
+    <div class="card profile-section">
+        <span style="font-size: 12px; color: var(--text-muted);">Profilo Attivo: <strong id="active-profile-label" style="color: var(--accent);">Blu</strong></span>
+        <div class="profile-buttons">
+            <button class="profile-btn active" onclick="setProfile('Blu', this)">Blu</button>
+            <button class="profile-btn" onclick="setProfile('Rosso', this)">Rosso</button>
+            <button class="profile-btn" onclick="setProfile('Giallo', this)">Giallo</button>
         </div>
     </div>
 
-    <button class="action-btn">+ Vendi / Proponi</button>
-    <button class="action-btn" style="background: #0099ff;">🛒 Carrello (0)</button>
-    <button class="action-btn btn-piggy">🐷 PiggyBank</button>
-    <button class="action-btn btn-club">⭐ RiverClub</button>
-    <button class="action-btn btn-shield">📊 Calcolatore Shield</button>
+    <div class="action-grid">
+        <button class="action-btn" onclick="notify('Sezione Vendi aperta')">➕ Vendi</button>
+        <button class="action-btn btn-secondary" id="cart-btn" onclick="notify('Carrello aperto')">🛒 Carrello (<span id="cart-count">0</span>)</button>
+        <button class="action-btn btn-secondary" onclick="notify('PiggyBank sincronizzato')">🐷 PiggyBank</button>
+        <button class="action-btn btn-secondary" onclick="notify('RiverClub attivo')">⭐ RiverClub</button>
+        <button class="action-btn btn-full" style="background: #059669;" onclick="notify('Calcolatore Shield avviato')">📊 Calcolatore Shield</button>
+    </div>
 
-    <div class="section-title">🔥 In Evidenza nel Fiume</div>
+    <div class="section-title">
+        <span>Catalogo Live</span>
+        <span style="font-size: 12px; color: var(--text-muted);">2 articoli</span>
+    </div>
 
-    <div class="products-grid">
-        <div class="product-card">
-            <div class="product-img">⌚</div>
-            <div class="product-name">Watch Test</div>
-            <div class="product-price">€ 29,99</div>
-            <button class="add-btn">Aggiungi</button>
+    <div class="products-list">
+        <div class="product-item">
+            <div class="product-info">
+                <h4>Watch Test Modern</h4>
+                <span>€ 29,99</span>
+            </div>
+            <button class="add-cart-btn" onclick="addToCart('Watch Test')">Aggiungi</button>
         </div>
-        <div class="product-card">
-            <div class="product-img">💊</div>
-            <div class="product-name">Trinciapollo</div>
-            <div class="product-price">€ 10,00</div>
-            <button class="add-btn">Aggiungi</button>
+        <div class="product-item">
+            <div class="product-info">
+                <h4>Trinciapollo Pro</h4>
+                <span>€ 10,00</span>
+            </div>
+            <button class="add-cart-btn" onclick="addToCart('Trinciapollo')">Aggiungi</button>
         </div>
     </div>
 </div>
+
+<div id="notification">Notifica</div>
+
+<script>
+    let cartTotal = 0;
+
+    function setProfile(name, btn) {
+        document.querySelectorAll('.profile-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('active-profile-label').innerText = name;
+        notify('Profilo cambiato in: ' + name);
+    }
+
+    function addToCart(item) {
+        cartTotal++;
+        document.getElementById('cart-count').innerText = cartTotal;
+        notify(item + ' aggiunto al carrello!');
+    }
+
+    function notify(text) {
+        const notif = document.getElementById('notification');
+        notif.innerText = text;
+        notif.classList.add('show');
+        setTimeout(() => {
+            notif.classList.remove('show');
+        }, 2000);
+    }
+</script>
 
 </body>
 </html>
