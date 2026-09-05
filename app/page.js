@@ -1,67 +1,58 @@
 'use client';
 import { useState } from 'react';
 
-export default function RiverSpendApp() {
+export default function Home() {
   const [profile, setProfile] = useState('Blu');
   const [cartCount, setCartCount] = useState(0);
-  const [toast,- setToast] = useState('');
+  const [toast, setToast] = useState('');
 
-  const showToast = (msg) => {
+  const showMsg = (msg) => {
     setToast(msg);
     setTimeout(() => setToast(''), 2000);
   };
 
   return (
-    <main style={{ padding: '20px', maxWidth: '480px', margin: '0 auto' }}>
-      <header style={{ textAlign: 'center', marginBottom: '20px' }}>
-        <h1 style={{ fontSize: '28px', color: '#60a5fa', margin: 0 }}>RiverSpend</h1>
-        <p style={{ fontSize: '13px', color: '#94a3b8' }}>Nuova Architettura Next.js Interattiva</p>
-      </header>
+    <main style={{ width: '100%', maxWidth: '450px', padding: '15px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <h1 style={{ color: '#ffcc00', margin: '10px 0 0 0', fontSize: '32px', fontWeight: '800' }}>RiverSpend</h1>
+      <div style={{ fontStyle: 'italic', fontSize: '14px', color: '#e0e0e0', marginBottom: '15px' }}>your shop your flow</div>
+      <div style={{ fontSize: '12px', marginBottom: '25px', color: '#d1e7dd', background: 'rgba(255,255,255,0.1)', padding: '6px 12px', borderRadius: '20px' }}>🌱 Spedito da RiverLogistics &bull; 🛡️ Protezione Shield</div>
 
-      <div style={{ background: '#1e293b', padding: '15px', borderRadius: '12px', marginBottom: '15px', border: '1px solid rgba(255,255,255,0.05)' }}>
-        <p style={{ margin: '0 0 10px 0', fontSize: '13px' }}>Profilo Attivo: <strong style={{ color: '#3b82f6' }}>{profile}</strong></p>
-        <div style={{ display: 'flex', gap: '8px' }}>
-          {['Blu', 'Rosso', 'Giallo'].map((p) => (
-            <button
-              key={p}
-              onClick={() => { setProfile(p); showToast(`Profilo impostato su ${p}`); }}
-              style={{
-                flex: 1, padding: '8px', borderRadius: '8px', border: 'none',
-                background: profile === p ? '#3b82f6' : '#334155', color: 'white', fontWeight: 'bold', cursor: 'pointer'
-              }}
-            >
-              {p}
-            </button>
-          ))}
+      <div style={{ backgroundColor: '#002366', width: '100%', borderRadius: '20px', padding: '15px', boxSizing: 'border-box', textAlign: 'center', marginBottom: '20px', boxShadow: '0 4px 15px rgba(0,0,0,0.3)' }}>
+        <p style={{ margin: '0 0 10px 0', fontSize: '14px', fontWeight: '600' }}>Profilo Utente Attivo: <span style={{ color: '#ffcc00' }}>{profile}</span></p>
+        <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginBottom: '10px' }}>
+          <button onClick={() => { setProfile('Blu'); showMsg('Profilo Blu attivo'); }} style={{ border: 'none', padding: '8px 18px', borderRadius: '20px', fontWeight: 'bold', fontSize: '13px', cursor: 'pointer', background: profile === 'Blu' ? '#ffcc00' : '#ffffff', color: '#0040aa' }}>Utente Blu 🔵</button>
+          <button onClick={() => { setProfile('Rosso'); showMsg('Profilo Rosso attivo'); }} style={{ border: 'none', padding: '8px 18px', borderRadius: '20px', fontWeight: 'bold', fontSize: '13px', cursor: 'pointer', background: profile === 'Rosso' ? '#ffcc00' : '#dc3545', color: profile === 'Rosso' ? '#000' : 'white' }}>Utente Rosso 🔴</button>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <button onClick={() => { setProfile('Giallo'); showMsg('Profilo Giallo attivo'); }} style={{ border: 'none', padding: '8px 18px', borderRadius: '20px', fontWeight: 'bold', fontSize: '13px', cursor: 'pointer', background: '#ffc107', color: '#000' }}>Utente Giallo 🟡</button>
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '20px' }}>
-        <button onClick={() => showToast('Sezione Vendi aperta')} style={{ padding: '14px', background: '#2563eb', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}>+ Vendi</button>
-        <button onClick={() => showToast('Carrello aperto')} style={{ padding: '14px', background: '#334155', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}>🛒 Carrello ({cartCount})</button>
-        <button onClick={() => showToast('PiggyBank & RiverClub')} style={{ padding: '14px', background: '#334155', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer', gridColumn: 'span 2' }}>🐷 PiggyBank & RiverClub</button>
-      </div>
+      <button onClick={() => showMsg('Sezione Vendi aperta')} style={{ width: '100%', background: '#0088cc', border: 'none', padding: '14px', borderRadius: '12px', color: 'white', fontSize: '16px', fontWeight: 'bold', marginBottom: '12px', cursor: 'pointer' }}>+ Vendi / Proponi</button>
+      <button onClick={() => showMsg('Carrello aperto')} style={{ width: '100%', background: '#0088cc', border: 'none', padding: '14px', borderRadius: '12px', color: 'white', fontSize: '16px', fontWeight: 'bold', marginBottom: '12px', cursor: 'pointer' }}>🛒 Carrello ({cartCount})</button>
+      <button onClick={() => showMsg('PiggyBank aperto')} style={{ width: '100%', background: '#dc3545', border: 'none', padding: '14px', borderRadius: '12px', color: 'white', fontSize: '16px', fontWeight: 'bold', marginBottom: '12px', cursor: 'pointer' }}>🐷 PiggyBank</button>
+      <button onClick={() => showMsg('RiverClub aperto')} style={{ width: '100%', background: '#6f42c1', border: 'none', padding: '14px', borderRadius: '12px', color: 'white', fontSize: '16px', fontWeight: 'bold', marginBottom: '12px', cursor: 'pointer' }}>⭐ RiverClub</button>
+      <button onClick={() => showMsg('Calcolatore Shield aperto')} style={{ width: '100%', background: '#28a745', border: 'none', padding: '14px', borderRadius: '12px', color: 'white', fontSize: '16px', fontWeight: 'bold', marginBottom: '12px', cursor: 'pointer' }}>📊 Calcolatore Shield</button>
 
-      <h2 style={{ fontSize: '16px', marginBottom: '10px' }}>Catalogo Prodotti</h2>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-        <div style={{ background: '#1e293b', padding: '14px', borderRadius: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', border: '1px solid rgba(255,255,255,0.05)' }}>
-          <div>
-            <h4 style={{ margin: '0 0 4px 0', fontSize: '14px' }}>Watch Test</h4>
-            <span style={{ color: '#10b981', fontSize: '12px', fontWeight: 'bold' }}>€ 29,99</span>
-          </div>
-          <button onClick={() => { setCartCount(c => c + 1); showToast('Watch Test aggiunto!'); }} style={{ background: '#10b981', color: 'white', border: 'none', padding: '8px 14px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>Aggiungi</button>
+      <div style={{ alignSelf: 'flex-start', fontSize: '18px', fontWeight: 'bold', margin: '20px 0 10px 5px' }}>🔥 In Evidenza nel Fiume</div>
+
+      <div style={{ display: 'flex', gap: '15px', width: '100%' }}>
+        <div style={{ background: 'white', color: '#333', borderRadius: '12px', padding: '12px', width: '50%', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <div style={{ fontSize: '30px', marginBottom: '8px' }}>⌚</div>
+          <div style={{ fontSize: '13px', fontWeight: 'bold', marginBottom: '5px' }}>Watch Test</div>
+          <div style={{ fontSize: '13px', color: '#28a745', fontWeight: 'bold', marginBottom: '8px' }}>€ 29,99</div>
+          <button onClick={() => { setCartCount(c => c + 1); showMsg('Watch Test aggiunto al carrello!'); }} style={{ background: '#28a745', color: 'white', border: 'none', padding: '6px 0', width: '100%', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}>Aggiungi</button>
         </div>
-        <div style={{ background: '#1e293b', padding: '14px', borderRadius: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', border: '1px solid rgba(255,255,255,0.05)' }}>
-          <div>
-            <h4 style={{ margin: '0 0 4px 0', fontSize: '14px' }}>Trinciapollo</h4>
-            <span style={{ color: '#10b981', fontSize: '12px', fontWeight: 'bold' }}>€ 10,00</span>
-          </div>
-          <button onClick={() => { setCartCount(c => c + 1); showToast('Trinciapollo aggiunto!'); }} style={{ background: '#10b981', color: 'white', border: 'none', padding: '8px 14px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>Aggiungi</button>
+        <div style={{ background: 'white', color: '#333', borderRadius: '12px', padding: '12px', width: '50%', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <div style={{ fontSize: '30px', marginBottom: '8px' }}>💊</div>
+          <div style={{ fontSize: '13px', fontWeight: 'bold', marginBottom: '5px' }}>Trinciapollo</div>
+          <div style={{ fontSize: '13px', color: '#28a745', fontWeight: 'bold', marginBottom: '8px' }}>€ 10,00</div>
+          <button onClick={() => { setCartCount(c => c + 1); showMsg('Trinciapollo aggiunto al carrello!'); }} style={{ background: '#28a745', color: 'white', border: 'none', padding: '6px 0', width: '100%', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}>Aggiungi</button>
         </div>
       </div>
 
       {toast && (
-        <div style={{ position: 'fixed', bottom: '20px', left: '50%', transform: 'translateX(-50%)', background: '#10b981', color: 'white', padding: '10px 20px', borderRadius: '20px', fontWeight: 'bold', fontSize: '13px', boxShadow: '0 4px 12px rgba(0,0,0,0.3)', zIndex: 1000 }}>
+        <div style={{ position: 'fixed', bottom: '20px', background: '#10b981', color: 'white', padding: '10px 20px', borderRadius: '30px', fontWeight: 'bold', fontSize: '13px', boxShadow: '0 4px 12px rgba(0,0,0,0.3)' }}>
           {toast}
         </div>
       )}
