@@ -19,7 +19,7 @@ export default function SplashScreen({ onEnter }) {
   };
 
   return (
-    <div className={`fixed inset-0 z-50 flex flex-col items-center justify-center bg-gradient-to-b from-slate-950 via-sky-950 to-blue-900 text-white transition-opacity duration-1000 ${fadeOut ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+    <div className={`fixed inset-0 z-50 flex flex-col items-center justify-center bg-gradient-to-b from-cyan-100 via-sky-100 to-cyan-200 text-white transition-opacity duration-1000 ${fadeOut ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
       <div className="text-center px-6 max-w-2xl">
         <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-4 bg-gradient-to-r from-teal-300 via-sky-200 to-white bg-clip-text text-transparent drop-shadow-md">
           RiverSpend
@@ -65,7 +65,7 @@ export default function Home() {
   return (
     <main className="relative min-h-screen bg-slate-900 text-white">
       {showSplash && (
-        <div className={`fixed inset-0 z-50 flex flex-col items-center justify-center bg-gradient-to-b from-slate-950 via-sky-950 to-blue-900 text-white transition-opacity duration-1000 ${fadeOut ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+        <div className={`fixed inset-0 z-50 flex flex-col items-center justify-center bg-gradient-to-b from-cyan-100 via-sky-100 to-cyan-200 text-white transition-opacity duration-1000 ${fadeOut ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
           <div className="text-center px-6 max-w-2xl">
             <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-4 bg-gradient-to-r from-teal-300 via-sky-200 to-white bg-clip-text text-transparent drop-shadow-md">
               RiverSpend

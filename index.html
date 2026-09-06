@@ -8,7 +8,7 @@
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
-<body style="margin: 0; padding: 0; background-color: #0040aa; color: #ffffff; font-family: sans-serif; display: flex; justify-content: center;">
+<body style="margin: 0; padding: 0; background-color: #dff7ff; color: #ffffff; font-family: sans-serif; display: flex; justify-content: center;">
     <div id="root" style="width: 100%; display: flex; justify-content: center;"></div>
 
     <script type="text/babel">
@@ -46,10 +46,10 @@
                     <div style={{ fontSize: '12px', marginBottom: '20px', color: '#d1e7dd', background: 'rgba(255,255,255,0.1)', padding: '6px 12px', borderRadius: '20px' }}>🌱 Spedito da RiverLogistics &bull; 🛡️ Protezione Shield</div>
 
                     {/* Profilo Utente */}
-                    <div style={{ backgroundColor: '#002366', width: '100%', borderRadius: '20px', padding: '15px', boxSizing: 'border-box', textAlign: 'center', marginBottom: '20px', boxShadow: '0 4px 15px rgba(0,0,0,0.3)' }}>
+                    <div style={{ backgroundColor: '#c8f3ff', width: '100%', borderRadius: '20px', padding: '15px', boxSizing: 'border-box', textAlign: 'center', marginBottom: '20px', boxShadow: '0 4px 15px rgba(0,0,0,0.3)' }}>
                         <p style={{ margin: '0 0 10px 0', fontSize: '14px', fontWeight: '600' }}>Profilo Utente Attivo: <span style={{ color: '#ffcc00' }}>{profile}</span></p>
                         <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
-                            <button onClick={() => setProfile('Blu')} style={{ border: 'none', padding: '6px 14px', borderRadius: '20px', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer', background: profile === 'Blu' ? '#ffcc00' : '#ffffff', color: '#0040aa' }}>Blu 🔵</button>
+                            <button onClick={() => setProfile('Blu')} style={{ border: 'none', padding: '6px 14px', borderRadius: '20px', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer', background: profile === 'Blu' ? '#ffcc00' : '#ffffff', color: '#dff7ff' }}>Blu 🔵</button>
                             <button onClick={() => setProfile('Rosso')} style={{ border: 'none', padding: '6px 14px', borderRadius: '20px', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer', background: profile === 'Rosso' ? '#ffcc00' : '#dc3545', color: profile === 'Rosso' ? '#000' : 'white' }}>Rosso 🔴</button>
                             <button onClick={() => setProfile('Giallo')} style={{ border: 'none', padding: '6px 14px', borderRadius: '20px', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer', background: profile === 'Giallo' ? '#ffcc00' : '#ffc107', color: '#000' }}>Giallo 🟡</button>
                         </div>
@@ -65,8 +65,8 @@
                     {view === 'home' && (
                         <>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%' }}>
-                                <button onClick={() => setView('sell')} style={{ width: '100%', background: '#0088cc', border: 'none', padding: '14px', borderRadius: '12px', color: 'white', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer' }}>+ Vendi / Proponi</button>
-                                <button onClick={() => setView('cart')} style={{ width: '100%', background: '#0088cc', border: 'none', padding: '14px', borderRadius: '12px', color: 'white', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer' }}>🛒 Carrello ({cartItemsCount}) - € {cartTotal.toFixed(2)}</button>
+                                <button onClick={() => setView('sell')} style={{ width: '100%', background: '#9de3ff', border: 'none', padding: '14px', borderRadius: '12px', color: 'white', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer' }}>+ Vendi / Proponi</button>
+                                <button onClick={() => setView('cart')} style={{ width: '100%', background: '#9de3ff', border: 'none', padding: '14px', borderRadius: '12px', color: 'white', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer' }}>🛒 Carrello ({cartItemsCount}) - € {cartTotal.toFixed(2)}</button>
                                 <button onClick={() => setView('piggy')} style={{ width: '100%', background: '#dc3545', border: 'none', padding: '14px', borderRadius: '12px', color: 'white', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer' }}>🐷 PiggyBank (€ {piggyBalance.toFixed(2)})</button>
                                 <button onClick={() => setView('club')} style={{ width: '100%', background: '#6f42c1', border: 'none', padding: '14px', borderRadius: '12px', color: 'white', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer' }}>⭐ RiverClub (Status: VIP)</button>
                                 <button onClick={() => setView('shield')} style={{ width: '100%', background: '#28a745', border: 'none', padding: '14px', borderRadius: '12px', color: 'white', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer' }}>📊 Calcolatore Shield</button>
@@ -93,7 +93,7 @@
 
                     {/* VISTA: CARRELLO */}
                     {view === 'cart' && (
-                        <div style={{ width: '100%', background: '#002366', padding: '20px', borderRadius: '15px', boxSizing: 'border-box' }}>
+                        <div style={{ width: '100%', background: '#c8f3ff', padding: '20px', borderRadius: '15px', boxSizing: 'border-box' }}>
                             <h2>🛒 Il tuo Carrello</h2>
                             {cart.length === 0 ? <p>Il carrello è vuoto.</p> : (
                                 <div>
@@ -168,7 +168,7 @@
 
                     {/* VISTA: VENDI */}
                     {view === 'sell' && (
-                        <div style={{ width: '100%', background: '#0056b3', padding: '20px', borderRadius: '15px', boxSizing: 'border-box' }}>
+                        <div style={{ width: '100%', background: '#b8ecff', padding: '20px', borderRadius: '15px', boxSizing: 'border-box' }}>
                             <h2>➕ Vendi / Proponi Articolo</h2>
                             <input 
                                 type="text" 
