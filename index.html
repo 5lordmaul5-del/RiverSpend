@@ -1155,6 +1155,7 @@ function renderWowMarketplace(){
   renderWowRail('wowDiscoverRail',discover);
 }
 
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
 function productCard(p){
   return `<article class="card">
     <img src="${esc(p.image)}" alt="${esc(p.name)}" onerror="this.style.display='none'">
