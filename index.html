@@ -442,6 +442,17 @@ filter:blur(1px);animation:rsStableFlow 7s ease-in-out infinite alternate}
 @media(min-width:760px){.rs-approved-hero{margin:18px auto 16px;max-width:1100px;min-height:260px;padding:34px}.rs-approved-cats,.rs-approved-actions{max-width:1100px;margin:auto}.rs-approved-actions{grid-template-columns:repeat(4,1fr)}.rs-approved-bottom{max-width:760px;margin:auto;border:1px solid #dcebed;border-radius:22px 22px 0 0}}
 </style>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+window.RS_SUPABASE_URL = "https://rkwqmteuxpdgdhgowbpn.supabase.co";
+window.RS_SUPABASE_KEY = "sb_publishable_fl3jgQp7nsP90RRD8Ji21g_ZtTyQAXn";
+window.rsSupabase = null;
+try {
+  if (window.supabase && window.RS_SUPABASE_KEY && !window.RS_SUPABASE_KEY.startsWith("__")) {
+    window.rsSupabase = window.supabase.createClient(window.RS_SUPABASE_URL, window.RS_SUPABASE_KEY);
+  }
+} catch (e) { console.error("RiverSpend Supabase init", e); }
+</script>
 </head>
 <body class="rs-opening-active">
 <div id="welcome" aria-label="Apertura RiverSpend">
@@ -1072,6 +1083,54 @@ let piggy = JSON.parse(localStorage.getItem("rs_piggy") || "[]");
 let returns = JSON.parse(localStorage.getItem("rs_returns") || "[]");
 
 function saveProducts(){localStorage.setItem("rs_products",JSON.stringify(products))}
+
+async function loadProductsOnline(){
+  if(!window.rsSupabase) return;
+  try{
+    const {data,error}=await window.rsSupabase.from("products").select("*").order("created_at",{ascending:false});
+    if(error) throw error;
+    const online=(data||[]).map(p=>({
+      id:String(p.id), sellerType:p.seller_type||"Privato", condition:p.condition||"Nuovo",
+      name:p.name, description:p.description||"", price:Number(p.price||0), stock:Number(p.stock||0),
+      category:p.category||"Altro", shipping:p.shipping||"Spedizione disponibile", handling:p.handling||"",
+      payout:p.payout||"", promo:Boolean(p.promo), image:p.image||"", createdAt:new Date(p.created_at).getTime()
+    }));
+    const demoIds=new Set(DEMO_PRODUCTS.map(p=>String(p.id)));
+    products=[...online,...products.filter(p=>!demoIds.has(String(p.id))&&!online.some(o=>String(o.id)===String(p.id))),...DEMO_PRODUCTS];
+    saveProducts();
+    renderProducts(); renderWowMarketplace(); updateCount();
+    console.log("RiverSpend: prodotti online caricati",online.length);
+  }catch(err){ console.error("RiverSpend: errore caricamento prodotti online",err); }
+}
+
+async function publishProductOnline(){
+  const name=document.getElementById("sellName").value.trim();
+  const price=Number(document.getElementById("sellPrice").value);
+  const cat=document.getElementById("sellCategory").value;
+  const desc=document.getElementById("sellDesc").value.trim();
+  const product={
+    id:"user-"+Date.now(), seller_type:"Privato", condition:sellType||"Nuovo", name, description:desc,
+    price, stock:1, category:cat, shipping:"Spedizione disponibile", handling:"", payout:"", promo:false, image:""
+  };
+  const {data,error}=await window.rsSupabase.from("products").insert(product).select().single();
+  if(error) throw error;
+  const saved={
+    id:String(data.id),sellerType:data.seller_type||"Privato",condition:data.condition||"Nuovo",name:data.name,
+    description:data.description||"",price:Number(data.price||0),stock:Number(data.stock||0),category:data.category||"Altro",
+    shipping:data.shipping||"Spedizione disponibile",handling:data.handling||"",payout:data.payout||"",promo:Boolean(data.promo),
+    image:data.image||"",createdAt:new Date(data.created_at).getTime()
+  };
+  products=[saved,...products.filter(p=>String(p.id)!==String(saved.id))];
+  saveProducts();
+  window.sellerFilter="Privato";
+  renderProducts(); renderWowMarketplace(); updateCount();
+  showPage("market");
+  const descBox=document.getElementById("tabDescription"); if(descBox) descBox.textContent="Prodotti messi in vendita da persone private.";
+  document.querySelectorAll('.market-tabs button').forEach(b=>b.classList.remove('active'));
+  const tab=document.getElementById('tabPrivati'); if(tab) tab.classList.add('active');
+  return saved;
+}
+
 window.sellerFilter="RiverSpend";
 function saveCart(){
   try{
@@ -1681,7 +1740,21 @@ function runNovaCheck(){
 function sellPickType(t){sellType=t; document.querySelectorAll(".sell-choice").forEach(b=>b.style.outline=""); event.currentTarget.style.outline="3px solid #0b9ab8";}
 function sellNext(){ if(sellStep===1 && !sellType){alert("Scegli se l'oggetto è nuovo o usato.");return;} sellGo(Math.min(4,sellStep+1));}
 function sellBack(){sellGo(Math.max(1,sellStep-1));}
-function publishSellDemo(){sellGo(4);}
+async function publishSellDemo(){
+  const btn=document.getElementById("novaPublishBtn");
+  if(btn){btn.disabled=true;btn.textContent="Pubblicazione...";}
+  try{
+    if(!window.rsSupabase) throw new Error("Supabase non configurato");
+    await publishProductOnline();
+    sellGo(4);
+    const box=document.querySelector('[data-sell-step="4"] .sell-success');
+    if(box) box.innerHTML='✅ <strong>Prodotto pubblicato nel Market!</strong><br>Il prodotto è stato salvato online in Supabase.';
+  }catch(err){
+    console.error(err);
+    alert("Pubblicazione non riuscita: "+(err?.message||err));
+    if(btn){btn.disabled=false;btn.textContent="Pubblica →";}
+  }
+}
 </script>
 
 
@@ -2072,5 +2145,6 @@ window.goToCart = window.RiverSpendOpenCart;
  <button onclick="showPage('profile')"><b>👤</b>Profilo</button>
 </nav>
 
+<script>document.addEventListener("DOMContentLoaded",()=>{loadProductsOnline();});</script>
 </body>
 </html>
