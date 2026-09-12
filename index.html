@@ -1140,6 +1140,23 @@ function saveCart(){
   }catch(e){}
   if(typeof updateTopCart==="function") updateTopCart();
 }
+window.esc=function(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))};
+window.renderWowRail=function(id,list){
+  const el=document.getElementById(id);
+  if(!el)return;
+  const arr=Array.isArray(list)?list:[];
+  el.innerHTML=arr.slice(0,12).map(p=>`
+    <article class="rs-wow-card" onclick="openFeaturedProduct('${esc(p.id)}')">
+      <img src="${esc(p.image||"")}" alt="${esc(p.name||"")}" onerror="this.style.display='none'">
+      <div class="rs-wow-card-body">
+        <div class="wow-meta">${esc(p.category||'Marketplace')} · ${esc(p.sellerType||'Privato')}</div>
+        <h3>${esc(p.name||"")}</h3>
+        <div class="wow-price">${money(p.price)}</div>
+        <button class="wow-buy" type="button" onclick="event.stopPropagation();addToCart('${esc(p.id)}')">🛒 Compra</button>
+      </div>
+    </article>`).join('') || '<div class="empty">Nessun prodotto disponibile.</div>';
+};
+
 function renderWowMarketplace(){
   const all=Array.isArray(products)?products.slice():[];
   const promos=all.filter(p=>p.promo===true);
