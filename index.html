@@ -1156,6 +1156,7 @@ function renderWowMarketplace(){
 }
 
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+window.money=function(n){return Number(n).toLocaleString("it-IT",{style:"currency",currency:"EUR"})};
 function productCard(p){
   return `<article class="card">
     <img src="${esc(p.image)}" alt="${esc(p.name)}" onerror="this.style.display='none'">
