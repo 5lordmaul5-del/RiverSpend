@@ -241,6 +241,15 @@ footer{text-align:center;color:#688391;padding:28px 16px;border-top:1px solid va
 .sell-nova{font-weight:800;color:#087fa5}
 .sell-preview{font-weight:700}
 .sell-upload{display:block;font-weight:800;color:#31596b;margin-top:6px}.sell-upload span{font-size:12px;font-weight:500;color:#78909c}
+.rs-media-help{font-size:12px;color:#71858d;margin:4px 0 8px}
+.rs-media-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:8px 0 4px}
+.rs-media-item{position:relative;aspect-ratio:1;border:1px solid #c9eaf0;border-radius:12px;overflow:hidden;background:#f4fbfd}
+.rs-media-item img,.rs-media-item video{width:100%;height:100%;object-fit:cover;display:block}
+.rs-media-type{position:absolute;left:5px;bottom:5px;background:rgba(0,35,50,.72);color:#fff;border-radius:8px;padding:3px 5px;font-size:10px;font-weight:800}
+.rs-media-remove{position:absolute;right:4px;top:4px;width:26px;height:26px;border:0;border-radius:50%;background:rgba(160,20,20,.88);color:#fff;font-weight:900;cursor:pointer}
+.rs-media-cover{position:absolute;left:5px;top:5px;background:#f2c14b;color:#173b52;border-radius:8px;padding:3px 5px;font-size:10px;font-weight:900}
+.rs-media-count{font-size:12px;font-weight:850;color:#087fa5;margin-top:4px}
+@media(max-width:520px){.rs-media-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 </style>
 
 
@@ -440,6 +449,8 @@ filter:blur(1px);animation:rsStableFlow 7s ease-in-out infinite alternate}
 .rs-approved-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;padding:0 12px 14px}.rs-approved-action{border:0;border-radius:18px;padding:13px 8px;background:#fff;box-shadow:0 6px 18px rgba(0,60,80,.08);font-weight:850;min-height:72px}.rs-approved-action b{display:block;font-size:22px;margin-bottom:4px}.rs-approved-action small{font-size:10px;color:#52717a}
 .rs-approved-bottom{position:sticky;bottom:0;z-index:5000;display:grid;grid-template-columns:repeat(6,1fr);gap:2px;padding:7px 5px calc(7px + env(safe-area-inset-bottom));background:rgba(255,255,255,.96);backdrop-filter:blur(14px);border-top:1px solid #dcebed;box-shadow:0 -5px 18px rgba(0,50,70,.08)}.rs-approved-bottom button{border:0;background:transparent;font-size:10px;font-weight:850;color:#315861;padding:5px 2px}.rs-approved-bottom b{display:block;font-size:19px;margin-bottom:2px}.rs-approved-bottom .active{color:#0788a2}
 @media(min-width:760px){.rs-approved-hero{margin:18px auto 16px;max-width:1100px;min-height:260px;padding:34px}.rs-approved-cats,.rs-approved-actions{max-width:1100px;margin:auto}.rs-approved-actions{grid-template-columns:repeat(4,1fr)}.rs-approved-bottom{max-width:760px;margin:auto;border:1px solid #dcebed;border-radius:22px 22px 0 0}}
+.brand-center{position:relative;min-height:58px;display:flex;justify-content:center;align-items:center}.brand-center .home-logo{margin:0 auto;transform:none}
+@media(max-width:600px){.brand-center{min-height:54px}.brand-center .home-logo{font-size:34px!important;width:auto!important;height:52px!important}}
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -453,12 +464,6 @@ try {
   }
 } catch (e) { console.error("RiverSpend Supabase init", e); }
 </script>
-<style id="rs-photo-upload-fix">
-.photo-preview-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0 14px}
-.photo-preview-item{position:relative;aspect-ratio:1;border-radius:12px;overflow:hidden;background:#eef8fa;border:1px solid #c9eaf0}
-.photo-preview-item img{width:100%;height:100%;object-fit:cover;display:block}
-.photo-preview-item span{position:absolute;left:5px;bottom:5px;background:rgba(0,0,0,.65);color:#fff;border-radius:999px;padding:2px 7px;font-size:11px;font-weight:800}
-</style>
 </head>
 <body class="rs-opening-active">
 <div id="welcome" aria-label="Apertura RiverSpend">
@@ -493,7 +498,7 @@ try {
   <button type="button" id="topCartBtn" class="rs-user-cart" onclick="return RiverSpendTopCartV50(event);" aria-label="Apri carrello e pagamento">
     🛒 <span class="cart-label">Carrello</span> <span id="cartCountTop" class="badge">0</span>
   </button>
-  <button type="button" class="rs-user-chip" onclick="showPage('profile')">
+  <button type="button" class="rs-user-chip" onclick="rsOpenAuth()">
     👤 <span id="rsUserName">Ospite</span> <small>⌄</small>
   </button>
 </div>
@@ -535,7 +540,7 @@ try {
 
 
 <!-- RiverSpend — Marketplace Showcase -->
-<section class="rs-vetrina" aria-label="Prodotti in evidenza RiverSpend">
+<section class="rs-vetrina" aria-label="Prodotti in evidenza RiverSpend" style="display:none">
   <div class="rs-vetrina-head">
     <div class="rs-vetrina-title">🛍️ <strong>PRODOTTI IN EVIDENZA</strong><span>Compra e vendi su RiverSpend</span></div>
     <button class="rs-vetrina-open" onclick="showPage('market')">Vedi tutti i prodotti →</button>
@@ -666,6 +671,18 @@ try {
 
 
 <main>
+  <div id="rsAuthPanel" class="panel" style="display:none;max-width:520px;margin:12px auto">
+    <h3>👤 Account RiverSpend</h3>
+    <p id="rsAuthStatus" class="muted">Accedi per vendere e acquistare online.</p>
+    <input id="rsAuthEmail" type="email" placeholder="Email">
+    <input id="rsAuthPassword" type="password" placeholder="Password (min. 6 caratteri)">
+    <div class="row" style="margin-top:10px">
+      <button type="button" onclick="rsSignIn()">Accedi</button>
+      <button type="button" class="secondary" onclick="rsSignUp()">Crea account</button>
+      <button type="button" class="secondary" onclick="rsSignOut()">Esci</button>
+    </div>
+  </div>
+
   <section id="market" class="page active">
     <div class="category-menu">
       <select onchange="setCategory(this.value)">
@@ -686,11 +703,11 @@ try {
     </div>
 
     <div class="market-tabs" aria-label="Sezioni del marketplace">
-      <button id="tabRiverSpend" class="active" onclick="setMarketTab('RiverSpend')">⭐ Vetrina RiverSpend</button>
+      <button id="tabRiverSpend" class="active" onclick="setMarketTab('Tutti')">🛍️ Tutto il RiverSpendShop</button>
       <button id="tabAziende" onclick="setMarketTab('Azienda')">🏢 Aziende</button>
       <button id="tabPrivati" onclick="setMarketTab('Privato')">👤 Privati</button>
     </div>
-    <p class="section-sub" id="tabDescription">Prodotti e offerte proposte direttamente da RiverSpend.</p>
+    <p class="section-sub" id="tabDescription">Tutti i prodotti pubblicati nel RiverSpendShop.</p>
 
     <section class="market-section" style="margin-top:10px">
       <div class="feed-head">
@@ -733,10 +750,10 @@ try {
             <select id="condition" required><option>Nuovo</option><option>Usato</option><option>Ricondizionato</option></select>
           </label>
         </div>
-        <label>📷 Foto prodotto <span class="muted">(fino a 10 foto)</span>
-          <input id="photo" type="file" accept="image/*" multiple onchange="previewPhoto(event)">
+        <label>📷 Foto prodotto
+          <input id="photo" type="file" accept="image/*" onchange="previewPhoto(event)">
         </label>
-        <div id="photoPreviewGrid" class="photo-preview-grid" aria-live="polite"></div>
+        <img id="photoPreview" alt="Anteprima">
         <label>Nome prodotto
           <input id="name" required placeholder="Es. Creatina Monoidrata 500 g">
         </label>
@@ -928,7 +945,7 @@ try {
     <div class="rs-profile-grid">
       <button type="button" onclick="showPage('cart')">🛒 Vai al carrello</button>
       <button type="button" onclick="showPage('orders')">📦 I miei ordini</button>
-      <button type="button" onclick="showPage('sell')">🏷️ Vendi su RiverSpend</button>
+      <button type="button" onclick="openSellPanel()">🏷️ Vendi su RiverSpend</button>
       <button type="button" onclick="showPage('nova')">🛡️ Parla con Nova</button>
     </div>
   </div>
@@ -1031,7 +1048,7 @@ try {
   <p>Prima scopri, cerca e compra. Qui sotto trovi tutti i servizi del tuo account.</p>
   <div class="rs-service-grid">
     <button onclick="showPage('profile')">👤 Profilo</button>
-    <button onclick="showPage('sell')">🏷️ Vendi su RiverSpend</button>
+    <button onclick="openSellPanel()">🏷️ Vendi su RiverSpend</button>
     <button onclick="showPage('ads')">📣 RiverSpend Ads</button>
     <button onclick="showPage('piggy')">🐷 PiggyBank</button>
     <button onclick="openNovaVigilante()">🛡️ Nova il Vigilante</button>
@@ -1046,22 +1063,10 @@ try {
 <footer>RiverSpend • Vetrina RiverSpend • Privati • Aziende • RiverSpend Ads • RiverSpendShield • Promozioni</footer>
 
 <script>
-const DEMO_PRODUCTS = [
- {id:"demo-1",sellerType:"RiverSpend",condition:"Nuovo",promo:true,name:"Creatina Monoidrato",price:15,stock:10,category:"Salute",description:"Creatina micronizzata in polvere.",image:"https://images.unsplash.com/photo-1593095948071-474c5cc2989d?auto=format&fit=crop&w=800&q=80"},
- {id:"demo-2",sellerType:"RiverSpend",condition:"Nuovo",promo:true,name:"iPhone 15",price:799,stock:3,category:"Elettronica",description:"Smartphone demo RiverSpend.",image:"https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=800&q=80"},
- {id:"demo-3",sellerType:"RiverSpend",condition:"Nuovo",promo:false,name:"Scarpe Sportive",price:59.90,stock:8,category:"Sport",description:"Scarpe sportive demo.",image:"https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=80"},
- {id:"demo-4",sellerType:"RiverSpend",condition:"Nuovo",promo:false,name:"Smartwatch",price:49.90,stock:12,category:"Elettronica",description:"Smartwatch demo RiverSpend.",image:"https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80"},
- {id:"demo-5",sellerType:"Privato",condition:"Ottime condizioni",promo:false,name:"Cuffie Bluetooth",price:29.90,stock:5,category:"Elettronica",description:"Cuffie Bluetooth in ottime condizioni.",image:"https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80"},
- {id:"demo-6",sellerType:"Privato",condition:"Usato · Ottime condizioni",promo:false,name:"Console Gaming",price:199,stock:2,category:"Giochi",description:"Console gaming usata in ottime condizioni.",image:"https://images.unsplash.com/photo-1486401899868-0e435ed85128?auto=format&fit=crop&w=800&q=80"}
-];
+const DEMO_PRODUCTS = [];
 
 let products = JSON.parse(localStorage.getItem("rs_products") || "null");
-// Mantieni sempre presenti i prodotti demo RiverSpend, senza cancellare eventuali prodotti aggiunti dall'utente.
 if(!Array.isArray(products)) products = [];
-DEMO_PRODUCTS.forEach(dp=>{
-  const i=products.findIndex(p=>String(p.id)===String(dp.id));
-  if(i<0) products.push(dp);
-});
 saveProducts();
 function loadRiverSpendCart(){
   let primary={}, legacy={};
@@ -1089,395 +1094,203 @@ let piggy = JSON.parse(localStorage.getItem("rs_piggy") || "[]");
 let returns = JSON.parse(localStorage.getItem("rs_returns") || "[]");
 
 function saveProducts(){localStorage.setItem("rs_products",JSON.stringify(products))}
+function escRS(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]));}
+function moneyRS(v){return "€"+Number(v||0).toFixed(2).replace(".",",");}
+function setCategory(value){
+  category=value||"Tutti";
+  const sel=document.querySelector('.category-menu select'); if(sel) sel.value=category;
+  renderProducts(); renderWowMarketplace();
+}
+function setMarketTab(tab){
+  window.sellerFilter=tab||"Tutti";
+  document.querySelectorAll('.market-tabs button').forEach(b=>b.classList.remove('active'));
+  const id=tab==='Azienda'?'tabAziende':tab==='Privato'?'tabPrivati':'tabRiverSpend';
+  document.getElementById(id)?.classList.add('active');
+  const d=document.getElementById('tabDescription'); if(d)d.textContent=tab==='Privato'?'Prodotti pubblicati da venditori privati.':tab==='Azienda'?'Prodotti pubblicati da aziende.':'Tutti i prodotti pubblicati nel RiverSpendShop.';
+  renderProducts(); renderWowMarketplace();
+}
+function setPromoFilter(){
+  const grid=document.getElementById('promoGrid'); if(grid) grid.scrollIntoView({behavior:'smooth',block:'start'});
+  const old=category; category='Tutti';
+  renderProducts(true); category=old;
+}
+function productMatches(p){
+  if(!p || (p.status && p.status!=='published') || Number(p.stock||0)<=0)return false;
+  if(category!=='Tutti' && String(p.category||'')!==String(category))return false;
+  const sf=window.sellerFilter||'Tutti';
+  if(sf!=='Tutti' && String(p.sellerType||p.seller_type||'Privato')!==sf)return false;
+  const q=(document.getElementById('searchInput')?.value||'').trim().toLowerCase();
+  if(q && ![p.name,p.description,p.category,p.sellerType].some(x=>String(x||'').toLowerCase().includes(q)))return false;
+  return true;
+}
+function productCard(p){
+  const img=escRS(p.image||p.images?.[0]||'');
+  const name=escRS(p.name||'Prodotto RiverSpend');
+  const id=escRS(p.id);
+  return `<article class="product-card" data-product-id="${id}"><button type="button" class="product-card-btn" onclick="openFeaturedProduct('${id}')">${img?`<img src="${img}" alt="${name}" loading="lazy">`:'<div class="product-placeholder">🛍️</div>'}<div class="product-info"><strong>${name}</strong><b>${moneyRS(p.price)}</b><small>${escRS(p.condition||'Nuovo')} · ${escRS(p.category||'Altro')}</small></div></button></article>`;
+}
+function renderProducts(promoOnly=false){
+  const source=Array.isArray(products)?products:[];
+  const visible=source.filter(productMatches);
+  const sort=document.getElementById('sortSelect')?.value||'recent';
+  visible.sort((a,b)=>sort==='priceAsc'?Number(a.price)-Number(b.price):sort==='priceDesc'?Number(b.price)-Number(a.price):sort==='name'?String(a.name).localeCompare(String(b.name),'it'):Number(b.createdAt||0)-Number(a.createdAt||0));
+  const all=document.getElementById('allProductsGrid');
+  const promo=document.getElementById('promoGrid');
+  if(all) all.innerHTML=visible.length?visible.map(productCard).join(''):'<div class="empty">🌊 Nessun prodotto disponibile con questi filtri.</div>';
+  if(promo){const ps=visible.filter(p=>Boolean(p.promo)); promo.innerHTML=ps.length?ps.map(productCard).join(''):'<div class="empty">Nessuna promozione attiva.</div>';}
+  updateCount();
+}
+function renderWowMarketplace(){
+  const ids=['wowPromoRail','wowTechRail','wowLifestyleRail','wowAllRail','wowHomeRail','wowDiscoverRail'];
+  const visible=(Array.isArray(products)?products:[]).filter(productMatches).sort((a,b)=>Number(b.createdAt||0)-Number(a.createdAt||0));
+  const sets=[visible.filter(p=>p.promo),visible.filter(p=>p.category==='Elettronica'),visible.filter(p=>['Moda','Sport'].includes(p.category)),visible,visible.filter(p=>p.category==='Casa'),visible];
+  ids.forEach((id,i)=>{const el=document.getElementById(id);if(el)el.innerHTML=(sets[i]||[]).slice(0,6).map(productCard).join('')||'<div class="empty">Nessun prodotto disponibile.</div>';});
+}
+function updateCount(){
+  const n=(Array.isArray(products)?products:[]).filter(p=>(!p.status||p.status==='published')&&Number(p.stock||0)>0).length;
+  document.querySelectorAll('[data-product-count]').forEach(e=>e.textContent=n);
+  if(typeof window.updateTopCart==='function')window.updateTopCart();
+}
+function openFeaturedProduct(id){
+  const p=(Array.isArray(products)?products:[]).find(x=>String(x.id)===String(id));
+  if(!p){alert('Questo prodotto non è più disponibile.');return;}
+  const modal=document.getElementById('featuredProductModal'), box=document.getElementById('featuredProductContent');
+  if(!modal||!box)return;
+  const imgs=Array.isArray(p.images)&&p.images.length?p.images:[p.image].filter(Boolean);
+  const vids=Array.isArray(p.videos)?p.videos:[];
+  const mediaHtml=[...imgs.map(u=>`<img src="${escRS(u)}" alt="${escRS(p.name)}">`),...vids.map(u=>`<video src="${escRS(u)}" controls playsinline preload="metadata"></video>`)].join('');
+  box.innerHTML=`<div class="rs-featured-detail"><div class="rs-gallery">${mediaHtml}</div><h2>${escRS(p.name)}</h2><p>${escRS(p.description)}</p><div class="rs-detail-price">${moneyRS(p.price)}</div><p><strong>Disponibilità:</strong> ${Number(p.stock||0)>0?'Disponibile':'VENDUTO'}</p><p><strong>Condizione:</strong> ${escRS(p.condition||'Nuovo')} · ${escRS(p.category||'Altro')}</p><div class="row"><button type="button" onclick="addToCart('${escRS(p.id)}');closeFeaturedProduct()">🛒 Aggiungi alla Rete</button><button type="button" class="secondary" onclick="closeFeaturedProduct()">Chiudi</button></div></div>`;
+  modal.hidden=false;
+}
+function closeFeaturedProduct(){const m=document.getElementById('featuredProductModal');if(m)m.hidden=true;}
+function openNovaVigilante(){showPage('nova');setTimeout(()=>novaVigilanteScan(),0);}
+function saveRSProfile(){const n=document.getElementById('profileName')?.value?.trim()||document.getElementById('rsProfileName')?.value?.trim();if(n)localStorage.setItem('rs_profile_name',n);renderRSProfile();}
+function renderRSProfile(){const n=localStorage.getItem('rs_profile_name')||'Ospite';document.querySelectorAll('[data-rs-profile-name]').forEach(e=>e.textContent=n);const x=document.getElementById('rsProfileName');if(x)x.value=n;}
+function populateAdProducts(){const s=document.getElementById('adProduct');if(!s)return;s.innerHTML='<option value="">Seleziona prodotto</option>'+(Array.isArray(products)?products:[]).map(p=>`<option value="${escRS(p.id)}">${escRS(p.name)}</option>`).join('');}
+function updateAdTotal(){const b=Number(document.getElementById('adBudget')?.value||0),d=Number(document.getElementById('adDays')?.value||0),t=document.getElementById('adTotal');if(t)t.textContent=moneyRS(b*d);}
+function renderPiggy(){const e=document.getElementById('piggyBalance');if(e)e.textContent=moneyRS(Number(localStorage.getItem('rs_piggy_balance')||0));}
+function refreshStock(){renderProducts();}
+function sellPickType(t){sellType=t;document.querySelectorAll('.sell-choice').forEach(b=>b.style.outline=(b.textContent.trim()===String(t).trim()?'3px solid #0b9ab8':''));}
+
+
 
 async function loadProductsOnline(){
   if(!window.rsSupabase) return;
   try{
-    const {data,error}=await window.rsSupabase.from("products").select("*").order("created_at",{ascending:false});
+    const {data,error}=await window.rsSupabase.from("products").select("*").eq("status","published").gt("stock",0).order("created_at",{ascending:false});
     if(error) throw error;
-    const online=(data||[]).map(p=>({
-      id:String(p.id), sellerType:p.seller_type||"Privato", condition:p.condition||"Nuovo",
-      name:p.name, description:p.description||"", price:Number(p.price||0), stock:Number(p.stock||0),
-      category:p.category||"Altro", shipping:p.shipping||"Spedizione disponibile", handling:p.handling||"",
-      payout:p.payout||"", promo:Boolean(p.promo), image:p.image||"", createdAt:new Date(p.created_at).getTime()
-    }));
-    const demoIds=new Set(DEMO_PRODUCTS.map(p=>String(p.id)));
-    products=[...online,...products.filter(p=>!demoIds.has(String(p.id))&&!online.some(o=>String(o.id)===String(p.id))),...DEMO_PRODUCTS];
+    const ids=(data||[]).map(p=>String(p.id));
+    let mediaRows=[];
+    if(ids.length){
+      const mr=await window.rsSupabase.from("product_media").select("product_id,media_type,media_url,sort_order").in("product_id",ids).order("sort_order",{ascending:true});
+      if(mr.error) throw mr.error;
+      mediaRows=mr.data||[];
+    }
+    const mediaById={};
+    mediaRows.forEach(m=>{
+      const id=String(m.product_id);
+      if(!mediaById[id]) mediaById[id]={images:[],videos:[]};
+      if(m.media_type==='video') mediaById[id].videos.push(m.media_url);
+      else mediaById[id].images.push(m.media_url);
+    });
+    const online=(data||[]).map(p=>{
+      const media=mediaById[String(p.id)]||{images:[],videos:[]};
+      const images=Array.isArray(p.images)&&p.images.length?p.images:(media.images.length?media.images:(p.image?[p.image]:[]));
+      const videos=Array.isArray(p.videos)?p.videos:media.videos;
+      return {
+        id:String(p.id), seller_id:p.seller_id||null, status:p.status||"published", sellerType:p.seller_type||"Privato", condition:p.condition||"Nuovo",
+        name:p.name, description:p.description||"", price:Number(p.price||0), stock:Number(p.stock||0),
+        category:p.category||"Altro", shipping:p.shipping||"Spedizione disponibile", handling:p.handling||"",
+        payout:p.payout||"", promo:Boolean(p.promo), image:images[0]||p.image||"", images, videos,
+        createdAt:new Date(p.created_at).getTime()
+      };
+    });
+    // La vetrina pubblica usa esclusivamente il catalogo pubblicato da Supabase.
+    // Non reinseriamo copie locali/demo che possono mostrare prodotti vecchi o inesistenti.
+    products=online;
     saveProducts();
     renderProducts(); renderWowMarketplace(); updateCount();
-    console.log("RiverSpend: prodotti online caricati",online.length);
+    console.log("RiverSpend: prodotti online caricati",online.length,"media",mediaRows.length);
   }catch(err){ console.error("RiverSpend: errore caricamento prodotti online",err); }
 }
 
 async function publishProductOnline(){
+  if(!window.rsSupabase) throw new Error("Supabase non configurato");
+  const auth=await window.rsSupabase.auth.getUser();
+  const user=auth?.data?.user||null;
+  if(!user) throw new Error("Devi accedere al tuo account RiverSpend prima di pubblicare.");
+
   const name=document.getElementById("sellName").value.trim();
   const price=Number(document.getElementById("sellPrice").value);
   const cat=document.getElementById("sellCategory").value;
   const desc=document.getElementById("sellDesc").value.trim();
+  const files=Array.isArray(sellMediaFiles)?sellMediaFiles.slice():[];
+  const productId="user-"+crypto.randomUUID();
+  const images=[];
+  const videos=[];
+
+  if(!name || !price || !cat || !desc) throw new Error("Completa nome, prezzo, categoria e descrizione.");
+  if(files.length<1) throw new Error("Inserisci almeno una foto del prodotto.");
+  if(files.filter(f=>f.type.startsWith('image/')).length>20) throw new Error("Puoi caricare massimo 20 foto.");
+  if(files.filter(f=>f.type.startsWith('video/')).length>3) throw new Error("Puoi caricare massimo 3 video.");
+
+  for(let i=0;i<files.length;i++){
+    const file=files[i];
+    const isVideo=file.type.startsWith('video/');
+    const maxBytes=isVideo?60*1024*1024:10*1024*1024;
+    if(file.size>maxBytes) throw new Error((isVideo?"Un video":"Una foto")+" supera il limite consentito.");
+    const ext=(file.name.split('.').pop()||(isVideo?'mp4':'jpg')).toLowerCase().replace(/[^a-z0-9]/g,'')||(isVideo?'mp4':'jpg');
+    const path=`products/${user.id}/${productId}/${isVideo?'videos':'images'}/${String(i+1).padStart(2,'0')}-${crypto.randomUUID()}.${ext}`;
+    const up=await window.rsSupabase.storage.from('river-product-media').upload(path,file,{cacheControl:'3600',upsert:false,contentType:file.type||undefined});
+    if(up.error) throw up.error;
+    const pub=window.rsSupabase.storage.from('river-product-media').getPublicUrl(path);
+    const url=pub?.data?.publicUrl||'';
+    if(!url) throw new Error("URL media non disponibile.");
+    if(isVideo) videos.push(url); else images.push(url);
+  }
+
   const product={
-    id:"user-"+Date.now(), seller_type:"Privato", condition:sellType||"Nuovo", name, description:desc,
-    price, stock:1, category:cat, shipping:"Spedizione disponibile", handling:"", payout:"", promo:false, image:""
+    id:productId, seller_id:user.id, seller_type:"Privato", condition:sellType||"Nuovo", name, description:desc,
+    price, stock:1, category:cat, shipping:"Spedizione disponibile", handling:"", payout:"", promo:false, status:"published",
+    image:images[0]||""
   };
   const {data,error}=await window.rsSupabase.from("products").insert(product).select().single();
   if(error) throw error;
+
+  const mediaRows=[...images.map((url,i)=>({product_id:String(data.id),seller_id:user.id,media_type:'image',media_url:url,sort_order:i})),
+                   ...videos.map((url,i)=>({product_id:String(data.id),seller_id:user.id,media_type:'video',media_url:url,sort_order:100+i}))];
+  if(mediaRows.length){
+    const mr=await window.rsSupabase.from('product_media').insert(mediaRows);
+    if(mr.error) throw mr.error;
+  }
+
   const saved={
     id:String(data.id),sellerType:data.seller_type||"Privato",condition:data.condition||"Nuovo",name:data.name,
     description:data.description||"",price:Number(data.price||0),stock:Number(data.stock||0),category:data.category||"Altro",
     shipping:data.shipping||"Spedizione disponibile",handling:data.handling||"",payout:data.payout||"",promo:Boolean(data.promo),
-    image:data.image||"",createdAt:new Date(data.created_at).getTime()
+    image:images[0]||data.image||"",images,videos,createdAt:new Date(data.created_at).getTime()
   };
   products=[saved,...products.filter(p=>String(p.id)!==String(saved.id))];
   saveProducts();
-  window.sellerFilter="Privato";
+  window.sellerFilter="Tutti";
   renderProducts(); renderWowMarketplace(); updateCount();
   showPage("market");
-  const descBox=document.getElementById("tabDescription"); if(descBox) descBox.textContent="Prodotti messi in vendita da persone private.";
+  const descBox=document.getElementById("tabDescription"); if(descBox) descBox.textContent="Tutti i prodotti pubblicati nel RiverSpendShop.";
   document.querySelectorAll('.market-tabs button').forEach(b=>b.classList.remove('active'));
-  const tab=document.getElementById('tabPrivati'); if(tab) tab.classList.add('active');
+  const tab=document.getElementById('tabRiverSpend'); if(tab) tab.classList.add('active');
   return saved;
 }
 
-window.sellerFilter="RiverSpend";
-function saveCart(){
-  try{
-    const data=JSON.stringify(cart||{});
-    localStorage.setItem("rs_cart",data);
-    localStorage.setItem("riverSpendCart",data);
-  }catch(e){}
-  if(typeof updateTopCart==="function") updateTopCart();
-}
-window.esc=function(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))};
-window.renderWowRail=function(id,list){
-  const el=document.getElementById(id);
-  if(!el)return;
-  const arr=Array.isArray(list)?list:[];
-  el.innerHTML=arr.slice(0,12).map(p=>`
-    <article class="rs-wow-card" onclick="openFeaturedProduct('${esc(p.id)}')">
-      <img src="${esc(p.image||"")}" alt="${esc(p.name||"")}" onerror="this.style.display='none'">
-      <div class="rs-wow-card-body">
-        <div class="wow-meta">${esc(p.category||'Marketplace')} · ${esc(p.sellerType||'Privato')}</div>
-        <h3>${esc(p.name||"")}</h3>
-        <div class="wow-price">${money(p.price)}</div>
-        <button class="wow-buy" type="button" onclick="event.stopPropagation();addToCart('${esc(p.id)}')">🛒 Compra</button>
-      </div>
-    </article>`).join('') || '<div class="empty">Nessun prodotto disponibile.</div>';
-};
-
-function renderWowMarketplace(){
-  const all=Array.isArray(products)?products.slice():[];
-  const promos=all.filter(p=>p.promo===true);
-  const tech=all.filter(p=>p.category==='Elettronica');
-  const lifestyle=all.filter(p=>['Sport','Moda','Salute','Casa'].includes(p.category));
-  renderWowRail('wowPromoRail',promos.length?promos:all);
-  renderWowRail('wowTechRail',tech.length?tech:all);
-  renderWowRail('wowLifestyleRail',lifestyle.length?lifestyle:all);
-  renderWowRail('wowAllRail',all);
-  const home=all.filter(p=>['Casa','Auto e Moto','Altro'].includes(p.category));
-  const discover=all.slice().sort(()=>Math.random()-0.5);
-  renderWowRail('wowHomeRail',home.length?home:all);
-  renderWowRail('wowDiscoverRail',discover);
+function previewPhoto(e){
+  const file=e.target.files[0], img=document.getElementById("photoPreview");
+  if(!file){img.style.display="none";return}
+  const r=new FileReader(); r.onload=()=>{img.src=r.result;img.style.display="block"}; r.readAsDataURL(file);
 }
 
-function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
-window.money=function(n){return Number(n).toLocaleString("it-IT",{style:"currency",currency:"EUR"})};
-function productCard(p){
-  return `<article class="card">
-    <img src="${esc(p.image)}" alt="${esc(p.name)}" onerror="this.style.display='none'">
-    <div class="body">
-      <div class="muted">${esc(p.category)} · ${esc(p.sellerType || 'Privato')}</div>
-      <h3>${esc(p.name)}</h3>
-      <div><span class="badge-condition">${esc(p.condition || 'Nuovo')}</span></div>
-      <div class="muted">${esc(p.description)}</div>
-      <div class="price">${money(p.price)}</div>
-      <div class="muted">Disponibili: ${p.stock} · ${esc(p.shipping || 'Spedizione disponibile')}</div>
-      <div class="spacer"></div>
-      <button class="buy" onclick="addToCart('${p.id}')">🛒 Compra</button>
-    </div>
-  </article>`;
-}
-function filteredProducts(){
-  const q=(document.getElementById("searchInput").value||"").toLowerCase().trim();
-  return products.filter(p=>
-    (category==="Tutti"||p.category===category) &&
-    (!q || (p.name+" "+p.description+" "+p.category+" "+(p.sellerType||"")).toLowerCase().includes(q))
-  );
-}
-function renderSection(id,list){
-  const grid=document.getElementById(id);
-  if(!grid)return;
-  grid.innerHTML=list.length?list.map(productCard).join(""):'<div class="empty">Nessun prodotto in questa sezione.</div>';
-}
-function setMarketTab(type){
-  window.sellerFilter=type;
-  showPage('market');
-  document.querySelectorAll('.market-tabs button').forEach(b=>b.classList.remove('active'));
-  const map={RiverSpend:'tabRiverSpend',Privato:'tabPrivati',Azienda:'tabAziende'};
-  document.getElementById(map[type]).classList.add('active');
-  const desc={RiverSpend:'Prodotti e offerte proposte direttamente da RiverSpend.',Privato:'Prodotti messi in vendita da persone private.',Azienda:'Prodotti e cataloghi pubblicati da aziende e attività.'};
-  document.getElementById('tabDescription').textContent=desc[type];
-  renderProducts();
-renderWowMarketplace();
-updateCount();updateTopCart();
-}
-
-
-function renderProducts(){
-  let list=filteredProducts();
-  const activeType=window.sellerFilter || 'RiverSpend';
-  list=list.filter(p=>(p.sellerType||'RiverSpend')===activeType);
-  const sort=(document.getElementById('sortSelect')||{}).value||'recent';
-  if(sort==='priceAsc') list.sort((a,b)=>Number(a.price)-Number(b.price));
-  else if(sort==='priceDesc') list.sort((a,b)=>Number(b.price)-Number(a.price));
-  else if(sort==='name') list.sort((a,b)=>String(a.name).localeCompare(String(b.name),'it'));
-  else list.sort((a,b)=>(Number(b.createdAt)||0)-(Number(a.createdAt)||0));
-  renderSection('allProductsGrid',list);
-  renderSection('promoGrid',filteredProducts().filter(p=>p.promo===true).slice(0,8));
-}
-function setSellerFilter(type){setMarketTab(type)}
-function setPromoFilter(){
-  showPage('market');
-  document.getElementById('tabDescription').textContent='Promozioni e occasioni selezionate tra RiverSpend, privati e aziende.';
-  document.querySelectorAll('.market-tabs button').forEach(b=>b.classList.remove('active'));
-  const list=filteredProducts().filter(p=>p.promo===true);
-  renderSection('allProductsGrid',list);
-}
-
-
-function openFeaturedProduct(id){
-  const p=products.find(x=>String(x.id)===String(id)) || DEMO_PRODUCTS.find(x=>String(x.id)===String(id));
-  if(!p) return;
-  const box=document.getElementById("featuredProductContent");
-  const safe=(v)=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
-  box.innerHTML=`<img src="${safe(p.image)}" alt="${safe(p.name)}" onerror="this.style.display='none'">
-    <h2>${safe(p.name)}</h2><div class="price">€${Number(p.price).toFixed(2).replace(".",",")}</div>
-    <p>${safe(p.description||"Prodotto disponibile su RiverSpend.")}</p>
-    <small>${safe(p.condition)} · ${safe(p.category)} · Disponibili: ${Number(p.stock||0)}</small>
-    <button class="buy" type="button" onclick="addToCart('${safe(p.id)}');closeFeaturedProduct();showPage('cart')">🛒 Aggiungi al carrello</button>`;
-  document.getElementById("featuredProductModal").hidden=false;
-}
-function closeFeaturedProduct(){
-  const m=document.getElementById("featuredProductModal"); if(m) m.hidden=true;
-}
-function openCheckoutFromCart(){
-  cart=loadRiverSpendCart();
-  saveCart();
-  const cartPage=document.getElementById("cart");
-  if(!cartPage) return;
-  document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
-  if(typeof updateTopCart==="function") updateTopCart();
-  if(typeof updateCount==="function") updateCount();
-
-  cartPage.classList.add("rs-cart-page");
-  document.body.classList.add("rs-cart-open");
-  cartPage.style.display="block";
-  cartPage.setAttribute("aria-hidden","false");
-
-  if(typeof renderCart==="function") renderCart();
-  window.scrollTo({top:0,behavior:"instant"});
-}
-function updateTopCart(){
-  const count=Object.values(cart).reduce((a,x)=>a+Number(x.qty||0),0);
-  const n=document.getElementById('cartCountTop');
-  const b=document.getElementById('topCartBtn');
-  if(n) n.textContent=count;
-  if(b) b.classList.toggle('has-items',count>0);
-}
-function showCartFeedback(productName){
-  document.querySelectorAll('.rs-cart-feedback').forEach(x=>x.remove());
-  const box=document.createElement('div');
-  box.className='rs-cart-feedback';
-  box.innerHTML=`<span>✅ <b>${esc(productName)}</b> aggiunto al carrello</span><button type="button" onclick="showPage('cart');this.parentElement.remove()">Vai al carrello</button>`;
-  document.body.appendChild(box);
-  setTimeout(()=>box.remove(),4500);
-}
-function addToCart(id){
-  const p=products.find(x=>String(x.id)===String(id));
-  if(!p){alert("Prodotto non trovato.");return;}
-  const key=String(p.id);
-  const current=Number(cart[key]?.qty||0);
-  const stock=Number(p.stock||0);
-  if(stock>0 && current>=stock){alert("Quantità disponibile esaurita.");return;}
-
-  cart[key]={
-    ...(cart[key]||{}),
-    qty:current+1,
-    product:{
-      id:p.id,name:p.name,price:Number(p.price||0),image:p.image||"",
-      description:p.description||"",category:p.category||""
-    }
-  };
-
-  saveCart();
-  if(typeof updateCount==="function") updateCount();
-  if(typeof updateTopCart==="function") updateTopCart();
-  showCartFeedback(p.name);
-}
-
-function renderCart(){
-  const list=document.getElementById("cartList");
-  const totalEl=document.getElementById("cartTotal");
-  if(!list) return;
-
-  const entries=Object.entries(cart||{}).filter(([id,v])=>v && Number(v.qty||0)>0);
-  if(!entries.length){
-    list.innerHTML='<div class="empty">🛒 Il carrello è vuoto.<br><small>Aggiungi prodotti dal Marketplace.</small></div>';
-    if(totalEl) totalEl.textContent="Totale: €0,00";
-    if(typeof updateTopCart==="function") updateTopCart();
-    return;
-  }
-
-  let total=0;
-  list.innerHTML=entries.map(([id,v])=>{
-    const live=products.find(x=>String(x.id)===String(id)) || DEMO_PRODUCTS.find(x=>String(x.id)===String(id));
-    const p=live || v.product || {id,name:"Prodotto RiverSpend",price:0,image:""};
-    const qty=Math.max(1,Number(v.qty||1));
-    const price=Number(p.price||0);
-    const subtotal=price*qty;
-    total+=subtotal;
-    const safeName=esc(p.name||"Prodotto RiverSpend");
-    const safeImg=esc(p.image||"");
-    return `<div class="cart-item-rs40">
-      <div class="cart-item-img">${safeImg?`<img src="${safeImg}" alt="${safeName}">`:"🛍️"}</div>
-      <div class="cart-item-main">
-        <strong>${safeName}</strong>
-        <span>€${price.toFixed(2).replace(".",",")} cad.</span>
-        <div class="cart-qty-rs40">
-          <button type="button" onclick="changeCartQty('${String(id)}',-1)">−</button>
-          <b>${qty}</b>
-          <button type="button" onclick="changeCartQty('${String(id)}',1)">+</button>
-          <button type="button" onclick="removeFromCart('${String(id)}')">🗑️ Rimuovi</button>
-        </div>
-      </div>
-      <strong>€${subtotal.toFixed(2).replace(".",",")}</strong>
-    </div>`;
-  }).join("");
-
-  const donationAmount=Number(donation?.amount||0);
-  if(totalEl) totalEl.textContent="Totale: €"+(total+donationAmount).toFixed(2).replace(".",",");
-
-  if(typeof updateTopCart==="function") updateTopCart();
-}
-
-function changeCartQty(id,delta){
-  const key=String(id);
-  if(!cart[key]) return;
-  const next=Number(cart[key].qty||0)+Number(delta);
-  if(next<=0) delete cart[key];
-  else cart[key].qty=next;
-  saveCart();
-  renderCart();
-  if(typeof updateCount==="function") updateCount();
-}
-
-function removeFromCart(id){
-  delete cart[String(id)];
-  saveCart();
-  renderCart();
-  if(typeof updateCount==="function") updateCount();
-}
-
-function renderRSProfile(){
-  const total=Object.values(cart||{}).reduce((a,x)=>a+Number(x?.qty||0),0);
-  const el=document.getElementById("rsProfileCart");
-  if(el) el.textContent=total+" "+(total===1?"prodotto":"prodotti");
-}
-function updateCount(){
-  const total=Object.values(cart||{}).reduce((a,x)=>a+Number(x?.qty||0),0);
-  const legacy=document.getElementById("cartCount");
-  if(legacy) legacy.textContent=total;
-  renderRSProfile();
-  updateTopCart();
-}
-
-function setCategory(c){category=c;renderProducts();showPage("market")}
-function openNovaVigilante(){
-  const welcome=document.getElementById("welcome");
-  if(welcome) welcome.classList.add("hide");
-  const pages=document.querySelectorAll(".page");
-  pages.forEach(el=>el.classList.remove("active"));
-  const nova=document.getElementById("nova");
-  if(nova){
-    nova.classList.add("active");
-    window.scrollTo(0,0);
-    const input=document.getElementById("novaInput");
-    if(input) setTimeout(()=>input.focus(),120);
-    return true;
-  }
-  alert("Nova non è disponibile in questa versione.");
-  return false;
-}
-
-function showPage(id){
-  // Il carrello è una vera pagina a schermo intero: un solo punto di ingresso.
-  if(id==='cart'){
-    openCheckoutFromCart();
-    return;
-  }
-  const cartPage=document.getElementById('cart');
-  if(cartPage){
-    cartPage.classList.remove('rs-cart-page');
-    cartPage.style.display='';
-    cartPage.setAttribute('aria-hidden','true');
-  }
-  document.body.classList.remove('rs-cart-open');
-  document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
-  const page=document.getElementById(id);
-  if(!page)return;
-  page.classList.add('active');
-  requestAnimationFrame(()=>{
-    page.scrollIntoView({behavior:'smooth',block:'start'});
-    setTimeout(()=>window.scrollBy({top:-12,behavior:'smooth'}),350);
-  });
-  try{if(id==='profile'){renderRSProfile();}}catch(e){}
-  try{if(id==='piggy'){renderPiggy();}}catch(e){}
-  try{if(id==='nova'){novaVigilanteScan();}}catch(e){}
-}
-
-let sellPhotoData=[];
-function compressSellImage(file){
-  return new Promise((resolve,reject)=>{
-    const reader=new FileReader();
-    reader.onerror=()=>reject(new Error("Impossibile leggere la foto"));
-    reader.onload=()=>{
-      const img=new Image();
-      img.onerror=()=>reject(new Error("Immagine non valida"));
-      img.onload=()=>{
-        const max=1200, scale=Math.min(1,max/Math.max(img.width,img.height));
-        const canvas=document.createElement("canvas");
-        canvas.width=Math.max(1,Math.round(img.width*scale));
-        canvas.height=Math.max(1,Math.round(img.height*scale));
-        const ctx=canvas.getContext("2d");
-        ctx.drawImage(img,0,0,canvas.width,canvas.height);
-        resolve(canvas.toDataURL("image/jpeg",0.78));
-      };
-      img.src=reader.result;
-    };
-    reader.readAsDataURL(file);
-  });
-}
-async function previewPhoto(e){
-  const files=Array.from(e.target.files||[]).slice(0,10);
-  const grid=document.getElementById("photoPreviewGrid");
-  sellPhotoData=[];
-  if(grid) grid.innerHTML="";
-  if(!files.length) return;
-  try{
-    sellPhotoData=await Promise.all(files.map(compressSellImage));
-    if(grid) grid.innerHTML=sellPhotoData.map((src,i)=>`<div class="photo-preview-item"><img src="${src}" alt="Foto ${i+1}"><span>${i+1}</span></div>`).join('');
-  }catch(err){
-    if(grid) grid.innerHTML='<div class="notice">❌ Errore nella lettura delle foto.</div>';
-    console.error(err);
-  }
-}
-
-async function publishProduct(e){
+function publishProduct(e){
   e.preventDefault();
-  const submit=e.submitter||e.target.querySelector('button[type="submit"]');
-  if(submit){submit.disabled=true;submit.textContent="Pubblicazione...";}
-  try{
-    const files=Array.from(document.getElementById("photo").files||[]).slice(0,10);
-    if(files.length && sellPhotoData.length!==files.length) sellPhotoData=await Promise.all(files.map(compressSellImage));
-    const data={
+  const file=document.getElementById("photo").files[0];
+  const data={
     id:"user-"+Date.now(),
     sellerType:document.getElementById("sellerType").value,
     condition:document.getElementById("condition").value,
@@ -1490,30 +1303,18 @@ async function publishProduct(e){
     handling:document.getElementById("handling").value,
     payout:document.getElementById("payout").value,
     promo:false,
-    image:sellPhotoData[0]||"https://images.unsplash.com/photo-1556228578-8c89e6adf883?auto=format&fit=crop&w=800&q=80",
-    images:sellPhotoData.length?sellPhotoData:["https://images.unsplash.com/photo-1556228578-8c89e6adf883?auto=format&fit=crop&w=800&q=80"]
+    image:""
   };
-  data.createdAt=Date.now();
-  products.unshift(data);
-  saveProducts();
-  renderProducts();
-  try{renderWowMarketplace();}catch(_){}
-  updateCount();
-  e.target.reset();
-  sellPhotoData=[];
-  const grid=document.getElementById("photoPreviewGrid"); if(grid) grid.innerHTML="";
-  const n=document.getElementById("sellNotice");
-  n.textContent="✅ Prodotto pubblicato. È ora visibile nel Market.";
-  n.style.display="block";
-  showPage("market");
-  if(submit){submit.disabled=false;submit.textContent="🚀 Pubblica e vendi su RiverSpend";}
-  }catch(err){
-    console.error("RiverSpend pubblicazione",err);
+  const done=()=>{
+    data.createdAt=Date.now(); products.unshift(data);saveProducts();renderProducts();
+    e.target.reset();document.getElementById("photoPreview").style.display="none";
     const n=document.getElementById("sellNotice");
-    n.textContent="❌ Non sono riuscito a leggere le foto. Riprova con immagini JPG/PNG.";
+    n.textContent="Annuncio creato. Il prodotto è ora visibile nel Market: carica, descrivi, fai il tuo prezzo e sei pronto a vendere.";
     n.style.display="block";
-    if(submit){submit.disabled=false;submit.textContent="🚀 Pubblica e vendi su RiverSpend";}
-  }
+    showPage("market");
+  };
+  if(file){const r=new FileReader();r.onload=()=>{data.image=r.result;done()};r.readAsDataURL(file)}
+  else {data.image="https://images.unsplash.com/photo-1556228578-8c89e6adf883?auto=format&fit=crop&w=800&q=80";done()}
 }
 
 
@@ -1602,6 +1403,40 @@ function setLanguage(lang){
   const notice=document.getElementById('languageNotice'); if(notice){notice.textContent='Lingua selezionata: '+l.name+'. La preferenza è stata salvata sul dispositivo.';notice.style.display='block';}
   renderCart(); updateCount();
 }
+
+async function rsRefreshAuth(){
+  if(!window.rsSupabase)return;
+  const {data}=await window.rsSupabase.auth.getUser();
+  const user=data?.user||null;
+  const nameEl=document.getElementById("rsUserName");
+  const status=document.getElementById("rsAuthStatus");
+  if(user){
+    if(nameEl)nameEl.textContent=user.email||"Account";
+    if(status)status.textContent="Account collegato: "+(user.email||"");
+    const panel=document.getElementById("rsAuthPanel"); if(panel)panel.style.display="none";
+  }else{
+    if(nameEl)nameEl.textContent="Ospite";
+    if(status)status.textContent="Accedi per vendere e acquistare online.";
+  }
+}
+function rsOpenAuth(){const p=document.getElementById("rsAuthPanel");if(p)p.style.display=p.style.display==="none"?"block":"none";}
+async function rsSignUp(){
+  const email=document.getElementById("rsAuthEmail")?.value.trim(), password=document.getElementById("rsAuthPassword")?.value||"";
+  if(!email||password.length<6){alert("Inserisci email e password di almeno 6 caratteri.");return;}
+  const {data,error}=await window.rsSupabase.auth.signUp({email,password});
+  if(error){alert("Registrazione non riuscita: "+error.message);return;}
+  if(data.user) await window.rsSupabase.from("profiles").upsert({id:data.user.id,display_name:email.split("@")[0],seller_type:"Privato"});
+  alert(data.session?"Account creato e accesso effettuato.":"Account creato. Controlla la tua email se è richiesta la conferma.");
+  await rsRefreshAuth();
+}
+async function rsSignIn(){
+  const email=document.getElementById("rsAuthEmail")?.value.trim(), password=document.getElementById("rsAuthPassword")?.value||"";
+  const {error}=await window.rsSupabase.auth.signInWithPassword({email,password});
+  if(error){alert("Accesso non riuscito: "+error.message);return;}
+  await rsRefreshAuth();
+}
+async function rsSignOut(){if(window.rsSupabase){await window.rsSupabase.auth.signOut();await rsRefreshAuth();}}
+if(window.rsSupabase) window.rsSupabase.auth.onAuthStateChange(()=>rsRefreshAuth());
 
 renderProducts();renderCart();updateCount();renderRSProfile();populateAdProducts();updateAdTotal();setTimeout(novaVigilanteScan,0);
 setLanguage(localStorage.getItem('rs_language')||'it');
@@ -1702,9 +1537,13 @@ document.addEventListener('DOMContentLoaded',()=>{renderCart();updateCount();ren
 
     <div class="sell-step" data-sell-step="2">
       <h3>2. Inserisci il prodotto</h3>
-      <label class="sell-upload" for="sellPhoto">📷 Foto del prodotto <span>(fino a 10 foto)</span></label>
-      <input id="sellPhoto" class="sell-input" type="file" accept="image/*" multiple onchange="previewSellPhoto(event)">
-      <img id="sellPhotoPreview" style="display:none;width:100%;max-height:220px;object-fit:contain;border-radius:14px;border:1px solid #c9eaf0;margin:4px 0 10px;background:#f4fbfd" alt="Anteprima prodotto">
+      <label class="sell-upload" for="sellPhoto">📷 Foto del prodotto <span>(1–20 foto)</span></label>
+      <input id="sellPhoto" class="sell-input" type="file" accept="image/*" multiple onchange="previewSellMedia(event)">
+      <div class="rs-media-help">Puoi selezionare più foto insieme. La prima sarà la copertina.</div>
+      <div id="sellMediaGrid" class="rs-media-grid"></div>
+      <div id="sellMediaCount" class="rs-media-count">0/20 foto · 0/3 video</div>
+      <label class="sell-upload" for="sellVideo" style="margin-top:12px">🎥 Video del prodotto <span>(1–3 video)</span></label>
+      <input id="sellVideo" class="sell-input" type="file" accept="video/*" multiple onchange="previewSellMedia(event)">
       <input id="sellName" class="sell-input" placeholder="Nome del prodotto">
       <input id="sellPrice" class="sell-input" type="number" min="0" step="0.01" placeholder="Prezzo (€)">
       <select id="sellCategory" class="sell-input">
@@ -1738,8 +1577,8 @@ document.addEventListener('DOMContentLoaded',()=>{renderCart();updateCount();ren
     <div class="sell-step" data-sell-step="4">
       <h3>✅ Prodotto pronto!</h3>
       <div class="sell-success">
-        Il tuo annuncio è stato preparato per RiverSpend.<br>
-        <strong>Prossimo passo:</strong> collegare foto, account venditore, approvazione Nova e pubblicazione reale nel catalogo.
+        Il tuo annuncio è stato pubblicato su RiverSpendShop.<br>
+        <strong>Media:</strong> foto e video sono stati caricati online e collegati al prodotto.
       </div>
       <div class="sell-actions">
         <button class="sell-next" onclick="closeSellPanel()">Chiudi</button>
@@ -1751,12 +1590,43 @@ document.addEventListener('DOMContentLoaded',()=>{renderCart();updateCount();ren
 
 <script id="riverspend-sell-js">
 let sellStep = 1, sellType = "", sellPhotoData = "";
-function previewSellPhoto(e){
-  const files=Array.from(e.target.files||[]).slice(0,10), img=document.getElementById("sellPhotoPreview");
-  if(!files.length||!img)return;
-  const f=files[0]; const r=new FileReader(); r.onload=()=>{sellPhotoData=r.result; img.src=sellPhotoData; img.style.display="block"}; r.readAsDataURL(f);
+let sellMediaFiles = [];
+function previewSellMedia(e){
+  const incoming=Array.from(e.target.files||[]);
+  if(!incoming.length)return;
+  const photoCount=sellMediaFiles.filter(f=>f.type.startsWith('image/')).length;
+  const videoCount=sellMediaFiles.filter(f=>f.type.startsWith('video/')).length;
+  const addPhotos=incoming.filter(f=>f.type.startsWith('image/'));
+  const addVideos=incoming.filter(f=>f.type.startsWith('video/'));
+  if(photoCount+addPhotos.length>20){alert('Massimo 20 foto.');return;}
+  if(videoCount+addVideos.length>3){alert('Massimo 3 video.');return;}
+  sellMediaFiles.push(...incoming);
+  renderSellMedia();
+  e.target.value='';
 }
-function openSellPanel(){
+function removeSellMedia(index){sellMediaFiles.splice(index,1);renderSellMedia();}
+function renderSellMedia(){
+  const grid=document.getElementById('sellMediaGrid');
+  const count=document.getElementById('sellMediaCount');
+  if(!grid)return;
+  grid.innerHTML=sellMediaFiles.map((f,i)=>{
+    const url=URL.createObjectURL(f);
+    const isVideo=f.type.startsWith('video/');
+    return `<div class="rs-media-item">${isVideo?`<video src="${url}" muted playsinline preload="metadata"></video>`:`<img src="${url}" alt="Foto ${i+1}">`}<button type="button" class="rs-media-remove" onclick="removeSellMedia(${i})">×</button>${!isVideo&&i===sellMediaFiles.findIndex(x=>x.type.startsWith('image/'))?'<span class="rs-media-cover">COPERTINA</span>':''}<span class="rs-media-type">${isVideo?'VIDEO':'FOTO'}</span></div>`;
+  }).join('');
+  const photos=sellMediaFiles.filter(f=>f.type.startsWith('image/')).length;
+  const videos=sellMediaFiles.filter(f=>f.type.startsWith('video/')).length;
+  count.textContent=`${photos}/20 foto · ${videos}/3 video`;
+  sellPhotoData=photos?'ready':'';
+}
+async function openSellPanel(){
+  if(!window.rsSupabase){ alert("Servizio RiverSpend non disponibile. Riprova tra poco."); return; }
+  const {data}=await window.rsSupabase.auth.getUser();
+  if(!data?.user){
+    if(typeof rsOpenAuth==='function') rsOpenAuth();
+    else alert("Accedi al tuo account RiverSpend per vendere.");
+    return;
+  }
   const o=document.getElementById("sellOverlay");
   if(o){o.style.display="flex"; sellGo(1);}
 }
@@ -1773,9 +1643,13 @@ function sellGo(n){
     const cat=document.getElementById("sellCategory").value;
     const desc=document.getElementById("sellDesc").value.trim();
     if(!name || !price || !cat || !desc){sellGo(2); alert("Completa nome, prezzo, categoria e descrizione."); return;}
+    const photoCount=sellMediaFiles.filter(f=>f.type.startsWith('image/')).length;
+    const videoCount=sellMediaFiles.filter(f=>f.type.startsWith('video/')).length;
+    if(photoCount<1){sellGo(2); alert("Inserisci almeno una foto del prodotto."); return;}
+    if(photoCount>20 || videoCount>3){sellGo(2); return;}
     document.getElementById("sellPreview").innerHTML =
       `<div class="sell-preview">${escapeSell(name)}</div><div>${escapeSell(sellType||"Condizione non selezionata")} • ${escapeSell(cat)}</div><div>€ ${price.toFixed(2)}</div>`;
-    const pc=document.getElementById("sellPhotoCheck"); if(pc)pc.style.display=sellPhotoData?"block":"none";
+    const pc=document.getElementById("sellPhotoCheck"); if(pc)pc.style.display=sellMediaFiles.some(f=>f.type.startsWith('image/'))?"block":"none";
     runNovaCheck();
   }
 }
@@ -1809,23 +1683,25 @@ function runNovaCheck(){
   }
 }
 
-function sellPickType(t){sellType=t; document.querySelectorAll(".sell-choice").forEach(b=>b.style.outline=""); event.currentTarget.style.outline="3px solid #0b9ab8";}
+function sellPickType(t,ev){
+  sellType=t;
+  document.querySelectorAll(".sell-choice").forEach(b=>b.style.outline="");
+  const target=ev?.currentTarget;
+  if(target) target.style.outline="3px solid #0b9ab8";
+}
 function sellNext(){ if(sellStep===1 && !sellType){alert("Scegli se l'oggetto è nuovo o usato.");return;} sellGo(Math.min(4,sellStep+1));}
 function sellBack(){sellGo(Math.max(1,sellStep-1));}
 async function publishSellDemo(){
   const btn=document.getElementById("novaPublishBtn");
   if(btn){btn.disabled=true;btn.textContent="Pubblicazione...";}
   try{
-    const name=document.getElementById("sellName").value.trim();
-    const price=Number(document.getElementById("sellPrice").value);
-    const cat=document.getElementById("sellCategory").value;
-    const desc=document.getElementById("sellDesc").value.trim();
-    const product={id:"user-"+Date.now(),sellerType:"Privato",condition:sellType.includes("usato")?"Usato":"Nuovo",name,description:desc,price,stock:1,category:cat,shipping:"Spedizione disponibile",handling:"",payout:"",promo:false,image:sellPhotoData||"https://images.unsplash.com/photo-1556228578-8c89e6adf883?auto=format&fit=crop&w=800&q=80",images:sellPhotoData?[sellPhotoData]:[] ,createdAt:Date.now()};
-    products.unshift(product); saveProducts(); renderProducts(); try{renderWowMarketplace();}catch(_){} updateCount();
+    if(!window.rsSupabase) throw new Error("Supabase non configurato");
+    await publishProductOnline();
+    sellMediaFiles=[];
+    renderSellMedia();
     sellGo(4);
     const box=document.querySelector('[data-sell-step="4"] .sell-success');
-    if(box) box.innerHTML='✅ <strong>Prodotto pubblicato nel Market!</strong><br>Il prodotto è stato salvato sul dispositivo e compare subito nel catalogo.';
-    showPage("market");
+    if(box) box.innerHTML='✅ <strong>Prodotto pubblicato nel Market!</strong><br>Il prodotto è stato salvato online in Supabase.';
   }catch(err){
     console.error(err);
     alert("Pubblicazione non riuscita: "+(err?.message||err));
