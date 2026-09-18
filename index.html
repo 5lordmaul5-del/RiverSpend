@@ -453,6 +453,12 @@ try {
   }
 } catch (e) { console.error("RiverSpend Supabase init", e); }
 </script>
+<style id="rs-photo-upload-fix">
+.photo-preview-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0 14px}
+.photo-preview-item{position:relative;aspect-ratio:1;border-radius:12px;overflow:hidden;background:#eef8fa;border:1px solid #c9eaf0}
+.photo-preview-item img{width:100%;height:100%;object-fit:cover;display:block}
+.photo-preview-item span{position:absolute;left:5px;bottom:5px;background:rgba(0,0,0,.65);color:#fff;border-radius:999px;padding:2px 7px;font-size:11px;font-weight:800}
+</style>
 </head>
 <body class="rs-opening-active">
 <div id="welcome" aria-label="Apertura RiverSpend">
@@ -727,10 +733,10 @@ try {
             <select id="condition" required><option>Nuovo</option><option>Usato</option><option>Ricondizionato</option></select>
           </label>
         </div>
-        <label>📷 Foto prodotto
-          <input id="photo" type="file" accept="image/*" onchange="previewPhoto(event)">
+        <label>📷 Foto prodotto <span class="muted">(fino a 10 foto)</span>
+          <input id="photo" type="file" accept="image/*" multiple onchange="previewPhoto(event)">
         </label>
-        <img id="photoPreview" alt="Anteprima">
+        <div id="photoPreviewGrid" class="photo-preview-grid" aria-live="polite"></div>
         <label>Nome prodotto
           <input id="name" required placeholder="Es. Creatina Monoidrata 500 g">
         </label>
@@ -1427,16 +1433,51 @@ function showPage(id){
   try{if(id==='nova'){novaVigilanteScan();}}catch(e){}
 }
 
-function previewPhoto(e){
-  const file=e.target.files[0], img=document.getElementById("photoPreview");
-  if(!file){img.style.display="none";return}
-  const r=new FileReader(); r.onload=()=>{img.src=r.result;img.style.display="block"}; r.readAsDataURL(file);
+let sellPhotoData=[];
+function compressSellImage(file){
+  return new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onerror=()=>reject(new Error("Impossibile leggere la foto"));
+    reader.onload=()=>{
+      const img=new Image();
+      img.onerror=()=>reject(new Error("Immagine non valida"));
+      img.onload=()=>{
+        const max=1200, scale=Math.min(1,max/Math.max(img.width,img.height));
+        const canvas=document.createElement("canvas");
+        canvas.width=Math.max(1,Math.round(img.width*scale));
+        canvas.height=Math.max(1,Math.round(img.height*scale));
+        const ctx=canvas.getContext("2d");
+        ctx.drawImage(img,0,0,canvas.width,canvas.height);
+        resolve(canvas.toDataURL("image/jpeg",0.78));
+      };
+      img.src=reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+async function previewPhoto(e){
+  const files=Array.from(e.target.files||[]).slice(0,10);
+  const grid=document.getElementById("photoPreviewGrid");
+  sellPhotoData=[];
+  if(grid) grid.innerHTML="";
+  if(!files.length) return;
+  try{
+    sellPhotoData=await Promise.all(files.map(compressSellImage));
+    if(grid) grid.innerHTML=sellPhotoData.map((src,i)=>`<div class="photo-preview-item"><img src="${src}" alt="Foto ${i+1}"><span>${i+1}</span></div>`).join('');
+  }catch(err){
+    if(grid) grid.innerHTML='<div class="notice">❌ Errore nella lettura delle foto.</div>';
+    console.error(err);
+  }
 }
 
-function publishProduct(e){
+async function publishProduct(e){
   e.preventDefault();
-  const file=document.getElementById("photo").files[0];
-  const data={
+  const submit=e.submitter||e.target.querySelector('button[type="submit"]');
+  if(submit){submit.disabled=true;submit.textContent="Pubblicazione...";}
+  try{
+    const files=Array.from(document.getElementById("photo").files||[]).slice(0,10);
+    if(files.length && sellPhotoData.length!==files.length) sellPhotoData=await Promise.all(files.map(compressSellImage));
+    const data={
     id:"user-"+Date.now(),
     sellerType:document.getElementById("sellerType").value,
     condition:document.getElementById("condition").value,
@@ -1449,18 +1490,30 @@ function publishProduct(e){
     handling:document.getElementById("handling").value,
     payout:document.getElementById("payout").value,
     promo:false,
-    image:""
+    image:sellPhotoData[0]||"https://images.unsplash.com/photo-1556228578-8c89e6adf883?auto=format&fit=crop&w=800&q=80",
+    images:sellPhotoData.length?sellPhotoData:["https://images.unsplash.com/photo-1556228578-8c89e6adf883?auto=format&fit=crop&w=800&q=80"]
   };
-  const done=()=>{
-    data.createdAt=Date.now(); products.unshift(data);saveProducts();renderProducts();
-    e.target.reset();document.getElementById("photoPreview").style.display="none";
+  data.createdAt=Date.now();
+  products.unshift(data);
+  saveProducts();
+  renderProducts();
+  try{renderWowMarketplace();}catch(_){}
+  updateCount();
+  e.target.reset();
+  sellPhotoData=[];
+  const grid=document.getElementById("photoPreviewGrid"); if(grid) grid.innerHTML="";
+  const n=document.getElementById("sellNotice");
+  n.textContent="✅ Prodotto pubblicato. È ora visibile nel Market.";
+  n.style.display="block";
+  showPage("market");
+  if(submit){submit.disabled=false;submit.textContent="🚀 Pubblica e vendi su RiverSpend";}
+  }catch(err){
+    console.error("RiverSpend pubblicazione",err);
     const n=document.getElementById("sellNotice");
-    n.textContent="Annuncio creato. Il prodotto è ora visibile nel Market: carica, descrivi, fai il tuo prezzo e sei pronto a vendere.";
+    n.textContent="❌ Non sono riuscito a leggere le foto. Riprova con immagini JPG/PNG.";
     n.style.display="block";
-    showPage("market");
-  };
-  if(file){const r=new FileReader();r.onload=()=>{data.image=r.result;done()};r.readAsDataURL(file)}
-  else {data.image="https://images.unsplash.com/photo-1556228578-8c89e6adf883?auto=format&fit=crop&w=800&q=80";done()}
+    if(submit){submit.disabled=false;submit.textContent="🚀 Pubblica e vendi su RiverSpend";}
+  }
 }
 
 
@@ -1649,8 +1702,8 @@ document.addEventListener('DOMContentLoaded',()=>{renderCart();updateCount();ren
 
     <div class="sell-step" data-sell-step="2">
       <h3>2. Inserisci il prodotto</h3>
-      <label class="sell-upload" for="sellPhoto">📷 Foto del prodotto <span>(facoltativa per ora)</span></label>
-      <input id="sellPhoto" class="sell-input" type="file" accept="image/*" onchange="previewSellPhoto(event)">
+      <label class="sell-upload" for="sellPhoto">📷 Foto del prodotto <span>(fino a 10 foto)</span></label>
+      <input id="sellPhoto" class="sell-input" type="file" accept="image/*" multiple onchange="previewSellPhoto(event)">
       <img id="sellPhotoPreview" style="display:none;width:100%;max-height:220px;object-fit:contain;border-radius:14px;border:1px solid #c9eaf0;margin:4px 0 10px;background:#f4fbfd" alt="Anteprima prodotto">
       <input id="sellName" class="sell-input" placeholder="Nome del prodotto">
       <input id="sellPrice" class="sell-input" type="number" min="0" step="0.01" placeholder="Prezzo (€)">
@@ -1699,9 +1752,9 @@ document.addEventListener('DOMContentLoaded',()=>{renderCart();updateCount();ren
 <script id="riverspend-sell-js">
 let sellStep = 1, sellType = "", sellPhotoData = "";
 function previewSellPhoto(e){
-  const f=e.target.files&&e.target.files[0], img=document.getElementById("sellPhotoPreview");
-  if(!f||!img)return;
-  const r=new FileReader(); r.onload=()=>{sellPhotoData=r.result; img.src=sellPhotoData; img.style.display="block"}; r.readAsDataURL(f);
+  const files=Array.from(e.target.files||[]).slice(0,10), img=document.getElementById("sellPhotoPreview");
+  if(!files.length||!img)return;
+  const f=files[0]; const r=new FileReader(); r.onload=()=>{sellPhotoData=r.result; img.src=sellPhotoData; img.style.display="block"}; r.readAsDataURL(f);
 }
 function openSellPanel(){
   const o=document.getElementById("sellOverlay");
@@ -1763,11 +1816,16 @@ async function publishSellDemo(){
   const btn=document.getElementById("novaPublishBtn");
   if(btn){btn.disabled=true;btn.textContent="Pubblicazione...";}
   try{
-    if(!window.rsSupabase) throw new Error("Supabase non configurato");
-    await publishProductOnline();
+    const name=document.getElementById("sellName").value.trim();
+    const price=Number(document.getElementById("sellPrice").value);
+    const cat=document.getElementById("sellCategory").value;
+    const desc=document.getElementById("sellDesc").value.trim();
+    const product={id:"user-"+Date.now(),sellerType:"Privato",condition:sellType.includes("usato")?"Usato":"Nuovo",name,description:desc,price,stock:1,category:cat,shipping:"Spedizione disponibile",handling:"",payout:"",promo:false,image:sellPhotoData||"https://images.unsplash.com/photo-1556228578-8c89e6adf883?auto=format&fit=crop&w=800&q=80",images:sellPhotoData?[sellPhotoData]:[] ,createdAt:Date.now()};
+    products.unshift(product); saveProducts(); renderProducts(); try{renderWowMarketplace();}catch(_){} updateCount();
     sellGo(4);
     const box=document.querySelector('[data-sell-step="4"] .sell-success');
-    if(box) box.innerHTML='✅ <strong>Prodotto pubblicato nel Market!</strong><br>Il prodotto è stato salvato online in Supabase.';
+    if(box) box.innerHTML='✅ <strong>Prodotto pubblicato nel Market!</strong><br>Il prodotto è stato salvato sul dispositivo e compare subito nel catalogo.';
+    showPage("market");
   }catch(err){
     console.error(err);
     alert("Pubblicazione non riuscita: "+(err?.message||err));
