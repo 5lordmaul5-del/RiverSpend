@@ -171,7 +171,18 @@ footer{text-align:center;color:#688391;padding:28px 16px;border-top:1px solid va
 .rs-product-dialog h2{margin:10px 0 4px}.rs-product-dialog .price{font-size:22px;font-weight:900;color:#087e9b}
 .rs-product-dialog .buy{width:100%;margin-top:12px;padding:13px;border:0;border-radius:13px;background:#087e9b;color:white;font-weight:900;cursor:pointer}
 @media(max-width:700px){.rs-product{flex-basis:205px;min-height:225px}.rs-product-visual{height:130px;font-size:76px}}
-</style>
+
+/* RiverSpend product presentation / media reliability */
+.product-media-cover{display:block;position:relative;width:100%;aspect-ratio:1/1;background:#eef8fb;overflow:hidden}
+.product-media-cover img{width:100%;height:100%;object-fit:cover;display:block}
+.rs-image-fallback{width:100%;height:100%;min-height:130px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;background:linear-gradient(135deg,#e9f7fb,#f7fbfc);color:#168bd1;font-size:34px}
+.rs-image-fallback span{font-size:11px;color:#688391;font-weight:700}
+.rs-image-fallback.large{min-height:240px}
+.rs-product-detail-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-top:12px}
+.rs-stock-badge{border-radius:999px;padding:7px 10px;font-weight:800;font-size:12px;white-space:nowrap;background:#e8f7ee;color:#17633d}.rs-stock-badge.sold{background:#ffe9e9;color:#a33}
+.rs-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.rs-detail-grid>div{border:1px solid var(--line);border-radius:12px;padding:11px;background:#fbfdfe}.rs-detail-grid p{margin:6px 0;line-height:1.45;font-size:13px}
+.rs-piggy-product{display:flex;align-items:center;gap:9px;flex-wrap:wrap;border:1px solid #f0df9c;background:#fff9df;border-radius:12px;padding:11px;margin:12px 0}.rs-piggy-product span{font-size:12px;color:#688391;flex:1}@media(max-width:600px){.rs-detail-grid{grid-template-columns:1fr}.rs-product-detail-head{flex-direction:column}.rs-gallery img,.rs-gallery video{max-height:300px}}
+.rs-global-product-rail{max-width:1180px;margin:10px auto;padding:10px 14px;border:1px solid var(--line);border-radius:14px;background:#fff;display:flex;align-items:center;gap:10px;flex-wrap:wrap}.rs-global-product-rail>div:first-child{display:flex;flex-direction:column}.rs-global-product-rail>div:first-child span{font-size:11px;color:var(--muted)}#rs-global-product-list{display:flex;gap:7px;overflow:auto;flex:1}.rs-global-product-chip{min-width:145px;border:1px solid #d9e9ef;border-radius:10px;padding:7px;background:#fafdff;cursor:pointer}.rs-global-product-chip img{width:42px;height:42px;object-fit:cover;border-radius:8px;vertical-align:middle;margin-right:6px}.rs-global-product-chip b{font-size:12px}</style>
 
 <style id="market-core-v14">
 .core-status{margin:10px auto;max-width:1180px;padding:9px 12px;border:1px solid #d8e5ee;border-radius:12px;background:#fbfdff;font-size:12px}
@@ -685,9 +696,9 @@ try {
 
   <section id="market" class="page active">
     <div class="category-menu">
-      <select onchange="setCategory(this.value)">
-        <option value="Tutti">📂 Categorie: Tutti</option>
-        <option>Elettronica</option><option>Moda</option><option>Casa</option><option>Salute</option><option>Sport</option><option>Giochi</option><option>Bambini</option><option>Pet Food & Animali</option><option>Extra Luxury</option><option>Auto e Moto</option><option>Altro</option>
+      <label for="rsCategorySelect" class="sr-only">Categorie prodotti</label>
+      <select id="rsCategorySelect" onchange="setCategory(this.value)">
+        <option value="Tutti">📂 TUTTE LE CATEGORIE</option>
       </select>
     </div>
     <div class="category-strip">
@@ -1067,7 +1078,6 @@ const DEMO_PRODUCTS = [];
 
 let products = JSON.parse(localStorage.getItem("rs_products") || "null");
 if(!Array.isArray(products)) products = [];
-saveProducts();
 function loadRiverSpendCart(){
   let primary={}, legacy={};
   try{ primary=JSON.parse(localStorage.getItem("rs_cart")||"{}")||{}; }catch(e){}
@@ -1090,6 +1100,60 @@ function loadRiverSpendCart(){
 let cart = loadRiverSpendCart();
 let category = "Tutti";
 let donation = JSON.parse(localStorage.getItem("rs_donation") || '{"amount":0,"cause":"ambient"}');
+const RS_CATEGORY_TREE = {
+  "Moda": ["Uomo","Donna","Bambini","Scarpe","Borse","Accessori","Gioielli","Orologi","Abbigliamento sportivo","Intimo","Costumi","Valigie e borse"],
+  "Elettronica e Tecnologia": ["Smartphone","Tablet","PC","Notebook","Mac","Monitor","TV","Smartwatch","Audio","Cuffie e auricolari","Fotografia","Videocamere","Console","Accessori elettronica","Cavi e caricabatterie","Caricatori","Batterie","Smart Home","Stampanti","Router e rete","Droni","GPS"],
+  "Gaming": ["PlayStation","Xbox","Nintendo","PC Gaming","Videogiochi","Controller","Accessori gaming","Retro gaming","Carte e giochi digitali"],
+  "Casa": ["Arredamento","Cucina","Bagno","Camera","Soggiorno","Illuminazione","Decorazioni","Elettrodomestici","Casalinghi","Tovaglie","Tessili casa","Pentole e padelle","Piatti e bicchieri","Utensili cucina","Pulizia","Detersivi","Giardino","Bricolage casa","Sicurezza casa"],
+  "Auto e Moto": ["Auto","Moto","Ricambi auto","Ricambi moto","Accessori auto","Accessori moto","Pneumatici","Cerchi","Elettronica auto","Car audio","Attrezzatura","Manutenzione","Abbigliamento moto"],
+  "Animali": ["Cani","Gatti","Uccelli","Pesci","Piccoli animali","Alimentazione animali","Accessori animali","Cucce e recinti","Giochi animali","Igiene animali","Acquari"],
+  "Salute e Benessere": ["Integratori","Proteine","Creatina","Vitamine","Minerali","Cura della persona","Igiene","Benessere","Medicale","Fitness","Massaggi e recupero"],
+  "Sport e Tempo libero": ["Arti marziali","Calcio","Ciclismo","Running","Palestra","Fitness","Pesca","Trekking","Sci","Snowboard","Nuoto","Tennis","Padel","Basket","Equitazione","Yoga","Golf","Sport acquatici"],
+  "Outdoor e Campeggio": ["Campeggio","Tende","Zaini","Sacchi a pelo","Escursionismo","Attrezzatura outdoor","Torcia e illuminazione","Cucina da campeggio","Survival e bushcraft","Picnic"],
+  "Alimentari": ["Pasta","Riso","Farine","Conserve","Dolci","Snack","Caffè","Tè e infusi","Condimenti","Olio","Aceto","Prodotti tipici","Biologico","Surgelati","Colazione","Spezie","Prodotti da forno"],
+  "Bevande": ["Acqua","Bibite","Succhi","Caffè","Tè e infusi","Bevande analcoliche","Bevande energetiche"],
+  "Fai da te e Lavoro": ["Utensili","Ferramenta","Elettroutensili","Materiali","Attrezzatura professionale","Abbigliamento da lavoro","Sicurezza","Scale","Compressori","Saldatura","Idraulica","Elettricità"],
+  "Bambini e Infanzia": ["Giocattoli","Giochi","Prima infanzia","Passeggini","Seggiolini auto","Abbigliamento bambini","Accessori bambini","Scuola","Cameretta"],
+  "Bellezza": ["Cosmetici","Profumi","Make-up","Capelli","Cura corpo","Cura viso","Manicure e pedicure","Barber"],
+  "Libri e Cultura": ["Libri","Fumetti","Manga","Riviste","Film","DVD","Musica","Manuali","Libri scolastici"],
+  "Musica": ["Strumenti musicali","Chitarre","Batterie","Tastiere","Amplificatori","Microfoni","Audio","Vinili","CD","DJ"],
+  "Hobby e Collezionismo": ["Modellismo","Figurine","Monete","Francobolli","Vintage","Arte","Artigianato","Collezioni","Memorabilia","Antiquariato"],
+  "Viaggi": ["Valigie","Zaini","Accessori viaggio","Campeggio viaggio","Organizzazione bagagli"],
+  "Ufficio e Scuola": ["Cancelleria","Stampanti","Computer","Arredi ufficio","Scrivanie","Sedie","Materiale scolastico","Archiviazione"],
+  "Giardino e Agricoltura": ["Piante","Semi","Attrezzi giardino","Irrigazione","Terriccio","Vasi","Arredo giardino","Macchine da giardino","Agricoltura"],
+  "Gadget e Regali": ["Gadget","Regali","Idee regalo","Personalizzati","Gadget tecnologici"],
+  "Gioielli e Preziosi": ["Gioielli","Orologeria","Oro","Argento","Bijoux","Accessori orologeria"],
+  "Servizi": ["Servizi professionali","Riparazioni","Lezioni","Eventi","Servizi digitali"]
+};
+const RS_CATEGORY_ALIASES = {"PC":"PC","Tablet":"Tablet","TV":"TV","Casalinghi":"Casalinghi","Tovaglie":"Tovaglie","Integratori":"Integratori","Auto e Moto":"Auto e Moto","Moda":"Moda","Casa":"Casa","Animali":"Animali","Sport":"Sport e Tempo libero","Lavoro":"Fai da te e Lavoro","Gadget":"Gadget e Regali","Alimentari":"Alimentari","Bevande":"Bevande"};
+function rsCategoryPath(value){ const v=String(value||'').trim(); if(!v||v==='Tutti') return ''; if(v.includes(' > ')) return v; const parent=Object.entries(RS_CATEGORY_TREE).find(([,children])=>children.includes(v))?.[0]; return parent ? parent+' > '+v : v; }
+function rsCategoryLeaf(value){ const v=String(value||'').trim(); return v.includes(' > ')?v.split(' > ').pop().trim():v; }
+function rsCategoryEntries(){
+  const out=[];
+  Object.entries(RS_CATEGORY_TREE).forEach(([parent,children])=>{out.push({value:parent,label:parent,parent:null});children.forEach(child=>out.push({value:child,label:child,parent}));});
+  return out;
+}
+function initCategorySelectors(){
+  const entries=rsCategoryEntries();
+  const market=document.getElementById('rsCategorySelect');
+  if(market){market.innerHTML='<option value="Tutti">📂 TUTTE LE CATEGORIE</option>'+Object.entries(RS_CATEGORY_TREE).map(([parent,children])=>`<optgroup label="${parent}"><option value="${parent}">${parent}</option>${children.map(c=>`<option value="${c}">${c}</option>`).join('')}</optgroup>`).join(''); market.value=category||'Tutti';}
+  const sell=document.getElementById('sellCategory');
+  if(sell){sell.innerHTML='<option value="">Categoria</option>'+Object.entries(RS_CATEGORY_TREE).map(([parent,children])=>`<optgroup label="${parent}"><option value="${parent}">${parent}</option>${children.map(c=>`<option value="${parent} > ${c}">${c}</option>`).join('')}</optgroup>`).join('');}
+}
+function rsCategoryMatches(productCategory, selected){
+  if(!selected || selected==='Tutti') return true;
+  const pc=String(productCategory||'').trim();
+  const sel=rsCategoryPath(selected);
+  if(pc===selected || pc===sel) return true;
+  const leaf=rsCategoryLeaf(pc);
+  const selectedLeaf=rsCategoryLeaf(sel);
+  if(leaf && selectedLeaf && leaf===selectedLeaf) return true;
+  const parent=Object.entries(RS_CATEGORY_TREE).find(([,children])=>children.includes(leaf))?.[0];
+  if(parent===selected || parent===sel || pc.startsWith(String(sel)+' > ')) return true;
+  const alias=RS_CATEGORY_ALIASES[selected] || RS_CATEGORY_ALIASES[selectedLeaf];
+  return !!alias && (pc===alias || pc.toLowerCase().includes(String(alias).toLowerCase()));
+}
+
 let piggy = JSON.parse(localStorage.getItem("rs_piggy") || "[]");
 let returns = JSON.parse(localStorage.getItem("rs_returns") || "[]");
 
@@ -1116,18 +1180,28 @@ function setPromoFilter(){
 }
 function productMatches(p){
   if(!p || (p.status && p.status!=='published') || Number(p.stock||0)<=0)return false;
-  if(category!=='Tutti' && String(p.category||'')!==String(category))return false;
+  if(!rsCategoryMatches(p.category,category))return false;
   const sf=window.sellerFilter||'Tutti';
   if(sf!=='Tutti' && String(p.sellerType||p.seller_type||'Privato')!==sf)return false;
   const q=(document.getElementById('searchInput')?.value||'').trim().toLowerCase();
-  if(q && ![p.name,p.description,p.category,p.sellerType].some(x=>String(x||'').toLowerCase().includes(q)))return false;
+  if(q){ const catText=String(p.category||'').toLowerCase(); const treeText=Object.entries(RS_CATEGORY_TREE).filter(([parent,children])=>parent.toLowerCase().includes(catText)||children.some(c=>c.toLowerCase()===catText)||children.some(c=>String(p.category||'').toLowerCase().includes(c.toLowerCase()))).map(([parent,children])=>parent+' '+children.join(' ')).join(' ').toLowerCase(); if(![p.name,p.description,p.category,p.sellerType,treeText].some(x=>String(x||'').toLowerCase().includes(q)))return false;}
   return true;
+}
+function rsImageFallback(el){
+  if(!el || el.dataset.rsFallback) return;
+  el.dataset.rsFallback='1';
+  el.style.display='none';
+  const holder=el.parentElement;
+  if(holder && !holder.querySelector('.rs-image-fallback')) holder.insertAdjacentHTML('beforeend','<div class="rs-image-fallback">🛍️<span>Foto non disponibile</span></div>');
 }
 function productCard(p){
   const img=escRS(p.image||p.images?.[0]||'');
   const name=escRS(p.name||'Prodotto RiverSpend');
   const id=escRS(p.id);
-  return `<article class="product-card" data-product-id="${id}"><button type="button" class="product-card-btn" onclick="openFeaturedProduct('${id}')">${img?`<img src="${img}" alt="${name}" loading="lazy">`:'<div class="product-placeholder">🛍️</div>'}<div class="product-info"><strong>${name}</strong><b>${moneyRS(p.price)}</b><small>${escRS(p.condition||'Nuovo')} · ${escRS(p.category||'Altro')}</small></div></button></article>`;
+  const stock=Math.max(0,Number(p.stock||0));
+  const imageCount=Array.isArray(p.images)?p.images.length:0;
+  const videoCount=Array.isArray(p.videos)?p.videos.length:0;
+  return `<article class="product-card" data-product-id="${id}"><button type="button" class="product-card-btn" onclick="openFeaturedProduct('${id}')"><span class="product-media-cover">${img?`<img src="${img}" onerror="rsImageFallback(this)" alt="${name}" loading="lazy">`:'<div class="rs-image-fallback">🛍️<span>Foto non disponibile</span></div>'}</span><div class="product-info"><strong>${name}</strong><b>${moneyRS(p.price)}</b><small>${escRS(p.condition||'Nuovo')} · ${escRS(p.category||'Altro')}</small><small>📦 ${stock} disponibili${imageCount?` · 📷 ${imageCount} foto`:''}${videoCount?` · 🎥 ${videoCount} video`:''}</small></div></button></article>`;
 }
 function renderProducts(promoOnly=false){
   const source=Array.isArray(products)?products:[];
@@ -1139,6 +1213,7 @@ function renderProducts(promoOnly=false){
   if(all) all.innerHTML=visible.length?visible.map(productCard).join(''):'<div class="empty">🌊 Nessun prodotto disponibile con questi filtri.</div>';
   if(promo){const ps=visible.filter(p=>Boolean(p.promo)); promo.innerHTML=ps.length?ps.map(productCard).join(''):'<div class="empty">Nessuna promozione attiva.</div>';}
   updateCount();
+  if(typeof renderGlobalProductRail==='function') renderGlobalProductRail();
 }
 function renderWowMarketplace(){
   const ids=['wowPromoRail','wowTechRail','wowLifestyleRail','wowAllRail','wowHomeRail','wowDiscoverRail'];
@@ -1158,9 +1233,23 @@ function openFeaturedProduct(id){
   if(!modal||!box)return;
   const imgs=Array.isArray(p.images)&&p.images.length?p.images:[p.image].filter(Boolean);
   const vids=Array.isArray(p.videos)?p.videos:[];
-  const mediaHtml=[...imgs.map(u=>`<img src="${escRS(u)}" alt="${escRS(p.name)}">`),...vids.map(u=>`<video src="${escRS(u)}" controls playsinline preload="metadata"></video>`)].join('');
-  box.innerHTML=`<div class="rs-featured-detail"><div class="rs-gallery">${mediaHtml}</div><h2>${escRS(p.name)}</h2><p>${escRS(p.description)}</p><div class="rs-detail-price">${moneyRS(p.price)}</div><p><strong>Disponibilità:</strong> ${Number(p.stock||0)>0?'Disponibile':'VENDUTO'}</p><p><strong>Condizione:</strong> ${escRS(p.condition||'Nuovo')} · ${escRS(p.category||'Altro')}</p><div class="row"><button type="button" onclick="addToCart('${escRS(p.id)}');closeFeaturedProduct()">🛒 Aggiungi alla Rete</button><button type="button" class="secondary" onclick="closeFeaturedProduct()">Chiudi</button></div></div>`;
+  const mediaHtml=[...imgs.map((u,i)=>`<img src="${escRS(u)}" onerror="rsImageFallback(this)" alt="${escRS(p.name)} — foto ${i+1}" loading="lazy">`),...vids.map((u,i)=>`<video src="${escRS(u)}" controls playsinline preload="metadata" aria-label="${escRS(p.name)} — video ${i+1}"></video>`)].join('') || '<div class="rs-image-fallback large">🛍️<span>Foto non disponibile</span></div>';
+  const stock=Math.max(0,Number(p.stock||0));
+  const qty=stock>0?Math.min(stock,Number(cart?.[p.id]?.qty||0)+1):0;
+  const payment='Visa / Mastercard · Bancomat · PayPal · Scalapay · PayPal a rate · Scalapay a rate · QR · Contactless';
+  box.innerHTML=`<div class="rs-featured-detail"><div class="rs-gallery">${mediaHtml}</div><div class="rs-product-detail-head"><div><h2>${escRS(p.name)}</h2><div class="rs-detail-price">${moneyRS(p.price)}</div></div><span class="rs-stock-badge ${stock>0?'ok':'sold'}">${stock>0?`📦 ${stock} rimasti`:'VENDUTO'}</span></div><div class="rs-detail-grid"><div><strong>Descrizione</strong><p>${escRS(p.description)||'Nessuna descrizione inserita.'}</p></div><div><strong>Dettagli</strong><p>Condizione: ${escRS(p.condition||'Nuovo')}<br>Categoria: ${escRS(p.category||'Altro')}<br>Spedizione: ${escRS(p.shipping||'Da definire')}<br>Preparazione: ${escRS(p.handling||'Da definire')}<br>Venditore: ${escRS(p.sellerType||'Privato')}</p></div><div><strong>Quantità</strong><p>Stock residuo: <b>${stock}</b><br>Nel tuo carrello: <b>${Math.max(0,Number(cart?.[p.id]?.qty||0))}</b></p></div><div><strong>Pagamento</strong><p>${payment}</p></div></div><div class="rs-piggy-product"><strong>🐷 PiggyBank</strong><span>Metti da parte per questo prodotto.</span><button type="button" class="secondary" onclick="saveProductToPiggy('${escRS(p.id)}')">Salva nel PiggyBank</button></div><div class="row"><button type="button" ${stock>0?'':'disabled'} onclick="addToCart('${escRS(p.id)}');closeFeaturedProduct()">🕸️ Aggiungi alla Rete</button><button type="button" class="secondary" onclick="showPage('checkout');closeFeaturedProduct()">💳 Vai al pagamento</button><button type="button" class="secondary" onclick="closeFeaturedProduct()">Chiudi</button></div></div>`;
   modal.hidden=false;
+}
+function saveProductToPiggy(id){
+  const p=(Array.isArray(products)?products:[]).find(x=>String(x.id)===String(id));
+  if(!p){alert('Prodotto non trovato.');return;}
+  const list=Array.isArray(piggy)?piggy:[];
+  const existing=list.find(x=>String(x.productId||'')===String(p.id));
+  if(existing){showPage('piggy');return;}
+  list.unshift({id:'PIG-'+Date.now(),productId:String(p.id),name:p.name,target:Number(p.price||0),saved:0,createdAt:Date.now()});
+  piggy=list; localStorage.setItem('rs_piggy',JSON.stringify(piggy));
+  alert('Prodotto salvato nel PiggyBank.');
+  closeFeaturedProduct(); showPage('piggy'); renderPiggy();
 }
 function closeFeaturedProduct(){const m=document.getElementById('featuredProductModal');if(m)m.hidden=true;}
 function openNovaVigilante(){showPage('nova');setTimeout(()=>novaVigilanteScan(),0);}
@@ -1195,8 +1284,19 @@ async function loadProductsOnline(){
     });
     const online=(data||[]).map(p=>{
       const media=mediaById[String(p.id)]||{images:[],videos:[]};
-      const images=Array.isArray(p.images)&&p.images.length?p.images:(media.images.length?media.images:(p.image?[p.image]:[]));
-      const videos=Array.isArray(p.videos)?p.videos:media.videos;
+      const normalizeMediaUrl=(u)=>{
+        const v=String(u||'').trim();
+        if(!v)return '';
+        if(/^https?:\/\//i.test(v) || v.startsWith('data:') || v.startsWith('blob:'))return v;
+        const base=(window.RS_SUPABASE_URL||'').replace(/\/$/,'');
+        if(v.startsWith('/storage/v1/object/public/')) return base+v;
+        if(v.startsWith('storage/v1/object/public/')) return base+'/'+v;
+        return base+'/storage/v1/object/public/river-product-media/'+v.replace(/^\//,'');
+      };
+      const imagesRaw=Array.isArray(p.images)&&p.images.length?p.images:(media.images.length?media.images:(p.image?[p.image]:[]));
+      const videosRaw=Array.isArray(p.videos)?p.videos:media.videos;
+      const images=imagesRaw.map(normalizeMediaUrl).filter(Boolean);
+      const videos=videosRaw.map(normalizeMediaUrl).filter(Boolean);
       return {
         id:String(p.id), seller_id:p.seller_id||null, status:p.status||"published", sellerType:p.seller_type||"Privato", condition:p.condition||"Nuovo",
         name:p.name, description:p.description||"", price:Number(p.price||0), stock:Number(p.stock||0),
@@ -1222,8 +1322,9 @@ async function publishProductOnline(){
 
   const name=document.getElementById("sellName").value.trim();
   const price=Number(document.getElementById("sellPrice").value);
-  const cat=document.getElementById("sellCategory").value;
+  const cat=rsCategoryPath(document.getElementById("sellCategory").value);
   const desc=document.getElementById("sellDesc").value.trim();
+  const stock=Math.max(1,Math.floor(Number(document.getElementById("sellStock")?.value||1)));
   const files=Array.isArray(sellMediaFiles)?sellMediaFiles.slice():[];
   const productId="user-"+crypto.randomUUID();
   const images=[];
@@ -1249,9 +1350,14 @@ async function publishProductOnline(){
     if(isVideo) videos.push(url); else images.push(url);
   }
 
+  let sellerType='Privato';
+  try{
+    const pr=await window.rsSupabase.from('profiles').select('seller_type').eq('id',user.id).maybeSingle();
+    sellerType=pr?.data?.seller_type||'Privato';
+  }catch(_){}
   const product={
-    id:productId, seller_id:user.id, seller_type:"Privato", condition:sellType||"Nuovo", name, description:desc,
-    price, stock:1, category:cat, shipping:"Spedizione disponibile", handling:"", payout:"", promo:false, status:"published",
+    id:productId, seller_id:user.id, seller_type:sellerType, condition:sellType||"Nuovo", name, description:desc,
+    price, stock, category:cat, shipping:"Spedizione disponibile", handling:"", payout:"", promo:false, status:"published",
     image:images[0]||""
   };
   const {data,error}=await window.rsSupabase.from("products").insert(product).select().single();
@@ -1261,7 +1367,7 @@ async function publishProductOnline(){
                    ...videos.map((url,i)=>({product_id:String(data.id),seller_id:user.id,media_type:'video',media_url:url,sort_order:100+i}))];
   if(mediaRows.length){
     const mr=await window.rsSupabase.from('product_media').insert(mediaRows);
-    if(mr.error) throw mr.error;
+    if(mr.error){ await window.rsSupabase.from('products').delete().eq('id',String(data.id)); throw mr.error; }
   }
 
   const saved={
@@ -1489,7 +1595,7 @@ document.getElementById('adDays')?.addEventListener('input',updateAdTotal);
   // Closing is handled by the immediate opening guard above. Keep this block only for audio lifecycle.
   window.addEventListener('pagehide',stopAmbient,{once:true});
 })();
-document.addEventListener('DOMContentLoaded',()=>{renderCart();updateCount();renderPiggy();refreshStock();});
+document.addEventListener('DOMContentLoaded',()=>{initCategorySelectors();renderCart();updateCount();renderPiggy();refreshStock();});
 </script>
 
 <script id="market-core-v14-js">
@@ -1531,7 +1637,7 @@ document.addEventListener('DOMContentLoaded',()=>{renderCart();updateCount();ren
     <div class="sell-step active" data-sell-step="1">
       <h3>1. Cosa vuoi vendere?</h3>
       <button class="sell-choice" onclick="sellPickType('📦 Oggetto nuovo')">📦 Oggetto nuovo</button>
-      <button class="sell-choice" onclick="sellPickType('♻️ Oggetto usato in ottime condizioni')">♻️ Oggetto usato in ottime condizioni</button>
+      <button class="sell-choice" onclick="sellPickType('♻️ Oggetto usato in ottime condizioni',event)">♻️ Oggetto usato in ottime condizioni</button>
       <div class="sell-actions"><button class="sell-next" onclick="sellNext()">Continua →</button></div>
     </div>
 
@@ -1548,9 +1654,8 @@ document.addEventListener('DOMContentLoaded',()=>{renderCart();updateCount();ren
       <input id="sellPrice" class="sell-input" type="number" min="0" step="0.01" placeholder="Prezzo (€)">
       <select id="sellCategory" class="sell-input">
         <option value="">Categoria</option>
-        <option>Elettronica</option><option>Sport</option><option>Casa</option>
-        <option>Moda</option><option>Integratori</option><option>Altro</option>
       </select>
+      <input id="sellStock" class="sell-input" type="number" min="1" max="100000" step="1" value="1" placeholder="Quantità disponibile">
       <textarea id="sellDesc" class="sell-textarea" rows="4" placeholder="Descrizione e condizioni del prodotto"></textarea>
       <div class="sell-actions">
         <button class="sell-back" onclick="sellBack()">← Indietro</button>
@@ -1640,15 +1745,16 @@ function sellGo(n){
   if(n===3){
     const name=document.getElementById("sellName").value.trim();
     const price=Number(document.getElementById("sellPrice").value);
-    const cat=document.getElementById("sellCategory").value;
+    const cat=rsCategoryPath(document.getElementById("sellCategory").value);
     const desc=document.getElementById("sellDesc").value.trim();
-    if(!name || !price || !cat || !desc){sellGo(2); alert("Completa nome, prezzo, categoria e descrizione."); return;}
+    const stock=Math.floor(Number(document.getElementById("sellStock")?.value||0));
+    if(!name || !price || !cat || !desc || stock<1){sellGo(2); alert("Completa nome, prezzo, categoria, descrizione e quantità disponibile."); return;}
     const photoCount=sellMediaFiles.filter(f=>f.type.startsWith('image/')).length;
     const videoCount=sellMediaFiles.filter(f=>f.type.startsWith('video/')).length;
     if(photoCount<1){sellGo(2); alert("Inserisci almeno una foto del prodotto."); return;}
     if(photoCount>20 || videoCount>3){sellGo(2); return;}
     document.getElementById("sellPreview").innerHTML =
-      `<div class="sell-preview">${escapeSell(name)}</div><div>${escapeSell(sellType||"Condizione non selezionata")} • ${escapeSell(cat)}</div><div>€ ${price.toFixed(2)}</div>`;
+      `<div class="sell-preview">${escapeSell(name)}</div><div>${escapeSell(sellType||"Condizione non selezionata")} • ${escapeSell(cat)}</div><div>€ ${price.toFixed(2)} • ${stock} disponibili</div>`;
     const pc=document.getElementById("sellPhotoCheck"); if(pc)pc.style.display=sellMediaFiles.some(f=>f.type.startsWith('image/'))?"block":"none";
     runNovaCheck();
   }
@@ -1657,7 +1763,7 @@ function escapeSell(v){return String(v).replace(/[&<>"']/g,m=>({'&':'&amp;','<':
 function runNovaCheck(){
   const name=document.getElementById("sellName").value.trim();
   const price=Number(document.getElementById("sellPrice").value);
-  const cat=document.getElementById("sellCategory").value;
+  const cat=rsCategoryPath(document.getElementById("sellCategory").value);
   const desc=document.getElementById("sellDesc").value.trim();
   const checks=[];
   checks.push([name.length>=3,"Nome del prodotto presente e leggibile"]);
@@ -2089,15 +2195,27 @@ window.goToCart = window.RiverSpendOpenCart;
 </script>
 
 
+<div id="rs-global-product-rail" class="rs-global-product-rail" hidden><div><strong>🌊 RiverSpendShop</strong><span>Prodotti disponibili</span></div><div id="rs-global-product-list"></div><button type="button" onclick="showPage('market')">Apri Shop →</button></div>
+
 <nav class="rs-approved-bottom" aria-label="Navigazione RiverSpend">
  <button class="active" onclick="showPage('market')"><b>🏠</b>Home</button>
  <button onclick="showPage('market')"><b>🛍️</b>Market</button>
  <button onclick="openSellPanel()"><b>🏷️</b>Vendi</button>
- <button onclick="RiverSpendOpenCart()"><b>🛒</b>Carrello</button>
+ <button onclick="RiverSpendOpenCartV51()"><b>🛒</b>Carrello</button>
  <button onclick="showPage('nova')"><b>🛡️</b>Nova</button>
  <button onclick="showPage('profile')"><b>👤</b>Profilo</button>
 </nav>
 
-<script>document.addEventListener("DOMContentLoaded",()=>{loadProductsOnline();});</script>
+<script>
+function renderGlobalProductRail(){
+  const rail=document.getElementById('rs-global-product-rail'),list=document.getElementById('rs-global-product-list');
+  if(!rail||!list)return;
+  const items=(Array.isArray(products)?products:[]).filter(productMatches).slice(0,5);
+  if(!items.length){rail.hidden=true;return;}
+  rail.hidden=false;
+  list.innerHTML=items.map(p=>{const u=escRS(p.image||p.images?.[0]||'');return `<button type="button" class="rs-global-product-chip" onclick="openFeaturedProduct('${escRS(p.id)}')">${u?`<img src="${u}" onerror="rsImageFallback(this)" alt="">`:'🛍️'}<b>${escRS(p.name)}</b><br><small>${moneyRS(p.price)} · ${Number(p.stock||0)} rimasti</small></button>`}).join('');
+}
+</script>
+<script>document.addEventListener("DOMContentLoaded",()=>{loadProductsOnline();renderGlobalProductRail();});</script>
 </body>
 </html>
