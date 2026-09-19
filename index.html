@@ -182,7 +182,26 @@ footer{text-align:center;color:#688391;padding:28px 16px;border-top:1px solid va
 .rs-stock-badge{border-radius:999px;padding:7px 10px;font-weight:800;font-size:12px;white-space:nowrap;background:#e8f7ee;color:#17633d}.rs-stock-badge.sold{background:#ffe9e9;color:#a33}
 .rs-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.rs-detail-grid>div{border:1px solid var(--line);border-radius:12px;padding:11px;background:#fbfdfe}.rs-detail-grid p{margin:6px 0;line-height:1.45;font-size:13px}
 .rs-piggy-product{display:flex;align-items:center;gap:9px;flex-wrap:wrap;border:1px solid #f0df9c;background:#fff9df;border-radius:12px;padding:11px;margin:12px 0}.rs-piggy-product span{font-size:12px;color:#688391;flex:1}@media(max-width:600px){.rs-detail-grid{grid-template-columns:1fr}.rs-product-detail-head{flex-direction:column}.rs-gallery img,.rs-gallery video{max-height:300px}}
-.rs-global-product-rail{max-width:1180px;margin:10px auto;padding:10px 14px;border:1px solid var(--line);border-radius:14px;background:#fff;display:flex;align-items:center;gap:10px;flex-wrap:wrap}.rs-global-product-rail>div:first-child{display:flex;flex-direction:column}.rs-global-product-rail>div:first-child span{font-size:11px;color:var(--muted)}#rs-global-product-list{display:flex;gap:7px;overflow:auto;flex:1}.rs-global-product-chip{min-width:145px;border:1px solid #d9e9ef;border-radius:10px;padding:7px;background:#fafdff;cursor:pointer}.rs-global-product-chip img{width:42px;height:42px;object-fit:cover;border-radius:8px;vertical-align:middle;margin-right:6px}.rs-global-product-chip b{font-size:12px}</style>
+.rs-global-product-rail{max-width:1180px;margin:10px auto;padding:10px 14px;border:1px solid var(--line);border-radius:14px;background:#fff;display:flex;align-items:center;gap:10px;flex-wrap:wrap}.rs-global-product-rail>div:first-child{display:flex;flex-direction:column}.rs-global-product-rail>div:first-child span{font-size:11px;color:var(--muted)}#rs-global-product-list{display:flex;gap:7px;overflow:auto;flex:1}.rs-global-product-chip{min-width:145px;border:1px solid #d9e9ef;border-radius:10px;padding:7px;background:#fafdff;cursor:pointer}.rs-global-product-chip img{width:42px;height:42px;object-fit:cover;border-radius:8px;vertical-align:middle;margin-right:6px}.rs-global-product-chip b{font-size:12px}
+/* RiverSpend Park insertion */
+.rs-park-hero{margin:12px auto 16px;max-width:1180px;border-radius:24px;overflow:hidden;background:linear-gradient(145deg,#063f57,#087f9b 55%,#1fb6b0);color:#fff;padding:22px;box-shadow:0 12px 30px rgba(0,70,95,.18)}
+.rs-park-hero h1{margin:4px 0 7px;font-size:30px}.rs-park-hero p{margin:0 0 13px;max-width:760px;line-height:1.45}
+.rs-park-badge{display:inline-block;background:#ffd45a;color:#17364b;border-radius:999px;padding:6px 10px;font-size:11px;font-weight:900}
+.rs-park-actions{display:flex;gap:8px;flex-wrap:wrap}.rs-park-actions button{border:0;border-radius:999px;padding:10px 14px;font-weight:900}
+.rs-park-actions .secondary{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.5)}
+.rs-park-section{margin:18px 0}.rs-park-section h2{margin:0 0 6px}.rs-park-note{color:#688391;font-size:12px;margin:0 0 12px}
+.rs-park-gallery{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.rs-park-card{background:#fff;border:1px solid #c9eaf0;border-radius:15px;overflow:hidden;box-shadow:0 5px 15px rgba(38,112,132,.07)}
+.rs-park-card img{width:100%;aspect-ratio:1/0.92;object-fit:cover;display:block;background:#eefafd}
+.rs-park-card .rs-park-card-body{padding:9px 10px 11px}.rs-park-card strong{display:block;font-size:13px;color:#17364b}.rs-park-card small{display:block;color:#688391;margin-top:3px;font-size:10px}
+.rs-park-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.rs-park-list-item{background:#f5fcfd;border:1px solid #d5edf1;border-radius:12px;padding:10px}.rs-park-list-item b{color:#087f9b}.rs-park-list-item span{display:block;font-size:12px;margin-top:3px;color:#31596b}
+.rs-park-events{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.rs-park-event{background:linear-gradient(135deg,#fff8df,#effbfd);border:1px solid #ead88e;border-radius:13px;padding:12px}
+.rs-park-event b{display:block;margin-bottom:3px}.rs-park-source{font-size:11px;color:#688391;margin-top:12px}
+@media(max-width:700px){.rs-park-gallery{grid-template-columns:repeat(2,minmax(0,1fr))}.rs-park-list{grid-template-columns:1fr 1fr}.rs-park-events{grid-template-columns:1fr}.rs-park-hero h1{font-size:25px}}
+
+</style>
 
 <style id="market-core-v14">
 .core-status{margin:10px auto;max-width:1180px;padding:9px 12px;border:1px solid #d8e5ee;border-radius:12px;background:#fbfdff;font-size:12px}
@@ -536,6 +555,7 @@ try {
   <button class="rs-approved-action" onclick="showPage('piggy')"><b>🐷</b>PiggyBank<small>Metti da parte</small></button>
   <button class="rs-approved-action" onclick="showPage('shield')"><b>🛡️</b>Shield<small>Protezione</small></button>
   <button class="rs-approved-action" onclick="showPage('nova')"><b>🤖</b>Nova<small>Il Vigilante</small></button>
+  <button class="rs-approved-action" onclick="showPage('park')"><b>🎢</b>RiverSpend Park<small>Scopri il progetto</small></button>
 </div>
 
 <div class="market-head">
@@ -939,6 +959,91 @@ try {
   </section>
 
   
+
+<section id="park" class="page">
+  <div class="rs-park-hero">
+    <span class="rs-park-badge">RIVERSPEND PARK • PROGETTO IN SVILUPPO</span>
+    <h1>🎢 RiverSpend Park — Avventure Oltre l'Immaginazione</h1>
+    <p>Area dedicata al progetto del parco: attrazioni, WaterPark, Kids, Future, Nature, Village ed esperienze. Le immagini sono quelle caricate nella chat.</p>
+    <div class="rs-park-actions">
+      <button type="button" onclick="document.getElementById('rsParkGallery').scrollIntoView({behavior:'smooth',block:'start'})">🖼️ Guarda le immagini</button>
+      <button type="button" class="secondary" onclick="document.getElementById('rsParkList').scrollIntoView({behavior:'smooth',block:'start'})">📋 Lista attrazioni</button>
+      <button type="button" class="secondary" onclick="showPage('market')">🛍️ Torna al RiverSpendShop</button>
+    </div>
+  </div>
+  <div class="panel">
+    <h2>🌊 Il progetto</h2>
+    <p class="muted">Il Park viene presentato come progetto in sviluppo, non come struttura già operativa.</p>
+  </div>
+  <section id="rsParkGallery" class="rs-park-section">
+    <h2>🖼️ Galleria immagini RiverSpend Park</h2>
+    <p class="rs-park-note">Sono incluse le immagini originali disponibili nei file caricati. I nomi numerici vengono mantenuti per non inventare associazioni non verificate.</p>
+    <div class="rs-park-gallery"><article class="rs-park-card"><img src="riverspend-park-assets/1000186325.png" alt="RiverSpend Park — immagine 1" loading="lazy"><div class="rs-park-card-body"><strong>RiverSpend Park</strong><small>Materiale attrazioni — immagine 1</small></div></article>
+<article class="rs-park-card"><img src="riverspend-park-assets/1000186326.png" alt="RiverSpend Park — immagine 2" loading="lazy"><div class="rs-park-card-body"><strong>RiverSpend Park</strong><small>Materiale attrazioni — immagine 2</small></div></article>
+<article class="rs-park-card"><img src="riverspend-park-assets/1000186327.png" alt="RiverSpend Park — immagine 3" loading="lazy"><div class="rs-park-card-body"><strong>RiverSpend Park</strong><small>Materiale attrazioni — immagine 3</small></div></article>
+<article class="rs-park-card"><img src="riverspend-park-assets/1000186351.png" alt="RiverSpend Park — immagine 4" loading="lazy"><div class="rs-park-card-body"><strong>RiverSpend Park</strong><small>Materiale attrazioni — immagine 4</small></div></article>
+<article class="rs-park-card"><img src="riverspend-park-assets/1000186352.png" alt="RiverSpend Park — immagine 5" loading="lazy"><div class="rs-park-card-body"><strong>RiverSpend Park</strong><small>Materiale attrazioni — immagine 5</small></div></article>
+<article class="rs-park-card"><img src="riverspend-park-assets/1000186353.png" alt="RiverSpend Park — immagine 6" loading="lazy"><div class="rs-park-card-body"><strong>RiverSpend Park</strong><small>Materiale attrazioni — immagine 6</small></div></article>
+<article class="rs-park-card"><img src="riverspend-park-assets/1000186354.png" alt="RiverSpend Park — immagine 7" loading="lazy"><div class="rs-park-card-body"><strong>RiverSpend Park</strong><small>Materiale attrazioni — immagine 7</small></div></article>
+<article class="rs-park-card"><img src="riverspend-park-assets/1000186355.png" alt="RiverSpend Park — immagine 8" loading="lazy"><div class="rs-park-card-body"><strong>RiverSpend Park</strong><small>Materiale attrazioni — immagine 8</small></div></article>
+<article class="rs-park-card"><img src="riverspend-park-assets/1000186365.png" alt="RiverSpend Park — immagine 9" loading="lazy"><div class="rs-park-card-body"><strong>RiverSpend Park</strong><small>Materiale attrazioni — immagine 9</small></div></article>
+<article class="rs-park-card"><img src="riverspend-park-assets/1000186366.png" alt="RiverSpend Park — immagine 10" loading="lazy"><div class="rs-park-card-body"><strong>RiverSpend Park</strong><small>Materiale attrazioni — immagine 10</small></div></article>
+<article class="rs-park-card"><img src="riverspend-park-assets/1000186367.png" alt="RiverSpend Park — immagine 11" loading="lazy"><div class="rs-park-card-body"><strong>RiverSpend Park</strong><small>Materiale attrazioni — immagine 11</small></div></article>
+<article class="rs-park-card"><img src="riverspend-park-assets/1000186368.png" alt="RiverSpend Park — immagine 12" loading="lazy"><div class="rs-park-card-body"><strong>RiverSpend Park</strong><small>Materiale attrazioni — immagine 12</small></div></article>
+<article class="rs-park-card"><img src="riverspend-park-assets/1000186369.png" alt="RiverSpend Park — immagine 13" loading="lazy"><div class="rs-park-card-body"><strong>RiverSpend Park</strong><small>Materiale attrazioni — immagine 13</small></div></article>
+<article class="rs-park-card"><img src="riverspend-park-assets/1000186372.png" alt="RiverSpend Park — immagine 14" loading="lazy"><div class="rs-park-card-body"><strong>RiverSpend Park</strong><small>Materiale attrazioni — immagine 14</small></div></article>
+<article class="rs-park-card"><img src="riverspend-park-assets/1000186373.png" alt="RiverSpend Park — immagine 15" loading="lazy"><div class="rs-park-card-body"><strong>RiverSpend Park</strong><small>Materiale attrazioni — immagine 15</small></div></article>
+<article class="rs-park-card"><img src="riverspend-park-assets/1000186381.png" alt="RiverSpend Park — immagine 16" loading="lazy"><div class="rs-park-card-body"><strong>RiverSpend Park</strong><small>Materiale attrazioni — immagine 16</small></div></article>
+<article class="rs-park-card"><img src="riverspend-park-assets/1000186382.png" alt="RiverSpend Park — immagine 17" loading="lazy"><div class="rs-park-card-body"><strong>RiverSpend Park</strong><small>Materiale attrazioni — immagine 17</small></div></article>
+<article class="rs-park-card"><img src="riverspend-park-assets/1000186392.png" alt="RiverSpend Park — immagine 18" loading="lazy"><div class="rs-park-card-body"><strong>RiverSpend Park</strong><small>Materiale attrazioni — immagine 18</small></div></article>
+<article class="rs-park-card"><img src="riverspend-park-assets/1000186393.png" alt="RiverSpend Park — immagine 19" loading="lazy"><div class="rs-park-card-body"><strong>RiverSpend Park</strong><small>Materiale attrazioni — immagine 19</small></div></article>
+<article class="rs-park-card"><img src="riverspend-park-assets/1000186393_2.png" alt="RiverSpend Park — immagine 20" loading="lazy"><div class="rs-park-card-body"><strong>RiverSpend Park</strong><small>Materiale attrazioni — immagine 20</small></div></article>
+<article class="rs-park-card"><img src="riverspend-park-assets/1000186394.png" alt="RiverSpend Park — immagine 21" loading="lazy"><div class="rs-park-card-body"><strong>RiverSpend Park</strong><small>Materiale attrazioni — immagine 21</small></div></article>
+<article class="rs-park-card"><img src="riverspend-park-assets/1000186395.png" alt="RiverSpend Park — immagine 22" loading="lazy"><div class="rs-park-card-body"><strong>RiverSpend Park</strong><small>Materiale attrazioni — immagine 22</small></div></article>
+<article class="rs-park-card"><img src="riverspend-park-assets/1000186396.png" alt="RiverSpend Park — immagine 23" loading="lazy"><div class="rs-park-card-body"><strong>RiverSpend Park</strong><small>Materiale attrazioni — immagine 23</small></div></article>
+<article class="rs-park-card"><img src="riverspend-park-assets/1000186397.png" alt="RiverSpend Park — immagine 24" loading="lazy"><div class="rs-park-card-body"><strong>RiverSpend Park</strong><small>Materiale attrazioni — immagine 24</small></div></article>
+<article class="rs-park-card"><img src="riverspend-park-assets/1000186398.png" alt="RiverSpend Park — immagine 25" loading="lazy"><div class="rs-park-card-body"><strong>RiverSpend Park</strong><small>Materiale attrazioni — immagine 25</small></div></article>
+<article class="rs-park-card"><img src="riverspend-park-assets/1000186399.png" alt="RiverSpend Park — immagine 26" loading="lazy"><div class="rs-park-card-body"><strong>RiverSpend Park</strong><small>Materiale attrazioni — immagine 26</small></div></article>
+<article class="rs-park-card"><img src="riverspend-park-assets/1000186400.png" alt="RiverSpend Park — immagine 27" loading="lazy"><div class="rs-park-card-body"><strong>RiverSpend Park</strong><small>Materiale attrazioni — immagine 27</small></div></article>
+<article class="rs-park-card"><img src="riverspend-park-assets/1000186402.png" alt="RiverSpend Park — immagine 28" loading="lazy"><div class="rs-park-card-body"><strong>RiverSpend Park</strong><small>Materiale attrazioni — immagine 28</small></div></article>
+<article class="rs-park-card"><img src="riverspend-park-assets/1000186423.png" alt="RiverSpend Park — immagine 29" loading="lazy"><div class="rs-park-card-body"><strong>RiverSpend Park</strong><small>Materiale attrazioni — immagine 29</small></div></article>
+<article class="rs-park-card"><img src="riverspend-park-assets/1000187313.jpg" alt="RiverSpend Park — immagine 30" loading="lazy"><div class="rs-park-card-body"><strong>RiverSpend Park</strong><small>Materiale attrazioni — immagine 30</small></div></article>
+<article class="rs-park-card"><img src="riverspend-park-assets/1000187314.jpg" alt="RiverSpend Park — immagine 31" loading="lazy"><div class="rs-park-card-body"><strong>RiverSpend Park</strong><small>Materiale attrazioni — immagine 31</small></div></article>
+<article class="rs-park-card"><img src="riverspend-park-assets/1000187315.jpg" alt="RiverSpend Park — immagine 32" loading="lazy"><div class="rs-park-card-body"><strong>RiverSpend Park</strong><small>Materiale attrazioni — immagine 32</small></div></article>
+<article class="rs-park-card"><img src="riverspend-park-assets/1000187316.jpg" alt="RiverSpend Park — immagine 33" loading="lazy"><div class="rs-park-card-body"><strong>RiverSpend Park</strong><small>Materiale attrazioni — immagine 33</small></div></article>
+<article class="rs-park-card"><img src="riverspend-park-assets/1000187317.jpg" alt="RiverSpend Park — immagine 34" loading="lazy"><div class="rs-park-card-body"><strong>RiverSpend Park</strong><small>Materiale attrazioni — immagine 34</small></div></article>
+<article class="rs-park-card"><img src="riverspend-park-assets/1000187321.jpg" alt="RiverSpend Park — immagine 35" loading="lazy"><div class="rs-park-card-body"><strong>RiverSpend Park</strong><small>Materiale attrazioni — immagine 35</small></div></article>
+<article class="rs-park-card"><img src="riverspend-park-assets/1000187322.jpg" alt="RiverSpend Park — immagine 36" loading="lazy"><div class="rs-park-card-body"><strong>RiverSpend Park</strong><small>Materiale attrazioni — immagine 36</small></div></article>
+<article class="rs-park-card"><img src="riverspend-park-assets/1000187343.png" alt="RiverSpend Park — immagine 37" loading="lazy"><div class="rs-park-card-body"><strong>RiverSpend Park</strong><small>Materiale attrazioni — immagine 37</small></div></article>
+<article class="rs-park-card"><img src="riverspend-park-assets/1000187343_2.png" alt="RiverSpend Park — immagine 38" loading="lazy"><div class="rs-park-card-body"><strong>RiverSpend Park</strong><small>Materiale attrazioni — immagine 38</small></div></article></div>
+  </section>
+  <section id="rsParkList" class="rs-park-section">
+    <h2>📋 Lista attrazioni e aree</h2>
+    <p class="rs-park-note">Elenco trascritto dal materiale video caricato in chat.</p>
+    <h3>🌊 Zona River / Adventure</h3><div class="rs-park-list"><div class="rs-park-list-item"><b>1. River Boat</b><span>giro in barca sul fiume</span></div><div class="rs-park-list-item"><b>2. Adventure River</b><span>percorso acquatico</span></div><div class="rs-park-list-item"><b>3. Fishing Zone</b><span>area pesca</span></div><div class="rs-park-list-item"><b>4. Gold River</b><span>ricerca delle pepite d'oro</span></div><div class="rs-park-list-item"><b>5. River Bridge</b><span>percorso panoramico sul fiume</span></div><div class="rs-park-list-item"><b>6. RiverZip</b><span>zip-line</span></div><div class="rs-park-list-item"><b>7. RiverClimb</b><span>arrampicata</span></div><div class="rs-park-list-item"><b>8. Jungle Trail</b><span>percorso nella natura</span></div><div class="rs-park-list-item"><b>9. RiverBike</b><span>percorso MTB</span></div><div class="rs-park-list-item"><b>10. Adventure Camp</b><span>area campeggio/avventura</span></div></div>
+    <h3 style="margin-top:18px">🎯 Altre attrazioni nel materiale</h3><div class="rs-park-list"><div class="rs-park-list-item"><b>. Monster Vulcan</b><span></span></div><div class="rs-park-list-item"><b>. Crop Circles</b><span></span></div><div class="rs-park-list-item"><b>. Il Sesto Elemento</b><span></span></div><div class="rs-park-list-item"><b>. The Crypt</b><span></span></div><div class="rs-park-list-item"><b>. Prehistoric River</b><span></span></div><div class="rs-park-list-item"><b>. UNIVERSE</b><span></span></div><div class="rs-park-list-item"><b>. Wild West Wood</b><span></span></div></div>
+    <h3 style="margin-top:18px">🔥 Attrazioni 75–83</h3><div class="rs-park-list"><div class="rs-park-list-item"><b>75. Volcano Escape</b><span>fuga da un vulcano in eruzione</span></div><div class="rs-park-list-item"><b>76. SkyRocket</b><span>lancio verticale verso il cielo</span></div><div class="rs-park-list-item"><b>77. RiverRacer</b><span>duello tra due coaster</span></div><div class="rs-park-list-item"><b>78. Dark River</b><span>dark ride completamente al buio</span></div><div class="rs-park-list-item"><b>79. Lost Temple</b><span>avventura in un antico tempio</span></div><div class="rs-park-list-item"><b>80. Pirate River</b><span>battaglia navale interattiva</span></div><div class="rs-park-list-item"><b>81. Dragon Flight</b><span>volo su un drago</span></div><div class="rs-park-list-item"><b>82. Ice Mountain</b><span>spedizione su una montagna ghiacciata</span></div><div class="rs-park-list-item"><b>83. Avalanche</b><span>discesa attraverso una valanga</span></div></div>
+    <h3 style="margin-top:18px">👧 Kids & Future</h3><div class="rs-park-list"><div class="rs-park-list-item"><b>13. Kids River</b><span>area bambini</span></div><div class="rs-park-list-item"><b>14. River Castle</b><span>area gioco</span></div><div class="rs-park-list-item"><b>15. Splash River</b><span>area acqua per famiglie</span></div><div class="rs-park-list-item"><b>16. Future City</b><span>città futuristica</span></div><div class="rs-park-list-item"><b>17. Nova Experience</b><span>esperienza interattiva con Nova</span></div><div class="rs-park-list-item"><b>18. Drone Zone</b><span>area droni</span></div><div class="rs-park-list-item"><b>19. Space River</b><span>esperienza spaziale</span></div><div class="rs-park-list-item"><b>20. VR River</b><span>esperienze in realtà virtuale</span></div><div class="rs-park-list-item"><b>89. Kids River Boats</b><span>mini-barche per bambini</span></div><div class="rs-park-list-item"><b>90. Little Explorers</b><span>percorso avventura</span></div><div class="rs-park-list-item"><b>91. Mini Volcano</b><span>vulcano interattivo per bambini</span></div><div class="rs-park-list-item"><b>92. Rainbow Falls</b><span>cascate colorate e giochi d’acqua</span></div><div class="rs-park-list-item"><b>93. Magic Forest</b><span>foresta interattiva</span></div><div class="rs-park-list-item"><b>94. Dino Kids Adventure</b><span>spedizione tra dinosauri</span></div><div class="rs-park-list-item"><b>95. Robot Factory</b><span>fabbrica futuristica interattiva</span></div><div class="rs-park-list-item"><b>96. Cyber River</b><span>percorso digitale immersivo</span></div><div class="rs-park-list-item"><b>97. Moon Mission</b><span>missione sulla Luna</span></div></div>
+    <h3 style="margin-top:18px">💦 WaterPark — 11 attrazioni</h3><div class="rs-park-list"><div class="rs-park-list-item"><b>1. Megalondonte</b><span>WaterPark</span></div><div class="rs-park-list-item"><b>2. Tsunami Wave</b><span>WaterPark</span></div><div class="rs-park-list-item"><b>3. Octopus</b><span>WaterPark</span></div><div class="rs-park-list-item"><b>4. River Rapidi</b><span>WaterPark</span></div><div class="rs-park-list-item"><b>5. Leviatan</b><span>WaterPark</span></div><div class="rs-park-list-item"><b>6. Whale</b><span>WaterPark</span></div><div class="rs-park-list-item"><b>7. Manta</b><span>WaterPark</span></div><div class="rs-park-list-item"><b>8. Orca</b><span>WaterPark</span></div><div class="rs-park-list-item"><b>9. Trichechi</b><span>WaterPark</span></div><div class="rs-park-list-item"><b>10. FreeFall</b><span>WaterPark</span></div><div class="rs-park-list-item"><b>11. RiverFlow</b><span>WaterPark</span></div></div>
+    <h3 style="margin-top:18px">🏘️ Village, Nature & Special</h3><div class="rs-park-list"><div class="rs-park-list-item"><b>26. RiverSpendShop Village</b><span>area villaggio</span></div><div class="rs-park-list-item"><b>27. RiverFood</b><span>area food</span></div><div class="rs-park-list-item"><b>28. River Café</b><span>area café</span></div><div class="rs-park-list-item"><b>29. RiverGift</b><span>area gift</span></div><div class="rs-park-list-item"><b>30. RiverMoney Center</b><span>servizi RiverMoney</span></div><div class="rs-park-list-item"><b>31. River Forest</b><span>zona natura</span></div><div class="rs-park-list-item"><b>32. River Garden</b><span>zona natura</span></div><div class="rs-park-list-item"><b>33. Red Fish River</b><span>zona natura</span></div><div class="rs-park-list-item"><b>34. Wildlife Area</b><span>area fauna</span></div><div class="rs-park-list-item"><b>35. River Ecology</b><span>area ecologia</span></div><div class="rs-park-list-item"><b>36. RiverSpend Challenge</b><span>attrazione speciale</span></div></div>
+  </section>
+  <section class="rs-park-section">
+    <h2>📅 Event Days</h2>
+    <div class="rs-park-events">
+      <div class="rs-park-event"><b>🌊 Tsunami Day</b>Giornata tematica del Park.</div>
+      <div class="rs-park-event"><b>🌋 Vulcan Day</b>Giornata tematica del Park.</div>
+      <div class="rs-park-event"><b>🌪️ Twister Day</b>Giornata tematica del Park.</div>
+      <div class="rs-park-event"><b>🔥 Fire Day</b>Giornata tematica del Park.</div>
+      <div class="rs-park-event"><b>🌍 Earthquake Day</b>Giornata tematica del Park.</div>
+      <div class="rs-park-event"><b>⛈️ Storm Day</b>Giornata tematica del Park.</div>
+      <div class="rs-park-event"><b>❄️ Glacier Day</b>Giornata tematica del Park.</div>
+      <div class="rs-park-event"><b>🌊 River Day</b>Giornata tematica del Park.</div>
+      <div class="rs-park-event"><b>🌑 Eclipse Day</b>Giornata tematica del Park.</div>
+    </div>
+  </section>
+</section>
+
+
 <section id="profile" class="page">
   <h2>👤 Il mio RiverSpend</h2>
   <div class="panel">
@@ -1068,6 +1173,7 @@ try {
     <button onclick="showPage('protector')">🔐 RiverSpend Protector</button>
     <button onclick="showPage('multilanguage')">🌐 Multilanguage</button>
     <button onclick="showPage('market')">🛍️ Tutti i prodotti</button>
+    <button onclick="showPage('park')">🎢 RiverSpend Park</button>
   </div>
 </div>
 
@@ -1126,8 +1232,6 @@ const RS_CATEGORY_TREE = {
   "Servizi": ["Servizi professionali","Riparazioni","Lezioni","Eventi","Servizi digitali"]
 };
 const RS_CATEGORY_ALIASES = {"PC":"PC","Tablet":"Tablet","TV":"TV","Casalinghi":"Casalinghi","Tovaglie":"Tovaglie","Integratori":"Integratori","Auto e Moto":"Auto e Moto","Moda":"Moda","Casa":"Casa","Animali":"Animali","Sport":"Sport e Tempo libero","Lavoro":"Fai da te e Lavoro","Gadget":"Gadget e Regali","Alimentari":"Alimentari","Bevande":"Bevande"};
-function rsCategoryPath(value){ const v=String(value||'').trim(); if(!v||v==='Tutti') return ''; if(v.includes(' > ')) return v; const parent=Object.entries(RS_CATEGORY_TREE).find(([,children])=>children.includes(v))?.[0]; return parent ? parent+' > '+v : v; }
-function rsCategoryLeaf(value){ const v=String(value||'').trim(); return v.includes(' > ')?v.split(' > ').pop().trim():v; }
 function rsCategoryEntries(){
   const out=[];
   Object.entries(RS_CATEGORY_TREE).forEach(([parent,children])=>{out.push({value:parent,label:parent,parent:null});children.forEach(child=>out.push({value:child,label:child,parent}));});
@@ -1138,20 +1242,18 @@ function initCategorySelectors(){
   const market=document.getElementById('rsCategorySelect');
   if(market){market.innerHTML='<option value="Tutti">📂 TUTTE LE CATEGORIE</option>'+Object.entries(RS_CATEGORY_TREE).map(([parent,children])=>`<optgroup label="${parent}"><option value="${parent}">${parent}</option>${children.map(c=>`<option value="${c}">${c}</option>`).join('')}</optgroup>`).join(''); market.value=category||'Tutti';}
   const sell=document.getElementById('sellCategory');
-  if(sell){sell.innerHTML='<option value="">Categoria</option>'+Object.entries(RS_CATEGORY_TREE).map(([parent,children])=>`<optgroup label="${parent}"><option value="${parent}">${parent}</option>${children.map(c=>`<option value="${parent} > ${c}">${c}</option>`).join('')}</optgroup>`).join('');}
+  if(sell){sell.innerHTML='<option value="">Categoria</option>'+Object.entries(RS_CATEGORY_TREE).map(([parent,children])=>`<optgroup label="${parent}"><option value="${parent}">${parent}</option>${children.map(c=>`<option value="${c}">${c}</option>`).join('')}</optgroup>`).join('');}
 }
 function rsCategoryMatches(productCategory, selected){
   if(!selected || selected==='Tutti') return true;
   const pc=String(productCategory||'').trim();
-  const sel=rsCategoryPath(selected);
-  if(pc===selected || pc===sel) return true;
-  const leaf=rsCategoryLeaf(pc);
-  const selectedLeaf=rsCategoryLeaf(sel);
-  if(leaf && selectedLeaf && leaf===selectedLeaf) return true;
-  const parent=Object.entries(RS_CATEGORY_TREE).find(([,children])=>children.includes(leaf))?.[0];
-  if(parent===selected || parent===sel || pc.startsWith(String(sel)+' > ')) return true;
-  const alias=RS_CATEGORY_ALIASES[selected] || RS_CATEGORY_ALIASES[selectedLeaf];
-  return !!alias && (pc===alias || pc.toLowerCase().includes(String(alias).toLowerCase()));
+  if(pc===selected) return true;
+  const children=RS_CATEGORY_TREE[selected];
+  if(children?.includes(pc)) return true;
+  const parent=Object.entries(RS_CATEGORY_TREE).find(([,children])=>children.includes(pc))?.[0];
+  if(parent===selected) return true;
+  const alias=RS_CATEGORY_ALIASES[selected];
+  return !!alias && (pc===alias || String(pc).toLowerCase().includes(String(alias).toLowerCase()));
 }
 
 let piggy = JSON.parse(localStorage.getItem("rs_piggy") || "[]");
@@ -1184,7 +1286,7 @@ function productMatches(p){
   const sf=window.sellerFilter||'Tutti';
   if(sf!=='Tutti' && String(p.sellerType||p.seller_type||'Privato')!==sf)return false;
   const q=(document.getElementById('searchInput')?.value||'').trim().toLowerCase();
-  if(q){ const catText=String(p.category||'').toLowerCase(); const treeText=Object.entries(RS_CATEGORY_TREE).filter(([parent,children])=>parent.toLowerCase().includes(catText)||children.some(c=>c.toLowerCase()===catText)||children.some(c=>String(p.category||'').toLowerCase().includes(c.toLowerCase()))).map(([parent,children])=>parent+' '+children.join(' ')).join(' ').toLowerCase(); if(![p.name,p.description,p.category,p.sellerType,treeText].some(x=>String(x||'').toLowerCase().includes(q)))return false;}
+  if(q){ const catText=String(p.category||'').toLowerCase(); const treeText=Object.entries(RS_CATEGORY_TREE).filter(([parent,children])=>parent.toLowerCase().includes(catText)||children.some(c=>c.toLowerCase()===catText)).map(([parent,children])=>parent+' '+children.join(' ')).join(' ').toLowerCase(); if(![p.name,p.description,p.category,p.sellerType,treeText].some(x=>String(x||'').toLowerCase().includes(q)))return false;}
   return true;
 }
 function rsImageFallback(el){
@@ -1288,10 +1390,7 @@ async function loadProductsOnline(){
         const v=String(u||'').trim();
         if(!v)return '';
         if(/^https?:\/\//i.test(v) || v.startsWith('data:') || v.startsWith('blob:'))return v;
-        const base=(window.RS_SUPABASE_URL||'').replace(/\/$/,'');
-        if(v.startsWith('/storage/v1/object/public/')) return base+v;
-        if(v.startsWith('storage/v1/object/public/')) return base+'/'+v;
-        return base+'/storage/v1/object/public/river-product-media/'+v.replace(/^\//,'');
+        return (window.RS_SUPABASE_URL||'').replace(/\/$/,'')+'/storage/v1/object/public/river-product-media/'+v.replace(/^\//,'');
       };
       const imagesRaw=Array.isArray(p.images)&&p.images.length?p.images:(media.images.length?media.images:(p.image?[p.image]:[]));
       const videosRaw=Array.isArray(p.videos)?p.videos:media.videos;
@@ -1322,7 +1421,7 @@ async function publishProductOnline(){
 
   const name=document.getElementById("sellName").value.trim();
   const price=Number(document.getElementById("sellPrice").value);
-  const cat=rsCategoryPath(document.getElementById("sellCategory").value);
+  const cat=document.getElementById("sellCategory").value;
   const desc=document.getElementById("sellDesc").value.trim();
   const stock=Math.max(1,Math.floor(Number(document.getElementById("sellStock")?.value||1)));
   const files=Array.isArray(sellMediaFiles)?sellMediaFiles.slice():[];
@@ -1350,13 +1449,8 @@ async function publishProductOnline(){
     if(isVideo) videos.push(url); else images.push(url);
   }
 
-  let sellerType='Privato';
-  try{
-    const pr=await window.rsSupabase.from('profiles').select('seller_type').eq('id',user.id).maybeSingle();
-    sellerType=pr?.data?.seller_type||'Privato';
-  }catch(_){}
   const product={
-    id:productId, seller_id:user.id, seller_type:sellerType, condition:sellType||"Nuovo", name, description:desc,
+    id:productId, seller_id:user.id, seller_type:"Privato", condition:sellType||"Nuovo", name, description:desc,
     price, stock, category:cat, shipping:"Spedizione disponibile", handling:"", payout:"", promo:false, status:"published",
     image:images[0]||""
   };
@@ -1367,7 +1461,7 @@ async function publishProductOnline(){
                    ...videos.map((url,i)=>({product_id:String(data.id),seller_id:user.id,media_type:'video',media_url:url,sort_order:100+i}))];
   if(mediaRows.length){
     const mr=await window.rsSupabase.from('product_media').insert(mediaRows);
-    if(mr.error){ await window.rsSupabase.from('products').delete().eq('id',String(data.id)); throw mr.error; }
+    if(mr.error) throw mr.error;
   }
 
   const saved={
@@ -1637,7 +1731,7 @@ document.addEventListener('DOMContentLoaded',()=>{initCategorySelectors();render
     <div class="sell-step active" data-sell-step="1">
       <h3>1. Cosa vuoi vendere?</h3>
       <button class="sell-choice" onclick="sellPickType('📦 Oggetto nuovo')">📦 Oggetto nuovo</button>
-      <button class="sell-choice" onclick="sellPickType('♻️ Oggetto usato in ottime condizioni',event)">♻️ Oggetto usato in ottime condizioni</button>
+      <button class="sell-choice" onclick="sellPickType('♻️ Oggetto usato in ottime condizioni')">♻️ Oggetto usato in ottime condizioni</button>
       <div class="sell-actions"><button class="sell-next" onclick="sellNext()">Continua →</button></div>
     </div>
 
@@ -1745,7 +1839,7 @@ function sellGo(n){
   if(n===3){
     const name=document.getElementById("sellName").value.trim();
     const price=Number(document.getElementById("sellPrice").value);
-    const cat=rsCategoryPath(document.getElementById("sellCategory").value);
+    const cat=document.getElementById("sellCategory").value;
     const desc=document.getElementById("sellDesc").value.trim();
     const stock=Math.floor(Number(document.getElementById("sellStock")?.value||0));
     if(!name || !price || !cat || !desc || stock<1){sellGo(2); alert("Completa nome, prezzo, categoria, descrizione e quantità disponibile."); return;}
@@ -1763,7 +1857,7 @@ function escapeSell(v){return String(v).replace(/[&<>"']/g,m=>({'&':'&amp;','<':
 function runNovaCheck(){
   const name=document.getElementById("sellName").value.trim();
   const price=Number(document.getElementById("sellPrice").value);
-  const cat=rsCategoryPath(document.getElementById("sellCategory").value);
+  const cat=document.getElementById("sellCategory").value;
   const desc=document.getElementById("sellDesc").value.trim();
   const checks=[];
   checks.push([name.length>=3,"Nome del prodotto presente e leggibile"]);
