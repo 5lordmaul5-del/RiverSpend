@@ -2361,72 +2361,7 @@ function renderGlobalProductRail(){
   setTimeout(fixRiverSpend, 3000);
 })();
 </script>
-<script id="rs-product-images-fix">
-(function () {
-  const immagini = {
-    integratori: "https://images.unsplash.com/photo-1593095948071-474c5cc2989d?auto=format&fit=crop&w=800&q=80",
-    animali: "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=800&q=80",
-    elettronica: "https://images.unsplash.com/photo-1517336714739-489689fd1ca8?auto=format&fit=crop&w=800&q=80",
-    videogiochi: "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?auto=format&fit=crop&w=800&q=80",
-    altro: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80"
-  };
 
-  function scegliImmagine(testo) {
-    testo = String(testo || "").toLowerCase();
 
-    if (/creatina|integrator|vitamin|ferro|astax|glucos|condroit|supplement/.test(testo))
-      return immagini.integratori;
-
-    if (/collare|cane|gatto|antiparassitari|animali|pet/.test(testo))
-      return immagini.animali;
-
-    if (/iphone|macbook|computer|pc|tablet|telefon|apple|samsung|cuffie/.test(testo))
-      return immagini.elettronica;
-
-    if (/playstation|xbox|nintendo|videogioc|gaming/.test(testo))
-      return immagini.videogiochi;
-
-    return immagini.altro;
-  }
-
-  function sistemaImmagini() {
-    document.querySelectorAll(".rs-image-fallback").forEach(function (box) {
-      const card =
-        box.closest(".product-card, .card, article, li") ||
-        box.parentElement;
-
-      const testo = card ? card.innerText : "";
-      const url = scegliImmagine(testo);
-
-      box.innerHTML =
-        '<img src="' + url + '" alt="Immagine prodotto RiverSpend">';
-
-      box.style.padding = "0";
-      box.style.overflow = "hidden";
-
-      const img = box.querySelector("img");
-
-      if (img) {
-        img.style.width = "100%";
-        img.style.height = "100%";
-        img.style.minHeight = "135px";
-        img.style.objectFit = "cover";
-        img.style.display = "block";
-      }
-    });
-  }
-
-  document.addEventListener("DOMContentLoaded", sistemaImmagini);
-
-  setTimeout(sistemaImmagini, 500);
-  setTimeout(sistemaImmagini, 1500);
-  setTimeout(sistemaImmagini, 3000);
-
-  new MutationObserver(sistemaImmagini).observe(document.body, {
-    childList: true,
-    subtree: true
-  });
-})();
-</script>
 </body>
-</html>
+
