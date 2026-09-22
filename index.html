@@ -2364,4 +2364,254 @@ function renderGlobalProductRail(){
 
 
 </body>
+<!-- RIVERSPEND NUOVA APERTURA -->
+<style>
+#rs-new-opening{
+  position:fixed;
+  inset:0;
+  z-index:999999;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 50% 30%,rgba(170,250,255,.9),transparent 38%),
+    linear-gradient(180deg,#071f35 0%,#087fa8 48%,#071f35 100%);
+  color:white;
+  text-align:center;
+  font-family:Arial,Helvetica,sans-serif;
+  transition:opacity .8s ease,visibility .8s ease;
+}
 
+#rs-new-opening.rs-hide{
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+}
+
+.rs-water{
+  position:absolute;
+  inset:0;
+  opacity:.65;
+  background:
+    repeating-radial-gradient(
+      ellipse at 50% 110%,
+      transparent 0 18px,
+      rgba(170,245,255,.22) 20px 23px,
+      transparent 25px 42px
+    );
+  animation:rsWater 7s linear infinite;
+}
+
+@keyframes rsWater{
+  from{transform:translateY(0) scale(1)}
+  to{transform:translateY(-55px) scale(1.08)}
+}
+
+.rs-opening-content{
+  position:relative;
+  z-index:3;
+  padding:30px;
+}
+
+.rs-wave-logo{
+  width:min(270px,70vw);
+  margin:auto;
+  filter:drop-shadow(0 8px 20px rgba(0,0,0,.25));
+}
+
+.rs-wave-logo svg{
+  width:100%;
+  height:auto;
+}
+
+.rs-wave-logo path{
+  fill:none;
+  stroke:#8ff3ff;
+  stroke-width:11;
+  stroke-linecap:round;
+}
+
+.rs-wave-logo path+path{
+  stroke:#168bd0;
+  stroke-width:8;
+}
+
+.rs-brand{
+  margin-top:8px;
+  font-size:clamp(42px,12vw,72px);
+  font-weight:900;
+  letter-spacing:-3px;
+}
+
+.rs-brand .river{color:#72dfff}
+.rs-brand .spend{
+  color:#f2c94c;
+  text-shadow:0 2px 8px rgba(0,0,0,.2);
+}
+
+.rs-tagline{
+  margin-top:10px;
+  font-size:14px;
+  letter-spacing:4px;
+  font-weight:700;
+}
+
+.rs-enter{
+  margin-top:32px;
+  padding:13px 26px;
+  border:1px solid rgba(255,255,255,.6);
+  border-radius:999px;
+  background:rgba(255,255,255,.15);
+  color:white;
+  font-size:15px;
+  font-weight:700;
+  backdrop-filter:blur(8px);
+}
+
+.rs-sound{
+  position:absolute;
+  right:18px;
+  top:18px;
+  z-index:5;
+  width:44px;
+  height:44px;
+  border:1px solid rgba(255,255,255,.5);
+  border-radius:50%;
+  background:rgba(0,0,0,.18);
+  color:white;
+  font-size:19px;
+}
+</style>
+
+<div id="rs-new-opening">
+  <div class="rs-water"></div>
+
+  <button id="rsSound" class="rs-sound" aria-label="Audio">🔇</button>
+
+  <div class="rs-opening-content">
+
+    <div class="rs-wave-logo">
+      <svg viewBox="0 0 240 92" aria-hidden="true">
+        <path d="M12 45 C42 8 74 8 108 45 S176 82 228 45"/>
+        <path d="M28 67 C58 30 88 30 120 67 S180 104 216 67"/>
+      </svg>
+    </div>
+
+    <div class="rs-brand">
+      <span class="river">River</span><span class="spend">Spend</span>
+    </div>
+
+    <div class="rs-tagline">YOUR SHOP • YOUR FLOW</div>
+
+    <button id="rsEnter" class="rs-enter">
+      🌊 ENTRA IN RIVERSPEND
+    </button>
+
+  </div>
+</div>
+
+<script>
+(function(){
+
+  const opening = document.getElementById('rs-new-opening');
+  const enter = document.getElementById('rsEnter');
+  const sound = document.getElementById('rsSound');
+
+  let audioContext = null;
+  let noiseSource = null;
+  let gain = null;
+  let audioOn = false;
+
+  function startRiverSound(){
+
+    if(audioOn) return;
+
+    audioContext =
+      new (window.AudioContext || window.webkitAudioContext)();
+
+    const bufferSize = audioContext.sampleRate * 2;
+    const buffer = audioContext.createBuffer(
+      1,
+      bufferSize,
+      audioContext.sampleRate
+    );
+
+    const data = buffer.getChannelData(0);
+
+    for(let i=0;i<bufferSize;i++){
+      data[i] = (Math.random()*2-1) * 0.35;
+    }
+
+    noiseSource = audioContext.createBufferSource();
+    noiseSource.buffer = buffer;
+    noiseSource.loop = true;
+
+    const filter = audioContext.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.value = 1100;
+
+    gain = audioContext.createGain();
+    gain.gain.value = 0.055;
+
+    noiseSource
+      .connect(filter)
+      .connect(gain)
+      .connect(audioContext.destination);
+
+    noiseSource.start();
+
+    audioOn = true;
+    sound.textContent = '🔊';
+  }
+
+  function stopRiverSound(){
+
+    if(!audioContext) return;
+
+    gain.gain.value = 0;
+
+    audioOn = false;
+    sound.textContent = '🔇';
+  }
+
+  sound.addEventListener('click',function(e){
+    e.stopPropagation();
+
+    if(audioOn){
+      stopRiverSound();
+    }else{
+      startRiverSound();
+    }
+  });
+
+  function enterRiverSpend(){
+
+    startRiverSound();
+
+    setTimeout(function(){
+      opening.classList.add('rs-hide');
+
+      setTimeout(function(){
+        opening.remove();
+      },900);
+
+    },150);
+  }
+
+  enter.addEventListener('click',enterRiverSpend);
+
+  setTimeout(function(){
+    if(opening && !opening.classList.contains('rs-hide')){
+      opening.classList.add('rs-hide');
+
+      setTimeout(function(){
+        if(opening) opening.remove();
+      },900);
+    }
+  },5000);
+
+})();
+</script>
+  </body>
+</html>
