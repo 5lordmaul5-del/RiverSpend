@@ -2311,5 +2311,55 @@ function renderGlobalProductRail(){
 }
 </script>
 <script>document.addEventListener("DOMContentLoaded",()=>{loadProductsOnline();renderGlobalProductRail();});</script>
+<script>
+(function () {
+  const images = {
+    integratori: "https://images.unsplash.com/photo-1593095948071-474c5cc2989d?auto=format&fit=crop&w=800&q=80",
+    elettronica: "https://images.unsplash.com/photo-1517336714739-489689fd1ca8?auto=format&fit=crop&w=800&q=80",
+    videogiochi: "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?auto=format&fit=crop&w=800&q=80",
+    altro: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80"
+  };
+
+  function imageFor(text) {
+    text = (text || "").toLowerCase();
+
+    if (/creatina|integrator|vitamin|ferro|astax|glucos|condroit|supplement/.test(text))
+      return images.integratori;
+
+    if (/iphone|macbook|computer|pc|tablet|telefon|apple|samsung|cuffie/.test(text))
+      return images.elettronica;
+
+    if (/playstation|xbox|nintendo|videogioc|gaming/.test(text))
+      return images.videogiochi;
+
+    return images.altro;
+  }
+
+  function fixRiverSpend() {
+    document.querySelectorAll("img").forEach(function (img) {
+      const box = img.closest("article, li, [class*='product'], [class*='card']") || img.parentElement;
+      const text = box ? box.innerText : "";
+
+      if (!img.getAttribute("src") || img.getAttribute("src") === "")
+        img.src = imageFor(text);
+
+      img.onerror = function () {
+        img.onerror = null;
+        img.src = imageFor(text);
+      };
+    });
+
+    document.querySelectorAll("#splashScreen, #splash, .splash-screen").forEach(function (el) {
+      el.style.display = "none";
+      el.style.visibility = "hidden";
+      el.style.pointerEvents = "none";
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", fixRiverSpend);
+  setTimeout(fixRiverSpend, 1000);
+  setTimeout(fixRiverSpend, 3000);
+})();
+</script>
 </body>
 </html>
