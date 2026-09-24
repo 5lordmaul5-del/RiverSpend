@@ -2613,6 +2613,80 @@ function renderGlobalProductRail(){
 
 })();
 </script>
+<!-- RIVERSPEND APERTURA DEFINITIVA -->
+<div id="rs-final-opening">
+  <img src="./file_00000000c750820b8e168f1087120377.png"
+       alt="RiverSpend">
 
+  <button id="rs-enter-button">🌊 ENTRA IN RIVERSPEND</button>
+</div>
+
+<style>
+#rs-final-opening{
+  position:fixed;
+  inset:0;
+  z-index:999999999;
+  background:#003b5c;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-end;
+  padding:0 20px 55px;
+  box-sizing:border-box;
+}
+
+#rs-final-opening img{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center;
+}
+
+#rs-final-opening button{
+  position:relative;
+  z-index:2;
+  margin-bottom:5px;
+  padding:16px 30px;
+  border:1px solid rgba(255,255,255,.8);
+  border-radius:999px;
+  background:rgba(0,55,85,.65);
+  color:white;
+  font-size:17px;
+  font-weight:700;
+  box-shadow:0 5px 25px rgba(0,0,0,.35);
+}
+
+#rs-final-opening.rs-opening-hide{
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .8s ease;
+}
+</style>
+
+<script>
+(function(){
+  var opening=document.getElementById('rs-final-opening');
+  var enter=document.getElementById('rs-enter-button');
+
+  /* Nasconde le vecchie aperture */
+  var old1=document.getElementById('welcome');
+  var old2=document.getElementById('rs-new-opening');
+  var old3=document.getElementById('rs-photo-opening');
+
+  if(old1) old1.remove();
+  if(old2) old2.remove();
+  if(old3) old3.remove();
+
+  enter.addEventListener('click',function(){
+    opening.classList.add('rs-opening-hide');
+
+    setTimeout(function(){
+      opening.remove();
+    },900);
+  });
+})();
+</script>
   </body>
 </html>
