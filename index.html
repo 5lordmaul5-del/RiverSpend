@@ -20,12 +20,13 @@
       width: 100%;
       height: 100%;
       margin: 0;
-      overflow: hidden;
+      padding: 0;
     }
 
     body {
       font-family: Arial, Helvetica, sans-serif;
-      background: #063f5c;
+      background: #000;
+      overflow: hidden;
     }
 
     /* =========================
@@ -39,161 +40,41 @@
       height: 100dvh;
 
       display: flex;
-      flex-direction: column;
-      align-items: center;
+      align-items: flex-end;
       justify-content: center;
 
-      padding: 24px;
+      padding: 0 20px 55px;
 
-      background:
-        radial-gradient(
-          circle at 50% 35%,
-          #159fc7 0%,
-          #087da5 35%,
-          #064f70 68%,
-          #032f49 100%
-        );
-
-      color: white;
-      text-align: center;
+      background: #000
+        url("./file_00000000c750820b8e168f1087120377.png")
+        center center
+        / cover
+        no-repeat;
 
       z-index: 9999;
     }
 
-    /* effetto acqua */
-    #opening::before,
-    #opening::after {
-      content: "";
-      position: absolute;
-      left: -10%;
-      width: 120%;
-      height: 180px;
-
-      border-radius: 50%;
-
-      background: rgba(255,255,255,0.07);
-
-      pointer-events: none;
-    }
-
-    #opening::before {
-      top: 18%;
-      transform: rotate(-4deg);
-    }
-
-    #opening::after {
-      bottom: 14%;
-      transform: rotate(3deg);
-    }
-
     /* =========================
-       LOGO
-       ========================= */
-
-    .river-logo {
-      position: relative;
-      z-index: 2;
-
-      font-size: clamp(42px, 13vw, 86px);
-      line-height: 1;
-      font-weight: 800;
-      letter-spacing: -3px;
-
-      margin-bottom: 20px;
-
-      text-shadow:
-        0 4px 20px rgba(0,0,0,0.25);
-    }
-
-    .river-logo .river {
-      color: #9deeff;
-    }
-
-    .river-logo .spend {
-      color: #e5b83d;
-    }
-
-    /* doppia onda sotto il logo */
-
-    .waves {
-      position: relative;
-      z-index: 2;
-
-      width: min(330px, 78vw);
-      height: 34px;
-
-      margin-bottom: 25px;
-    }
-
-    .waves::before,
-    .waves::after {
-      content: "";
-
-      position: absolute;
-      left: 0;
-
-      width: 100%;
-      height: 12px;
-
-      border-top: 3px solid #8de9ff;
-      border-radius: 50%;
-    }
-
-    .waves::before {
-      top: 4px;
-      transform: skewX(-18deg);
-    }
-
-    .waves::after {
-      top: 15px;
-      transform: skewX(18deg);
-      border-color: #e5b83d;
-    }
-
-    /* =========================
-       PAYOFF
-       ========================= */
-
-    .payoff {
-      position: relative;
-      z-index: 2;
-
-      font-size: clamp(15px, 4vw, 21px);
-      font-weight: 700;
-      letter-spacing: 2px;
-
-      margin-bottom: 8px;
-    }
-
-    .claim {
-      position: relative;
-      z-index: 2;
-
-      font-size: clamp(14px, 3.5vw, 18px);
-      opacity: 0.9;
-
-      margin-bottom: 38px;
-    }
-
-    /* =========================
-       ENTRA
+       PULSANTE ENTRA
        ========================= */
 
     #enter {
       position: relative;
-      z-index: 2;
+      z-index: 10;
 
-      border: 1px solid rgba(255,255,255,0.8);
+      min-width: 270px;
+      max-width: 90vw;
 
+      padding: 17px 28px;
+
+      border: 1.5px solid rgba(255, 255, 255, 0.9);
       border-radius: 999px;
 
-      padding: 15px 30px;
+      background: rgba(0, 65, 95, 0.72);
 
-      background: rgba(0,55,85,0.65);
+      color: #ffffff;
 
-      color: white;
-
-      font-size: 16px;
+      font-size: 17px;
       font-weight: 700;
 
       letter-spacing: 0.5px;
@@ -201,7 +82,9 @@
       cursor: pointer;
 
       box-shadow:
-        0 8px 30px rgba(0,0,0,0.25);
+        0 8px 30px rgba(0, 0, 0, 0.35);
+
+      backdrop-filter: blur(5px);
 
       transition:
         transform 0.2s ease,
@@ -213,7 +96,7 @@
     }
 
     #enter:hover {
-      background: rgba(0,80,115,0.85);
+      background: rgba(0, 95, 130, 0.88);
     }
 
     /* =========================
@@ -223,42 +106,39 @@
     #home {
       display: none;
 
+      width: 100%;
       min-height: 100dvh;
 
-      padding: 30px 18px;
+      padding: 35px 20px;
 
-      background: #f5fbfd;
+      background: #f4fbfd;
 
       color: #123;
     }
 
     #home h1 {
-      color: #078fc0;
+      margin: 0 0 18px;
+
+      font-size: 38px;
+
+      color: #078fbf;
+    }
+
+    #home p {
+      margin: 0;
+
+      font-size: 18px;
     }
   </style>
 </head>
 
 <body>
 
-  <!-- =================================
-       UNICA APERTURA
-       ================================= -->
+  <!-- =========================
+       APERTURA
+       ========================= -->
 
   <section id="opening">
-
-    <div class="river-logo">
-      <span class="river">River</span><span class="spend">Spend</span>
-    </div>
-
-    <div class="waves"></div>
-
-    <div class="payoff">
-      YOUR SHOP • YOUR FLOW
-    </div>
-
-    <div class="claim">
-      Il fiume scorre con te
-    </div>
 
     <button id="enter">
       🌊 ENTRA IN RIVERSPEND
@@ -267,9 +147,10 @@
   </section>
 
 
-  <!-- =================================
-       PAGINA SUCCESSIVA TEMPORANEA
-       ================================= -->
+  <!-- =========================
+       PAGINA SUCCESSIVA
+       TEMPORANEA
+       ========================= -->
 
   <main id="home">
 
@@ -283,6 +164,7 @@
 
 
   <script>
+
     const enterButton = document.getElementById("enter");
     const opening = document.getElementById("opening");
     const home = document.getElementById("home");
@@ -290,9 +172,11 @@
     enterButton.addEventListener("click", function () {
 
       opening.style.display = "none";
+
       home.style.display = "block";
 
     });
+
   </script>
 
 </body>
