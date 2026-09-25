@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="it">
-
 <head>
-
   <meta charset="UTF-8">
 
   <meta
@@ -13,7 +11,6 @@
   <title>RiverSpend — YOUR SHOP • YOUR FLOW</title>
 
   <style>
-
     * {
       box-sizing: border-box;
     }
@@ -21,7 +18,7 @@
     html,
     body {
       width: 100%;
-      min-height: 100%;
+      height: 100%;
       margin: 0;
       padding: 0;
     }
@@ -29,199 +26,170 @@
     body {
       font-family: Arial, Helvetica, sans-serif;
       background: #12b7df;
-      overflow-x: hidden;
+      overflow: hidden;
     }
 
-
-    /* =================================
+    /* =========================
        APERTURA RIVERSPEND
-       ================================= */
+       ========================= */
 
     #opening {
-
       position: fixed;
-
       inset: 0;
 
       width: 100%;
       height: 100dvh;
 
-      background: #12b7df;
-
       display: flex;
-
       flex-direction: column;
-
       align-items: center;
-
       justify-content: center;
 
       padding: 20px;
+
+      background: #12b7df;
 
       overflow: hidden;
 
       z-index: 9999;
     }
 
-
-    /* =================================
+    /* =========================
        IMMAGINE RIVERSPEND
-       ================================= */
+       ========================= */
 
     #opening-image {
-
       display: block;
 
       width: 100%;
-
       max-width: 700px;
 
       height: auto;
-
       max-height: 68dvh;
 
       object-fit: contain;
 
-      object-position: center;
-
-      margin: 0 auto 28px auto;
-
-      border: 0;
-
+      margin: 0 auto 42px auto;
     }
 
-
-    /* =================================
-       PULSANTE
-       ================================= */
+    /* =========================
+       PULSANTE ENTRA
+       ========================= */
 
     #enter {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
 
-      position: relative;
+      width: min(90vw, 620px);
+      min-height: 82px;
 
-      z-index: 10;
+      padding: 18px 30px;
 
-      width: min(490px, 90vw);
-
-      min-height: 58px;
-
-      padding: 15px 25px;
-
-      border: 2px solid rgba(255,255,255,0.95);
-
+      border: 3px solid white;
       border-radius: 999px;
 
-      background: rgba(0, 70, 100, 0.78);
+      background: #075b78;
 
-      color: #ffffff;
+      color: white;
 
-      font-size: clamp(16px, 4vw, 20px);
-
+      font-size: clamp(20px, 5vw, 32px);
       font-weight: 700;
 
-      letter-spacing: 0.4px;
+      letter-spacing: 0.5px;
 
       cursor: pointer;
 
       box-shadow:
-        0 8px 25px rgba(0,0,0,0.25);
+        0 10px 30px rgba(0, 0, 0, 0.22);
 
-      backdrop-filter: blur(5px);
-
-      -webkit-backdrop-filter: blur(5px);
-
+      -webkit-tap-highlight-color: transparent;
     }
-
 
     #enter:active {
-
-      transform: scale(0.97);
-
+      transform: scale(0.98);
     }
 
-
-    /* =================================
-       PAGINA SUCCESSIVA TEMPORANEA
-       ================================= */
+    /* =========================
+       PAGINA SUCCESSIVA
+       ========================= */
 
     #home {
-
       display: none;
-
-      width: 100%;
 
       min-height: 100dvh;
 
-      padding: 35px 20px;
+      padding: 30px 20px;
 
-      background: #f4fbfd;
+      background: #f5fbfd;
 
       color: #123;
-
     }
-
 
     #home h1 {
-
-      margin: 0 0 18px;
-
-      color: #078fbf;
-
-      font-size: 38px;
-
+      margin-top: 0;
+      color: #078fc0;
     }
 
+    /* =========================
+       TELEFONI PICCOLI
+       ========================= */
 
-    #home p {
+    @media (max-width: 480px) {
 
-      margin: 0;
+      #opening {
+        padding: 16px;
+      }
 
-      font-size: 18px;
+      #opening-image {
+        width: 100%;
+        max-width: 100%;
+        max-height: 62dvh;
 
+        margin-bottom: 34px;
+      }
+
+      #enter {
+        width: 94vw;
+        min-height: 72px;
+
+        font-size: 21px;
+
+        padding: 16px 20px;
+      }
     }
-
   </style>
-
 </head>
-
 
 <body>
 
-
-  <!-- =================================
+  <!-- =========================
        APERTURA
-       ================================= -->
+       ========================= -->
 
   <section id="opening">
 
-
     <img
       id="opening-image"
-      src=".file_00000000db008246926cc5b0d85ffd53.png
+      src="./file_00000000db008246926cc5b0d85ffd53.png"
       alt="RiverSpend — YOUR SHOP • YOUR FLOW"
     >
 
-
-    <button id="enter">
-
+    <button id="enter" type="button">
       🌊 ENTRA IN RIVERSPEND
-
     </button>
-
 
   </section>
 
 
-
-  <!-- =================================
+  <!-- =========================
        PAGINA SUCCESSIVA
-       ================================= -->
+       ========================= -->
 
   <main id="home">
 
-    <h1>
-      RiverSpend
-    </h1>
+    <h1>RiverSpend</h1>
 
     <p>
       YOUR SHOP • YOUR FLOW
@@ -230,33 +198,17 @@
   </main>
 
 
-
   <script>
+    const enterButton = document.getElementById("enter");
+    const opening = document.getElementById("opening");
+    const home = document.getElementById("home");
 
-    const enterButton =
-      document.getElementById("enter");
-
-    const opening =
-      document.getElementById("opening");
-
-    const home =
-      document.getElementById("home");
-
-
-    enterButton.addEventListener(
-      "click",
-      function () {
-
-        opening.style.display = "none";
-
-        home.style.display = "block";
-
-      }
-    );
-
+    enterButton.addEventListener("click", function () {
+      opening.style.display = "none";
+      home.style.display = "block";
+      document.body.style.overflow = "auto";
+    });
   </script>
 
-
 </body>
-
 </html>
