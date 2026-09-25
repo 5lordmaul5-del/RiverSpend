@@ -29,10 +29,6 @@
       overflow: hidden;
     }
 
-    /* =========================
-       APERTURA RIVERSPEND
-       ========================= */
-
     #opening {
       position: fixed;
       inset: 0;
@@ -41,7 +37,6 @@
       height: 100dvh;
 
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
 
@@ -54,10 +49,6 @@
       z-index: 9999;
     }
 
-    /* =========================
-       IMMAGINE RIVERSPEND
-       ========================= */
-
     #opening-image {
       display: block;
 
@@ -65,59 +56,19 @@
       max-width: 700px;
 
       height: auto;
-      max-height: 68dvh;
+      max-height: 90dvh;
 
       object-fit: contain;
 
-      margin: 0 auto 42px auto;
-    }
-
-    /* =========================
-       PULSANTE ENTRA
-       ========================= */
-
-    #enter {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-
-      width: min(90vw, 620px);
-      min-height: 82px;
-
-      padding: 18px 30px;
-
-      border: 3px solid white;
-      border-radius: 999px;
-
-      background: #075b78;
-
-      color: white;
-
-      font-size: clamp(20px, 5vw, 32px);
-      font-weight: 700;
-
-      letter-spacing: 0.5px;
-
       cursor: pointer;
-
-      box-shadow:
-        0 10px 30px rgba(0, 0, 0, 0.22);
 
       -webkit-tap-highlight-color: transparent;
     }
 
-    #enter:active {
-      transform: scale(0.98);
-    }
-
-    /* =========================
-       PAGINA SUCCESSIVA
-       ========================= */
-
     #home {
       display: none;
 
+      width: 100%;
       min-height: 100dvh;
 
       padding: 30px 20px;
@@ -128,45 +79,12 @@
     }
 
     #home h1 {
-      margin-top: 0;
       color: #078fc0;
-    }
-
-    /* =========================
-       TELEFONI PICCOLI
-       ========================= */
-
-    @media (max-width: 480px) {
-
-      #opening {
-        padding: 16px;
-      }
-
-      #opening-image {
-        width: 100%;
-        max-width: 100%;
-        max-height: 62dvh;
-
-        margin-bottom: 34px;
-      }
-
-      #enter {
-        width: 94vw;
-        min-height: 72px;
-
-        font-size: 21px;
-
-        padding: 16px 20px;
-      }
     }
   </style>
 </head>
 
 <body>
-
-  <!-- =========================
-       APERTURA
-       ========================= -->
 
   <section id="opening">
 
@@ -176,34 +94,22 @@
       alt="RiverSpend — YOUR SHOP • YOUR FLOW"
     >
 
-    <button id="enter" type="button">
-      🌊 ENTRA IN RIVERSPEND
-    </button>
-
   </section>
-
-
-  <!-- =========================
-       PAGINA SUCCESSIVA
-       ========================= -->
 
   <main id="home">
 
     <h1>RiverSpend</h1>
 
-    <p>
-      YOUR SHOP • YOUR FLOW
-    </p>
+    <p>YOUR SHOP • YOUR FLOW</p>
 
   </main>
 
-
   <script>
-    const enterButton = document.getElementById("enter");
     const opening = document.getElementById("opening");
+    const image = document.getElementById("opening-image");
     const home = document.getElementById("home");
 
-    enterButton.addEventListener("click", function () {
+    image.addEventListener("click", function () {
       opening.style.display = "none";
       home.style.display = "block";
       document.body.style.overflow = "auto";
