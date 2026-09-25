@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
+
   <meta charset="UTF-8">
 
   <meta
@@ -11,6 +13,7 @@
   <title>RiverSpend — YOUR SHOP • YOUR FLOW</title>
 
   <style>
+
     * {
       box-sizing: border-box;
     }
@@ -18,95 +21,135 @@
     html,
     body {
       width: 100%;
-      height: 100%;
+      min-height: 100%;
       margin: 0;
       padding: 0;
     }
 
     body {
       font-family: Arial, Helvetica, sans-serif;
-      background: #000;
-      overflow: hidden;
+      background: #12b7df;
+      overflow-x: hidden;
     }
 
-    /* =========================
+
+    /* =================================
        APERTURA RIVERSPEND
-       ========================= */
+       ================================= */
 
     #opening {
+
       position: fixed;
+
       inset: 0;
+
       width: 100%;
       height: 100dvh;
 
+      background: #12b7df;
+
       display: flex;
-      align-items: flex-end;
+
+      flex-direction: column;
+
+      align-items: center;
+
       justify-content: center;
 
-      padding: 0 20px 55px;
+      padding: 20px;
 
-      background: #000
-      url("./file_00000000c750820b8e168f1087120377.png")
-      center center
-      / / 100% auto
-      no-repeat;
+      overflow: hidden;
 
       z-index: 9999;
     }
 
-    /* =========================
-       PULSANTE ENTRA
-       ========================= */
+
+    /* =================================
+       IMMAGINE RIVERSPEND
+       ================================= */
+
+    #opening-image {
+
+      display: block;
+
+      width: 100%;
+
+      max-width: 700px;
+
+      height: auto;
+
+      max-height: 68dvh;
+
+      object-fit: contain;
+
+      object-position: center;
+
+      margin: 0 auto 28px auto;
+
+      border: 0;
+
+    }
+
+
+    /* =================================
+       PULSANTE
+       ================================= */
 
     #enter {
+
       position: relative;
+
       z-index: 10;
 
-      min-width: 270px;
-      max-width: 90vw;
+      width: min(490px, 90vw);
 
-      padding: 17px 28px;
+      min-height: 58px;
 
-      border: 1.5px solid rgba(255, 255, 255, 0.9);
+      padding: 15px 25px;
+
+      border: 2px solid rgba(255,255,255,0.95);
+
       border-radius: 999px;
 
-      background: rgba(0, 65, 95, 0.72);
+      background: rgba(0, 70, 100, 0.78);
 
       color: #ffffff;
 
-      font-size: 17px;
+      font-size: clamp(16px, 4vw, 20px);
+
       font-weight: 700;
 
-      letter-spacing: 0.5px;
+      letter-spacing: 0.4px;
 
       cursor: pointer;
 
       box-shadow:
-        0 8px 30px rgba(0, 0, 0, 0.35);
+        0 8px 25px rgba(0,0,0,0.25);
 
       backdrop-filter: blur(5px);
 
-      transition:
-        transform 0.2s ease,
-        background 0.2s ease;
+      -webkit-backdrop-filter: blur(5px);
+
     }
+
 
     #enter:active {
-      transform: scale(0.96);
+
+      transform: scale(0.97);
+
     }
 
-    #enter:hover {
-      background: rgba(0, 95, 130, 0.88);
-    }
 
-    /* =========================
-       HOME TEMPORANEA
-       ========================= */
+    /* =================================
+       PAGINA SUCCESSIVA TEMPORANEA
+       ================================= */
 
     #home {
+
       display: none;
 
       width: 100%;
+
       min-height: 100dvh;
 
       padding: 35px 20px;
@@ -114,47 +157,71 @@
       background: #f4fbfd;
 
       color: #123;
+
     }
 
+
     #home h1 {
+
       margin: 0 0 18px;
+
+      color: #078fbf;
 
       font-size: 38px;
 
-      color: #078fbf;
     }
 
+
     #home p {
+
       margin: 0;
 
       font-size: 18px;
+
     }
+
   </style>
+
 </head>
+
 
 <body>
 
-  <!-- =========================
+
+  <!-- =================================
        APERTURA
-       ========================= -->
+       ================================= -->
 
   <section id="opening">
 
+
+    <img
+      id="opening-image"
+      src="./file_00000000c750820b8e168f1087120377.png"
+      alt="RiverSpend — YOUR SHOP • YOUR FLOW"
+    >
+
+
     <button id="enter">
+
       🌊 ENTRA IN RIVERSPEND
+
     </button>
+
 
   </section>
 
 
-  <!-- =========================
+
+  <!-- =================================
        PAGINA SUCCESSIVA
-       TEMPORANEA
-       ========================= -->
+       ================================= -->
 
   <main id="home">
 
-    <h1>RiverSpend</h1>
+    <h1>
+      RiverSpend
+    </h1>
 
     <p>
       YOUR SHOP • YOUR FLOW
@@ -163,21 +230,33 @@
   </main>
 
 
+
   <script>
 
-    const enterButton = document.getElementById("enter");
-    const opening = document.getElementById("opening");
-    const home = document.getElementById("home");
+    const enterButton =
+      document.getElementById("enter");
 
-    enterButton.addEventListener("click", function () {
+    const opening =
+      document.getElementById("opening");
 
-      opening.style.display = "none";
+    const home =
+      document.getElementById("home");
 
-      home.style.display = "block";
 
-    });
+    enterButton.addEventListener(
+      "click",
+      function () {
+
+        opening.style.display = "none";
+
+        home.style.display = "block";
+
+      }
+    );
 
   </script>
 
+
 </body>
+
 </html>
