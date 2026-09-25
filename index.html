@@ -3,10 +3,8 @@
 <head>
   <meta charset="UTF-8">
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
-  >
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
   <title>RiverSpend — YOUR SHOP • YOUR FLOW</title>
 
@@ -21,60 +19,43 @@
       height: 100%;
       margin: 0;
       padding: 0;
-    }
-
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      background: #12b7df;
       overflow: hidden;
+      background: #10b7df;
     }
 
     #opening {
       position: fixed;
       inset: 0;
-
-      width: 100%;
+      width: 100vw;
       height: 100dvh;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      padding: 20px;
-
-      background: #12b7df;
-
       overflow: hidden;
-
+      background: #10b7df;
       z-index: 9999;
+      cursor: pointer;
     }
 
     #opening-image {
       display: block;
 
-      width: 100%;
-      max-width: 700px;
+      width: 100vw;
+      height: 100dvh;
 
-      height: auto;
-      max-height: 90dvh;
+      margin: 0;
+      padding: 0;
 
-      object-fit: contain;
+      object-fit: fill;
 
-      cursor: pointer;
+      border: 0;
+      outline: 0;
 
       -webkit-tap-highlight-color: transparent;
     }
 
     #home {
       display: none;
-
-      width: 100%;
       min-height: 100dvh;
-
       padding: 30px 20px;
-
       background: #f5fbfd;
-
       color: #123;
     }
 
@@ -109,7 +90,7 @@
     const image = document.getElementById("opening-image");
     const home = document.getElementById("home");
 
-    image.addEventListener("click", function () {
+    opening.addEventListener("click", function () {
       opening.style.display = "none";
       home.style.display = "block";
       document.body.style.overflow = "auto";
