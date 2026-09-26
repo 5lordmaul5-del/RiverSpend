@@ -87,6 +87,129 @@
 
       background: #f5fbfd;
     }
+    /* RIVERSPEND HOME — BLOCCO GRAFICO 1 */
+
+body {
+  overflow: auto;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #12343b;
+  background: #f4fbfd;
+}
+
+#home {
+  min-height: 100dvh;
+  background:
+    linear-gradient(180deg, #e8faff 0%, #f7fcfd 42%, #ffffff 100%);
+}
+
+.rs-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  height: 68px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255,255,255,.94);
+  border-bottom: 1px solid #d7edf2;
+  box-shadow: 0 2px 12px rgba(0,80,100,.08);
+}
+
+.rs-header button {
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 12px;
+  background: #e9f8fc;
+  color: #087f9e;
+  font-size: 21px;
+}
+
+.rs-logo {
+  flex: 1;
+  text-align: center;
+  font-size: 25px;
+  font-weight: 800;
+  letter-spacing: -.5px;
+  color: #08a7cf;
+}
+
+.rs-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 16px;
+}
+
+.rs-actions button {
+  height: 52px;
+  border: 0;
+  border-radius: 15px;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: .5px;
+  background: #08a7cf;
+  color: white;
+  box-shadow: 0 5px 14px rgba(8,167,207,.22);
+}
+
+.rs-areas {
+  display: flex;
+  gap: 8px;
+  padding: 0 16px 18px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.rs-areas::-webkit-scrollbar {
+  display: none;
+}
+
+.rs-areas button {
+  flex: 0 0 auto;
+  padding: 11px 17px;
+  border: 1px solid #c8e6ed;
+  border-radius: 999px;
+  background: white;
+  color: #287080;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.rs-areas button.active {
+  background: #08a7cf;
+  border-color: #08a7cf;
+  color: white;
+}
+
+.rs-products {
+  padding: 8px 16px 40px;
+}
+
+.rs-products h1 {
+  margin: 0;
+  font-size: 30px;
+  color: #12343b;
+}
+
+.rs-products p {
+  margin: 7px 0 22px;
+  color: #63818a;
+  font-size: 15px;
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+@media (min-width: 700px) {
+  .product-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
   </style>
 </head>
 
