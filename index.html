@@ -3,8 +3,10 @@
 <head>
   <meta charset="UTF-8">
 
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  >
 
   <title>RiverSpend — YOUR SHOP • YOUR FLOW</title>
 
@@ -20,18 +22,23 @@
       margin: 0;
       padding: 0;
       overflow: hidden;
-      background: #10b7df;
+      background: #12b7df;
     }
 
     #opening {
       position: fixed;
       inset: 0;
+
       width: 100vw;
       height: 100dvh;
+
+      background: #12b7df;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
       overflow: hidden;
-      background: #10b7df;
-      z-index: 9999;
-      cursor: pointer;
     }
 
     #opening-image {
@@ -43,24 +50,42 @@
       margin: 0;
       padding: 0;
 
-      object-fit: fill;
+      object-fit: cover;
 
       border: 0;
       outline: 0;
 
-      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    /* Area invisibile sopra il pulsante
+       già presente nell'immagine */
+    #enter {
+      position: absolute;
+
+      left: 10%;
+      right: 10%;
+      bottom: 12%;
+
+      height: 13%;
+
+      border: 0;
+      background: transparent;
+
+      cursor: pointer;
+
+      padding: 0;
+      margin: 0;
     }
 
     #home {
       display: none;
-      min-height: 100dvh;
-      padding: 30px 20px;
-      background: #f5fbfd;
-      color: #123;
-    }
 
-    #home h1 {
-      color: #078fc0;
+      width: 100%;
+      min-height: 100dvh;
+
+      background: #f5fbfd;
     }
   </style>
 </head>
@@ -75,25 +100,23 @@
       alt="RiverSpend — YOUR SHOP • YOUR FLOW"
     >
 
+    <button
+      id="enter"
+      aria-label="Entra in RiverSpend"
+    ></button>
+
   </section>
 
-  <main id="home">
-
-    <h1>RiverSpend</h1>
-
-    <p>YOUR SHOP • YOUR FLOW</p>
-
-  </main>
+  <main id="home"></main>
 
   <script>
+    const enter = document.getElementById("enter");
     const opening = document.getElementById("opening");
-    const image = document.getElementById("opening-image");
     const home = document.getElementById("home");
 
-    opening.addEventListener("click", function () {
+    enter.addEventListener("click", function () {
       opening.style.display = "none";
       home.style.display = "block";
-      document.body.style.overflow = "auto";
     });
   </script>
 
