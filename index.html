@@ -119,6 +119,30 @@
       home.style.display = "block";
     });
   </script>
+<script type="module">
+  import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
+  const SUPABASE_URL = "https://rkwqmteuxpdgdhgowbpn.supabase.co";
+  const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_fl3jgQp7nsP90RRD8Ji21g_ZtTyQAXn";
+
+  const riverSupabase = createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY
+  );
+
+  window.riverSupabase = riverSupabase;
+
+  riverSupabase
+    .from("products")
+    .select("id")
+    .limit(1)
+    .then(({ error }) => {
+      if (error) {
+        console.error("RiverSpend Cloud: collegamento Supabase non riuscito.", error);
+      } else {
+        console.log("RiverSpend Cloud: Supabase collegato correttamente.");
+      }
+    });
+</script>
 </body>
 </html>
