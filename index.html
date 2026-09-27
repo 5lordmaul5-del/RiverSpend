@@ -306,6 +306,395 @@ body {
         console.log("RiverSpend Cloud: Supabase collegato correttamente.");
       }
     });
+  // ======================================================
+// RIVERSPEND — CATALOGO CATEGORIE COMPLETO
+// ======================================================
+
+const riverSpendCategories = {
+
+  "AUTO": [
+    "Utilitarie", "City Car", "Berline", "Station Wagon",
+    "SUV", "Crossover", "Monovolume", "Coupé", "Cabrio",
+    "Spider", "Sportive", "Supercar", "Hypercar",
+    "Auto di lusso", "Auto d'epoca", "Auto storiche",
+    "Auto da collezione", "Auto elettriche", "Auto ibride",
+    "Auto GPL", "Auto metano", "Tuning", "Drift",
+    "Rally", "Pista", "4x4", "Fuoristrada",
+    "Restauro", "Car Audio", "Ricambi", "Motori",
+    "Cambio", "Frizioni", "Freni", "Sospensioni",
+    "Pneumatici", "Cerchi", "Carrozzeria", "Illuminazione",
+    "Accessori", "Navigazione", "Diagnostica"
+  ],
+
+  "MOTO": [
+    "Naked", "Sportive", "Supersportive", "Enduro",
+    "Motocross", "Trial", "Adventure", "Touring",
+    "Gran Turismo", "Cruiser", "Chopper", "Bobber",
+    "Café Racer", "Scrambler", "Custom", "Supermotard",
+    "D'epoca", "Storiche", "Elettriche", "50 cc",
+    "125 cc", "Ricambi", "Motori", "Scarichi",
+    "Sospensioni", "Freni", "Pneumatici", "Caschi",
+    "Abbigliamento", "Accessori"
+  ],
+
+  "SCOOTER": [
+    "50 cc", "125 cc", "150 cc", "250 cc", "Maxi Scooter",
+    "Scooter sportivi", "Scooter cittadini", "Scooter touring",
+    "Scooter elettrici", "Scooter d'epoca", "Ricambi",
+    "Motori", "Pneumatici", "Caschi", "Accessori"
+  ],
+
+  "HARLEY & CUSTOM": [
+    "Harley-Davidson", "Chopper", "Bobber", "Cruiser",
+    "Café Racer", "Scrambler", "Custom", "Preparazioni",
+    "Restauri", "Verniciature", "Motori", "Scarichi",
+    "Ricambi", "Accessori", "Abbigliamento", "Gadget"
+  ],
+
+  "CAMION & VEICOLI COMMERCIALI": [
+    "Autocarri", "Trattori stradali", "Bilici", "Furgoni",
+    "Cassonati", "Ribaltabili", "Cisterne", "Frigoriferi",
+    "Rimorchi", "Semirimorchi", "Autobus", "Pullman",
+    "Minibus", "Camper", "Caravan", "Veicoli speciali",
+    "Soccorso stradale", "Ricambi", "Motori", "Accessori"
+  ],
+
+  "TRATTORI & AGRICOLTURA": [
+    "Trattori", "Trattori compatti", "Trattori d'epoca",
+    "Mietitrebbie", "Seminatrici", "Aratri", "Erpici",
+    "Fresatrici", "Falciatrici", "Trinciatrici",
+    "Irroratrici", "Raccoglitrici", "Presse",
+    "Rimorchi agricoli", "Macchine agricole",
+    "Attrezzature agricole", "Irrigazione", "Ricambi",
+    "Pneumatici agricoli", "Accessori"
+  ],
+
+  "EDILIZIA & MACCHINE DA LAVORO": [
+    "Escavatori", "Miniescavatori", "Pale", "Ruspe",
+    "Dozer", "Terne", "Autobetoniere", "Betoniere",
+    "Gru", "Autogru", "Piattaforme aeree", "Carrelli elevatori",
+    "Rulli", "Vibrofinitrici", "Perforatrici",
+    "Macchine movimento terra", "Generatori", "Compressori",
+    "Attrezzatura", "Ricambi"
+  ],
+
+  "NAUTICA": [
+    "Barche a motore", "Barche a vela", "Gommoni",
+    "Motoscafi", "Yacht", "Mega Yacht", "Catamarani",
+    "Trimarani", "Barche da pesca", "Barche d'epoca",
+    "Moto d'acqua", "Tender", "Fuoribordo", "Entrobordo",
+    "Motori marini", "Elettronica nautica", "GPS nautici",
+    "Radar", "VHF", "Eliche", "Attrezzatura",
+    "Accessori", "Ricambi", "Abbigliamento nautico"
+  ],
+
+  "NAVALE": [
+    "Navi", "Imbarcazioni", "Rimorchiatori", "Traghetti",
+    "Pescherecci", "Navi da lavoro", "Navi storiche",
+    "Componentistica", "Motori navali", "Propulsione",
+    "Elettronica navale", "Navigazione", "Attrezzatura marina",
+    "Ricambi", "Accessori", "Modellismo navale"
+  ],
+
+  "AERONAUTICA": [
+    "Aerei", "Ultraleggeri", "Alianti", "Elicotteri",
+    "Aviazione civile", "Aviazione storica",
+    "Aeromodellismo", "Droni", "Simulatori di volo",
+    "Avionica", "Strumentazione", "Componenti",
+    "Motori aeronautici", "Accessori", "Libri",
+    "Manuali", "Fotografie", "Memorabilia"
+  ],
+
+  "MILITARIA & STORIA": [
+    "Vestiario militare", "Uniformi storiche", "Giacche",
+    "Pantaloni", "Stivali", "Zaini", "Borse",
+    "Equipaggiamento storico", "Medaglie", "Decorazioni",
+    "Distintivi", "Mostrine", "Patch", "Gradi",
+    "Copricapi", "Elmetti da collezione", "Bandiere",
+    "Insegne", "Libri storici", "Riviste", "Documenti",
+    "Fotografie", "Poster", "Gadget", "Memorabilia",
+    "Modellini", "Diorami", "Reenactment", "Ricostruzione storica"
+  ],
+
+  "SPORT": [
+    "Calcio", "Calcio a 5", "Basket", "Pallavolo",
+    "Beach Volley", "Rugby", "Football Americano",
+    "Baseball", "Softball", "Cricket", "Tennis",
+    "Padel", "Badminton", "Ping Pong", "Squash",
+    "Atletica", "Corsa", "Maratona", "Trail Running",
+    "Triathlon", "Nuoto", "Tuffi", "Pallanuoto",
+    "Ginnastica Artistica", "Ginnastica Ritmica",
+    "Ginnastica Acrobatica", "CrossFit", "Fitness",
+    "Bodybuilding", "Powerlifting", "Weightlifting",
+    "Ciclismo", "Mountain Bike", "BMX", "Gravel",
+    "Ciclismo su pista", "Ciclismo su strada",
+    "Equitazione", "Polo", "Golf", "Hockey",
+    "Hockey su ghiaccio", "Pattinaggio", "Pattinaggio artistico",
+    "Skateboard", "Roller", "Sci", "Sci alpino",
+    "Sci di fondo", "Sci freestyle", "Snowboard",
+    "Arrampicata", "Bouldering", "Alpinismo",
+    "Escursionismo", "Trekking", "Surf", "Windsurf",
+    "Kitesurf", "Wakeboard", "Sci nautico", "Vela",
+    "Canottaggio", "Kayak", "Canoa", "Rafting",
+    "Pesca sportiva", "Dart", "Biliardo", "Bowling",
+    "Motorsport", "Rally", "Karting", "Motociclismo"
+  ],
+
+  "ARTI MARZIALI & COMBATTIMENTO": [
+    "Karate", "Judo", "Jiu-Jitsu", "Brazilian Jiu-Jitsu",
+    "Aikido", "Taekwondo", "Hapkido", "Kung Fu",
+    "Wushu", "Sanda", "Wing Chun", "Tai Chi",
+    "Krav Maga", "Muay Thai", "Kickboxing", "Savate",
+    "Boxe", "MMA", "Sambo", "Kendo", "Iaido",
+    "Ninjutsu", "Sumo", "Lotta olimpica", "Grappling",
+    "Pankration", "Capoeira", "Kali", "Arnis",
+    "Escrima", "Jeet Kune Do", "Silat", "Systema",
+    "Scherma", "Scherma storica", "Arti marziali tradizionali",
+    "Arti marziali storiche", "Difesa personale",
+    "Attrezzatura", "Kimono", "Gi", "Cinture",
+    "Guantoni", "Protezioni", "Caschi", "Paratibie",
+    "Parapiedi", "Colpitori", "Sacchi", "Tatami",
+    "Materassine", "Libri", "Video", "Collezionismo"
+  ],
+
+  "FITNESS & PALESTRA": [
+    "Pesi", "Manubri", "Bilancieri", "Dischi",
+    "Kettlebell", "Power Rack", "Panche",
+    "Macchine palestra", "Tapis roulant", "Cyclette",
+    "Ellittiche", "Vogatori", "Step", "Elastici",
+    "Yoga", "Pilates", "CrossFit", "Calisthenics",
+    "Bodybuilding", "Powerlifting", "Fitness casa",
+    "Abbigliamento", "Accessori"
+  ],
+
+  "OUTDOOR & AVVENTURA": [
+    "Camping", "Trekking", "Escursionismo", "Alpinismo",
+    "Arrampicata", "Bouldering", "Survival",
+    "Bushcraft", "Escursionismo invernale",
+    "Speleologia", "Orienteering", "Zaini",
+    "Tende", "Sacchi a pelo", "Materassini",
+    "Cucina da campo", "Illuminazione", "Abbigliamento"
+  ],
+
+  "PESCA": [
+    "Pesca in mare", "Pesca in fiume", "Pesca in lago",
+    "Pesca a mosca", "Spinning", "Carpfishing",
+    "Surfcasting", "Pesca subacquea", "Canne",
+    "Mulinelli", "Esche", "Ami", "Fili",
+    "Guadini", "Cassetti da pesca", "Abbigliamento",
+    "Accessori", "Imbarcazioni da pesca"
+  ],
+
+  "INTEGRATORI": [
+    "Proteine", "Whey", "Whey Isolate", "Caseine",
+    "Proteine vegetali", "Mass Gainer",
+    "Creatina", "BCAA", "EAA", "Glutammina",
+    "Arginina", "Citrullina", "Beta Alanina",
+    "Pre-Workout", "Post-Workout",
+    "Elettroliti", "Carboidrati",
+    "Vitamine", "Multivitaminici", "Vitamina A",
+    "Vitamina B", "Vitamina C", "Vitamina D",
+    "Vitamina E", "Vitamina K",
+    "Magnesio", "Zinco", "Ferro", "Potassio",
+    "Calcio", "Selenio",
+    "Omega 3", "Omega 6", "Collagene",
+    "Glucosamina", "Condroitina",
+    "Astaxantina", "Coenzima Q10",
+    "Probiotici", "Integratori sportivi",
+    "Integratori vegani", "Integratori biologici"
+  ],
+
+  "ELETTRONICA & INFORMATICA": [
+    "PC", "Notebook", "Mac", "Tablet", "Smartphone",
+    "iPhone", "Android", "Monitor", "TV", "Home Cinema",
+    "Stampanti", "Scanner", "Server", "Networking",
+    "Router", "Componenti PC", "Schede video",
+    "Processori", "RAM", "SSD", "Hard Disk",
+    "Accessori", "Cavi", "Alimentatori",
+    "Elettronica vintage", "Radio", "Hi-Fi"
+  ],
+
+  "GAMING": [
+    "PlayStation", "Xbox", "Nintendo", "PC Gaming",
+    "Console", "Videogiochi", "Controller",
+    "Volanti", "Joystick", "Cuffie", "Gaming Chair",
+    "Accessori", "Retrogaming", "Arcade",
+    "Collezionismo"
+  ],
+
+  "FOTOGRAFIA & VIDEO": [
+    "Fotocamere", "Reflex", "Mirrorless", "Compatte",
+    "Obiettivi", "Teleobiettivi", "Grandangolari",
+    "Videocamere", "Action Cam", "Droni",
+    "Treppiedi", "Flash", "Microfoni",
+    "Luci", "Gimbal", "Accessori",
+    "Fotografia analogica", "Pellicole", "Camera oscura"
+  ],
+
+  "MUSICA & AUDIO": [
+    "Chitarre", "Bassi", "Batterie", "Percussioni",
+    "Pianoforti", "Tastiere", "Sintetizzatori",
+    "Organi", "Violini", "Violoncelli", "Fiati",
+    "Amplificatori", "Effetti", "Pedali",
+    "Mixer", "Microfoni", "Casse", "DJ",
+    "Studio Recording", "Vinili", "CD",
+    "Strumenti vintage", "Accessori"
+  ],
+
+  "ABBIGLIAMENTO": [
+    "Uomo", "Donna", "Bambino", "Neonato",
+    "Vintage", "Streetwear", "Casual", "Elegante",
+    "Sportivo", "Workwear", "Militare",
+    "Giacche", "Cappotti", "Pantaloni",
+    "Jeans", "Maglieria", "Camicie",
+    "T-shirt", "Costumi", "Intimo", "Accessori"
+  ],
+
+  "SCARPE": [
+    "Sneakers", "Running", "Calcio", "Basket",
+    "Trekking", "Scarponi", "Stivali",
+    "Mocassini", "Eleganti", "Sandali",
+    "Vintage", "Designer"
+  ],
+
+  "GIOIELLI & OROLOGI": [
+    "Orologi", "Orologi vintage", "Orologi meccanici",
+    "Orologi automatici", "Gioielli", "Anelli",
+    "Collane", "Bracciali", "Orecchini",
+    "Bigiotteria", "Orologeria", "Accessori"
+  ],
+
+  "CASA & ARREDAMENTO": [
+    "Mobili", "Divani", "Poltrone", "Tavoli",
+    "Sedie", "Letti", "Materassi", "Armadi",
+    "Librerie", "Complementi d'arredo",
+    "Lampade", "Illuminazione", "Tappeti",
+    "Tende", "Decorazioni", "Vintage", "Antiquariato"
+  ],
+
+  "CUCINA": [
+    "Elettrodomestici", "Forni", "Frigoriferi",
+    "Lavastoviglie", "Macchine da caffè",
+    "Pentole", "Padelle", "Stoviglie",
+    "Bicchieri", "Posate", "Coltelli da cucina",
+    "Utensili", "Robot da cucina", "Accessori"
+  ],
+
+  "FAI DA TE & FERRAMENTA": [
+    "Utensili manuali", "Elettroutensili", "Trapani",
+    "Avvitatori", "Smerigliatrici", "Seghe",
+    "Levigatrici", "Saldatura", "Compressori",
+    "Ferramenta", "Viteria", "Bulloneria",
+    "Scale", "Attrezzatura professionale"
+  ],
+
+  "GIARDINO": [
+    "Tagliaerba", "Decespugliatori", "Motoseghe",
+    "Soffiatori", "Tagliasiepi", "Trattorini",
+    "Irrigazione", "Serre", "Arredo giardino",
+    "Barbecue", "Piscine", "Attrezzatura",
+    "Piante", "Vasi"
+  ],
+
+  "ANIMALI": [
+    "Cani", "Gatti", "Uccelli", "Pesci",
+    "Piccoli animali", "Acquari", "Terrari",
+    "Cucce", "Trasportini", "Giochi",
+    "Accessori", "Toelettatura"
+  ],
+
+  "BAMBINI & GIOCATTOLI": [
+    "Prima infanzia", "Passeggini", "Seggiolini",
+    "Culle", "Abbigliamento", "Giocattoli",
+    "Giochi educativi", "Giochi elettronici",
+    "Peluches", "Costruzioni", "Bambole",
+    "Action Figure", "Modellismo"
+  ],
+
+  "LIBRI & CULTURA": [
+    "Libri", "Romanzi", "Saggistica", "Manuali",
+    "Enciclopedie", "Fumetti", "Manga", "Riviste",
+    "Libri antichi", "Fotografia", "Arte",
+    "Storia", "Scienza", "Tecnologia", "Musica"
+  ],
+
+  "ARTE": [
+    "Dipinti", "Disegni", "Sculture", "Fotografie",
+    "Stampe", "Poster", "Arte contemporanea",
+    "Arte moderna", "Arte antica", "Materiali artistici"
+  ],
+
+  "ANTIQUARIATO": [
+    "Mobili antichi", "Ceramiche", "Porcellane",
+    "Argenteria", "Quadri", "Sculture",
+    "Orologi antichi", "Libri antichi",
+    "Oggettistica", "Vintage"
+  ],
+
+  "COLLEZIONISMO": [
+    "Monete", "Banconote", "Francobolli", "Medaglie",
+    "Figurine", "Carte collezionabili", "Action Figure",
+    "Modellini", "Die-cast", "Funko",
+    "Memorabilia", "Vintage", "Gadget"
+  ],
+
+  "HOBBY": [
+    "Modellismo", "Aeromodellismo", "Modellismo navale",
+    "Ferroviario", "Puzzle", "Giochi da tavolo",
+    "Carte", "Magic", "Pokémon", "War Games",
+    "Artigianato", "Cucito", "Maglia",
+    "Collezioni", "Gadget"
+  ],
+
+  "VIAGGI & VALIGERIA": [
+    "Valigie", "Trolley", "Zaini", "Borse da viaggio",
+    "Beauty Case", "Accessori viaggio", "Campeggio",
+    "Attrezzatura"
+  ],
+
+  "UFFICIO & PROFESSIONALE": [
+    "Scrivanie", "Sedie", "Stampanti", "Scanner",
+    "Cancelleria", "Materiale ufficio",
+    "Attrezzatura professionale", "Arredi professionali"
+  ],
+
+  "INDUSTRIA": [
+    "Macchinari", "Motori", "Pompe", "Compressori",
+    "Generatori", "Automazione", "Robotica",
+    "Componentistica", "Attrezzature industriali"
+  ],
+
+  "ENERGIA & SMART HOME": [
+    "Fotovoltaico", "Pannelli solari", "Inverter",
+    "Batterie", "Power Station", "Generatori",
+    "Domotica", "Smart Home", "Illuminazione"
+  ],
+
+  "GADGET & REGALI": [
+    "Gadget", "Souvenir", "Regali",
+    "Personalizzati", "Gadget tecnologici",
+    "Memorabilia", "Collezionabili"
+  ],
+
+  "SERVIZI DIGITALI": [
+    "Software", "Licenze", "Grafica", "Web Design",
+    "Programmazione", "Servizi digitali",
+    "Contenuti digitali"
+  ],
+
+  "ALTRO": [
+    "Oggetti vari", "Prodotti vari", "Altri articoli"
+  ]
+
+};
+
+window.riverSpendCategories = riverSpendCategories;
+
+console.log(
+  "RiverSpend: catalogo categorie caricato:",
+  Object.keys(riverSpendCategories).length,
+  "categorie principali"
+);
 </script>
 </body>
 </html>
