@@ -770,6 +770,16 @@ menuButton.addEventListener("click", () => {
     const subItem = document.createElement("div");
 
     subItem.textContent = subcategory;
+    subItem.addEventListener("click", () => {
+
+  const category = encodeURIComponent(category);
+  const subcategoryName = encodeURIComponent(subcategory);
+
+  window.location.href =
+    "?category=" + category +
+    "&subcategory=" + subcategoryName;
+
+});
 
     subItem.style.cssText = `
       padding:9px 4px;
