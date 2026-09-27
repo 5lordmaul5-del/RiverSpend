@@ -726,10 +726,11 @@ menuButton.addEventListener("click", () => {
     const title = document.createElement("h2");
     title.textContent = "Categorie RiverSpend";
     title.style.cssText = `
-      margin:0 0 18px;
-      color:#087f9e;
-      font-size:24px;
-    `;
+  margin:0 0 14px;
+  color:black;
+  font-size:20px;
+  font-weight:700;
+`;
 
     menu.appendChild(title);
 
@@ -738,20 +739,20 @@ menuButton.addEventListener("click", () => {
       const item = document.createElement("button");
 
       item.textContent = category;
-
-      item.style.cssText = `
-        display:block;
-        width:100%;
-        margin:0 0 10px;
-        padding:15px;
-        border:1px solid #08a7cf;
-        border-radius:12px;
-        background:#08a7cf;
-        color:white;
-        font-size:16px;
-        font-weight:700;
-        text-align:left;
-      `;
+item.style.cssText = `
+  display:block;
+  width:100%;
+  margin:0;
+  padding:12px 4px;
+  border:0;
+  border-bottom:1px solid #ddd;
+  border-radius:0;
+  background:white;
+  color:black;
+  font-size:15px;
+  font-weight:600;
+  text-align:left;
+`;
 
       menu.appendChild(item);
     });
