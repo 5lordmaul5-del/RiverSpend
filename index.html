@@ -734,28 +734,73 @@ menuButton.addEventListener("click", () => {
 
     menu.appendChild(title);
 
-    Object.keys(riverSpendCategories).forEach(category => {
+      Object.keys(riverSpendCategories).forEach(category => {
 
-      const item = document.createElement("button");
+  const wrapper = document.createElement("div");
 
-      item.textContent = category;
-item.style.cssText = `
-  display:block;
-  width:100%;
-  margin:0;
-  padding:12px 4px;
-  border:0;
-  border-bottom:1px solid #ddd;
-  border-radius:0;
-  background:white;
-  color:black;
-  font-size:15px;
-  font-weight:600;
-  text-align:left;
-`;
+  const item = document.createElement("button");
+  item.textContent = category + "  ›";
 
-      menu.appendChild(item);
-    });
+  item.style.cssText = `
+    display:block;
+    width:100%;
+    margin:0;
+    padding:12px 4px;
+    border:0;
+    border-bottom:1px solid #ddd;
+    border-radius:0;
+    background:white;
+    color:black;
+    font-size:15px;
+    font-weight:600;
+    text-align:left;
+    cursor:pointer;
+  `;
+
+  const subMenu = document.createElement("div");
+
+  subMenu.style.cssText = `
+    display:none;
+    background:white;
+    padding:0 0 6px 18px;
+  `;
+
+  riverSpendCategories[category].forEach(subcategory => {
+
+    const subItem = document.createElement("div");
+
+    subItem.textContent = subcategory;
+
+    subItem.style.cssText = `
+      padding:9px 4px;
+      border-bottom:1px solid #eee;
+      color:black;
+      background:white;
+      font-size:14px;
+      font-weight:400;
+      cursor:pointer;
+    `;
+
+    subMenu.appendChild(subItem);
+
+  });
+
+  item.addEventListener("click", () => {
+
+    const aperto = subMenu.style.display === "block";
+
+    subMenu.style.display = aperto ? "none" : "block";
+
+    item.textContent = category + (aperto ? "  ›" : "  ↓");
+
+  });
+
+  wrapper.appendChild(item);
+  wrapper.appendChild(subMenu);
+
+  menu.appendChild(wrapper);
+
+});
 
     document.body.appendChild(menu);
 
