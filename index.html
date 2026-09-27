@@ -1411,7 +1411,134 @@ profileButton.addEventListener("click", () => {
             font-size:14px;
             cursor:pointer;
           `;
+          if (itemName === "🐬 Megalodonte") {
 
+            item.addEventListener("click", () => {
+
+              const box = document.createElement("div");
+
+              box.style.cssText = `
+                position:fixed;
+                inset:0;
+                z-index:11000;
+                background:rgba(0,20,30,.96);
+                overflow-y:auto;
+                padding:20px;
+                box-sizing:border-box;
+              `;
+
+              box.innerHTML = `
+                <div style="
+                  max-width:720px;
+                  margin:0 auto;
+                  background:white;
+                  border-radius:20px;
+                  overflow:hidden;
+                ">
+
+                  <img
+                    src="file_00000000070081f4be8d351d407b4017.png"
+                    alt="Megalodonte - RiverSpend Park"
+                    style="
+                      display:block;
+                      width:100%;
+                      height:auto;
+                    "
+                  >
+
+                  <div style="padding:20px;">
+
+                    <h1 style="
+                      margin:0 0 8px;
+                      color:#087f9e;
+                    ">
+                      🦈 MEGALODONTE
+                    </h1>
+
+                    <h3 style="
+                      margin:0 0 18px;
+                      color:#12343b;
+                    ">
+                      Lo scivolo che ti ingoia nel divertimento
+                    </h3>
+
+                    <p style="
+                      line-height:1.6;
+                      color:#45636b;
+                    ">
+                      Una grande attrazione acquatica tematizzata attorno
+                      al Megalodonte, con una discesa immersiva attraverso
+                      tunnel, effetti d'acqua e la gigantesca bocca dello squalo.
+                    </p>
+
+                    <h3 style="color:#087f9e;">
+                      🌊 Il percorso
+                    </h3>
+
+                    <p style="
+                      line-height:1.6;
+                      color:#45636b;
+                    ">
+                      La Partenza → La Discesa → L'Incontro →
+                      Nella Bocca → Il Tunnel → Il Gran Finale
+                    </p>
+
+                    <h3 style="color:#087f9e;">
+                      ⚙️ Caratteristiche
+                    </h3>
+
+                    <ul style="
+                      line-height:1.8;
+                      color:#45636b;
+                    ">
+                      <li>Grande scivolo acquatico tematizzato</li>
+                      <li>Megalodonte gigante</li>
+                      <li>Tunnel immersivi</li>
+                      <li>Effetti d'acqua e illuminazione</li>
+                      <li>Power Shield per la sicurezza dell'attrazione</li>
+                    </ul>
+
+                    <p style="
+                      padding:12px;
+                      border-radius:12px;
+                      background:#e9f8fc;
+                      color:#087f9e;
+                      font-weight:bold;
+                    ">
+                      🚧 Scheda tecnica e sviluppo definitivo: IN SVILUPPO
+                    </p>
+
+                    <button
+                      id="close-megalodonte"
+                      style="
+                        width:100%;
+                        padding:14px;
+                        border:0;
+                        border-radius:12px;
+                        background:#087f9e;
+                        color:white;
+                        font-size:16px;
+                        font-weight:bold;
+                      "
+                    >
+                      ← Torna a RS Park
+                    </button>
+
+                  </div>
+                </div>
+              `;
+
+              document.body.appendChild(box);
+
+              document
+                .getElementById("close-megalodonte")
+                .addEventListener("click", () => {
+                  box.remove();
+                });
+
+            });
+
+          }
           subMenu.appendChild(item);
 
         });
