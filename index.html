@@ -239,14 +239,12 @@ body {
 
   <main id="home">
 
-
-  <header class="rs-header">
+<header class="rs-header">
   <button class="rs-menu" aria-label="Apri categorie">☰</button>
 
   <div class="rs-logo">RiverSpend</div>
 
-  <button class="rs-search" aria-label="Cerca">⌕</button>
-
+  <button class="rs-profile" aria-label="Apri servizi RiverSpend">👤</button>
 </header>
     
   <section class="rs-actions">
@@ -817,6 +815,169 @@ menuButton.addEventListener("click", () => {
   } else {
 
     menu.remove();
+
+  }
+
+});
+  // ======================================================
+// RIVERSPEND — MENU PROFILO E SERVIZI
+// ======================================================
+
+const profileButton = document.querySelector(".rs-profile");
+
+profileButton.addEventListener("click", () => {
+
+  let profileMenu = document.getElementById("river-profile-menu");
+
+  if (!profileMenu) {
+
+    profileMenu = document.createElement("div");
+    profileMenu.id = "river-profile-menu";
+
+    profileMenu.style.cssText = `
+      position:fixed;
+      top:68px;
+      left:0;
+      right:0;
+      bottom:0;
+      z-index:10000;
+      background:white;
+      overflow-y:auto;
+      padding:16px;
+      box-sizing:border-box;
+    `;
+
+    const title = document.createElement("h2");
+
+    title.textContent = "RS Profilo e Servizi";
+
+    title.style.cssText = `
+      margin:0 0 14px;
+      color:black;
+      font-size:20px;
+      font-weight:700;
+    `;
+
+    profileMenu.appendChild(title);
+
+    const sections = {
+
+      "RS Profilo / Account": [
+        "Privato",
+        "Azienda",
+        "Professionista",
+        "Venditore",
+        "Acquirente",
+        "Associazione / Ente",
+        "Negozio",
+        "Gestione account",
+        "Dati personali / aziendali",
+        "Indirizzi",
+        "Metodi di pagamento",
+        "Sicurezza e accesso",
+        "Notifiche",
+        "Privacy",
+        "Lingua"
+      ],
+
+      "RS Fidelity": [],
+
+      "RS Local": [],
+
+      "RS PiggyBank": [],
+
+      "RS Shield Protector": [],
+
+      "RS Multilanguage": [],
+
+      "RS Resi e Rimborsi": [],
+
+      "RS Ads": [],
+
+      "RS Broadcast — TV / Radio / Media": [],
+
+      "RS Park": []
+
+    };
+
+    Object.keys(sections).forEach(sectionName => {
+
+      const section = document.createElement("div");
+
+      const button = document.createElement("button");
+
+      button.textContent = sectionName + "  ›";
+
+      button.style.cssText = `
+        display:block;
+        width:100%;
+        margin:0;
+        padding:13px 4px;
+        border:0;
+        border-bottom:1px solid #ddd;
+        background:white;
+        color:black;
+        font-size:15px;
+        font-weight:600;
+        text-align:left;
+        cursor:pointer;
+      `;
+
+      section.appendChild(button);
+
+      if (sections[sectionName].length > 0) {
+
+        const subMenu = document.createElement("div");
+
+        subMenu.style.cssText = `
+          display:none;
+          background:white;
+          padding-left:18px;
+        `;
+
+        sections[sectionName].forEach(itemName => {
+
+          const item = document.createElement("div");
+
+          item.textContent = itemName;
+
+          item.style.cssText = `
+            padding:10px 4px;
+            border-bottom:1px solid #eee;
+            background:white;
+            color:black;
+            font-size:14px;
+            cursor:pointer;
+          `;
+
+          subMenu.appendChild(item);
+
+        });
+
+        button.addEventListener("click", () => {
+
+          const open = subMenu.style.display === "block";
+
+          subMenu.style.display = open ? "none" : "block";
+
+          button.textContent =
+            sectionName + (open ? "  ›" : "  ↓");
+
+        });
+
+        section.appendChild(subMenu);
+
+      }
+
+      profileMenu.appendChild(section);
+
+    });
+
+    document.body.appendChild(profileMenu);
+
+  } else {
+
+    profileMenu.remove();
 
   }
 
