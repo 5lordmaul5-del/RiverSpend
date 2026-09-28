@@ -1,99 +1,227 @@
+import { useEffect, useState } from "react";
+import { supabase } from "../../lib/supabase";
+
+const cards = [
+  ["💰", "Incassi", "Dati pagamenti da collegare"],
+  ["💸", "Spese", "Registro spese da configurare"],
+  ["🛒", "Ordini visibili", "Conteggio consentito dalle policy"],
+  ["↩️", "Resi", "Gestione resi da configurare"],
+  ["👥", "Iscritti", "Conteggio amministrativo da collegare"],
+  ["🏪", "Venditori", "Dati venditori da collegare"],
+  ["🏢", "Aziende", "Dati aziende da collegare"],
+  ["📦", "Prodotti pubblicati", "Conteggio dal database"],
+];
+
 export default function RSControlCenter() {
-  const sezioni = [
-    { icona: "💰", titolo: "Finanza", voci: "Incassi · Spese · Commissioni · Rimborsi" },
-    { icona: "🛒", titolo: "Marketplace", voci: "Ordini · Vendite · Prodotti · Vetrine" },
-    { icona: "↩️", titolo: "Resi e assistenza", voci: "Resi · Contestazioni · Assistenza" },
-    { icona: "👥", titolo: "Utenti", voci: "Iscritti · Privati · Aziende · Venditori" },
-    { icona: "👷", titolo: "Collaboratori", voci: "Team · Ruoli · Permessi · Attività" },
-    { icona: "📊", titolo: "Statistiche", voci: "Iscrizioni · Vendite · Crescita · Report" },
-  ];
+  const [status, setStatus] = useState("Verifica accesso…");
+  const [email, setEmail] = useState("");
+  const [metrics, setMetrics] = useState({});
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let alive = true;
+
+    async function load() {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (!alive) return;
+
+      if (!session) {
+        setStatus("login");
+        return;
+      }
+
+      setEmail(session.user.email || "");
+
+      const { data: role, error: roleError } = await supabase
+        .from("rs_admin_roles")
+        .select("role")
+        .eq("user_id", session.user.id)
+        .maybeSingle();
+
+      if (!alive) return;
+
+      if (roleError || role?.role !== "admin") {
+        setStatus("denied");
+        setError(
+          roleError?.message ||
+            "Questo account non ha il ruolo amministratore."
+        );
+        return;
+      }
+
+      setStatus("admin");
+
+      const results = await Promise.all([
+        supabase
+          .from("products")
+          .select("id", { count: "exact", head: true })
+          .eq("status", "published"),
+        supabase.from("orders").select("id", { count: "exact", head: true }),
+      ]);
+
+      if (!alive) return;
+
+      setMetrics({
+        products: results[0].error ? null : results[0].count,
+        orders: results[1].error ? null : results[1].count,
+      });
+    }
+
+    load();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(() => load());
+
+    return () => {
+      alive = false;
+      subscription?.unsubscribe();
+    };
+  }, []);
+
+  const panel = {
+    background: "white",
+    borderRadius: 16,
+    padding: 18,
+    boxShadow: "0 4px 14px rgba(0,80,100,.07)",
+  };
+
+  const value = (key) =>
+    metrics[key] === null || metrics[key] === undefined
+      ? "—"
+      : metrics[key];
 
   return (
-    <main style={{
-      minHeight: "100vh",
-      background: "#f3fbfd",
-      color: "#12343b",
-      fontFamily: "Arial, sans-serif",
-      padding: "20px",
-    }}>
-      <header style={{
-        background: "white",
-        borderRadius: "18px",
-        padding: "18px",
-        marginBottom: "24px",
-        boxShadow: "0 4px 14px rgba(0,80,100,.08)",
-      }}>
-        <div style={{ color: "#08a7cf", fontSize: "25px", fontWeight: "bold" }}>
+    <main
+      style={{
+        minHeight: "100vh",
+        background: "#f3fbfd",
+        color: "#12343b",
+        fontFamily: "Arial,sans-serif",
+        padding: 20,
+      }}
+    >
+      <header style={{ ...panel, marginBottom: 22 }}>
+        <div style={{ color: "#08a7cf", fontSize: 25, fontWeight: 700 }}>
           RiverSpend
         </div>
-        <div style={{ color: "#63818a", marginTop: "5px" }}>
-          RS Control Center
+        <div style={{ color: "#63818a", marginTop: 5 }}>
+          🏢 RS Control Center
         </div>
       </header>
 
-      <h1 style={{ fontSize: "28px", marginBottom: "8px" }}>
-        Centro di controllo
-      </h1>
-      <p style={{ color: "#63818a", lineHeight: 1.5 }}>
-        La tua centrale di gestione dell’ecosistema RiverSpend.
-      </p>
+      {status === "login" ? (
+        <section style={panel}>
+          <h1>Accesso richiesto</h1>
+          <p>
+            Accedi a RiverSpend con l’account amministratore{" "}
+            <b>mauriziolella@yahoo.it</b>, poi riapri questo pannello.
+          </p>
+        </section>
+      ) : status === "denied" ? (
+        <section style={panel}>
+          <h1>Accesso non autorizzato</h1>
+          <p>{error}</p>
+        </section>
+      ) : status !== "admin" ? (
+        <section style={panel}>{status}</section>
+      ) : (
+        <>
+          <h1 style={{ fontSize: 27, marginBottom: 6 }}>
+            Centro di controllo
+          </h1>
+          <p style={{ color: "#63818a", marginTop: 0 }}>
+            Area amministrativa · Accesso verificato per {email}
+          </p>
 
-      <section style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-        gap: "12px",
-        margin: "22px 0",
-      }}>
-        {[
-          ["💰", "Incassi"],
-          ["🛒", "Ordini"],
-          ["👥", "Iscritti"],
-          ["↩️", "Resi"],
-        ].map(([icona, titolo]) => (
-          <div key={titolo} style={{
-            background: "white",
-            borderRadius: "15px",
-            padding: "18px 12px",
-            boxShadow: "0 4px 14px rgba(0,80,100,.07)",
-          }}>
-            <div style={{ fontSize: "25px" }}>{icona}</div>
-            <strong style={{ display: "block", marginTop: "8px" }}>{titolo}</strong>
-            <div style={{ color: "#63818a", fontSize: "20px", marginTop: "5px" }}>—</div>
-            <small style={{ color: "#8aa0a6" }}>Dati da collegare</small>
+          <div
+            style={{
+              ...panel,
+              borderLeft: "5px solid #16a36a",
+              margin: "18px 0",
+            }}
+          >
+            <b style={{ color: "#168454" }}>
+              ✓ Amministratore verificato
+            </b>
+            <div
+              style={{
+                color: "#63818a",
+                fontSize: 13,
+                marginTop: 5,
+              }}
+            >
+              I valori mostrati provengono dal database. “—” indica dati non
+              accessibili o non ancora collegati, non zero.
+            </div>
           </div>
-        ))}
-      </section>
 
-      <section style={{
-        display: "grid",
-        gridTemplateColumns: "1fr",
-        gap: "14px",
-      }}>
-        {sezioni.map((sezione) => (
-          <article key={sezione.titolo} style={{
-            background: "white",
-            borderRadius: "16px",
-            padding: "18px",
-            boxShadow: "0 4px 14px rgba(0,80,100,.07)",
-          }}>
-            <h2 style={{ fontSize: "19px", margin: "0 0 10px" }}>
-              {sezione.icona} {sezione.titolo}
-            </h2>
-            <p style={{ color: "#63818a", margin: 0, lineHeight: 1.6 }}>
-              {sezione.voci}
-            </p>
-          </article>
-        ))}
-      </section>
+          <section
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit,minmax(145px,1fr))",
+              gap: 12,
+            }}
+          >
+            {cards.map(([icon, title, note]) => {
+              const metric =
+                title === "Prodotti pubblicati"
+                  ? value("products")
+                  : title === "Ordini visibili"
+                    ? value("orders")
+                    : "—";
 
-      <p style={{
-        marginTop: "24px",
-        color: "#63818a",
-        fontSize: "13px",
-        textAlign: "center",
-      }}>
-        RS Control Center · Area amministrativa RiverSpend
-      </p>
+              return (
+                <article key={title} style={panel}>
+                  <div style={{ fontSize: 24 }}>{icon}</div>
+                  <b style={{ display: "block", marginTop: 8 }}>{title}</b>
+                  <div
+                    style={{
+                      fontSize: 25,
+                      fontWeight: 700,
+                      margin: "8px 0",
+                      color: "#087f9e",
+                    }}
+                  >
+                    {metric}
+                  </div>
+                  <small style={{ color: "#718a91", lineHeight: 1.4 }}>
+                    {note}
+                  </small>
+                </article>
+              );
+            })}
+          </section>
+
+          <h2 style={{ marginTop: 26 }}>Gestione ecosistema</h2>
+          <section
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))",
+              gap: 12,
+            }}
+          >
+            {[
+              ["🛒 Marketplace", "Prodotti · Vetrine · Categorie · ADS · Ordini"],
+              ["👥 Utenti", "Privati · Aziende · Acquirenti · Venditori"],
+              ["👷 Collaboratori", "Elenco · Ruoli · Permessi · Attività"],
+              ["📊 Statistiche", "Iscrizioni · Crescita · Vendite · Rimborsi"],
+              ["🛡️ Sicurezza", "Accesso admin · Ruoli · Registro attività"],
+            ].map(([title, detail]) => (
+              <article key={title} style={panel}>
+                <b>{title}</b>
+                <p style={{ color: "#63818a", lineHeight: 1.5 }}>{detail}</p>
+                <small style={{ color: "#8aa0a6" }}>
+                  Collegamento dati in corso
+                </small>
+              </article>
+            ))}
+          </section>
+        </>
+      )}
     </main>
   );
 }
