@@ -247,9 +247,93 @@ body {
   <button class="rs-profile" aria-label="Apri servizi RiverSpend">👤</button>
 </header>
     
-  <section class="rs-actions">
-    <button id="rs-vendi-button">VENDI</button>
-    <button>COMPRA</button>
+  <section style="
+  padding:14px 16px 8px;
+  background:#f4fbfd;
+">
+
+  <div style="
+    display:flex;
+    align-items:center;
+    gap:8px;
+    background:white;
+    border:1px solid #cfe9ef;
+    border-radius:18px;
+    padding:5px 7px 5px 14px;
+    min-height:54px;
+    box-shadow:0 4px 14px rgba(0,80,100,.08);
+  ">
+
+    <span style="font-size:20px;">🔍</span>
+
+    <input
+      type="search"
+      placeholder="Cerca prodotti, categorie, marche..."
+      style="
+        flex:1;
+        min-width:0;
+        border:0;
+        outline:0;
+        background:transparent;
+        font-size:16px;
+      "
+    >
+
+    <button style="
+      width:44px;
+      height:44px;
+      border:0;
+      border-radius:14px;
+      background:#08a7cf;
+      color:white;
+      font-size:18px;
+    ">
+      🔎
+    </button>
+
+  </div>
+
+</section>
+
+<nav style="
+  display:flex;
+  gap:9px;
+  padding:8px 16px 14px;
+  overflow-x:auto;
+  background:#f4fbfd;
+">
+
+  <button>🔥 Offerte</button>
+  <button>✨ Nuovi arrivi</button>
+  <button>⭐ In evidenza</button>
+  <button>📦 Tutti i prodotti</button>
+  <button>❤️ Desideri</button>
+
+</nav>
+
+<section style="padding:8px 16px 20px;">
+
+  <h1 style="
+    margin:0;
+    font-size:26px;
+    color:#12343b;
+  ">
+    In evidenza nel Fiume
+  </h1>
+
+  <p style="
+    margin:6px 0 18px;
+    color:#63818a;
+  ">
+    Scopri i prodotti del RiverSpendShop
+  </p>
+
+  <div class="product-grid">
+    <!-- qui arriveranno i prodotti reali -->
+  </div>
+
+</section>
+  
   </section>
 
   <nav class="rs-areas">
