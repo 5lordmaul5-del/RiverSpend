@@ -217,6 +217,47 @@ body {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
+
+/* RiverSpendShop — pulsanti di navigazione moderni e leggibili */
+.rs-discovery-nav {
+  display:flex;
+  gap:10px;
+  padding:10px 16px 18px;
+  overflow-x:auto;
+  overscroll-behavior-x:contain;
+  scrollbar-width:none;
+  background:#f4fbfd;
+}
+.rs-discovery-nav::-webkit-scrollbar { display:none; }
+.rs-discovery-nav .rs-chip {
+  flex:0 0 auto;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  min-height:44px;
+  padding:0 17px;
+  border:1px solid #c8e6ed;
+  border-radius:999px;
+  background:#fff;
+  color:#155568;
+  font:700 14px/1 Arial,Helvetica,sans-serif;
+  box-shadow:0 3px 10px rgba(0,80,100,.07);
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  transition:background .18s ease, color .18s ease, transform .18s ease, box-shadow .18s ease;
+}
+.rs-discovery-nav .rs-chip:active { transform:scale(.97); }
+.rs-discovery-nav .rs-chip.active {
+  color:#fff;
+  background:linear-gradient(135deg,#08a7cf,#087f9e);
+  border-color:#08a7cf;
+  box-shadow:0 5px 14px rgba(8,167,207,.22);
+}
+.rs-discovery-nav .rs-chip:focus-visible {
+  outline:3px solid #f2bd42;
+  outline-offset:3px;
+}
   </style>
 </head>
 
@@ -294,20 +335,12 @@ body {
 
 </section>
 
-<nav style="
-  display:flex;
-  gap:9px;
-  padding:8px 16px 14px;
-  overflow-x:auto;
-  background:#f4fbfd;
-">
-
-  <button>🔥 Offerte</button>
-  <button>✨ Nuovi arrivi</button>
-  <button>⭐ In evidenza</button>
-  <button>📦 Tutti i prodotti</button>
-  <button>❤️ Desideri</button>
-
+<nav class="rs-discovery-nav" aria-label="Esplora prodotti">
+  <button type="button" class="rs-chip active" data-filter="offers">🔥 <span>Offerte</span></button>
+  <button type="button" class="rs-chip" data-filter="new">✨ <span>Nuovi arrivi</span></button>
+  <button type="button" class="rs-chip" data-filter="featured">⭐ <span>In evidenza</span></button>
+  <button type="button" class="rs-chip" data-filter="all">📦 <span>Tutti i prodotti</span></button>
+  <button type="button" class="rs-chip" data-filter="wishlist">♡ <span>Desideri</span></button>
 </nav>
 
 <section style="padding:8px 16px 20px;">
@@ -335,21 +368,7 @@ body {
   
   </section>
 
-  <nav class="rs-areas">
-    <button class="active">RiverSpend</button>
-    <button>RiverSpendShop</button>
-    <button>Privati</button>
-    <button>Aziende</button>
-  </nav>
 
-  <section class="rs-products">
-    <h1>RiverSpend</h1>
-    <p>I prodotti del mondo RiverSpend</p>
-
-    <div class="product-grid">
-      <!-- I prodotti reali verranno caricati da Supabase nel prossimo blocco -->
-    </div>
-  </section>
 
 </main>
 
@@ -387,6 +406,83 @@ body {
         console.log("RiverSpend Cloud: Supabase collegato correttamente.");
       }
     });
+
+  // RiverSpend: carica i prodotti pubblicati nelle griglie della home.
+  async function caricaProdottiHome() {
+    const griglie = document.querySelectorAll("#home .product-grid");
+    griglie.forEach((grid) => {
+      grid.replaceChildren();
+      const loading = document.createElement("p");
+      loading.textContent = "Caricamento prodotti…";
+      loading.style.gridColumn = "1 / -1";
+      grid.appendChild(loading);
+    });
+
+    const { data, error } = await riverSupabase
+      .from("products")
+      .select("id,name,description,price,condition,image,created_at")
+      .eq("status", "published")
+      .order("created_at", { ascending: false });
+
+    griglie.forEach((grid) => grid.replaceChildren());
+
+    if (error) {
+      console.error("RiverSpend: errore caricamento prodotti", error);
+      griglie.forEach((grid) => {
+        const msg = document.createElement("p");
+        msg.textContent = "Non riusciamo a caricare i prodotti. Riprova più tardi.";
+        msg.style.cssText = "grid-column:1/-1;color:#a33";
+        grid.appendChild(msg);
+      });
+      return;
+    }
+
+    if (!data || data.length === 0) {
+      griglie.forEach((grid) => {
+        const msg = document.createElement("p");
+        msg.textContent = "Non ci sono ancora prodotti pubblicati.";
+        msg.style.cssText = "grid-column:1/-1;color:#63818a";
+        grid.appendChild(msg);
+      });
+      return;
+    }
+
+    griglie.forEach((grid) => {
+      data.forEach((product) => {
+        const card = document.createElement("article");
+        card.style.cssText = "min-width:0;background:#fff;border:1px solid #d7edf2;border-radius:14px;overflow:hidden;box-shadow:0 3px 10px rgba(0,80,100,.07)";
+        if (product.image) {
+          const img = document.createElement("img");
+          img.src = product.image;
+          img.alt = product.name || "Prodotto RiverSpend";
+          img.loading = "lazy";
+          img.style.cssText = "display:block;width:100%;height:150px;object-fit:cover;background:#e8faff";
+          card.appendChild(img);
+        } else {
+          const placeholder = document.createElement("div");
+          placeholder.textContent = "📦 Foto non disponibile";
+          placeholder.style.cssText = "height:150px;display:flex;align-items:center;justify-content:center;background:#e8faff;color:#63818a;font-size:13px";
+          card.appendChild(placeholder);
+        }
+        const details = document.createElement("div");
+        details.style.padding = "10px";
+        const title = document.createElement("h3");
+        title.textContent = product.name || "Prodotto";
+        title.style.cssText = "margin:0 0 6px;font-size:16px;line-height:1.3;color:#12343b";
+        const price = document.createElement("p");
+        price.textContent = new Intl.NumberFormat("it-IT", {style:"currency",currency:"EUR"}).format(Number(product.price || 0));
+        price.style.cssText = "margin:0;color:#087f9e;font-size:17px;font-weight:800";
+        const condition = document.createElement("p");
+        condition.textContent = product.condition || "";
+        condition.style.cssText = "margin:5px 0 0;color:#63818a;font-size:12px";
+        details.append(title, price, condition);
+        card.appendChild(details);
+        grid.appendChild(card);
+      });
+    });
+  }
+
+  caricaProdottiHome();
   // ======================================================
 // RIVERSPEND — CATALOGO CATEGORIE COMPLETO
 // ======================================================
