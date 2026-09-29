@@ -5,55 +5,53 @@ export default async function handler(req, res) {
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
   if (!supabaseUrl || !supabaseKey) {
-    return res.status(500).json({
-      error: 'Configurazione Supabase mancante.'
-    });
+    return res.status(500).json({ error: 'Configurazione Supabase mancante.' });
   }
 
   const supabase = createClient(supabaseUrl, supabaseKey);
 
   if (req.method !== 'GET') {
-    return res.status(405).json({
-      error: 'Metodo non consentito.'
-    });
+    return res.status(405).json({ error: 'Metodo non consentito.' });
   }
 
   try {
-    const { data: products, error } = await supabase
+    // Read products and media separately: product_media.product_id has no
+    // declared foreign key to products, so PostgREST cannot reliably embed it.
+    const { data: products, error: productsError } = await supabase
       .from('products')
-      .select(`
-        id,
-        name,
-        description,
-        price,
-        condition,
-        image,
-        created_at,
-        product_media (
-          media_url,
-          media_type,
-          sort_order
-        )
-      `)
+      .select('id, name, description, price, condition, image, created_at')
       .eq('status', 'published')
       .order('created_at', { ascending: false });
 
-    if (error) {
-      console.error('Supabase products GET:', error);
-      return res.status(500).json({
-        error: 'Errore nel caricamento dei prodotti.'
-      });
+    if (productsError) throw productsError;
+
+    const ids = (products || []).map((product) => product.id);
+    let media = [];
+
+    if (ids.length) {
+      const { data, error: mediaError } = await supabase
+        .from('product_media')
+        .select('product_id, media_url, media_type, sort_order')
+        .in('product_id', ids)
+        .eq('media_type', 'image')
+        .order('sort_order', { ascending: true });
+
+      if (mediaError) throw mediaError;
+      media = data || [];
     }
 
-    const result = (products || []).map((product) => {
-      const media = (product.product_media || [])
-        .filter((item) => item.media_type === 'image')
-        .sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0))
-        .map((item) => item.media_url)
-        .filter(Boolean);
+    const mediaByProduct = new Map();
+    for (const item of media) {
+      if (!item.media_url) continue;
+      const list = mediaByProduct.get(item.product_id) || [];
+      list.push(item.media_url);
+      mediaByProduct.set(item.product_id, list);
+    }
 
-      const immagini = media.length
-        ? media
+    return res.status(200).json((products || []).map((product) => {
+      const mediaImages = mediaByProduct.get(product.id) || [];
+      const immagini = mediaImages.length
+        ? mediaImages
         : product.image
           ? [product.image]
           : [];
@@ -66,13 +64,12 @@ export default async function handler(req, res) {
         descrizione: product.description || '',
         immagini
       };
-    });
-
-    return res.status(200).json(result);
+    }));
   } catch (error) {
     console.error('Products API:', error);
     return res.status(500).json({
-      error: 'Errore interno nel caricamento dei prodotti.'
+      error: 'Errore nel caricamento dei prodotti.',
+      detail: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
 }
