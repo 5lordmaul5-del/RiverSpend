@@ -28,6 +28,7 @@ export default function Home() {
   const areeRiverSpend = [
     ['Profilo','/profilo'],
     ['RiverSpendShop','/'],
+    ['RS Shield','/nova-shield'],
     ['RS Fidelity','/servizi/fidelity'],
     ['RS Nova Shield','/nova-shield'],
     ['RS Local','/servizi/local'],
@@ -35,6 +36,7 @@ export default function Home() {
     ['RiverSpend Box','/servizi/box'],
     ['RiverSpend Park','/park'],
     ['RiverSpend Broadcast','/servizi/broadcast'],
+    ['RiverSpend TV','/servizi/tv'],
     ['RiverSpend Experience','/servizi/experience'],
     ['RiverSpend Ecology','/servizi/ecology'],
     ['RiverSpend Oracle','/servizi/oracle'],
