@@ -19,7 +19,7 @@ export default async function handler(req, res) {
     // declared foreign key to products, so PostgREST cannot reliably embed it.
     const { data: products, error: productsError } = await supabase
       .from('products')
-      .select('id, name, description, price, condition, image, created_at')
+      .select('id, name, description, price, condition, image, seller_id, created_at')
       .eq('status', 'published')
       .order('created_at', { ascending: false });
 
@@ -33,7 +33,7 @@ export default async function handler(req, res) {
         .from('product_media')
         .select('product_id, media_url, media_type, sort_order')
         .in('product_id', ids)
-        .eq('media_type', 'image')
+        .in('media_type', ['image', 'video'])
         .order('sort_order', { ascending: true });
 
       if (mediaError) throw mediaError;
@@ -44,17 +44,15 @@ export default async function handler(req, res) {
     for (const item of media) {
       if (!item.media_url) continue;
       const list = mediaByProduct.get(item.product_id) || [];
-      list.push(item.media_url);
+      list.push({ url: item.media_url, type: item.media_type });
       mediaByProduct.set(item.product_id, list);
     }
 
     return res.status(200).json((products || []).map((product) => {
-      const mediaImages = mediaByProduct.get(product.id) || [];
-      const immagini = mediaImages.length
-        ? mediaImages
-        : product.image
-          ? [product.image]
-          : [];
+      const productMedia = mediaByProduct.get(product.id) || [];
+      const immagini = productMedia.filter((item) => item.type === 'image').map((item) => item.url);
+      const video = productMedia.filter((item) => item.type === 'video').map((item) => item.url);
+      if (!immagini.length && product.image) immagini.push(product.image);
 
       return {
         id: product.id,
@@ -62,7 +60,9 @@ export default async function handler(req, res) {
         prezzo: Number(product.price || 0),
         condizione: product.condition || '',
         descrizione: product.description || '',
-        immagini
+        immagini,
+        video,
+        seller_id: product.seller_id
       };
     }));
   } catch (error) {
