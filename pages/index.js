@@ -3,6 +3,16 @@
 import { useEffect, useMemo, useState } from 'react';
 import SplashScreen from './SplashScreen';
 
+const categorie = [
+  'Uomo', 'Donna', 'Bambini', 'Animali', 'Casa', 'Giardino e fai da te',
+  'Auto e Moto', 'Ricambi e accessori', 'Elettronica', 'Smartphone',
+  'Tablet e Computer', 'TV e Audio', 'Sport', 'Arti marziali & combattimento',
+  'Integratori', 'Bellezza e benessere', 'Abbigliamento e scarpe',
+  'Borse e accessori', 'Giochi e giocattoli', 'Libri e musica',
+  'Campeggio e outdoor', 'Lavoro e attrezzature', 'Gadget e collezionismo',
+  'Casalinghi', 'Alimentari', 'Bevande'
+];
+
 const servizi = [
   ['RS Profilo', 'Account e identità'], ['RS Park', 'Il parco divertimenti'],
   ['RS ISSA', 'Immersive Sound'], ['RS Fidelity', 'Vantaggi e fedeltà'],
@@ -57,15 +67,22 @@ export default function Home() {
 
         <div className="mx-auto grid max-w-[1500px] gap-5 px-4 py-5 lg:grid-cols-[220px_minmax(0,1fr)_260px]">
           <aside className="rs-glass h-fit rounded-2xl p-4 lg:sticky lg:top-24">
-            <p className="mb-3 text-xs font-bold uppercase tracking-widest text-teal-300">Il tuo fiume</p>
-            <nav className="grid grid-cols-2 gap-2 text-sm lg:grid-cols-1">
-              <a className="rounded-xl bg-teal-400/10 px-3 py-2 text-teal-200" href="/">⌂ Home</a>
-              <a className="rounded-xl px-3 py-2 hover:bg-white/5" href="#catalogo">▦ Categorie</a>
-              <a className="rounded-xl px-3 py-2 hover:bg-white/5" href="#catalogo">⌕ Cerca prodotti</a>
-              <a className="rounded-xl px-3 py-2 hover:bg-white/5" href="/vendi">🕸 La mia rete</a>
-              <a className="rounded-xl px-3 py-2 hover:bg-white/5" href="/vendi">♡ Preferiti</a>
-              <a className="rounded-xl px-3 py-2 hover:bg-white/5" href="/vendi">♙ Profilo / Accedi</a>
+            <p className="mb-3 text-xs font-bold uppercase tracking-widest text-teal-300">Categorie prodotti</p>
+            <nav aria-label="Categorie prodotti" className="grid max-h-[65vh] grid-cols-2 gap-1 overflow-y-auto text-sm lg:grid-cols-1">
+              {categorie.map((categoria) => (
+                <a key={categoria} className="rounded-lg px-2.5 py-2 text-slate-200 hover:bg-teal-400/10 hover:text-teal-200" href="#catalogo">{categoria}</a>
+              ))}
             </nav>
+            <div className="mt-4 border-t border-teal-900/60 pt-3">
+              <p className="mb-2 text-xs font-bold uppercase tracking-widest text-teal-300">Il tuo fiume</p>
+              <nav className="grid grid-cols-2 gap-1 text-xs lg:grid-cols-1">
+                <a className="rounded-lg px-2.5 py-2 hover:bg-white/5" href="/">⌂ Home</a>
+                <a className="rounded-lg px-2.5 py-2 hover:bg-white/5" href="#catalogo">⌕ Cerca prodotti</a>
+                <a className="rounded-lg px-2.5 py-2 hover:bg-white/5" href="/vendi">🕸 La mia rete</a>
+                <a className="rounded-lg px-2.5 py-2 hover:bg-white/5" href="/vendi">♡ Preferiti</a>
+                <a className="rounded-lg px-2.5 py-2 hover:bg-white/5" href="/vendi">♙ Profilo / Accedi</a>
+              </nav>
+            </div>
             <div className="mt-5 rounded-xl border border-teal-800/70 bg-slate-950/50 p-3">
               <p className="text-sm font-semibold">Privati prima di tutto</p>
               <p className="mt-1 text-xs leading-5 text-slate-400">Un mercato per dare nuova vita agli oggetti.</p>
@@ -111,7 +128,7 @@ export default function Home() {
             <p className="mb-1 text-xs font-bold uppercase tracking-widest text-teal-300">Oltre il mercato</p>
             <h2 className="mb-3 text-xl font-bold">Ecosistema RS</h2>
             <div className="grid grid-cols-2 gap-2 lg:grid-cols-1">
-              {servizi.map(([nome, descrizione]) => <a key={nome} href="/vendi" className="rounded-xl border border-white/10 bg-slate-950/40 p-3 hover:border-teal-400/60 hover:bg-teal-400/5"><span className="block text-sm font-bold text-teal-100">{nome}</span><span className="mt-1 block text-[11px] leading-4 text-slate-400">{descrizione}</span></a>)}
+              {servizi.map(([nome, descrizione]) => <div key={nome} className="rounded-xl border border-white/10 bg-slate-950/40 p-3"><span className="block text-sm font-bold text-teal-100">{nome}</span><span className="mt-1 block text-[11px] leading-4 text-slate-400">{descrizione}</span></div>)}
             </div>
           </aside>
         </div>
