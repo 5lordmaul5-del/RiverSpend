@@ -70,8 +70,8 @@ export default function Home() {
   const prodottiVisibili = useMemo(() => {
     const q = ricerca.trim().toLowerCase();
     return prodotti.filter((p) => {
-      const testo = [p.titolo, p.descrizione, p.condizione].filter(Boolean).join(' ').toLowerCase();
-      const categoriaOk = !categoriaAttiva || testo.includes(categoriaAttiva.toLowerCase());
+      const testo = [p.titolo, p.descrizione, p.condizione, p.categoria].filter(Boolean).join(' ').toLowerCase();
+      const categoriaOk = !categoriaAttiva || (p.categoria || '').toLowerCase() === categoriaAttiva.toLowerCase() || testo.includes(categoriaAttiva.toLowerCase());
       const ricercaOk = !q || testo.includes(q);
       return categoriaOk && ricercaOk;
     });
@@ -182,7 +182,7 @@ export default function Home() {
                   <div className="p-3">
                     <h3 className="line-clamp-2 font-semibold">{p.titolo}</h3>
                     <p className="mt-2 text-lg font-bold text-teal-300">€ {Number(p.prezzo || 0).toFixed(2)}</p>
-                    <p className="text-xs text-slate-400">{p.condizione}</p>
+                    <p className="text-xs text-slate-400">{p.categoria || 'Altro'} · {p.condizione}</p>
                     <p className="mt-3 text-sm font-semibold text-teal-300">Apri prodotto →</p>
                   </div>
                 </a>

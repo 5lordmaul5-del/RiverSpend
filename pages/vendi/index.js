@@ -12,6 +12,7 @@ export default function Vendi() {
   const [prezzo, setPrezzo] = useState('');
   const [descrizione, setDescrizione] = useState('');
   const [condizione, setCondizione] = useState('Nuovo');
+  const [categoria, setCategoria] = useState('Altro');
 
   const [foto, setFoto] = useState([]);
   const [session, setSession] = useState(null);
@@ -203,6 +204,7 @@ export default function Vendi() {
           name: titolo.trim(),
           price: prezzoNumero,
           condition: condizione,
+          category: categoria,
           description: descrizione.trim(),
           image: immaginiCaricate[0],
           seller_id: session.user.id,
@@ -240,6 +242,7 @@ export default function Vendi() {
           titolo: titolo.trim(),
           prezzo: prezzoNumero,
           condizione,
+          categoria,
           descrizione: descrizione.trim(),
           immagini: immaginiCaricate
         },
@@ -250,6 +253,7 @@ export default function Vendi() {
       setPrezzo('');
       setDescrizione('');
       setCondizione('Nuovo');
+      setCategoria('Altro');
 
       foto.forEach((item) => URL.revokeObjectURL(item.url));
       setFoto([]);
@@ -367,6 +371,11 @@ export default function Vendi() {
                 <option>Nuovo</option>
                 <option>Usato</option>
                 <option>Come nuovo</option>
+              </select>
+
+              <label className="mb-2 block font-semibold">Categoria</label>
+              <select className="mb-3 w-full rounded-xl border p-3" value={categoria} onChange={(e) => setCategoria(e.target.value)}>
+                {['Auto & Veicoli','Auto','Moto','Scooter','Harley & Custom','Camion & Veicoli commerciali','Trattori & Agricoltura','Edilizia & Macchine da lavoro','Ricambi & Accessori auto','Ricambi & Accessori moto','Nautica','Navale','Barche & Gommoni','Motori marini','Aeronautica','Militaria & Storia','Sport','Arti marziali & Combattimento','Fitness & Palestra','Outdoor & Avventura','Pesca','Integratori','Elettronica & Informatica','Smartphone & Telefonia','Computer & Notebook','Gaming','Console & Videogiochi','Fotografia & Video','Musica & Audio','TV & Home cinema','Abbigliamento','Scarpe','Borse & Accessori','Gioielli & Orologi','Bellezza & Cura personale','Casa & Arredamento','Cucina','Elettrodomestici','Fai da te & Ferramenta','Giardino','Illuminazione','Tessile casa','Animali','Bambini & Giocattoli','Prima infanzia','Libri & Cultura','Arte','Antiquariato','Collezionismo','Hobby & Modellismo','Viaggi & Valigeria','Ufficio & Professionale','Industria','Attrezzature professionali','Energia & Smart Home','Servizi digitali','Gadget & Regali','Vintage & Second hand','Altro'].map((item) => <option key={item}>{item}</option>)}
               </select>
 
               <label className="block font-bold mb-2">
