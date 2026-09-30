@@ -4,7 +4,9 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
 
 const MAX_PHOTOS = 20;
+const MAX_VIDEOS = 3;
 const MAX_PHOTO_SIZE = 10 * 1024 * 1024;
+const MAX_VIDEO_SIZE = 50 * 1024 * 1024;
 
 export default function Vendi() {
   const [prodotti, setProdotti] = useState([]);
@@ -14,6 +16,7 @@ export default function Vendi() {
   const [condizione, setCondizione] = useState('Nuovo');
 
   const [foto, setFoto] = useState([]);
+  const [video, setVideo] = useState([]);
   const [session, setSession] = useState(null);
   const [email, setEmail] = useState('');
   const [caricamento, setCaricamento] = useState(false);
@@ -89,6 +92,77 @@ export default function Vendi() {
     })));
 
     setMessaggio(`📸 ${files.length} foto selezionate.`);
+  }
+
+  function handleVideos(event) {
+    const files = Array.from(event.target.files || []);
+    event.target.value = '';
+    if (!files.length) return;
+    if (files.length > MAX_VIDEOS) {
+      setMessaggio(`⚠️ Puoi selezionare al massimo ${MAX_VIDEOS} video.`);
+      return;
+    }
+    const invalid = files.find((file) =>
+      !file.type.startsWith('video/') || file.size > MAX_VIDEO_SIZE
+    );
+    if (invalid) {
+      setMessaggio('⚠️ Seleziona video validi fino a 50 MB ciascuno.');
+      return;
+    }
+    setVideo(files.map((file) => ({ file, url: URL.createObjectURL(file) })));
+    setMessaggio(`🎥 ${files.length} video selezionati.`);
+  }
+
+  async function eliminaAnnuncio(prodotto) {
+    if (!session?.user || !window.confirm(`Vuoi eliminare definitivamente "${prodotto.titolo}"?`)) return;
+    setCaricamento(true);
+    setMessaggio('⏳ Eliminazione annuncio...');
+    try {
+      const { data: media, error: mediaReadError } = await supabase
+        .from('product_media')
+        .select('media_url')
+        .eq('product_id', prodotto.id)
+        .eq('seller_id', session.user.id);
+      if (mediaReadError) throw mediaReadError;
+
+      const { data: deletedProduct, error: productDeleteError } = await supabase
+        .from('products')
+        .delete()
+        .eq('id', prodotto.id)
+        .eq('seller_id', session.user.id)
+        .select('id')
+        .maybeSingle();
+      if (productDeleteError) throw productDeleteError;
+      if (!deletedProduct) throw new Error('Annuncio non eliminato: verifica di essere il proprietario.');
+
+      const { error: mediaDeleteError } = await supabase
+        .from('product_media')
+        .delete()
+        .eq('product_id', prodotto.id)
+        .eq('seller_id', session.user.id);
+      if (mediaDeleteError) throw mediaDeleteError;
+
+      const urls = [...(media || []).map((item) => item.media_url), ...(prodotto.immagini || [])].filter(Boolean);
+      const prefix = '/storage/v1/object/public/product-images/';
+      const paths = [...new Set(urls.map((url) => {
+        try {
+          const pathname = new URL(url).pathname;
+          const at = pathname.indexOf(prefix);
+          return at >= 0 ? decodeURIComponent(pathname.slice(at + prefix.length)) : null;
+        } catch { return null; }
+      }).filter(Boolean))];
+      if (paths.length) {
+        const { error: storageError } = await supabase.storage.from('product-images').remove(paths);
+        if (storageError) console.warn('File multimediali non rimossi:', storageError);
+      }
+      setProdotti((current) => current.filter((item) => item.id !== prodotto.id));
+      setMessaggio('✅ Annuncio eliminato.');
+    } catch (error) {
+      console.error('Eliminazione annuncio:', error);
+      setMessaggio(`❌ ${error.message || 'Eliminazione non riuscita.'}`);
+    } finally {
+      setCaricamento(false);
+    }
   }
 
   function removePhoto(index) {
@@ -169,6 +243,7 @@ export default function Vendi() {
 
     try {
       const immaginiCaricate = [];
+      const videoCaricati = [];
 
       for (let i = 0; i < foto.length; i += 1) {
         const file = foto[i].file;
@@ -196,6 +271,19 @@ export default function Vendi() {
         immaginiCaricate.push(urlData.publicUrl);
       }
 
+      for (let i = 0; i < video.length; i += 1) {
+        const file = video[i].file;
+        const estensione = file.name.includes('.') ? file.name.split('.').pop().toLowerCase().replace(/[^a-z0-9]/g, '') : 'mp4';
+        const percorso = `${session.user.id}/${productId}/video-${i + 1}.${estensione || 'mp4'}`;
+        const { error: uploadError } = await supabase.storage.from('product-images').upload(percorso, file, {
+          contentType: file.type || 'video/mp4', upsert: false
+        });
+        if (uploadError) throw uploadError;
+        percorsiCaricati.push(percorso);
+        const { data: urlData } = supabase.storage.from('product-images').getPublicUrl(percorso);
+        videoCaricati.push(urlData.publicUrl);
+      }
+
       const { error: productError } = await supabase
         .from('products')
         .insert({
@@ -212,13 +300,19 @@ export default function Vendi() {
 
       if (productError) throw productError;
 
-      const righeMedia = immaginiCaricate.map((url, index) => ({
+      const righeMedia = [
+        ...immaginiCaricate.map((url, index) => ({
         product_id: productId,
         media_type: 'image',
         media_url: url,
         sort_order: index,
         seller_id: session.user.id
-      }));
+        })),
+        ...videoCaricati.map((url, index) => ({
+          product_id: productId, media_type: 'video', media_url: url,
+          sort_order: immaginiCaricate.length + index, seller_id: session.user.id
+        }))
+      ];
 
       const { error: mediaError } = await supabase
         .from('product_media')
@@ -241,7 +335,9 @@ export default function Vendi() {
           prezzo: prezzoNumero,
           condizione,
           descrizione: descrizione.trim(),
-          immagini: immaginiCaricate
+          immagini: immaginiCaricate,
+          video: videoCaricati,
+          seller_id: session.user.id
         },
         ...current
       ]);
@@ -252,7 +348,9 @@ export default function Vendi() {
       setCondizione('Nuovo');
 
       foto.forEach((item) => URL.revokeObjectURL(item.url));
+      video.forEach((item) => URL.revokeObjectURL(item.url));
       setFoto([]);
+      setVideo([]);
 
       setMessaggio('✅ Prodotto pubblicato nel RiverSpendShop!');
     } catch (error) {
@@ -384,6 +482,8 @@ export default function Vendi() {
                 multiple
                 onChange={handlePhotos}
               />
+              <p className="text-xs text-slate-500 mb-3">Per scattare subito: usa il pulsante Fotocamera qui sotto.</p>
+              <input className="w-full border rounded-xl p-3 mb-4" type="file" accept="image/*" capture="environment" onChange={handlePhotos} aria-label="Scatta una foto con la fotocamera" />
 
               {foto.length > 0 && (
                 <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 mb-4">
@@ -413,6 +513,13 @@ export default function Vendi() {
                   ))}
                 </div>
               )}
+
+              <label className="block font-bold mb-2">🎥 Video prodotto</label>
+              <p className="text-sm text-slate-500 mb-2">Puoi selezionare fino a 3 video (massimo 50 MB ciascuno).</p>
+              <input className="w-full border rounded-xl p-3 mb-4" type="file" accept="video/*" multiple capture="environment" onChange={handleVideos} />
+              {video.length > 0 && <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                {video.map((item, index) => <video key={item.url} src={item.url} controls playsInline className="w-full rounded-xl" />)}
+              </div>}
 
               <textarea
                 className="w-full border rounded-xl p-3 mb-4"
@@ -476,6 +583,15 @@ export default function Vendi() {
                       {prodotto.descrizione}
                     </p>
 
+                    {prodotto.video?.length > 0 && prodotto.video.map((url, index) => (
+                      <video key={url} src={url} controls playsInline className="w-full rounded-xl mt-3" aria-label={`Video prodotto ${index + 1}`} />
+                    ))}
+                    {session?.user?.id === prodotto.seller_id && (
+                      <button type="button" disabled={caricamento} onClick={() => eliminaAnnuncio(prodotto)}
+                        className="mt-4 w-full rounded-xl border border-red-300 text-red-700 font-semibold p-3 disabled:opacity-50">
+                        🗑️ Elimina annuncio
+                      </button>
+                    )}
                     {prodotto.immagini?.length > 1 && (
                       <p className="text-sm text-slate-500 mt-2">
                         📸 {prodotto.immagini.length} foto
