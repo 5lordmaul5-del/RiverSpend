@@ -1,18 +1,19 @@
 import Link from 'next/link';
 
 const aree = [
-  ['🛒','RiverSpendShop','Marketplace','/'],
-  ['💳','RiverSpend Pay','Pagamenti','/servizi/pay'],
-  ['🛡️','RS Nova Shield','Protezione','/nova-shield'],
-  ['📦','RiverSpend Box','Logistica','/servizi/box'],
-  ['💎','RiverSpend Fidelity','Fidelizzazione','/servizi/fidelity'],
-  ['🎢','RiverSpend Park','Parco e attrazioni','/servizi/park'],
-  ['📡','RiverSpend Broadcast','Comunicazione','/servizi/broadcast'],
-  ['🌊','RiverSpend Experience','Esperienza immersiva','/servizi/experience'],
-  ['🌱','RiverSpend Ecology','Ecologia','/servizi/ecology'],
-  ['🔮','RiverSpend Oracle','Assistenza intelligente','/servizi/oracle'],
-  ['♻️','RiverSpend Recovery','Recupero e assistenza','/servizi/recovery'],
-  ['🏰','RiverSpend Fortress','Sicurezza ecosistema','/servizi/fortress']
+  ['🛒','RiverSpendShop','Marketplace tra privati e aziende','/'],
+  ['💎','RS Fidelity','Programma fedeltà e vantaggi','/servizi/fidelity'],
+  ['🛡️','RS Nova Shield','Protezione e controlli di sicurezza','/nova-shield'],
+  ['📍','RS Local','Scopri attività, offerte e servizi locali','/servizi/local'],
+  ['💳','RiverSpend Pay','Pagamenti e gestione transazioni','/servizi/pay'],
+  ['📦','RiverSpend Box','Spedizioni, tracking e consegne','/servizi/box'],
+  ['🎢','RiverSpend Park','Parco, attrazioni e sicurezza Power Shield','/park'],
+  ['📡','RiverSpend Broadcast','Comunicazione e aggiornamenti','/servizi/broadcast'],
+  ['🌊','RiverSpend Experience','Esperienza immersiva e audio ambientale','/servizi/experience'],
+  ['🌱','RiverSpend Ecology','Sostenibilità e iniziative ambientali','/servizi/ecology'],
+  ['🔮','RiverSpend Oracle','Informazione e assistenza intelligente','/servizi/oracle'],
+  ['♻️','RiverSpend Recovery','Recupero e assistenza post-vendita','/servizi/recovery'],
+  ['🏰','RiverSpend Fortress','Sicurezza dell’ecosistema','/servizi/fortress']
 ];
 
 export default function Ecosistema() {
@@ -22,10 +23,9 @@ export default function Ecosistema() {
         <Link href="/" className="text-teal-300 underline">← Torna al RiverSpendShop</Link>
         <header className="mt-6 mb-8">
           <p className="text-sm font-semibold uppercase tracking-widest text-teal-300">YOUR SHOP • YOUR FLOW</p>
-          <h1 className="mt-2 text-4xl font-bold">Il mondo RiverSpend</h1>
-          <p className="mt-3 max-w-2xl text-slate-300">Un’unica base per marketplace, servizi, protezione, logistica e future aree dell’ecosistema.</p>
+          <h1 className="mt-2 text-4xl font-bold">L’ecosistema RiverSpend</h1>
+          <p className="mt-3 max-w-2xl text-slate-300">Un unico mondo: marketplace, protezione, servizi locali, fedeltà, logistica e RiverSpend Park.</p>
         </header>
-
         <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {aree.map(([icon,title,note,href]) => (
             <Link href={href} key={title} className="rounded-2xl border border-slate-800 bg-slate-900 p-5 hover:border-teal-500">
