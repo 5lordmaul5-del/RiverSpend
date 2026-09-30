@@ -1,0 +1,48 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: dark;
+  --river-ink: #061923;
+  --river-deep: #082b3a;
+  --river-aqua: #36d6c2;
+  --river-gold: #e7bd65;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--river-ink);
+  color: #f3fbfa;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection { background: rgba(54, 214, 194, .28); color: #fff; }
+a { -webkit-tap-highlight-color: transparent; }
+button, input, select, textarea { font: inherit; }
+button, a { transition: color .18s ease, background-color .18s ease, border-color .18s ease, transform .18s ease, box-shadow .18s ease; }
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 2px solid var(--river-aqua);
+  outline-offset: 3px;
+}
+img { display: block; max-width: 100%; }
+
+/* RiverSpend visual foundation */
+.rs-glass {
+  border: 1px solid rgba(139, 220, 213, .18);
+  background: rgba(7, 35, 47, .78);
+  box-shadow: 0 18px 55px rgba(0, 0, 0, .22);
+  backdrop-filter: blur(14px);
+}
+.rs-glow { box-shadow: 0 0 0 1px rgba(54, 214, 194, .16), 0 12px 38px rgba(14, 167, 157, .12); }
+
+input, select, textarea {
+  color: #102a35;
+  background: #f8fcfb;
+  border-color: #cbdedb;
+}
+input::placeholder, textarea::placeholder { color: #71858a; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+}
