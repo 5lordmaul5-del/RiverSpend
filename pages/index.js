@@ -12,22 +12,37 @@ export default function Home() {
   const [ricerca, setRicerca] = useState('');
   const [categoriaAttiva, setCategoriaAttiva] = useState('');
 
-  const categorie = ['AUTO','MOTO','SCOOTER','HARLEY & CUSTOM','CAMION & VEICOLI COMMERCIALI','TRATTORI & AGRICOLTURA','EDILIZIA & MACCHINE DA LAVORO','NAUTICA','NAVALE','AERONAUTICA','MILITARIA & STORIA','SPORT','ARTI MARZIALI & COMBATTIMENTO','FITNESS & PALESTRA','OUTDOOR & AVVENTURA','PESCA','INTEGRATORI','ELETTRONICA & INFORMATICA','GAMING','FOTOGRAFIA & VIDEO','MUSICA & AUDIO','ABBIGLIAMENTO','SCARPE','GIOIELLI & OROLOGI','CASA & ARREDAMENTO','CUCINA','FAI DA TE & FERRAMENTA','GIARDINO','ANIMALI','BAMBINI & GIOCATTOLI','LIBRI & CULTURA','ARTE','ANTIQUARIATO','COLLEZIONISMO','HOBBY','VIAGGI & VALIGERIA','UFFICIO & PROFESSIONALE','INDUSTRIA','ENERGIA & SMART HOME','GADGET & REGALI','SERVIZI DIGITALI','ALTRO'];
+  const categorie = [
+    'AUTO & VEICOLI','Auto','Moto','Scooter','Harley & Custom','Camion & Veicoli commerciali','Trattori & Agricoltura','Edilizia & Macchine da lavoro','Ricambi & Accessori auto','Ricambi & Accessori moto',
+    'NAUTICA & TRASPORTI','Nautica','Navale','Barche & Gommoni','Motori marini','Aeronautica','Militaria & Storia',
+    'SPORT & BENESSERE','Sport','Arti marziali & Combattimento','Fitness & Palestra','Outdoor & Avventura','Pesca','Caccia & Accessori consentiti','Integratori',
+    'TECNOLOGIA','Elettronica & Informatica','Smartphone & Telefonia','Computer & Notebook','Gaming','Console & Videogiochi','Fotografia & Video','Musica & Audio','TV & Home cinema',
+    'MODA & ACCESSORI','Abbigliamento','Scarpe','Borse & Accessori','Gioielli & Orologi','Bellezza & Cura personale',
+    'CASA & VITA','Casa & Arredamento','Cucina','Elettrodomestici','Fai da te & Ferramenta','Giardino','Illuminazione','Tessile casa',
+    'FAMIGLIA & ANIMALI','Animali','Bambini & Giocattoli','Prima infanzia',
+    'CULTURA & TEMPO LIBERO','Libri & Cultura','Arte','Antiquariato','Collezionismo','Hobby & Modellismo','Viaggi & Valigeria',
+    'LAVORO & IMPRESA','Ufficio & Professionale','Industria','Attrezzature professionali','Energia & Smart Home','Servizi digitali',
+    'COLLEZIONI & REGALI','Gadget & Regali','Vintage & Second hand','Altro'
+  ];
 
   const areeRiverSpend = [
     ['Profilo','/profilo'],
     ['RiverSpendShop','/'],
+    ['RS Shield','/nova-shield'],
+    ['RS Fidelity','/servizi/fidelity'],
+    ['RS Nova Shield','/nova-shield'],
+    ['RS Local','/servizi/local'],
     ['RiverSpend Pay','/servizi/pay'],
-    ['RiverSpend Shield','/nova-shield'],
     ['RiverSpend Box','/servizi/box'],
-    ['RiverSpend Fidelity','/servizi/fidelity'],
-    ['RiverSpend Park','/servizi/park'],
+    ['RiverSpend Park','/park'],
     ['RiverSpend Broadcast','/servizi/broadcast'],
+    ['RiverSpend TV','/servizi/tv'],
     ['RiverSpend Experience','/servizi/experience'],
     ['RiverSpend Ecology','/servizi/ecology'],
     ['RiverSpend Oracle','/servizi/oracle'],
     ['RiverSpend Recovery','/servizi/recovery'],
-    ['RiverSpend Fortress','/servizi/fortress']
+    ['RiverSpend Fortress','/servizi/fortress'],
+    ['RiverSpend SurroundSpaceAroundExperience','/servizi/experience']
   ];
 
   useEffect(() => {
