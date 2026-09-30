@@ -71,7 +71,7 @@ export default function Home() {
           ) : (
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
               {prodotti.map((p) => (
-                <article key={p.id} className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900">
+                <a href={`/prodotto/${encodeURIComponent(p.id)}`} key={p.id} className="block overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 transition hover:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-400">
                   {p.immagini?.[0] ? (
                     <img src={p.immagini[0]} alt={p.titolo || 'Prodotto'} className="h-40 w-full object-cover sm:h-52" />
                   ) : (
@@ -81,8 +81,9 @@ export default function Home() {
                     <h3 className="line-clamp-2 font-semibold">{p.titolo}</h3>
                     <p className="mt-2 text-lg font-bold text-teal-300">€ {Number(p.prezzo || 0).toFixed(2)}</p>
                     <p className="text-xs text-slate-400">{p.condizione}</p>
+                    <p className="mt-3 text-sm font-semibold text-teal-300">Apri prodotto →</p>
                   </div>
-                </article>
+                </a>
               ))}
             </div>
           )}
