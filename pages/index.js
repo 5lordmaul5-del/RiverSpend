@@ -26,28 +26,28 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-slate-950 text-white">
+    <main className="rs-site min-h-screen bg-slate-950 text-white">
       {showSplash && <SplashScreen onEnter={() => setShowSplash(false)} />}
 
       <div className={`transition-opacity duration-700 ${showSplash ? 'opacity-0' : 'opacity-100'}`}>
-        <header className="sticky top-0 z-20 border-b border-slate-800 bg-slate-950/95 px-4 py-4">
+        <header className="rs-header sticky top-0 z-20 border-b border-slate-800 bg-slate-950/95 px-4 py-4">
           <div className="mx-auto flex max-w-6xl items-center justify-between gap-3">
             <div>
-              <h1 className="text-2xl font-bold text-teal-400">RiverSpend</h1>
+              <h1 className="rs-brand text-2xl font-bold text-teal-400">RiverSpend<span>Shop</span></h1>
               <p className="text-xs text-slate-400">YOUR SHOP • YOUR FLOW</p>
             </div>
-            <a href="/vendi" className="rounded-full bg-teal-500 px-5 py-3 text-sm font-bold text-slate-950 hover:bg-teal-400">
+            <a href="/vendi" className="rs-button rs-button-primary rounded-full bg-teal-500 px-5 py-3 text-sm font-bold text-slate-950 hover:bg-teal-400">
               + Vendi un prodotto
             </a>
           </div>
         </header>
 
         <section className="mx-auto max-w-6xl px-4 py-8">
-          <div className="mb-8 rounded-3xl border border-teal-800 bg-gradient-to-br from-slate-900 to-sky-950 p-6 sm:p-10">
-            <p className="mb-2 text-sm font-semibold uppercase tracking-widest text-teal-300">RiverSpendShop</p>
+          <div className="rs-hero mb-8 rounded-3xl border border-teal-800 bg-gradient-to-br from-slate-900 to-sky-950 p-6 sm:p-10">
+            <p className="mb-2 text-sm font-semibold uppercase tracking-widest text-teal-300">La tua esperienza sul fiume</p>
             <h2 className="mb-3 text-3xl font-bold sm:text-5xl">La tua rete. Il tuo mercato.</h2>
             <p className="mb-6 max-w-2xl text-slate-300">Scopri gli articoli pubblicati e metti in vendita i tuoi prodotti.</p>
-            <a href="/vendi" className="inline-block rounded-xl bg-teal-500 px-6 py-3 font-bold text-slate-950">Carica prodotto con foto</a>
+            <a href="/vendi" className="rs-button rs-button-primary inline-block rounded-xl bg-teal-500 px-6 py-3 font-bold text-slate-950">Carica prodotto con foto</a>
           </div>
 
           <div className="mb-5 flex items-end justify-between gap-3">
@@ -71,7 +71,7 @@ export default function Home() {
           ) : (
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
               {prodotti.map((p) => (
-                <a href={`/prodotto/${encodeURIComponent(p.id)}`} key={p.id} className="block overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 transition hover:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-400">
+                <a href={`/prodotto/${encodeURIComponent(p.id)}`} key={p.id} className="rs-product-card block overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 transition hover:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-400">
                   {p.immagini?.[0] ? (
                     <img src={p.immagini[0]} alt={p.titolo || 'Prodotto'} className="h-40 w-full object-cover sm:h-52" />
                   ) : (
