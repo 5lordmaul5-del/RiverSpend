@@ -77,6 +77,10 @@ export default function Home() {
             </a>
 
             <div className="flex items-center gap-2">
+              <div className="hidden sm:flex items-center gap-2">
+                <a href="/profilo" className="rounded-xl border border-teal-800 px-2 py-2 text-xs font-bold text-teal-200">👤 Profilo</a>
+                <a href="/desideri" className="rounded-xl border border-teal-800 px-2 py-2 text-xs font-bold text-teal-200">♡ Desideri</a>
+              </div>
               <a href="/rete" className="rounded-xl border border-teal-800 px-2 py-2 text-xs font-bold text-teal-200">🕸️ Rete</a>
               <button type="button" onClick={() => { setMenuRiverSpend(!menuRiverSpend); setMenuCategorie(false); }} aria-expanded={menuRiverSpend} className="rounded-xl border border-teal-800 px-2 py-2 text-xs font-bold text-teal-200">RiverSpend ▾</button>
               <a href="/vendi" className="rs-button rs-button-primary rounded-full bg-teal-500 px-3 py-2 text-xs font-bold text-slate-950 hover:bg-teal-400">+ Vendi</a>
@@ -180,7 +184,7 @@ export default function Home() {
               <a href="/nova-shield" className="text-teal-200">RS Nova Shield</a>
               <a href="/tutela" className="text-slate-300">Tutela e assistenza</a>
               <a href="/vendi" className="text-slate-300">Vendi un prodotto</a>
-              <a href="/rete" className="text-slate-300">La mia rete</a>
+              <a href="/rete" className="text-slate-300">La mia rete</a><a href="/desideri" className="text-slate-300">Desideri</a>
             </nav>
           </div>
         </footer>
