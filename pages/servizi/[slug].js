@@ -1,7 +1,19 @@
 import Link from 'next/link';
 
 const servizi = {
-  local: {\n    titolo: 'RS Local',\n    icona: '📍',\n    descrizione: 'Scopri attività, negozi, professionisti, servizi e opportunità vicino a te. RS Local collega il marketplace alla comunità del territorio.',\n    stato: 'Scheda informativa pronta; geolocalizzazione e inserimento attività da collegare'\n  },\n  tv: {\n    titolo: 'RiverSpend TV',\n    icona: '📺',\n    descrizione: 'Canale RiverSpend per video, presentazioni, storie del marketplace e contenuti del parco.',\n    stato: 'Area informativa pronta; pubblicazione video da collegare'\n  },\n  pay: {
+  local: {
+    titolo: 'RS Local',
+    icona: '📍',
+    descrizione: 'Scopri attività, negozi, professionisti, servizi e opportunità vicino a te. RS Local collega il marketplace alla comunità del territorio.',
+    stato: 'Scheda informativa pronta; geolocalizzazione e inserimento attività da collegare'
+  },
+  tv: {
+    titolo: 'RiverSpend TV',
+    icona: '📺',
+    descrizione: 'Canale RiverSpend per video, presentazioni, storie del marketplace e contenuti del parco.',
+    stato: 'Area informativa pronta; pubblicazione video da collegare'
+  },
+  pay: {
     titolo: 'RiverSpend Pay',
     icona: '💳',
     descrizione: 'Area pagamenti RiverSpend: metodi di pagamento, stato transazioni, rimborsi e storico.',
