@@ -125,19 +125,22 @@ export default function Vendi() {
         .eq('seller_id', session.user.id);
       if (mediaReadError) throw mediaReadError;
 
+      const { data: deletedProduct, error: productDeleteError } = await supabase
+        .from('products')
+        .delete()
+        .eq('id', prodotto.id)
+        .eq('seller_id', session.user.id)
+        .select('id')
+        .maybeSingle();
+      if (productDeleteError) throw productDeleteError;
+      if (!deletedProduct) throw new Error('Annuncio non eliminato: verifica di essere il proprietario.');
+
       const { error: mediaDeleteError } = await supabase
         .from('product_media')
         .delete()
         .eq('product_id', prodotto.id)
         .eq('seller_id', session.user.id);
       if (mediaDeleteError) throw mediaDeleteError;
-
-      const { error: productDeleteError } = await supabase
-        .from('products')
-        .delete()
-        .eq('id', prodotto.id)
-        .eq('seller_id', session.user.id);
-      if (productDeleteError) throw productDeleteError;
 
       const urls = [...(media || []).map((item) => item.media_url), ...(prodotto.immagini || [])].filter(Boolean);
       const prefix = '/storage/v1/object/public/product-images/';
