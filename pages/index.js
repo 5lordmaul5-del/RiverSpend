@@ -36,9 +36,12 @@ export default function Home() {
               <h1 className="rs-brand text-2xl font-bold text-teal-400">RiverSpend<span>Shop</span></h1>
               <p className="text-xs text-slate-400">YOUR SHOP • YOUR FLOW</p>
             </div>
-            <a href="/vendi" className="rs-button rs-button-primary rounded-full bg-teal-500 px-5 py-3 text-sm font-bold text-slate-950 hover:bg-teal-400">
-              + Vendi un prodotto
-            </a>
+            <nav className="flex items-center gap-3">
+              <a href="/tutela" className="text-sm font-semibold text-teal-200 underline underline-offset-4">Tutela e assistenza</a>
+              <a href="/vendi" className="rs-button rs-button-primary rounded-full bg-teal-500 px-5 py-3 text-sm font-bold text-slate-950 hover:bg-teal-400">
+                + Vendi un prodotto
+              </a>
+            </nav>
           </div>
         </header>
 
