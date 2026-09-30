@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import SplashScreen from './SplashScreen';
 
 export default function Home() {
-  const [showSplash, setShowSplash] = useState(true);
+  const [showSplash, setShowSplash] = useState(false);
   const [prodotti, setProdotti] = useState([]);
   const [errore, setErrore] = useState('');
   const [menuCategorie, setMenuCategorie] = useState(false);
@@ -79,26 +79,27 @@ export default function Home() {
 
   return (
     <main className="rs-site min-h-screen bg-slate-950 text-white">
-      {showSplash && <SplashScreen onEnter={() => setShowSplash(false)} />}
+      {showSplash && <SplashScreen onEnter={() => { try { sessionStorage.setItem('rs-opening-seen', '1'); } catch {} setShowSplash(false); }} />}
 
       <div className={`transition-opacity duration-700 ${showSplash ? 'opacity-0' : 'opacity-100'}`}>
         <header className="rs-header sticky top-0 z-30 border-b border-slate-800 bg-slate-950/95 px-3 py-3">
-          <div className="mx-auto flex max-w-6xl items-center justify-between gap-2">
-            <button type="button" onClick={() => { setMenuCategorie(!menuCategorie); setMenuRiverSpend(false); }} aria-label="Apri categorie" aria-expanded={menuCategorie} className="rounded-xl border border-teal-800 px-3 py-2 text-xl text-teal-200">☰</button>
-
-            <a href="/" className="min-w-0">
-              <h1 className="rs-brand text-xl font-bold text-teal-400">RiverSpend<span>Shop</span></h1>
-              <p className="text-[10px] text-slate-400">YOUR SHOP • YOUR FLOW</p>
-            </a>
-
-            <div className="flex items-center gap-2">
-              <div className="hidden sm:flex items-center gap-2">
-                <a href="/profilo" className="rounded-xl border border-teal-800 px-2 py-2 text-xs font-bold text-teal-200">👤 Profilo</a>
-                <a href="/desideri" className="rounded-xl border border-teal-800 px-2 py-2 text-xs font-bold text-teal-200">♡ Desideri</a>
-              </div>
-              <a href="/rete" className="rounded-xl border border-teal-800 px-2 py-2 text-xs font-bold text-teal-200">🕸️ Rete</a>
-              <button type="button" onClick={() => { setMenuRiverSpend(!menuRiverSpend); setMenuCategorie(false); }} aria-expanded={menuRiverSpend} className="rounded-xl border border-teal-800 px-2 py-2 text-xs font-bold text-teal-200">RiverSpend ▾</button>
-              <a href="/vendi" className="rs-button rs-button-primary rounded-full bg-teal-500 px-3 py-2 text-xs font-bold text-slate-950 hover:bg-teal-400">+ Vendi</a>
+          <div className="mx-auto max-w-6xl">
+            <div className="flex justify-center">
+              <a href="/" aria-label="RiverSpendShop, pagina iniziale" className="inline-flex flex-col items-center rounded-2xl border border-teal-800/80 bg-slate-900/70 px-6 py-2 shadow-lg shadow-teal-950/30">
+                <h1 className="rs-brand text-2xl font-extrabold leading-tight text-teal-400">RiverSpend</h1>
+                <span className="text-sm font-semibold italic text-amber-300">Shop</span>
+                <p className="mt-1 text-[9px] tracking-wide text-slate-400">YOUR SHOP • YOUR FLOW</p>
+              </a>
+            </div>
+            <div className="mt-3 flex items-center justify-between gap-2">
+              <button type="button" onClick={() => { setMenuCategorie(!menuCategorie); setMenuRiverSpend(false); }} aria-label="Apri categorie" aria-expanded={menuCategorie} className="rounded-xl border border-teal-800 px-3 py-2 text-xl text-teal-200">☰</button>
+              <a href="/rete" className="rounded-xl border border-teal-800 px-3 py-2 text-sm font-bold text-teal-200">🕸️ Rete</a>
+              <button type="button" onClick={() => { setMenuRiverSpend(!menuRiverSpend); setMenuCategorie(false); }} aria-expanded={menuRiverSpend} className="rounded-xl border border-teal-800 px-3 py-2 text-sm font-bold text-teal-200">RiverSpend ▾</button>
+              <a href="/vendi" className="rs-button rs-button-primary rounded-full bg-teal-500 px-4 py-3 text-sm font-bold text-slate-950 hover:bg-teal-400">+ Vendi</a>
+            </div>
+            <div className="mt-2 flex justify-end gap-3 text-xs sm:hidden">
+              <a href="/profilo" className="text-teal-200">👤 Profilo</a>
+              <a href="/desideri" className="text-teal-200">♡ Desideri</a>
             </div>
           </div>
 
@@ -148,13 +149,13 @@ export default function Home() {
         </header>
 
         <section className="mx-auto max-w-6xl px-4 py-8">
-          <div className="rs-hero mb-8 rounded-3xl border border-teal-800 bg-gradient-to-br from-slate-900 to-sky-950 p-6 sm:p-10">
-            <p className="mb-2 text-sm font-semibold uppercase tracking-widest text-teal-300">La tua esperienza sul fiume</p>
-            <h2 className="mb-3 text-3xl font-bold sm:text-5xl">La tua rete. Il tuo mercato.</h2>
-            <p className="mb-6 max-w-2xl text-slate-300">Scopri gli articoli pubblicati, aggiungili alla rete e metti in vendita i tuoi prodotti.</p>
-            <div className="flex flex-wrap gap-3">
-              <a href="/vendi" className="rs-button rs-button-primary rounded-xl px-6 py-3 font-bold text-slate-950">Carica prodotto con foto</a>
-              <a href="/ecosistema" className="rounded-xl border border-teal-700 px-6 py-3 font-bold text-teal-100">Esplora ecosistema</a>
+          <div className="rs-hero mb-5 rounded-2xl border border-teal-800 bg-gradient-to-br from-slate-900 to-sky-950 px-5 py-4 sm:px-7 sm:py-5">
+            <p className="mb-1 text-[10px] font-semibold uppercase tracking-widest text-teal-300 sm:text-xs">La tua esperienza sul fiume</p>
+            <h2 className="mb-2 text-2xl font-bold sm:text-3xl">La tua rete. Il tuo mercato.</h2>
+            <p className="mb-3 max-w-2xl text-sm leading-5 text-slate-300 sm:text-base">Scopri gli articoli pubblicati, aggiungili alla rete e metti in vendita i tuoi prodotti.</p>
+            <div className="flex flex-wrap gap-2">
+              <a href="/vendi" className="rs-button rs-button-primary rounded-xl px-4 py-2.5 text-sm font-bold text-slate-950">Carica prodotto con foto</a>
+              <a href="/ecosistema" className="rounded-xl border border-teal-700 px-4 py-2.5 text-sm font-bold text-teal-100">Esplora ecosistema</a>
             </div>
           </div>
 
