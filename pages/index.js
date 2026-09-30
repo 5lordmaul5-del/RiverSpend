@@ -7,6 +7,10 @@ export default function Home() {
   const [showSplash, setShowSplash] = useState(true);
   const [prodotti, setProdotti] = useState([]);
   const [errore, setErrore] = useState('');
+  const [menuCategorie, setMenuCategorie] = useState(false);
+  const [menuRiverSpend, setMenuRiverSpend] = useState(false);
+  const categorie = ['AUTO','MOTO','SCOOTER','HARLEY & CUSTOM','CAMION & VEICOLI COMMERCIALI','TRATTORI & AGRICOLTURA','EDILIZIA & MACCHINE DA LAVORO','NAUTICA','NAVALE','AERONAUTICA','MILITARIA & STORIA','SPORT','ARTI MARZIALI & COMBATTIMENTO','FITNESS & PALESTRA','OUTDOOR & AVVENTURA','PESCA','INTEGRATORI','ELETTRONICA & INFORMATICA','GAMING','FOTOGRAFIA & VIDEO','MUSICA & AUDIO','ABBIGLIAMENTO','SCARPE','GIOIELLI & OROLOGI','CASA & ARREDAMENTO','CUCINA','FAI DA TE & FERRAMENTA','GIARDINO','ANIMALI','BAMBINI & GIOCATTOLI','LIBRI & CULTURA','ARTE','ANTIQUARIATO','COLLEZIONISMO','HOBBY','VIAGGI & VALIGERIA','UFFICIO & PROFESSIONALE','INDUSTRIA','ENERGIA & SMART HOME','GADGET & REGALI','SERVIZI DIGITALI','ALTRO'];
+  const areeRiverSpend = ['Profilo','RiverSpendShop','RiverSpend Pay','RiverSpend Shield','RiverSpend Box','RiverSpend Fidelity','RiverSpend Park','RiverSpend Broadcast','RiverSpend Experience','RiverSpend Ecology','RiverSpend Oracle','RiverSpend Recovery','RiverSpend Fortress'];
 
   useEffect(() => {
     let attivo = true;
@@ -30,19 +34,20 @@ export default function Home() {
       {showSplash && <SplashScreen onEnter={() => setShowSplash(false)} />}
 
       <div className={`transition-opacity duration-700 ${showSplash ? 'opacity-0' : 'opacity-100'}`}>
-        <header className="rs-header sticky top-0 z-20 border-b border-slate-800 bg-slate-950/95 px-4 py-4">
-          <div className="mx-auto flex max-w-6xl items-center justify-between gap-3">
-            <div>
-              <h1 className="rs-brand text-2xl font-bold text-teal-400">RiverSpend<span>Shop</span></h1>
-              <p className="text-xs text-slate-400">YOUR SHOP • YOUR FLOW</p>
+        <header className="rs-header sticky top-0 z-30 border-b border-slate-800 bg-slate-950/95 px-3 py-3">
+          <div className="mx-auto flex max-w-6xl items-center justify-between gap-2">
+            <button type="button" onClick={() => { setMenuCategorie(!menuCategorie); setMenuRiverSpend(false); }} aria-label="Apri categorie" aria-expanded={menuCategorie} className="rounded-xl border border-teal-800 px-3 py-2 text-xl text-teal-200">☰</button>
+            <a href="/" className="min-w-0">
+              <h1 className="rs-brand text-xl font-bold text-teal-400">RiverSpend<span>Shop</span></h1>
+              <p className="text-[10px] text-slate-400">YOUR SHOP • YOUR FLOW</p>
+            </a>
+            <div className="flex items-center gap-2">
+              <button type="button" onClick={() => { setMenuRiverSpend(!menuRiverSpend); setMenuCategorie(false); }} aria-expanded={menuRiverSpend} className="rounded-xl border border-teal-800 px-2 py-2 text-xs font-bold text-teal-200">RiverSpend ▾</button>
+              <a href="/vendi" className="rs-button rs-button-primary rounded-full bg-teal-500 px-3 py-2 text-xs font-bold text-slate-950 hover:bg-teal-400">+ Vendi</a>
             </div>
-            <nav className="flex items-center gap-3">
-              <a href="/tutela" className="text-sm font-semibold text-teal-200 underline underline-offset-4">Tutela e assistenza</a>
-              <a href="/vendi" className="rs-button rs-button-primary rounded-full bg-teal-500 px-5 py-3 text-sm font-bold text-slate-950 hover:bg-teal-400">
-                + Vendi un prodotto
-              </a>
-            </nav>
           </div>
+          {menuCategorie && <div className="absolute left-0 top-full max-h-[75vh] w-[min(88vw,360px)] overflow-y-auto rounded-br-2xl border border-teal-800 bg-slate-900 p-4 shadow-2xl"><div className="mb-3 flex items-center justify-between"><strong className="text-teal-200">Categorie RiverSpend</strong><button onClick={() => setMenuCategorie(false)} aria-label="Chiudi">✕</button></div><div className="grid grid-cols-1 gap-1">{categorie.map((cat) => <a key={cat} href={`/?category=${encodeURIComponent(cat)}`} onClick={() => setMenuCategorie(false)} className="rounded-lg px-3 py-2 text-sm text-slate-100 hover:bg-teal-900">{cat} <span className="float-right text-teal-300">›</span></a>)}</div></div>}
+          {menuRiverSpend && <div className="absolute right-0 top-full max-h-[75vh] w-[min(88vw,340px)] overflow-y-auto rounded-bl-2xl border border-teal-800 bg-slate-900 p-4 shadow-2xl"><div className="mb-3 flex items-center justify-between"><strong className="text-teal-200">Il mondo RiverSpend</strong><button onClick={() => setMenuRiverSpend(false)} aria-label="Chiudi">✕</button></div><div className="space-y-1">{areeRiverSpend.map((area) => <div key={area} className="flex items-center justify-between rounded-lg px-3 py-2 text-sm text-slate-100"><span>{area}</span><span className="text-[10px] text-amber-300">In sviluppo</span></div>)}</div><a href="/tutela" onClick={() => setMenuRiverSpend(false)} className="mt-3 block rounded-lg bg-teal-900 px-3 py-2 text-sm font-semibold text-teal-100">Tutela e assistenza →</a></div>}
         </header>
 
         <section className="mx-auto max-w-6xl px-4 py-8">
@@ -91,6 +96,12 @@ export default function Home() {
             </div>
           )}
         </section>
+        <footer className="border-t border-slate-800 bg-slate-950 px-4 py-8">
+          <div className="mx-auto flex max-w-6xl flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+            <div><strong className="text-lg text-teal-300">RiverSpend</strong><p className="text-xs text-slate-400">YOUR SHOP • YOUR FLOW</p></div>
+            <nav aria-label="Link di servizio" className="flex flex-wrap gap-x-5 gap-y-3 text-sm"><a href="/tutela" className="text-teal-200 underline underline-offset-4">Tutela e assistenza</a><a href="/vendi" className="text-slate-300">Vendi un prodotto</a><a href="/" className="text-slate-300">Torna al negozio</a></nav>
+          </div>
+        </footer>
       </div>
     </main>
   );
