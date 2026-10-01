@@ -110,7 +110,7 @@ export default function Prodotto() {
                   <div className="mt-3 grid grid-cols-5 gap-2">
                     {immagini.map((url, index) => (
                       <button key={url + index} type="button" onClick={() => setFotoAttiva(index)} aria-label={'Mostra foto ' + (index + 1)} aria-pressed={fotoAttiva === index} className={'overflow-hidden rounded-lg border-2 ' + (fotoAttiva === index ? 'border-teal-400' : 'border-slate-700')}>
-                        <img src={url} alt={'Anteprima ' + (index + 1)} className="h-20 w-full object-cover" />
+                        <img src={url} alt={'Anteprima ' + (index + 1)} className="h-20 w-full bg-white object-contain p-1" />
                       </button>
                     ))}
                   </div>
