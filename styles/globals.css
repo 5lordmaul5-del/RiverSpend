@@ -114,3 +114,142 @@ input::placeholder, textarea::placeholder { color: #71858a; }
   .rs-brand { font-size: 1.35rem; }
   .rs-button { padding-left: 1rem; padding-right: 1rem; font-size: .82rem; }
 }
+
+/* RiverSpend light-water theme: white + clear aqua, with discreet river details */
+:root {
+  color-scheme: light;
+  --river-ink: #f5fcfb;
+  --river-deep: #e4f8f5;
+  --river-aqua: #21b9b1;
+  --river-gold: #c99735;
+}
+body { background: #f5fcfb; color: #17343a; }
+::selection { background: rgba(33, 185, 177, .22); color: #12343a; }
+.rs-glass {
+  border-color: rgba(33, 185, 177, .2);
+  background: rgba(255, 255, 255, .9);
+  box-shadow: 0 14px 38px rgba(34, 112, 111, .09);
+}
+.rs-site {
+  color: #17343a;
+  background:
+    radial-gradient(ellipse at 12% 0%, rgba(93, 221, 207, .2), transparent 34rem),
+    linear-gradient(180deg, #ffffff 0%, #f0fbf9 58%, #ffffff 100%);
+}
+.rs-header {
+  border-color: #ccece7;
+  background: rgba(255, 255, 255, .94);
+  box-shadow: 0 8px 26px rgba(37, 113, 109, .08);
+}
+.rs-header .rs-brand { color: #159f9a; }
+.rs-header a, .rs-header button { color: #176b6b; }
+.rs-header > div > div > a[aria-label] {
+  border-color: #c6e9e4;
+  background: rgba(238, 251, 249, .95);
+  box-shadow: 0 8px 22px rgba(32, 128, 121, .08);
+}
+.rs-header input {
+  color: #17343a;
+  background: #fff;
+  border-color: #cce4e1;
+}
+.rs-header input::placeholder { color: #718b8b; }
+.rs-header select { color: #176b6b; background: #effaf8; border-color: #c6e9e4; }
+.rs-header select option { color: #17343a; background: #fff; }
+.rs-header [class*="bg-slate-900"],
+.rs-header [class*="bg-slate-950"] {
+  background-color: #f3fbfa;
+}
+.rs-header [class*="text-slate-100"],
+.rs-header [class*="text-white"] { color: #24474b; }
+.rs-header [class*="border-teal-800"] { border-color: #c1e7e1; }
+.rs-header [class*="hover:bg-teal-900"]:hover { background: #e2f7f3; }
+.rs-hero {
+  border-color: #bce8e1;
+  background:
+    radial-gradient(ellipse at 85% 15%, rgba(71, 211, 194, .22), transparent 24rem),
+    linear-gradient(125deg, #ffffff, #eaf9f6 58%, #dff5f1);
+  box-shadow: 0 18px 44px rgba(35, 132, 124, .1), inset 0 1px rgba(255,255,255,.9);
+  color: #17343a;
+}
+.rs-hero h2 { color: #173f43; }
+.rs-hero p { color: #527174; }
+.rs-button-primary { color: #073c40; }
+.rs-product-card {
+  border-color: #d7ebe8;
+  background: #fff;
+  color: #234448;
+  box-shadow: 0 8px 24px rgba(37, 113, 109, .08);
+}
+.rs-product-card h3 { color: #24474b; }
+.rs-product-card:hover {
+  border-color: #69cfc2;
+  box-shadow: 0 14px 32px rgba(37, 145, 134, .14);
+}
+.rs-site [class*="text-slate-400"],
+.rs-site [class*="text-slate-300"] { color: #668184; }
+.rs-site [class*="border-slate-800"],
+.rs-site [class*="border-slate-700"] { border-color: #d6eae7; }
+.rs-site [class*="bg-slate-900"],
+.rs-site [class*="bg-slate-950"] { background-color: #fff; }
+.rs-site footer { background: #f0faf8; border-color: #d2eae6; }
+.rs-site footer strong { color: #159f9a; }
+.rs-site .rs-honor-panel { background: linear-gradient(135deg, #fff, #fff9e9); }
+
+/* Three tiny red river fish and a few gold pebbles: decorative, never interactive */
+.rs-river-decor {
+  position: absolute;
+  right: 1.25rem;
+  bottom: .9rem;
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+  opacity: .88;
+  pointer-events: none;
+}
+.rs-fish {
+  position: relative;
+  display: block;
+  width: 1.05rem;
+  height: .55rem;
+  border-radius: 60% 48% 48% 60%;
+  background: linear-gradient(180deg, #ff7770, #d9363d);
+  filter: drop-shadow(0 2px 2px rgba(112, 48, 40, .14));
+}
+.rs-fish::before {
+  content: "";
+  position: absolute;
+  left: -.34rem;
+  top: .08rem;
+  border-top: .2rem solid transparent;
+  border-bottom: .2rem solid transparent;
+  border-right: .38rem solid #df4548;
+}
+.rs-fish::after {
+  content: "";
+  position: absolute;
+  right: .22rem;
+  top: .18rem;
+  width: .1rem;
+  height: .1rem;
+  border-radius: 50%;
+  background: #fff;
+}
+.rs-fish:nth-child(2) { transform: translateY(-.35rem) scale(.82); }
+.rs-fish:nth-child(3) { transform: translateY(.22rem) scale(.68); }
+.rs-gold-pebble {
+  position: absolute;
+  width: .62rem;
+  height: .48rem;
+  border-radius: 48% 55% 42% 60%;
+  background: radial-gradient(circle at 30% 25%, #fff1a8, #e6b84f 52%, #b98525);
+  box-shadow: 0 2px 5px rgba(153, 111, 27, .18);
+  pointer-events: none;
+}
+.rs-gold-pebble.one { top: 1.1rem; right: 1.3rem; transform: rotate(25deg); }
+.rs-gold-pebble.two { bottom: 1.2rem; left: 1.2rem; width: .45rem; height: .38rem; transform: rotate(-18deg); }
+@media (max-width: 480px) {
+  .rs-river-decor { right: .9rem; bottom: .55rem; transform: scale(.78); transform-origin: right bottom; }
+  .rs-hero { padding-bottom: 2.5rem; }
+}
+
