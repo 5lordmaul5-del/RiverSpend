@@ -79,43 +79,18 @@ export default function Vendi() {
       return { file, url, originalUrl: url, uploadFile: null, processed: false, processing: true, error: false };
     });
     setFoto(elementi);
-    setMessaggio('✨ Rimozione automatica dello sfondo in corso per tutte le foto…');
-    const { data: sessionData } = await supabase.auth.getSession();
-    const token = sessionData?.session?.access_token;
-    if (!token) {
-      setFoto(elementi.map((item) => ({ ...item, processing: false, error: true })));
-      setMessaggio('⚠️ Accedi di nuovo per elaborare le foto.');
-      return;
-    }
+    setMessaggio('✨ RiverSpend PhotoAI sta preparando automaticamente le tue foto…');
+    const { removeBackground } = await import('@bg0/browser');
     for (let index = 0; index < elementi.length; index += 1) {
       const item = elementi[index];
       try {
-        const sourceBitmap = await createImageBitmap(item.file);
-        const maxSide = 1800;
-        const factor = Math.min(1, maxSide / Math.max(sourceBitmap.width, sourceBitmap.height));
-        const inputCanvas = document.createElement('canvas');
-        inputCanvas.width = Math.max(1, Math.round(sourceBitmap.width * factor));
-        inputCanvas.height = Math.max(1, Math.round(sourceBitmap.height * factor));
-        inputCanvas.getContext('2d').drawImage(sourceBitmap, 0, 0, inputCanvas.width, inputCanvas.height);
-        sourceBitmap.close();
-        const compressed = await new Promise((resolve) => inputCanvas.toBlob(resolve, 'image/jpeg', 0.82));
-        if (!compressed) throw new Error('Impossibile preparare la foto per l’elaborazione.');
-        const dataUrl = await new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result);
-          reader.onerror = reject;
-          reader.readAsDataURL(compressed);
+        const result = await removeBackground(item.file, {
+          quality: 'quality',
+          onProgress: ({ progress, message }) => {
+            setMessaggio(`✨ RiverSpend PhotoAI — foto ${index + 1}/${elementi.length}: ${message || Math.round(progress * 100) + '%'}`);
+          }
         });
-        const response = await fetch('/api/remove-background', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-          body: JSON.stringify({ image: dataUrl })
-        });
-        if (!response.ok) {
-          const info = await response.json().catch(() => ({}));
-          throw new Error(info.error || 'Elaborazione non riuscita.');
-        }
-        const cutout = await createImageBitmap(await response.blob());
+        const cutout = await createImageBitmap(result.blob);
         const canvas = document.createElement('canvas');
         canvas.width = 1200;
         canvas.height = 1200;
@@ -129,17 +104,17 @@ export default function Vendi() {
         cutout.close();
         const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.92));
         if (!blob) throw new Error('Impossibile preparare la foto finale.');
-        const processedFile = new File([blob], `riverspend-foto-${index + 1}.jpg`, { type: 'image/jpeg' });
+        const processedFile = new File([blob], `riverspend-photoai-${index + 1}.jpg`, { type: 'image/jpeg' });
         const processedUrl = URL.createObjectURL(blob);
         setFoto((current) => current.map((photo) => photo.file === item.file
           ? { ...photo, url: processedUrl, processedUrl, uploadFile: processedFile, processed: true, processing: false, error: false }
           : photo));
       } catch (error) {
-        console.error('Elaborazione foto:', error);
+        console.error('RiverSpend PhotoAI:', error);
         setFoto((current) => current.map((photo) => photo.file === item.file
           ? { ...photo, processing: false, error: true }
           : photo));
-        setMessaggio(`⚠️ Foto ${index + 1}: ${error.message} L’originale è conservato; riprova dopo aver configurato il servizio.`);
+        setMessaggio(`⚠️ PhotoAI non ha elaborato la foto ${index + 1}. L’originale è conservato e potrai comunque pubblicarlo.`);
       }
     }
     setFoto((current) => current.map((photo) => photo.processing ? { ...photo, processing: false } : photo));
@@ -226,7 +201,7 @@ export default function Vendi() {
     }
 
     if (foto.some((item) => item.processing || item.error || !item.processed)) {
-      setMessaggio('⚠️ Attendi la rimozione automatica dello sfondo per tutte le foto. Se il servizio non è configurato, completa prima la configurazione su Vercel.');
+      setMessaggio('⚠️ Attendi che PhotoAI termini. In caso di errore puoi pubblicare gli originali. Se il servizio non è configurato, completa prima la configurazione su Vercel.');
       return;
     }
 
@@ -464,10 +439,10 @@ export default function Vendi() {
 
               {foto.length > 0 && (
                 <div className="rounded-xl border border-cyan-200 bg-cyan-50 p-3 mb-4">
-                  <p className="font-semibold mb-1">✨ Sfondo rimosso automaticamente</p>
-                  <p className="text-sm text-slate-600">Ogni foto viene elaborata al caricamento, centrata su una tela bianca uniforme e ridimensionata senza deformare il prodotto. L’originale resta recuperabile.</p>
+                  <p className="font-semibold mb-1">✨ RiverSpend PhotoAI</p>
+                  <p className="text-sm text-slate-600">PhotoAI rimuove lo sfondo, centra il prodotto e lo prepara su una tela bianca. Le foto restano sul tuo dispositivo durante l’elaborazione; l’originale viene conservato.</p>
                   {foto.some((item) => item.processing) && <p className="text-sm font-semibold mt-2">⏳ Elaborazione in corso… attendi prima di pubblicare.</p>}
-                  {foto.some((item) => item.error) && <p className="text-sm text-red-700 mt-2">Alcune foto non sono state elaborate. Non pubblicarle prima di aver risolto il problema.</p>}
+                  {foto.some((item) => item.error) && <p className="text-sm text-red-700 mt-2">Alcune foto non sono state elaborate: puoi riprovare oppure pubblicare usando gli originali.</p>}
                   {foto[0]?.processed && <button type="button" onClick={ripristinaFotoPrincipale} disabled={caricamento} className="mt-2 rounded-lg border px-3 py-2">Ripristina originale della prima foto</button>}
                 </div>
               )}
@@ -483,7 +458,7 @@ export default function Vendi() {
                         alt={`Foto ${index + 1}`}
                         className="w-full h-28 bg-white object-contain p-1"
                       />
-                      <span className="block text-center text-xs py-1">{item.processing ? 'Elaborazione…' : item.processed ? '✓ Sfondo rimosso' : item.error ? 'Da riprovare' : 'Originale'}</span>
+                      <span className="block text-center text-xs py-1">{item.processing ? 'Elaborazione…' : item.processed ? '✓ Sfondo rimosso' : item.error ? 'Originale · PhotoAI non riuscita' : 'Originale'}</span>
                       <button
                         type="button"
                         onClick={() => removePhoto(index)}
