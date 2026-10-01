@@ -136,7 +136,7 @@ export default function Home() {
       {showSplash && <SplashScreen onEnter={() => { try { sessionStorage.setItem('rs-opening-seen', '1'); } catch {} setShowSplash(false); }} />}
 
       <div className={`transition-opacity duration-700 ${showSplash ? 'opacity-0' : 'opacity-100'}`}>
-        <header className="rs-header sticky top-0 z-30 border-b border-slate-800 bg-slate-950/95 px-3 py-3">
+        <header className="rs-header sm:sticky sm:top-0 z-30 border-b border-slate-800 bg-slate-950/95 px-3 py-3">
           <div className="mx-auto max-w-6xl">
             <div className="flex justify-center">
               <a href="/" aria-label="RiverSpendShop, pagina iniziale" className="inline-flex flex-col items-center rounded-2xl border border-teal-800/80 bg-slate-900/70 px-6 py-2 shadow-lg shadow-teal-950/30">
