@@ -104,17 +104,46 @@ export default function Vendi() {
           original.close();
           throw new Error('L’inquadratura elaborata non corrisponde all’originale.');
         }
+        // Ritaglia solo i bordi trasparenti: il prodotto non viene mai tagliato.
+        const boundsCanvas = document.createElement('canvas');
+        boundsCanvas.width = cutout.width;
+        boundsCanvas.height = cutout.height;
+        const boundsCtx = boundsCanvas.getContext('2d', { willReadFrequently: true });
+        boundsCtx.drawImage(cutout, 0, 0);
+        const pixels = boundsCtx.getImageData(0, 0, cutout.width, cutout.height).data;
+        let minX = cutout.width, minY = cutout.height, maxX = -1, maxY = -1;
+        for (let y = 0; y < cutout.height; y += 2) {
+          for (let x = 0; x < cutout.width; x += 2) {
+            if (pixels[(y * cutout.width + x) * 4 + 3] > 24) {
+              if (x < minX) minX = x;
+              if (x > maxX) maxX = x;
+              if (y < minY) minY = y;
+              if (y > maxY) maxY = y;
+            }
+          }
+        }
+        const foundSubject = maxX >= minX && maxY >= minY;
+        // Se il file non ha trasparenza utile, manteniamo tutto il fotogramma originale del modello.
+        let sx = foundSubject ? minX : 0;
+        let sy = foundSubject ? minY : 0;
+        let sw = foundSubject ? maxX - minX + 1 : cutout.width;
+        let sh = foundSubject ? maxY - minY + 1 : cutout.height;
+        const padding = Math.round(Math.max(sw, sh) * 0.07);
+        sx = Math.max(0, sx - padding);
+        sy = Math.max(0, sy - padding);
+        sw = Math.min(cutout.width - sx, sw + padding * 2);
+        sh = Math.min(cutout.height - sy, sh + padding * 2);
         const canvas = document.createElement('canvas');
         canvas.width = 1200;
         canvas.height = 1200;
         const ctx = canvas.getContext('2d');
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(0, 0, 1200, 1200);
-        // Usa l’intero fotogramma restituito e lascia più spazio intorno al prodotto.
-        const scale = Math.min(840 / cutout.width, 840 / cutout.height);
-        const width = cutout.width * scale;
-        const height = cutout.height * scale;
-        ctx.drawImage(cutout, (1200 - width) / 2, (1200 - height) / 2, width, height);
+        // Il soggetto occupa circa il 78% della tela, con proporzioni intatte e margine.
+        const scale = Math.min(936 / sw, 936 / sh);
+        const width = sw * scale;
+        const height = sh * scale;
+        ctx.drawImage(cutout, sx, sy, sw, sh, (1200 - width) / 2, (1200 - height) / 2, width, height);
         cutout.close();
         original.close();
         const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.92));
