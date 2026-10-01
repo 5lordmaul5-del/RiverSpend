@@ -90,11 +90,21 @@ export default function Vendi() {
     for (let index = 0; index < elementi.length; index += 1) {
       const item = elementi[index];
       try {
+        const sourceBitmap = await createImageBitmap(item.file);
+        const maxSide = 1800;
+        const factor = Math.min(1, maxSide / Math.max(sourceBitmap.width, sourceBitmap.height));
+        const inputCanvas = document.createElement('canvas');
+        inputCanvas.width = Math.max(1, Math.round(sourceBitmap.width * factor));
+        inputCanvas.height = Math.max(1, Math.round(sourceBitmap.height * factor));
+        inputCanvas.getContext('2d').drawImage(sourceBitmap, 0, 0, inputCanvas.width, inputCanvas.height);
+        sourceBitmap.close();
+        const compressed = await new Promise((resolve) => inputCanvas.toBlob(resolve, 'image/jpeg', 0.82));
+        if (!compressed) throw new Error('Impossibile preparare la foto per l’elaborazione.');
         const dataUrl = await new Promise((resolve, reject) => {
           const reader = new FileReader();
           reader.onload = () => resolve(reader.result);
           reader.onerror = reject;
-          reader.readAsDataURL(item.file);
+          reader.readAsDataURL(compressed);
         });
         const response = await fetch('/api/remove-background', {
           method: 'POST',
