@@ -84,13 +84,10 @@ export default function Vendi() {
       return;
     }
 
-    setFoto(files.map((file) => ({
-      file,
-      url: URL.createObjectURL(file),
-      originalUrl: URL.createObjectURL(file),
-      uploadFile: file,
-      processed: false
-    })));
+    setFoto(files.map((file) => {
+      const url = URL.createObjectURL(file);
+      return { file, url, originalUrl: url, uploadFile: file, processed: false };
+    }));
 
     setMessaggio(`📸 ${files.length} foto selezionate.`);
   }
@@ -140,6 +137,7 @@ export default function Vendi() {
     setFoto((current) => {
       const daRimuovere = current[index];
       if (daRimuovere?.url) URL.revokeObjectURL(daRimuovere.url);
+      if (daRimuovere?.originalUrl && daRimuovere.originalUrl !== daRimuovere.url) URL.revokeObjectURL(daRimuovere.originalUrl);
       return current.filter((_, i) => i !== index);
     });
   }
