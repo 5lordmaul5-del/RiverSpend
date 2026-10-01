@@ -215,6 +215,11 @@ export default function Vendi() {
       return;
     }
 
+    if (foto.some((item) => item.processing || item.error || !item.processed)) {
+      setMessaggio('⚠️ Attendi la rimozione automatica dello sfondo per tutte le foto. Se il servizio non è configurato, completa prima la configurazione su Vercel.');
+      return;
+    }
+
     setCaricamento(true);
     setMessaggio('⏳ Caricamento foto e pubblicazione...');
 
@@ -469,12 +474,6 @@ export default function Vendi() {
                         className="w-full h-28 bg-white object-contain p-1"
                       />
                       <span className="block text-center text-xs py-1">{item.processing ? 'Elaborazione…' : item.processed ? '✓ Sfondo rimosso' : item.error ? 'Da riprovare' : 'Originale'}</span>
-                      <img
-                        hidden
-                        alt=""
-                        src={item.url}
-                      />
-
                       <button
                         type="button"
                         onClick={() => removePhoto(index)}
