@@ -61,75 +61,85 @@ export default function Vendi() {
     };
   }, []);
 
-  function handlePhotos(event) {
+  async function handlePhotos(event) {
     const files = Array.from(event.target.files || []);
     event.target.value = '';
-
     if (!files.length) return;
-
     if (files.length > MAX_PHOTOS) {
       setMessaggio(`⚠️ Puoi selezionare al massimo ${MAX_PHOTOS} foto.`);
       return;
     }
-
-    const nonValide = files.find((file) => {
-      return (
-        !file.type.startsWith('image/') ||
-        file.size > MAX_PHOTO_SIZE
-      );
-    });
-
+    const nonValide = files.find((file) => !file.type.startsWith('image/') || file.size > MAX_PHOTO_SIZE);
     if (nonValide) {
       setMessaggio('⚠️ Seleziona solo immagini fino a 10 MB ciascuna.');
       return;
     }
-
-    setFoto(files.map((file) => {
+    const elementi = files.map((file) => {
       const url = URL.createObjectURL(file);
-      return { file, url, originalUrl: url, uploadFile: file, processed: false };
-    }));
-
-    setMessaggio(`📸 ${files.length} foto selezionate.`);
-  }
-
-
-  async function miglioraFotoPrincipale() {
-    const item = foto[0];
-    if (!item || item.processed) return;
-    setMessaggio('✨ Elaborazione dello sfondo…');
-    try {
-      const img = new Image();
-      img.src = item.originalUrl || item.url;
-      await new Promise((resolve, reject) => { img.onload = resolve; img.onerror = reject; });
-      const canvas = document.createElement('canvas');
-      canvas.width = img.naturalWidth; canvas.height = img.naturalHeight;
-      const ctx = canvas.getContext('2d', { willReadFrequently: true });
-      ctx.drawImage(img, 0, 0);
-      const data = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const px = data.data, w = canvas.width, h = canvas.height;
-      const corner = (x,y) => { let r=0,g=0,b=0,n=0; for(let yy=0;yy<4;yy++) for(let xx=0;xx<4;xx++){const k=((Math.min(h-1,y+yy)*w)+Math.min(w-1,x+xx))*4;r+=px[k];g+=px[k+1];b+=px[k+2];n++;} return [r/n,g/n,b/n]; };
-      const cs=[corner(0,0),corner(w-4,0),corner(0,h-4),corner(w-4,h-4)];
-      const bg=cs.reduce((a,c)=>[a[0]+c[0]/4,a[1]+c[1]/4,a[2]+c[2]/4],[0,0,0]);
-      const spread=Math.max(...cs.map(c=>Math.hypot(c[0]-bg[0],c[1]-bg[1],c[2]-bg[2])));
-      if(spread>75){setMessaggio('⚠️ Sfondo non uniforme: scegli una foto più pulita. L’originale è intatto.');return;}
-      const seen=new Uint8Array(w*h), queue=new Int32Array(w*h); let head=0,tail=0;
-      const add=p=>{if(p<0||p>=w*h||seen[p])return;const k=p*4;if(Math.hypot(px[k]-bg[0],px[k+1]-bg[1],px[k+2]-bg[2])>68)return;seen[p]=1;queue[tail++]=p;};
-      for(let x=0;x<w;x++){add(x);add((h-1)*w+x);}
-      for(let y=0;y<h;y++){add(y*w);add(y*w+w-1);}
-      while(head<tail){const p=queue[head++],x=p%w,y=Math.floor(p/w);if(x>0)add(p-1);if(x<w-1)add(p+1);if(y>0)add(p-w);if(y<h-1)add(p+w);}
-      for(let p=0;p<seen.length;p++)if(seen[p]){const k=p*4;px[k]=255;px[k+1]=255;px[k+2]=255;px[k+3]=255;}
-      ctx.putImageData(data,0,0);
-      const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',0.94));
-      if(!blob)throw new Error('Elaborazione non riuscita');
-      const file=new File([blob],'riverspend-sfondo-bianco.jpg',{type:'image/jpeg'});
-      const url=URL.createObjectURL(blob);
-      setFoto(current=>current.map((p,i)=>i===0?{...p,uploadFile:file,url,processed:true,processedUrl:url}:p));
-      setMessaggio('✅ Anteprima pronta. Controllala e, se non ti piace, ripristina l’originale.');
-    } catch(e){console.error(e);setMessaggio('❌ Non riesco a elaborare questa foto. L’originale è intatto.');}
+      return { file, url, originalUrl: url, uploadFile: null, processed: false, processing: true, error: false };
+    });
+    setFoto(elementi);
+    setMessaggio('✨ Rimozione automatica dello sfondo in corso per tutte le foto…');
+    const { data: sessionData } = await supabase.auth.getSession();
+    const token = sessionData?.session?.access_token;
+    if (!token) {
+      setFoto(elementi.map((item) => ({ ...item, processing: false, error: true })));
+      setMessaggio('⚠️ Accedi di nuovo per elaborare le foto.');
+      return;
+    }
+    for (let index = 0; index < elementi.length; index += 1) {
+      const item = elementi[index];
+      try {
+        const dataUrl = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(item.file);
+        });
+        const response = await fetch('/api/remove-background', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ image: dataUrl })
+        });
+        if (!response.ok) {
+          const info = await response.json().catch(() => ({}));
+          throw new Error(info.error || 'Elaborazione non riuscita.');
+        }
+        const cutout = await createImageBitmap(await response.blob());
+        const canvas = document.createElement('canvas');
+        canvas.width = 1200;
+        canvas.height = 1200;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, 1200, 1200);
+        const scale = Math.min(960 / cutout.width, 960 / cutout.height);
+        const width = cutout.width * scale;
+        const height = cutout.height * scale;
+        ctx.drawImage(cutout, (1200 - width) / 2, (1200 - height) / 2, width, height);
+        cutout.close();
+        const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.92));
+        if (!blob) throw new Error('Impossibile preparare la foto finale.');
+        const processedFile = new File([blob], `riverspend-foto-${index + 1}.jpg`, { type: 'image/jpeg' });
+        const processedUrl = URL.createObjectURL(blob);
+        setFoto((current) => current.map((photo) => photo.file === item.file
+          ? { ...photo, url: processedUrl, processedUrl, uploadFile: processedFile, processed: true, processing: false, error: false }
+          : photo));
+      } catch (error) {
+        console.error('Elaborazione foto:', error);
+        setFoto((current) => current.map((photo) => photo.file === item.file
+          ? { ...photo, processing: false, error: true }
+          : photo));
+        setMessaggio(`⚠️ Foto ${index + 1}: ${error.message} L’originale è conservato; riprova dopo aver configurato il servizio.`);
+      }
+    }
+    setFoto((current) => current.map((photo) => photo.processing ? { ...photo, processing: false } : photo));
+    setMessaggio('Elaborazione terminata. Controlla le anteprime: le foto con sfondo rimosso sono pronte.');
   }
 
   function ripristinaFotoPrincipale() {
-    setFoto(current=>current.map((p,i)=>i===0?{...p,uploadFile:p.file,url:p.originalUrl,processed:false}:p));
+    setFoto((current) => current.map((p, i) => i === 0
+      ? { ...p, uploadFile: p.file, url: p.originalUrl, processed: false, error: false }
+      : p));
     setMessaggio('Foto originale ripristinata.');
   }
 
@@ -138,6 +148,7 @@ export default function Vendi() {
       const daRimuovere = current[index];
       if (daRimuovere?.url) URL.revokeObjectURL(daRimuovere.url);
       if (daRimuovere?.originalUrl && daRimuovere.originalUrl !== daRimuovere.url) URL.revokeObjectURL(daRimuovere.originalUrl);
+      if (daRimuovere?.processedUrl) URL.revokeObjectURL(daRimuovere.processedUrl);
       return current.filter((_, i) => i !== index);
     });
   }
@@ -438,12 +449,11 @@ export default function Vendi() {
 
               {foto.length > 0 && (
                 <div className="rounded-xl border border-cyan-200 bg-cyan-50 p-3 mb-4">
-                  <p className="font-semibold mb-1">✨ Foto principale più pulita</p>
-                  <p className="text-sm text-slate-600 mb-3">Prova lo sfondo bianco sulla prima foto. Funziona meglio con sfondi uniformi: controlla sempre l’anteprima. L’originale resta recuperabile.</p>
-                  <div className="flex flex-wrap gap-2">
-                    <button type="button" onClick={miglioraFotoPrincipale} disabled={caricamento || foto[0]?.processed} className="rounded-lg bg-white border border-cyan-500 text-cyan-800 font-semibold px-3 py-2 disabled:opacity-50">Sfondo bianco automatico</button>
-                    {foto[0]?.processed && <button type="button" onClick={ripristinaFotoPrincipale} disabled={caricamento} className="rounded-lg border px-3 py-2">Ripristina originale</button>}
-                  </div>
+                  <p className="font-semibold mb-1">✨ Sfondo rimosso automaticamente</p>
+                  <p className="text-sm text-slate-600">Ogni foto viene elaborata al caricamento, centrata su una tela bianca uniforme e ridimensionata senza deformare il prodotto. L’originale resta recuperabile.</p>
+                  {foto.some((item) => item.processing) && <p className="text-sm font-semibold mt-2">⏳ Elaborazione in corso… attendi prima di pubblicare.</p>}
+                  {foto.some((item) => item.error) && <p className="text-sm text-red-700 mt-2">Alcune foto non sono state elaborate. Non pubblicarle prima di aver risolto il problema.</p>}
+                  {foto[0]?.processed && <button type="button" onClick={ripristinaFotoPrincipale} disabled={caricamento} className="mt-2 rounded-lg border px-3 py-2">Ripristina originale della prima foto</button>}
                 </div>
               )}
               {foto.length > 0 && (
@@ -457,6 +467,12 @@ export default function Vendi() {
                         src={item.url}
                         alt={`Foto ${index + 1}`}
                         className="w-full h-28 bg-white object-contain p-1"
+                      />
+                      <span className="block text-center text-xs py-1">{item.processing ? 'Elaborazione…' : item.processed ? '✓ Sfondo rimosso' : item.error ? 'Da riprovare' : 'Originale'}</span>
+                      <img
+                        hidden
+                        alt=""
+                        src={item.url}
                       />
 
                       <button
