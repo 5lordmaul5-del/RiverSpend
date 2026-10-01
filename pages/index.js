@@ -41,7 +41,23 @@ function LanguageSelector() {
   );
 }
 
+const HOME_TEXT = {
+  it: {profile:'Profilo',wishes:'Desideri',search:'Cerca nel RiverSpendShop…',categories:'Categorie RiverSpend',close:'Chiudi',world:'Il mondo RiverSpend',open:'Apri →',ecosystem:'Tutto l’ecosistema →',support:'Tutela e assistenza →',experience:'La tua esperienza sul fiume',heroTitle:'La tua rete. Il tuo mercato.',heroBody:'Scopri gli articoli pubblicati, aggiungili alla rete e metti in vendita i tuoi prodotti.',sellPhoto:'Carica prodotto con foto',explore:'Esplora ecosistema',products:'Prodotti nel Fiume',visible:'risultati visibili nel RiverSpendShop',myNet:'La mia rete',catalogError:'Il catalogo non è raggiungibile:',noProducts:'Ancora nessun prodotto pubblicato',noMatch:'Nessun prodotto corrisponde alla ricerca',firstItem:'Accedi e carica il primo articolo con le sue foto.',changeSearch:'Cambia ricerca o categoria.',goUpload:'Vai a Carica prodotto',reset:'Azzera filtri',photoMissing:t('photoMissing'),openProduct:'Apri prodotto →',ecosystemLink:'Ecosistema',sell:'Vendi un prodotto',rights:'YOUR SHOP • YOUR FLOW'},
+  en: {profile:'Profile',wishes:'Wishlist',search:'Search RiverSpendShop…',categories:'RiverSpend categories',close:'Close',world:'The RiverSpend world',open:'Open →',ecosystem:'Full ecosystem →',support:'Protection & support →',experience:'Your experience on the river',heroTitle:'Your net. Your market.',heroBody:'Discover listed items, add them to your net, and put your products up for sale.',sellPhoto:'List a product with photos',explore:'Explore the ecosystem',products:'Products on the River',visible:'results in RiverSpendShop',myNet:'My net',catalogError:'The catalog is unavailable:',noProducts:'No products published yet',noMatch:'No products match your search',firstItem:'Sign in and list the first item with its photos.',changeSearch:'Change your search or category.',goUpload:'Go to product listing',reset:'Clear filters',photoMissing:'Photo unavailable',openProduct:'View product →',ecosystemLink:'Ecosystem',sell:'Sell a product',rights:'YOUR SHOP • YOUR FLOW'},
+  es: {profile:'Perfil',wishes:'Favoritos',search:'Buscar en RiverSpendShop…',categories:'Categorías RiverSpend',close:'Cerrar',world:'El mundo RiverSpend',open:'Abrir →',ecosystem:'Todo el ecosistema →',support:'Protección y asistencia →',experience:'Tu experiencia en el río',heroTitle:'Tu red. Tu mercado.',heroBody:'Descubre los artículos publicados, añádelos a tu red y pon tus productos a la venta.',sellPhoto:'Publicar producto con fotos',explore:'Explorar el ecosistema',products:'Productos en el río',visible:'resultados en RiverSpendShop',myNet:'Mi red',catalogError:'El catálogo no está disponible:',noProducts:'Aún no hay productos publicados',noMatch:'Ningún producto coincide con tu búsqueda',firstItem:'Inicia sesión y publica el primer artículo con sus fotos.',changeSearch:'Cambia la búsqueda o la categoría.',goUpload:'Ir a publicar producto',reset:'Borrar filtros',photoMissing:'Foto no disponible',openProduct:'Ver producto →',ecosystemLink:'Ecosistema',sell:'Vender un producto',rights:'YOUR SHOP • YOUR FLOW'},
+  fr: {profile:'Profil',wishes:'Favoris',search:'Rechercher dans RiverSpendShop…',categories:'Catégories RiverSpend',close:'Fermer',world:'Le monde RiverSpend',open:'Ouvrir →',ecosystem:'Tout l’écosystème →',support:'Protection et assistance →',experience:'Votre expérience sur le fleuve',heroTitle:'Votre réseau. Votre marché.',heroBody:'Découvrez les articles publiés, ajoutez-les à votre réseau et mettez vos produits en vente.',sellPhoto:'Mettre un produit en vente avec photos',explore:'Explorer l’écosystème',products:'Produits sur le fleuve',visible:'résultats dans RiverSpendShop',myNet:'Mon réseau',catalogError:'Le catalogue est indisponible :',noProducts:'Aucun produit publié pour le moment',noMatch:'Aucun produit ne correspond à votre recherche',firstItem:'Connectez-vous et publiez le premier article avec ses photos.',changeSearch:'Modifiez votre recherche ou catégorie.',goUpload:'Publier un produit',reset:'Effacer les filtres',photoMissing:'Photo indisponible',openProduct:'Voir le produit →',ecosystemLink:'Écosystème',sell:'Vendre un produit',rights:'YOUR SHOP • YOUR FLOW'},
+  de: {profile:'Profil',wishes:'Merkliste',search:'RiverSpendShop durchsuchen…',categories:'RiverSpend-Kategorien',close:'Schließen',world:'Die RiverSpend-Welt',open:'Öffnen →',ecosystem:'Das gesamte Ökosystem →',support:'Schutz & Hilfe →',experience:'Dein Erlebnis am Fluss',heroTitle:'Dein Netz. Dein Marktplatz.',heroBody:'Entdecke veröffentlichte Artikel, füge sie deinem Netz hinzu und verkaufe deine Produkte.',sellPhoto:'Produkt mit Fotos einstellen',explore:'Ökosystem entdecken',products:'Produkte im Fluss',visible:'Ergebnisse in RiverSpendShop',myNet:'Mein Netz',catalogError:'Der Katalog ist nicht verfügbar:',noProducts:'Noch keine Produkte veröffentlicht',noMatch:'Keine Produkte entsprechen deiner Suche',firstItem:'Melde dich an und stelle den ersten Artikel mit Fotos ein.',changeSearch:'Ändere Suche oder Kategorie.',goUpload:'Produkt einstellen',reset:'Filter zurücksetzen',photoMissing:'Foto nicht verfügbar',openProduct:'Produkt ansehen →',ecosystemLink:'Ökosystem',sell:'Produkt verkaufen',rights:'YOUR SHOP • YOUR FLOW'},
+  pt: {profile:'Perfil',wishes:'Favoritos',search:'Pesquisar no RiverSpendShop…',categories:'Categorias RiverSpend',close:'Fechar',world:'O mundo RiverSpend',open:'Abrir →',ecosystem:'Todo o ecossistema →',support:'Proteção e assistência →',experience:'A tua experiência no rio',heroTitle:'A tua rede. O teu mercado.',heroBody:'Descobre os artigos publicados, adiciona-os à rede e coloca os teus produtos à venda.',sellPhoto:'Publicar produto com fotos',explore:'Explorar ecossistema',products:'Produtos no rio',visible:'resultados no RiverSpendShop',myNet:'A minha rede',catalogError:'O catálogo não está disponível:',noProducts:'Ainda não há produtos publicados',noMatch:'Nenhum produto corresponde à pesquisa',firstItem:'Inicia sessão e publica o primeiro artigo com as suas fotos.',changeSearch:'Altera a pesquisa ou categoria.',goUpload:'Publicar produto',reset:'Limpar filtros',photoMissing:'Foto indisponível',openProduct:'Ver produto →',ecosystemLink:'Ecossistema',sell:'Vender produto',rights:'YOUR SHOP • YOUR FLOW'}
+};
 export default function Home() {
+  const [language, setLanguage] = useState('it');
+  const t = (key) => (HOME_TEXT[language] || HOME_TEXT.en)[key] || HOME_TEXT.it[key] || key;
+  useEffect(() => {
+    const sync = (event) => setLanguage(event.detail?.language || document.documentElement.lang || 'it');
+    setLanguage(document.documentElement.lang || 'it');
+    window.addEventListener('riverspend:language-change', sync);
+    return () => window.removeEventListener('riverspend:language-change', sync);
+  }, []);
   const [showSplash, setShowSplash] = useState(false);
   const [prodotti, setProdotti] = useState([]);
   const [errore, setErrore] = useState('');
@@ -130,14 +146,14 @@ export default function Home() {
               </a>
             </div>
             <div className="mt-3 flex items-center justify-between gap-2">
-              <button type="button" onClick={() => { setMenuCategorie(!menuCategorie); setMenuRiverSpend(false); }} aria-label="Apri categorie" aria-expanded={menuCategorie} className="rounded-xl border border-teal-800 px-3 py-2 text-xl text-teal-200">☰</button>
-              <a href="/rete" className="rounded-xl border border-teal-800 px-3 py-2 text-sm font-bold text-teal-200">🕸️ Rete</a>
+              <button type="button" onClick={() => { setMenuCategorie(!menuCategorie); setMenuRiverSpend(false); }} aria-label={t('categories')} aria-expanded={menuCategorie} className="rounded-xl border border-teal-800 px-3 py-2 text-xl text-teal-200">☰</button>
+              <a href="/rete" className="rounded-xl border border-teal-800 px-3 py-2 text-sm font-bold text-teal-200">🕸️ {t('myNet')}</a>
               <button type="button" onClick={() => { setMenuRiverSpend(!menuRiverSpend); setMenuCategorie(false); }} aria-expanded={menuRiverSpend} className="rounded-xl border border-teal-800 px-3 py-2 text-sm font-bold text-teal-200">RiverSpend ▾</button>
-              <a href="/vendi" className="rs-button rs-button-primary rounded-full bg-teal-500 px-4 py-3 text-sm font-bold text-slate-950 hover:bg-teal-400">+ Vendi</a>
+              <a href="/vendi" className="rs-button rs-button-primary rounded-full bg-teal-500 px-4 py-3 text-sm font-bold text-slate-950 hover:bg-teal-400">+ {t('sell')}</a>
             </div>
             <div className="mt-2 flex items-center justify-end gap-3 text-xs">
-              <a href="/profilo" className="text-teal-200">👤 Profilo</a>
-              <a href="/desideri" className="text-teal-200">♡ Desideri</a>
+              <a href="/profilo" className="text-teal-200">👤 {t('profile')}</a>
+              <a href="/desideri" className="text-teal-200">♡ {t('wishes')}</a>
               <LanguageSelector />
             </div>
           </div>
@@ -146,7 +162,7 @@ export default function Home() {
             <input
               value={ricerca}
               onChange={(e) => setRicerca(e.target.value)}
-              placeholder="Cerca nel RiverSpendShop…"
+              placeholder={t('search')}
               aria-label="Cerca prodotti"
               className="min-w-0 flex-1 rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-white"
             />
@@ -159,7 +175,7 @@ export default function Home() {
 
           {menuCategorie && (
             <div className="absolute left-0 top-full max-h-[75vh] w-[min(88vw,360px)] overflow-y-auto rounded-br-2xl border border-teal-800 bg-slate-900 p-4 shadow-2xl">
-              <div className="mb-3 flex items-center justify-between"><strong className="text-teal-200">Categorie RiverSpend</strong><button onClick={() => setMenuCategorie(false)} aria-label="Chiudi">✕</button></div>
+              <div className="mb-3 flex items-center justify-between"><strong className="text-teal-200">{t('categories')}</strong><button onClick={() => setMenuCategorie(false)} aria-label={t('close')}>✕</button></div>
               <div className="grid grid-cols-1 gap-1">
                 {categorie.map((cat) => (
                   <a key={cat} href={`/?category=${encodeURIComponent(cat)}`} onClick={() => setMenuCategorie(false)} className="rounded-lg px-3 py-2 text-sm text-slate-100 hover:bg-teal-900">
@@ -172,47 +188,47 @@ export default function Home() {
 
           {menuRiverSpend && (
             <div className="absolute right-0 top-full max-h-[75vh] w-[min(92vw,360px)] overflow-y-auto rounded-bl-2xl border border-teal-800 bg-slate-900 p-4 shadow-2xl">
-              <div className="mb-3 flex items-center justify-between"><strong className="text-teal-200">Il mondo RiverSpend</strong><button onClick={() => setMenuRiverSpend(false)} aria-label="Chiudi">✕</button></div>
+              <div className="mb-3 flex items-center justify-between"><strong className="text-teal-200">{t('world')}</strong><button onClick={() => setMenuRiverSpend(false)} aria-label={t('close')}>✕</button></div>
               <div className="space-y-1">
                 {areeRiverSpend.map(([area, href]) => (
                   <a key={area} href={href} onClick={() => setMenuRiverSpend(false)} className="flex items-center justify-between rounded-lg px-3 py-2 text-sm text-slate-100 hover:bg-teal-900">
                     <span>{area === 'RiverSpend Shield' ? '🛡️ RS Nova Shield' : area}</span>
-                    <span className="text-[10px] text-teal-300">Apri →</span>
+                    <span className="text-[10px] text-teal-300">{t('open')}</span>
                   </a>
                 ))}
               </div>
-              <a href="/ecosistema" onClick={() => setMenuRiverSpend(false)} className="mt-3 block rounded-lg bg-teal-900 px-3 py-2 text-sm font-semibold text-teal-100">Tutto l’ecosistema →</a>
-              <a href="/tutela" onClick={() => setMenuRiverSpend(false)} className="mt-2 block rounded-lg border border-teal-800 px-3 py-2 text-sm font-semibold text-teal-100">Tutela e assistenza →</a>
+              <a href="/ecosistema" onClick={() => setMenuRiverSpend(false)} className="mt-3 block rounded-lg bg-teal-900 px-3 py-2 text-sm font-semibold text-teal-100">{t('ecosystem')}</a>
+              <a href="/tutela" onClick={() => setMenuRiverSpend(false)} className="mt-2 block rounded-lg border border-teal-800 px-3 py-2 text-sm font-semibold text-teal-100">{t('support')}</a>
             </div>
           )}
         </header>
 
         <section className="mx-auto max-w-6xl px-4 py-8">
           <div className="rs-hero mb-5 rounded-2xl border border-teal-800 bg-gradient-to-br from-slate-900 to-sky-950 px-5 py-4 sm:px-7 sm:py-5">
-            <p className="mb-1 text-[10px] font-semibold uppercase tracking-widest text-teal-300 sm:text-xs">La tua esperienza sul fiume</p>
-            <h2 className="mb-2 text-2xl font-bold sm:text-3xl">La tua rete. Il tuo mercato.</h2>
-            <p className="mb-3 max-w-2xl text-sm leading-5 text-slate-300 sm:text-base">Scopri gli articoli pubblicati, aggiungili alla rete e metti in vendita i tuoi prodotti.</p>
+            <p className="mb-1 text-[10px] font-semibold uppercase tracking-widest text-teal-300 sm:text-xs">{t('experience')}</p>
+            <h2 className="mb-2 text-2xl font-bold sm:text-3xl">{t('heroTitle')}</h2>
+            <p className="mb-3 max-w-2xl text-sm leading-5 text-slate-300 sm:text-base">{t('heroBody')}</p>
             <div className="flex flex-wrap gap-3">
-              <a href="/vendi" className="rs-button rs-button-primary rounded-xl px-4 py-2.5 text-sm font-bold text-slate-950">Carica prodotto con foto</a>
-              <a href="/ecosistema" className="rounded-xl border border-teal-700 px-4 py-2.5 text-sm font-bold text-teal-100">Esplora ecosistema</a>
+              <a href="/vendi" className="rs-button rs-button-primary rounded-xl px-4 py-2.5 text-sm font-bold text-slate-950">{t('sellPhoto')}</a>
+              <a href="/ecosistema" className="rounded-xl border border-teal-700 px-4 py-2.5 text-sm font-bold text-teal-100">{t('explore')}</a>
             </div>
           </div>
 
           <div className="mb-5 flex items-end justify-between gap-3">
             <div>
-              <h2 className="text-2xl font-bold">Prodotti nel Fiume</h2>
-              <p className="text-sm text-slate-400">{prodottiVisibili.length} risultati visibili nel RiverSpendShop</p>
+              <h2 className="text-2xl font-bold">{t('products')}</h2>
+              <p className="text-sm text-slate-400">{prodottiVisibili.length} {t('visible')}</p>
             </div>
-            <a href="/rete" className="text-sm font-semibold text-teal-300 underline">La mia rete</a>
+            <a href="/rete" className="text-sm font-semibold text-teal-300 underline">{t('myNet')}</a>
           </div>
 
           {errore ? (
-            <div className="rounded-xl border border-amber-700 bg-amber-950/40 p-4 text-amber-200">Il catalogo non è raggiungibile: {errore}</div>
+            <div className="rounded-xl border border-amber-700 bg-amber-950/40 p-4 text-amber-200">{t('catalogError')} {errore}</div>
           ) : prodottiVisibili.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-slate-700 p-8 text-center">
-              <p className="mb-2 text-lg font-semibold">{prodotti.length === 0 ? 'Ancora nessun prodotto pubblicato' : 'Nessun prodotto corrisponde alla ricerca'}</p>
-              <p className="mb-5 text-sm text-slate-400">{prodotti.length === 0 ? 'Accedi e carica il primo articolo con le sue foto.' : 'Cambia ricerca o categoria.'}</p>
-              {prodotti.length === 0 ? <a href="/vendi" className="inline-block rounded-xl bg-teal-500 px-6 py-3 font-bold text-slate-950">Vai a Carica prodotto</a> : <button type="button" onClick={() => { setRicerca(''); setCategoriaAttiva(''); window.history.replaceState({}, '', '/'); }} className="rounded-xl border border-teal-800 px-5 py-3 font-semibold text-teal-200">Azzera filtri</button>}
+              <p className="mb-2 text-lg font-semibold">{prodotti.length === 0 ? t('noProducts') : t('noMatch')}</p>
+              <p className="mb-5 text-sm text-slate-400">{prodotti.length === 0 ? t('firstItem') : t('changeSearch')}</p>
+              {prodotti.length === 0 ? <a href="/vendi" className="inline-block rounded-xl bg-teal-500 px-6 py-3 font-bold text-slate-950">{t('goUpload')}</a> : <button type="button" onClick={() => { setRicerca(''); setCategoriaAttiva(''); window.history.replaceState({}, '', '/'); }} className="rounded-xl border border-teal-800 px-5 py-3 font-semibold text-teal-200">{t('reset')}</button>}
             </div>
           ) : (
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
@@ -223,7 +239,7 @@ export default function Home() {
                     <h3 className="line-clamp-2 font-semibold">{p.titolo}</h3>
                     <p className="mt-2 text-lg font-bold text-teal-300">€ {Number(p.prezzo || 0).toFixed(2)}</p>
                     <p className="text-xs text-slate-400">{p.categoria || 'Altro'} · {p.condizione}</p>
-                    <p className="mt-3 text-sm font-semibold text-teal-300">Apri prodotto →</p>
+                    <p className="mt-3 text-sm font-semibold text-teal-300">{t('openProduct')}</p>
                   </div>
                 </a>
               ))}
@@ -235,11 +251,11 @@ export default function Home() {
           <div className="mx-auto flex max-w-6xl flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
             <div><strong className="text-lg text-teal-300">RiverSpend</strong><p className="text-xs text-slate-400">YOUR SHOP • YOUR FLOW</p></div>
             <nav aria-label="Link di servizio" className="flex flex-wrap gap-x-5 gap-y-3 text-sm">
-              <a href="/ecosistema" className="text-teal-200 underline underline-offset-4">Ecosistema</a>
+              <a href="/ecosistema" className="text-teal-200 underline underline-offset-4">{t('ecosystemLink')}</a>
               <a href="/nova-shield" className="text-teal-200">RS Nova Shield</a>
               <a href="/tutela" className="text-slate-300">Tutela e assistenza</a>
-              <a href="/vendi" className="text-slate-300">Vendi un prodotto</a>
-              <a href="/rete" className="text-slate-300">La mia rete</a><a href="/desideri" className="text-slate-300">Desideri</a>
+              <a href="/vendi" className="text-slate-300">{t('sell')}</a>
+              <a href="/rete" className="text-slate-300">{t('myNet')}</a><a href="/desideri" className="text-slate-300">Desideri</a>
             </nav>
           </div>
         </footer>
