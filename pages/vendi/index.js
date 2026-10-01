@@ -456,7 +456,7 @@ export default function Vendi() {
                       <img
                         src={item.url}
                         alt={`Foto ${index + 1}`}
-                        className="w-full h-28 object-cover"
+                        className="w-full h-28 bg-white object-contain p-1"
                       />
 
                       <button
