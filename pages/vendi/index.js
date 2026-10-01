@@ -86,10 +86,54 @@ export default function Vendi() {
 
     setFoto(files.map((file) => ({
       file,
-      url: URL.createObjectURL(file)
+      url: URL.createObjectURL(file),
+      originalUrl: URL.createObjectURL(file),
+      uploadFile: file,
+      processed: false
     })));
 
     setMessaggio(`📸 ${files.length} foto selezionate.`);
+  }
+
+
+  async function miglioraFotoPrincipale() {
+    const item = foto[0];
+    if (!item || item.processed) return;
+    setMessaggio('✨ Elaborazione dello sfondo…');
+    try {
+      const img = new Image();
+      img.src = item.originalUrl || item.url;
+      await new Promise((resolve, reject) => { img.onload = resolve; img.onerror = reject; });
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth; canvas.height = img.naturalHeight;
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
+      ctx.drawImage(img, 0, 0);
+      const data = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const px = data.data, w = canvas.width, h = canvas.height;
+      const corner = (x,y) => { let r=0,g=0,b=0,n=0; for(let yy=0;yy<4;yy++) for(let xx=0;xx<4;xx++){const k=((Math.min(h-1,y+yy)*w)+Math.min(w-1,x+xx))*4;r+=px[k];g+=px[k+1];b+=px[k+2];n++;} return [r/n,g/n,b/n]; };
+      const cs=[corner(0,0),corner(w-4,0),corner(0,h-4),corner(w-4,h-4)];
+      const bg=cs.reduce((a,c)=>[a[0]+c[0]/4,a[1]+c[1]/4,a[2]+c[2]/4],[0,0,0]);
+      const spread=Math.max(...cs.map(c=>Math.hypot(c[0]-bg[0],c[1]-bg[1],c[2]-bg[2])));
+      if(spread>75){setMessaggio('⚠️ Sfondo non uniforme: scegli una foto più pulita. L’originale è intatto.');return;}
+      const seen=new Uint8Array(w*h), queue=new Int32Array(w*h); let head=0,tail=0;
+      const add=p=>{if(p<0||p>=w*h||seen[p])return;const k=p*4;if(Math.hypot(px[k]-bg[0],px[k+1]-bg[1],px[k+2]-bg[2])>68)return;seen[p]=1;queue[tail++]=p;};
+      for(let x=0;x<w;x++){add(x);add((h-1)*w+x);}
+      for(let y=0;y<h;y++){add(y*w);add(y*w+w-1);}
+      while(head<tail){const p=queue[head++],x=p%w,y=Math.floor(p/w);if(x>0)add(p-1);if(x<w-1)add(p+1);if(y>0)add(p-w);if(y<h-1)add(p+w);}
+      for(let p=0;p<seen.length;p++)if(seen[p]){const k=p*4;px[k]=255;px[k+1]=255;px[k+2]=255;px[k+3]=255;}
+      ctx.putImageData(data,0,0);
+      const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',0.94));
+      if(!blob)throw new Error('Elaborazione non riuscita');
+      const file=new File([blob],'riverspend-sfondo-bianco.jpg',{type:'image/jpeg'});
+      const url=URL.createObjectURL(blob);
+      setFoto(current=>current.map((p,i)=>i===0?{...p,uploadFile:file,url,processed:true,processedUrl:url}:p));
+      setMessaggio('✅ Anteprima pronta. Controllala e, se non ti piace, ripristina l’originale.');
+    } catch(e){console.error(e);setMessaggio('❌ Non riesco a elaborare questa foto. L’originale è intatto.');}
+  }
+
+  function ripristinaFotoPrincipale() {
+    setFoto(current=>current.map((p,i)=>i===0?{...p,uploadFile:p.file,url:p.originalUrl,processed:false}:p));
+    setMessaggio('Foto originale ripristinata.');
   }
 
   function removePhoto(index) {
@@ -172,7 +216,7 @@ export default function Vendi() {
       const immaginiCaricate = [];
 
       for (let i = 0; i < foto.length; i += 1) {
-        const file = foto[i].file;
+        const file = foto[i].uploadFile || foto[i].file;
         const estensione = file.name.includes('.')
           ? file.name.split('.').pop().toLowerCase().replace(/[^a-z0-9]/g, '')
           : 'jpg';
@@ -394,6 +438,16 @@ export default function Vendi() {
                 onChange={handlePhotos}
               />
 
+              {foto.length > 0 && (
+                <div className="rounded-xl border border-cyan-200 bg-cyan-50 p-3 mb-4">
+                  <p className="font-semibold mb-1">✨ Foto principale più pulita</p>
+                  <p className="text-sm text-slate-600 mb-3">Prova lo sfondo bianco sulla prima foto. Funziona meglio con sfondi uniformi: controlla sempre l’anteprima. L’originale resta recuperabile.</p>
+                  <div className="flex flex-wrap gap-2">
+                    <button type="button" onClick={miglioraFotoPrincipale} disabled={caricamento || foto[0]?.processed} className="rounded-lg bg-white border border-cyan-500 text-cyan-800 font-semibold px-3 py-2 disabled:opacity-50">Sfondo bianco automatico</button>
+                    {foto[0]?.processed && <button type="button" onClick={ripristinaFotoPrincipale} disabled={caricamento} className="rounded-lg border px-3 py-2">Ripristina originale</button>}
+                  </div>
+                </div>
+              )}
               {foto.length > 0 && (
                 <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 mb-4">
                   {foto.map((item, index) => (
