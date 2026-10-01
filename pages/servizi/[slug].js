@@ -4,8 +4,8 @@ const servizi = {
   local: {
     titolo: 'RS Local',
     icona: '📍',
-    descrizione: 'Scopri attività, negozi, professionisti, servizi e opportunità vicino a te. RS Local collega il marketplace alla comunità del territorio.',
-    stato: 'Scheda informativa pronta; geolocalizzazione e inserimento attività da collegare'
+    descrizione: 'RS Local è il servizio RiverSpend dedicato alle attività del territorio: un punto d’incontro tra persone, negozi, ristoranti e servizi locali.',
+    stato: 'Presentazione informativa; cataloghi, ordini e consegne sono da sviluppare'
   },
   tv: {
     titolo: 'RiverSpend TV',
@@ -99,6 +99,36 @@ export default function Servizio({ slug }) {
           <p className="mt-5 text-sm font-semibold uppercase tracking-widest text-teal-300">RiverSpend</p>
           <h1 className="mt-2 text-4xl font-bold">{servizio.titolo}</h1>
           <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-300">{servizio.descrizione}</p>
+
+          {slug === 'local' && (
+            <div className="mt-8 grid gap-4">
+              <section className="rounded-2xl border border-teal-800/80 bg-slate-950/50 p-5">
+                <h2 className="text-xl font-bold text-teal-200">Cos’è RS Local?</h2>
+                <p className="mt-3 leading-7 text-slate-300">
+                  È la parte di RiverSpend pensata per aiutarti a trovare ciò che offre il tuo territorio.
+                  Riunirà in un unico spazio attività locali, ristoranti, negozi e servizi, così potrai
+                  consultarne le proposte senza dover cercare su tanti canali diversi.
+                </p>
+              </section>
+              <section className="rounded-2xl border border-teal-800/80 bg-slate-950/50 p-5">
+                <h2 className="text-xl font-bold text-teal-200">A cosa serve?</h2>
+                <ul className="mt-3 list-disc space-y-2 pl-5 leading-7 text-slate-300">
+                  <li><strong className="text-white">Per chi cerca:</strong> scoprire attività, prodotti e servizi nella propria zona.</li>
+                  <li><strong className="text-white">Per le attività:</strong> presentare il proprio negozio e le proprie proposte alla comunità locale.</li>
+                  <li><strong className="text-white">Per gli ordini:</strong> in una fase successiva, consultare i cataloghi, ordinare e scegliere tra consegna e ritiro, dove disponibili.</li>
+                </ul>
+              </section>
+              <section className="rounded-2xl border border-teal-800/80 bg-slate-950/50 p-5">
+                <h2 className="text-xl font-bold text-teal-200">Come funzionerà</h2>
+                <ol className="mt-3 grid gap-3 sm:grid-cols-3">
+                  <li className="rounded-xl bg-slate-900 p-4"><span className="text-2xl">📍</span><p className="mt-2 font-semibold text-white">1. Scegli la zona</p><p className="mt-1 text-sm leading-6 text-slate-300">Indichi città o area che ti interessa.</p></li>
+                  <li className="rounded-xl bg-slate-900 p-4"><span className="text-2xl">🛍️</span><p className="mt-2 font-semibold text-white">2. Scopri le attività</p><p className="mt-1 text-sm leading-6 text-slate-300">Esplori negozi, ristoranti e le loro proposte.</p></li>
+                  <li className="rounded-xl bg-slate-900 p-4"><span className="text-2xl">🛵</span><p className="mt-2 font-semibold text-white">3. Ordina o ritira</p><p className="mt-1 text-sm leading-6 text-slate-300">Quando il servizio sarà attivo, potrai scegliere le opzioni offerte dall’attività.</p></li>
+                </ol>
+              </section>
+              <p className="text-sm leading-6 text-slate-400">Nota: RS Local è in fase di sviluppo. Al momento questa pagina presenta il progetto; non è ancora possibile effettuare ordini o richiedere consegne.</p>
+            </div>
+          )}
 
           <div className="mt-7 rounded-2xl border border-slate-700 bg-slate-950/60 p-4">
             <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Stato</p>
