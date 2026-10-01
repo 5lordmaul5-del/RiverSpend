@@ -174,7 +174,7 @@ export default function Home() {
           </div>
 
           {menuCategorie && (
-            <div className="absolute left-0 top-full max-h-[75vh] w-[min(88vw,360px)] overflow-y-auto rounded-br-2xl border border-teal-800 bg-slate-900 p-4 shadow-2xl">
+            <div className="mx-auto mt-3 max-h-[45vh] w-full max-w-6xl overflow-y-auto rounded-2xl border border-teal-800 bg-slate-900 p-4 shadow-2xl">
               <div className="mb-3 flex items-center justify-between"><strong className="text-teal-200">{t('categories')}</strong><button onClick={() => setMenuCategorie(false)} aria-label={t('close')}>✕</button></div>
               <div className="grid grid-cols-1 gap-1">
                 {categorie.map((cat) => (
@@ -187,7 +187,7 @@ export default function Home() {
           )}
 
           {menuRiverSpend && (
-            <div className="absolute right-0 top-full max-h-[75vh] w-[min(92vw,360px)] overflow-y-auto rounded-bl-2xl border border-teal-800 bg-slate-900 p-4 shadow-2xl">
+            <div className="mx-auto mt-3 max-h-[45vh] w-full max-w-6xl overflow-y-auto rounded-2xl border border-teal-800 bg-slate-900 p-4 shadow-2xl">
               <div className="mb-3 flex items-center justify-between"><strong className="text-teal-200">{t('world')}</strong><button onClick={() => setMenuRiverSpend(false)} aria-label={t('close')}>✕</button></div>
               <div className="space-y-1">
                 {areeRiverSpend.map(([area, href]) => (
