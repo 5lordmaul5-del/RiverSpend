@@ -205,6 +205,9 @@ export default function Home() {
 
         <section className="mx-auto max-w-6xl px-4 py-8">
           <div className="rs-hero mb-5 rounded-2xl border border-teal-800 bg-gradient-to-br from-slate-900 to-sky-950 px-5 py-4 sm:px-7 sm:py-5">
+            <span className="rs-gold-pebble one" aria-hidden="true" />
+            <span className="rs-gold-pebble two" aria-hidden="true" />
+            <span className="rs-river-decor" aria-hidden="true"><i className="rs-fish" /><i className="rs-fish" /><i className="rs-fish" /></span>
             <p className="mb-1 text-[10px] font-semibold uppercase tracking-widest text-teal-300 sm:text-xs">{t('experience')}</p>
             <h2 className="mb-2 text-2xl font-bold sm:text-3xl">{t('heroTitle')}</h2>
             <p className="mb-3 max-w-2xl text-sm leading-5 text-slate-300 sm:text-base">{t('heroBody')}</p>
@@ -248,7 +251,7 @@ export default function Home() {
         </section>
 
         <section aria-labelledby="nova-honor-title" className="mx-auto mb-7 max-w-6xl px-4">
-          <div className="rounded-2xl border border-amber-500/40 bg-gradient-to-br from-slate-900 via-slate-900 to-amber-950/30 p-5 text-center shadow-lg shadow-amber-950/20 sm:p-7">
+          <div className="rs-honor-panel rounded-2xl border border-amber-500/40 bg-gradient-to-br from-slate-900 via-slate-900 to-amber-950/30 p-5 text-center shadow-lg shadow-amber-950/20 sm:p-7">
             <div className="mb-2 text-2xl" aria-hidden="true">✨</div>
             <p className="mb-1 text-xs font-semibold uppercase tracking-[0.2em] text-amber-300">RiverSpend · Gratitudine</p>
             <h2 id="nova-honor-title" className="mb-3 text-xl font-bold text-amber-200 sm:text-2xl">{t('honorTitle')}</h2>
