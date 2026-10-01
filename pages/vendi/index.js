@@ -85,23 +85,38 @@ export default function Vendi() {
       const item = elementi[index];
       try {
         const result = await removeBackground(item.file, {
-          quality: 'quality',
-          onProgress: ({ progress, message }) => {
-            setMessaggio(`✨ RiverSpend PhotoAI — foto ${index + 1}/${elementi.length}: ${message || Math.round(progress * 100) + '%'}`);
+          quality: 'fast',
+          onProgress: ({ stage, progress, message }) => {
+            const fase = stage === 'downloading' ? 'Download del modello (prima volta)' :
+              stage === 'processing' ? 'Rimozione sfondo' :
+              stage === 'finishing' ? 'Preparazione foto' :
+              message || 'Avvio';
+            setMessaggio(`✨ RiverSpend PhotoAI — foto ${index + 1}/${elementi.length}: ${fase} ${Number.isFinite(progress) ? Math.round(progress * 100) + '%' : ''}`);
           }
         });
         const cutout = await createImageBitmap(result.blob);
+        const original = await createImageBitmap(item.file);
+        const ratioOriginale = original.width / original.height;
+        const ratioRisultato = cutout.width / cutout.height;
+        // Se il modello restituisce un'inquadratura diversa, non rischiamo di pubblicare un prodotto tagliato.
+        if (Math.abs(ratioOriginale - ratioRisultato) / ratioOriginale > 0.02) {
+          cutout.close();
+          original.close();
+          throw new Error('L’inquadratura elaborata non corrisponde all’originale.');
+        }
         const canvas = document.createElement('canvas');
         canvas.width = 1200;
         canvas.height = 1200;
         const ctx = canvas.getContext('2d');
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(0, 0, 1200, 1200);
-        const scale = Math.min(960 / cutout.width, 960 / cutout.height);
+        // Usa l’intero fotogramma restituito e lascia più spazio intorno al prodotto.
+        const scale = Math.min(840 / cutout.width, 840 / cutout.height);
         const width = cutout.width * scale;
         const height = cutout.height * scale;
         ctx.drawImage(cutout, (1200 - width) / 2, (1200 - height) / 2, width, height);
         cutout.close();
+        original.close();
         const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.92));
         if (!blob) throw new Error('Impossibile preparare la foto finale.');
         const processedFile = new File([blob], `riverspend-photoai-${index + 1}.jpg`, { type: 'image/jpeg' });
@@ -112,7 +127,7 @@ export default function Vendi() {
       } catch (error) {
         console.error('RiverSpend PhotoAI:', error);
         setFoto((current) => current.map((photo) => photo.file === item.file
-          ? { ...photo, processing: false, error: true }
+          ? { ...photo, uploadFile: photo.file, processing: false, error: true }
           : photo));
         setMessaggio(`⚠️ PhotoAI non ha elaborato la foto ${index + 1}. L’originale è conservato e potrai comunque pubblicarlo.`);
       }
@@ -200,8 +215,8 @@ export default function Vendi() {
       return;
     }
 
-    if (foto.some((item) => item.processing || item.error || !item.processed)) {
-      setMessaggio('⚠️ Attendi che PhotoAI termini. In caso di errore puoi pubblicare gli originali. Se il servizio non è configurato, completa prima la configurazione su Vercel.');
+    if (foto.some((item) => item.processing)) {
+      setMessaggio('⚠️ Attendi che PhotoAI termini prima di pubblicare.');
       return;
     }
 
