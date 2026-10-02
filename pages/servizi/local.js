@@ -94,7 +94,7 @@ export default function RSLocal() {
   const categoryLabel = value => ({ restaurant: 'Ristorante', cafe: 'Bar e caffè', fast_food: 'Ristorazione veloce', pub: 'Pub', supermarket: 'Supermercato', convenience: 'Alimentari', clothes: 'Abbigliamento', shoes: 'Calzature', hairdresser: 'Parrucchiere', beauty: 'Estetica', pharmacy: 'Farmacia', bank: 'Banca', dentist: 'Dentista', doctors: 'Medico', school: 'Scuola', hotel: 'Hotel', bakery: 'Panetteria', books: 'Libreria' }[value] || value.replace(/_/g, ' '));
 
   return (
-    <main className="rs-local min-h-screen bg-[#ffffff] px-4 py-6 text-[#243746] sm:py-10" style={{ backgroundColor: "#ffffff", color: "#243746" }}>
+    <main className="rs-local min-h-screen bg-[#08b9d5] px-4 py-6 text-[#173746] sm:py-10" style={{ background: "linear-gradient(180deg, #08b9d5 0%, #13c7d8 100%)", color: "#173746" }}>
       <div className="mx-auto max-w-5xl">
         <Link href="/ecosistema" className="text-sm font-semibold text-slate-700 underline">← Ecosistema RiverSpend</Link>
         <header className="mt-5 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
