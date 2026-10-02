@@ -27,9 +27,9 @@ export default function Rete() {
   return (
     <main className="min-h-screen bg-slate-950 px-4 py-8 text-white">
       <div className="mx-auto max-w-5xl">
-        <Link href="/" className="text-teal-300 underline">← Torna al RiverSpendShop</Link>
+        <Link href="/" className="text-slate-200 underline">← Torna al RiverSpendShop</Link>
         <header className="mt-6 mb-8">
-          <p className="text-sm font-semibold uppercase tracking-widest text-teal-300">RiverSpendShop</p>
+          <p className="text-sm font-semibold uppercase tracking-widest text-slate-300">RiverSpendShop</p>
           <h1 className="mt-2 text-4xl font-bold">🕸️ La mia rete</h1>
           <p className="mt-2 text-slate-400">{items.length} articol{items.length === 1 ? 'o' : 'i'} nella tua rete.</p>
         </header>
