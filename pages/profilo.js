@@ -24,10 +24,10 @@ export default function Profilo() {
     setSession(null);
   }
   return (
-    <main className="min-h-screen bg-[#08b8d0] px-4 py-8 text-[#17364a]">
+    <main className="min-h-screen bg-[#c9f1f3] px-4 py-8 text-[#173f4a]">
       <div className="mx-auto max-w-3xl">
         <Link href="/" className="text-[#075b78] underline">← RiverSpendShop</Link>
-        <section className="mt-6 rounded-3xl border border-white/80 bg-[#f4feff] p-6 shadow-xl shadow-[#075b78]/10">
+        <section className="mt-6 rounded-3xl border border-[#a8dfe5] bg-[#f4feff] p-6 shadow-xl shadow-[#075b78]/10">
           <p className="text-sm uppercase tracking-widest text-[#087f9b]">RiverSpend</p>
           <h1 className="mt-2 text-4xl font-bold">Profilo</h1>
           {session ? (
