@@ -94,59 +94,59 @@ export default function RSLocal() {
   const categoryLabel = value => ({ restaurant: 'Ristorante', cafe: 'Bar e caffè', fast_food: 'Ristorazione veloce', pub: 'Pub', supermarket: 'Supermercato', convenience: 'Alimentari', clothes: 'Abbigliamento', shoes: 'Calzature', hairdresser: 'Parrucchiere', beauty: 'Estetica', pharmacy: 'Farmacia', bank: 'Banca', dentist: 'Dentista', doctors: 'Medico', school: 'Scuola', hotel: 'Hotel', bakery: 'Panetteria', books: 'Libreria' }[value] || value.replace(/_/g, ' '));
 
   return (
-    <main className="rs-local min-h-screen bg-[#08b9d5] px-4 py-6 text-[#173746] sm:py-10" style={{ background: "linear-gradient(180deg, #08b9d5 0%, #13c7d8 100%)", color: "#173746" }}>
+    <main className="rs-local min-h-screen bg-[#c9f1f3] px-4 py-6 text-[#173f4a] sm:py-10" style={{ background: "#c9f1f3", color: "#173f4a" }}>
       <div className="mx-auto max-w-5xl">
-        <Link href="/ecosistema" className="text-sm font-semibold text-slate-700 underline">← Ecosistema RiverSpend</Link>
+        <Link href="/ecosistema" className="text-sm font-semibold text-[#075b78] underline">← Ecosistema RiverSpend</Link>
         <header className="mt-5 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
           <div className="text-4xl">📍</div>
-          <p className="mt-4 text-xs font-bold uppercase tracking-[.2em] text-slate-600">RiverSpend • Territorio</p>
-          <h1 className="mt-2 text-4xl font-extrabold tracking-tight text-slate-900">RS Local</h1>
-          <p className="mt-3 max-w-2xl text-base leading-7 text-slate-600">Scopri attività e servizi nella zona che ti interessa. La posizione è facoltativa: puoi scegliere se condividerla oppure cercare manualmente.</p>
+          <p className="mt-4 text-xs font-bold uppercase tracking-[.2em] text-[#496575]">RiverSpend • Territorio</p>
+          <h1 className="mt-2 text-4xl font-extrabold tracking-tight text-[#173f4a]">RS Local</h1>
+          <p className="mt-3 max-w-2xl text-base leading-7 text-[#496575]">Scopri attività e servizi nella zona che ti interessa. La posizione è facoltativa: puoi scegliere se condividerla oppure cercare manualmente.</p>
         </header>
 
         <section className="mt-5 rounded-3xl border border-[#e2e8ee] bg-white p-5 shadow-sm sm:p-7">
-          <h2 className="text-xl font-bold text-slate-900">Da dove vuoi partire?</h2>
+          <h2 className="text-xl font-bold text-[#173f4a]">Da dove vuoi partire?</h2>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
-            <button type="button" onClick={locateMe} disabled={loading} className="rounded-2xl bg-slate-700 px-5 py-4 text-left font-semibold text-white hover:bg-slate-800 disabled:opacity-60">
-              <span className="block text-lg">◎ Usa la mia posizione</span><span className="mt-1 block text-sm font-normal text-slate-100">Solo dopo il tuo consenso</span>
+            <button type="button" onClick={locateMe} disabled={loading} className="rounded-2xl bg-[#079fbd] px-5 py-4 text-left font-semibold text-white hover:bg-[#087f9b] disabled:opacity-60">
+              <span className="block text-lg">◎ Usa la mia posizione</span><span className="mt-1 block text-sm font-normal text-white">Solo dopo il tuo consenso</span>
             </button>
             <form onSubmit={searchPlace} className="flex gap-2">
               <label className="sr-only" htmlFor="rs-local-place">Città o zona</label>
-              <input id="rs-local-place" value={place} onChange={e => setPlace(e.target.value)} placeholder="Città, quartiere o CAP" className="min-w-0 flex-1 rounded-2xl border border-slate-300 px-4 py-3 text-slate-900 outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-100" />
-              <button disabled={loading} className="rounded-2xl bg-slate-900 px-4 font-semibold text-white disabled:opacity-60" type="submit">Cerca</button>
+              <input id="rs-local-place" value={place} onChange={e => setPlace(e.target.value)} placeholder="Città, quartiere o CAP" className="min-w-0 flex-1 rounded-2xl border border-[#a8dfe5] px-4 py-3 text-[#173f4a] outline-none focus:border-[#079fbd] focus:ring-2 focus:ring-[#c9f1f3]" />
+              <button disabled={loading} className="rounded-2xl bg-[#087f9b] px-4 font-semibold text-white disabled:opacity-60" type="submit">Cerca</button>
             </form>
           </div>
-          {status && <p role="status" aria-live="polite" className="mt-3 text-sm leading-6 text-slate-600">{status}</p>}
+          {status && <p role="status" aria-live="polite" className="mt-3 text-sm leading-6 text-[#496575]">{status}</p>}
         </section>
 
         <section className="mt-5 rounded-3xl border border-[#e2e8ee] bg-white p-5 shadow-sm sm:p-7">
-          <h2 className="text-xl font-bold text-slate-900">Quanto vicino?</h2>
+          <h2 className="text-xl font-bold text-[#173f4a]">Quanto vicino?</h2>
           <div className="mt-4 flex flex-wrap gap-2">
-            {distances.map(d => <button key={d} type="button" onClick={() => changeRadius(d)} aria-pressed={radius === d} className={'rounded-full border px-4 py-2 text-sm font-semibold ' + (radius === d ? 'border-slate-700 bg-slate-700 text-white' : 'border-slate-300 bg-white text-slate-700 hover:border-slate-400')}>{d === 0 ? 'Senza limite' : d >= 1000 ? (d / 1000) + ' km' : d + ' m'}</button>)}
+            {distances.map(d => <button key={d} type="button" onClick={() => changeRadius(d)} aria-pressed={radius === d} className={'rounded-full border px-4 py-2 text-sm font-semibold ' + (radius === d ? 'border-[#079fbd] bg-[#079fbd] text-white' : 'border-[#a8dfe5] bg-white text-[#075b78] hover:border-slate-400')}>{d === 0 ? 'Senza limite' : d >= 1000 ? (d / 1000) + ' km' : d + ' m'}</button>)}
           </div>
-          <p className="mt-3 text-sm text-slate-600">Raggio selezionato: <strong className="text-slate-900">{radiusLabel}</strong></p>
-          {radius === 0 && <p className="mt-1 text-xs text-slate-500">*Per non sovraccaricare il servizio, la ricerca “Senza limite” mostra fino a 10 km dalla zona scelta.</p>}
+          <p className="mt-3 text-sm text-[#496575]">Raggio selezionato: <strong className="text-[#173f4a]">{radiusLabel}</strong></p>
+          {radius === 0 && <p className="mt-1 text-xs text-[#607d88]">*Per non sovraccaricare il servizio, la ricerca “Senza limite” mostra fino a 10 km dalla zona scelta.</p>}
         </section>
 
         <section className="mt-5 overflow-hidden rounded-3xl border border-[#e2e8ee] bg-white shadow-sm">
           <div className="flex flex-wrap items-center justify-between gap-3 p-5 sm:p-7">
-            <div><h2 className="text-xl font-bold text-slate-900">Esplora la zona</h2><p className="mt-1 text-sm text-slate-600">Locali, negozi e servizi nella zona scelta. Dati OpenStreetMap: non indicano ancora attività aderenti RiverSpend.</p></div>
-            <div className="flex rounded-xl border border-slate-300 p-1" aria-label="Modalità di visualizzazione">
-              <button type="button" onClick={() => setView('list')} aria-pressed={view === 'list'} className={'rounded-lg px-3 py-2 text-sm font-semibold ' + (view === 'list' ? 'bg-slate-900 text-white' : 'text-slate-700')}>Elenco</button>
-              <button type="button" onClick={() => setView('map')} aria-pressed={view === 'map'} className={'rounded-lg px-3 py-2 text-sm font-semibold ' + (view === 'map' ? 'bg-slate-900 text-white' : 'text-slate-700')}>Mappa</button>
+            <div><h2 className="text-xl font-bold text-[#173f4a]">Esplora la zona</h2><p className="mt-1 text-sm text-[#496575]">Locali, negozi e servizi nella zona scelta. Dati OpenStreetMap: non indicano ancora attività aderenti RiverSpend.</p></div>
+            <div className="flex rounded-xl border border-[#a8dfe5] p-1" aria-label="Modalità di visualizzazione">
+              <button type="button" onClick={() => setView('list')} aria-pressed={view === 'list'} className={'rounded-lg px-3 py-2 text-sm font-semibold ' + (view === 'list' ? 'bg-[#087f9b] text-white' : 'text-[#075b78]')}>Elenco</button>
+              <button type="button" onClick={() => setView('map')} aria-pressed={view === 'map'} className={'rounded-lg px-3 py-2 text-sm font-semibold ' + (view === 'map' ? 'bg-[#087f9b] text-white' : 'text-[#075b78]')}>Mappa</button>
             </div>
           </div>
-          {view === 'map' ? (mapUrl ? <iframe title="Mappa RS Local" src={mapUrl} className="h-96 w-full border-0" loading="lazy" /> : <div className="bg-slate-50 p-10 text-center text-slate-700">Cerca una zona o consenti la posizione per visualizzare la mappa.</div>) : (
+          {view === 'map' ? (mapUrl ? <iframe title="Mappa RS Local" src={mapUrl} className="h-96 w-full border-0" loading="lazy" /> : <div className="bg-slate-50 p-10 text-center text-[#075b78]">Cerca una zona o consenti la posizione per visualizzare la mappa.</div>) : (
             <div className="border-t border-slate-100">
-              {!searched ? <p className="p-6 text-sm text-slate-600">Scegli una zona per vedere locali, negozi e servizi vicini.</p> : loading ? <p className="p-6 text-sm text-slate-600">Caricamento risultati…</p> : places.length ? <><div className="border-t border-slate-100 p-4 sm:px-6"><label htmlFor="rs-local-filter" className="mb-2 block text-sm font-semibold text-slate-700">Cerca tra i locali trovati</label><input id="rs-local-filter" value={filter} onChange={e => setFilter(e.target.value)} placeholder="Nome, categoria o indirizzo" className="w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-100" /><p className="mt-2 text-xs text-slate-500">Visualizzati {visiblePlaces.length} di {places.length} risultati</p></div>{visiblePlaces.length ? <ul className="divide-y divide-slate-100">{visiblePlaces.map(item => <li key={item.id} className="flex flex-wrap items-center justify-between gap-3 p-4 sm:px-6"><div><h3 className="font-semibold text-slate-900">{item.name}</h3><p className="mt-1 text-sm capitalize text-slate-600">{categoryLabel(item.category)}{item.address ? ' · ' + item.address : ''}</p></div><a className="text-sm font-semibold text-slate-700 underline" href={item.url} target="_blank" rel="noreferrer">Dettagli OSM ↗</a></li>)}</ul> : <p className="p-6 text-sm text-slate-600">Nessun locale corrisponde alla ricerca. Prova un altro nome o categoria.</p>}</> : <p className="p-6 text-sm text-slate-600">Nessun risultato disponibile per questa ricerca.</p>}
+              {!searched ? <p className="p-6 text-sm text-[#496575]">Scegli una zona per vedere locali, negozi e servizi vicini.</p> : loading ? <p className="p-6 text-sm text-[#496575]">Caricamento risultati…</p> : places.length ? <><div className="border-t border-slate-100 p-4 sm:px-6"><label htmlFor="rs-local-filter" className="mb-2 block text-sm font-semibold text-[#075b78]">Cerca tra i locali trovati</label><input id="rs-local-filter" value={filter} onChange={e => setFilter(e.target.value)} placeholder="Nome, categoria o indirizzo" className="w-full rounded-xl border border-[#a8dfe5] px-4 py-3 text-[#173f4a] outline-none focus:border-[#079fbd] focus:ring-2 focus:ring-[#c9f1f3]" /><p className="mt-2 text-xs text-[#607d88]">Visualizzati {visiblePlaces.length} di {places.length} risultati</p></div>{visiblePlaces.length ? <ul className="divide-y divide-slate-100">{visiblePlaces.map(item => <li key={item.id} className="flex flex-wrap items-center justify-between gap-3 p-4 sm:px-6"><div><h3 className="font-semibold text-[#173f4a]">{item.name}</h3><p className="mt-1 text-sm capitalize text-[#496575]">{categoryLabel(item.category)}{item.address ? ' · ' + item.address : ''}</p></div><a className="text-sm font-semibold text-[#075b78] underline" href={item.url} target="_blank" rel="noreferrer">Dettagli OSM ↗</a></li>)}</ul> : <p className="p-6 text-sm text-[#496575]">Nessun locale corrisponde alla ricerca. Prova un altro nome o categoria.</p>}</> : <p className="p-6 text-sm text-[#496575]">Nessun risultato disponibile per questa ricerca.</p>}
             </div>
           )}
         </section>
         <section className="mt-5 rounded-3xl border border-amber-200 bg-amber-50 p-5 sm:p-7">
-          <h2 className="text-lg font-bold text-slate-900">Un’informazione importante</h2>
-          <p className="mt-2 leading-7 text-slate-700">I risultati provengono da OpenStreetMap e possono essere incompleti o non aggiornati. Non sono recensioni né attività verificate da RiverSpend. Le schede degli esercenti, le recensioni verificate e il collegamento con RS Maps saranno sviluppati in una fase successiva.</p>
+          <h2 className="text-lg font-bold text-[#173f4a]">Un’informazione importante</h2>
+          <p className="mt-2 leading-7 text-[#075b78]">I risultati provengono da OpenStreetMap e possono essere incompleti o non aggiornati. Non sono recensioni né attività verificate da RiverSpend. Le schede degli esercenti, le recensioni verificate e il collegamento con RS Maps saranno sviluppati in una fase successiva.</p>
         </section>
-        <p className="mt-6 text-center text-xs leading-5 text-slate-500">RS Local è in fase di test. La ricerca usa servizi OpenStreetMap; la disponibilità dipende dai loro server e dai dati presenti.</p>
+        <p className="mt-6 text-center text-xs leading-5 text-[#607d88]">RS Local è in fase di test. La ricerca usa servizi OpenStreetMap; la disponibilità dipende dai loro server e dai dati presenti.</p>
       </div>
     </main>
   );
