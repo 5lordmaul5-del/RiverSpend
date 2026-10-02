@@ -149,7 +149,7 @@ export default function Home() {
             <div className="flex flex-col items-stretch gap-2">
               <a href="/" aria-label="RiverSpendShop, pagina iniziale" className="mx-auto flex w-full max-w-4xl flex-col items-center justify-center rounded-2xl border border-slate-200 bg-white px-3 py-4 shadow-sm sm:py-5">
                 <h1 className="rs-brand whitespace-nowrap text-[clamp(3rem,14vw,5.5rem)] font-extrabold leading-none tracking-tight text-slate-800">RiverSpend</h1>
-                <span className="-mt-0.5 translate-x-6 -rotate-6 text-base font-bold italic text-[#D4AF37] sm:text-lg">Shop</span>
+                <span className="-mt-1 translate-x-8 -rotate-6 text-2xl font-extrabold italic text-[#B8860B] drop-shadow-[0_1px_0_#F5D76E] sm:text-3xl">Shop</span>
                 <p className="mt-1 text-[9px] font-medium tracking-[0.12em] text-slate-600 sm:text-[10px]">YOUR SHOP • YOUR FLOW</p>
               </a>
               <div className="grid grid-cols-2 gap-2">
