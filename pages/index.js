@@ -103,7 +103,6 @@ export default function Home() {
     ['RiverSpend Oracle','/servizi/oracle'],
     ['RiverSpend Recovery','/servizi/recovery'],
     ['RiverSpend Fortress','/servizi/fortress'],
-    ['RiverSpend SurroundSpaceAroundExperience','/servizi/experience']
   ];
 
   useEffect(() => {
