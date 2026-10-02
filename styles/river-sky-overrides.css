@@ -37,3 +37,32 @@ html, body, #__next { background: var(--rs-sky-pale) !important; color: var(--rs
 .rs-site [class*="text-blue-"], .rs-site [class*="text-sky-"], .rs-site [class*="text-indigo-"] { color:#155b86 !important; }
 .rs-site input, .rs-site select { background:#ffffff !important; border-color:#c6dfef !important; color:#173b56 !important; }
 .rs-site footer { background:#eaf6ff !important; border-color:#c9e4f7 !important; }
+
+
+/* Correzione richiesta da Maury: AZZURRO SULLE SUPERFICI DELL'INTERA PAGINA.
+   Non colorare soltanto testi e pulsanti: il bianco non deve dominare lo sfondo. */
+html, body, #__next { background: #b7e0fa !important; }
+.rs-site {
+  background: #b7e0fa !important;
+  background-image: none !important;
+}
+.rs-site .rs-header,
+.rs-site .rs-header > div,
+.rs-site .rs-glass {
+  background: #d7efff !important;
+}
+.rs-site .rs-hero,
+.rs-site .rs-honor-panel {
+  background: #c8e8fc !important;
+  background-image: none !important;
+}
+.rs-site .rs-product-card,
+.rs-site .rs-header [class*="max-h-"] {
+  background: #cfeaff !important;
+}
+.rs-site input,
+.rs-site select,
+.rs-site textarea {
+  background: #e5f4ff !important;
+}
+.rs-site footer { background: #c8e8fc !important; }
