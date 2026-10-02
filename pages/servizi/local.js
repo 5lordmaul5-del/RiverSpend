@@ -13,6 +13,7 @@ export default function RSLocal() {
   const [places, setPlaces] = useState([]);
   const [view, setView] = useState('list');
   const [searched, setSearched] = useState(false);
+  const [filter, setFilter] = useState('');
 
   const mapUrl = useMemo(() => {
     if (!position) return '';
@@ -89,6 +90,8 @@ export default function RSLocal() {
   }
 
   const radiusLabel = radius === 0 ? 'Senza limite*' : radius >= 1000 ? (radius / 1000) + ' km' : radius + ' m';
+  const visiblePlaces = places.filter(item => (item.name + ' ' + item.category + ' ' + item.address).toLocaleLowerCase('it').includes(filter.trim().toLocaleLowerCase('it')));
+  const categoryLabel = value => ({ restaurant: 'Ristorante', cafe: 'Bar e caffè', fast_food: 'Ristorazione veloce', pub: 'Pub', supermarket: 'Supermercato', convenience: 'Alimentari', clothes: 'Abbigliamento', shoes: 'Calzature', hairdresser: 'Parrucchiere', beauty: 'Estetica', pharmacy: 'Farmacia', bank: 'Banca', dentist: 'Dentista', doctors: 'Medico', school: 'Scuola', hotel: 'Hotel', bakery: 'Panetteria', books: 'Libreria' }[value] || value.replace(/_/g, ' '));
 
   return (
     <main className="min-h-screen bg-sky-50 px-4 py-6 text-slate-800 sm:py-10">
@@ -127,7 +130,7 @@ export default function RSLocal() {
 
         <section className="mt-5 overflow-hidden rounded-3xl border border-sky-200 bg-white shadow-sm">
           <div className="flex flex-wrap items-center justify-between gap-3 p-5 sm:p-7">
-            <div><h2 className="text-xl font-bold text-slate-900">Esplora la zona</h2><p className="mt-1 text-sm text-slate-600">Risultati cartografici OpenStreetMap, non ancora attività aderenti RiverSpend.</p></div>
+            <div><h2 className="text-xl font-bold text-slate-900">Esplora la zona</h2><p className="mt-1 text-sm text-slate-600">Locali, negozi e servizi nella zona scelta. Dati OpenStreetMap: non indicano ancora attività aderenti RiverSpend.</p></div>
             <div className="flex rounded-xl border border-slate-300 p-1" aria-label="Modalità di visualizzazione">
               <button type="button" onClick={() => setView('list')} aria-pressed={view === 'list'} className={'rounded-lg px-3 py-2 text-sm font-semibold ' + (view === 'list' ? 'bg-slate-900 text-white' : 'text-slate-700')}>Elenco</button>
               <button type="button" onClick={() => setView('map')} aria-pressed={view === 'map'} className={'rounded-lg px-3 py-2 text-sm font-semibold ' + (view === 'map' ? 'bg-slate-900 text-white' : 'text-slate-700')}>Mappa</button>
@@ -135,7 +138,7 @@ export default function RSLocal() {
           </div>
           {view === 'map' ? (mapUrl ? <iframe title="Mappa RS Local" src={mapUrl} className="h-96 w-full border-0" loading="lazy" /> : <div className="bg-sky-100 p-10 text-center text-slate-700">Cerca una zona o consenti la posizione per visualizzare la mappa.</div>) : (
             <div className="border-t border-slate-100">
-              {!searched ? <p className="p-6 text-sm text-slate-600">Scegli una zona per vedere le attività vicine.</p> : loading ? <p className="p-6 text-sm text-slate-600">Caricamento risultati…</p> : places.length ? <ul className="divide-y divide-slate-100">{places.map(item => <li key={item.id} className="flex flex-wrap items-center justify-between gap-3 p-4 sm:px-6"><div><h3 className="font-semibold text-slate-900">{item.name}</h3><p className="mt-1 text-sm text-slate-600">{item.category}{item.address ? ' · ' + item.address : ''}</p></div><a className="text-sm font-semibold text-sky-800 underline" href={item.url} target="_blank" rel="noreferrer">Dettagli OSM ↗</a></li>)}</ul> : <p className="p-6 text-sm text-slate-600">Nessun risultato disponibile per questa ricerca.</p>}
+              {!searched ? <p className="p-6 text-sm text-slate-600">Scegli una zona per vedere locali, negozi e servizi vicini.</p> : loading ? <p className="p-6 text-sm text-slate-600">Caricamento risultati…</p> : places.length ? <><div className="border-t border-slate-100 p-4 sm:px-6"><label htmlFor="rs-local-filter" className="mb-2 block text-sm font-semibold text-slate-700">Cerca tra i locali trovati</label><input id="rs-local-filter" value={filter} onChange={e => setFilter(e.target.value)} placeholder="Nome, categoria o indirizzo" className="w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 outline-none focus:border-sky-600 focus:ring-2 focus:ring-sky-100" /><p className="mt-2 text-xs text-slate-500">Visualizzati {visiblePlaces.length} di {places.length} risultati</p></div>{visiblePlaces.length ? <ul className="divide-y divide-slate-100">{visiblePlaces.map(item => <li key={item.id} className="flex flex-wrap items-center justify-between gap-3 p-4 sm:px-6"><div><h3 className="font-semibold text-slate-900">{item.name}</h3><p className="mt-1 text-sm capitalize text-slate-600">{categoryLabel(item.category)}{item.address ? ' · ' + item.address : ''}</p></div><a className="text-sm font-semibold text-sky-800 underline" href={item.url} target="_blank" rel="noreferrer">Dettagli OSM ↗</a></li>)}</ul> : <p className="p-6 text-sm text-slate-600">Nessun locale corrisponde alla ricerca. Prova un altro nome o categoria.</p>}</> : <p className="p-6 text-sm text-slate-600">Nessun risultato disponibile per questa ricerca.</p>}
             </div>
           )}
         </section>
