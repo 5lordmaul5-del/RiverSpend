@@ -148,7 +148,7 @@ export default function Home() {
           <div className="mx-auto max-w-6xl">
             <div className="flex flex-col items-stretch gap-2">
               <a href="/" aria-label="RiverSpendShop, pagina iniziale" className="mx-auto flex w-full max-w-none flex-col items-center justify-center rounded-2xl border border-slate-200 bg-white px-2 py-5 shadow-sm sm:py-6">
-                <h1 className="w-full whitespace-nowrap text-center text-[clamp(3.6rem,19vw,8rem)] font-extrabold leading-[0.98] tracking-[-0.055em] text-slate-800">RiverSpend</h1>
+                <h1 className="w-full whitespace-nowrap text-center text-[clamp(2.5rem,14.5vw,7rem)] font-extrabold leading-[0.98] tracking-[-0.055em] text-slate-800">RiverSpend</h1>
                 <span className="mt-0 translate-x-10 -rotate-6 text-[clamp(3.5rem,13vw,5.5rem)] font-extrabold italic leading-none text-[#B8860B] drop-shadow-[0_1px_0_#F5D76E]">Shop</span>
                 <p className="mt-3 text-base font-bold tracking-[0.14em] text-slate-700 sm:text-lg">YOUR SHOP • YOUR FLOW</p>
               </a>
