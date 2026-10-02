@@ -287,3 +287,23 @@ input::placeholder,textarea::placeholder { color:#71899a !important; }
 [class*="bg-teal-"],[class*="bg-cyan-"],[class*="bg-emerald-"] { background-color:#168bd2 !important; }
 [class*="border-teal-"],[class*="border-cyan-"],[class*="border-emerald-"] { border-color:#c7e3f5 !important; }
 [class*="hover\\:bg-teal-"]:hover,[class*="hover\\:bg-cyan-"]:hover { background-color:#0877b5 !important; }
+
+
+/* RiverSpend — azzurro cielo uniforme anche per le utility blu */
+.rs-site [class*="bg-blue-"],
+.rs-site [class*="bg-sky-"],
+.rs-site [class*="bg-indigo-"] {
+  background-color: #9bd8f7 !important;
+  color: #173f5b !important;
+}
+.rs-site [class*="hover\\:bg-blue-"]:hover,
+.rs-site [class*="hover\\:bg-sky-"]:hover,
+.rs-site [class*="hover\\:bg-indigo-"]:hover {
+  background-color: #7fcaf2 !important;
+}
+.rs-site [class*="text-blue-"],
+.rs-site [class*="text-sky-"],
+.rs-site [class*="text-indigo-"] { color: #155b86 !important; }
+.rs-site [class*="border-blue-"],
+.rs-site [class*="border-sky-"],
+.rs-site [class*="border-indigo-"] { border-color: #b9daf2 !important; }
