@@ -21,8 +21,8 @@ export default function SplashScreen({ onEnter }) {
     <div className={`fixed inset-0 z-[9999] flex min-h-screen items-center justify-center bg-white transition-opacity duration-500 ${visible ? 'opacity-100' : 'opacity-0'}`}>
       <div className="flex w-full flex-col items-center justify-center px-5 text-center">
         <h1 className="whitespace-nowrap text-[clamp(3.6rem,17vw,6.5rem)] font-extrabold leading-none tracking-[-0.045em] text-[#173653]">RiverSpend</h1>
-        <span className="mt-1 translate-x-8 -rotate-6 text-xl font-bold italic text-[#c99a2e]">Shop</span>
-        <p className="mt-4 text-xs font-semibold tracking-[0.22em] text-slate-600">YOUR SHOP • YOUR FLOW</p>
+        <span className="mt-0 translate-x-12 -rotate-6 text-5xl font-extrabold italic text-[#B8860B] drop-shadow-[0_1px_0_#F5D76E] sm:text-6xl">Shop</span>
+        <p className="mt-5 text-base font-bold tracking-[0.18em] text-slate-700 sm:text-lg">YOUR SHOP • YOUR FLOW</p>
       </div>
     </div>
   );
