@@ -333,3 +333,38 @@ body { color: #18364b !important; }
   border-color: #bddcf2 !important;
 }
 .rs-site footer { background: #c8e4f8 !important; }
+
+
+/* TEMPORARY NEUTRAL RESET — remove aqua/blue backgrounds until functionality is stable */
+html, body, .rs-site { background: #ffffff !important; color: #263238 !important; }
+.rs-site { background-image: none !important; }
+.rs-header, .rs-hero, .rs-glass, .rs-product-card, .rs-honor-panel,
+.rs-header > div > div > a[aria-label] {
+  background: #ffffff !important;
+  background-image: none !important;
+  color: #263238 !important;
+  border-color: #e2e5e7 !important;
+  box-shadow: none !important;
+}
+.rs-header { backdrop-filter: none !important; }
+.rs-header a, .rs-header button, .rs-header .rs-brand,
+.rs-site footer strong, .rs-hero h2, .rs-hero p,
+.rs-site [class*="text-teal-"], .rs-site [class*="text-cyan-"],
+.rs-site [class*="text-sky-"], .rs-site [class*="text-blue-"] { color: #34454d !important; }
+.rs-site [class*="bg-sky-"], .rs-site [class*="bg-blue-"],
+.rs-site [class*="bg-teal-"], .rs-site [class*="bg-cyan-"],
+.rs-site [class*="bg-emerald-"], .rs-site [class*="bg-indigo-"] {
+  background: #ffffff !important;
+  color: #34454d !important;
+}
+.rs-site [class*="border-sky-"], .rs-site [class*="border-blue-"],
+.rs-site [class*="border-teal-"], .rs-site [class*="border-cyan-"],
+.rs-site [class*="border-emerald-"] { border-color: #e2e5e7 !important; }
+.rs-button-primary, .rs-button-primary:hover {
+  background: #ffffff !important;
+  background-image: none !important;
+  color: #34454d !important;
+  border: 1px solid #d8dee2 !important;
+  box-shadow: none !important;
+}
+.rs-site footer { background: #ffffff !important; border-color: #e2e5e7 !important; }
