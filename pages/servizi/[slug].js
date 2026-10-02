@@ -162,7 +162,7 @@ export default function Servizio({ slug }) {
             </div>
           )}
 
-          <div className="mt-7 rounded-2xl border border-slate-700 bg-[#c9f1f3]/60 p-4">
+          <div className="mt-7 rounded-2xl border border-[#a8dfe5] bg-[#e8fbfc]/80 p-4">
             <p className="text-xs font-semibold uppercase tracking-wider text-[#607d88]">Stato</p>
             <p className="mt-1 font-semibold text-[#087f9b]">{servizio.stato}</p>
           </div>
