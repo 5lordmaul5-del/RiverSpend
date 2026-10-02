@@ -307,3 +307,29 @@ input::placeholder,textarea::placeholder { color:#71899a !important; }
 .rs-site [class*="border-blue-"],
 .rs-site [class*="border-sky-"],
 .rs-site [class*="border-indigo-"] { border-color: #b9daf2 !important; }
+
+
+/* RiverSpend — AZZURRO DI SFONDO: il colore deve stare sulle superfici, non solo su testi e pulsanti */
+html, body { background: #cfe8fb !important; }
+body { color: #18364b !important; }
+.rs-site {
+  background: linear-gradient(180deg, #dff1ff 0%, #cfe8fb 52%, #d9eeff 100%) !important;
+  color: #18364b !important;
+}
+.rs-header {
+  background: #e7f4ff !important;
+  border-color: #b8d9f1 !important;
+}
+.rs-glass {
+  background: #e5f3ff !important;
+  border-color: #b8d9f1 !important;
+}
+.rs-hero {
+  background: linear-gradient(135deg, #d8eeff 0%, #c4e4fb 55%, #b8def8 100%) !important;
+  border-color: #a9d2ef !important;
+}
+.rs-product-card {
+  background: #eaf6ff !important;
+  border-color: #bddcf2 !important;
+}
+.rs-site footer { background: #c8e4f8 !important; }
