@@ -1,0 +1,39 @@
+/* RiverSpend — AZZURRO CIELO uniforme, non verde acqua */
+:root {
+  color-scheme: light;
+  --rs-sky: #8fd0f4;
+  --rs-sky-soft: #eaf6ff;
+  --rs-sky-pale: #f4faff;
+  --rs-sky-border: #b9dcf3;
+  --rs-blue: #168bd2;
+  --rs-ink: #173b56;
+}
+html, body, #__next { background: var(--rs-sky-pale) !important; color: var(--rs-ink) !important; }
+.rs-site { background: linear-gradient(180deg,#ffffff 0%,#f4faff 55%,#eaf6ff 100%) !important; color:var(--rs-ink) !important; }
+.rs-site .rs-header { background:rgba(255,255,255,.98) !important; border-color:var(--rs-sky-border) !important; }
+.rs-site .rs-header a, .rs-site .rs-header button { color:#155b86 !important; }
+.rs-site .rs-header > div > div > a[aria-label] { background:#f0f8ff !important; border-color:var(--rs-sky-border) !important; }
+.rs-site .rs-header .max-h-\[45vh\] { background:#ffffff !important; border-color:var(--rs-sky-border) !important; }
+.rs-site .rs-header .max-h-\[45vh\] a {
+  display:flex; align-items:center; justify-content:space-between;
+  margin:3px 0; border:1px solid #c9e4f7 !important; border-radius:10px !important;
+  background:#a9dcf8 !important; color:#173b56 !important;
+}
+.rs-site .rs-header .max-h-\[45vh\] a:hover { background:#8fd0f4 !important; color:#12344d !important; }
+.rs-site .rs-header .max-h-\[45vh\] a span { color:#155b86 !important; }
+.rs-site .rs-hero { background:linear-gradient(125deg,#ffffff 0%,#eaf6ff 58%,#d9efff 100%) !important; border-color:var(--rs-sky-border) !important; color:var(--rs-ink) !important; }
+.rs-site .rs-hero h2 { color:#173b56 !important; }
+.rs-site .rs-hero p { color:#49677e !important; }
+.rs-site .rs-button-primary, .rs-site a.bg-teal-500, .rs-site button.bg-teal-500 {
+  background:linear-gradient(135deg,#43b2ed,#168bd2) !important; color:#ffffff !important;
+}
+.rs-site .rs-button-primary:hover { background:#087fbd !important; }
+.rs-site [class*="bg-teal-"], .rs-site [class*="bg-cyan-"], .rs-site [class*="bg-emerald-"] {
+  background-color:#a9dcf8 !important; color:#173b56 !important;
+}
+.rs-site [class*="text-teal-"], .rs-site [class*="text-cyan-"], .rs-site [class*="text-emerald-"] { color:#087fbd !important; }
+.rs-site [class*="border-teal-"], .rs-site [class*="border-cyan-"], .rs-site [class*="border-emerald-"] { border-color:#b9dcf3 !important; }
+.rs-site [class*="bg-blue-"], .rs-site [class*="bg-sky-"], .rs-site [class*="bg-indigo-"] { background-color:#a9dcf8 !important; color:#173b56 !important; }
+.rs-site [class*="text-blue-"], .rs-site [class*="text-sky-"], .rs-site [class*="text-indigo-"] { color:#155b86 !important; }
+.rs-site input, .rs-site select { background:#ffffff !important; border-color:#c6dfef !important; color:#173b56 !important; }
+.rs-site footer { background:#eaf6ff !important; border-color:#c9e4f7 !important; }
