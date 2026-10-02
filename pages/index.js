@@ -138,18 +138,18 @@ export default function Home() {
       <div className={`transition-opacity duration-700 ${showSplash ? 'opacity-0' : 'opacity-100'}`}>
         <header className="rs-header sm:sticky sm:top-0 z-30 border-b border-slate-800 bg-slate-950/95 px-3 py-3">
           <div className="mx-auto max-w-6xl">
-            <div className="flex justify-center">
-              <a href="/" aria-label="RiverSpendShop, pagina iniziale" className="inline-flex flex-col items-center rounded-2xl border border-teal-800/80 bg-slate-900/70 px-6 py-2 shadow-lg shadow-teal-950/30">
-                <h1 className="rs-brand text-2xl font-extrabold leading-tight text-teal-400">RiverSpend</h1>
-                <span className="text-sm font-semibold italic text-amber-300">Shop</span>
-                <p className="mt-1 text-[9px] tracking-wide text-slate-400">YOUR SHOP • YOUR FLOW</p>
+            <div className="flex items-center gap-2 sm:gap-4">
+              <button type="button" onClick={() => { setMenuCategorie(!menuCategorie); setMenuRiverSpend(false); }} aria-label={t('categories')} aria-expanded={menuCategorie} className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-sky-300 bg-sky-50 text-2xl font-semibold text-sky-800 shadow-sm hover:bg-sky-100">☰</button>
+              <a href="/" aria-label="RiverSpendShop, pagina iniziale" className="flex min-w-0 flex-1 flex-col items-center justify-center rounded-2xl border border-sky-200 bg-sky-50/90 px-2 py-2 shadow-sm sm:py-3">
+                <h1 className="rs-brand whitespace-nowrap text-[clamp(1.75rem,7vw,3rem)] font-extrabold leading-none tracking-tight text-sky-700">RiverSpend</h1>
+                <span className="-mt-0.5 translate-x-5 -rotate-6 text-sm font-bold italic text-amber-400 sm:text-base">Shop</span>
+                <p className="mt-0.5 text-[8px] font-medium tracking-[0.12em] text-sky-800 sm:text-[9px]">YOUR SHOP • YOUR FLOW</p>
               </a>
+              <button type="button" onClick={() => { setMenuRiverSpend(!menuRiverSpend); setMenuCategorie(false); }} aria-label={t('world')} aria-expanded={menuRiverSpend} className="h-12 shrink-0 rounded-xl border border-sky-300 bg-sky-50 px-2 text-xs font-bold text-sky-800 hover:bg-sky-100 sm:px-3 sm:text-sm">RiverSpend ▾</button>
             </div>
-            <div className="mt-3 grid grid-cols-2 gap-2 sm:flex sm:items-center sm:justify-between">
-              <button type="button" onClick={() => { setMenuCategorie(!menuCategorie); setMenuRiverSpend(false); }} aria-label={t('categories')} aria-expanded={menuCategorie} className="col-span-1 rounded-xl border border-teal-800 px-3 py-3 text-xl text-teal-200 sm:order-1 sm:py-2">☰</button>
-              <button type="button" onClick={() => { setMenuRiverSpend(!menuRiverSpend); setMenuCategorie(false); }} aria-expanded={menuRiverSpend} className="col-span-1 min-w-0 rounded-xl border border-teal-800 px-2 py-3 text-sm font-bold text-teal-200 sm:order-3 sm:px-3 sm:py-2">RiverSpend ▾</button>
-              <a href="/rete" className="col-span-1 flex min-w-0 items-center justify-center rounded-xl border border-teal-800 px-2 py-3 text-center text-sm font-bold leading-tight text-teal-200 sm:order-2 sm:flex-1 sm:py-2">🕸️ {t('myNet')}</a>
-              <a href="/vendi" className="rs-button rs-button-primary col-span-1 flex min-w-0 items-center justify-center rounded-full bg-teal-500 px-2 py-3 text-center text-sm font-bold leading-tight text-slate-950 hover:bg-teal-400 sm:order-4 sm:px-4">+ {t('sell')}</a>
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              <a href="/rete" className="flex min-w-0 items-center justify-center rounded-xl border border-sky-300 bg-sky-50 px-2 py-3 text-center text-sm font-bold leading-tight text-sky-800 hover:bg-sky-100">🕸️ {t('myNet')}</a>
+              <a href="/vendi" className="rs-button rs-button-primary flex min-w-0 items-center justify-center rounded-full bg-sky-500 px-2 py-3 text-center text-sm font-bold leading-tight text-white hover:bg-sky-600">+ {t('sell')}</a>
             </div>
             <div className="mt-2 flex items-center justify-end gap-3 text-xs">
               <a href="/profilo" className="text-teal-200">👤 {t('profile')}</a>
