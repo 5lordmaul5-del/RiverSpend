@@ -19,7 +19,7 @@ const aree = [
 
 export default function Ecosistema() {
   return (
-    <main className="min-h-screen bg-[#f2f8ff] px-4 py-8 text-[#18364b]">
+    <main className="min-h-screen bg-[#c9f1f3] px-4 py-8 text-[#173f4a]">
       <div className="mx-auto max-w-6xl">
         <Link href="/" className="text-[#155b86] underline">← Torna al RiverSpendShop</Link>
         <header className="mt-6 mb-8">
@@ -29,7 +29,7 @@ export default function Ecosistema() {
         </header>
         <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {aree.map(([icon,title,note,href]) => (
-            <Link href={href} key={title} className="rounded-2xl border border-[#c7e3f5] bg-white p-5 shadow-sm hover:border-[#77bce8]">
+            <Link href={href} key={title} className="rounded-2xl border border-[#a8dfe5] bg-white p-5 shadow-sm hover:border-[#168bd2]">
               <div className="text-3xl">{icon}</div>
               <h2 className="mt-3 text-xl font-bold">{title}</h2>
               <p className="mt-1 text-sm text-[#526f84]">{note}</p>
