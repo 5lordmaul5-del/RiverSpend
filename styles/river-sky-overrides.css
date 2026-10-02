@@ -1,68 +1,60 @@
-/* RiverSpend — AZZURRO CIELO uniforme, non verde acqua */
-:root {
-  color-scheme: light;
-  --rs-sky: #8fd0f4;
-  --rs-sky-soft: #eaf6ff;
-  --rs-sky-pale: #f4faff;
-  --rs-sky-border: #b9dcf3;
-  --rs-blue: #168bd2;
-  --rs-ink: #173b56;
-}
-html, body, #__next { background: var(--rs-sky-pale) !important; color: var(--rs-ink) !important; }
-.rs-site { background: linear-gradient(180deg,#ffffff 0%,#f4faff 55%,#eaf6ff 100%) !important; color:var(--rs-ink) !important; }
-.rs-site .rs-header { background:rgba(255,255,255,.98) !important; border-color:var(--rs-sky-border) !important; }
-.rs-site .rs-header a, .rs-site .rs-header button { color:#155b86 !important; }
-.rs-site .rs-header > div > div > a[aria-label] { background:#f0f8ff !important; border-color:var(--rs-sky-border) !important; }
-.rs-site .rs-header .max-h-\[45vh\] { background:#ffffff !important; border-color:var(--rs-sky-border) !important; }
-.rs-site .rs-header .max-h-\[45vh\] a {
-  display:flex; align-items:center; justify-content:space-between;
-  margin:3px 0; border:1px solid #c9e4f7 !important; border-radius:10px !important;
-  background:#a9dcf8 !important; color:#173b56 !important;
-}
-.rs-site .rs-header .max-h-\[45vh\] a:hover { background:#8fd0f4 !important; color:#12344d !important; }
-.rs-site .rs-header .max-h-\[45vh\] a span { color:#155b86 !important; }
-.rs-site .rs-hero { background:linear-gradient(125deg,#ffffff 0%,#eaf6ff 58%,#d9efff 100%) !important; border-color:var(--rs-sky-border) !important; color:var(--rs-ink) !important; }
-.rs-site .rs-hero h2 { color:#173b56 !important; }
-.rs-site .rs-hero p { color:#49677e !important; }
-.rs-site .rs-button-primary, .rs-site a.bg-teal-500, .rs-site button.bg-teal-500 {
-  background:linear-gradient(135deg,#43b2ed,#168bd2) !important; color:#ffffff !important;
-}
-.rs-site .rs-button-primary:hover { background:#087fbd !important; }
-.rs-site [class*="bg-teal-"], .rs-site [class*="bg-cyan-"], .rs-site [class*="bg-emerald-"] {
-  background-color:#a9dcf8 !important; color:#173b56 !important;
-}
-.rs-site [class*="text-teal-"], .rs-site [class*="text-cyan-"], .rs-site [class*="text-emerald-"] { color:#087fbd !important; }
-.rs-site [class*="border-teal-"], .rs-site [class*="border-cyan-"], .rs-site [class*="border-emerald-"] { border-color:#b9dcf3 !important; }
-.rs-site [class*="bg-blue-"], .rs-site [class*="bg-sky-"], .rs-site [class*="bg-indigo-"] { background-color:#a9dcf8 !important; color:#173b56 !important; }
-.rs-site [class*="text-blue-"], .rs-site [class*="text-sky-"], .rs-site [class*="text-indigo-"] { color:#155b86 !important; }
-.rs-site input, .rs-site select { background:#ffffff !important; border-color:#c6dfef !important; color:#173b56 !important; }
-.rs-site footer { background:#eaf6ff !important; border-color:#c9e4f7 !important; }
-
-
-/* Correzione richiesta da Maury: AZZURRO SULLE SUPERFICI DELL'INTERA PAGINA.
-   Non colorare soltanto testi e pulsanti: il bianco non deve dominare lo sfondo. */
-html, body, #__next { background: #b7e0fa !important; }
+/* RiverSpend — modalità neutra: superfici bianche mentre si sistemano le funzioni. */
+:root { color-scheme: light; }
+html, body, #__next { background: #ffffff !important; }
+body { color: #243746 !important; }
 .rs-site {
-  background: #b7e0fa !important;
+  background: #ffffff !important;
   background-image: none !important;
+  color: #243746 !important;
 }
 .rs-site .rs-header,
-.rs-site .rs-header > div,
-.rs-site .rs-glass {
-  background: #d7efff !important;
-}
+.rs-site .rs-glass,
 .rs-site .rs-hero,
-.rs-site .rs-honor-panel {
-  background: #c8e8fc !important;
-  background-image: none !important;
-}
+.rs-site .rs-honor-panel,
 .rs-site .rs-product-card,
+.rs-site footer,
 .rs-site .rs-header [class*="max-h-"] {
-  background: #cfeaff !important;
+  background: #ffffff !important;
+  background-image: none !important;
+  border-color: #e2e8ee !important;
+  color: #243746 !important;
+  box-shadow: none !important;
 }
+.rs-site .rs-header > div { background: transparent !important; }
+.rs-site .rs-hero h2,
+.rs-site .rs-product-card h2,
+.rs-site .rs-product-card h3 { color: #243746 !important; }
+.rs-site .rs-hero p,
+.rs-site .rs-product-card p { color: #647786 !important; }
+.rs-site .rs-header .max-h-\\[45vh\\] a,
+.rs-site [class*="bg-teal-"],
+.rs-site [class*="bg-cyan-"],
+.rs-site [class*="bg-emerald-"],
+.rs-site [class*="bg-blue-"],
+.rs-site [class*="bg-sky-"],
+.rs-site [class*="bg-indigo-"] {
+  background: #ffffff !important;
+  color: #243746 !important;
+  border-color: #e2e8ee !important;
+}
+.rs-site .rs-button-primary,
+.rs-site a.bg-teal-500,
+.rs-site button.bg-teal-500 {
+  background: #ffffff !important;
+  color: #243746 !important;
+  border: 1px solid #d5dee6 !important;
+}
+.rs-site [class*="text-teal-"],
+.rs-site [class*="text-cyan-"],
+.rs-site [class*="text-emerald-"],
+.rs-site [class*="text-blue-"],
+.rs-site [class*="text-sky-"],
+.rs-site [class*="text-indigo-"] { color: #31566f !important; }
 .rs-site input,
 .rs-site select,
 .rs-site textarea {
-  background: #e5f4ff !important;
+  background: #ffffff !important;
+  color: #243746 !important;
+  border-color: #d5dee6 !important;
 }
-.rs-site footer { background: #c8e8fc !important; }
+.rs-site footer { border-color: #e2e8ee !important; }
