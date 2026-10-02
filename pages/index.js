@@ -149,8 +149,8 @@ export default function Home() {
             <div className="flex flex-col items-stretch gap-2">
               <a href="/" aria-label="RiverSpendShop, pagina iniziale" className="mx-auto flex w-full max-w-4xl flex-col items-center justify-center rounded-2xl border border-slate-200 bg-white px-3 py-4 shadow-sm sm:py-5">
                 <h1 className="rs-brand whitespace-nowrap text-[clamp(3rem,14vw,5.5rem)] font-extrabold leading-none tracking-tight text-slate-800">RiverSpend</h1>
-                <span className="-mt-1 translate-x-8 -rotate-6 text-2xl font-extrabold italic text-[#B8860B] drop-shadow-[0_1px_0_#F5D76E] sm:text-3xl">Shop</span>
-                <p className="mt-1 text-[9px] font-medium tracking-[0.12em] text-slate-600 sm:text-[10px]">YOUR SHOP • YOUR FLOW</p>
+                <span className="-mt-1 translate-x-10 -rotate-6 text-4xl font-extrabold italic text-[#B8860B] drop-shadow-[0_1px_0_#F5D76E] sm:text-5xl">Shop</span>
+                <p className="mt-2 text-sm font-semibold tracking-[0.16em] text-slate-700 sm:text-base">YOUR SHOP • YOUR FLOW</p>
               </a>
               <div className="grid grid-cols-2 gap-2">
                 <button type="button" onClick={() => { setMenuCategorie(!menuCategorie); setMenuRiverSpend(false); }} aria-label={t('categories')} aria-expanded={menuCategorie} className="flex h-12 items-center justify-center rounded-xl border border-slate-200 bg-white text-2xl font-semibold text-slate-700 shadow-sm hover:bg-slate-50">☰</button>
