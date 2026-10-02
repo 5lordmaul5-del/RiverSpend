@@ -35,8 +35,8 @@ export default function Profilo() {
               <p className="mt-6 text-[#496575]">Accesso effettuato come <strong>{session.user.email}</strong></p>
               <div className="mt-6 grid gap-3 sm:grid-cols-3">
                 <Link href="/rete" className="rounded-xl border border-[#8bd9e3] bg-white p-4 text-center text-[#075b78]">🕸️ La mia rete</Link>
-                <Link href="/desideri" className="rounded-xl border border-teal-800 p-4 text-center text-teal-100">♡ Desideri</Link>
-                <Link href="/vendi" className="rounded-xl border border-teal-800 p-4 text-center text-teal-100">+ Vendi</Link>
+                <Link href="/desideri" className="rounded-xl border border-[#8bd9e3] bg-white p-4 text-center text-[#075b78]">♡ Desideri</Link>
+                <Link href="/vendi" className="rounded-xl border border-[#8bd9e3] bg-white p-4 text-center text-[#075b78]">+ Vendi</Link>
               </div>
               <button onClick={logout} className="mt-6 rounded-xl border border-[#8bd9e3] bg-white px-5 py-3 text-[#17364a]">Esci</button>
             </>
