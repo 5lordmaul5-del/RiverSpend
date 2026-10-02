@@ -17,6 +17,6 @@ export default function NovaShield() {
       <div className="flex flex-wrap items-center justify-between gap-2"><h3 className="font-bold">{item.title}</h3><span className={item.status === 'Protetto' ? 'rounded-full bg-emerald-100 px-3 py-1 text-xs text-emerald-800' : 'rounded-full bg-amber-100 px-3 py-1 text-xs text-amber-800'}>{item.status}</span></div>
       <p className="mt-3 text-sm text-[#496575]">{item.detail}</p>
     </section>)}</div>
-    <p className="mt-6 rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900">Trasparenza Nova Shield: questa pagina riporta lo stato noto delle verifiche, non è una scansione automatica continua e non certifica la sicurezza complessiva del sito.</p>
+    <p className="mt-6 rounded-xl border border-[#a8dfe5] bg-[#e8fbfc] p-4 text-sm text-[#496575]">Trasparenza Nova Shield: questa pagina riporta lo stato noto delle verifiche, non è una scansione automatica continua e non certifica la sicurezza complessiva del sito.</p>
   </div></main>;
 }
