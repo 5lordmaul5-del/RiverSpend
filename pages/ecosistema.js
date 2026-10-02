@@ -19,21 +19,21 @@ const aree = [
 
 export default function Ecosistema() {
   return (
-    <main className="min-h-screen bg-[#f5fcfb] px-4 py-8 text-[#17343a]">
+    <main className="min-h-screen bg-[#f2f8ff] px-4 py-8 text-[#18364b]">
       <div className="mx-auto max-w-6xl">
-        <Link href="/" className="text-[#176b6b] underline">← Torna al RiverSpendShop</Link>
+        <Link href="/" className="text-[#155b86] underline">← Torna al RiverSpendShop</Link>
         <header className="mt-6 mb-8">
-          <p className="text-sm font-semibold uppercase tracking-widest text-[#159f9a]">YOUR SHOP • YOUR FLOW</p>
+          <p className="text-sm font-semibold uppercase tracking-widest text-[#087fbd]">YOUR SHOP • YOUR FLOW</p>
           <h1 className="mt-2 text-4xl font-bold">L’ecosistema RiverSpend</h1>
-          <p className="mt-3 max-w-2xl text-[#668184]">Un unico mondo: marketplace, protezione, servizi locali, fedeltà, logistica e RiverSpend Park.</p>
+          <p className="mt-3 max-w-2xl text-[#526f84]">Un unico mondo: marketplace, protezione, servizi locali, fedeltà, logistica e RiverSpend Park.</p>
         </header>
         <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {aree.map(([icon,title,note,href]) => (
-            <Link href={href} key={title} className="rounded-2xl border border-[#ccece7] bg-white p-5 shadow-sm hover:border-[#69cfc2]">
+            <Link href={href} key={title} className="rounded-2xl border border-[#c7e3f5] bg-white p-5 shadow-sm hover:border-[#77bce8]">
               <div className="text-3xl">{icon}</div>
               <h2 className="mt-3 text-xl font-bold">{title}</h2>
-              <p className="mt-1 text-sm text-[#668184]">{note}</p>
-              <p className="mt-5 font-semibold text-[#159f9a]">Apri →</p>
+              <p className="mt-1 text-sm text-[#526f84]">{note}</p>
+              <p className="mt-5 font-semibold text-[#087fbd]">Apri →</p>
             </Link>
           ))}
         </section>
