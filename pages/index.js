@@ -148,9 +148,9 @@ export default function Home() {
           <div className="mx-auto max-w-6xl">
             <div className="flex flex-col items-stretch gap-2">
               <a href="/" aria-label="RiverSpendShop, pagina iniziale" className="mx-auto flex w-full max-w-none flex-col items-center justify-center rounded-2xl border border-slate-200 bg-white px-2 py-5 shadow-sm sm:py-6">
-                <h1 className="w-full whitespace-nowrap text-center text-[clamp(2.5rem,14.5vw,7rem)] font-extrabold leading-[0.98] tracking-[-0.055em] text-slate-800">RiverSpend</h1>
-                <span className="mt-0 translate-x-10 -rotate-6 text-[clamp(2rem,10vw,4rem)] font-extrabold italic leading-none text-[#B8860B] drop-shadow-[0_1px_0_#F5D76E]">Shop</span>
-                <p className="mt-3 text-base font-bold tracking-[0.14em] text-slate-700 sm:text-lg">YOUR SHOP • YOUR FLOW</p>
+                <h1 className="w-full max-w-full whitespace-nowrap text-center text-[clamp(2.8rem,13vw,6.2rem)] font-extrabold leading-[0.98] tracking-[-0.06em] text-slate-800">RiverSpend</h1>
+                <span className="mt-1 translate-x-8 -rotate-6 text-[clamp(2rem,8.5vw,3.8rem)] font-extrabold italic leading-none text-[#C99718] drop-shadow-[0_1px_0_#F5D76E]">Shop</span>
+                <p className="mt-4 text-[clamp(0.9rem,3.7vw,1.15rem)] font-bold tracking-[0.16em] text-slate-700">YOUR SHOP • YOUR FLOW</p>
               </a>
               <div className="grid grid-cols-2 gap-2">
                 <button type="button" onClick={() => { setMenuCategorie(!menuCategorie); setMenuRiverSpend(false); }} aria-label={t('categories')} aria-expanded={menuCategorie} className="flex h-12 items-center justify-center rounded-xl border border-slate-200 bg-white text-2xl font-semibold text-slate-700 shadow-sm hover:bg-slate-50">☰</button>
