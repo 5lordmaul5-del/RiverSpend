@@ -94,41 +94,41 @@ export default function RSLocal() {
   const categoryLabel = value => ({ restaurant: 'Ristorante', cafe: 'Bar e caffè', fast_food: 'Ristorazione veloce', pub: 'Pub', supermarket: 'Supermercato', convenience: 'Alimentari', clothes: 'Abbigliamento', shoes: 'Calzature', hairdresser: 'Parrucchiere', beauty: 'Estetica', pharmacy: 'Farmacia', bank: 'Banca', dentist: 'Dentista', doctors: 'Medico', school: 'Scuola', hotel: 'Hotel', bakery: 'Panetteria', books: 'Libreria' }[value] || value.replace(/_/g, ' '));
 
   return (
-    <main className="min-h-screen bg-[#f5fcfb] px-4 py-6 text-[#17343a] sm:py-10">
+    <main className="min-h-screen bg-[#f0f8ff] px-4 py-6 text-[#17343a] sm:py-10">
       <div className="mx-auto max-w-5xl">
-        <Link href="/ecosistema" className="text-sm font-semibold text-[#176b6b] underline">← Ecosistema RiverSpend</Link>
-        <header className="mt-5 rounded-3xl border border-[#ccece7] bg-white p-6 shadow-sm sm:p-8">
+        <Link href="/ecosistema" className="text-sm font-semibold text-[#126a9c] underline">← Ecosistema RiverSpend</Link>
+        <header className="mt-5 rounded-3xl border border-[#c7e3f5] bg-white p-6 shadow-sm sm:p-8">
           <div className="text-4xl">📍</div>
-          <p className="mt-4 text-xs font-bold uppercase tracking-[.2em] text-[#159f9a]">RiverSpend • Territorio</p>
+          <p className="mt-4 text-xs font-bold uppercase tracking-[.2em] text-[#087fbd]">RiverSpend • Territorio</p>
           <h1 className="mt-2 text-4xl font-extrabold tracking-tight text-slate-900">RS Local</h1>
           <p className="mt-3 max-w-2xl text-base leading-7 text-slate-600">Scopri attività e servizi nella zona che ti interessa. La posizione è facoltativa: puoi scegliere se condividerla oppure cercare manualmente.</p>
         </header>
 
-        <section className="mt-5 rounded-3xl border border-[#ccece7] bg-white p-5 shadow-sm sm:p-7">
+        <section className="mt-5 rounded-3xl border border-[#c7e3f5] bg-white p-5 shadow-sm sm:p-7">
           <h2 className="text-xl font-bold text-slate-900">Da dove vuoi partire?</h2>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
-            <button type="button" onClick={locateMe} disabled={loading} className="rounded-2xl bg-[#21b9b1] px-5 py-4 text-left font-semibold text-white hover:bg-[#159f9a] disabled:opacity-60">
-              <span className="block text-lg">◎ Usa la mia posizione</span><span className="mt-1 block text-sm font-normal text-[#eaf9f6]">Solo dopo il tuo consenso</span>
+            <button type="button" onClick={locateMe} disabled={loading} className="rounded-2xl bg-[#168bd2] px-5 py-4 text-left font-semibold text-white hover:bg-[#0877b5] disabled:opacity-60">
+              <span className="block text-lg">◎ Usa la mia posizione</span><span className="mt-1 block text-sm font-normal text-[#eaf6ff]">Solo dopo il tuo consenso</span>
             </button>
             <form onSubmit={searchPlace} className="flex gap-2">
               <label className="sr-only" htmlFor="rs-local-place">Città o zona</label>
-              <input id="rs-local-place" value={place} onChange={e => setPlace(e.target.value)} placeholder="Città, quartiere o CAP" className="min-w-0 flex-1 rounded-2xl border border-slate-300 px-4 py-3 text-slate-900 outline-none focus:border-[#21b9b1] focus:ring-2 focus:ring-[#eaf9f6]" />
+              <input id="rs-local-place" value={place} onChange={e => setPlace(e.target.value)} placeholder="Città, quartiere o CAP" className="min-w-0 flex-1 rounded-2xl border border-slate-300 px-4 py-3 text-slate-900 outline-none focus:border-[#168bd2] focus:ring-2 focus:ring-[#eaf6ff]" />
               <button disabled={loading} className="rounded-2xl bg-slate-900 px-4 font-semibold text-white disabled:opacity-60" type="submit">Cerca</button>
             </form>
           </div>
           {status && <p role="status" aria-live="polite" className="mt-3 text-sm leading-6 text-slate-600">{status}</p>}
         </section>
 
-        <section className="mt-5 rounded-3xl border border-[#ccece7] bg-white p-5 shadow-sm sm:p-7">
+        <section className="mt-5 rounded-3xl border border-[#c7e3f5] bg-white p-5 shadow-sm sm:p-7">
           <h2 className="text-xl font-bold text-slate-900">Quanto vicino?</h2>
           <div className="mt-4 flex flex-wrap gap-2">
-            {distances.map(d => <button key={d} type="button" onClick={() => changeRadius(d)} aria-pressed={radius === d} className={'rounded-full border px-4 py-2 text-sm font-semibold ' + (radius === d ? 'border-sky-700 bg-[#21b9b1] text-white' : 'border-slate-300 bg-white text-slate-700 hover:border-[#69cfc2]')}>{d === 0 ? 'Senza limite' : d >= 1000 ? (d / 1000) + ' km' : d + ' m'}</button>)}
+            {distances.map(d => <button key={d} type="button" onClick={() => changeRadius(d)} aria-pressed={radius === d} className={'rounded-full border px-4 py-2 text-sm font-semibold ' + (radius === d ? 'border-sky-700 bg-[#168bd2] text-white' : 'border-slate-300 bg-white text-slate-700 hover:border-[#77bce8]')}>{d === 0 ? 'Senza limite' : d >= 1000 ? (d / 1000) + ' km' : d + ' m'}</button>)}
           </div>
           <p className="mt-3 text-sm text-slate-600">Raggio selezionato: <strong className="text-slate-900">{radiusLabel}</strong></p>
           {radius === 0 && <p className="mt-1 text-xs text-slate-500">*Per non sovraccaricare il servizio, la ricerca “Senza limite” mostra fino a 10 km dalla zona scelta.</p>}
         </section>
 
-        <section className="mt-5 overflow-hidden rounded-3xl border border-[#ccece7] bg-white shadow-sm">
+        <section className="mt-5 overflow-hidden rounded-3xl border border-[#c7e3f5] bg-white shadow-sm">
           <div className="flex flex-wrap items-center justify-between gap-3 p-5 sm:p-7">
             <div><h2 className="text-xl font-bold text-slate-900">Esplora la zona</h2><p className="mt-1 text-sm text-slate-600">Locali, negozi e servizi nella zona scelta. Dati OpenStreetMap: non indicano ancora attività aderenti RiverSpend.</p></div>
             <div className="flex rounded-xl border border-slate-300 p-1" aria-label="Modalità di visualizzazione">
@@ -136,9 +136,9 @@ export default function RSLocal() {
               <button type="button" onClick={() => setView('map')} aria-pressed={view === 'map'} className={'rounded-lg px-3 py-2 text-sm font-semibold ' + (view === 'map' ? 'bg-slate-900 text-white' : 'text-slate-700')}>Mappa</button>
             </div>
           </div>
-          {view === 'map' ? (mapUrl ? <iframe title="Mappa RS Local" src={mapUrl} className="h-96 w-full border-0" loading="lazy" /> : <div className="bg-[#eaf9f6] p-10 text-center text-slate-700">Cerca una zona o consenti la posizione per visualizzare la mappa.</div>) : (
+          {view === 'map' ? (mapUrl ? <iframe title="Mappa RS Local" src={mapUrl} className="h-96 w-full border-0" loading="lazy" /> : <div className="bg-[#eaf6ff] p-10 text-center text-slate-700">Cerca una zona o consenti la posizione per visualizzare la mappa.</div>) : (
             <div className="border-t border-slate-100">
-              {!searched ? <p className="p-6 text-sm text-slate-600">Scegli una zona per vedere locali, negozi e servizi vicini.</p> : loading ? <p className="p-6 text-sm text-slate-600">Caricamento risultati…</p> : places.length ? <><div className="border-t border-slate-100 p-4 sm:px-6"><label htmlFor="rs-local-filter" className="mb-2 block text-sm font-semibold text-slate-700">Cerca tra i locali trovati</label><input id="rs-local-filter" value={filter} onChange={e => setFilter(e.target.value)} placeholder="Nome, categoria o indirizzo" className="w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 outline-none focus:border-[#21b9b1] focus:ring-2 focus:ring-[#eaf9f6]" /><p className="mt-2 text-xs text-slate-500">Visualizzati {visiblePlaces.length} di {places.length} risultati</p></div>{visiblePlaces.length ? <ul className="divide-y divide-slate-100">{visiblePlaces.map(item => <li key={item.id} className="flex flex-wrap items-center justify-between gap-3 p-4 sm:px-6"><div><h3 className="font-semibold text-slate-900">{item.name}</h3><p className="mt-1 text-sm capitalize text-slate-600">{categoryLabel(item.category)}{item.address ? ' · ' + item.address : ''}</p></div><a className="text-sm font-semibold text-[#176b6b] underline" href={item.url} target="_blank" rel="noreferrer">Dettagli OSM ↗</a></li>)}</ul> : <p className="p-6 text-sm text-slate-600">Nessun locale corrisponde alla ricerca. Prova un altro nome o categoria.</p>}</> : <p className="p-6 text-sm text-slate-600">Nessun risultato disponibile per questa ricerca.</p>}
+              {!searched ? <p className="p-6 text-sm text-slate-600">Scegli una zona per vedere locali, negozi e servizi vicini.</p> : loading ? <p className="p-6 text-sm text-slate-600">Caricamento risultati…</p> : places.length ? <><div className="border-t border-slate-100 p-4 sm:px-6"><label htmlFor="rs-local-filter" className="mb-2 block text-sm font-semibold text-slate-700">Cerca tra i locali trovati</label><input id="rs-local-filter" value={filter} onChange={e => setFilter(e.target.value)} placeholder="Nome, categoria o indirizzo" className="w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 outline-none focus:border-[#168bd2] focus:ring-2 focus:ring-[#eaf6ff]" /><p className="mt-2 text-xs text-slate-500">Visualizzati {visiblePlaces.length} di {places.length} risultati</p></div>{visiblePlaces.length ? <ul className="divide-y divide-slate-100">{visiblePlaces.map(item => <li key={item.id} className="flex flex-wrap items-center justify-between gap-3 p-4 sm:px-6"><div><h3 className="font-semibold text-slate-900">{item.name}</h3><p className="mt-1 text-sm capitalize text-slate-600">{categoryLabel(item.category)}{item.address ? ' · ' + item.address : ''}</p></div><a className="text-sm font-semibold text-[#126a9c] underline" href={item.url} target="_blank" rel="noreferrer">Dettagli OSM ↗</a></li>)}</ul> : <p className="p-6 text-sm text-slate-600">Nessun locale corrisponde alla ricerca. Prova un altro nome o categoria.</p>}</> : <p className="p-6 text-sm text-slate-600">Nessun risultato disponibile per questa ricerca.</p>}
             </div>
           )}
         </section>
