@@ -80,9 +80,9 @@ export default function Servizio({ slug }) {
 
   if (!servizio) {
     return (
-      <main className="min-h-screen bg-slate-950 px-4 py-8 text-white">
+      <main className="min-h-screen bg-[#c9f1f3] px-4 py-8 text-[#173f4a]">
         <div className="mx-auto max-w-4xl">
-          <Link href="/" className="text-teal-300 underline">← Torna al RiverSpendShop</Link>
+          <Link href="/" className="text-[#087f9b] underline">← Torna al RiverSpendShop</Link>
           <h1 className="mt-8 text-3xl font-bold">Area non trovata</h1>
         </div>
       </main>
@@ -90,20 +90,20 @@ export default function Servizio({ slug }) {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-8 text-white">
+    <main className="min-h-screen bg-slate-950 px-4 py-8 text-[#173f4a]">
       <div className="mx-auto max-w-4xl">
         <Link href="/ecosistema" className="text-teal-300 underline">← Ecosistema RiverSpend</Link>
 
-        <section className="mt-6 rounded-3xl border border-teal-800 bg-gradient-to-br from-slate-900 to-sky-950 p-6 sm:p-10">
+        <section className="mt-6 rounded-3xl border border-[#a8dfe5] bg-gradient-to-br from-white to-[#e8fbfc] p-6 sm:p-10">
           <div className="text-5xl">{servizio.icona}</div>
           <p className="mt-5 text-sm font-semibold uppercase tracking-widest text-teal-300">RiverSpend</p>
           <h1 className="mt-2 text-4xl font-bold">{servizio.titolo}</h1>
-          <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-300">{servizio.descrizione}</p>
+          <p className="mt-5 max-w-2xl text-lg leading-8 text-[#496575]">{servizio.descrizione}</p>
 
           {slug === 'box' && (
             <div className="mt-8 grid gap-4">
-              <section className="rounded-2xl border border-teal-800/80 bg-slate-950/50 p-5">
-                <h2 className="text-xl font-bold text-teal-200">Spedisci tra privati, con RiverSpend</h2>
+              <section className="rounded-2xl border border-[#a8dfe5] bg-white/90 p-5">
+                <h2 className="text-xl font-bold text-[#087f9b]">Spedisci tra privati, con RiverSpend</h2>
                 <p className="mt-3 leading-7 text-slate-300">
                   RiverSpend Box è pensato per collegare chi vende su RiverSpendShop con chi acquista,
                   utilizzando operatori di spedizione e punti di ritiro già presenti sul territorio.
@@ -113,7 +113,7 @@ export default function Servizio({ slug }) {
               <section className="rounded-2xl border border-teal-800/80 bg-slate-950/50 p-5">
                 <h2 className="text-xl font-bold text-teal-200">Come sarà il percorso</h2>
                 <ol className="mt-3 grid gap-3 sm:grid-cols-2">
-                  <li className="rounded-xl bg-slate-900 p-4"><span className="text-2xl">🛍️</span><p className="mt-2 font-semibold text-white">1. Vendita conclusa</p><p className="mt-1 text-sm leading-6 text-slate-300">Il venditore prepara il pacco dopo l’ordine.</p></li>
+                  <li className="rounded-xl bg-white p-4"><span className="text-2xl">🛍️</span><p className="mt-2 font-semibold text-white">1. Vendita conclusa</p><p className="mt-1 text-sm leading-6 text-slate-300">Il venditore prepara il pacco dopo l’ordine.</p></li>
                   <li className="rounded-xl bg-slate-900 p-4"><span className="text-2xl">📲</span><p className="mt-2 font-semibold text-white">2. Etichetta o QR</p><p className="mt-1 text-sm leading-6 text-slate-300">Il corriere collegato fornisce l’etichetta o il codice QR valido per la spedizione.</p></li>
                   <li className="rounded-xl bg-slate-900 p-4"><span className="text-2xl">📮</span><p className="mt-2 font-semibold text-white">3. Consegna del pacco</p><p className="mt-1 text-sm leading-6 text-slate-300">Il venditore lo porta al punto previsto o usa il ritiro, se disponibile.</p></li>
                   <li className="rounded-xl bg-slate-900 p-4"><span className="text-2xl">📍</span><p className="mt-2 font-semibold text-white">4. Tracking e ricezione</p><p className="mt-1 text-sm leading-6 text-slate-300">L’acquirente segue la spedizione e, dove previsto, ritira presso un punto abilitato.</p></li>
@@ -128,7 +128,7 @@ export default function Servizio({ slug }) {
                   nazionale tra privati.
                 </p>
               </section>
-              <p className="text-sm leading-6 text-slate-400">Nota: RiverSpend Box è in progettazione. Al momento non genera etichette o QR di spedizione e non prenota ritiri: queste funzioni richiedono accordi e integrazioni con gli operatori.</p>
+              <p className="text-sm leading-6 text-[#607d88]">Nota: RiverSpend Box è in progettazione. Al momento non genera etichette o QR di spedizione e non prenota ritiri: queste funzioni richiedono accordi e integrazioni con gli operatori.</p>
             </div>
           )}
 
