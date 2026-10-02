@@ -179,7 +179,9 @@ export default function Servizio({ slug }) {
 
 export function getStaticPaths() {
   return {
-    paths: Object.keys(servizi).map((slug) => ({ params: { slug } })),
+    paths: Object.keys(servizi)
+      .filter((slug) => slug !== 'local')
+      .map((slug) => ({ params: { slug } })),
     fallback: false
   };
 }
