@@ -34,12 +34,12 @@ export default function RiverSpendPark() {
       <div className="mx-auto max-w-6xl">
         <Link href="/ecosistema" className="text-slate-600 underline">← Ecosistema RiverSpend</Link>
         <header className="mt-6 overflow-hidden rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-10">
-          <p className="text-sm font-bold uppercase tracking-[.2em] text-teal-300">RiverSpend • Il parco</p>
+          <p className="text-sm font-bold uppercase tracking-[.2em] text-slate-600">RiverSpend • Il parco</p>
           <h1 className="mt-3 text-4xl font-black sm:text-5xl">🎢 RiverSpend Park</h1>
           <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-600">Un mondo di acqua, avventura, velocità, fantasia e tecnologia. Questa è la raccolta iniziale delle attrazioni da sviluppare con schede, immagini, planimetria e requisiti tecnici.</p>
           <div className="mt-6 flex flex-wrap gap-3">
             <span className="rounded-full border border-slate-300 px-4 py-2 text-sm text-slate-700">25 attrazioni in catalogo</span>
-            <span className="rounded-full border border-teal-700 px-4 py-2 text-sm text-teal-100">Power Shield • sicurezza prioritaria</span>
+            <span className="rounded-full border border-slate-300 px-4 py-2 text-sm text-slate-700">Power Shield • sicurezza prioritaria</span>
           </div>
         </header>
 
@@ -60,7 +60,7 @@ export default function RiverSpendPark() {
                 <span className="text-xs text-slate-400">{tema}</span>
               </div>
               <h3 className="mt-4 text-xl font-bold">{nome}</h3>
-              <p className="mt-2 text-sm leading-6 text-slate-300">{descrizione}</p>
+              <p className="mt-2 text-sm leading-6 text-slate-600">{descrizione}</p>
               <p className="mt-4 border-t border-slate-200 pt-3 text-xs font-semibold text-slate-500">Scheda tecnica e immagini: da completare</p>
             </article>
           ))}
