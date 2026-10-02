@@ -132,7 +132,7 @@ export default function Home() {
   }, [prodotti, ricerca, categoriaAttiva]);
 
   return (
-    <main className="rs-site min-h-screen bg-slate-950 text-white">
+    <main className="rs-site min-h-screen">
       {showSplash && <SplashScreen onEnter={() => { try { sessionStorage.setItem('rs-opening-seen', '1'); } catch {} setShowSplash(false); }} />}
 
       <div className={`transition-opacity duration-700 ${showSplash ? 'opacity-0' : 'opacity-100'}`}>
