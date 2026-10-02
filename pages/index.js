@@ -59,6 +59,14 @@ export default function Home() {
     return () => window.removeEventListener('riverspend:language-change', sync);
   }, []);
   const [showSplash, setShowSplash] = useState(false);
+
+  useEffect(() => {
+    try {
+      setShowSplash(sessionStorage.getItem('rs-opening-seen') !== '1');
+    } catch {
+      setShowSplash(true);
+    }
+  }, []);
   const [prodotti, setProdotti] = useState([]);
   const [errore, setErrore] = useState('');
   const [menuCategorie, setMenuCategorie] = useState(false);
