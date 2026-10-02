@@ -253,3 +253,37 @@ body { background: #f5fcfb; color: #17343a; }
   .rs-hero { padding-bottom: 2.5rem; }
 }
 
+
+
+/* RiverSpend — palette unificata AZZURRO CIELO (no verde acqua/turchese) */
+:root {
+  color-scheme: light;
+  --river-ink: #f2f8ff;
+  --river-deep: #dceeff;
+  --river-aqua: #168bd2;
+  --river-gold: #c99735;
+}
+body { background: #f2f8ff !important; color: #18364b !important; }
+::selection { background: rgba(22,139,210,.22); color: #102b40; }
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline-color: #168bd2; }
+.rs-glass { border-color: #c8e2f5 !important; background: rgba(255,255,255,.94) !important; box-shadow: 0 14px 38px rgba(35,105,155,.09) !important; }
+.rs-glow { box-shadow: 0 0 0 1px rgba(22,139,210,.16), 0 12px 38px rgba(22,139,210,.10) !important; }
+.rs-site { color:#18364b !important; background:linear-gradient(180deg,#ffffff 0%,#f2f8ff 58%,#eaf5ff 100%) !important; }
+.rs-header { border-color:#c7e3f5 !important; background:rgba(255,255,255,.96) !important; }
+.rs-header .rs-brand, .rs-site footer strong { color:#087fbd !important; }
+.rs-header a, .rs-header button { color:#155b86 !important; }
+.rs-hero { border-color:#b9daf2 !important; background:linear-gradient(125deg,#ffffff 0%,#eaf5ff 58%,#dceeff 100%) !important; color:#18364b !important; }
+.rs-hero h2 { color:#18364b !important; }
+.rs-hero p { color:#526f84 !important; }
+.rs-button-primary { background:linear-gradient(135deg,#35a9e8,#168bd2) !important; color:#ffffff !important; }
+.rs-button-primary:hover { background:linear-gradient(135deg,#168bd2,#0877b5) !important; }
+.rs-product-card { border-color:#d2e6f5 !important; color:#24465d !important; }
+.rs-product-card:hover { border-color:#77bce8 !important; }
+.rs-site footer { background:#eaf5ff !important; border-color:#d2e6f5 !important; }
+input,select,textarea { background:#fff !important; border-color:#c7ddec !important; color:#18364b !important; }
+input::placeholder,textarea::placeholder { color:#71899a !important; }
+/* Uniforma anche le utility Tailwind usate nelle singole pagine */
+[class*="text-teal-"],[class*="text-cyan-"],[class*="text-emerald-"] { color:#087fbd !important; }
+[class*="bg-teal-"],[class*="bg-cyan-"],[class*="bg-emerald-"] { background-color:#168bd2 !important; }
+[class*="border-teal-"],[class*="border-cyan-"],[class*="border-emerald-"] { border-color:#c7e3f5 !important; }
+[class*="hover\\:bg-teal-"]:hover,[class*="hover\\:bg-cyan-"]:hover { background-color:#0877b5 !important; }
