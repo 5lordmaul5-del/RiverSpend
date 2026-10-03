@@ -12,27 +12,27 @@ export default function Desideri() {
     localStorage.setItem('riverspend-wishlist', JSON.stringify(next));
   }
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-8 text-white">
+    <main className="min-h-screen bg-[#c9f2f2] px-4 py-8 text-[#123f49]">
       <div className="mx-auto max-w-5xl">
-        <Link href="/" className="text-teal-300 underline">← RiverSpendShop</Link>
+        <Link href="/" className="text-[#176777] underline">← RiverSpendShop</Link>
         <h1 className="mt-6 text-4xl font-bold">♡ Lista dei desideri</h1>
-        <p className="mt-2 text-slate-400">{items.length} articol{items.length === 1 ? 'o' : 'i'}</p>
+        <p className="mt-2 text-slate-600">{items.length} articol{items.length === 1 ? 'o' : 'i'}</p>
         {!items.length ? (
-          <section className="mt-8 rounded-2xl border border-dashed border-slate-700 p-10 text-center">
+          <section className="mt-8 rounded-2xl border border-dashed border-[#a9dfe2] bg-[#f4feff] p-10 text-center">
             <p className="font-semibold">Nessun desiderio salvato</p>
-            <Link href="/" className="mt-5 inline-block rounded-xl bg-teal-500 px-5 py-3 font-bold text-slate-950">Esplora prodotti</Link>
+            <Link href="/" className="mt-5 inline-block rounded-xl bg-[#079eae] px-5 py-3 font-bold text-white">Esplora prodotti</Link>
           </section>
         ) : (
           <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {items.map((item) => (
-              <article key={item.id} className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900">
+              <article key={item.id} className="overflow-hidden rounded-2xl border border-[#c1e5e7] bg-[#f4feff]">
                 {item.image ? <img src={item.image} alt={item.title || 'Prodotto'} className="h-48 w-full object-cover" /> : null}
                 <div className="p-4">
                   <h2 className="font-bold">{item.title}</h2>
-                  <p className="mt-2 text-xl font-bold text-teal-300">€ {Number(item.price || 0).toFixed(2)}</p>
+                  <p className="mt-2 text-xl font-bold text-[#087f91]">€ {Number(item.price || 0).toFixed(2)}</p>
                   <div className="mt-4 flex gap-2">
-                    <Link href={'/prodotto/' + encodeURIComponent(item.id)} className="rounded-lg bg-teal-500 px-3 py-2 text-sm font-bold text-slate-950">Apri</Link>
-                    <button onClick={() => remove(item.id)} className="rounded-lg border border-slate-700 px-3 py-2 text-sm">Rimuovi</button>
+                    <Link href={'/prodotto/' + encodeURIComponent(item.id)} className="rounded-lg bg-[#079eae] px-3 py-2 text-sm font-bold text-white">Apri</Link>
+                    <button onClick={() => remove(item.id)} className="rounded-lg border border-[#9fcdd1] px-3 py-2 text-sm text-[#174b55]">Rimuovi</button>
                   </div>
                 </div>
               </article>

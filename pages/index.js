@@ -59,6 +59,14 @@ export default function Home() {
     return () => window.removeEventListener('riverspend:language-change', sync);
   }, []);
   const [showSplash, setShowSplash] = useState(false);
+
+  useEffect(() => {
+    try {
+      setShowSplash(sessionStorage.getItem('rs-opening-seen') !== '1');
+    } catch {
+      setShowSplash(true);
+    }
+  }, []);
   const [prodotti, setProdotti] = useState([]);
   const [errore, setErrore] = useState('');
   const [menuCategorie, setMenuCategorie] = useState(false);
@@ -82,7 +90,6 @@ export default function Home() {
   const areeRiverSpend = [
     ['Profilo','/profilo'],
     ['RiverSpendShop','/'],
-    ['RS Shield','/nova-shield'],
     ['RS Fidelity','/servizi/fidelity'],
     ['RS Nova Shield','/nova-shield'],
     ['RS Local','/servizi/local'],
@@ -96,7 +103,6 @@ export default function Home() {
     ['RiverSpend Oracle','/servizi/oracle'],
     ['RiverSpend Recovery','/servizi/recovery'],
     ['RiverSpend Fortress','/servizi/fortress'],
-    ['RiverSpend SurroundSpaceAroundExperience','/servizi/experience']
   ];
 
   useEffect(() => {
@@ -132,24 +138,26 @@ export default function Home() {
   }, [prodotti, ricerca, categoriaAttiva]);
 
   return (
-    <main className="rs-site min-h-screen bg-slate-950 text-white">
+    <main className="rs-site min-h-screen">
       {showSplash && <SplashScreen onEnter={() => { try { sessionStorage.setItem('rs-opening-seen', '1'); } catch {} setShowSplash(false); }} />}
 
       <div className={`transition-opacity duration-700 ${showSplash ? 'opacity-0' : 'opacity-100'}`}>
         <header className="rs-header sm:sticky sm:top-0 z-30 border-b border-slate-800 bg-slate-950/95 px-3 py-3">
           <div className="mx-auto max-w-6xl">
-            <div className="flex justify-center">
-              <a href="/" aria-label="RiverSpendShop, pagina iniziale" className="inline-flex flex-col items-center rounded-2xl border border-teal-800/80 bg-slate-900/70 px-6 py-2 shadow-lg shadow-teal-950/30">
-                <h1 className="rs-brand text-2xl font-extrabold leading-tight text-teal-400">RiverSpend</h1>
-                <span className="text-sm font-semibold italic text-amber-300">Shop</span>
-                <p className="mt-1 text-[9px] tracking-wide text-slate-400">YOUR SHOP • YOUR FLOW</p>
+            <div className="flex flex-col items-stretch gap-2">
+              <a href="/" aria-label="RiverSpendShop, pagina iniziale" className="mx-auto flex w-full max-w-none flex-col items-center justify-center rounded-2xl border border-slate-200 bg-white px-2 py-5 shadow-sm sm:py-6">
+                <h1 className="w-full max-w-full whitespace-nowrap text-center text-[clamp(2.8rem,13vw,6.2rem)] font-extrabold leading-[0.98] tracking-[-0.06em] text-slate-800">RiverSpend</h1>
+                <span className="mt-1 translate-x-8 -rotate-6 text-[clamp(2rem,8.5vw,3.8rem)] font-extrabold italic leading-none text-[#C99718] drop-shadow-[0_1px_0_#F5D76E]">Shop</span>
+                <p className="mt-4 text-[clamp(0.9rem,3.7vw,1.15rem)] font-bold tracking-[0.16em] text-slate-700">YOUR SHOP • YOUR FLOW</p>
               </a>
+              <div className="grid grid-cols-2 gap-2">
+                <button type="button" onClick={() => { setMenuCategorie(!menuCategorie); setMenuRiverSpend(false); }} aria-label={t('categories')} aria-expanded={menuCategorie} className="flex h-12 items-center justify-center rounded-xl border border-slate-200 bg-white text-2xl font-semibold text-slate-700 shadow-sm hover:bg-slate-50">☰</button>
+                <button type="button" onClick={() => { setMenuRiverSpend(!menuRiverSpend); setMenuCategorie(false); }} aria-label={t('world')} aria-expanded={menuRiverSpend} className="h-12 rounded-xl border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 sm:text-base">RiverSpend ▾</button>
+              </div>
             </div>
-            <div className="mt-3 grid grid-cols-2 gap-2 sm:flex sm:items-center sm:justify-between">
-              <button type="button" onClick={() => { setMenuCategorie(!menuCategorie); setMenuRiverSpend(false); }} aria-label={t('categories')} aria-expanded={menuCategorie} className="col-span-1 rounded-xl border border-teal-800 px-3 py-3 text-xl text-teal-200 sm:order-1 sm:py-2">☰</button>
-              <button type="button" onClick={() => { setMenuRiverSpend(!menuRiverSpend); setMenuCategorie(false); }} aria-expanded={menuRiverSpend} className="col-span-1 min-w-0 rounded-xl border border-teal-800 px-2 py-3 text-sm font-bold text-teal-200 sm:order-3 sm:px-3 sm:py-2">RiverSpend ▾</button>
-              <a href="/rete" className="col-span-1 flex min-w-0 items-center justify-center rounded-xl border border-teal-800 px-2 py-3 text-center text-sm font-bold leading-tight text-teal-200 sm:order-2 sm:flex-1 sm:py-2">🕸️ {t('myNet')}</a>
-              <a href="/vendi" className="rs-button rs-button-primary col-span-1 flex min-w-0 items-center justify-center rounded-full bg-teal-500 px-2 py-3 text-center text-sm font-bold leading-tight text-slate-950 hover:bg-teal-400 sm:order-4 sm:px-4">+ {t('sell')}</a>
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              <a href="/rete" className="flex min-w-0 items-center justify-center rounded-xl border border-sky-300 bg-sky-50 px-2 py-3 text-center text-sm font-bold leading-tight text-sky-800 hover:bg-sky-100">🕸️ {t('myNet')}</a>
+              <a href="/vendi" className="rs-button rs-button-primary flex min-w-0 items-center justify-center rounded-full bg-sky-500 px-2 py-3 text-center text-sm font-bold leading-tight text-white hover:bg-sky-600">+ {t('sell')}</a>
             </div>
             <div className="mt-2 flex items-center justify-end gap-3 text-xs">
               <a href="/profilo" className="text-teal-200">👤 {t('profile')}</a>

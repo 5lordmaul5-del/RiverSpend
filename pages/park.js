@@ -30,45 +30,45 @@ const attrazioni = [
 
 export default function RiverSpendPark() {
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-8 text-white">
+    <main className="min-h-screen bg-white px-4 py-8 text-slate-800">
       <div className="mx-auto max-w-6xl">
-        <Link href="/ecosistema" className="text-teal-300 underline">← Ecosistema RiverSpend</Link>
-        <header className="mt-6 overflow-hidden rounded-3xl border border-teal-800 bg-gradient-to-br from-slate-900 via-sky-950 to-slate-950 p-6 sm:p-10">
-          <p className="text-sm font-bold uppercase tracking-[.2em] text-teal-300">RiverSpend • Il parco</p>
+        <Link href="/ecosistema" className="text-slate-600 underline">← Ecosistema RiverSpend</Link>
+        <header className="mt-6 overflow-hidden rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-10">
+          <p className="text-sm font-bold uppercase tracking-[.2em] text-slate-600">RiverSpend • Il parco</p>
           <h1 className="mt-3 text-4xl font-black sm:text-5xl">🎢 RiverSpend Park</h1>
-          <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-300">Un mondo di acqua, avventura, velocità, fantasia e tecnologia. Questa è la raccolta iniziale delle attrazioni da sviluppare con schede, immagini, planimetria e requisiti tecnici.</p>
+          <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-600">Un mondo di acqua, avventura, velocità, fantasia e tecnologia. Questa è la raccolta iniziale delle attrazioni da sviluppare con schede, immagini, planimetria e requisiti tecnici.</p>
           <div className="mt-6 flex flex-wrap gap-3">
-            <span className="rounded-full border border-teal-700 px-4 py-2 text-sm text-teal-100">25 attrazioni in catalogo</span>
-            <span className="rounded-full border border-teal-700 px-4 py-2 text-sm text-teal-100">Power Shield • sicurezza prioritaria</span>
+            <span className="rounded-full border border-slate-300 px-4 py-2 text-sm text-slate-700">25 attrazioni in catalogo</span>
+            <span className="rounded-full border border-slate-300 px-4 py-2 text-sm text-slate-700">Power Shield • sicurezza prioritaria</span>
           </div>
         </header>
 
-        <section className="my-8 rounded-2xl border border-amber-800 bg-amber-950/40 p-5">
-          <h2 className="text-xl font-bold text-amber-100">🛡️ Power Shield — principio di progettazione</h2>
-          <p className="mt-2 leading-7 text-amber-50/90">Ogni attrazione dovrà avere valutazione dei rischi, progettazione e collaudo da professionisti abilitati, procedure operative, manutenzione documentata, vie di esodo, accessibilità, gestione meteo e piano di emergenza. Questa pagina è un catalogo concettuale: non costituisce certificazione né autorizzazione all’esercizio.</p>
+        <section className="my-8 rounded-2xl border border-slate-200 bg-slate-50 p-5">
+          <h2 className="text-xl font-bold text-slate-800">🛡️ Power Shield — principio di progettazione</h2>
+          <p className="mt-2 leading-7 text-slate-600">Ogni attrazione dovrà avere valutazione dei rischi, progettazione e collaudo da professionisti abilitati, procedure operative, manutenzione documentata, vie di esodo, accessibilità, gestione meteo e piano di emergenza. Questa pagina è un catalogo concettuale: non costituisce certificazione né autorizzazione all’esercizio.</p>
         </section>
 
         <div className="mb-4 flex items-end justify-between gap-3">
           <h2 className="text-2xl font-bold">Le attrazioni</h2>
-          <span className="text-sm text-slate-400">{attrazioni.length} schede</span>
+          <span className="text-sm text-slate-500">{attrazioni.length} schede</span>
         </div>
         <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {attrazioni.map(([nome,tema,descrizione],i) => (
-            <article key={nome} className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
+            <article key={nome} className="rounded-2xl border border-slate-200 bg-white p-5">
               <div className="flex items-center justify-between gap-3">
-                <span className="rounded-full bg-teal-950 px-3 py-1 text-xs font-bold text-teal-200">#{String(i+1).padStart(2,'0')}</span>
+                <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-700">#{String(i+1).padStart(2,'0')}</span>
                 <span className="text-xs text-slate-400">{tema}</span>
               </div>
               <h3 className="mt-4 text-xl font-bold">{nome}</h3>
-              <p className="mt-2 text-sm leading-6 text-slate-300">{descrizione}</p>
-              <p className="mt-4 border-t border-slate-800 pt-3 text-xs font-semibold text-amber-200">Scheda tecnica e immagini: da completare</p>
+              <p className="mt-2 text-sm leading-6 text-slate-600">{descrizione}</p>
+              <p className="mt-4 border-t border-slate-200 pt-3 text-xs font-semibold text-slate-500">Scheda tecnica e immagini: da completare</p>
             </article>
           ))}
         </section>
 
         <footer className="mt-8 flex flex-wrap gap-3">
-          <Link href="/" className="rounded-xl bg-teal-500 px-5 py-3 font-bold text-slate-950">RiverSpendShop</Link>
-          <Link href="/ecosistema" className="rounded-xl border border-teal-800 px-5 py-3 font-semibold text-teal-100">Tutto l’ecosistema</Link>
+          <Link href="/" className="rounded-xl border border-slate-300 bg-white px-5 py-3 font-bold text-slate-800">RiverSpendShop</Link>
+          <Link href="/ecosistema" className="rounded-xl border border-slate-300 px-5 py-3 font-semibold text-slate-700">Tutto l’ecosistema</Link>
         </footer>
       </div>
     </main>

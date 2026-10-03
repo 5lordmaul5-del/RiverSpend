@@ -1,0 +1,59 @@
+/* RiverSpend — modalità neutra: superfici bianche mentre si sistemano le funzioni. */
+:root { color-scheme: light; }
+html, body, #__next { background: #ffffff !important; }
+body { color: #243746 !important; }
+.rs-site {
+  background: #ffffff !important;
+  background-image: none !important;
+  color: #243746 !important;
+}
+.rs-site .rs-header,
+.rs-site .rs-glass,
+.rs-site .rs-hero,
+.rs-site .rs-honor-panel,
+.rs-site .rs-product-card,
+.rs-site footer,
+.rs-site .rs-header [class*="max-h-"] {
+  background: #ffffff !important;
+  background-image: none !important;
+  border-color: #e2e8ee !important;
+  color: #243746 !important;
+  box-shadow: none !important;
+}
+.rs-site .rs-header > div { background: transparent !important; }
+.rs-site .rs-hero h2,
+.rs-site .rs-product-card h2,
+.rs-site .rs-product-card h3 { color: #243746 !important; }
+.rs-site .rs-hero p,
+.rs-site .rs-product-card p { color: #647786 !important; }
+.rs-site [class*="bg-teal-"],
+.rs-site [class*="bg-cyan-"],
+.rs-site [class*="bg-emerald-"],
+.rs-site [class*="bg-blue-"],
+.rs-site [class*="bg-sky-"],
+.rs-site [class*="bg-indigo-"] {
+  background: #ffffff !important;
+  color: #243746 !important;
+  border-color: #e2e8ee !important;
+}
+.rs-site .rs-button-primary,
+.rs-site a.bg-teal-500,
+.rs-site button.bg-teal-500 {
+  background: #ffffff !important;
+  color: #243746 !important;
+  border: 1px solid #d5dee6 !important;
+}
+.rs-site [class*="text-teal-"],
+.rs-site [class*="text-cyan-"],
+.rs-site [class*="text-emerald-"],
+.rs-site [class*="text-blue-"],
+.rs-site [class*="text-sky-"],
+.rs-site [class*="text-indigo-"] { color: #31566f !important; }
+.rs-site input,
+.rs-site select,
+.rs-site textarea {
+  background: #ffffff !important;
+  color: #243746 !important;
+  border-color: #d5dee6 !important;
+}
+.rs-site footer { border-color: #e2e8ee !important; }
