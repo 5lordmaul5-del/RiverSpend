@@ -236,7 +236,7 @@ export default function Home() {
           ) : (
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
               {prodottiVisibili.map((p) => (
-                <a href={`/prodotto/${encodeURIComponent(p.id)}`} key={p.id} className="rs-product-card block overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 transition hover:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-400">
+                <a href={`/prodotto/${encodeURIComponent(p.id)}`} key={p.id} className="rs-product-card group block overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 transition hover:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-400">
                   {p.immagini?.[0] ? <div className="rs-product-media flex h-52 w-full items-center justify-center overflow-hidden bg-gradient-to-br from-cyan-50 via-sky-50 to-teal-100 p-1 sm:h-60 sm:p-2"><img src={p.immagini[0]} alt={p.titolo || 'Prodotto'} className="h-full w-full scale-110 object-contain transition-transform duration-300 group-hover:scale-[1.16]" /></div> : <div className="flex h-52 items-center justify-center bg-gradient-to-br from-cyan-50 to-teal-100 text-sm text-slate-500 sm:h-60">Foto non disponibile</div>}
                   <div className="p-3">
                     <h3 className="line-clamp-2 font-semibold">{p.titolo}</h3>
