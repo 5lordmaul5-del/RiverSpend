@@ -1,90 +1,67 @@
 import Link from 'next/link';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
-const tracks = [
-  'Traccia 01 · Singolo di apertura',
-  'Traccia 02 · Secondo brano',
-  'Traccia 03 · Terzo brano',
-  'Traccia 04 · Quarto brano',
-  'Traccia 05 · Quinto brano',
-  'Traccia 06 · Sesto brano',
-  'Traccia 07 · Settimo brano',
-  'Traccia 08 · Ottavo brano',
-  'Traccia 09 · Nono brano',
-  'Traccia 10 · Decimo brano',
-  'Traccia 11 · Undicesimo brano',
-  'Traccia 12 · Dodicesimo brano'
-];
+const commission = 0.10;
 
 export default function BroadcastMusic() {
-  const [prices, setPrices] = useState({});
-  const [notice, setNotice] = useState('');
+  const [kind, setKind] = useState('audio');
+  const [price, setPrice] = useState(1);
+  const [fileName, setFileName] = useState('');
+  const [rights, setRights] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const net = useMemo(() => (price * (1 - commission)).toFixed(2).replace('.', ','), [price]);
+  const fileAccept = kind === 'audio' ? 'audio/*' : 'video/*';
 
-  function choosePrice(index, price) {
-    setPrices((current) => ({ ...current, [index]: price }));
-    setNotice('Prezzo demo aggiornato. Le vendite saranno attivate con i pagamenti.');
+  function handleSubmit(event) {
+    event.preventDefault();
+    setSubmitted(true);
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-8 text-white">
+    <main className="min-h-screen bg-[#071a25] px-4 py-6 text-white sm:py-10">
       <div className="mx-auto max-w-5xl">
-        <Link href="/servizi/broadcast" className="text-teal-300 underline">← RiverSpend BroadCast</Link>
-        <section className="mt-6 overflow-hidden rounded-3xl border border-teal-800 bg-gradient-to-br from-slate-900 via-slate-950 to-sky-950 p-6 sm:p-10">
-          <div className="text-5xl">🎵</div>
-          <p className="mt-5 text-sm font-semibold uppercase tracking-widest text-teal-300">RiverSpend BroadCast · Audio & Video</p>
-          <h1 className="mt-2 text-4xl font-bold sm:text-5xl">BroadCast Music</h1>
-          <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-300">
-            Uno spazio per band e artisti: presenta i tuoi brani, fai ascoltare un’anteprima con la firma audio RiverSpend e vendi download musicali e album.
-          </p>
-          <div className="mt-7 grid gap-4 sm:grid-cols-3">
-            <div className="rounded-2xl border border-teal-800 bg-slate-950/60 p-4"><p className="text-sm text-slate-400">Ascolto anteprima</p><p className="mt-1 text-2xl font-bold text-teal-200">0,10 €</p><p className="mt-1 text-sm text-slate-400">per singolo brano</p></div>
-            <div className="rounded-2xl border border-teal-800 bg-slate-950/60 p-4"><p className="text-sm text-slate-400">Prezzo download</p><p className="mt-1 text-2xl font-bold text-teal-200">1 / 2 / 5 €</p><p className="mt-1 text-sm text-slate-400">scelto dall’artista</p></div>
-            <div className="rounded-2xl border border-teal-800 bg-slate-950/60 p-4"><p className="text-sm text-slate-400">Commissione RiverSpend</p><p className="mt-1 text-2xl font-bold text-teal-200">10%</p><p className="mt-1 text-sm text-slate-400">sulle vendite, secondo condizioni</p></div>
-          </div>
+        <Link href="/servizi/broadcast" className="text-[#67e4d0] underline">← RiverSpend BroadCast TV · Audio · Video</Link>
+        <header className="mt-5 border-b border-[#1d5960] pb-6">
+          <p className="text-sm font-semibold uppercase tracking-[.18em] text-[#67e4d0]">RiverSpend BroadCast</p>
+          <h1 className="mt-2 text-3xl font-bold sm:text-5xl">Pubblica e guadagna con i tuoi contenuti</h1>
+          <p className="mt-4 max-w-3xl text-base leading-7 text-slate-300">Carica un brano, un video o un film. Dichiara i diritti, scegli il prezzo per ogni download e consulta la quota prevista dopo la commissione RiverSpend.</p>
+        </header>
+        <section className="mt-6 grid gap-3 sm:grid-cols-3">
+          <div className="border-l-4 border-[#67e4d0] bg-[#0c2a36] p-4"><p className="text-sm text-slate-300">Commissione RiverSpend</p><p className="mt-1 text-2xl font-bold">10%</p><p className="text-xs text-slate-400">sul prezzo di vendita</p></div>
+          <div className="border-l-4 border-[#67e4d0] bg-[#0c2a36] p-4"><p className="text-sm text-slate-300">Prezzo per download</p><p className="mt-1 text-2xl font-bold">1 € o 2 €</p><p className="text-xs text-slate-400">scelto dal titolare</p></div>
+          <div className="border-l-4 border-[#67e4d0] bg-[#0c2a36] p-4"><p className="text-sm text-slate-300">Quota prevista al titolare</p><p className="mt-1 text-2xl font-bold">0,90 € / 1,80 €</p><p className="text-xs text-slate-400">prima di eventuali costi e imposte</p></div>
         </section>
-
-        <section className="mt-6 rounded-3xl border border-slate-800 bg-slate-900/70 p-6">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div><p className="text-sm font-semibold uppercase tracking-wider text-teal-300">Area artista</p><h2 className="mt-1 text-2xl font-bold">Pubblica la tua musica</h2></div>
-            <span className="rounded-full border border-amber-700/70 bg-amber-950/40 px-3 py-1 text-xs font-semibold text-amber-200">Anteprima interfaccia</span>
-          </div>
-          <p className="mt-3 leading-7 text-slate-300">L’artista potrà caricare copertina, informazioni, singoli, album e videoclip, dopo la verifica dei diritti sui contenuti.</p>
-          <div className="mt-5 grid gap-3 sm:grid-cols-2">
-            <label className="text-sm text-slate-300">Nome artista o band<input className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white" placeholder="Es. Nome artista" /></label>
-            <label className="text-sm text-slate-300">Titolo album<input className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white" placeholder="Es. Il mio album" /></label>
-          </div>
-          <div className="mt-5 rounded-2xl border border-dashed border-teal-800 bg-slate-950/60 p-5">
-            <p className="font-semibold text-teal-200">＋ Aggiungi copertina, brani e video</p>
-            <p className="mt-1 text-sm text-slate-400">Caricamento e archiviazione saranno collegati nella fase tecnica successiva.</p>
-          </div>
-        </section>
-
-        <section className="mt-6 rounded-3xl border border-slate-800 bg-slate-900/70 p-6">
-          <p className="text-sm font-semibold uppercase tracking-wider text-teal-300">Esempio album · 12 brani</p>
-          <h2 className="mt-1 text-2xl font-bold">Ascolta l’anteprima, poi scegli</h2>
-          <p className="mt-3 leading-7 text-slate-300">Ogni anteprima costa 0,10 €. Durante l’anteprima è prevista la firma vocale “RiverSpend BroadCast Music” ogni 10 secondi. Il file acquistato sarà il brano originale, senza la firma dell’anteprima.</p>
-          <div className="mt-5 divide-y divide-slate-800">
-            {tracks.map((track, index) => (
-              <div key={track} className="flex flex-wrap items-center justify-between gap-3 py-4">
-                <div><p className="font-semibold">{track}</p><p className="mt-1 text-xs text-slate-400">Anteprima: 0,10 € · Download a pagamento</p></div>
-                <div className="flex flex-wrap items-center gap-2">
-                  {[1, 2, 5].map((price) => (
-                    <button key={price} type="button" onClick={() => choosePrice(index, price)} className={`rounded-lg border px-3 py-2 text-sm font-semibold ${prices[index] === price ? 'border-teal-300 bg-teal-900 text-teal-100' : 'border-slate-700 bg-slate-950 text-slate-300'}`}>{price} €</button>
-                  ))}
-                  <span className="min-w-24 text-right text-xs text-slate-400">{prices[index] ? `Prezzo: ${prices[index]} €` : 'Scegli prezzo'}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-          {notice && <p role="status" className="mt-4 rounded-xl bg-teal-950/60 p-3 text-sm text-teal-200">{notice}</p>}
-        </section>
-
-        <section className="mt-6 grid gap-4 sm:grid-cols-2">
-          <div className="rounded-2xl border border-teal-800 bg-slate-900 p-5"><h2 className="text-xl font-bold text-teal-200">Per chi ascolta</h2><p className="mt-2 leading-7 text-slate-300">Paga 0,10 € per ogni anteprima. Se il brano ti piace, acquistalo e scarica la versione originale. Sarà possibile acquistare anche l’intero album.</p></div>
-          <div className="rounded-2xl border border-teal-800 bg-slate-900 p-5"><h2 className="text-xl font-bold text-teal-200">Per l’artista</h2><p className="mt-2 leading-7 text-slate-300">Sceglie i prezzi e consulta ascolti, vendite, commissione RiverSpend del 10% e quota maturata. Potrà inoltre acquistare visibilità sponsorizzata, segnalata come tale.</p></div>
-        </section>
-        <p className="mt-6 text-sm leading-6 text-slate-500">Questa è la schermata iniziale inserita nel progetto. Pagamenti, upload protetto, streaming, download, rendicontazione e classifica sponsorizzata richiedono ancora integrazioni reali. Nessun pagamento viene effettuato da questa anteprima.</p>
-        <div className="mt-7"><Link href="/servizi/broadcast" className="rounded-xl border border-teal-700 px-5 py-3 font-semibold text-teal-200">← Torna a BroadCast</Link></div>
+        <form onSubmit={handleSubmit} className="mt-7 space-y-6">
+          <section className="border border-[#24606a] bg-[#0a2430] p-5 sm:p-7">
+            <p className="text-sm font-semibold uppercase tracking-wider text-[#67e4d0]">01 · Tipo di contenuto</p><h2 className="mt-1 text-2xl font-bold">Che cosa vuoi pubblicare?</h2>
+            <div className="mt-4 grid gap-3 sm:grid-cols-3">
+              {[{id:'audio',title:'Brano / Album',detail:'Singolo o più tracce'},{id:'video',title:'Video',detail:'Videoclip o contenuto video'},{id:'film',title:'Film',detail:'Cortometraggio o lungometraggio'}].map(item => <button key={item.id} type="button" onClick={() => {setKind(item.id);setFileName('');setSubmitted(false);}} className={`border p-4 text-left ${kind===item.id?'border-[#67e4d0] bg-[#12404a]':'border-[#28505a] bg-[#071a25]'}`}><span className="block font-bold">{item.title}</span><span className="mt-1 block text-sm text-slate-400">{item.detail}</span></button>)}
+            </div>
+          </section>
+          <section className="border border-[#24606a] bg-[#0a2430] p-5 sm:p-7">
+            <p className="text-sm font-semibold uppercase tracking-wider text-[#67e4d0]">02 · Caricamento</p><h2 className="mt-1 text-2xl font-bold">Inserisci il tuo contenuto</h2>
+            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+              <label className="block text-sm text-slate-300">Nome artista / autore / casa di produzione<input required className="mt-2 w-full border border-[#28505a] bg-[#071a25] px-4 py-3 text-white" placeholder="Nome o ragione sociale" /></label>
+              <label className="block text-sm text-slate-300">Titolo dell'opera<input required className="mt-2 w-full border border-[#28505a] bg-[#071a25] px-4 py-3 text-white" placeholder={kind==='audio'?'Titolo del brano o album':kind==='video'?'Titolo del video':'Titolo del film'} /></label>
+            </div>
+            <label className="mt-5 block border border-dashed border-[#67e4d0] bg-[#071a25] p-5"><span className="block font-semibold text-[#8bf0df]">＋ Seleziona {kind==='audio'?'file audio':'file video'}</span><span className="mt-1 block text-sm text-slate-400">{kind==='audio'?'Seleziona il file del brano.':'Seleziona il file video del contenuto.'}</span><input required type="file" accept={fileAccept} onChange={e=>{const f=e.target.files&&e.target.files[0];setFileName(f?f.name:'');setSubmitted(false);}} className="mt-4 block w-full text-sm text-slate-300 file:mr-4 file:border-0 file:bg-[#67e4d0] file:px-4 file:py-2 file:font-semibold file:text-[#071a25]" />{fileName&&<span className="mt-3 block break-all text-sm text-[#8bf0df]">File selezionato: {fileName}</span>}</label>
+            <p className="mt-3 text-xs leading-5 text-slate-400">La selezione del file è già visibile nell’interfaccia; trasferimento sicuro e archiviazione online devono ancora essere collegati.</p>
+          </section>
+          <section className="border border-[#24606a] bg-[#0a2430] p-5 sm:p-7">
+            <p className="text-sm font-semibold uppercase tracking-wider text-[#67e4d0]">03 · Diritti d'autore e verifica</p><h2 className="mt-1 text-2xl font-bold">Dichiara i tuoi diritti</h2>
+            <p className="mt-3 leading-7 text-slate-300">Prima della pubblicazione, RiverSpend dovrà verificare la titolarità o l’autorizzazione alla distribuzione. La dichiarazione non sostituisce il controllo documentale.</p>
+            <label className="mt-4 flex items-start gap-3 border border-[#28505a] bg-[#071a25] p-4 text-sm leading-6"><input required type="checkbox" checked={rights} onChange={e=>{setRights(e.target.checked);setSubmitted(false);}} className="mt-1 h-5 w-5 accent-teal-300" /><span>Dichiaro di essere titolare dei diritti necessari oppure di avere le autorizzazioni valide per caricare, distribuire e vendere quest'opera, inclusi musica, immagini, interpreti e materiali di terzi eventualmente presenti.</span></label>
+            <div className="mt-4 border-l-4 border-amber-400 bg-[#302a1a] p-4 text-sm leading-6 text-amber-100"><strong>Stato previsto: da verificare.</strong> Il contenuto resta non pubblicato finché il controllo dei diritti non viene completato. Controllo automatico e revisione documentale devono ancora essere integrati.</div>
+          </section>
+          <section className="border border-[#24606a] bg-[#0a2430] p-5 sm:p-7">
+            <p className="text-sm font-semibold uppercase tracking-wider text-[#67e4d0]">04 · Prezzo e guadagno</p><h2 className="mt-1 text-2xl font-bold">Scegli il prezzo per ogni download</h2><p className="mt-2 text-sm text-slate-300">RiverSpend trattiene il 10%; la quota mostrata è quella prevista per te al netto della commissione.</p>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">{[1,2].map(value=><button type="button" key={value} onClick={()=>{setPrice(value);setSubmitted(false);}} className={`border p-4 text-left ${price===value?'border-[#67e4d0] bg-[#12404a]':'border-[#28505a] bg-[#071a25]'}`}><span className="block text-xl font-bold">{value} € per download</span><span className="mt-1 block text-sm text-slate-300">A te: {(value*.9).toFixed(2).replace('.',',')} € · RiverSpend: {(value*.1).toFixed(2).replace('.',',')} €</span></button>)}</div>
+            <div className="mt-4 bg-[#071a25] p-4"><p className="text-sm text-slate-400">Riepilogo per ogni download</p><p className="mt-1 text-2xl font-bold text-[#8bf0df]">A te spettano {net} €</p><p className="text-sm text-slate-400">Prezzo {price} € − commissione RiverSpend {(price*commission).toFixed(2).replace('.',',')} € (10%)</p></div>
+          </section>
+          <button type="submit" className="w-full bg-[#67e4d0] px-6 py-4 font-bold text-[#071a25]">Invia per verifica dei diritti</button>
+          {submitted&&<div role="status" className="border border-amber-500 bg-[#302a1a] p-4 text-sm leading-6 text-amber-100">Modulo di prova compilato. Nessun file è stato caricato online e nessuna opera è stata pubblicata: servono archivio protetto, verifica dei diritti e collegamento ai pagamenti.</div>}
+        </form>
+        <footer className="mt-7 border-t border-[#1d5960] pt-5 text-sm leading-6 text-slate-400">Simulazione basata sulla commissione del 10% concordata per i download. Eventuali costi del gestore dei pagamenti, imposte e condizioni di liquidazione vanno definiti prima dell’attivazione commerciale.<div className="mt-5"><Link href="/servizi/broadcast" className="text-[#67e4d0] underline">← Torna a BroadCast TV · Audio · Video</Link></div></footer>
       </div>
     </main>
   );
