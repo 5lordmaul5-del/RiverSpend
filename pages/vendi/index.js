@@ -362,11 +362,11 @@ export default function Vendi() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-100 text-slate-900 p-4">
+    <main className="min-h-screen bg-[#c9f2f2] text-[#123f49] p-4">
       <div className="max-w-5xl mx-auto">
 
         <header className="mb-6">
-          <h1 className="text-3xl font-bold text-teal-700">
+          <h1 className="text-3xl font-bold text-[#087f91]">
             RiverSpend
           </h1>
           <p className="text-slate-600">
@@ -377,7 +377,7 @@ export default function Vendi() {
         {!session?.user ? (
           <form
             onSubmit={inviaLinkAccesso}
-            className="bg-white rounded-2xl shadow p-5 mb-8"
+            className="bg-[#f4feff] rounded-2xl border border-[#c1e5e7] shadow p-5 mb-8"
           >
             <h2 className="text-2xl font-bold mb-3">
               Accedi per vendere
@@ -399,7 +399,7 @@ export default function Vendi() {
             <button
               type="submit"
               disabled={caricamento}
-              className="w-full bg-teal-600 text-white font-bold rounded-xl p-3 disabled:opacity-50"
+              className="w-full bg-[#079eae] text-white font-bold rounded-xl p-3 disabled:opacity-50"
             >
               {caricamento ? 'Invio...' : '📩 INVIA LINK DI ACCESSO'}
             </button>
@@ -410,7 +410,7 @@ export default function Vendi() {
           </form>
         ) : (
           <>
-            <div className="bg-white rounded-xl shadow p-4 mb-4 flex flex-wrap items-center justify-between gap-3">
+            <div className="bg-[#f4feff] rounded-xl border border-[#c1e5e7] shadow p-4 mb-4 flex flex-wrap items-center justify-between gap-3">
               <p className="text-sm text-slate-600">
                 Accesso effettuato: <strong>{session.user.email}</strong>
               </p>
@@ -554,7 +554,7 @@ export default function Vendi() {
               {prodotti.map((prodotto) => (
                 <article
                   key={prodotto.id}
-                  className="bg-white rounded-2xl shadow overflow-hidden"
+                  className="bg-[#f4feff] rounded-2xl border border-[#c1e5e7] shadow overflow-hidden"
                 >
                   {prodotto.immagini?.length > 0 && (
                     <img
@@ -569,7 +569,7 @@ export default function Vendi() {
                       {prodotto.titolo}
                     </h3>
 
-                    <p className="text-teal-700 text-xl font-bold mt-2">
+                    <p className="text-[#087f91] text-xl font-bold mt-2">
                       € {Number(prodotto.prezzo).toFixed(2)}
                     </p>
 
