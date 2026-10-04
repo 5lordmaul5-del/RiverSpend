@@ -296,6 +296,8 @@ export default function Vendi() {
           image: immaginiCaricate[0],
           seller_id: session.user.id,
           seller_type: 'Privato',
+          stock: 1,
+          homepage_expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
           status: 'published'
         });
 
