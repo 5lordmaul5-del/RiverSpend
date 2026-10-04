@@ -90,18 +90,18 @@ export default function Prodotto() {
 
         <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl shadow-slate-200/60">
           <div className="grid md:grid-cols-[1.08fr_.92fr]">
-            <section className="min-w-0 bg-gradient-to-br from-[#fffdf8] via-[#f4ead7] to-[#e8dcc3] p-3 text-slate-900 sm:p-5">
+            <section className="min-w-0 bg-white p-3 text-slate-900 sm:p-5">
               <div className="mb-3 flex items-center justify-between gap-2">
-                <span className="rounded-full border border-[#d8c69f] bg-[#f8f0df] px-3 py-1 text-xs font-bold text-[#715a2d]">La vetrina sul fiume</span>
+                <span className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-bold text-slate-700">La vetrina sul fiume</span>
                 <span className={'rounded-full border px-3 py-1 text-xs font-extrabold shadow-sm ' + badge.style}>{badge.label}</span>
               </div>
               {immagini.length ? (
                 <>
-                  <div className="flex min-h-[330px] items-center justify-center overflow-hidden rounded-2xl border border-[#e4d8c1] bg-[#fffdf8] sm:min-h-[510px]">
+                  <div className="flex min-h-[330px] items-center justify-center overflow-hidden rounded-2xl border border-slate-200 bg-white sm:min-h-[510px]">
                     <img src={immagini[Math.min(fotoAttiva, immagini.length - 1)]} alt={prodotto.titolo || 'Foto prodotto'} className="h-[330px] w-full object-contain sm:h-[510px]" />
                   </div>
                   {immagini.length > 1 && <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
-                    {immagini.map((url, index) => <button key={url + index} type="button" onClick={() => setFotoAttiva(index)} aria-label={'Mostra foto ' + (index + 1)} aria-pressed={fotoAttiva === index} className={'h-16 w-16 shrink-0 overflow-hidden rounded-xl border-2 bg-[#fffdf8] ' + (fotoAttiva === index ? 'border-teal-500 ring-2 ring-teal-200' : 'border-slate-300')}>
+                    {immagini.map((url, index) => <button key={url + index} type="button" onClick={() => setFotoAttiva(index)} aria-label={'Mostra foto ' + (index + 1)} aria-pressed={fotoAttiva === index} className={'h-16 w-16 shrink-0 overflow-hidden rounded-xl border-2 bg-white ' + (fotoAttiva === index ? 'border-teal-500 ring-2 ring-teal-200' : 'border-slate-300')}>
                       <img src={url} alt={'Anteprima ' + (index + 1)} className="h-full w-full object-contain" />
                     </button>)}
                   </div>}
@@ -113,19 +113,19 @@ export default function Prodotto() {
             <section className="p-4 sm:p-7">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="text-xs font-bold uppercase tracking-[.2em] text-[#9b762e]">RiverSpendShop</span>
-                {sponsorizzato && <span className="rounded-full border border-amber-300/60 bg-amber-300/15 px-3 py-1 text-xs font-bold text-amber-200">✦ In evidenza</span>}
+                {sponsorizzato && <span className="rounded-full border border-amber-300/60 bg-amber-300/15 px-3 py-1 text-xs font-bold text-amber-800">✦ In evidenza</span>}
               </div>
               <h1 className="mt-3 text-2xl font-extrabold leading-tight sm:text-3xl">{prodotto.titolo}</h1>
-              <div className="mt-5 rounded-2xl border border-[#e4d8c1] bg-gradient-to-r from-[#fffdf8] to-[#f3ead8] p-4">
+              <div className="mt-5 rounded-2xl border border-slate-200 bg-gradient-to-r from-white to-white p-4">
                 <p className="text-xs font-semibold uppercase tracking-wider text-slate-600">Valore dell’articolo</p>
-                <p className="mt-1 text-3xl font-black text-amber-300">€ {Number(prodotto.prezzo || 0).toFixed(2)}</p>
+                <p className="mt-1 text-3xl font-black text-amber-800">€ {Number(prodotto.prezzo || 0).toFixed(2)}</p>
                 <div className="mt-3 flex flex-wrap gap-2 text-xs">
                   <span className="rounded-full bg-white px-3 py-1 text-slate-700 border border-slate-200">{prodotto.condizione || 'Condizione non indicata'}</span>
                   <span className="rounded-full bg-white px-3 py-1 text-slate-700 border border-slate-200">{prodotto.categoria || 'Categoria da definire'}</span>
                 </div>
               </div>
 
-              <div className="mt-4 rounded-2xl border border-slate-200 bg-[#fffdf8] p-4">
+              <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4">
                 <div className="flex items-center justify-between gap-3">
                   <div><p className="text-xs text-slate-600">Disponibilità dichiarata</p><p className="mt-1 font-bold">{quantita > 0 ? (quantita === 1 ? 'Ultimo pezzo disponibile' : quantita + ' pezzi disponibili') : 'Disponibilità da verificare'}</p></div>
                   <span className="text-2xl" aria-hidden="true">🪙</span>
@@ -133,19 +133,19 @@ export default function Prodotto() {
               </div>
 
               <div className="mt-5 grid gap-3">
-                <button type="button" onClick={() => toggleLista('riverspend-rete', inRete, setInRete, '🕸️ Articolo aggiunto alla tua Rete.', 'Articolo rimosso dalla Rete.')} className="rounded-xl bg-gradient-to-r from-teal-400 to-cyan-300 px-5 py-4 text-base font-extrabold text-slate-950 shadow-lg shadow-teal-950/30">
+                <button type="button" onClick={() => toggleLista('riverspend-rete', inRete, setInRete, '🕸️ Articolo aggiunto alla tua Rete.', 'Articolo rimosso dalla Rete.')} className="rounded-xl bg-slate-100 border border-slate-300 px-5 py-4 text-base font-extrabold text-slate-900 shadow-sm shadow-slate-200/60">
                   {inRete ? '✓ Nella mia Rete' : '🕸️ Aggiungi alla Rete'}
                 </button>
-                <button type="button" onClick={() => toggleLista('riverspend-wishlist', wishlist, setWishlist, '♡ Aggiunto ai tuoi desideri.', 'Rimosso dai desideri.')} className="rounded-xl border border-[#d8c69f] bg-[#fffdf8] px-5 py-3 font-bold text-slate-800">
+                <button type="button" onClick={() => toggleLista('riverspend-wishlist', wishlist, setWishlist, '♡ Aggiunto ai tuoi desideri.', 'Rimosso dai desideri.')} className="rounded-xl border border-slate-200 bg-white px-5 py-3 font-bold text-slate-800">
                   {wishlist ? '♥ Nei miei desideri' : '♡ Aggiungi ai desideri'}
                 </button>
               </div>
-              {feedback && <p role="status" className="mt-3 rounded-xl border border-teal-200 bg-teal-50 p-3 text-sm text-slate-800">{feedback}</p>}
+              {feedback && <p role="status" className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-800">{feedback}</p>}
               <Link href="/rete" className="mt-3 inline-block text-sm font-semibold text-[#8a692b] underline underline-offset-4">Apri la mia Rete →</Link>
 
               <div className="mt-6 grid grid-cols-2 gap-2">
-                <div className="rounded-xl border border-slate-200 bg-[#fffdf8] p-3"><p className="text-[11px] uppercase tracking-wider text-slate-400">Tutela</p><p className="mt-1 font-bold text-[#8a692b]">RS Shield</p><p className="mt-1 text-xs text-slate-600">Spazio dedicato alla protezione</p></div>
-                <div className="rounded-xl border border-slate-200 bg-[#fffdf8] p-3"><p className="text-[11px] uppercase tracking-wider text-slate-400">Venditore</p><p className="mt-1 font-bold text-slate-900">{badge.note}</p><span className={'mt-2 inline-flex rounded-md border px-2 py-1 text-xs font-extrabold ' + badge.style}>{badge.label}</span></div>
+                <div className="rounded-xl border border-slate-200 bg-white p-3"><p className="text-[11px] uppercase tracking-wider text-slate-400">Tutela</p><p className="mt-1 font-bold text-[#8a692b]">RS Shield</p><p className="mt-1 text-xs text-slate-600">Spazio dedicato alla protezione</p></div>
+                <div className="rounded-xl border border-slate-200 bg-white p-3"><p className="text-[11px] uppercase tracking-wider text-slate-400">Venditore</p><p className="mt-1 font-bold text-slate-900">{badge.note}</p><span className={'mt-2 inline-flex rounded-md border px-2 py-1 text-xs font-extrabold ' + badge.style}>{badge.label}</span></div>
               </div>
             </section>
           </div>
@@ -157,7 +157,7 @@ export default function Prodotto() {
                 <h2 className="mt-2 text-xl font-bold">Descrizione</h2>
                 <p className="mt-3 whitespace-pre-wrap leading-7 text-slate-700">{prodotto.descrizione || 'Il venditore non ha ancora inserito una descrizione.'}</p>
               </div>
-              <aside className="rounded-2xl border border-[#e4d8c1] bg-gradient-to-br from-[#fffdf8] to-[#f1eadb] p-4">
+              <aside className="rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-white p-4">
                 <p className="font-bold text-[#8a692b]">Dettagli del fiume</p>
                 <dl className="mt-3 space-y-3 text-sm">
                   <div><dt className="text-slate-400">Categoria</dt><dd className="font-semibold">{prodotto.categoria || 'Non indicata'}</dd></div>
