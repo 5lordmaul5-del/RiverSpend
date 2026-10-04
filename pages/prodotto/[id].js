@@ -68,10 +68,10 @@ export default function Prodotto() {
     } catch { setFeedback('Impossibile salvare su questo dispositivo.'); }
   }
 
-  if (caricamento) return <main className="min-h-screen bg-slate-950 p-6 text-teal-100">Il fiume sta preparando la scheda…</main>;
+  if (caricamento) return <main className="min-h-screen bg-slate-950 p-6 text-slate-700">Il fiume sta preparando la scheda…</main>;
   if (errore || !prodotto) return (
     <main className="min-h-screen bg-slate-950 p-6 text-white">
-      <Link href="/" className="text-teal-300 underline">← Torna al RiverSpendShop</Link>
+      <Link href="/" className="text-[#8a692b] underline">← Torna al RiverSpendShop</Link>
       <p className="mt-6">{errore || 'Prodotto non trovato.'}</p>
     </main>
   );
@@ -81,14 +81,14 @@ export default function Prodotto() {
   const quantita = Number(prodotto.quantita ?? 1);
 
   return (
-    <main className="rs-product-page min-h-screen bg-gradient-to-b from-slate-950 via-slate-950 to-sky-950 px-3 py-4 text-white sm:px-5 sm:py-7">
+    <main className="rs-product-page min-h-screen bg-white px-3 py-4 text-slate-900 sm:px-5 sm:py-7">
       <div className="mx-auto max-w-6xl">
         <nav className="mb-5 flex flex-wrap items-center justify-between gap-3">
-          <Link href="/" className="inline-flex items-center gap-2 rounded-full border border-teal-800 bg-slate-900/80 px-4 py-2 text-sm font-semibold text-teal-200">← RiverSpendShop</Link>
-          <span className="text-xs font-semibold tracking-[.18em] text-teal-300">YOUR SHOP • YOUR FLOW</span>
+          <Link href="/" className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700">← RiverSpendShop</Link>
+          <span className="text-xs font-semibold tracking-[.18em] text-slate-600">YOUR SHOP • YOUR FLOW</span>
         </nav>
 
-        <div className="overflow-hidden rounded-3xl border border-teal-800/70 bg-slate-900/90 shadow-2xl shadow-cyan-950/30">
+        <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl shadow-slate-200/60">
           <div className="grid md:grid-cols-[1.08fr_.92fr]">
             <section className="min-w-0 bg-gradient-to-br from-[#fffdf8] via-[#f4ead7] to-[#e8dcc3] p-3 text-slate-900 sm:p-5">
               <div className="mb-3 flex items-center justify-between gap-2">
@@ -112,22 +112,22 @@ export default function Prodotto() {
 
             <section className="p-4 sm:p-7">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="text-xs font-bold uppercase tracking-[.2em] text-teal-300">RiverSpendShop</span>
+                <span className="text-xs font-bold uppercase tracking-[.2em] text-[#9b762e]">RiverSpendShop</span>
                 {sponsorizzato && <span className="rounded-full border border-amber-300/60 bg-amber-300/15 px-3 py-1 text-xs font-bold text-amber-200">✦ In evidenza</span>}
               </div>
               <h1 className="mt-3 text-2xl font-extrabold leading-tight sm:text-3xl">{prodotto.titolo}</h1>
-              <div className="mt-5 rounded-2xl border border-teal-800 bg-gradient-to-r from-slate-800 to-sky-950 p-4">
-                <p className="text-xs font-semibold uppercase tracking-wider text-teal-200">Valore dell’articolo</p>
+              <div className="mt-5 rounded-2xl border border-[#e4d8c1] bg-gradient-to-r from-[#fffdf8] to-[#f3ead8] p-4">
+                <p className="text-xs font-semibold uppercase tracking-wider text-slate-600">Valore dell’articolo</p>
                 <p className="mt-1 text-3xl font-black text-amber-300">€ {Number(prodotto.prezzo || 0).toFixed(2)}</p>
                 <div className="mt-3 flex flex-wrap gap-2 text-xs">
-                  <span className="rounded-full bg-white/10 px-3 py-1 text-slate-200">{prodotto.condizione || 'Condizione non indicata'}</span>
-                  <span className="rounded-full bg-white/10 px-3 py-1 text-slate-200">{prodotto.categoria || 'Categoria da definire'}</span>
+                  <span className="rounded-full bg-white px-3 py-1 text-slate-700 border border-slate-200">{prodotto.condizione || 'Condizione non indicata'}</span>
+                  <span className="rounded-full bg-white px-3 py-1 text-slate-700 border border-slate-200">{prodotto.categoria || 'Categoria da definire'}</span>
                 </div>
               </div>
 
-              <div className="mt-4 rounded-2xl border border-slate-700 bg-slate-950/60 p-4">
+              <div className="mt-4 rounded-2xl border border-slate-200 bg-[#fffdf8] p-4">
                 <div className="flex items-center justify-between gap-3">
-                  <div><p className="text-xs text-slate-400">Disponibilità dichiarata</p><p className="mt-1 font-bold">{quantita > 0 ? (quantita === 1 ? 'Ultimo pezzo disponibile' : quantita + ' pezzi disponibili') : 'Disponibilità da verificare'}</p></div>
+                  <div><p className="text-xs text-slate-600">Disponibilità dichiarata</p><p className="mt-1 font-bold">{quantita > 0 ? (quantita === 1 ? 'Ultimo pezzo disponibile' : quantita + ' pezzi disponibili') : 'Disponibilità da verificare'}</p></div>
                   <span className="text-2xl" aria-hidden="true">🪙</span>
                 </div>
               </div>
@@ -136,29 +136,29 @@ export default function Prodotto() {
                 <button type="button" onClick={() => toggleLista('riverspend-rete', inRete, setInRete, '🕸️ Articolo aggiunto alla tua Rete.', 'Articolo rimosso dalla Rete.')} className="rounded-xl bg-gradient-to-r from-teal-400 to-cyan-300 px-5 py-4 text-base font-extrabold text-slate-950 shadow-lg shadow-teal-950/30">
                   {inRete ? '✓ Nella mia Rete' : '🕸️ Aggiungi alla Rete'}
                 </button>
-                <button type="button" onClick={() => toggleLista('riverspend-wishlist', wishlist, setWishlist, '♡ Aggiunto ai tuoi desideri.', 'Rimosso dai desideri.')} className="rounded-xl border border-teal-700 bg-slate-800 px-5 py-3 font-bold text-teal-100">
+                <button type="button" onClick={() => toggleLista('riverspend-wishlist', wishlist, setWishlist, '♡ Aggiunto ai tuoi desideri.', 'Rimosso dai desideri.')} className="rounded-xl border border-[#d8c69f] bg-[#fffdf8] px-5 py-3 font-bold text-slate-800">
                   {wishlist ? '♥ Nei miei desideri' : '♡ Aggiungi ai desideri'}
                 </button>
               </div>
-              {feedback && <p role="status" className="mt-3 rounded-xl border border-teal-700 bg-teal-950/60 p-3 text-sm text-teal-100">{feedback}</p>}
-              <Link href="/rete" className="mt-3 inline-block text-sm font-semibold text-teal-300 underline underline-offset-4">Apri la mia Rete →</Link>
+              {feedback && <p role="status" className="mt-3 rounded-xl border border-teal-700 bg-teal-950/60 p-3 text-sm text-slate-700">{feedback}</p>}
+              <Link href="/rete" className="mt-3 inline-block text-sm font-semibold text-[#8a692b] underline underline-offset-4">Apri la mia Rete →</Link>
 
               <div className="mt-6 grid grid-cols-2 gap-2">
-                <div className="rounded-xl border border-teal-900 bg-slate-950/70 p-3"><p className="text-[11px] uppercase tracking-wider text-slate-400">Tutela</p><p className="mt-1 font-bold text-teal-200">RS Shield</p><p className="mt-1 text-xs text-slate-400">Spazio dedicato alla protezione</p></div>
-                <div className="rounded-xl border border-teal-900 bg-slate-950/70 p-3"><p className="text-[11px] uppercase tracking-wider text-slate-400">Venditore</p><p className="mt-1 font-bold text-white">{badge.note}</p><span className={'mt-2 inline-flex rounded-md border px-2 py-1 text-xs font-extrabold ' + badge.style}>{badge.label}</span></div>
+                <div className="rounded-xl border border-slate-200 bg-[#fffdf8] p-3"><p className="text-[11px] uppercase tracking-wider text-slate-400">Tutela</p><p className="mt-1 font-bold text-[#8a692b]">RS Shield</p><p className="mt-1 text-xs text-slate-600">Spazio dedicato alla protezione</p></div>
+                <div className="rounded-xl border border-slate-200 bg-[#fffdf8] p-3"><p className="text-[11px] uppercase tracking-wider text-slate-400">Venditore</p><p className="mt-1 font-bold text-white">{badge.note}</p><span className={'mt-2 inline-flex rounded-md border px-2 py-1 text-xs font-extrabold ' + badge.style}>{badge.label}</span></div>
               </div>
             </section>
           </div>
 
-          <section className="border-t border-teal-900 bg-slate-950/70 p-4 sm:p-7">
+          <section className="border-t border-slate-200 bg-white p-4 sm:p-7">
             <div className="grid gap-6 md:grid-cols-[1.4fr_.6fr]">
               <div>
-                <p className="text-xs font-bold uppercase tracking-[.2em] text-teal-300">Storia dell’articolo</p>
+                <p className="text-xs font-bold uppercase tracking-[.2em] text-[#9b762e]">Storia dell’articolo</p>
                 <h2 className="mt-2 text-xl font-bold">Descrizione</h2>
-                <p className="mt-3 whitespace-pre-wrap leading-7 text-slate-300">{prodotto.descrizione || 'Il venditore non ha ancora inserito una descrizione.'}</p>
+                <p className="mt-3 whitespace-pre-wrap leading-7 text-slate-700">{prodotto.descrizione || 'Il venditore non ha ancora inserito una descrizione.'}</p>
               </div>
-              <aside className="rounded-2xl border border-teal-900 bg-gradient-to-br from-sky-950 to-slate-900 p-4">
-                <p className="font-bold text-teal-200">Dettagli del fiume</p>
+              <aside className="rounded-2xl border border-[#e4d8c1] bg-gradient-to-br from-[#fffdf8] to-[#f1eadb] p-4">
+                <p className="font-bold text-[#8a692b]">Dettagli del fiume</p>
                 <dl className="mt-3 space-y-3 text-sm">
                   <div><dt className="text-slate-400">Categoria</dt><dd className="font-semibold">{prodotto.categoria || 'Non indicata'}</dd></div>
                   <div><dt className="text-slate-400">Condizione</dt><dd className="font-semibold">{prodotto.condizione || 'Non indicata'}</dd></div>
