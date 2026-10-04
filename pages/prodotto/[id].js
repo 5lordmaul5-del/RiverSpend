@@ -22,6 +22,7 @@ export default function Prodotto() {
   const [inRete, setInRete] = useState(false);
   const [wishlist, setWishlist] = useState(false);
   const [feedback, setFeedback] = useState('');
+  const [mappaLocalita, setMappaLocalita] = useState(null);
 
   useEffect(() => {
     let attivo = true;
@@ -48,6 +49,21 @@ export default function Prodotto() {
       .finally(() => { if (attivo) setCaricamento(false); });
     return () => { attivo = false; };
   }, []);
+
+  useEffect(() => {
+    if (!prodotto) return;
+    const luogo = [prodotto.localita, prodotto.provincia, prodotto.regione, 'Italia'].filter(Boolean).join(', ');
+    if (!luogo || luogo === 'Italia') return;
+    let attivo = true;
+    fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&country=Italy&q=' + encodeURIComponent(luogo), { headers: { Accept: 'application/json' } })
+      .then((res) => res.ok ? res.json() : [])
+      .then((results) => {
+        if (!attivo || !results?.length) return;
+        setMappaLocalita({ lat: Number(results[0].lat), lon: Number(results[0].lon), nome: luogo });
+      })
+      .catch(() => {});
+    return () => { attivo = false; };
+  }, [prodotto]);
 
   const immagini = Array.isArray(prodotto?.immagini) ? prodotto.immagini : [];
   const record = useMemo(() => prodotto ? ({
@@ -164,7 +180,19 @@ export default function Prodotto() {
                   <div><dt className="text-slate-400">Condizione</dt><dd className="font-semibold">{prodotto.condizione || 'Non indicata'}</dd></div>
                   {prodotto.paeseOrigine && <div><dt className="text-slate-400">Paese d’origine</dt><dd className="font-semibold">{prodotto.paeseOrigine}</dd></div>}
                   {prodotto.paeseVenditore && <div><dt className="text-slate-400">Paese venditore</dt><dd className="font-semibold">{prodotto.paeseVenditore}</dd></div>}
+                  {(prodotto.localita || prodotto.provincia || prodotto.regione) && <div><dt className="text-slate-400">Località dell’articolo</dt><dd className="font-semibold">{[prodotto.localita, prodotto.provincia, prodotto.regione].filter(Boolean).join(' · ')}</dd></div>}
                 </dl>
+                {(prodotto.localita || prodotto.provincia || prodotto.regione) && (
+                  <div className="mt-4 overflow-hidden rounded-xl border border-slate-200">
+                    <div className="flex items-center justify-between gap-2 bg-slate-50 p-3 text-xs text-slate-700">
+                      <strong>📍 Zona dell’articolo</strong>
+                      <a className="font-semibold text-teal-800 underline" href={'https://www.openstreetmap.org/search?query=' + encodeURIComponent([prodotto.localita, prodotto.provincia, prodotto.regione, 'Italia'].filter(Boolean).join(', '))} target="_blank" rel="noreferrer">Apri mappa</a>
+                    </div>
+                    {mappaLocalita ? (
+                      <iframe title="Mappa della zona dell’articolo" src={'https://www.openstreetmap.org/export/embed.html?bbox=' + [mappaLocalita.lon - 0.035, mappaLocalita.lat - 0.025, mappaLocalita.lon + 0.035, mappaLocalita.lat + 0.025].join('%2C') + '&layer=mapnik&marker=' + mappaLocalita.lat + '%2C' + mappaLocalita.lon} className="h-56 w-full border-0" loading="lazy" />
+                    ) : <p className="p-3 text-xs text-slate-500">Mappa della zona in caricamento; se non appare, usa “Apri mappa”. La posizione indica la località dichiarata, non l’indirizzo preciso del venditore.</p>}
+                  </div>
+                )}
               </aside>
             </div>
           </section>
