@@ -276,3 +276,9 @@ body { background: #fff !important; color: #243b3d; }
 .rs-product-page [class*="border-slate-800"],
 .rs-product-page [class*="border-slate-700"] { border-color: #e5e7eb !important; }
 .rs-product-page img { background-color: #fff; }
+
+/* Remove the aqua tint from homepage product photo panels too */
+.rs-product-media,
+.rs-site [class*="from-cyan-50"],
+.rs-site [class*="via-sky-50"],
+.rs-site [class*="to-teal-100"] { background: #fff !important; }
