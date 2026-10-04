@@ -68,9 +68,9 @@ export default function Prodotto() {
     } catch { setFeedback('Impossibile salvare su questo dispositivo.'); }
   }
 
-  if (caricamento) return <main className="min-h-screen bg-slate-950 p-6 text-slate-700">Il fiume sta preparando la scheda…</main>;
+  if (caricamento) return <main className="min-h-screen bg-white p-6 text-slate-800">Il fiume sta preparando la scheda…</main>;
   if (errore || !prodotto) return (
-    <main className="min-h-screen bg-slate-950 p-6 text-white">
+    <main className="min-h-screen bg-white p-6 text-slate-900">
       <Link href="/" className="text-[#8a692b] underline">← Torna al RiverSpendShop</Link>
       <p className="mt-6">{errore || 'Prodotto non trovato.'}</p>
     </main>
@@ -140,12 +140,12 @@ export default function Prodotto() {
                   {wishlist ? '♥ Nei miei desideri' : '♡ Aggiungi ai desideri'}
                 </button>
               </div>
-              {feedback && <p role="status" className="mt-3 rounded-xl border border-teal-700 bg-teal-950/60 p-3 text-sm text-slate-700">{feedback}</p>}
+              {feedback && <p role="status" className="mt-3 rounded-xl border border-teal-200 bg-teal-50 p-3 text-sm text-slate-800">{feedback}</p>}
               <Link href="/rete" className="mt-3 inline-block text-sm font-semibold text-[#8a692b] underline underline-offset-4">Apri la mia Rete →</Link>
 
               <div className="mt-6 grid grid-cols-2 gap-2">
                 <div className="rounded-xl border border-slate-200 bg-[#fffdf8] p-3"><p className="text-[11px] uppercase tracking-wider text-slate-400">Tutela</p><p className="mt-1 font-bold text-[#8a692b]">RS Shield</p><p className="mt-1 text-xs text-slate-600">Spazio dedicato alla protezione</p></div>
-                <div className="rounded-xl border border-slate-200 bg-[#fffdf8] p-3"><p className="text-[11px] uppercase tracking-wider text-slate-400">Venditore</p><p className="mt-1 font-bold text-white">{badge.note}</p><span className={'mt-2 inline-flex rounded-md border px-2 py-1 text-xs font-extrabold ' + badge.style}>{badge.label}</span></div>
+                <div className="rounded-xl border border-slate-200 bg-[#fffdf8] p-3"><p className="text-[11px] uppercase tracking-wider text-slate-400">Venditore</p><p className="mt-1 font-bold text-slate-900">{badge.note}</p><span className={'mt-2 inline-flex rounded-md border px-2 py-1 text-xs font-extrabold ' + badge.style}>{badge.label}</span></div>
               </div>
             </section>
           </div>
