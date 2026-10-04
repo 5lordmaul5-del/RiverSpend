@@ -21,7 +21,9 @@ export default async function handler(req, res) {
       .from('products')
       .select('id, name, description, price, condition, category, image, created_at, seller_type, stock, status, homepage_expires_at, sponsored_until, sponsored_label')
       .eq('status', 'published')
-      .gt('stock', 0)
+      // Legacy rows may have NULL stock; treat them as one available item.
+      // Explicit stock=0 remains excluded from the public catalog.
+      .or('stock.gt.0,stock.is.null')
       .order('created_at', { ascending: false });
 
     if (productsError) throw productsError;
