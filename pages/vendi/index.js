@@ -15,6 +15,9 @@ export default function Vendi() {
   const [categoria, setCategoria] = useState('Altro');
   const [sellerCountry, setSellerCountry] = useState('Italia');
   const [originCountry, setOriginCountry] = useState('');
+  const [locality, setLocality] = useState('');
+  const [province, setProvince] = useState('');
+  const [region, setRegion] = useState('');
 
   const [foto, setFoto] = useState([]);
   const [session, setSession] = useState(null);
@@ -299,6 +302,9 @@ export default function Vendi() {
           seller_id: session.user.id,
           seller_type: 'Privato',
           seller_country: sellerCountry.trim() || null,
+          locality: locality.trim() || null,
+          province: province.trim() || null,
+          region: region.trim() || null,
           origin_country: originCountry.trim() || null,
           original_language: document.documentElement.lang || 'it',
           homepage_expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
@@ -349,6 +355,9 @@ export default function Vendi() {
       setCategoria('Altro');
       setSellerCountry('Italia');
       setOriginCountry('');
+      setLocality('');
+      setProvince('');
+      setRegion('');
 
       foto.forEach((item) => URL.revokeObjectURL(item.url));
       setFoto([]);
@@ -470,6 +479,16 @@ export default function Vendi() {
 
               <label className="mb-2 block font-semibold">Paese del venditore</label>
               <input className="w-full border rounded-xl p-3 mb-3" value={sellerCountry} onChange={(e) => setSellerCountry(e.target.value)} placeholder="Es. Italia" required />
+              <div className="mt-2 mb-4 rounded-xl border border-teal-200 bg-teal-50 p-3">
+                <p className="font-semibold text-teal-900">📍 Presenza su RiverSpend Local</p>
+                <p className="mt-1 mb-3 text-sm text-slate-600">Facoltativo: indica dove si trova il prodotto. Sarà visibile in Local solo come località, non come indirizzo preciso.</p>
+                <label className="mb-1 block text-sm font-semibold">Comune / località</label>
+                <input className="mb-3 w-full rounded-xl border p-3" value={locality} onChange={(e) => setLocality(e.target.value)} placeholder="Es. Cannobio" />
+                <label className="mb-1 block text-sm font-semibold">Provincia</label>
+                <input className="mb-3 w-full rounded-xl border p-3" value={province} onChange={(e) => setProvince(e.target.value)} placeholder="Es. Verbano-Cusio-Ossola" />
+                <label className="mb-1 block text-sm font-semibold">Regione</label>
+                <input className="w-full rounded-xl border p-3" value={region} onChange={(e) => setRegion(e.target.value)} placeholder="Es. Piemonte" />
+              </div>
               <label className="mb-2 block font-semibold">Paese di origine del prodotto (se conosciuto)</label>
               <input className="w-full border rounded-xl p-3 mb-3" value={originCountry} onChange={(e) => setOriginCountry(e.target.value)} placeholder="Es. Italia, Giappone, Cina…" />
               <p className="mb-3 text-xs text-slate-500">Indica l’origine reale del prodotto, non il paese del sito o del fornitore.</p>
