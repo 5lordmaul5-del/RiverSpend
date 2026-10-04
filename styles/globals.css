@@ -253,3 +253,9 @@ body { background: #f5fcfb; color: #17343a; }
   .rs-hero { padding-bottom: 2.5rem; }
 }
 
+
+
+/* Official RiverSpendShop wordmark: black RiverSpend + gold Shop */
+.rs-header .rs-brand { color: #111111 !important; font-size: 1.875rem; letter-spacing: -.045em; }
+.rs-header .rs-shop-word { color: #c99735 !important; line-height: 1; transform: rotate(-8deg) translateY(-.08em); }
+@media (min-width: 640px) { .rs-header .rs-brand { font-size: 2.25rem; } .rs-header .rs-shop-word { font-size: 1.25rem; } }
