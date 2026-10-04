@@ -133,9 +133,16 @@ export default function Home() {
       const testo = [p.titolo, p.descrizione, p.condizione, p.categoria].filter(Boolean).join(' ').toLowerCase();
       const categoriaOk = !categoriaAttiva || (p.categoria || '').toLowerCase() === categoriaAttiva.toLowerCase() || testo.includes(categoriaAttiva.toLowerCase());
       const ricercaOk = !q || testo.includes(q);
-      return categoriaOk && ricercaOk;
+      const inVetrina = categoriaAttiva || q || p.sponsorizzatoFino && new Date(p.sponsorizzatoFino).getTime() > Date.now() || !p.scadenzaVetrina || new Date(p.scadenzaVetrina).getTime() > Date.now();
+      return categoriaOk && ricercaOk && inVetrina;
     });
   }, [prodotti, ricerca, categoriaAttiva]);
+
+  const prodottiOrdinati = useMemo(() => [...prodottiVisibili].sort((a, b) => {
+    const aSponsored = a.sponsorizzatoFino && new Date(a.sponsorizzatoFino).getTime() > Date.now();
+    const bSponsored = b.sponsorizzatoFino && new Date(b.sponsorizzatoFino).getTime() > Date.now();
+    return Number(Boolean(bSponsored)) - Number(Boolean(aSponsored)) || new Date(b.scadenzaVetrina || 0) - new Date(a.scadenzaVetrina || 0);
+  }), [prodottiVisibili]);
 
   return (
     <main className="rs-site min-h-screen">
@@ -243,11 +250,12 @@ export default function Home() {
             </div>
           ) : (
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-              {prodottiVisibili.map((p) => (
+              {prodottiOrdinati.map((p) => (
                 <a href={`/prodotto/${encodeURIComponent(p.id)}`} key={p.id} className="rs-product-card block overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 transition hover:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-400">
                   {p.immagini?.[0] ? <div className="flex h-40 w-full items-center justify-center overflow-hidden bg-white p-2 sm:h-52 sm:p-3"><img src={p.immagini[0]} alt={p.titolo || 'Prodotto'} className="h-full w-full object-contain" /></div> : <div className="flex h-40 items-center justify-center bg-white text-sm text-slate-500 sm:h-52">Foto non disponibile</div>}
                   <div className="p-3">
                     <h3 className="line-clamp-2 font-semibold">{p.titolo}</h3>
+                    {p.sponsorizzatoFino && new Date(p.sponsorizzatoFino).getTime() > Date.now() && <span className="mt-1 inline-block rounded-full bg-amber-400 px-2 py-1 text-xs font-bold text-slate-950">★ {p.etichettaSponsorizzata || 'In evidenza'}</span>}
                     <p className="mt-2 text-lg font-bold text-teal-300">€ {Number(p.prezzo || 0).toFixed(2)}</p>
                     <p className="text-xs text-slate-400">{p.categoria || 'Altro'} · {p.condizione}</p>
                     <p className="mt-3 text-sm font-semibold text-teal-300">{t('openProduct')}</p>
