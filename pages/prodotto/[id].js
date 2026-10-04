@@ -90,18 +90,18 @@ export default function Prodotto() {
 
         <div className="overflow-hidden rounded-3xl border border-teal-800/70 bg-slate-900/90 shadow-2xl shadow-cyan-950/30">
           <div className="grid md:grid-cols-[1.08fr_.92fr]">
-            <section className="min-w-0 bg-gradient-to-br from-white via-slate-100 to-sky-100 p-3 text-slate-900 sm:p-5">
+            <section className="min-w-0 bg-gradient-to-br from-[#fffdf8] via-[#f4ead7] to-[#e8dcc3] p-3 text-slate-900 sm:p-5">
               <div className="mb-3 flex items-center justify-between gap-2">
-                <span className="rounded-full border border-sky-300 bg-sky-100 px-3 py-1 text-xs font-bold text-sky-950">La vetrina sul fiume</span>
+                <span className="rounded-full border border-[#d8c69f] bg-[#f8f0df] px-3 py-1 text-xs font-bold text-[#715a2d]">La vetrina sul fiume</span>
                 <span className={'rounded-full border px-3 py-1 text-xs font-extrabold shadow-sm ' + badge.style}>{badge.label}</span>
               </div>
               {immagini.length ? (
                 <>
-                  <div className="flex min-h-[330px] items-center justify-center overflow-hidden rounded-2xl border border-slate-200 bg-white sm:min-h-[510px]">
+                  <div className="flex min-h-[330px] items-center justify-center overflow-hidden rounded-2xl border border-[#e4d8c1] bg-[#fffdf8] sm:min-h-[510px]">
                     <img src={immagini[Math.min(fotoAttiva, immagini.length - 1)]} alt={prodotto.titolo || 'Foto prodotto'} className="h-[330px] w-full object-contain sm:h-[510px]" />
                   </div>
                   {immagini.length > 1 && <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
-                    {immagini.map((url, index) => <button key={url + index} type="button" onClick={() => setFotoAttiva(index)} aria-label={'Mostra foto ' + (index + 1)} aria-pressed={fotoAttiva === index} className={'h-16 w-16 shrink-0 overflow-hidden rounded-xl border-2 bg-white ' + (fotoAttiva === index ? 'border-teal-500 ring-2 ring-teal-200' : 'border-slate-300')}>
+                    {immagini.map((url, index) => <button key={url + index} type="button" onClick={() => setFotoAttiva(index)} aria-label={'Mostra foto ' + (index + 1)} aria-pressed={fotoAttiva === index} className={'h-16 w-16 shrink-0 overflow-hidden rounded-xl border-2 bg-[#fffdf8] ' + (fotoAttiva === index ? 'border-teal-500 ring-2 ring-teal-200' : 'border-slate-300')}>
                       <img src={url} alt={'Anteprima ' + (index + 1)} className="h-full w-full object-contain" />
                     </button>)}
                   </div>}
