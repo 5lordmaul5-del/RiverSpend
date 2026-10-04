@@ -320,3 +320,14 @@ main [class*="text-slate-400"] { color: #526c70 !important; }
 main [class*="border-slate-800"],
 main [class*="border-slate-700"],
 main [class*="border-slate-600"] { border-color: #dfe9e8 !important; }
+
+
+/* Product-card typography: remove the bright aqua text from prices and actions. */
+.rs-product-card [class*="text-teal-"],
+.rs-product-card [class*="text-cyan-"] {
+  color: #263f42 !important;
+}
+.rs-product-card [class*="text-teal-"]:hover,
+.rs-product-card [class*="text-cyan-"]:hover {
+  color: #111f21 !important;
+}
