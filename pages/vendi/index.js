@@ -13,6 +13,8 @@ export default function Vendi() {
   const [descrizione, setDescrizione] = useState('');
   const [condizione, setCondizione] = useState('Nuovo');
   const [categoria, setCategoria] = useState('Altro');
+  const [sellerCountry, setSellerCountry] = useState('Italia');
+  const [originCountry, setOriginCountry] = useState('');
 
   const [foto, setFoto] = useState([]);
   const [session, setSession] = useState(null);
@@ -296,6 +298,10 @@ export default function Vendi() {
           image: immaginiCaricate[0],
           seller_id: session.user.id,
           seller_type: 'Privato',
+          seller_country: sellerCountry.trim() || null,
+          origin_country: originCountry.trim() || null,
+          original_language: document.documentElement.lang || 'it',
+          homepage_expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
           status: 'published'
         });
 
@@ -341,6 +347,8 @@ export default function Vendi() {
       setDescrizione('');
       setCondizione('Nuovo');
       setCategoria('Altro');
+      setSellerCountry('Italia');
+      setOriginCountry('');
 
       foto.forEach((item) => URL.revokeObjectURL(item.url));
       setFoto([]);
@@ -460,6 +468,11 @@ export default function Vendi() {
                 <option>Come nuovo</option>
               </select>
 
+              <label className="mb-2 block font-semibold">Paese del venditore</label>
+              <input className="w-full border rounded-xl p-3 mb-3" value={sellerCountry} onChange={(e) => setSellerCountry(e.target.value)} placeholder="Es. Italia" required />
+              <label className="mb-2 block font-semibold">Paese di origine del prodotto (se conosciuto)</label>
+              <input className="w-full border rounded-xl p-3 mb-3" value={originCountry} onChange={(e) => setOriginCountry(e.target.value)} placeholder="Es. Italia, Giappone, Cina…" />
+              <p className="mb-3 text-xs text-slate-500">Indica l’origine reale del prodotto, non il paese del sito o del fornitore.</p>
               <label className="mb-2 block font-semibold">Categoria</label>
               <select className="mb-3 w-full rounded-xl border p-3" value={categoria} onChange={(e) => setCategoria(e.target.value)}>
                 {['Auto & Veicoli','Auto','Moto','Scooter','Harley & Custom','Camion & Veicoli commerciali','Trattori & Agricoltura','Edilizia & Macchine da lavoro','Ricambi & Accessori auto','Ricambi & Accessori moto','Nautica','Navale','Barche & Gommoni','Motori marini','Aeronautica','Militaria & Storia','Sport','Arti marziali & Combattimento','Fitness & Palestra','Outdoor & Avventura','Pesca','Integratori','Elettronica & Informatica','Smartphone & Telefonia','Computer & Notebook','Gaming','Console & Videogiochi','Fotografia & Video','Musica & Audio','TV & Home cinema','Abbigliamento','Scarpe','Borse & Accessori','Gioielli & Orologi','Bellezza & Cura personale','Casa & Arredamento','Cucina','Elettrodomestici','Fai da te & Ferramenta','Giardino','Illuminazione','Tessile casa','Animali','Bambini & Giocattoli','Prima infanzia','Libri & Cultura','Arte','Antiquariato','Collezionismo','Hobby & Modellismo','Viaggi & Valigeria','Ufficio & Professionale','Industria','Attrezzature professionali','Energia & Smart Home','Servizi digitali','Gadget & Regali','Vintage & Second hand','Altro'].map((item) => <option key={item}>{item}</option>)}
