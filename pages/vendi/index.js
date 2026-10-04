@@ -8,6 +8,8 @@ const MAX_PHOTO_SIZE = 10 * 1024 * 1024;
 
 export default function Vendi() {
   const [prodotti, setProdotti] = useState([]);
+  const [mieInserzioni, setMieInserzioni] = useState([]);
+  const [aggiornamentoVendita, setAggiornamentoVendita] = useState('');
   const [titolo, setTitolo] = useState('');
   const [prezzo, setPrezzo] = useState('');
   const [descrizione, setDescrizione] = useState('');
@@ -41,6 +43,54 @@ export default function Vendi() {
     } catch (error) {
       console.error(error);
       setMessaggio('❌ Errore caricamento prodotti.');
+    }
+  }
+
+  async function loadMieInserzioni(userId) {
+    if (!userId) { setMieInserzioni([]); return; }
+    const { data, error } = await supabase
+      .from('products')
+      .select('id, name, price, status, locality, province, region, sold_at')
+      .eq('seller_id', userId)
+      .order('created_at', { ascending: false });
+    if (error) {
+      console.error('Caricamento annunci personali:', error);
+      setMessaggio('❌ Non riesco a caricare i tuoi annunci.');
+      return;
+    }
+    setMieInserzioni(data || []);
+  }
+
+  useEffect(() => {
+    if (session?.user?.id) loadMieInserzioni(session.user.id);
+    else setMieInserzioni([]);
+  }, [session?.user?.id]);
+
+  async function segnaComeVenduto(prodotto) {
+    if (!session?.user?.id || !prodotto?.id || prodotto.status !== 'published') return;
+    const conferma = window.confirm(`Confermi che “${prodotto.name}” è stato venduto? L’annuncio sparirà da RiverSpendShop e RS Local, ma resterà nel tuo elenco come venduto.`);
+    if (!conferma) return;
+    setAggiornamentoVendita(prodotto.id);
+    setMessaggio('Aggiorno lo stato dell’annuncio…');
+    try {
+      const { data, error } = await supabase
+        .from('products')
+        .update({ status: 'sold', sold_at: new Date().toISOString() })
+        .eq('id', prodotto.id)
+        .eq('seller_id', session.user.id)
+        .eq('status', 'published')
+        .select('id, status, sold_at')
+        .maybeSingle();
+      if (error) throw error;
+      if (!data) throw new Error('Annuncio non aggiornato: verifica di essere il venditore e che sia ancora pubblicato.');
+      setMieInserzioni((current) => current.map((item) => String(item.id) === String(prodotto.id) ? { ...item, status: 'sold', sold_at: data.sold_at } : item));
+      setProdotti((current) => current.filter((item) => String(item.id) !== String(prodotto.id)));
+      setMessaggio('✅ Annuncio segnato come venduto: non apparirà più tra quelli disponibili in Shop e Local.');
+    } catch (error) {
+      console.error('Aggiornamento vendita:', error);
+      setMessaggio(`❌ ${error.message || 'Non è stato possibile aggiornare l’annuncio.'}`);
+    } finally {
+      setAggiornamentoVendita('');
     }
   }
 
@@ -362,6 +412,7 @@ export default function Vendi() {
       foto.forEach((item) => URL.revokeObjectURL(item.url));
       setFoto([]);
 
+      await loadMieInserzioni(session.user.id);
       setMessaggio('✅ Prodotto pubblicato nel RiverSpendShop!');
     } catch (error) {
       console.error('Pubblicazione prodotto:', error);
@@ -439,6 +490,32 @@ export default function Vendi() {
                 Esci
               </button>
             </div>
+
+            <section className="mb-6 rounded-2xl border border-teal-200 bg-white p-5 shadow-sm">
+              <h2 className="text-xl font-bold text-teal-800">I miei annunci · Gestione vendite</h2>
+              <p className="mt-1 text-sm text-slate-600">Quando concludi una vendita fuori dal checkout RiverSpend, segna qui l’annuncio come venduto: verrà tolto dagli annunci disponibili in Shop e Local e resterà nel tuo elenco.</p>
+              {mieInserzioni.length === 0 ? (
+                <p className="mt-4 text-sm text-slate-500">Non hai ancora annunci associati a questo account.</p>
+              ) : (
+                <div className="mt-4 space-y-3">
+                  {mieInserzioni.map((item) => (
+                    <article key={item.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 p-3">
+                      <div className="min-w-0">
+                        <p className="font-semibold">{item.name}</p>
+                        <p className="text-sm text-slate-600">€ {Number(item.price || 0).toFixed(2)}{item.locality ? ` · ${item.locality}` : ''}{item.province ? ` · ${item.province}` : ''}</p>
+                        <span className={`mt-1 inline-flex rounded-full px-2 py-1 text-xs font-bold ${item.status === 'sold' ? 'bg-slate-200 text-slate-700' : 'bg-emerald-100 text-emerald-800'}`}>{item.status === 'sold' ? '✓ Venduto' : item.status === 'published' ? '● Disponibile' : item.status}</span>
+                      </div>
+                      {item.status === 'published' && (
+                        <button type="button" onClick={() => segnaComeVenduto(item)} disabled={Boolean(aggiornamentoVendita)} className="rounded-xl bg-teal-700 px-4 py-2 text-sm font-bold text-white disabled:opacity-50">
+                          {aggiornamentoVendita === item.id ? 'Aggiorno…' : 'Segna come venduto'}
+                        </button>
+                      )}
+                    </article>
+                  ))}
+                </div>
+              )}
+              {messaggio && <p role="status" className="mt-3 text-sm font-semibold">{messaggio}</p>}
+            </section>
 
             <form
               onSubmit={handleSubmit}
