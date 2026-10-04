@@ -259,3 +259,20 @@ body { background: #f5fcfb; color: #17343a; }
 .rs-header .rs-brand { color: #111111 !important; font-size: 1.875rem; letter-spacing: -.045em; }
 .rs-header .rs-shop-word { color: #c99735 !important; line-height: 1; transform: rotate(-8deg) translateY(-.08em); }
 @media (min-width: 640px) { .rs-header .rs-brand { font-size: 2.25rem; } .rs-header .rs-shop-word { font-size: 1.25rem; } }
+
+
+/* White-only surfaces: homepage and product detail */
+body { background: #fff !important; color: #243b3d; }
+.rs-site { background: #fff !important; }
+.rs-hero { background: #fff !important; box-shadow: 0 8px 28px rgba(0,0,0,.045); }
+.rs-header { background: #fff !important; backdrop-filter: none; }
+.rs-product-page { background: #fff !important; color: #243b3d !important; }
+.rs-product-page [class*="bg-slate-950"],
+.rs-product-page [class*="bg-slate-900"],
+.rs-product-page [class*="bg-slate-800"] { background-color: #fff !important; }
+.rs-product-page [class*="text-white"],
+.rs-product-page [class*="text-slate-200"],
+.rs-product-page [class*="text-slate-300"] { color: #334b4e !important; }
+.rs-product-page [class*="border-slate-800"],
+.rs-product-page [class*="border-slate-700"] { border-color: #e5e7eb !important; }
+.rs-product-page img { background-color: #fff; }
