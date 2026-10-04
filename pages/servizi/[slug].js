@@ -54,27 +54,41 @@ function RSLocalFinder() {
 
   async function cercaCitta(e) {
     e.preventDefault();
-    const luogo = [citta.trim(), provincia.trim(), 'Italia'].filter(Boolean).join(', ');
-    if (!citta.trim()) { setStato('Inserisci almeno una città o località.'); return; }
+    const localitaRicerca = citta.trim();
+    const provinciaRicerca = provincia.trim();
+    if (!localitaRicerca) { setStato('Inserisci almeno una città o località.'); return; }
+
+    // La ricerca degli annunci RiverSpendShop non deve dipendere dal servizio cartografico.
     setCaricamento(true);
     setProdottiLocal([]);
-    setStato('Cerco la località…');
+    setStato('Cerco gli annunci RiverSpendShop…');
+    try {
+      const params = new URLSearchParams();
+      params.set('locality', localitaRicerca);
+      if (provinciaRicerca) params.set('province', provinciaRicerca);
+      const prodottiResponse = await fetch('/api/products?' + params.toString(), { cache: 'no-store' });
+      if (!prodottiResponse.ok) throw new Error('Non riesco a caricare gli annunci RiverSpendShop in questa zona.');
+      const annunci = await prodottiResponse.json();
+      const annunciLocali = Array.isArray(annunci) ? annunci.filter((p) => p.localita) : [];
+      setProdottiLocal(annunciLocali);
+      setStato(annunciLocali.length ? 'Annunci RiverSpendShop trovati. Verifico la mappa delle attività…' : 'Nessun annuncio RiverSpendShop trovato con questa località. Verifico comunque la mappa…');
+    } catch (e) {
+      setStato(e.message || 'Non riesco a caricare gli annunci RiverSpendShop.');
+      setCaricamento(false);
+      return;
+    }
+
+    // La mappa è un servizio separato: se non risponde, gli annunci restano visibili.
+    const luogo = [localitaRicerca, provinciaRicerca, 'Italia'].filter(Boolean).join(', ');
     try {
       const res = await fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&country=Italy&q=' + encodeURIComponent(luogo), { headers: { Accept: 'application/json' } });
-      if (!res.ok) throw new Error('Ricerca località momentaneamente non disponibile.');
+      if (!res.ok) throw new Error('Servizio cartografico momentaneamente non disponibile.');
       const results = await res.json();
-      if (!results.length) throw new Error('Località non trovata. Controlla città e provincia.');
+      if (!results.length) throw new Error('Località non trovata sulla mappa. Gli annunci sono stati cercati comunque.');
       await cerca(Number(results[0].lat), Number(results[0].lon), results[0].display_name);
-      const params = new URLSearchParams();
-      params.set('locality', citta.trim());
-      if (provincia.trim()) params.set('province', provincia.trim());
-      const prodottiResponse = await fetch('/api/products?' + params.toString(), { cache: 'no-store' });
-      if (!prodottiResponse.ok) throw new Error('Non riesco a caricare gli annunci RiverSpend in questa zona.');
-      const annunci = await prodottiResponse.json();
-      setProdottiLocal(Array.isArray(annunci) ? annunci.filter((p) => p.localita) : []);
     } catch (e) {
-      setStato(e.message || 'Non riesco a trovare questa località.');
       setCaricamento(false);
+      setStato('Ricerca annunci completata. La mappa delle attività è momentaneamente non disponibile.');
     }
   }
 
