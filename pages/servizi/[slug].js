@@ -15,6 +15,7 @@ function RSLocalFinder() {
   const [provincia, setProvincia] = useState('');
   const [centro, setCentro] = useState(null);
   const [attivita, setAttivita] = useState([]);
+  const [prodottiLocal, setProdottiLocal] = useState([]);
   const [raggio, setRaggio] = useState('5000');
   const [stato, setStato] = useState('');
   const [caricamento, setCaricamento] = useState(false);
@@ -56,6 +57,7 @@ function RSLocalFinder() {
     const luogo = [citta.trim(), provincia.trim(), 'Italia'].filter(Boolean).join(', ');
     if (!citta.trim()) { setStato('Inserisci almeno una città o località.'); return; }
     setCaricamento(true);
+    setProdottiLocal([]);
     setStato('Cerco la località…');
     try {
       const res = await fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&country=Italy&q=' + encodeURIComponent(luogo), { headers: { Accept: 'application/json' } });
@@ -63,6 +65,13 @@ function RSLocalFinder() {
       const results = await res.json();
       if (!results.length) throw new Error('Località non trovata. Controlla città e provincia.');
       await cerca(Number(results[0].lat), Number(results[0].lon), results[0].display_name);
+      const params = new URLSearchParams();
+      params.set('locality', citta.trim());
+      if (provincia.trim()) params.set('province', provincia.trim());
+      const prodottiResponse = await fetch('/api/products?' + params.toString(), { cache: 'no-store' });
+      if (!prodottiResponse.ok) throw new Error('Non riesco a caricare gli annunci RiverSpend in questa zona.');
+      const annunci = await prodottiResponse.json();
+      setProdottiLocal(Array.isArray(annunci) ? annunci.filter((p) => p.localita) : []);
     } catch (e) {
       setStato(e.message || 'Non riesco a trovare questa località.');
       setCaricamento(false);
@@ -107,6 +116,19 @@ function RSLocalFinder() {
         <div className="flex flex-wrap items-center justify-between gap-2 bg-slate-50 p-3 text-sm text-slate-700"><strong>{centro.etichetta}</strong><a className="font-semibold text-teal-800 underline" href={'https://www.openstreetmap.org/?mlat=' + centro.lat + '&mlon=' + centro.lon + '#map=14/' + centro.lat + '/' + centro.lon} target="_blank" rel="noreferrer">Apri mappa completa</a></div>
         <iframe title="Mappa delle attività vicine" src={mapUrl} className="h-72 w-full border-0" loading="lazy" />
       </div>}
+      <div className="mt-6 rounded-xl border border-teal-200 bg-teal-50 p-4">
+        <h3 className="text-lg font-bold text-teal-900">🛍️ Annunci RiverSpendShop in zona</h3>
+        <p className="mt-1 text-sm text-slate-600">Annunci pubblicati dai venditori che hanno indicato questa località. Non sono attività OpenStreetMap.</p>
+        {prodottiLocal.length ? <ul className="mt-3 grid gap-3 sm:grid-cols-2">
+          {prodottiLocal.map((item) => <li key={item.id} className="rounded-xl border border-teal-100 bg-white p-3">
+            {item.immagini?.[0] && <img src={item.immagini[0]} alt={item.titolo} className="mb-2 h-36 w-full rounded-lg object-contain" />}
+            <p className="font-bold text-slate-900">{item.titolo}</p>
+            <p className="mt-1 font-semibold text-teal-800">{Number(item.prezzo).toLocaleString('it-IT', { style: 'currency', currency: 'EUR' })}</p>
+            <p className="text-sm text-slate-600">{[item.localita, item.provincia, item.regione].filter(Boolean).join(' · ')}</p>
+            <a href={'/prodotto/' + encodeURIComponent(item.id)} className="mt-3 inline-block font-semibold text-teal-800 underline">Apri annuncio</a>
+          </li>)}
+        </ul> : <p className="mt-3 text-sm text-slate-600">Nessun annuncio RiverSpendShop con località indicata trovato per questa ricerca.</p>}
+      </div>
       {attivita.length > 0 && <div className="mt-5">
         <h3 className="mb-3 text-lg font-bold text-slate-900">Attività vicine</h3>
         <ul className="grid gap-3 sm:grid-cols-2">
