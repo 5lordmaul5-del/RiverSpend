@@ -140,8 +140,8 @@ export default function Home() {
           <div className="mx-auto max-w-6xl">
             <div className="flex justify-center">
               <a href="/" aria-label="RiverSpendShop, pagina iniziale" className="inline-flex flex-col items-center rounded-2xl border border-teal-800/80 bg-slate-900/70 px-6 py-2 shadow-lg shadow-teal-950/30">
-                <h1 className="rs-brand text-2xl font-extrabold leading-tight text-teal-400">RiverSpend</h1>
-                <span className="text-sm font-semibold italic text-amber-300">Shop</span>
+                <h1 className="rs-brand text-3xl sm:text-4xl font-extrabold leading-tight text-black">RiverSpend</h1>
+                <span className="rs-shop-word text-lg sm:text-xl font-bold italic">Shop</span>
                 <p className="mt-1 text-[9px] tracking-wide text-slate-400">YOUR SHOP • YOUR FLOW</p>
               </a>
             </div>
