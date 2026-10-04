@@ -19,13 +19,19 @@ export default async function handler(req, res) {
     // declared foreign key to products, so PostgREST cannot reliably embed it.
     const { data: products, error: productsError } = await supabase
       .from('products')
-      .select('id, name, description, price, condition, category, image, created_at, origin_country, seller_country, seller_type, stock, promo, homepage_expires_at, sponsored_until, sponsored_label')
+      .select('id, name, description, price, condition, category, image, created_at, origin_country, seller_country, seller_type, locality, province, region, stock, promo, homepage_expires_at, sponsored_until, sponsored_label')
       .eq('status', 'published')
       .order('created_at', { ascending: false });
 
     if (productsError) throw productsError;
 
-    const ids = (products || []).map((product) => product.id);
+    const locality = typeof req.query.locality === 'string' ? req.query.locality.trim() : '';
+    const province = typeof req.query.province === 'string' ? req.query.province.trim() : '';
+    let filteredProducts = products || [];
+    if (locality) filteredProducts = filteredProducts.filter((p) => (p.locality || '').toLocaleLowerCase('it').includes(locality.toLocaleLowerCase('it')));
+    if (province) filteredProducts = filteredProducts.filter((p) => (p.province || '').toLocaleLowerCase('it').includes(province.toLocaleLowerCase('it')));
+
+    const ids = filteredProducts.map((product) => product.id);
     let media = [];
 
     if (ids.length) {
@@ -48,7 +54,7 @@ export default async function handler(req, res) {
       mediaByProduct.set(item.product_id, list);
     }
 
-    return res.status(200).json((products || []).map((product) => {
+    return res.status(200).json(filteredProducts.map((product) => {
       const mediaImages = mediaByProduct.get(product.id) || [];
       const immagini = mediaImages.length
         ? mediaImages
@@ -66,6 +72,9 @@ export default async function handler(req, res) {
         immagini,
         paeseOrigine: product.origin_country || '',
         paeseVenditore: product.seller_country || '',
+        localita: product.locality || '',
+        provincia: product.province || '',
+        regione: product.region || '',
         venditoreTipo: product.seller_type || 'Privato',
         quantita: Number.isInteger(product.stock) ? product.stock : 1,
         sponsorizzato: Boolean(product.promo) || Boolean(product.sponsored_until && new Date(product.sponsored_until) > new Date()),
