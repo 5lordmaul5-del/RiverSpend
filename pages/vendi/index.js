@@ -555,6 +555,27 @@ export default function Vendi() {
           </>
         )}
 
+        <section className="mb-8 rounded-2xl border border-cyan-200 bg-gradient-to-br from-cyan-50 to-white p-5 shadow-sm">
+          <div className="mb-3 flex flex-wrap items-center gap-2">
+            <span className="rounded-full bg-cyan-100 px-3 py-1 text-sm font-bold text-cyan-800">RS Nova AI</span>
+            <span className="rounded-full bg-amber-100 px-3 py-1 text-sm font-bold text-amber-800">RS Booster</span>
+          </div>
+          <h2 className="text-2xl font-extrabold text-slate-900">Prendi tu il controllo del tuo prodotto!</h2>
+          <p className="mt-2 text-slate-700">Scegli tu come valorizzare la tua vendita: lascia prezzo e visibilità invariati, segui i consigli di RS Nova AI per rendere il prodotto più appetibile oppure attiva RS Booster per dare maggiore visibilità al tuo annuncio.</p>
+          <p className="mt-3 font-semibold text-slate-900">Con RS Nova AI e RS Booster ti aiutiamo a raggiungere più acquirenti e a concludere la vendita!</p>
+          <div className="mt-4 grid gap-2 sm:grid-cols-2">
+            <div className="rounded-xl border border-cyan-200 bg-white p-3">
+              <p className="font-bold text-cyan-800">✨ RS Nova AI · Consiglio prezzo</p>
+              <p className="mt-1 text-sm text-slate-600">Suggerimenti per rendere l’offerta più interessante. Il prezzo lo decidi sempre tu.</p>
+            </div>
+            <div className="rounded-xl border border-amber-200 bg-white p-3">
+              <p className="font-bold text-amber-800">🚀 RS Booster · Più visibilità</p>
+              <p className="mt-1 text-sm text-slate-600">In futuro potrai scegliere la promozione locale, regionale, nazionale o internazionale.</p>
+            </div>
+          </div>
+          <p className="mt-3 text-xs text-slate-500">Le funzioni di suggerimento automatico e acquisto Booster sono in fase di attivazione. La maggiore visibilità non garantisce la vendita.</p>
+        </section>
+
         <section>
           <h2 className="text-2xl font-bold mb-4">
             Prodotti in vendita
