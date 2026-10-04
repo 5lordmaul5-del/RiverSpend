@@ -82,12 +82,12 @@ export default function Prodotto() {
   }
 
   if (caricamento) {
-    return <main className="min-h-screen bg-slate-950 p-6 text-white">Caricamento prodotto…</main>;
+    return <main className="min-h-screen bg-white p-6 text-slate-800">Caricamento prodotto…</main>;
   }
 
   if (errore || !prodotto) {
     return (
-      <main className="min-h-screen bg-slate-950 p-6 text-white">
+      <main className="min-h-screen bg-white p-6 text-slate-800">
         <Link href="/" className="text-teal-300 underline">← Torna al RiverSpendShop</Link>
         <p className="mt-6">{errore || 'Prodotto non trovato.'}</p>
       </main>
@@ -95,7 +95,7 @@ export default function Prodotto() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-6 text-white">
+    <main className="rs-product-page min-h-screen bg-white px-4 py-6 text-slate-800">
       <div className="mx-auto max-w-5xl">
         <Link href="/" className="inline-block mb-6 text-teal-300 underline">← Torna al RiverSpendShop</Link>
 
@@ -103,19 +103,19 @@ export default function Prodotto() {
           <section>
             {immagini.length > 0 ? (
               <>
-                <div className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900">
+                <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
                   <img src={immagini[fotoAttiva]} alt={prodotto.titolo} className="h-[360px] w-full object-contain sm:h-[500px]" />
                 </div>
                 {immagini.length > 1 && (
                   <div className="mt-3 grid grid-cols-5 gap-2">
                     {immagini.map((url, index) => (
-                      <button key={url + index} type="button" onClick={() => setFotoAttiva(index)} aria-label={'Mostra foto ' + (index + 1)} aria-pressed={fotoAttiva === index} className={'overflow-hidden rounded-lg border-2 ' + (fotoAttiva === index ? 'border-teal-400' : 'border-slate-700')}>
+                      <button key={url + index} type="button" onClick={() => setFotoAttiva(index)} aria-label={'Mostra foto ' + (index + 1)} aria-pressed={fotoAttiva === index} className={'overflow-hidden rounded-lg border-2 ' + (fotoAttiva === index ? 'border-teal-400' : 'border-slate-200')}>
                         <img src={url} alt={'Anteprima ' + (index + 1)} className="h-20 w-full bg-white object-contain p-1" />
                       </button>
                     ))}
                   </div>
                 )}
-                <p className="mt-2 text-sm text-slate-400">Foto {fotoAttiva + 1} di {immagini.length}</p>
+                <p className="mt-2 text-sm text-slate-600">Foto {fotoAttiva + 1} di {immagini.length}</p>
               </>
             ) : (
               <div className="flex h-80 items-center justify-center rounded-2xl bg-slate-900 text-slate-400">Foto non disponibile</div>
@@ -126,7 +126,7 @@ export default function Prodotto() {
             <p className="text-sm font-semibold uppercase tracking-widest text-teal-300">RiverSpendShop</p>
             <h1 className="mt-2 text-3xl font-bold">{prodotto.titolo}</h1>
             <p className="mt-4 text-3xl font-bold text-teal-300">€ {Number(prodotto.prezzo || 0).toFixed(2)}</p>
-            <p className="mt-3 inline-block rounded-full bg-slate-800 px-3 py-1 text-sm text-slate-200">{prodotto.condizione || 'Condizione non indicata'}</p>
+            <p className="mt-3 inline-block rounded-full bg-slate-100 px-3 py-1 text-sm text-slate-700">{prodotto.condizione || 'Condizione non indicata'}</p>
 
             <div className="mt-7 flex flex-wrap gap-3">
               <button type="button" onClick={toggleRete} className="rounded-xl bg-teal-500 px-4 py-3 font-bold text-slate-950">
@@ -143,7 +143,7 @@ export default function Prodotto() {
 
             <div className="mt-8 border-t border-slate-800 pt-6">
               <h2 className="text-xl font-semibold">Descrizione prodotto</h2>
-              <p className="mt-3 whitespace-pre-wrap leading-7 text-slate-300">{prodotto.descrizione || 'Nessuna descrizione inserita.'}</p>
+              <p className="mt-3 whitespace-pre-wrap leading-7 text-slate-600">{prodotto.descrizione || 'Nessuna descrizione inserita.'}</p>
             </div>
 
             <div className="mt-8 grid grid-cols-2 gap-3">
