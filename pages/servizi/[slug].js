@@ -1,5 +1,127 @@
 import Link from 'next/link';
 
+import { useState } from 'react';
+
+function distanzaKm(a, b, c, d) {
+  const rad = (v) => (v * Math.PI) / 180;
+  const x = rad(c - a);
+  const y = rad(d - b);
+  const h = Math.sin(x / 2) ** 2 + Math.cos(rad(a)) * Math.cos(rad(c)) * Math.sin(y / 2) ** 2;
+  return 6371 * 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h));
+}
+
+function RSLocalFinder() {
+  const [citta, setCitta] = useState('');
+  const [provincia, setProvincia] = useState('');
+  const [centro, setCentro] = useState(null);
+  const [attivita, setAttivita] = useState([]);
+  const [raggio, setRaggio] = useState('5000');
+  const [stato, setStato] = useState('');
+  const [caricamento, setCaricamento] = useState(false);
+
+  async function cerca(lat, lon, etichetta) {
+    setCaricamento(true);
+    setStato('Cerco attività reali nella zona…');
+    setAttivita([]);
+    setCentro({ lat, lon, etichetta });
+    try {
+      const query = '[out:json][timeout:25];(node(around:' + raggio + ',' + lat + ',' + lon + ')[shop];way(around:' + raggio + ',' + lat + ',' + lon + ')[shop];relation(around:' + raggio + ',' + lat + ',' + lon + ')[shop];node(around:' + raggio + ',' + lat + ',' + lon + ')[amenity~"restaurant|cafe|bar|fast_food|pharmacy|bank|post_office|fuel|clinic|doctors|美容"];way(around:' + raggio + ',' + lat + ',' + lon + ')[amenity~"restaurant|cafe|bar|fast_food|pharmacy|bank|post_office|fuel|clinic|doctors"];);out center tags;';
+      const response = await fetch('https://overpass-api.de/api/interpreter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
+        body: 'data=' + encodeURIComponent(query)
+      });
+      if (!response.ok) throw new Error('Il servizio cartografico non risponde (' + response.status + '). Riprova tra poco.');
+      const data = await response.json();
+      const found = (data.elements || []).map((item) => {
+        const pLat = item.lat ?? item.center?.lat;
+        const pLon = item.lon ?? item.center?.lon;
+        if (typeof pLat !== 'number' || typeof pLon !== 'number') return null;
+        const tags = item.tags || {};
+        const nome = tags.name || tags.brand || tags.operator || tags.shop || tags.amenity || 'Attività locale';
+        const indirizzo = [tags['addr:street'], tags['addr:housenumber'], tags['addr:postcode'], tags['addr:city']].filter(Boolean).join(' ');
+        return { id: item.type + '-' + item.id, nome, tipo: tags.shop ? 'Negozio' : (tags.amenity || 'Servizio'), indirizzo, lat: pLat, lon: pLon, distanza: distanzaKm(lat, lon, pLat, pLon) };
+      }).filter(Boolean).sort((a, b) => a.distanza - b.distanza);
+      setAttivita(found);
+      setStato(found.length ? 'Trovate ' + found.length + ' attività nei dati OpenStreetMap. Verifica sempre indirizzo e disponibilità.' : 'Nessuna attività trovata in questo raggio. Prova ad aumentarlo o cambia zona.');
+    } catch (e) {
+      setStato(e.message || 'Ricerca non riuscita. Riprova.');
+    } finally {
+      setCaricamento(false);
+    }
+  }
+
+  async function cercaCitta(e) {
+    e.preventDefault();
+    const luogo = [citta.trim(), provincia.trim(), 'Italia'].filter(Boolean).join(', ');
+    if (!citta.trim()) { setStato('Inserisci almeno una città o località.'); return; }
+    setCaricamento(true);
+    setStato('Cerco la località…');
+    try {
+      const res = await fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&country=Italy&q=' + encodeURIComponent(luogo), { headers: { Accept: 'application/json' } });
+      if (!res.ok) throw new Error('Ricerca località momentaneamente non disponibile.');
+      const results = await res.json();
+      if (!results.length) throw new Error('Località non trovata. Controlla città e provincia.');
+      await cerca(Number(results[0].lat), Number(results[0].lon), results[0].display_name);
+    } catch (e) {
+      setStato(e.message || 'Non riesco a trovare questa località.');
+      setCaricamento(false);
+    }
+  }
+
+  function usaGps() {
+    if (!navigator.geolocation) { setStato('La geolocalizzazione non è supportata da questo dispositivo.'); return; }
+    setCaricamento(true);
+    setStato('In attesa del permesso GPS…');
+    navigator.geolocation.getCurrentPosition(
+      (pos) => cerca(pos.coords.latitude, pos.coords.longitude, 'La tua posizione'),
+      (err) => { setCaricamento(false); setStato(err.code === 1 ? 'Permesso posizione negato. Inserisci città e provincia.' : 'Posizione non disponibile. Inserisci città e provincia.'); },
+      { enableHighAccuracy: true, timeout: 12000, maximumAge: 60000 }
+    );
+  }
+
+  const bbox = centro ? [centro.lon - 0.035, centro.lat - 0.025, centro.lon + 0.035, centro.lat + 0.025].join('%2C') : '';
+  const mapUrl = centro ? 'https://www.openstreetmap.org/export/embed.html?bbox=' + bbox + '&layer=mapnik&marker=' + centro.lat + '%2C' + centro.lon : '';
+
+  return (
+    <section className="mt-8 rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
+      <h2 className="text-2xl font-bold text-slate-900">Trova attività vicino a te</h2>
+      <p className="mt-2 text-slate-600">Scegli una città oppure consenti l’uso della posizione GPS. Vedrai attività presenti sulla mappa e la distanza approssimativa dal punto scelto.</p>
+      <form onSubmit={cercaCitta} className="mt-5 grid gap-3 sm:grid-cols-2">
+        <label className="text-sm font-semibold text-slate-700">Città / località
+          <input value={citta} onChange={(e) => setCitta(e.target.value)} placeholder="Es. Cannobio" className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-3 text-base text-slate-900" />
+        </label>
+        <label className="text-sm font-semibold text-slate-700">Provincia
+          <input value={provincia} onChange={(e) => setProvincia(e.target.value)} placeholder="Es. Verbano-Cusio-Ossola" className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-3 text-base text-slate-900" />
+        </label>
+        <label className="text-sm font-semibold text-slate-700 sm:col-span-2">Raggio di ricerca
+          <select value={raggio} onChange={(e) => setRaggio(e.target.value)} className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-3 text-base text-slate-900">
+            <option value="1000">1 km</option><option value="3000">3 km</option><option value="5000">5 km</option><option value="10000">10 km</option><option value="20000">20 km</option>
+          </select>
+        </label>
+        <button type="submit" disabled={caricamento} className="rounded-xl bg-teal-700 px-4 py-3 font-bold text-white disabled:opacity-60">Cerca per città</button>
+        <button type="button" onClick={usaGps} disabled={caricamento} className="rounded-xl border border-teal-700 px-4 py-3 font-bold text-teal-800 disabled:opacity-60">📍 Usa la mia posizione GPS</button>
+      </form>
+      {stato && <p aria-live="polite" className="mt-4 rounded-xl bg-slate-50 p-3 text-sm text-slate-700">{caricamento ? '⏳ ' : ''}{stato}</p>}
+      {centro && <div className="mt-5 overflow-hidden rounded-xl border border-slate-200">
+        <div className="flex flex-wrap items-center justify-between gap-2 bg-slate-50 p-3 text-sm text-slate-700"><strong>{centro.etichetta}</strong><a className="font-semibold text-teal-800 underline" href={'https://www.openstreetmap.org/?mlat=' + centro.lat + '&mlon=' + centro.lon + '#map=14/' + centro.lat + '/' + centro.lon} target="_blank" rel="noreferrer">Apri mappa completa</a></div>
+        <iframe title="Mappa delle attività vicine" src={mapUrl} className="h-72 w-full border-0" loading="lazy" />
+      </div>}
+      {attivita.length > 0 && <div className="mt-5">
+        <h3 className="mb-3 text-lg font-bold text-slate-900">Attività vicine</h3>
+        <ul className="grid gap-3 sm:grid-cols-2">
+          {attivita.map((item) => <li key={item.id} className="rounded-xl border border-slate-200 bg-white p-4">
+            <div className="flex items-start justify-between gap-3"><div><p className="font-bold text-slate-900">{item.nome}</p><p className="mt-1 text-sm capitalize text-slate-600">{item.tipo}</p>{item.indirizzo && <p className="mt-1 text-sm text-slate-600">{item.indirizzo}</p>}</div><span className="shrink-0 rounded-full bg-teal-50 px-2 py-1 text-sm font-bold text-teal-900">{item.distanza.toFixed(1)} km</span></div>
+            <a className="mt-3 inline-block text-sm font-semibold text-teal-800 underline" href={'https://www.openstreetmap.org/?mlat=' + item.lat + '&mlon=' + item.lon + '#map=18/' + item.lat + '/' + item.lon} target="_blank" rel="noreferrer">Vedi sulla mappa</a>
+          </li>)}
+        </ul>
+      </div>}
+      <p className="mt-4 text-xs leading-5 text-slate-500">Dati cartografici OpenStreetMap. I risultati dipendono dai dati disponibili nella zona; non sono ancora cataloghi, venditori verificati o disponibilità di acquisto RiverSpend.</p>
+    </section>
+  );
+}
+
+
 const servizi = {
   local: {
     titolo: 'RS Local',
@@ -132,35 +254,7 @@ export default function Servizio({ slug }) {
             </div>
           )}
 
-          {slug === 'local' && (
-            <div className="mt-8 grid gap-4">
-              <section className={slug === 'local' ? "rounded-2xl border border-slate-200 bg-white p-5" : "rounded-2xl border border-teal-800/80 bg-slate-950/50 p-5"}>
-                <h2 className={slug === 'local' ? "text-xl font-bold text-teal-800" : "text-xl font-bold text-teal-200"}>Cos’è RS Local?</h2>
-                <p className={slug === 'local' ? "mt-3 leading-7 text-slate-700" : "mt-3 leading-7 text-slate-300"}>
-                  È la parte di RiverSpend pensata per aiutarti a trovare ciò che offre il tuo territorio.
-                  Riunirà in un unico spazio attività locali, ristoranti, negozi e servizi, così potrai
-                  consultarne le proposte senza dover cercare su tanti canali diversi.
-                </p>
-              </section>
-              <section className={slug === 'local' ? "rounded-2xl border border-slate-200 bg-white p-5" : "rounded-2xl border border-teal-800/80 bg-slate-950/50 p-5"}>
-                <h2 className={slug === 'local' ? "text-xl font-bold text-teal-800" : "text-xl font-bold text-teal-200"}>A cosa serve?</h2>
-                <ul className="mt-3 list-disc space-y-2 pl-5 leading-7 text-slate-700">
-                  <li><strong className="text-slate-900">Per chi cerca:</strong> scoprire attività, prodotti e servizi nella propria zona.</li>
-                  <li><strong className="text-slate-900">Per le attività:</strong> presentare il proprio negozio e le proprie proposte alla comunità locale.</li>
-                  <li><strong className="text-slate-900">Per gli ordini:</strong> in una fase successiva, consultare i cataloghi, ordinare e scegliere tra consegna e ritiro, dove disponibili.</li>
-                </ul>
-              </section>
-              <section className={slug === 'local' ? "rounded-2xl border border-slate-200 bg-white p-5" : "rounded-2xl border border-teal-800/80 bg-slate-950/50 p-5"}>
-                <h2 className={slug === 'local' ? "text-xl font-bold text-teal-800" : "text-xl font-bold text-teal-200"}>Come funzionerà</h2>
-                <ol className="mt-3 grid gap-3 sm:grid-cols-3">
-                  <li className="rounded-xl border border-slate-200 bg-slate-50 p-4"><span className="text-2xl">📍</span><p className="mt-2 font-semibold text-slate-900">1. Scegli la zona</p><p className="mt-1 text-sm leading-6 text-slate-700">Indichi città o area che ti interessa.</p></li>
-                  <li className="rounded-xl border border-slate-200 bg-slate-50 p-4"><span className="text-2xl">🛍️</span><p className="mt-2 font-semibold text-slate-900">2. Scopri le attività</p><p className="mt-1 text-sm leading-6 text-slate-700">Esplori negozi, ristoranti e le loro proposte.</p></li>
-                  <li className="rounded-xl border border-slate-200 bg-slate-50 p-4"><span className="text-2xl">🛵</span><p className="mt-2 font-semibold text-slate-900">3. Ordina o ritira</p><p className="mt-1 text-sm leading-6 text-slate-700">Quando il servizio sarà attivo, potrai scegliere le opzioni offerte dall’attività.</p></li>
-                </ol>
-              </section>
-              <p className="text-sm leading-6 text-slate-600">Nota: RS Local è in fase di sviluppo. Al momento questa pagina presenta il progetto; non è ancora possibile effettuare ordini o richiedere consegne.</p>
-            </div>
-          )}
+          {slug === 'local' && <RSLocalFinder />}
 
           <div className={slug === 'local' ? "mt-7 rounded-2xl border border-slate-200 bg-slate-50 p-4" : "mt-7 rounded-2xl border border-slate-700 bg-slate-950/60 p-4"}>
             <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Stato</p>
