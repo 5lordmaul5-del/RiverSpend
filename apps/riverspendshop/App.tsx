@@ -14,6 +14,13 @@ export default function App() {
     if (!result.canceled) { setMedia(prev => [...prev, ...result.assets]); setMessage('📷 Foto acquisita.'); }
   }
 
+  async function recordVideo() {
+    const permission = await ImagePicker.requestCameraPermissionsAsync();
+    if (!permission.granted) { setMessage('🎥 Permesso fotocamera non concesso.'); return; }
+    const result = await ImagePicker.launchCameraAsync({ mediaTypes: ['videos'] as any, videoMaxDuration: 60 });
+    if (!result.canceled) { setMedia(prev => [...prev, ...result.assets]); setMessage('🎥 Video acquisito.'); }
+  }
+
   async function pickMedia() {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images', 'videos'] as any,
@@ -34,9 +41,10 @@ export default function App() {
 
         <View style={styles.card}>
           <Text style={styles.title}>📸 Crea il tuo annuncio</Text>
-          <Text style={styles.text}>Scatta direttamente dal telefono oppure scegli foto e video dalla galleria. Fino a 20 elementi nella selezione.</Text>
+          <Text style={styles.text}>Scatta foto, registra un video direttamente dal telefono oppure scegli foto e video dalla galleria. Fino a 20 elementi nella selezione.</Text>
           <View style={styles.row}>
             <Pressable onPress={takePhoto} style={styles.primary}><Text style={styles.primaryText}>📷 Scatta foto</Text></Pressable>
+            <Pressable onPress={recordVideo} style={styles.primary}><Text style={styles.primaryText}>🎥 Registra video</Text></Pressable>
             <Pressable onPress={pickMedia} style={styles.secondary}><Text style={styles.secondaryText}>🖼️ Foto / video</Text></Pressable>
           </View>
           <Text style={styles.status}>{message}</Text>
