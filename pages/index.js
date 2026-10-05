@@ -33,21 +33,6 @@ function LanguageSelector() {
     try { localStorage.setItem('riverspend-language', next); } catch {}
     window.dispatchEvent(new CustomEvent('riverspend:language-change', { detail: { language: next } }));
   }
-      {mostraGate18 && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4" role="dialog" aria-modal="true" aria-labelledby="gate18-title">
-          <div className="w-full max-w-md rounded-3xl bg-white p-6 text-center shadow-2xl">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100 text-3xl">🔞</div>
-            <h2 id="gate18-title" className="text-2xl font-extrabold text-slate-900">Area 18+ · Sex Toys</h2>
-            <p className="mt-3 text-slate-600">Questa sezione di RiverSpendShop è riservata esclusivamente agli adulti. Devi avere almeno 18 anni per continuare.</p>
-            <div className="mt-5 grid grid-cols-1 gap-2 sm:grid-cols-2">
-              <button type="button" onClick={conferma18} className="rounded-xl bg-teal-700 px-4 py-3 font-bold text-white">Ho 18 anni · Entra</button>
-              <button type="button" onClick={rifiuta18} className="rounded-xl border border-slate-300 px-4 py-3 font-bold text-slate-800">Esci</button>
-            </div>
-            <p className="mt-3 text-xs text-slate-500">L'accesso 18+ viene memorizzato su questo dispositivo.</p>
-          </div>
-        </div>
-      )}
-
   return (
     <select value={language} onChange={changeLanguage} aria-label="Scegli la lingua"
       className="max-w-[112px] rounded-full border border-teal-700 bg-slate-900 px-2 py-1.5 text-xs font-semibold text-teal-100">
@@ -214,6 +199,21 @@ export default function Home() {
 
   return (
     <main className="rs-site min-h-screen bg-slate-950 text-white">
+      {mostraGate18 && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4" role="dialog" aria-modal="true" aria-labelledby="gate18-title">
+          <div className="w-full max-w-md rounded-3xl bg-white p-6 text-center shadow-2xl">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100 text-3xl">🔞</div>
+            <h2 id="gate18-title" className="text-2xl font-extrabold text-slate-900">Area 18+ · Sex Toys</h2>
+            <p className="mt-3 text-slate-600">Questa sezione di RiverSpendShop è riservata esclusivamente agli adulti. Devi avere almeno 18 anni per continuare.</p>
+            <div className="mt-5 grid grid-cols-1 gap-2 sm:grid-cols-2">
+              <button type="button" onClick={conferma18} className="rounded-xl bg-teal-700 px-4 py-3 font-bold text-white">Ho 18 anni · Entra</button>
+              <button type="button" onClick={rifiuta18} className="rounded-xl border border-slate-300 px-4 py-3 font-bold text-slate-800">Esci</button>
+            </div>
+            <p className="mt-3 text-xs text-slate-500">L'accesso 18+ viene memorizzato su questo dispositivo.</p>
+          </div>
+        </div>
+      )}
+
       {showSplash && <SplashScreen onEnter={() => { try { sessionStorage.setItem('rs-opening-seen', '1'); } catch {} setShowSplash(false); }} />}
 
       <div className={`transition-opacity duration-700 ${showSplash ? 'opacity-0' : 'opacity-100'}`}>
