@@ -274,7 +274,7 @@ export default function Home() {
                     {reteIds.includes(String(p.id)) ? '✓ Nella tua Rete' : '🕸️ Aggiungi alla Rete'}
                   </button>
                   <a href={`/piggybank?product=${encodeURIComponent(p.id)}`} className="flex w-full items-center justify-center rounded-xl border border-amber-400 bg-amber-300 px-3 py-2.5 text-xs font-extrabold text-amber-950 shadow-sm hover:bg-amber-200">
-                    <span className="inline-block" style={{textShadow:"-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000"}}>🐷</span><span aria-hidden="true">💰</span> PiggyBank
+                    <span className="mr-0.5 inline-flex h-5 w-5 items-center justify-center rounded-full border-2 border-black bg-white text-sm leading-none">🐷</span><span aria-hidden="true">💰</span> PiggyBank
                   </a>
                 </div>
               </article>
