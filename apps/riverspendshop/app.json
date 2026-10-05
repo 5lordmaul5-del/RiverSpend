@@ -1,0 +1,16 @@
+{
+  "expo": {
+    "name": "RiverSpendShop",
+    "slug": "riverspendshop",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "scheme": "riverspendshop",
+    "android": {
+      "package": "com.riverspend.shop"
+    },
+    "ios": {
+      "bundleIdentifier": "com.riverspend.shop"
+    }
+  }
+}
