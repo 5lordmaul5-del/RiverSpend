@@ -4,19 +4,19 @@ import * as ImagePicker from 'expo-image-picker';
 import { StatusBar } from 'expo-status-bar';
 
 export default function App() {
-  const [media, setMedia] = useState<ImagePicker.ImagePickerAsset[]>([]);
+  const [media, setMedia] = useState<any[]>([]);
   const [message, setMessage] = useState('Nessun file selezionato.');
 
   async function takePhoto() {
     const permission = await ImagePicker.requestCameraPermissionsAsync();
     if (!permission.granted) { setMessage('📷 Permesso fotocamera non concesso.'); return; }
-    const result = await ImagePicker.launchCameraAsync({ mediaTypes: ['images'], quality: 0.85 });
+    const result = await ImagePicker.launchCameraAsync({ mediaTypes: ['images'] as any, quality: 0.85 });
     if (!result.canceled) { setMedia(prev => [...prev, ...result.assets]); setMessage('📷 Foto acquisita.'); }
   }
 
   async function pickMedia() {
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images', 'videos'],
+      mediaTypes: ['images', 'videos'] as any,
       allowsMultipleSelection: true,
       selectionLimit: 20,
       quality: 0.85
