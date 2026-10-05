@@ -65,6 +65,7 @@ export default function Home() {
   const [menuRiverSpend, setMenuRiverSpend] = useState(false);
   const [ricerca, setRicerca] = useState('');
   const [categoriaAttiva, setCategoriaAttiva] = useState('');
+  const [reteIds, setReteIds] = useState([]);
 
   const categorie = [
     'AUTO & VEICOLI','Auto','Moto','Scooter','Harley & Custom','Camion & Veicoli commerciali','Trattori & Agricoltura','Edilizia & Macchine da lavoro','Ricambi & Accessori auto','Ricambi & Accessori moto',
@@ -98,6 +99,23 @@ export default function Home() {
     ['RiverSpend Fortress','/servizi/fortress'],
     ['RiverSpend SurroundSpaceAroundExperience','/servizi/experience']
   ];
+
+  useEffect(() => { try { const saved = JSON.parse(localStorage.getItem('riverspend-rete') || '[]'); setReteIds(Array.isArray(saved) ? saved.map((item) => String(item.id)) : []); } catch {} }, []);
+
+  function toggleReteFromCatalog(p) {
+    const key = 'riverspend-rete';
+    let current = [];
+    try { current = JSON.parse(localStorage.getItem(key) || '[]'); } catch {}
+    if (!Array.isArray(current)) current = [];
+    const exists = current.some((item) => String(item.id) === String(p.id));
+    const next = exists ? current.filter((item) => String(item.id) !== String(p.id)) : [...current, p];
+    try {
+      localStorage.setItem(key, JSON.stringify(next));
+      sessionStorage.setItem(key, JSON.stringify(next));
+      document.cookie = 'riverspend-rete-ids=' + encodeURIComponent(next.map((item) => item.id).join(',')) + '; path=/; max-age=31536000; SameSite=Lax';
+    } catch {}
+    setReteIds(next.map((item) => String(item.id)));
+  }
 
   useEffect(() => {
     let attivo = true;
@@ -236,7 +254,7 @@ export default function Home() {
           ) : (
             <div className="grid grid-cols-2 gap-2 sm:gap-4 sm:grid-cols-3 lg:grid-cols-4">
               {prodottiVisibili.map((p) => (
-                <a href={`/prodotto/${encodeURIComponent(p.id)}`} key={p.id} className="rs-product-card group block overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 transition hover:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-400">
+                <article key={p.id} className="rs-product-card group overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 transition hover:border-teal-500"><a href={`/prodotto/${encodeURIComponent(p.id)}`} className="block focus:outline-none focus:ring-2 focus:ring-teal-400">
                   <div className="relative">{p.immagini?.[0] ? <div className="rs-product-media flex aspect-square w-full items-center justify-center overflow-hidden bg-white p-0"><img src={p.immagini[0]} alt={p.titolo || 'Prodotto'} className="h-full w-full scale-110 object-contain transition-transform duration-300 group-hover:scale-[1.16]" /></div> : <div className="flex aspect-square items-center justify-center bg-white text-sm text-slate-500">Foto non disponibile</div>}{(() => { const tipo = String(p.venditoreTipo || "Privato").toLowerCase(); const river = tipo.includes("river"); const azienda = tipo.includes("aziend") || tipo.includes("business") || tipo.includes("iva"); const label = river ? "RSS" : azienda ? "RS azienda" : "RSprivato"; const color = river ? "border-cyan-300 bg-cyan-100 text-cyan-950" : azienda ? "border-green-300 bg-green-100 text-green-950" : "border-red-300 bg-red-100 text-red-950"; return <span className={`absolute left-2 top-2 z-10 rounded-md border px-2.5 py-1 text-[11px] font-extrabold shadow-sm ${color}`}>{label}</span>; })()} {p.paeseOrigine && <span className="absolute bottom-2 left-2 rounded-md bg-white/90 px-2 py-1 text-[10px] font-semibold text-slate-800">Origine: {p.paeseOrigine}</span>}{p.sponsorizzatoFino && new Date(p.sponsorizzatoFino) > new Date() && <span className="absolute right-2 top-2 rounded-md border border-amber-300 bg-amber-100 px-2 py-1 text-[10px] font-bold text-amber-900">RS Spons</span>}</div>
                   <div className="p-3">
                     <h3 className="line-clamp-2 font-semibold">{p.titolo}</h3>
@@ -245,6 +263,12 @@ export default function Home() {
                     <p className="mt-3 text-sm font-semibold text-teal-300">{t('openProduct')}</p>
                   </div>
                 </a>
+                <div className="px-3 pb-3">
+                  <button type="button" onClick={() => toggleReteFromCatalog(p)} className={`w-full rounded-xl border px-3 py-2.5 text-xs font-extrabold transition ${reteIds.includes(String(p.id)) ? 'border-teal-400 bg-teal-900 text-teal-100' : 'border-teal-600 bg-teal-500 text-slate-950 hover:bg-teal-400'}`} aria-pressed={reteIds.includes(String(p.id))}>
+                    {reteIds.includes(String(p.id)) ? '✓ Nella tua Rete' : '🕸️ Aggiungi alla Rete'}
+                  </button>
+                </div>
+              </article>
               ))}
             </div>
           )}
