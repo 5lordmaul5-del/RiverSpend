@@ -115,6 +115,7 @@ export default function Home() {
     ['RiverSpend Box','/servizi/box'],
     ['RiverSpend Park','/park'],
     ['RiverSpend Broadcast','/servizi/broadcast'],
+    ['RS Spons','/rs-spons'],
     ['RiverSpend TV','/servizi/tv'],
     ['RiverSpend Experience','/servizi/experience'],
     ['RiverSpend Ecology','/servizi/ecology'],
