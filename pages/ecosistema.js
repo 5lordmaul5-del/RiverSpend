@@ -20,7 +20,7 @@ const aree = [
 const piattaforme = [
   ['🗄️','RS Database','Database centrale dell’ecosistema RiverSpend','Supabase · attivo'],
   ['🖼️','RS Storage','Foto, video e media dei prodotti','Supabase Storage · attivo'],
-  ['☁️','RS Cloud','Backend, servizi cloud e collegamento dell’ecosistema','Cloud'],
+  ['☁️','RS Cloud','Backend, servizi cloud e collegamento dell’ecosistema','Cloud · attivo'],
   ['📺','RiverSpendStream','Streaming: film, musica, creator, live e Originals','/river-spend-stream'],
   ['📱','RiverSpendShop App','App marketplace per Android e Apple iOS','Android • Apple'],
   ['🎛️','RiverSpend Panel Control','RSPC: pannello CEO e collaboratori autorizzati','/rs-control-center']
