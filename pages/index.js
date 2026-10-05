@@ -33,6 +33,23 @@ function LanguageSelector() {
     try { localStorage.setItem('riverspend-language', next); } catch {}
     window.dispatchEvent(new CustomEvent('riverspend:language-change', { detail: { language: next } }));
   }
+  const mostraSezione18 = categoriaAttiva.toLowerCase() === '18🔞 sex toys' && accesso18;
+
+      {mostraGate18 && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4" role="dialog" aria-modal="true" aria-labelledby="gate18-title">
+          <div className="w-full max-w-md rounded-3xl bg-white p-6 text-center shadow-2xl">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100 text-3xl">🔞</div>
+            <h2 id="gate18-title" className="text-2xl font-extrabold text-slate-900">Area 18+ · Sex Toys</h2>
+            <p className="mt-3 text-slate-600">Questa sezione di RiverSpendShop è riservata esclusivamente agli adulti. Devi avere almeno 18 anni per continuare.</p>
+            <div className="mt-5 grid grid-cols-1 gap-2 sm:grid-cols-2">
+              <button type="button" onClick={conferma18} className="rounded-xl bg-teal-700 px-4 py-3 font-bold text-white">Ho 18 anni · Entra</button>
+              <button type="button" onClick={rifiuta18} className="rounded-xl border border-slate-300 px-4 py-3 font-bold text-slate-800">Esci</button>
+            </div>
+            <p className="mt-3 text-xs text-slate-500">L'accesso 18+ viene memorizzato su questo dispositivo.</p>
+          </div>
+        </div>
+      )}
+
   return (
     <select value={language} onChange={changeLanguage} aria-label="Scegli la lingua"
       className="max-w-[112px] rounded-full border border-teal-700 bg-slate-900 px-2 py-1.5 text-xs font-semibold text-teal-100">
@@ -87,6 +104,8 @@ export default function Home() {
   const [ricerca, setRicerca] = useState('');
   const [categoriaAttiva, setCategoriaAttiva] = useState('');
   const [reteIds, setReteIds] = useState([]);
+  const [accesso18, setAccesso18] = useState(false);
+  const [mostraGate18, setMostraGate18] = useState(false);
 
   const categorie = [
     'AUTO & VEICOLI','Auto','Moto','Scooter','Harley & Custom','Camion & Veicoli commerciali','Trattori & Agricoltura','Edilizia & Macchine da lavoro','Ricambi & Accessori auto','Ricambi & Accessori moto',
@@ -94,6 +113,7 @@ export default function Home() {
     'SPORT & BENESSERE','Sport','Arti marziali & Combattimento','Fitness & Palestra','Outdoor & Avventura','Pesca','Caccia & Accessori consentiti','Integratori',
     'TECNOLOGIA','Elettronica & Informatica','Smartphone & Telefonia','Computer & Notebook','Gaming','Console & Videogiochi','Fotografia & Video','Musica & Audio','TV & Home cinema',
     'MODA & ACCESSORI','Abbigliamento','Scarpe','Borse & Accessori','Gioielli & Orologi','Bellezza & Cura personale',
+    '18🔞 ADULTI','18🔞 Sex Toys',
     'CASA & VITA','Casa & Arredamento','Cucina','Elettrodomestici','Fai da te & Ferramenta','Giardino','Illuminazione','Tessile casa',
     'FAMIGLIA & ANIMALI','Animali','Bambini & Giocattoli','Prima infanzia',
     'CULTURA & TEMPO LIBERO','Libri & Cultura','Arte','Antiquariato','Collezionismo','Hobby & Modellismo','Viaggi & Valigeria',
@@ -149,6 +169,13 @@ export default function Home() {
     const params = new URLSearchParams(window.location.search);
     const cat = params.get('category') || '';
     setCategoriaAttiva(cat);
+    try {
+      const verificato = localStorage.getItem('riverspend-18plus') === 'true';
+      setAccesso18(verificato);
+      if (cat === '18🔞 Sex Toys' && !verificato) setMostraGate18(true);
+    } catch {
+      if (cat === '18🔞 Sex Toys') setMostraGate18(true);
+    }
 
     fetch('/api/products', { cache: 'no-store' })
       .then(async (res) => {
@@ -165,6 +192,17 @@ export default function Home() {
 
     return () => { attivo = false; };
   }, []);
+
+  function conferma18() {
+    try { localStorage.setItem('riverspend-18plus', 'true'); } catch {}
+    setAccesso18(true);
+    setMostraGate18(false);
+  }
+
+  function rifiuta18() {
+    setMostraGate18(false);
+    window.location.href = '/';
+  }
 
   const prodottiVisibili = useMemo(() => {
     const q = ricerca.trim().toLowerCase();
@@ -221,6 +259,7 @@ export default function Home() {
           {menuCategorie && (
             <div className="mx-auto mt-3 max-h-[45vh] w-full max-w-6xl overflow-y-auto rounded-2xl border border-teal-800 bg-slate-900 p-4 shadow-2xl">
               <div className="mb-3 flex items-center justify-between"><strong className="text-teal-200">{t('categories')}</strong><button onClick={() => setMenuCategorie(false)} aria-label={t('close')}>✕</button></div>
+              <div className="mb-3 rounded-xl border border-red-500/40 bg-red-950/40 px-3 py-2 text-xs text-red-100">🔞 Sezione riservata agli adulti (18+).</div>
               <div className="grid grid-cols-1 gap-1">
                 {categorie.map((cat) => (
                   <a key={cat} href={`/?category=${encodeURIComponent(cat)}`} onClick={() => setMenuCategorie(false)} className="rounded-lg px-3 py-2 text-sm text-slate-100 hover:bg-teal-900">
