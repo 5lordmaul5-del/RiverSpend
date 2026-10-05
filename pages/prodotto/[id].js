@@ -3,6 +3,27 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 
+function countryFlag(country) {
+  const value = String(country || '').trim().toLowerCase();
+  const codes = {
+    it: '🇮🇹', italia: '🇮🇹', italy: '🇮🇹', fr: '🇫🇷', francia: '🇫🇷', france: '🇫🇷',
+    no: '🇳🇴', norvegia: '🇳🇴', norway: '🇳🇴', de: '🇩🇪', germania: '🇩🇪', germany: '🇩🇪',
+    es: '🇪🇸', spagna: '🇪🇸', spain: '🇪🇸', pt: '🇵🇹', portogallo: '🇵🇹', portugal: '🇵🇹',
+    gb: '🇬🇧', uk: '🇬🇧', 'regno unito': '🇬🇧', 'united kingdom': '🇬🇧',
+    us: '🇺🇸', usa: '🇺🇸', 'stati uniti': '🇺🇸', 'united states': '🇺🇸',
+    ch: '🇨🇭', svizzera: '🇨🇭', switzerland: '🇨🇭', at: '🇦🇹', austria: '🇦🇹',
+    nl: '🇳🇱', olanda: '🇳🇱', netherlands: '🇳🇱', be: '🇧🇪', belgio: '🇧🇪', belgium: '🇧🇪',
+    se: '🇸🇪', svezia: '🇸🇪', sweden: '🇸🇪', dk: '🇩🇰', danimarca: '🇩🇰', denmark: '🇩🇰',
+    fi: '🇫🇮', finlandia: '🇫🇮', finland: '🇫🇮', pl: '🇵🇱', polonia: '🇵🇱', poland: '🇵🇱',
+    gr: '🇬🇷', grecia: '🇬🇷', greece: '🇬🇷', ie: '🇮🇪', irlanda: '🇮🇪', ireland: '🇮🇪',
+    jp: '🇯🇵', giappone: '🇯🇵', japan: '🇯🇵', cn: '🇨🇳', cina: '🇨🇳', china: '🇨🇳',
+    au: '🇦🇺', australia: '🇦🇺', ca: '🇨🇦', canada: '🇨🇦', br: '🇧🇷', brasile: '🇧🇷', brazil: '🇧🇷'
+  };
+  if (codes[value]) return codes[value];
+  if (/^[a-z]{2}$/i.test(value)) return String.fromCodePoint(...value.toUpperCase().split('').map((char) => 127397 + char.charCodeAt(0)));
+  return '';
+}
+
 function sellerBadge(tipo) {
   const value = String(tipo || 'Privato').toLowerCase();
   if (value.includes('river') || value === 'rss' || value.includes('riverspend')) {
@@ -118,8 +139,9 @@ export default function Prodotto() {
               </div>
               {immagini.length ? (
                 <>
-                  <div className="flex min-h-[330px] items-center justify-center overflow-hidden rounded-2xl border border-slate-200 bg-white sm:min-h-[510px]">
+                  <div className="relative flex min-h-[330px] items-center justify-center overflow-hidden rounded-2xl border border-slate-200 bg-white sm:min-h-[510px]">
                     <img src={immagini[Math.min(fotoAttiva, immagini.length - 1)]} alt={prodotto.titolo || 'Foto prodotto'} className="h-[330px] w-full object-contain sm:h-[510px]" />
+                    {countryFlag(prodotto.paeseOrigine) && <span className="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-slate-300 bg-white/95 text-xl shadow-sm" title={"Origine: " + prodotto.paeseOrigine} aria-label={"Origine: " + prodotto.paeseOrigine}>{countryFlag(prodotto.paeseOrigine)}</span>}
                   </div>
                   {immagini.length > 1 && <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
                     {immagini.map((url, index) => <button key={url + index} type="button" onClick={() => setFotoAttiva(index)} aria-label={'Mostra foto ' + (index + 1)} aria-pressed={fotoAttiva === index} className={'h-16 w-16 shrink-0 overflow-hidden rounded-xl border-2 bg-white ' + (fotoAttiva === index ? 'border-teal-500 ring-2 ring-teal-200' : 'border-slate-300')}>
