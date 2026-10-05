@@ -87,6 +87,10 @@ export default function Prodotto() {
   }, [prodotto]);
 
   const immagini = Array.isArray(prodotto?.immagini) ? prodotto.immagini : [];
+  const media = Array.isArray(prodotto?.media) && prodotto.media.length
+    ? prodotto.media.filter((item) => item?.url && (item?.type === 'image' || item?.type === 'video'))
+    : immagini.map((url) => ({ url, type: 'image' }));
+  const mediaAttivo = media[Math.min(fotoAttiva, Math.max(media.length - 1, 0))];
   const record = useMemo(() => prodotto ? ({
     id: prodotto.id, title: prodotto.titolo, price: Number(prodotto.prezzo || 0),
     image: prodotto.immagini?.[0] || ''
@@ -137,20 +141,44 @@ export default function Prodotto() {
                 <span className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-bold text-slate-700">La vetrina sul fiume</span>
                 <span className={'rounded-full border px-3 py-1 text-xs font-extrabold shadow-sm ' + badge.style}>{badge.label}</span>
               </div>
-              {immagini.length ? (
+              {media.length ? (
                 <>
                   <div className="relative flex min-h-[330px] items-center justify-center overflow-hidden rounded-2xl border border-slate-200 bg-white sm:min-h-[510px]">
-                    <img src={immagini[Math.min(fotoAttiva, immagini.length - 1)]} alt={prodotto.titolo || 'Foto prodotto'} className="h-[330px] w-full object-contain sm:h-[510px]" />
+                    {mediaAttivo?.type === 'video' ? (
+                      <video
+                        key={mediaAttivo.url}
+                        controls
+                        playsInline
+                        preload="metadata"
+                        className="h-[330px] w-full object-contain bg-black sm:h-[510px]"
+                        aria-label={'Video del prodotto ' + (prodotto.titolo || '')}
+                      >
+                        <source src={mediaAttivo.url} />
+                        Il tuo browser non supporta la riproduzione video.
+                      </video>
+                    ) : (
+                      <img
+                        src={mediaAttivo?.url || immagini[0]}
+                        alt={prodotto.titolo || 'Foto prodotto'}
+                        className="h-[330px] w-full object-contain sm:h-[510px]"
+                      />
+                    )}
                     {countryFlag(prodotto.paeseOrigine || prodotto.paeseVenditore) && <span className="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-slate-300 bg-white/95 text-xl shadow-sm" title={"Paese: " + (prodotto.paeseOrigine || prodotto.paeseVenditore)} aria-label={"Paese: " + (prodotto.paeseOrigine || prodotto.paeseVenditore)}>{countryFlag(prodotto.paeseOrigine || prodotto.paeseVenditore)}</span>}
                   </div>
-                  {immagini.length > 1 && <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
-                    {immagini.map((url, index) => <button key={url + index} type="button" onClick={() => setFotoAttiva(index)} aria-label={'Mostra foto ' + (index + 1)} aria-pressed={fotoAttiva === index} className={'h-16 w-16 shrink-0 overflow-hidden rounded-xl border-2 bg-white ' + (fotoAttiva === index ? 'border-teal-500 ring-2 ring-teal-200' : 'border-slate-300')}>
-                      <img src={url} alt={'Anteprima ' + (index + 1)} className="h-full w-full object-contain" />
+                  {media.length > 1 && <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
+                    {media.map((item, index) => <button key={item.url + index} type="button" onClick={() => setFotoAttiva(index)} aria-label={item.type === 'video' ? 'Riproduci video del prodotto' : 'Mostra foto ' + (index + 1)} aria-pressed={fotoAttiva === index} className={'relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border-2 bg-white ' + (fotoAttiva === index ? 'border-teal-500 ring-2 ring-teal-200' : 'border-slate-300')}>
+                      {item.type === 'video' ? (
+                        <div className="flex h-full w-full items-center justify-center bg-slate-900 text-2xl text-white">▶️</div>
+                      ) : (
+                        <img src={item.url} alt={'Anteprima foto ' + (index + 1)} className="h-full w-full object-contain" />
+                      )}
                     </button>)}
                   </div>}
-                  <p className="mt-2 text-center text-xs text-slate-500">{fotoAttiva + 1} / {immagini.length} immagini</p>
+                  <p className="mt-2 text-center text-xs text-slate-500">
+                    {fotoAttiva + 1} / {media.length} {media.some((item) => item.type === 'video') ? 'contenuti' : 'immagini'}
+                  </p>
                 </>
-              ) : <div className="flex min-h-[330px] items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-white text-slate-500 sm:min-h-[510px]">Foto non ancora disponibile</div>}
+              ) : <div className="flex min-h-[330px] items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-white text-slate-500 sm:min-h-[510px]">Foto o video non ancora disponibile</div>
             </section>
 
             <section className="p-4 sm:p-7">
