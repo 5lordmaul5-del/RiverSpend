@@ -46,13 +46,18 @@ export default function RsSponsPage() {
             saranno contenuti separati dai video caricati dagli utenti e dovranno essere autorizzati/licenziati.
           </div>
 
-          <button
-            type="button"
-            onClick={() => setDemoAttiva(true)}
-            className="mt-6 w-full rounded-xl bg-cyan-500 px-5 py-3 font-extrabold text-white shadow-lg transition hover:bg-cyan-600 sm:w-auto"
-          >
-            🎬 Attiva campagna demo
-          </button>
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+            <a href="/rs-spons/creator" className="rounded-xl bg-cyan-600 px-5 py-3 text-center font-extrabold text-white shadow-lg hover:bg-cyan-700">
+              ✨ Crea automaticamente la pubblicità
+            </a>
+            <button
+              type="button"
+              onClick={() => setDemoAttiva(true)}
+              className="rounded-xl border border-cyan-300 bg-cyan-50 px-5 py-3 font-extrabold text-cyan-800"
+            >
+              🎬 Attiva campagna demo
+            </button>
+          </div>
 
           {demoAttiva && (
             <div className="mt-4 rounded-xl border border-emerald-300 bg-emerald-50 p-4 font-semibold text-emerald-800">
