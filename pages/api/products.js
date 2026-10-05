@@ -39,7 +39,6 @@ export default async function handler(req, res) {
         .from('product_media')
         .select('product_id, media_url, media_type, sort_order')
         .in('product_id', ids)
-        .eq('media_type', 'image')
         .order('sort_order', { ascending: true });
 
       if (mediaError) throw mediaError;
@@ -50,17 +49,14 @@ export default async function handler(req, res) {
     for (const item of media) {
       if (!item.media_url) continue;
       const list = mediaByProduct.get(item.product_id) || [];
-      list.push(item.media_url);
+      list.push({ url: item.media_url, type: item.media_type || 'image', sortOrder: item.sort_order ?? 0 });
       mediaByProduct.set(item.product_id, list);
     }
 
     return res.status(200).json(filteredProducts.map((product) => {
-      const mediaImages = mediaByProduct.get(product.id) || [];
-      const immagini = mediaImages.length
-        ? mediaImages
-        : product.image
-          ? [product.image]
-          : [];
+      const productMedia = mediaByProduct.get(product.id) || [];
+      const immagini = productMedia.filter((item) => item.type === 'image').map((item) => item.url);
+      if (!immagini.length && product.image) immagini.push(product.image);
 
       return {
         id: product.id,
@@ -70,6 +66,7 @@ export default async function handler(req, res) {
         categoria: product.category || '',
         descrizione: product.description || '',
         immagini,
+        media: productMedia.map((item) => ({ url: item.url, type: item.type })),
         paeseOrigine: product.origin_country || '',
         paeseVenditore: product.seller_country || '',
         localita: product.locality || '',
