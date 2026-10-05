@@ -33,8 +33,6 @@ function LanguageSelector() {
     try { localStorage.setItem('riverspend-language', next); } catch {}
     window.dispatchEvent(new CustomEvent('riverspend:language-change', { detail: { language: next } }));
   }
-  const mostraSezione18 = categoriaAttiva.toLowerCase() === '18🔞 sex toys' && accesso18;
-
       {mostraGate18 && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4" role="dialog" aria-modal="true" aria-labelledby="gate18-title">
           <div className="w-full max-w-md rounded-3xl bg-white p-6 text-center shadow-2xl">
