@@ -35,8 +35,14 @@ export default function App() {
     <SafeAreaView style={styles.safe}>
       <StatusBar style="dark" />
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.logo}>RiverSpend</Text>
-        <Text style={styles.shop}>Shop</Text>
+        <View style={styles.brand}>
+          <Text style={styles.logo}>RiverSpend</Text>
+          <View style={styles.shopRow}>
+            <Text style={styles.shopS}>S</Text>
+            <Text style={styles.shopRest}>hop</Text>
+          </View>
+          <View style={styles.waveLine}><Text style={styles.wave}>〰</Text></View>
+        </View>
         <Text style={styles.tagline}>YOUR SHOP • YOUR FLOW</Text>
 
         <View style={styles.card}>
@@ -63,8 +69,13 @@ export default function App() {
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: '#f7fbfb' },
   container: { padding: 22, paddingBottom: 40 },
-  logo: { marginTop: 20, fontSize: 42, fontWeight: '900', color: '#111827', textAlign: 'center' },
-  shop: { marginTop: -6, fontSize: 34, fontStyle: 'italic', fontWeight: '800', color: '#b08a3c', textAlign: 'center' },
+  brand: { alignItems: 'center', marginTop: 20 },
+  logo: { fontSize: 42, fontWeight: '900', color: '#111827', textAlign: 'center' },
+  shopRow: { flexDirection: 'row', alignItems: 'center', marginTop: -6 },
+  shopS: { fontSize: 38, fontStyle: 'italic', fontWeight: '900', color: '#0ea5a8' },
+  shopRest: { fontSize: 34, fontStyle: 'italic', fontWeight: '800', color: '#b08a3c' },
+  waveLine: { height: 14, marginTop: -5, overflow: 'hidden' },
+  wave: { fontSize: 28, lineHeight: 18, color: '#0ea5a8', transform: [{ scaleX: 2 }] },
   tagline: { marginTop: 8, fontSize: 11, letterSpacing: 2, color: '#64748b', textAlign: 'center' },
   card: { width: '100%', marginTop: 24, padding: 20, borderRadius: 22, backgroundColor: '#fff', borderWidth: 1, borderColor: '#dbe4e7' },
   title: { fontSize: 21, fontWeight: '800', color: '#111827' },
