@@ -66,6 +66,18 @@ export default function PiggyBank() {
             <p className="mt-3 text-xs font-bold uppercase tracking-[0.25em] text-amber-300">RiverSpend</p>
             <h1 className="mt-1 text-3xl font-black text-amber-200">PiggyBank</h1>
             <p className="mt-2 text-sm text-slate-300">Metti da parte RiverMoney per il prodotto che desideri.</p>
+            <div className="mx-auto mt-5 max-w-xl rounded-2xl border border-amber-300/30 bg-amber-300/10 p-4 text-left">
+              <h2 className="text-base font-black text-amber-200">💡 A cosa serve PiggyBank?</h2>
+              <p className="mt-2 text-sm leading-6 text-slate-200">
+                PiggyBank ti permette di creare un obiettivo per un prodotto che vuoi acquistare e mettere da parte
+                gradualmente la somma necessaria. Puoi vedere il prezzo del prodotto, quanto hai già accantonato,
+                quanto manca e l'avanzamento verso il tuo obiettivo.
+              </p>
+              <p className="mt-2 text-xs leading-5 text-slate-400">
+                Nella versione attuale l'importo è un obiettivo salvato sul dispositivo: non è ancora un pagamento reale
+                e non viene trasferito denaro. In futuro sarà collegato a RiverSpend Pay.
+              </p>
+            </div>
           </div>
 
           {loading ? (
