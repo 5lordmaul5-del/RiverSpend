@@ -17,6 +17,15 @@ const aree = [
   ['🏰','RiverSpend Fortress','Sicurezza dell’ecosistema','/servizi/fortress']
 ];
 
+const piattaforme = [
+  ['🗄️','RS Database','Database centrale dell’ecosistema RiverSpend','Supabase'],
+  ['🖼️','RS Storage','Storage per foto, video e media dei prodotti','Supabase Storage'],
+  ['☁️','RS Cloud','Backend, servizi cloud e collegamento dell’ecosistema','Cloud'],
+  ['📺','RiverSpendStream','Streaming: film, musica, creator, live e Originals','/river-spend-stream'],
+  ['📱','RiverSpendShop App','App marketplace per Android e Apple iOS','Android • Apple'],
+  ['🎛️','RiverSpend Panel Control','RSPC: pannello CEO e collaboratori autorizzati','/rs-control-center']
+];
+
 export default function Ecosistema() {
   return (
     <main className="min-h-screen bg-white px-4 py-8 text-slate-900">
@@ -27,15 +36,59 @@ export default function Ecosistema() {
           <h1 className="mt-2 text-4xl font-bold">L’ecosistema RiverSpend</h1>
           <p className="mt-3 max-w-2xl text-slate-600">Un unico mondo: marketplace, protezione, servizi locali, fedeltà, logistica e RiverSpend Park.</p>
         </header>
-        <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {aree.map(([icon,title,note,href]) => (
-            <Link href={href} key={title} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm hover:border-teal-500">
-              <div className="text-3xl">{icon}</div>
-              <h2 className="mt-3 text-xl font-bold">{title}</h2>
-              <p className="mt-1 text-sm text-slate-600">{note}</p>
-              <p className="mt-5 font-semibold text-teal-300">Apri →</p>
-            </Link>
-          ))}
+
+        <section>
+          <h2 className="mb-4 text-2xl font-black">🌊 Servizi RiverSpend</h2>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {aree.map(([icon,title,note,href]) => (
+              <Link href={href} key={title} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm hover:border-teal-500">
+                <div className="text-3xl">{icon}</div>
+                <h3 className="mt-3 text-xl font-bold">{title}</h3>
+                <p className="mt-1 text-sm text-slate-600">{note}</p>
+                <p className="mt-5 font-semibold text-teal-600">Apri →</p>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        <section className="mt-10">
+          <h2 className="mb-2 text-2xl font-black">⚙️ Piattaforme, Cloud & App</h2>
+          <p className="mb-4 max-w-3xl text-sm text-slate-600">
+            La parte tecnica che sostiene RiverSpend: database, storage media, cloud, streaming,
+            app mobile e pannello di controllo.
+          </p>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {piattaforme.map(([icon,title,note,linkOrStatus]) => {
+              const isLink = linkOrStatus.startsWith('/');
+              const content = (
+                <>
+                  <div className="text-3xl">{icon}</div>
+                  <h3 className="mt-3 text-xl font-bold">{title}</h3>
+                  <p className="mt-1 text-sm text-slate-600">{note}</p>
+                  <p className="mt-4 text-sm font-semibold text-teal-700">
+                    {isLink ? 'Apri →' : linkOrStatus}
+                  </p>
+                </>
+              );
+
+              return isLink ? (
+                <Link
+                  href={linkOrStatus}
+                  key={title}
+                  className="rounded-2xl border border-teal-100 bg-gradient-to-br from-white to-cyan-50 p-5 shadow-sm hover:border-teal-500"
+                >
+                  {content}
+                </Link>
+              ) : (
+                <article
+                  key={title}
+                  className="rounded-2xl border border-teal-100 bg-gradient-to-br from-white to-cyan-50 p-5 shadow-sm"
+                >
+                  {content}
+                </article>
+              );
+            })}
+          </div>
         </section>
       </div>
     </main>
