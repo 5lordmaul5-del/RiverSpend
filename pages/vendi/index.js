@@ -5,6 +5,7 @@ import { supabase } from '../../lib/supabase';
 
 const MAX_PHOTOS = 20;
 const MAX_PHOTO_SIZE = 10 * 1024 * 1024;
+const MAX_VIDEO_SIZE = 100 * 1024 * 1024;
 
 export default function Vendi() {
   const [prodotti, setProdotti] = useState([]);
@@ -120,104 +121,153 @@ export default function Vendi() {
     const files = Array.from(event.target.files || []);
     event.target.value = '';
     if (!files.length) return;
-    if (files.length > MAX_PHOTOS) {
-      setMessaggio(`⚠️ Puoi selezionare al massimo ${MAX_PHOTOS} foto.`);
+
+    const immagini = files.filter((file) => file.type.startsWith('image/'));
+    const video = files.filter((file) => file.type.startsWith('video/'));
+
+    if (files.length > MAX_PHOTOS || foto.length + files.length > MAX_PHOTOS) {
+      setMessaggio(`⚠️ Puoi avere al massimo ${MAX_PHOTOS} foto/video per annuncio.`);
       return;
     }
-    const nonValide = files.find((file) => !file.type.startsWith('image/') || file.size > MAX_PHOTO_SIZE);
-    if (nonValide) {
-      setMessaggio('⚠️ Seleziona solo immagini fino a 10 MB ciascuna.');
+
+    const nonValido = files.find((file) =>
+      (!file.type.startsWith('image/') && !file.type.startsWith('video/')) ||
+      (file.type.startsWith('image/') && file.size > MAX_PHOTO_SIZE) ||
+      (file.type.startsWith('video/') && file.size > MAX_VIDEO_SIZE)
+    );
+
+    if (nonValido) {
+      setMessaggio('⚠️ Foto fino a 10 MB e video fino a 100 MB ciascuno.');
       return;
     }
+
     const elementi = files.map((file) => {
       const url = URL.createObjectURL(file);
-      return { file, url, originalUrl: url, uploadFile: null, processed: false, processing: true, error: false };
+      return {
+        file,
+        mediaType: file.type.startsWith('video/') ? 'video' : 'image',
+        url,
+        originalUrl: url,
+        uploadFile: file.type.startsWith('video/') ? file : null,
+        processed: false,
+        processing: file.type.startsWith('image/'),
+        error: false
+      };
     });
-    setFoto(elementi);
-    setMessaggio('✨ RiverSpend PhotoAI sta preparando automaticamente le tue foto…');
-    const { removeBackground } = await import('@bg0/browser');
-    for (let index = 0; index < elementi.length; index += 1) {
-      const item = elementi[index];
-      try {
-        const result = await removeBackground(item.file, {
-          quality: 'fast',
-          onProgress: ({ stage, progress, message }) => {
-            const fase = stage === 'downloading' ? 'Download del modello (prima volta)' :
-              stage === 'processing' ? 'Rimozione sfondo' :
-              stage === 'finishing' ? 'Preparazione foto' :
-              message || 'Avvio';
-            setMessaggio(`✨ RiverSpend PhotoAI — foto ${index + 1}/${elementi.length}: ${fase} ${Number.isFinite(progress) ? Math.round(progress * 100) + '%' : ''}`);
+
+    setFoto((current) => [...current, ...elementi]);
+
+    if (video.length && immagini.length) {
+      setMessaggio('🎥 Video acquisito e 📷 foto ricevute. RiverSpend PhotoAI preparerà le foto; il video resterà originale.');
+    } else if (video.length) {
+      setMessaggio('🎥 Video acquisito. Controlla l’anteprima prima di pubblicare.');
+    } else {
+      setMessaggio('✨ RiverSpend PhotoAI sta preparando automaticamente le tue foto…');
+    }
+
+    const elementiImmagine = elementi.filter((item) => item.mediaType === 'image');
+    if (!elementiImmagine.length) return;
+
+    try {
+      const { removeBackground } = await import('@bg0/browser');
+
+      for (let index = 0; index < elementiImmagine.length; index += 1) {
+        const item = elementiImmagine[index];
+        try {
+          const result = await removeBackground(item.file, {
+            quality: 'fast',
+            onProgress: ({ stage, progress, message }) => {
+              const fase = stage === 'downloading' ? 'Download del modello (prima volta)' :
+                stage === 'processing' ? 'Rimozione sfondo' :
+                stage === 'finishing' ? 'Preparazione foto' :
+                message || 'Avvio';
+              setMessaggio(`✨ RiverSpend PhotoAI — foto ${index + 1}/${elementiImmagine.length}: ${fase} ${Number.isFinite(progress) ? Math.round(progress * 100) + '%' : ''}`);
+            }
+          });
+
+          const cutout = await createImageBitmap(result.blob);
+          const original = await createImageBitmap(item.file);
+          const ratioOriginale = original.width / original.height;
+          const ratioRisultato = cutout.width / cutout.height;
+
+          if (Math.abs(ratioOriginale - ratioRisultato) / ratioOriginale > 0.02) {
+            cutout.close();
+            original.close();
+            throw new Error('L’inquadratura elaborata non corrisponde all’originale.');
           }
-        });
-        const cutout = await createImageBitmap(result.blob);
-        const original = await createImageBitmap(item.file);
-        const ratioOriginale = original.width / original.height;
-        const ratioRisultato = cutout.width / cutout.height;
-        // Se il modello restituisce un'inquadratura diversa, non rischiamo di pubblicare un prodotto tagliato.
-        if (Math.abs(ratioOriginale - ratioRisultato) / ratioOriginale > 0.02) {
-          cutout.close();
-          original.close();
-          throw new Error('L’inquadratura elaborata non corrisponde all’originale.');
-        }
-        // Ritaglia solo i bordi trasparenti: il prodotto non viene mai tagliato.
-        const boundsCanvas = document.createElement('canvas');
-        boundsCanvas.width = cutout.width;
-        boundsCanvas.height = cutout.height;
-        const boundsCtx = boundsCanvas.getContext('2d', { willReadFrequently: true });
-        boundsCtx.drawImage(cutout, 0, 0);
-        const pixels = boundsCtx.getImageData(0, 0, cutout.width, cutout.height).data;
-        let minX = cutout.width, minY = cutout.height, maxX = -1, maxY = -1;
-        for (let y = 0; y < cutout.height; y += 2) {
-          for (let x = 0; x < cutout.width; x += 2) {
-            if (pixels[(y * cutout.width + x) * 4 + 3] > 24) {
-              if (x < minX) minX = x;
-              if (x > maxX) maxX = x;
-              if (y < minY) minY = y;
-              if (y > maxY) maxY = y;
+
+          const boundsCanvas = document.createElement('canvas');
+          boundsCanvas.width = cutout.width;
+          boundsCanvas.height = cutout.height;
+          const boundsCtx = boundsCanvas.getContext('2d', { willReadFrequently: true });
+          boundsCtx.drawImage(cutout, 0, 0);
+          const pixels = boundsCtx.getImageData(0, 0, cutout.width, cutout.height).data;
+          let minX = cutout.width, minY = cutout.height, maxX = -1, maxY = -1;
+
+          for (let y = 0; y < cutout.height; y += 2) {
+            for (let x = 0; x < cutout.width; x += 2) {
+              if (pixels[(y * cutout.width + x) * 4 + 3] > 24) {
+                if (x < minX) minX = x;
+                if (x > maxX) maxX = x;
+                if (y < minY) minY = y;
+                if (y > maxY) maxY = y;
+              }
             }
           }
+
+          const foundSubject = maxX >= minX && maxY >= minY;
+          let sx = foundSubject ? minX : 0;
+          let sy = foundSubject ? minY : 0;
+          let sw = foundSubject ? maxX - minX + 1 : cutout.width;
+          let sh = foundSubject ? maxY - minY + 1 : cutout.height;
+          const padding = Math.round(Math.max(sw, sh) * 0.07);
+          sx = Math.max(0, sx - padding);
+          sy = Math.max(0, sy - padding);
+          sw = Math.min(cutout.width - sx, sw + padding * 2);
+          sh = Math.min(cutout.height - sy, sh + padding * 2);
+
+          const canvas = document.createElement('canvas');
+          canvas.width = 1200;
+          canvas.height = 1200;
+          const ctx = canvas.getContext('2d');
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, 1200, 1200);
+
+          const scale = Math.min(936 / sw, 936 / sh);
+          const width = sw * scale;
+          const height = sh * scale;
+          ctx.drawImage(cutout, sx, sy, sw, sh, (1200 - width) / 2, (1200 - height) / 2, width, height);
+
+          cutout.close();
+          original.close();
+
+          const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.92));
+          if (!blob) throw new Error('Impossibile preparare la foto finale.');
+
+          const processedFile = new File([blob], `riverspend-photoai-${index + 1}.jpg`, { type: 'image/jpeg' });
+          const processedUrl = URL.createObjectURL(blob);
+
+          setFoto((current) => current.map((photo) => photo.file === item.file
+            ? { ...photo, url: processedUrl, processedUrl, uploadFile: processedFile, processed: true, processing: false, error: false }
+            : photo));
+        } catch (error) {
+          console.error('RiverSpend PhotoAI:', error);
+          setFoto((current) => current.map((photo) => photo.file === item.file
+            ? { ...photo, uploadFile: photo.file, processing: false, error: true }
+            : photo));
+          setMessaggio(`⚠️ PhotoAI non ha elaborato la foto ${index + 1}. L’originale è conservato e potrai comunque pubblicarlo.`);
         }
-        const foundSubject = maxX >= minX && maxY >= minY;
-        // Se il file non ha trasparenza utile, manteniamo tutto il fotogramma originale del modello.
-        let sx = foundSubject ? minX : 0;
-        let sy = foundSubject ? minY : 0;
-        let sw = foundSubject ? maxX - minX + 1 : cutout.width;
-        let sh = foundSubject ? maxY - minY + 1 : cutout.height;
-        const padding = Math.round(Math.max(sw, sh) * 0.07);
-        sx = Math.max(0, sx - padding);
-        sy = Math.max(0, sy - padding);
-        sw = Math.min(cutout.width - sx, sw + padding * 2);
-        sh = Math.min(cutout.height - sy, sh + padding * 2);
-        const canvas = document.createElement('canvas');
-        canvas.width = 1200;
-        canvas.height = 1200;
-        const ctx = canvas.getContext('2d');
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(0, 0, 1200, 1200);
-        // Il soggetto occupa circa il 78% della tela, con proporzioni intatte e margine.
-        const scale = Math.min(936 / sw, 936 / sh);
-        const width = sw * scale;
-        const height = sh * scale;
-        ctx.drawImage(cutout, sx, sy, sw, sh, (1200 - width) / 2, (1200 - height) / 2, width, height);
-        cutout.close();
-        original.close();
-        const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.92));
-        if (!blob) throw new Error('Impossibile preparare la foto finale.');
-        const processedFile = new File([blob], `riverspend-photoai-${index + 1}.jpg`, { type: 'image/jpeg' });
-        const processedUrl = URL.createObjectURL(blob);
-        setFoto((current) => current.map((photo) => photo.file === item.file
-          ? { ...photo, url: processedUrl, processedUrl, uploadFile: processedFile, processed: true, processing: false, error: false }
-          : photo));
-      } catch (error) {
-        console.error('RiverSpend PhotoAI:', error);
-        setFoto((current) => current.map((photo) => photo.file === item.file
-          ? { ...photo, uploadFile: photo.file, processing: false, error: true }
-          : photo));
-        setMessaggio(`⚠️ PhotoAI non ha elaborato la foto ${index + 1}. L’originale è conservato e potrai comunque pubblicarlo.`);
       }
+    } catch (error) {
+      console.error('RiverSpend PhotoAI import:', error);
+      setFoto((current) => current.map((photo) => photo.processing ? { ...photo, processing: false, uploadFile: photo.file, error: true } : photo));
+      setMessaggio('⚠️ PhotoAI non è disponibile: le foto originali restano utilizzabili.');
     }
-    setFoto((current) => current.map((photo) => photo.processing ? { ...photo, processing: false } : photo));
-    setMessaggio('Elaborazione terminata. Controlla le anteprime: le foto con sfondo rimosso sono pronte.');
+
+    setFoto((current) => current.map((photo) => photo.processing
+      ? { ...photo, processing: false, uploadFile: photo.uploadFile || photo.file }
+      : photo));
+    setMessaggio('Elaborazione terminata. Controlla foto e video prima di pubblicare.');
   }
 
   function ripristinaFotoPrincipale() {
@@ -295,7 +345,7 @@ export default function Vendi() {
     }
 
     if (foto.length === 0) {
-      setMessaggio('⚠️ Inserisci almeno una foto.');
+      setMessaggio('⚠️ Inserisci almeno una foto o un video.');
       return;
     }
 
@@ -363,10 +413,10 @@ export default function Vendi() {
 
       if (productError) throw productError;
 
-      const righeMedia = immaginiCaricate.map((url, index) => ({
+      const righeMedia = foto.map((item, index) => ({
         product_id: productId,
-        media_type: 'image',
-        media_url: url,
+        media_type: item.mediaType || 'image',
+        media_url: immaginiCaricate[index],
         sort_order: index,
         seller_id: session.user.id
       }));
@@ -578,17 +628,44 @@ export default function Vendi() {
                 📸 Foto prodotto
               </label>
 
-              <p className="text-sm text-slate-500 mb-2">
-                Puoi selezionare fino a 20 foto (massimo 10 MB ciascuna).
+              <p className="text-sm text-slate-500 mb-3">
+                Fino a 20 foto/video per annuncio · foto max 10 MB · video max 100 MB.
               </p>
 
-              <input
-                className="w-full border rounded-xl p-3 mb-4"
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={handlePhotos}
-              />
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-4">
+                <label className="flex cursor-pointer items-center justify-center rounded-xl bg-teal-600 px-4 py-3 text-center font-bold text-white shadow-sm hover:bg-teal-700">
+                  📷 SCATTA FOTO
+                  <input
+                    className="sr-only"
+                    type="file"
+                    accept="image/*"
+                    capture="environment"
+                    onChange={handlePhotos}
+                  />
+                </label>
+
+                <label className="flex cursor-pointer items-center justify-center rounded-xl bg-cyan-600 px-4 py-3 text-center font-bold text-white shadow-sm hover:bg-cyan-700">
+                  🎥 REGISTRA VIDEO
+                  <input
+                    className="sr-only"
+                    type="file"
+                    accept="video/*"
+                    capture="environment"
+                    onChange={handlePhotos}
+                  />
+                </label>
+
+                <label className="flex cursor-pointer items-center justify-center rounded-xl border border-slate-300 bg-white px-4 py-3 text-center font-bold text-slate-800 shadow-sm hover:bg-slate-50">
+                  📁 SCEGLI DAL DISPOSITIVO
+                  <input
+                    className="sr-only"
+                    type="file"
+                    accept="image/*,video/*"
+                    multiple
+                    onChange={handlePhotos}
+                  />
+                </label>
+              </div>
 
               {foto.length > 0 && (
                 <div className="rounded-xl border border-cyan-200 bg-cyan-50 p-3 mb-4">
@@ -606,12 +683,21 @@ export default function Vendi() {
                       key={`${item.file.name}-${index}`}
                       className="relative overflow-hidden rounded-xl border"
                     >
-                      <img
-                        src={item.url}
-                        alt={`Foto ${index + 1}`}
-                        className="w-full h-28 bg-white object-contain p-1"
-                      />
-                      <span className="block text-center text-xs py-1">{item.processing ? 'Elaborazione…' : item.processed ? '✓ Sfondo rimosso' : item.error ? 'Originale · PhotoAI non riuscita' : 'Originale'}</span>
+                      {item.mediaType === 'video' ? (
+                        <video
+                          src={item.url}
+                          controls
+                          playsInline
+                          className="w-full h-28 bg-black object-contain"
+                        />
+                      ) : (
+                        <img
+                          src={item.url}
+                          alt={`Foto ${index + 1}`}
+                          className="w-full h-28 bg-white object-contain p-1"
+                        />
+                      )}
+                      <span className="block text-center text-xs py-1">{item.mediaType === 'video' ? '🎥 Video originale' : item.processing ? 'Elaborazione…' : item.processed ? '✓ Sfondo rimosso' : item.error ? 'Originale · PhotoAI non riuscita' : 'Originale'}</span>
                       <button
                         type="button"
                         onClick={() => removePhoto(index)}
