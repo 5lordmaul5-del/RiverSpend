@@ -27,7 +27,15 @@ export default async function handler(req, res) {
 
     const locality = typeof req.query.locality === 'string' ? req.query.locality.trim() : '';
     const province = typeof req.query.province === 'string' ? req.query.province.trim() : '';
-    let filteredProducts = products || [];
+    const category = typeof req.query.category === 'string' ? req.query.category.trim() : '';
+    const categorie18 = ['18🔞 ADULTI', '18🔞 Sex Toys'];
+    const richiesta18 = categorie18.some((cat) => cat.toLowerCase() === category.toLowerCase());
+    let filteredProducts = (products || []).filter((p) => {
+      const prodotto18 = categorie18.some((cat) => cat.toLowerCase() === String(p.category || '').trim().toLowerCase());
+      // Gli annunci 18+ non vengono mai restituiti al catalogo generale.
+      // Sono restituiti solo quando viene richiesta esplicitamente una categoria 18+.
+      return richiesta18 ? prodotto18 && String(p.category || '').trim().toLowerCase() === category.toLowerCase() : !prodotto18;
+    });
     if (locality) filteredProducts = filteredProducts.filter((p) => (p.locality || '').toLocaleLowerCase('it').includes(locality.toLocaleLowerCase('it')));
     if (province) filteredProducts = filteredProducts.filter((p) => (p.province || '').toLocaleLowerCase('it').includes(province.toLocaleLowerCase('it')));
 
