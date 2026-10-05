@@ -274,7 +274,7 @@ export default function Servizio({ slug }) {
                   <li className="rounded-xl border border-slate-200 bg-slate-50 p-4"><span className="text-2xl">🛍️</span><p className="mt-2 font-semibold text-slate-900">1. Vendita conclusa</p><p className="mt-1 text-sm leading-6 text-slate-700">Il venditore prepara il pacco dopo l’ordine.</p></li>
                   <li className="rounded-xl border border-slate-200 bg-slate-50 p-4"><span className="text-2xl">📲</span><p className="mt-2 font-semibold text-slate-900">2. Etichetta o QR</p><p className="mt-1 text-sm leading-6 text-slate-700">Il corriere collegato fornisce l’etichetta o il codice QR valido per la spedizione.</p></li>
                   <li className="rounded-xl border border-slate-200 bg-slate-50 p-4"><span className="text-2xl">📮</span><p className="mt-2 font-semibold text-slate-900">3. Consegna del pacco</p><p className="mt-1 text-sm leading-6 text-slate-700">Il venditore lo porta al punto previsto o usa il ritiro, se disponibile.</p></li>
-                  <li className="rounded-xl border border-slate-200 bg-slate-50 p-4"><span className="text-2xl">📍</span><p className="mt-2 font-semibold text-slate-900">4. Tracking e ricezione</p><p className="mt-1 text-sm leading-6 text-slate-700">L’acquirente segue la spedizione e, dove previsto, ritira presso un punto abilitato.</p></li>
+                  <li className="rounded-xl border border-slate-200 bg-slate-50 p-4"><span className="text-2xl">📍</span><p className="mt-2 text-sm leading-6 text-slate-700">4. Tracking e ricezione</p><p className="mt-1 text-sm leading-6 text-slate-700">L’acquirente segue la spedizione e, dove previsto, ritira presso un punto abilitato.</p></li>
                 </ol>
               </section>
               <section className={slug === 'local' ? "rounded-2xl border border-slate-200 bg-white p-5" : "rounded-2xl border border-teal-800/80 bg-slate-950/50 p-5"}>
@@ -310,7 +310,7 @@ export default function Servizio({ slug }) {
 export function getStaticPaths() {
   return {
     paths: Object.keys(servizi)
-      .filter((slug) => slug !== 'broadcast')
+      .filter((slug) => slug !== 'broadcast' && slug !== 'tv' && slug !== 'pay')
       .map((slug) => ({ params: { slug } })),
     fallback: false
   };
