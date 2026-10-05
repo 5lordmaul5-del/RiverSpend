@@ -5,39 +5,86 @@ export default function Rete() {
   const [items, setItems] = useState([]);
 
   useEffect(() => {
-    try {
-      const saved = JSON.parse(localStorage.getItem('riverspend-rete') || '[]');
-      setItems(Array.isArray(saved) ? saved : []);
-    } catch {
-      setItems([]);
+    let attivo = true;
+
+    async function loadRete() {
+      try {
+        const readJson = (storage, key) => {
+          try {
+            const value = JSON.parse(storage.getItem(key) || '[]');
+            return Array.isArray(value) ? value : [];
+          } catch {
+            return [];
+          }
+        };
+
+        const localItems = readJson(localStorage, 'riverspend-rete');
+        const sessionItems = readJson(sessionStorage, 'riverspend-rete');
+        let saved = localItems.length ? localItems : sessionItems;
+
+        // Fallback robusto: conserviamo anche solo gli ID in un cookie,
+        // così un ritorno da una pagina esterna (es. OpenStreetMap)
+        // non può far sparire una Rete già salvata.
+        if (!saved.length) {
+          const cookie = document.cookie.split('; ').find((entry) => entry.startsWith('riverspend-rete-ids='));
+          const ids = cookie ? decodeURIComponent(cookie.split('=').slice(1).join('=')) : '';
+          const parsedIds = ids ? ids.split(',').filter(Boolean) : [];
+          if (parsedIds.length) {
+            const res = await fetch('/api/products', { cache: 'no-store' });
+            const data = await res.json();
+            if (res.ok && Array.isArray(data)) {
+              saved = data
+                .filter((product) => parsedIds.some((id) => String(id) === String(product.id)))
+                .map((product) => ({
+                  id: product.id,
+                  title: product.titolo,
+                  price: Number(product.prezzo || 0),
+                  image: product.immagini?.[0] || ''
+                }));
+            }
+          }
+        }
+
+        if (attivo) setItems(saved);
+      } catch {
+        if (attivo) setItems([]);
+      }
     }
+
+    loadRete();
+    return () => { attivo = false; };
   }, []);
 
   function remove(id) {
     const next = items.filter((item) => String(item.id) !== String(id));
     setItems(next);
-    localStorage.setItem('riverspend-rete', JSON.stringify(next));
+    const serialized = JSON.stringify(next);
+    localStorage.setItem('riverspend-rete', serialized);
+    sessionStorage.setItem('riverspend-rete', serialized);
+    document.cookie = 'riverspend-rete-ids=' + encodeURIComponent(next.map((item) => item.id).join(',')) + '; path=/; max-age=31536000; SameSite=Lax';
   }
 
   function clearAll() {
     setItems([]);
     localStorage.removeItem('riverspend-rete');
+    sessionStorage.removeItem('riverspend-rete');
+    document.cookie = 'riverspend-rete-ids=; path=/; max-age=0; SameSite=Lax';
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-8 text-white">
+    <main className="min-h-screen bg-white px-4 py-8 text-slate-900">
       <div className="mx-auto max-w-5xl">
         <Link href="/" className="text-teal-300 underline">← Torna al RiverSpendShop</Link>
         <header className="mt-6 mb-8">
-          <p className="text-sm font-semibold uppercase tracking-widest text-teal-300">RiverSpendShop</p>
-          <h1 className="mt-2 text-4xl font-bold">🕸️ La mia rete</h1>
-          <p className="mt-2 text-slate-400">{items.length} articol{items.length === 1 ? 'o' : 'i'} nella tua rete.</p>
+          <p className="text-sm font-semibold uppercase tracking-widest text-teal-700">RiverSpendShop</p>
+          <h1 className="mt-2 text-4xl font-bold text-slate-900">🕸️ La mia rete</h1>
+          <p className="mt-2 text-slate-600">{items.length} articol{items.length === 1 ? 'o' : 'i'} nella tua rete.</p>
         </header>
 
         {items.length === 0 ? (
-          <section className="rounded-2xl border border-dashed border-slate-700 p-10 text-center">
+          <section className="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center shadow-sm">
             <p className="text-lg font-semibold">La rete è vuota</p>
-            <p className="mt-2 text-sm text-slate-400">Apri un prodotto e aggiungilo alla rete.</p>
+            <p className="mt-2 text-sm text-slate-600">Apri un prodotto e aggiungilo alla rete.</p>
             <Link href="/" className="mt-5 inline-flex rounded-xl bg-teal-500 px-5 py-3 font-bold text-slate-950">Esplora prodotti</Link>
           </section>
         ) : (
@@ -47,14 +94,14 @@ export default function Rete() {
             </div>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {items.map((item) => (
-                <article key={item.id} className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900">
-                  {item.image ? <img src={item.image} alt={item.title || 'Prodotto'} className="h-48 w-full object-cover" /> : <div className="flex h-48 items-center justify-center bg-slate-800 text-slate-500">Foto non disponibile</div>}
+                <article key={item.id} className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+                  {item.image ? <img src={item.image} alt={item.title || 'Prodotto'} className="h-48 w-full object-cover" /> : <div className="flex h-48 items-center justify-center bg-slate-100 text-slate-500">Foto non disponibile</div>}
                   <div className="p-4">
                     <h2 className="font-bold">{item.title || 'Prodotto'}</h2>
-                    <p className="mt-2 text-xl font-bold text-teal-300">€ {Number(item.price || 0).toFixed(2)}</p>
+                    <p className="mt-2 text-xl font-bold text-teal-700">€ {Number(item.price || 0).toFixed(2)}</p>
                     <div className="mt-4 flex gap-2">
-                      <Link href={'/prodotto/' + encodeURIComponent(item.id)} className="rounded-lg bg-teal-500 px-3 py-2 text-sm font-bold text-slate-950">Apri</Link>
-                      <button onClick={() => remove(item.id)} className="rounded-lg border border-slate-700 px-3 py-2 text-sm">Rimuovi</button>
+                      <Link href={'/prodotto/' + encodeURIComponent(item.id)} className="rounded-lg bg-teal-600 px-3 py-2 text-sm font-bold text-white">Apri</Link>
+                      <button onClick={() => remove(item.id)} className="rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700">Rimuovi</button>
                     </div>
                   </div>
                 </article>
