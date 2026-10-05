@@ -621,8 +621,15 @@ export default function Vendi() {
               <p className="mb-3 text-xs text-slate-500">Indica l’origine reale del prodotto, non il paese del sito o del fornitore.</p>
               <label className="mb-2 block font-semibold">Categoria</label>
               <select className="mb-3 w-full rounded-xl border p-3" value={categoria} onChange={(e) => setCategoria(e.target.value)}>
-                {["Auto","Moto","Scooter","Harley & Custom","Camion & Veicoli commerciali","Trattori & Agricoltura","Edilizia & Macchine da lavoro","Ricambi & Accessori auto","Ricambi & Accessori moto","Nautica","Navale","Barche & Gommoni","Motori marini","Aeronautica","Militaria & Storia","Sport","Arti marziali & Combattimento","Fitness & Palestra","Outdoor & Avventura","Pesca","Caccia & Accessori consentiti","Integratori","Elettronica & Informatica","Smartphone & Telefonia","Computer & Notebook","Gaming","Console & Videogiochi","Fotografia & Video","Musica & Audio","TV & Home cinema","Abbigliamento","Scarpe","Borse & Accessori","Gioielli & Orologi","Bellezza & Cura personale","Casa & Arredamento","Cucina","Elettrodomestici","Fai da te & Ferramenta","Giardino","Illuminazione","Tessile casa","Animali","Bambini & Giocattoli","Prima infanzia","Libri & Cultura","Arte","Antiquariato","Collezionismo","Hobby & Modellismo","Viaggi & Valigeria","Ufficio & Professionale","Industria","Attrezzature professionali","Energia & Smart Home","Servizi digitali","Gadget & Regali","Vintage & Second hand","Altro"].map((item) => <option key={item}>{item}</option>)}
+                {["Auto","Moto","Scooter","Harley & Custom","Camion & Veicoli commerciali","Trattori & Agricoltura","Edilizia & Macchine da lavoro","Ricambi & Accessori auto","Ricambi & Accessori moto","Nautica","Navale","Barche & Gommoni","Motori marini","Aeronautica","Militaria & Storia","Sport","Arti marziali & Combattimento","Fitness & Palestra","Outdoor & Avventura","Pesca","Caccia & Accessori consentiti","Integratori","Elettronica & Informatica","Smartphone & Telefonia","Computer & Notebook","Gaming","Console & Videogiochi","Fotografia & Video","Musica & Audio","TV & Home cinema","Abbigliamento","Scarpe","Borse & Accessori","Gioielli & Orologi","Bellezza & Cura personale","18🔞 ADULTI","18🔞 Sex Toys","Casa & Arredamento","Cucina","Elettrodomestici","Fai da te & Ferramenta","Giardino","Illuminazione","Tessile casa","Animali","Bambini & Giocattoli","Prima infanzia","Libri & Cultura","Arte","Antiquariato","Collezionismo","Hobby & Modellismo","Viaggi & Valigeria","Ufficio & Professionale","Industria","Attrezzature professionali","Energia & Smart Home","Servizi digitali","Gadget & Regali","Vintage & Second hand","Altro"].map((item) => <option key={item}>{item}</option>)}
               </select>
+
+              {categoria === '18🔞 Sex Toys' && (
+                <div className="mb-4 rounded-xl border border-red-300 bg-red-50 p-4" role="note">
+                  <p className="font-bold text-red-800">🔞 Categoria riservata agli adulti</p>
+                  <p className="mt-1 text-sm text-red-700">Gli annunci in questa categoria sono destinati esclusivamente a persone maggiorenni. Pubblica solo articoli consentiti e conformi alle regole di RiverSpend.</p>
+                </div>
+              )}
 
               <label className="block font-bold mb-2">
                 📸 Foto prodotto
