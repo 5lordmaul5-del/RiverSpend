@@ -108,7 +108,13 @@ export default function Home() {
     try { current = JSON.parse(localStorage.getItem(key) || '[]'); } catch {}
     if (!Array.isArray(current)) current = [];
     const exists = current.some((item) => String(item.id) === String(p.id));
-    const next = exists ? current.filter((item) => String(item.id) !== String(p.id)) : [...current, p];
+    const record = {
+      id: p.id,
+      title: p.titolo || p.title || 'Prodotto',
+      price: Number(p.prezzo ?? p.price ?? 0),
+      image: p.immagini?.[0] || p.image || ''
+    };
+    const next = exists ? current.filter((item) => String(item.id) !== String(p.id)) : [...current, record];
     try {
       localStorage.setItem(key, JSON.stringify(next));
       sessionStorage.setItem(key, JSON.stringify(next));
