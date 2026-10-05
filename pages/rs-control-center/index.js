@@ -109,7 +109,7 @@ export default function RSControlCenter() {
           RiverSpend
         </div>
         <div style={{ color: "#63818a", marginTop: 5 }}>
-          🏢 RS Control Center
+          🎛️ RiverSpend Panel Control · RSPC
         </div>
       </header>
 
@@ -131,10 +131,10 @@ export default function RSControlCenter() {
       ) : (
         <>
           <h1 style={{ fontSize: 27, marginBottom: 6 }}>
-            Centro di controllo
+            RiverSpend Panel Control
           </h1>
           <p style={{ color: "#63818a", marginTop: 0 }}>
-            Area amministrativa · Accesso verificato per {email}
+            RSPC · Area amministrativa · Accesso verificato per {email}
           </p>
 
           <div
@@ -144,16 +144,8 @@ export default function RSControlCenter() {
               margin: "18px 0",
             }}
           >
-            <b style={{ color: "#168454" }}>
-              ✓ Amministratore verificato
-            </b>
-            <div
-              style={{
-                color: "#63818a",
-                fontSize: 13,
-                marginTop: 5,
-              }}
-            >
+            <b style={{ color: "#168454" }}>✓ Amministratore verificato</b>
+            <div style={{ color: "#63818a", fontSize: 13, marginTop: 5 }}>
               I valori mostrati provengono dal database. “—” indica dati non
               accessibili o non ancora collegati, non zero.
             </div>
