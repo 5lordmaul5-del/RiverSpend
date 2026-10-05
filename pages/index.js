@@ -189,7 +189,14 @@ export default function Home() {
 
   const prodottiVisibili = useMemo(() => {
     const q = ricerca.trim().toLowerCase();
+    const categoria18 = ['18🔞 ADULTI', '18🔞 Sex Toys'];
+    const richiesta18 = categoria18.some((cat) => cat.toLowerCase() === categoriaAttiva.trim().toLowerCase());
     return prodotti.filter((p) => {
+      const categoriaProdotto = String(p.categoria || '').trim();
+      const prodotto18 = categoria18.some((cat) => cat.toLowerCase() === categoriaProdotto.toLowerCase());
+      // Gli articoli 18+ non entrano mai nella vetrina/homepage generale.
+      // Sono visibili esclusivamente quando l'utente apre esplicitamente una categoria 18+.
+      if (prodotto18 && !richiesta18) return false;
       const testo = [p.titolo, p.descrizione, p.condizione, p.categoria].filter(Boolean).join(' ').toLowerCase();
       const categoriaOk = !categoriaAttiva || (p.categoria || '').toLowerCase() === categoriaAttiva.toLowerCase() || testo.includes(categoriaAttiva.toLowerCase());
       const ricercaOk = !q || testo.includes(q);
