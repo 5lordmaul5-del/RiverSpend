@@ -46,6 +46,10 @@ export default function RsSponsPage() {
             saranno contenuti separati dai video caricati dagli utenti e dovranno essere autorizzati/licenziati.
           </div>
 
+          <div className="mt-6 rounded-2xl border border-cyan-200 bg-cyan-50 p-4">
+            <p className="font-black text-slate-900">🧢 Anche i privati possono sponsorizzare</p>
+            <p className="mt-1 text-sm text-slate-600">Hai un cappellino, una borsa, una console o qualsiasi altro prodotto? Carica le foto e RS Spons Creator può preparare automaticamente uno spot professionale da promuovere.</p>
+          </div>
           <div className="mt-6 flex flex-col gap-3 sm:flex-row">
             <a href="/rs-spons/creator" className="rounded-xl bg-cyan-600 px-5 py-3 text-center font-extrabold text-white shadow-lg hover:bg-cyan-700">
               ✨ Crea automaticamente la pubblicità
