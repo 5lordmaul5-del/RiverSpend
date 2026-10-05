@@ -33,6 +33,19 @@ export default function RiverSpendStream() {
             <Link href="/servizi/tv" className="rounded-xl bg-teal-500 px-5 py-3 font-black text-slate-950">📺 Esplora RiverSpend TV</Link>
             <Link href="/rs-spons" className="rounded-xl border border-slate-600 px-5 py-3 font-bold">📢 RS Spons</Link>
           </div>
+          <div className="mt-8 grid gap-3 sm:grid-cols-3">
+            {[
+              ['🎬','Film & Originals','Cinema, corti e produzioni RiverSpend'],
+              ['🎵','Music','Videoclip, concerti e contenuti musicali'],
+              ['🔴','Live & Creator','Dirette, creator ed eventi'],
+            ].map(([icon,title,desc]) => (
+              <article key={title} className="rounded-2xl border border-slate-800 bg-black/30 p-4">
+                <div className="text-2xl">{icon}</div>
+                <h2 className="mt-2 font-bold">{title}</h2>
+                <p className="mt-1 text-sm text-slate-400">{desc}</p>
+              </article>
+            ))}
+          </div>
         </section>
 
         <section className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
