@@ -78,7 +78,12 @@ export default function Prodotto() {
       const safe = Array.isArray(current) ? current : [];
       const exists = safe.some((x) => String(x.id) === String(record.id));
       const next = exists ? safe.filter((x) => String(x.id) !== String(record.id)) : [record, ...safe];
-      localStorage.setItem(key, JSON.stringify(next));
+      const serialized = JSON.stringify(next);
+      localStorage.setItem(key, serialized);
+      sessionStorage.setItem(key, serialized);
+      if (key === 'riverspend-rete') {
+        document.cookie = 'riverspend-rete-ids=' + encodeURIComponent(next.map((item) => item.id).join(',')) + '; path=/; max-age=31536000; SameSite=Lax';
+      }
       setter(!exists);
       setFeedback(exists ? removed : added);
     } catch { setFeedback('Impossibile salvare su questo dispositivo.'); }
