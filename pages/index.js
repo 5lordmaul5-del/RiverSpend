@@ -160,7 +160,8 @@ export default function Home() {
       if (cat === '18🔞 Sex Toys') setMostraGate18(true);
     }
 
-    fetch('/api/products', { cache: 'no-store' })
+    const catalogUrl = cat ? `/api/products?category=${encodeURIComponent(cat)}` : '/api/products';
+    fetch(catalogUrl, { cache: 'no-store' })
       .then(async (res) => {
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Catalogo non disponibile');
