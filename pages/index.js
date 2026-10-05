@@ -96,12 +96,12 @@ export default function Home() {
     'SPORT & BENESSERE','Sport','Arti marziali & Combattimento','Fitness & Palestra','Outdoor & Avventura','Pesca','Caccia & Accessori consentiti','Integratori',
     'TECNOLOGIA','Elettronica & Informatica','Smartphone & Telefonia','Computer & Notebook','Gaming','Console & Videogiochi','Fotografia & Video','Musica & Audio','TV & Home cinema',
     'MODA & ACCESSORI','Abbigliamento','Scarpe','Borse & Accessori','Gioielli & Orologi','Bellezza & Cura personale',
-    '18🔞 ADULTI','18🔞 Sex Toys',
     'CASA & VITA','Casa & Arredamento','Cucina','Elettrodomestici','Fai da te & Ferramenta','Giardino','Illuminazione','Tessile casa',
     'FAMIGLIA & ANIMALI','Animali','Bambini & Giocattoli','Prima infanzia',
     'CULTURA & TEMPO LIBERO','Libri & Cultura','Arte','Antiquariato','Collezionismo','Hobby & Modellismo','Viaggi & Valigeria',
     'LAVORO & IMPRESA','Ufficio & Professionale','Industria','Attrezzature professionali','Energia & Smart Home','Servizi digitali',
-    'COLLEZIONI & REGALI','Gadget & Regali','Vintage & Second hand','Altro'
+    'COLLEZIONI & REGALI','Gadget & Regali','Vintage & Second hand','Altro',
+    '18🔞 ADULTI','18🔞 Sex Toys'
   ];
 
   const areeRiverSpend = [
