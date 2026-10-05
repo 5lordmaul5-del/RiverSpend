@@ -23,7 +23,7 @@ const piattaforme = [
   ['☁️','RS Cloud','Backend, servizi cloud e collegamento dell’ecosistema','Cloud · attivo'],
   ['📺','RiverSpendStream','Streaming: film, musica, creator, live e Originals · Web attivo','/river-spend-stream'],
   ['📱','RiverSpendShop App','App marketplace per Android e Apple iOS','Android • Apple'],
-  ['🎛️','RiverSpend Panel Control','RSPC: pannello CEO e collaboratori autorizzati','/rs-control-center']
+  ['🎛️','RiverSpend Panel Control','RSPC: pannello CEO e collaboratori autorizzati','Supabase Auth + ruoli admin · attivo']
 ];
 
 export default function Ecosistema() {
