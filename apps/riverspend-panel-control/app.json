@@ -1,0 +1,16 @@
+{
+  "expo": {
+    "name": "RiverSpendPanelControl",
+    "slug": "riverspend-panel-control",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "scheme": "rspc",
+    "android": {
+      "package": "com.riverspend.panelcontrol"
+    },
+    "ios": {
+      "bundleIdentifier": "com.riverspend.panelcontrol"
+    }
+  }
+}
