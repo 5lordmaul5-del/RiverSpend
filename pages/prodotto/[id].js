@@ -87,10 +87,10 @@ export default function Prodotto() {
   }, [prodotto]);
 
   const immagini = Array.isArray(prodotto?.immagini) ? prodotto.immagini : [];
-  const media = Array.isArray(prodotto?.media) && prodotto.media.length
-    ? prodotto.media.filter((item) => item?.url && (item?.type === 'image' || item?.type === 'video'))
-    : immagini.map((url) => ({ url, type: 'image' }));
-  const mediaAttivo = media[Math.min(fotoAttiva, Math.max(media.length - 1, 0))];
+  const media = Array.isArray(prodotto?.media) ? prodotto.media : [];
+  const contenuti = media.length ? media : immagini.map((url) => ({ url, type: 'image' }));
+  const mediaAttivo = contenuti[fotoAttiva] || contenuti[0];
+
   const record = useMemo(() => prodotto ? ({
     id: prodotto.id, title: prodotto.titolo, price: Number(prodotto.prezzo || 0),
     image: prodotto.immagini?.[0] || ''
@@ -141,20 +141,17 @@ export default function Prodotto() {
                 <span className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-bold text-slate-700">La vetrina sul fiume</span>
                 <span className={'rounded-full border px-3 py-1 text-xs font-extrabold shadow-sm ' + badge.style}>{badge.label}</span>
               </div>
-              {media.length ? (
+              {contenuti.length ? (
                 <>
                   <div className="relative flex min-h-[330px] items-center justify-center overflow-hidden rounded-2xl border border-slate-200 bg-white sm:min-h-[510px]">
                     {mediaAttivo?.type === 'video' ? (
                       <video
-                        key={mediaAttivo.url}
                         controls
                         playsInline
                         preload="metadata"
                         className="h-[330px] w-full object-contain bg-black sm:h-[510px]"
-                        aria-label={'Video del prodotto ' + (prodotto.titolo || '')}
                       >
                         <source src={mediaAttivo.url} />
-                        Il tuo browser non supporta la riproduzione video.
                       </video>
                     ) : (
                       <img
@@ -165,8 +162,8 @@ export default function Prodotto() {
                     )}
                     {countryFlag(prodotto.paeseOrigine || prodotto.paeseVenditore) && <span className="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-slate-300 bg-white/95 text-xl shadow-sm" title={"Paese: " + (prodotto.paeseOrigine || prodotto.paeseVenditore)} aria-label={"Paese: " + (prodotto.paeseOrigine || prodotto.paeseVenditore)}>{countryFlag(prodotto.paeseOrigine || prodotto.paeseVenditore)}</span>}
                   </div>
-                  {media.length > 1 && <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
-                    {media.map((item, index) => <button key={item.url + index} type="button" onClick={() => setFotoAttiva(index)} aria-label={item.type === 'video' ? 'Riproduci video del prodotto' : 'Mostra foto ' + (index + 1)} aria-pressed={fotoAttiva === index} className={'relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border-2 bg-white ' + (fotoAttiva === index ? 'border-teal-500 ring-2 ring-teal-200' : 'border-slate-300')}>
+                  {contenuti.length > 1 && <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
+                    {contenuti.map((item, index) => <button key={item.url + index} type="button" onClick={() => setFotoAttiva(index)} aria-label={item.type === 'video' ? 'Riproduci video del prodotto' : 'Mostra foto ' + (index + 1)} className={'relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border-2 bg-white ' + (fotoAttiva === index ? 'border-teal-500 ring-2 ring-teal-200' : 'border-slate-300')}>
                       {item.type === 'video' ? (
                         <div className="flex h-full w-full items-center justify-center bg-slate-900 text-2xl text-white">▶️</div>
                       ) : (
@@ -175,85 +172,8 @@ export default function Prodotto() {
                     </button>)}
                   </div>}
                   <p className="mt-2 text-center text-xs text-slate-500">
-                    {fotoAttiva + 1} / {media.length} {media.some((item) => item.type === 'video') ? 'contenuti' : 'immagini'}
+                    {fotoAttiva + 1} / {contenuti.length} {contenuti.some((item) => item.type === 'video') ? 'contenuti' : 'immagini'}
                   </p>
                 </>
-              ) : <div className="flex min-h-[330px] items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-white text-slate-500 sm:min-h-[510px]">Foto o video non ancora disponibile</div>
-            </section>
+              ) : <div className="flex min-h-[330px] items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-white text-slate-500 sm:min-h-[510px]">Foto o video non ancora disponibile</div>}
 
-            <section className="p-4 sm:p-7">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-xs font-bold uppercase tracking-[.2em] text-[#9b762e]">RiverSpendShop</span>
-                {sponsorizzato && <span className="rounded-full border border-amber-300/60 bg-amber-300/15 px-3 py-1 text-xs font-bold text-amber-800">✦ In evidenza</span>}
-              </div>
-              <h1 className="mt-3 text-2xl font-extrabold leading-tight sm:text-3xl">{prodotto.titolo}</h1>
-              <div className="mt-5 rounded-2xl border border-slate-200 bg-gradient-to-r from-white to-white p-4">
-                <p className="text-xs font-semibold uppercase tracking-wider text-slate-600">Valore dell’articolo</p>
-                <p className="mt-1 text-3xl font-black text-amber-800">€ {Number(prodotto.prezzo || 0).toFixed(2)}</p>
-                <div className="mt-3 flex flex-wrap gap-2 text-xs">
-                  <span className="rounded-full bg-white px-3 py-1 text-slate-700 border border-slate-200">{prodotto.condizione || 'Condizione non indicata'}</span>
-                  <span className="rounded-full bg-white px-3 py-1 text-slate-700 border border-slate-200">{prodotto.categoria || 'Categoria da definire'}</span>
-                </div>
-              </div>
-
-              <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4">
-                <div className="flex items-center justify-between gap-3">
-                  <div><p className="text-xs text-slate-600">Disponibilità dichiarata</p><p className="mt-1 font-bold">{quantita > 0 ? (quantita === 1 ? 'Ultimo pezzo disponibile' : quantita + ' pezzi disponibili') : 'Disponibilità da verificare'}</p></div>
-                  <span className="text-2xl" aria-hidden="true">🪙</span>
-                </div>
-              </div>
-
-              <div className="mt-5 grid gap-3">
-                <button type="button" onClick={() => toggleLista('riverspend-rete', inRete, setInRete, '🕸️ Articolo aggiunto alla tua Rete.', 'Articolo rimosso dalla Rete.')} className="rounded-xl bg-slate-100 border border-slate-300 px-5 py-4 text-base font-extrabold text-slate-900 shadow-sm shadow-slate-200/60">
-                  {inRete ? '✓ Nella mia Rete' : '🕸️ Aggiungi alla Rete'}
-                </button>
-                <button type="button" onClick={() => toggleLista('riverspend-wishlist', wishlist, setWishlist, '♡ Aggiunto ai tuoi desideri.', 'Rimosso dai desideri.')} className="rounded-xl border border-slate-200 bg-white px-5 py-3 font-bold text-slate-800">
-                  {wishlist ? '♥ Nei miei desideri' : '♡ Aggiungi ai desideri'}
-                </button>
-              </div>
-              {feedback && <p role="status" className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-800">{feedback}</p>}
-              <Link href="/rete" className="mt-3 inline-block text-sm font-semibold text-[#8a692b] underline underline-offset-4">Apri la mia Rete →</Link>
-
-              <div className="mt-6 grid grid-cols-2 gap-2">
-                <div className="rounded-xl border border-slate-200 bg-white p-3"><p className="text-[11px] uppercase tracking-wider text-slate-400">Tutela</p><p className="mt-1 font-bold text-[#8a692b]">RS Shield</p><p className="mt-1 text-xs text-slate-600">Spazio dedicato alla protezione</p></div>
-                <div className="rounded-xl border border-slate-200 bg-white p-3"><p className="text-[11px] uppercase tracking-wider text-slate-400">Venditore</p><p className="mt-1 font-bold text-slate-900">{badge.note}</p><span className={'mt-2 inline-flex rounded-md border px-2 py-1 text-xs font-extrabold ' + badge.style}>{badge.label}</span></div>
-              </div>
-            </section>
-          </div>
-
-          <section className="border-t border-slate-200 bg-white p-4 sm:p-7">
-            <div className="grid gap-6 md:grid-cols-[1.4fr_.6fr]">
-              <div>
-                <p className="text-xs font-bold uppercase tracking-[.2em] text-[#9b762e]">Storia dell’articolo</p>
-                <h2 className="mt-2 text-xl font-bold">Descrizione</h2>
-                <p className="mt-3 whitespace-pre-wrap leading-7 text-slate-700">{prodotto.descrizione || 'Il venditore non ha ancora inserito una descrizione.'}</p>
-              </div>
-              <aside className="rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-white p-4">
-                <p className="font-bold text-[#8a692b]">Dettagli del fiume</p>
-                <dl className="mt-3 space-y-3 text-sm">
-                  <div><dt className="text-slate-400">Categoria</dt><dd className="font-semibold">{prodotto.categoria || 'Non indicata'}</dd></div>
-                  <div><dt className="text-slate-400">Condizione</dt><dd className="font-semibold">{prodotto.condizione || 'Non indicata'}</dd></div>
-                  {prodotto.paeseOrigine && <div><dt className="text-slate-400">Paese d’origine</dt><dd className="font-semibold">{prodotto.paeseOrigine}</dd></div>}
-                  {prodotto.paeseVenditore && <div><dt className="text-slate-400">Paese venditore</dt><dd className="font-semibold">{prodotto.paeseVenditore}</dd></div>}
-                  {(prodotto.localita || prodotto.provincia || prodotto.regione) && <div><dt className="text-slate-400">Località dell’articolo</dt><dd className="font-semibold">{[prodotto.localita, prodotto.provincia, prodotto.regione].filter(Boolean).join(' · ')}</dd></div>}
-                </dl>
-                {(prodotto.localita || prodotto.provincia || prodotto.regione) && (
-                  <div className="mt-4 overflow-hidden rounded-xl border border-slate-200">
-                    <div className="flex items-center justify-between gap-2 bg-slate-50 p-3 text-xs text-slate-700">
-                      <strong>📍 Zona dell’articolo</strong>
-                      <a className="font-semibold text-teal-800 underline" href={'https://www.openstreetmap.org/search?query=' + encodeURIComponent([prodotto.localita, prodotto.provincia, prodotto.regione, 'Italia'].filter(Boolean).join(', '))} target="_blank" rel="noreferrer">Apri mappa</a>
-                    </div>
-                    {mappaLocalita ? (
-                      <iframe title="Mappa della zona dell’articolo" src={'https://www.openstreetmap.org/export/embed.html?bbox=' + [mappaLocalita.lon - 0.035, mappaLocalita.lat - 0.025, mappaLocalita.lon + 0.035, mappaLocalita.lat + 0.025].join('%2C') + '&layer=mapnik&marker=' + mappaLocalita.lat + '%2C' + mappaLocalita.lon} className="h-56 w-full border-0" loading="lazy" />
-                    ) : <p className="p-3 text-xs text-slate-500">Mappa della zona in caricamento; se non appare, usa “Apri mappa”. La posizione indica la località dichiarata, non l’indirizzo preciso del venditore.</p>}
-                  </div>
-                )}
-              </aside>
-            </div>
-          </section>
-        </div>
-        <footer className="py-6 text-center text-xs tracking-wider text-slate-400">RiverSpend · YOUR SHOP • YOUR FLOW</footer>
-      </div>
-    </main>
-  );
-}
