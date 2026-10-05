@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "name": "RiverSpendStream",
+    "slug": "riverspendstream",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "scheme": "riverspendstream",
+    "android": { "package": "com.riverspend.stream" },
+    "ios": { "bundleIdentifier": "com.riverspend.stream" }
+  }
+}
