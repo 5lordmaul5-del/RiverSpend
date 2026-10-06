@@ -135,23 +135,22 @@ export default function Home() {
       if (!ctx) return;
       const now = ctx.currentTime;
 
-      // RS FORCE: originale, profondo e avvolgente.
-      // Niente audio esterno/copiato: viene generato localmente dal browser.
+      // RS FORCE — soundscape originale: profondo, lento, avvolgente.
       const master = ctx.createGain();
       const lowpass = ctx.createBiquadFilter();
       const compressor = ctx.createDynamicsCompressor();
       master.gain.setValueAtTime(0.0001, now);
-      master.gain.exponentialRampToValueAtTime(0.22, now + 0.55);
-      master.gain.exponentialRampToValueAtTime(0.0001, now + 3.7);
+      master.gain.exponentialRampToValueAtTime(0.58, now + 0.9);
+      master.gain.exponentialRampToValueAtTime(0.0001, now + 6.8);
       lowpass.type = 'lowpass';
-      lowpass.frequency.setValueAtTime(520, now);
-      lowpass.frequency.exponentialRampToValueAtTime(150, now + 3.5);
-      lowpass.Q.value = 0.7;
-      compressor.threshold.value = -24;
-      compressor.knee.value = 18;
-      compressor.ratio.value = 5;
-      compressor.attack.value = 0.02;
-      compressor.release.value = 0.8;
+      lowpass.frequency.setValueAtTime(680, now);
+      lowpass.frequency.exponentialRampToValueAtTime(115, now + 6.4);
+      lowpass.Q.value = 0.9;
+      compressor.threshold.value = -20;
+      compressor.knee.value = 24;
+      compressor.ratio.value = 4;
+      compressor.attack.value = 0.03;
+      compressor.release.value = 1.2;
       master.connect(lowpass);
       lowpass.connect(compressor);
       compressor.connect(ctx.destination);
@@ -159,56 +158,72 @@ export default function Home() {
       const sub = ctx.createOscillator();
       const subGain = ctx.createGain();
       sub.type = 'sine';
-      sub.frequency.setValueAtTime(48, now);
-      sub.frequency.exponentialRampToValueAtTime(34, now + 3.4);
+      sub.frequency.setValueAtTime(43, now);
+      sub.frequency.exponentialRampToValueAtTime(31, now + 6.2);
       subGain.gain.setValueAtTime(0.0001, now);
-      subGain.gain.exponentialRampToValueAtTime(0.9, now + 0.7);
-      subGain.gain.exponentialRampToValueAtTime(0.0001, now + 3.65);
+      subGain.gain.exponentialRampToValueAtTime(0.95, now + 1.15);
+      subGain.gain.exponentialRampToValueAtTime(0.0001, now + 6.65);
       sub.connect(subGain);
       subGain.connect(master);
       sub.start(now);
-      sub.stop(now + 3.8);
+      sub.stop(now + 6.9);
 
       const body = ctx.createOscillator();
       const bodyGain = ctx.createGain();
       body.type = 'triangle';
-      body.frequency.setValueAtTime(82, now);
-      body.frequency.exponentialRampToValueAtTime(58, now + 2.8);
+      body.frequency.setValueAtTime(72, now);
+      body.frequency.exponentialRampToValueAtTime(49, now + 5.7);
       bodyGain.gain.setValueAtTime(0.0001, now);
-      bodyGain.gain.exponentialRampToValueAtTime(0.34, now + 0.5);
-      bodyGain.gain.exponentialRampToValueAtTime(0.0001, now + 3.5);
+      bodyGain.gain.exponentialRampToValueAtTime(0.5, now + 1.0);
+      bodyGain.gain.exponentialRampToValueAtTime(0.0001, now + 6.35);
       body.connect(bodyGain);
       bodyGain.connect(master);
       body.start(now);
-      body.stop(now + 3.6);
+      body.stop(now + 6.6);
 
-      // Piccola "onda" luminosa, molto filtrata, per dare profondità senza invadere la voce.
-      const shimmer = ctx.createOscillator();
-      const shimmerGain = ctx.createGain();
-      const shimmerFilter = ctx.createBiquadFilter();
-      shimmer.type = 'sine';
-      shimmer.frequency.setValueAtTime(210, now + 0.45);
-      shimmer.frequency.exponentialRampToValueAtTime(420, now + 1.4);
-      shimmer.frequency.exponentialRampToValueAtTime(170, now + 3.1);
-      shimmerGain.gain.setValueAtTime(0.0001, now);
-      shimmerGain.gain.exponentialRampToValueAtTime(0.055, now + 0.9);
-      shimmerGain.gain.exponentialRampToValueAtTime(0.0001, now + 3.2);
-      shimmerFilter.type = 'lowpass';
-      shimmerFilter.frequency.value = 700;
-      shimmer.connect(shimmerGain);
-      shimmerGain.connect(shimmerFilter);
-      shimmerFilter.connect(master);
-      shimmer.start(now + 0.45);
-      shimmer.stop(now + 3.25);
+      // Movimento lento nel campo stereo: dà la sensazione di "spazio" in cuffia.
+      const air = ctx.createOscillator();
+      const airGain = ctx.createGain();
+      const airFilter = ctx.createBiquadFilter();
+      const pan = ctx.createStereoPanner ? ctx.createStereoPanner() : null;
+      air.type = 'sine';
+      air.frequency.setValueAtTime(155, now + 0.4);
+      air.frequency.exponentialRampToValueAtTime(330, now + 2.6);
+      air.frequency.exponentialRampToValueAtTime(125, now + 6.0);
+      airGain.gain.setValueAtTime(0.0001, now);
+      airGain.gain.exponentialRampToValueAtTime(0.12, now + 1.5);
+      airGain.gain.exponentialRampToValueAtTime(0.0001, now + 6.2);
+      airFilter.type = 'lowpass';
+      airFilter.frequency.value = 850;
+      air.connect(airGain);
+      airGain.connect(airFilter);
+      if (pan) {
+        airFilter.connect(pan);
+        pan.pan.setValueAtTime(-0.7, now);
+        pan.pan.linearRampToValueAtTime(0.7, now + 3.0);
+        pan.pan.linearRampToValueAtTime(-0.45, now + 6.0);
+        pan.connect(master);
+      } else {
+        airFilter.connect(master);
+      }
+      air.start(now + 0.4);
+      air.stop(now + 6.25);
 
-      window.setTimeout(() => ctx.close().catch(() => {}), 4100);
+      // Coda morbida: piccola eco filtrata, non un "beep".
+      const echo = ctx.createDelay(1.0);
+      const echoGain = ctx.createGain();
+      echo.delayTime.value = 0.72;
+      echoGain.gain.value = 0.18;
+      master.connect(echo);
+      echo.connect(echoGain);
+      echoGain.connect(lowpass);
+
+      window.setTimeout(() => ctx.close().catch(() => {}), 7400);
     } catch {}
   }
 
   function apriRsForce() {
     setRsForceAperta(true);
-    // Creiamo/sblocchiamo l'AudioContext direttamente dal tap dell'utente.
-    // Così i browser mobile non bloccano il suono quando parte dopo la voce.
     let forceAudioCtx = null;
     try {
       const AudioCtx = window.AudioContext || window.webkitAudioContext;
@@ -222,14 +237,14 @@ export default function Home() {
       window.speechSynthesis.cancel();
       const voce = new SpeechSynthesisUtterance('Benvenuto nel futuro.');
       voce.lang = language === 'it' ? 'it-IT' : 'en-US';
-      voce.rate = 0.82;
-      voce.pitch = 0.72;
+      voce.rate = 0.68;
+      voce.pitch = 0.62;
       voce.volume = 1;
-      // Prima la voce, poi il suono: nessuna sovrapposizione.
-      voce.onend = () => window.setTimeout(() => playRsForceSound(forceAudioCtx), 420);
+      // Voce più lenta e solenne; il soundscape entra dopo che ha finito.
+      voce.onend = () => window.setTimeout(() => playRsForceSound(forceAudioCtx), 720);
       window.speechSynthesis.speak(voce);
     } else {
-      window.setTimeout(() => playRsForceSound(forceAudioCtx), 420);
+      window.setTimeout(() => playRsForceSound(forceAudioCtx), 720);
     }
   }
 
