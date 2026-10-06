@@ -4,9 +4,14 @@ import { supabase } from '../lib/supabase';
 
 export default function Checkout() {
   const [user, setUser] = useState(null);
+  const [items, setItems] = useState([]);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setUser(data?.user || null));
+    try {
+      const saved = JSON.parse(localStorage.getItem('riverspend-rete') || '[]');
+      if (Array.isArray(saved)) setItems(saved);
+    } catch {}
   }, []);
 
   return (
@@ -21,6 +26,28 @@ export default function Checkout() {
             Qui nascerà il flusso ufficiale di pagamento RiverSpend: ordine, metodo di pagamento,
             conferma, protezione Shield e gestione della spedizione.
           </p>
+
+          <div className="mt-6 rounded-2xl border border-slate-700 bg-slate-950/70 p-4">
+            <h2 className="font-bold">🛒 Riepilogo</h2>
+            {items.length === 0 ? (
+              <p className="mt-2 text-sm text-slate-400">La tua Rete non contiene ancora prodotti da portare al checkout.</p>
+            ) : (
+              <>
+                <div className="mt-3 space-y-2">
+                  {items.map((item) => (
+                    <div key={item.id} className="flex items-center justify-between gap-3 text-sm">
+                      <span className="min-w-0 truncate">{item.title || 'Prodotto'}</span>
+                      <strong>€ {Number(item.price || 0).toFixed(2)}</strong>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-4 flex justify-between border-t border-slate-700 pt-3 text-lg font-black">
+                  <span>Totale</span>
+                  <span className="text-teal-300">€ {items.reduce((sum, item) => sum + Number(item.price || 0), 0).toFixed(2)}</span>
+                </div>
+              </>
+            )}
+          </div>
 
           <div className="mt-6 grid gap-3">
             {[
