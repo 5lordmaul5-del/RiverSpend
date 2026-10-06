@@ -442,16 +442,23 @@ export default function Home() {
                 const pos = positions[index];
                 const image = p.immagini?.[0];
                 return image ? (
-                  <a
-                    key={'force-' + p.id}
-                    href={'/prodotto/' + encodeURIComponent(p.id)}
-                    aria-label={'RS Force: ' + (p.titolo || 'prodotto')}
-                    className="rs-force-product absolute left-1/2 top-1/2 z-10 flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden rounded-2xl border border-cyan-200/70 bg-white p-1 shadow-[0_0_20px_rgba(34,211,238,.45)]"
-                    style={{'--force-x': pos.x, '--force-y': pos.y, '--force-r': pos.r, animationDelay: (index * 180) + 'ms'}}
+                  <span
+                    key={'force-orbit-' + p.id}
+                    className="rs-force-orbit z-10"
+                    style={{
+                      '--orbit-radius': index % 2 ? '145px' : '135px',
+                      '--orbit-duration': (10 + index * 0.7) + 's',
+                      animationDelay: (-index * 1.45) + 's'
+                    }}
                   >
-                    <img src={image} alt="" className="h-full w-full object-contain" />
-                  </a>
-                ) : null;
+                    <a
+                      href={'/prodotto/' + encodeURIComponent(p.id)}
+                      aria-label={'RS Force: ' + (p.titolo || 'prodotto')}
+                      className="rs-force-product absolute left-0 top-0 flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl border border-cyan-200/70 bg-white p-1 shadow-[0_0_20px_rgba(34,211,238,.45)]"
+                    >
+                      <img src={image} alt="" className="h-full w-full object-contain" />
+                    </a>
+                  </span>                ) : null;
               })}
               <button type="button" onClick={apriRsForce} aria-label="Apri RS Force" className="group relative z-20 flex h-32 w-32 items-center justify-center rounded-full border border-cyan-200/70 bg-[radial-gradient(circle_at_35%_30%,rgba(255,255,255,.95),rgba(103,232,249,.45)_18%,rgba(8,47,73,.95)_58%,rgba(2,6,23,1)_100%)] text-5xl shadow-[0_0_35px_rgba(34,211,238,.65)] transition duration-500 hover:scale-105 hover:shadow-[0_0_55px_rgba(34,211,238,.9)] active:scale-95" style={{animation:'rs-palantir-pulse 3s ease-in-out infinite'}}>
                 🔮
@@ -561,14 +568,19 @@ export default function Home() {
           0%, 100% { transform: scale(1); filter: brightness(1); }
           50% { transform: scale(1.05); filter: brightness(1.2); }
         }
-        @keyframes rs-force-pull {
-          0% { transform: translate(calc(-50% + var(--force-x)), calc(-50% + var(--force-y))) scale(.9) rotate(var(--force-r)); opacity: .85; }
-          55% { transform: translate(-50%, -50%) scale(.28) rotate(0deg); opacity: 1; filter: brightness(1.35); }
-          75% { transform: translate(-50%, -50%) scale(.55) rotate(0deg); opacity: .95; }
-          100% { transform: translate(calc(-50% + var(--force-x)), calc(-50% + var(--force-y))) scale(.9) rotate(var(--force-r)); opacity: .85; }
+        @keyframes rs-force-orbit {
+          from { transform: rotate(0deg) translateX(var(--orbit-radius)); }
+          to { transform: rotate(360deg) translateX(var(--orbit-radius)); }
         }
-        .rs-force-product { animation: rs-force-pull 2.8s ease-in-out infinite; will-change: transform, opacity, filter; }
-      `}</style>
+        .rs-force-orbit {
+          position: absolute; left: 50%; top: 50%; width: 0; height: 0;
+          animation: rs-force-orbit var(--orbit-duration) linear infinite;
+          transform-origin: center center; will-change: transform;
+        }
+        .rs-force-product {
+          transform: translate(-50%, -50%);
+          will-change: transform, filter;
+        }      `}</style>
     </main>
   );
 }
