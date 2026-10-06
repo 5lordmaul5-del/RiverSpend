@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import SplashScreen from './SplashScreen';
+import { supabase } from '../lib/supabase';
 
 const LANGUAGES = [
   ['it', '🇮🇹 Italiano'], ['en', '🇬🇧 English'], ['es', '🇪🇸 Español'], ['fr', '🇫🇷 Français'],
@@ -128,7 +129,7 @@ export default function Home() {
 
   useEffect(() => { try { const saved = JSON.parse(localStorage.getItem('riverspend-rete') || '[]'); setReteIds(Array.isArray(saved) ? saved.map((item) => String(item.id)) : []); } catch {} }, []);
 
-  function toggleReteFromCatalog(p) {
+  async function toggleReteFromCatalog(p) {
     const key = 'riverspend-rete';
     let current = [];
     try { current = JSON.parse(localStorage.getItem(key) || '[]'); } catch {}
@@ -147,6 +148,29 @@ export default function Home() {
       document.cookie = 'riverspend-rete-ids=' + encodeURIComponent(next.map((item) => item.id).join(',')) + '; path=/; max-age=31536000; SameSite=Lax';
     } catch {}
     setReteIds(next.map((item) => String(item.id)));
+
+    // Se l'utente è autenticato, mantieni la Rete anche nell'account RiverSpend.
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const productId = String(p.id);
+        if (exists) {
+          const { error } = await supabase
+            .from('river_net_items')
+            .delete()
+            .eq('user_id', user.id)
+            .eq('product_id', productId);
+          if (error) console.error('RiverSpend Rete cloud delete:', error);
+        } else {
+          const { error } = await supabase
+            .from('river_net_items')
+            .upsert({ user_id: user.id, product_id: productId }, { onConflict: 'user_id,product_id' });
+          if (error) console.error('RiverSpend Rete cloud insert:', error);
+        }
+      }
+    } catch (error) {
+      console.error('RiverSpend Rete cloud sync:', error);
+    }
   }
 
   useEffect(() => {
