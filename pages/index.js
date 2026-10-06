@@ -347,7 +347,7 @@ export default function Home() {
             <div className="mb-5 rounded-3xl border border-cyan-300/50 bg-slate-900 p-5 shadow-2xl shadow-cyan-950/30">
               <div className="flex items-start justify-between gap-3">
                 <div><p className="text-xs font-bold uppercase tracking-[0.25em] text-cyan-300">🔮 RS FORCE</p><h3 className="mt-1 text-xl font-extrabold">Benvenuto nel futuro</h3></div>
-                <button type="button" onClick={() => setRS ForceAperta(false)} className="rounded-full border border-slate-700 px-3 py-1 text-slate-300">✕</button>
+                <button type="button" onClick={() => setRsForceAperta(false)} className="rounded-full border border-slate-700 px-3 py-1 text-slate-300">✕</button>
               </div>
               <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
                 <a href={categoriaAttiva ? `/?category=${encodeURIComponent(categoriaAttiva)}&future=offers` : '/?future=offers'} className="rounded-2xl border border-amber-400/40 bg-amber-950/30 p-4 text-center"><span className="text-2xl">🏷️</span><p className="mt-2 text-sm font-bold">Promozioni</p></a>
