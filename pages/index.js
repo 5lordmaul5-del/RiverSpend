@@ -96,6 +96,7 @@ export default function Home() {
   const [rsFortunePrize, setRsFortunePrize] = useState('');
   const [rsFortuneRotation, setRsFortuneRotation] = useState(0);
   const [rsFortuneCelebration, setRsFortuneCelebration] = useState(false);
+  const [rsLotteryAperta, setRsLotteryAperta] = useState(false);
   const [rsAdmin, setRsAdmin] = useState(false);
 
   const categorie = [
@@ -549,8 +550,9 @@ export default function Home() {
           )}
         </header>
 
-        <section className="mx-auto max-w-6xl px-2 py-8 sm:px-4">
-          <div className="mb-5 rounded-3xl border border-cyan-400/40 bg-gradient-to-br from-slate-950 via-cyan-950/50 to-indigo-950/60 p-5 text-center shadow-2xl shadow-cyan-950/30 sm:p-8">
+        <section className="mx-auto max-w-6xl px-2 py-4 sm:px-4">
+          <div className="rs-apps-grid mb-5">
+          <div className="mb-0 rounded-2xl border border-cyan-400/40 bg-gradient-to-br from-slate-950 via-cyan-950/50 to-indigo-950/60 p-5 text-center shadow-2xl shadow-cyan-950/30 sm:p-8">
             <div className="rs-force-stage relative mx-auto flex h-44 max-w-xl items-center justify-center overflow-visible">
               {rsForceAperta && prodottiVisibili.slice(0, 6).map((p, index) => {
                 const positions = [
@@ -607,7 +609,7 @@ export default function Home() {
             </div>
           )}
 
-          <section className="mb-5 rounded-3xl border border-amber-400/40 bg-gradient-to-br from-slate-950 via-amber-950/30 to-slate-900 p-5 text-center shadow-2xl shadow-amber-950/20">
+          <section className="mb-0 rounded-2xl border border-amber-400/40 bg-gradient-to-br from-slate-950 via-amber-950/30 to-slate-900 p-5 text-center shadow-2xl shadow-amber-950/20">
             <button type="button" onClick={() => setRsFortuneAperta((v) => !v)} className="text-xs font-bold uppercase tracking-[0.3em] text-amber-300">🎡 RS FORTUNE · La ruota della fortuna</button>
             {rsFortuneAperta && <div className="mt-4">
               <div className="relative mx-auto h-64 w-64">
@@ -632,6 +634,20 @@ export default function Home() {
               <p className="mt-3 text-[11px] text-slate-400">I premi mostrati sono i premi iniziali della promozione RS FORTUNE. 1 RiverMoney = €0,10. I premi vengono registrati nel portafoglio RiverSpend dell’account autenticato.</p>
             </div>}
           </section>
+
+          <section className="mb-0 rounded-2xl border border-violet-400/40 bg-gradient-to-br from-slate-950 via-violet-950/25 to-slate-900 p-4 text-center shadow-lg">
+            <button type="button" onClick={() => setRsLotteryAperta((v) => !v)} className="w-full text-xs font-bold uppercase tracking-[0.25em] text-violet-300">
+              🎟️ RS LOTTERY
+            </button>
+            {rsLotteryAperta && (
+              <div className="mt-3">
+                <p className="text-sm font-semibold text-white">RS Lottery Annuale</p>
+                <p className="mt-1 text-xs leading-5 text-slate-300">1 codice per ogni acquisto di almeno €10. Il codice viene associato all'ordine e al tuo account.</p>
+                <a href="/profilo" className="mt-3 inline-block rounded-xl border border-violet-400/50 bg-violet-950/40 px-4 py-2 text-xs font-bold text-violet-200">🎟️ I miei codici</a>
+              </div>
+            )}
+          </section>
+          </div>
 
           <div className="rs-hero mb-5 rounded-2xl border border-teal-800 bg-gradient-to-br from-slate-900 to-sky-950 px-5 py-4 sm:px-7 sm:py-5">
             <span className="rs-gold-pebble one" aria-hidden="true" />
@@ -712,6 +728,21 @@ export default function Home() {
         </footer>
       </div>
       <style jsx>{`
+        .rs-apps-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; align-items:start; }
+        .rs-apps-grid > section, .rs-apps-grid > div { min-width:0; }
+        .rs-apps-grid .rs-force-stage { height:88px; }
+        .rs-apps-grid .rs-force-stage .group { height:68px; width:68px; font-size:1.75rem; }
+        .rs-apps-grid .rs-force-stage + p { margin-top:6px; font-size:9px; }
+        .rs-apps-grid h2 { font-size:15px; line-height:1.2; }
+        .rs-apps-grid > div:first-child > p:not(.mt-4) { margin-top:4px; font-size:10px; line-height:1.35; }
+        @media (max-width:640px) {
+          .rs-apps-grid { gap:8px; }
+          .rs-apps-grid > div:first-child { padding:10px; }
+          .rs-apps-grid > section { padding:10px; }
+        }
+        @media (min-width:768px) {
+          .rs-apps-grid { grid-template-columns:1fr 1fr; }
+        }
         @keyframes rs-palantir-pulse {
           0%, 100% { transform: scale(1); filter: brightness(1); }
           50% { transform: scale(1.05); filter: brightness(1.2); }
