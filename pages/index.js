@@ -657,7 +657,7 @@ export default function Home() {
                         )}
                       </div>
 
-                      <button type="button" onClick={() => setRsLotteryAperta((v) => !v)} className="rounded-xl border border-violet-400/40 bg-gradient-to-br from-violet-950/70 to-slate-950 p-2 text-left transition hover:border-violet-300">
+                      <div role="button" tabIndex={0} onClick={() => setRsLotteryAperta((v) => !v)} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") setRsLotteryAperta((v) => !v); }} className="rounded-xl border border-violet-400/40 bg-gradient-to-br from-violet-950/70 to-slate-950 p-2 text-left transition hover:border-violet-300">
                         <div className="flex items-center gap-2">
                           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-violet-300/70 bg-violet-900 text-xl">🎟️</span>
                           <span><span className="block text-[10px] font-extrabold uppercase tracking-wider text-violet-300">RS LOTTERY</span><span className="block text-[11px] font-bold text-white">1 codice per acquisto</span></span>
@@ -669,7 +669,7 @@ export default function Home() {
                             <p className="mt-1 text-violet-200">I codici saranno visibili nel Profilo → RS Lottery.</p>
                           </div>
                         )}
-                      </button>
+                      </div>
                     </div>
                   </div>
                 )}
