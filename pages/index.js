@@ -226,7 +226,7 @@ export default function Home() {
     } catch {}
   }
 
-  const RS_FORTUNE_PRIZES = ['💰 +50 RiverMoney','⭐ +100 RSP','⭐ +250 RSP','🚚 Spedizione gratuita','🏷️ Sconto 5%','🔥 RS Booster','🎁 Premio sorpresa','⭐ +500 RSP'];
+  const RS_FORTUNE_PRIZES = ['💰 +5 RiverMoney (€0,50)','💰 +10 RiverMoney (€1)','💰 +20 RiverMoney (€2)','🚚 Spedizione gratuita','🏷️ Sconto 5%','🔥 RS Booster','🎁 Premio sorpresa','⭐ +500 RSP'];
 
   function giraRsFortune() {
     if (rsFortuneSpinning) return;
@@ -558,7 +558,7 @@ export default function Home() {
               <p className="mt-3 text-sm text-slate-300">Un solo giro. Una sola fortuna. Gira la ruota e scopri il tuo premio.</p>
               <button type="button" disabled={rsFortuneSpinning} onClick={giraRsFortune} className="mt-3 rounded-full bg-amber-300 px-6 py-3 font-extrabold text-amber-950 disabled:opacity-50">{rsFortuneSpinning ? '🎡 La ruota gira…' : '🎡 Gira la ruota'}</button>
               {rsFortunePrize && <div className="mt-4 rounded-2xl border border-amber-400/50 bg-amber-950/30 p-4 text-lg font-extrabold text-amber-200">{rsFortunePrize}</div>}
-              <p className="mt-3 text-[11px] text-slate-400">I premi mostrati sono i premi della promozione RS FORTUNE; l’assegnazione effettiva di RSP, RiverMoney, sconti e vantaggi richiederà il relativo sistema premi.</p>
+              <p className="mt-3 text-[11px] text-slate-400">I premi mostrati sono i premi iniziali della promozione RS FORTUNE. 1 RiverMoney = €0,10. L’assegnazione effettiva di RSP, RiverMoney, sconti e vantaggi richiederà il relativo sistema premi.</p>
             </div>}
           </section>
 
