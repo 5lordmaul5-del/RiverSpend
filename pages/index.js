@@ -136,45 +136,79 @@ export default function Home() {
       if (!AudioCtx) return;
       const ctx = new AudioCtx();
       const now = ctx.currentTime;
-      const gain = ctx.createGain();
-      const filter = ctx.createBiquadFilter();
-      gain.gain.setValueAtTime(0.0001, now);
-      gain.gain.exponentialRampToValueAtTime(0.16, now + 0.08);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.15);
-      filter.type = 'lowpass';
-      filter.frequency.setValueAtTime(900, now);
-      filter.frequency.exponentialRampToValueAtTime(180, now + 1.1);
-      gain.connect(filter);
-      filter.connect(ctx.destination);
 
-      const osc = ctx.createOscillator();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(95, now);
-      osc.frequency.exponentialRampToValueAtTime(420, now + 0.38);
-      osc.frequency.exponentialRampToValueAtTime(75, now + 1.1);
-      osc.connect(gain);
-      osc.start(now);
-      osc.stop(now + 1.2);
+      // RS FORCE: originale, profondo e avvolgente.
+      // Niente audio esterno/copiato: viene generato localmente dal browser.
+      const master = ctx.createGain();
+      const lowpass = ctx.createBiquadFilter();
+      const compressor = ctx.createDynamicsCompressor();
+      master.gain.setValueAtTime(0.0001, now);
+      master.gain.exponentialRampToValueAtTime(0.22, now + 0.55);
+      master.gain.exponentialRampToValueAtTime(0.0001, now + 3.7);
+      lowpass.type = 'lowpass';
+      lowpass.frequency.setValueAtTime(520, now);
+      lowpass.frequency.exponentialRampToValueAtTime(150, now + 3.5);
+      lowpass.Q.value = 0.7;
+      compressor.threshold.value = -24;
+      compressor.knee.value = 18;
+      compressor.ratio.value = 5;
+      compressor.attack.value = 0.02;
+      compressor.release.value = 0.8;
+      master.connect(lowpass);
+      lowpass.connect(compressor);
+      compressor.connect(ctx.destination);
 
+      const sub = ctx.createOscillator();
+      const subGain = ctx.createGain();
+      sub.type = 'sine';
+      sub.frequency.setValueAtTime(48, now);
+      sub.frequency.exponentialRampToValueAtTime(34, now + 3.4);
+      subGain.gain.setValueAtTime(0.0001, now);
+      subGain.gain.exponentialRampToValueAtTime(0.9, now + 0.7);
+      subGain.gain.exponentialRampToValueAtTime(0.0001, now + 3.65);
+      sub.connect(subGain);
+      subGain.connect(master);
+      sub.start(now);
+      sub.stop(now + 3.8);
+
+      const body = ctx.createOscillator();
+      const bodyGain = ctx.createGain();
+      body.type = 'triangle';
+      body.frequency.setValueAtTime(82, now);
+      body.frequency.exponentialRampToValueAtTime(58, now + 2.8);
+      bodyGain.gain.setValueAtTime(0.0001, now);
+      bodyGain.gain.exponentialRampToValueAtTime(0.34, now + 0.5);
+      bodyGain.gain.exponentialRampToValueAtTime(0.0001, now + 3.5);
+      body.connect(bodyGain);
+      bodyGain.connect(master);
+      body.start(now);
+      body.stop(now + 3.6);
+
+      // Piccola "onda" luminosa, molto filtrata, per dare profondità senza invadere la voce.
       const shimmer = ctx.createOscillator();
       const shimmerGain = ctx.createGain();
-      shimmer.type = 'triangle';
-      shimmer.frequency.setValueAtTime(620, now);
-      shimmer.frequency.exponentialRampToValueAtTime(180, now + 0.9);
+      const shimmerFilter = ctx.createBiquadFilter();
+      shimmer.type = 'sine';
+      shimmer.frequency.setValueAtTime(210, now + 0.45);
+      shimmer.frequency.exponentialRampToValueAtTime(420, now + 1.4);
+      shimmer.frequency.exponentialRampToValueAtTime(170, now + 3.1);
       shimmerGain.gain.setValueAtTime(0.0001, now);
-      shimmerGain.gain.exponentialRampToValueAtTime(0.045, now + 0.1);
-      shimmerGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.95);
+      shimmerGain.gain.exponentialRampToValueAtTime(0.055, now + 0.9);
+      shimmerGain.gain.exponentialRampToValueAtTime(0.0001, now + 3.2);
+      shimmerFilter.type = 'lowpass';
+      shimmerFilter.frequency.value = 700;
       shimmer.connect(shimmerGain);
-      shimmerGain.connect(ctx.destination);
-      shimmer.start(now);
-      shimmer.stop(now + 1);
-      window.setTimeout(() => ctx.close().catch(() => {}), 1500);
+      shimmerGain.connect(shimmerFilter);
+      shimmerFilter.connect(master);
+      shimmer.start(now + 0.45);
+      shimmer.stop(now + 3.25);
+
+      window.setTimeout(() => ctx.close().catch(() => {}), 4100);
     } catch {}
   }
 
   function apriRsForce() {
     setRsForceAperta(true);
-    playRsForceSound();
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       window.speechSynthesis.cancel();
       const voce = new SpeechSynthesisUtterance('Benvenuto nel futuro.');
@@ -182,7 +216,11 @@ export default function Home() {
       voce.rate = 0.82;
       voce.pitch = 0.72;
       voce.volume = 1;
+      // Prima la voce, poi il suono: nessuna sovrapposizione.
+      voce.onend = () => window.setTimeout(playRsForceSound, 420);
       window.speechSynthesis.speak(voce);
+    } else {
+      window.setTimeout(playRsForceSound, 420);
     }
   }
 
