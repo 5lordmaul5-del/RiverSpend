@@ -130,11 +130,9 @@ export default function Home() {
 
   useEffect(() => { try { const saved = JSON.parse(localStorage.getItem('riverspend-rete') || '[]'); setReteIds(Array.isArray(saved) ? saved.map((item) => String(item.id)) : []); } catch {} }, []);
 
-  function playRsForceSound() {
+  function playRsForceSound(ctx) {
     try {
-      const AudioCtx = window.AudioContext || window.webkitAudioContext;
-      if (!AudioCtx) return;
-      const ctx = new AudioCtx();
+      if (!ctx) return;
       const now = ctx.currentTime;
 
       // RS FORCE: originale, profondo e avvolgente.
@@ -209,6 +207,17 @@ export default function Home() {
 
   function apriRsForce() {
     setRsForceAperta(true);
+    // Creiamo/sblocchiamo l'AudioContext direttamente dal tap dell'utente.
+    // Così i browser mobile non bloccano il suono quando parte dopo la voce.
+    let forceAudioCtx = null;
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (AudioCtx) {
+        forceAudioCtx = new AudioCtx();
+        if (forceAudioCtx.state === 'suspended') forceAudioCtx.resume().catch(() => {});
+      }
+    } catch {}
+
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       window.speechSynthesis.cancel();
       const voce = new SpeechSynthesisUtterance('Benvenuto nel futuro.');
@@ -217,10 +226,10 @@ export default function Home() {
       voce.pitch = 0.72;
       voce.volume = 1;
       // Prima la voce, poi il suono: nessuna sovrapposizione.
-      voce.onend = () => window.setTimeout(playRsForceSound, 420);
+      voce.onend = () => window.setTimeout(() => playRsForceSound(forceAudioCtx), 420);
       window.speechSynthesis.speak(voce);
     } else {
-      window.setTimeout(playRsForceSound, 420);
+      window.setTimeout(() => playRsForceSound(forceAudioCtx), 420);
     }
   }
 
