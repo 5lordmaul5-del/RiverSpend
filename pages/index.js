@@ -247,8 +247,7 @@ export default function Home() {
     let alreadyPlayed = false;
     try { alreadyPlayed = localStorage.getItem('riverspend-fortune-played') === 'true'; } catch {}
     if (alreadyPlayed && !rsAdmin) {
-      setRsFortunePrize('🍀 Hai già usato il tuo unico giro. La fortuna è già stata assegnata.');
-      setRsFortuneAperta(true);
+      setRsFortunePrize('🎡 Hai già girato la ruota.');
       return;
     }
 
