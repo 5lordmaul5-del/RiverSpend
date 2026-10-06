@@ -626,9 +626,9 @@ export default function Home() {
                             <p className="mt-1 text-center">Tocca per chiudere.</p>
                           </div>
                         )}
-                      </button>
+                      </div>
 
-                      <button type="button" onClick={() => setRsFortuneAperta((v) => !v)} className="rounded-xl border border-amber-400/40 bg-gradient-to-br from-amber-950/70 to-slate-950 p-2 text-left transition hover:border-amber-300">
+                      <div role="button" tabIndex={0} onClick={() => setRsFortuneAperta((v) => !v)} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") setRsFortuneAperta((v) => !v); }} className="rounded-xl border border-amber-400/40 bg-gradient-to-br from-amber-950/70 to-slate-950 p-2 text-left transition hover:border-amber-300">
                         <div className="flex items-center gap-2">
                           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-amber-300/70 bg-amber-200 text-xl">🎡</span>
                           <span><span className="block text-[10px] font-extrabold uppercase tracking-wider text-amber-300">RS FORTUNE</span><span className="block text-[11px] font-bold text-white">La ruota</span></span>
@@ -637,7 +637,7 @@ export default function Home() {
                           <div className="mt-2 rounded-lg border border-amber-400/30 bg-slate-950/70 p-2 text-center">
                             <div className="relative mx-auto h-44 w-44">
                               <div className="absolute -top-1 left-1/2 z-30 -translate-x-1/2 text-lg">🔻</div>
-                              <div className="rs-fortune-wheel relative h-44 w-44 rounded-full border-6 border-amber-300 shadow-[0_0_25px_rgba(251,191,36,.4)]" style={{transform:`rotate(${rsFortuneRotation}deg)`}}>
+                              <div className="rs-fortune-wheel relative h-44 w-44 rounded-full border-4 border-amber-300 shadow-[0_0_25px_rgba(251,191,36,.4)]" style={{transform:`rotate(${rsFortuneRotation}deg)`}}>
                                 <div className="rs-fortune-labels" aria-hidden="true">
                                   <span>💰<br/>5 RM</span><span>💰<br/>10 RM</span><span>💰<br/>20 RM</span><span>🚚<br/>FREE</span>
                                   <span>🏷️<br/>5%</span><span>🔥<br/>BOOST</span><span>🎁<br/>SORPRESA</span><span>⭐<br/>500 RSP</span>
@@ -655,7 +655,7 @@ export default function Home() {
                             )}
                           </div>
                         )}
-                      </button>
+                      </div>
 
                       <button type="button" onClick={() => setRsLotteryAperta((v) => !v)} className="rounded-xl border border-violet-400/40 bg-gradient-to-br from-violet-950/70 to-slate-950 p-2 text-left transition hover:border-violet-300">
                         <div className="flex items-center gap-2">
