@@ -244,13 +244,7 @@ export default function Home() {
 
   async function giraRsFortune() {
     if (rsFortuneSpinning) return;
-    let alreadyPlayed = false;
-    try { alreadyPlayed = localStorage.getItem('riverspend-fortune-played') === 'true'; } catch {}
-    if (alreadyPlayed && !rsAdmin) {
-      setRsFortunePrize('🎡 Hai già girato la ruota.');
-      return;
-    }
-
+    // Il controllo definitivo è sul server: il CEO/admin non viene bloccato dal localStorage.
     const winner = Math.floor(Math.random() * RS_FORTUNE_PRIZES.length);
     const segment = 360 / RS_FORTUNE_PRIZES.length;
     const target = 7 * 360 + (360 - winner * segment - segment / 2);
