@@ -137,8 +137,9 @@ export default function Rete() {
           </section>
         ) : (
           <>
-            <div className="mb-5 flex justify-end">
+            <div className="mb-5 flex flex-wrap justify-end gap-2">
               <button onClick={clearAll} className="rounded-xl border border-slate-700 px-4 py-2 text-sm">Svuota rete</button>
+              <Link href="/checkout" className="rounded-xl bg-teal-500 px-4 py-2 text-sm font-extrabold text-slate-950">🛒 Vai al Checkout</Link>
             </div>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {items.map((item) => (
