@@ -91,6 +91,10 @@ export default function Home() {
   const [accesso18, setAccesso18] = useState(false);
   const [mostraGate18, setMostraGate18] = useState(false);
   const [rsForceAperta, setRsForceAperta] = useState(false);
+  const [rsFortuneAperta, setRsFortuneAperta] = useState(false);
+  const [rsFortuneSpinning, setRsFortuneSpinning] = useState(false);
+  const [rsFortunePrize, setRsFortunePrize] = useState('');
+  const [rsFortuneRotation, setRsFortuneRotation] = useState(0);
 
   const categorie = [
     'AUTO & VEICOLI','Auto','Moto','Scooter','Harley & Custom','Camion & Veicoli commerciali','Trattori & Agricoltura','Edilizia & Macchine da lavoro','Ricambi & Accessori auto','Ricambi & Accessori moto',
@@ -220,6 +224,24 @@ export default function Home() {
 
       window.setTimeout(() => ctx.close().catch(() => {}), 7400);
     } catch {}
+  }
+
+  const RS_FORTUNE_PRIZES = ['🎁 Premio sorpresa','💰 +100 RiverMoney','⭐ +500 RSP','🏷️ Sconto 10%','🚚 Spedizione gratuita','🔥 RS Booster','🍀 Ritenta la fortuna'];
+
+  function giraRsFortune() {
+    if (rsFortuneSpinning) return;
+    let alreadyPlayed = false;
+    try { alreadyPlayed = localStorage.getItem('riverspend-fortune-date') === new Date().toISOString().slice(0, 10); } catch {}
+    if (alreadyPlayed) { setRsFortunePrize('🍀 Hai già usato il tuo tentativo di oggi.'); setRsFortuneAperta(true); return; }
+    const winner = Math.floor(Math.random() * RS_FORTUNE_PRIZES.length);
+    const segment = 360 / RS_FORTUNE_PRIZES.length;
+    const target = 7 * 360 + (360 - winner * segment - segment / 2);
+    setRsFortuneAperta(true); setRsFortunePrize(''); setRsFortuneSpinning(true);
+    setRsFortuneRotation((prev) => prev + target);
+    window.setTimeout(() => {
+      setRsFortuneSpinning(false); setRsFortunePrize(RS_FORTUNE_PRIZES[winner]);
+      try { localStorage.setItem('riverspend-fortune-date', new Date().toISOString().slice(0, 10)); } catch {}
+    }, 5200);
   }
 
   function apriRsForce() {
@@ -524,6 +546,22 @@ export default function Home() {
             </div>
           )}
 
+          <section className="mb-5 rounded-3xl border border-amber-400/40 bg-gradient-to-br from-slate-950 via-amber-950/30 to-slate-900 p-5 text-center shadow-2xl shadow-amber-950/20">
+            <button type="button" onClick={() => setRsFortuneAperta((v) => !v)} className="text-xs font-bold uppercase tracking-[0.3em] text-amber-300">🎡 RS FORTUNE · La ruota della fortuna</button>
+            {rsFortuneAperta && <div className="mt-4">
+              <div className="relative mx-auto h-64 w-64">
+                <div className="absolute -top-2 left-1/2 z-20 -translate-x-1/2 text-2xl">🔻</div>
+                <div className="rs-fortune-wheel h-64 w-64 rounded-full border-8 border-amber-300 shadow-[0_0_35px_rgba(251,191,36,.45)]" style={{transform:`rotate(${rsFortuneRotation}deg)`}}>
+                  <div className="rs-fortune-center">RS<br/>FORTUNE</div>
+                </div>
+              </div>
+              <p className="mt-3 text-sm text-slate-300">Un tentativo gratuito al giorno. Gira la ruota e scopri la tua fortuna.</p>
+              <button type="button" disabled={rsFortuneSpinning} onClick={giraRsFortune} className="mt-3 rounded-full bg-amber-300 px-6 py-3 font-extrabold text-amber-950 disabled:opacity-50">{rsFortuneSpinning ? '🎡 La ruota gira…' : '🎡 Gira la ruota'}</button>
+              {rsFortunePrize && <div className="mt-4 rounded-2xl border border-amber-400/50 bg-amber-950/30 p-4 text-lg font-extrabold text-amber-200">{rsFortunePrize}</div>}
+              <p className="mt-3 text-[11px] text-slate-400">I premi mostrati sono gestiti dalla promozione RiverSpend; il credito effettivo di RSP/RiverMoney e gli sconti richiederanno il relativo sistema premi.</p>
+            </div>}
+          </section>
+
           <div className="rs-hero mb-5 rounded-2xl border border-teal-800 bg-gradient-to-br from-slate-900 to-sky-950 px-5 py-4 sm:px-7 sm:py-5">
             <span className="rs-gold-pebble one" aria-hidden="true" />
             <span className="rs-gold-pebble two" aria-hidden="true" />
@@ -626,6 +664,19 @@ export default function Home() {
           transform: translate(-50%, -50%) rotateY(0deg) scale(var(--orbit-scale, 1));
           will-change: transform, filter;
           transform-style: preserve-3d;
+        }
+        .rs-fortune-wheel {
+          margin: 0 auto;
+          background: conic-gradient(#f59e0b 0deg 51.43deg,#fde68a 51.43deg 102.86deg,#f59e0b 102.86deg 154.29deg,#fde68a 154.29deg 205.72deg,#f59e0b 205.72deg 257.15deg,#fde68a 257.15deg 308.58deg,#f59e0b 308.58deg 360deg);
+          transition: transform 5.2s cubic-bezier(.12,.72,.18,1);
+          will-change: transform;
+        }
+        .rs-fortune-center {
+          position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+          display:flex; align-items:center; justify-content:center; text-align:center;
+          width:82px; height:82px; border-radius:9999px; border:4px solid #fef3c7;
+          background:#111827; color:#fcd34d; font-size:12px; font-weight:900;
+          box-shadow:0 0 20px rgba(251,191,36,.45);
         }      `}</style>
     </main>
   );
