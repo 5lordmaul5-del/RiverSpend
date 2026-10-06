@@ -231,8 +231,8 @@ export default function Home() {
   function giraRsFortune() {
     if (rsFortuneSpinning) return;
     let alreadyPlayed = false;
-    try { alreadyPlayed = localStorage.getItem('riverspend-fortune-date') === new Date().toISOString().slice(0, 10); } catch {}
-    if (alreadyPlayed) { setRsFortunePrize('🍀 Hai già usato il tuo tentativo di oggi.'); setRsFortuneAperta(true); return; }
+    try { alreadyPlayed = localStorage.getItem('riverspend-fortune-played') === 'true'; } catch {}
+    if (alreadyPlayed) { setRsFortunePrize('🍀 Hai già usato il tuo unico giro. La fortuna è già stata assegnata.'); setRsFortuneAperta(true); return; }
     const winner = Math.floor(Math.random() * RS_FORTUNE_PRIZES.length);
     const segment = 360 / RS_FORTUNE_PRIZES.length;
     const target = 7 * 360 + (360 - winner * segment - segment / 2);
@@ -240,7 +240,7 @@ export default function Home() {
     setRsFortuneRotation((prev) => prev + target);
     window.setTimeout(() => {
       setRsFortuneSpinning(false); setRsFortunePrize(RS_FORTUNE_PRIZES[winner]);
-      try { localStorage.setItem('riverspend-fortune-date', new Date().toISOString().slice(0, 10)); } catch {}
+      try { localStorage.setItem('riverspend-fortune-played', 'true'); } catch {}
     }, 5200);
   }
 
@@ -555,7 +555,7 @@ export default function Home() {
                   <div className="rs-fortune-center">RS<br/>FORTUNE</div>
                 </div>
               </div>
-              <p className="mt-3 text-sm text-slate-300">Un tentativo gratuito al giorno. Gira la ruota e scopri la tua fortuna.</p>
+              <p className="mt-3 text-sm text-slate-300">Un solo giro. Una sola fortuna. Gira la ruota e scopri il tuo premio.</p>
               <button type="button" disabled={rsFortuneSpinning} onClick={giraRsFortune} className="mt-3 rounded-full bg-amber-300 px-6 py-3 font-extrabold text-amber-950 disabled:opacity-50">{rsFortuneSpinning ? '🎡 La ruota gira…' : '🎡 Gira la ruota'}</button>
               {rsFortunePrize && <div className="mt-4 rounded-2xl border border-amber-400/50 bg-amber-950/30 p-4 text-lg font-extrabold text-amber-200">{rsFortunePrize}</div>}
               <p className="mt-3 text-[11px] text-slate-400">I premi mostrati sono gestiti dalla promozione RiverSpend; il credito effettivo di RSP/RiverMoney e gli sconti richiederanno il relativo sistema premi.</p>
