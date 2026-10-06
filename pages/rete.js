@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { supabase } from '../lib/supabase';
 
 export default function Rete() {
   const [items, setItems] = useState([]);
@@ -22,10 +23,40 @@ export default function Rete() {
         const sessionItems = readJson(sessionStorage, 'riverspend-rete');
         let saved = localItems.length ? localItems : sessionItems;
 
-        // Fallback robusto: conserviamo anche solo gli ID in un cookie,
-        // così un ritorno da una pagina esterna (es. OpenStreetMap)
-        // non può far sparire una Rete già salvata.
-        if (!saved.length) {
+        // Se l'utente è autenticato, la Rete principale arriva dall'account RiverSpend.
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data: cloudItems, error: cloudError } = await supabase
+            .from('river_net_items')
+            .select('product_id, created_at')
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: false });
+
+          if (!cloudError && Array.isArray(cloudItems)) {
+            const ids = cloudItems.map((item) => String(item.product_id));
+            if (ids.length) {
+              const res = await fetch('/api/products', { cache: 'no-store' });
+              const data = await res.json();
+              if (res.ok && Array.isArray(data)) {
+                saved = data
+                  .filter((product) => ids.includes(String(product.id)))
+                  .map((product) => ({
+                    id: product.id,
+                    title: product.titolo,
+                    price: Number(product.prezzo || 0),
+                    image: product.immagini?.[0] || ''
+                  }));
+              } else {
+                saved = [];
+              }
+            } else {
+              saved = [];
+            }
+          }
+        }
+
+        // Fallback robusto per utenti non autenticati: Rete locale + cookie.
+        if (!user && !saved.length) {
           const cookie = document.cookie.split('; ').find((entry) => entry.startsWith('riverspend-rete-ids='));
           const ids = cookie ? decodeURIComponent(cookie.split('=').slice(1).join('=')) : '';
           const parsedIds = ids ? ids.split(',').filter(Boolean) : [];
@@ -50,25 +81,42 @@ export default function Rete() {
         if (attivo) setItems([]);
       }
     }
-
     loadRete();
     return () => { attivo = false; };
   }, []);
 
-  function remove(id) {
+  async function remove(id) {
     const next = items.filter((item) => String(item.id) !== String(id));
     setItems(next);
     const serialized = JSON.stringify(next);
     localStorage.setItem('riverspend-rete', serialized);
     sessionStorage.setItem('riverspend-rete', serialized);
     document.cookie = 'riverspend-rete-ids=' + encodeURIComponent(next.map((item) => item.id).join(',')) + '; path=/; max-age=31536000; SameSite=Lax';
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { error } = await supabase.from('river_net_items').delete().eq('user_id', user.id).eq('product_id', String(id));
+        if (error) console.error('RiverSpend Rete cloud delete:', error);
+      }
+    } catch (error) {
+      console.error('RiverSpend Rete cloud sync:', error);
+    }
   }
 
-  function clearAll() {
+  async function clearAll() {
     setItems([]);
     localStorage.removeItem('riverspend-rete');
     sessionStorage.removeItem('riverspend-rete');
     document.cookie = 'riverspend-rete-ids=; path=/; max-age=0; SameSite=Lax';
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { error } = await supabase.from('river_net_items').delete().eq('user_id', user.id);
+        if (error) console.error('RiverSpend Rete cloud clear:', error);
+      }
+    } catch (error) {
+      console.error('RiverSpend Rete cloud sync:', error);
+    }
   }
 
   return (
