@@ -607,18 +607,25 @@ export default function Home() {
           0%, 100% { transform: scale(1); filter: brightness(1); }
           50% { transform: scale(1.05); filter: brightness(1.2); }
         }
+        /* RS FORCE: orbita orizzontale tipo pianeti attorno al sole.
+           Il movimento resta sul piano orizzontale: destra/sinistra + avanti/indietro,
+           con prospettiva per simulare la profondità senza il vecchio cerchio verticale. */
+        .rs-force-stage { perspective: 900px; transform-style: preserve-3d; }
         @keyframes rs-force-orbit {
-          from { transform: rotate(0deg) translateX(var(--orbit-radius)); }
-          to { transform: rotate(360deg) translateX(var(--orbit-radius)); }
+          from { transform: rotateY(0deg) translateX(var(--orbit-radius)); }
+          to { transform: rotateY(360deg) translateX(var(--orbit-radius)); }
         }
         .rs-force-orbit {
           position: absolute; left: 50%; top: 50%; width: 0; height: 0;
           animation: rs-force-orbit var(--orbit-duration) linear infinite;
-          transform-origin: center center; will-change: transform;
+          transform-origin: center center;
+          transform-style: preserve-3d;
+          will-change: transform;
         }
         .rs-force-product {
-          transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%) rotateY(0deg) scale(var(--orbit-scale, 1));
           will-change: transform, filter;
+          transform-style: preserve-3d;
         }      `}</style>
     </main>
   );
