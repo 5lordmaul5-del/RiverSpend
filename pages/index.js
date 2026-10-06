@@ -95,6 +95,7 @@ export default function Home() {
   const [rsFortuneSpinning, setRsFortuneSpinning] = useState(false);
   const [rsFortunePrize, setRsFortunePrize] = useState('');
   const [rsFortuneRotation, setRsFortuneRotation] = useState(0);
+  const [rsFortuneCelebration, setRsFortuneCelebration] = useState(false);
   const [rsAdmin, setRsAdmin] = useState(false);
 
   const categorie = [
@@ -293,6 +294,8 @@ export default function Home() {
           try { localStorage.setItem('riverspend-fortune-played', 'true'); } catch {}
         }
         setRsFortunePrize(label);
+        setRsFortuneCelebration(true);
+        window.setTimeout(() => setRsFortuneCelebration(false), 1800);
       } catch (error) {
         console.error('RS FORTUNE credit:', error);
         setRsFortunePrize('⚠️ Il premio non è stato accreditato. Riprova.');
@@ -620,6 +623,12 @@ export default function Home() {
               <p className="mt-3 text-sm text-slate-300">Un solo giro. Una sola fortuna. Gira la ruota e scopri il tuo premio.</p>
               <button type="button" disabled={rsFortuneSpinning} onClick={giraRsFortune} className="mt-3 rounded-full bg-amber-300 px-6 py-3 font-extrabold text-amber-950 disabled:opacity-50">{rsFortuneSpinning ? '🎡 La ruota gira…' : '🎡 Gira la ruota'}</button>
               {rsFortunePrize && <div className="mt-4 rounded-2xl border border-amber-400/50 bg-amber-950/30 p-4 text-lg font-extrabold text-amber-200">{rsFortunePrize}</div>}
+              {rsFortuneCelebration && (
+                <div className="rs-fortune-celebration" aria-hidden="true">
+                  {Array.from({ length: 22 }).map((_, i) => <i key={'confetti-'+i} className="rs-confetti" style={{'--i': i, '--dx': ((i % 2 ? 1 : -1) * (35 + (i * 17) % 85)) + 'px', '--delay': ((i % 5) * 0.04) + 's'}} />)}
+                  {Array.from({ length: 12 }).map((_, i) => <i key={'drop-'+i} className="rs-water-drop" style={{'--i': i, '--dx': ((i % 2 ? 1 : -1) * (25 + (i * 23) % 75)) + 'px', '--delay': ((i % 4) * 0.05) + 's'}} />)}
+                </div>
+              )}
               <p className="mt-3 text-[11px] text-slate-400">I premi mostrati sono i premi iniziali della promozione RS FORTUNE. 1 RiverMoney = €0,10. I premi vengono registrati nel portafoglio RiverSpend dell’account autenticato.</p>
             </div>}
           </section>
@@ -727,6 +736,11 @@ export default function Home() {
           will-change: transform, filter;
           transform-style: preserve-3d;
         }
+        .rs-fortune-celebration { position:relative; height:0; pointer-events:none; z-index:30; }
+        .rs-confetti,.rs-water-drop { position:absolute; left:50%; top:12px; display:block; animation:rs-fortune-burst 1.8s ease-out var(--delay) forwards; opacity:0; }
+        .rs-confetti { width:7px; height:13px; border-radius:2px; background:linear-gradient(135deg,#f59e0b,#22d3ee); transform:translateX(-50%); }
+        .rs-water-drop { width:8px; height:12px; border-radius:60% 60% 65% 65%; background:rgba(103,232,249,.9); box-shadow:0 0 8px rgba(34,211,238,.7); transform:translateX(-50%); }
+        @keyframes rs-fortune-burst { 0% { opacity:1; transform:translate(-50%,0) rotate(0deg) scale(.7); } 100% { opacity:0; transform:translate(calc(-50% + var(--dx)),110px) rotate(300deg) scale(1); } }
         .rs-fortune-wheel {
           margin: 0 auto;
           background: conic-gradient(#f59e0b 0deg 45deg,#fde68a 45deg 90deg,#f59e0b 90deg 135deg,#fde68a 135deg 180deg,#f59e0b 180deg 225deg,#fde68a 225deg 270deg,#f59e0b 270deg 315deg,#fde68a 315deg 360deg);
