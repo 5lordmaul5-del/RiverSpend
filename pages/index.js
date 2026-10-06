@@ -639,6 +639,10 @@ export default function Home() {
             <button type="button" onClick={() => setRsLotteryAperta((v) => !v)} className="w-full text-xs font-bold uppercase tracking-[0.25em] text-violet-300">
               🎟️ RS LOTTERY
             </button>
+<section className="mb-0 rounded-2xl border border-violet-400/40 bg-gradient-to-br from-slate-950 via-violet-950/25 to-slate-900 p-4 text-center shadow-lg">
+            <button type="button" onClick={() => setRsLotteryAperta((v) => !v)} className="w-full text-xs font-bold uppercase tracking-[0.25em] text-violet-300">
+              🎟️ RS LOTTERY
+            </button>
             {rsLotteryAperta && (
               <div className="mt-3">
                 <p className="text-sm font-semibold text-white">RS Lottery Annuale</p>
@@ -646,6 +650,14 @@ export default function Home() {
                 <a href="/profilo" className="mt-3 inline-block rounded-xl border border-violet-400/50 bg-violet-950/40 px-4 py-2 text-xs font-bold text-violet-200">🎟️ I miei codici</a>
               </div>
             )}
+          </section>
+          <section className="mb-0 rounded-2xl border border-orange-400/40 bg-gradient-to-br from-slate-950 via-orange-950/25 to-slate-900 p-4 text-center shadow-lg">
+            <button type="button" className="w-full text-xs font-bold uppercase tracking-[0.25em] text-orange-300">
+              ⚡ RS FOLGORE
+            </button>
+            <div className="mt-2 text-2xl" aria-hidden="true">✈️ 🪂</div>
+            <p className="mt-1 text-[11px] font-semibold text-white">Offerte che arrivano dal cielo</p>
+            <p className="mt-1 text-[10px] leading-4 text-slate-400">Stock, sconti e offerte lampo in un'esperienza cinematografica.</p>
           </section>
           </div>
 
