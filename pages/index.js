@@ -242,19 +242,70 @@ export default function Home() {
 
   const RS_FORTUNE_PRIZES = ['💰 +5 RiverMoney (€0,50)','💰 +10 RiverMoney (€1)','💰 +20 RiverMoney (€2)','🚚 Spedizione gratuita','🏷️ Sconto 5%','🔥 RS Booster','🎁 Premio sorpresa','⭐ +500 RSP'];
 
-  function giraRsFortune() {
+  async function giraRsFortune() {
     if (rsFortuneSpinning) return;
     let alreadyPlayed = false;
     try { alreadyPlayed = localStorage.getItem('riverspend-fortune-played') === 'true'; } catch {}
-    if (alreadyPlayed && !rsAdmin) { setRsFortunePrize('🍀 Hai già usato il tuo unico giro. La fortuna è già stata assegnata.'); setRsFortuneAperta(true); return; }
+    if (alreadyPlayed && !rsAdmin) {
+      setRsFortunePrize('🍀 Hai già usato il tuo unico giro. La fortuna è già stata assegnata.');
+      setRsFortuneAperta(true);
+      return;
+    }
+
     const winner = Math.floor(Math.random() * RS_FORTUNE_PRIZES.length);
     const segment = 360 / RS_FORTUNE_PRIZES.length;
     const target = 7 * 360 + (360 - winner * segment - segment / 2);
-    setRsFortuneAperta(true); setRsFortunePrize(''); setRsFortuneSpinning(true);
+    setRsFortuneAperta(true);
+    setRsFortunePrize('');
+    setRsFortuneSpinning(true);
     setRsFortuneRotation((prev) => prev + target);
-    window.setTimeout(() => {
-      setRsFortuneSpinning(false); setRsFortunePrize(RS_FORTUNE_PRIZES[winner]);
-      if (!rsAdmin) { try { localStorage.setItem('riverspend-fortune-played', 'true'); } catch {} }
+
+    window.setTimeout(async () => {
+      const label = RS_FORTUNE_PRIZES[winner];
+      const rewardMap = [
+        { type: 'rivermoney', rivermoney: 5, rsp: 0 },
+        { type: 'rivermoney', rivermoney: 10, rsp: 0 },
+        { type: 'rivermoney', rivermoney: 20, rsp: 0 },
+        { type: 'shipping', rivermoney: 0, rsp: 0 },
+        { type: 'discount', rivermoney: 0, rsp: 0 },
+        { type: 'booster', rivermoney: 0, rsp: 0 },
+        { type: 'surprise', rivermoney: 0, rsp: 0 },
+        { type: 'rsp', rivermoney: 0, rsp: 500 }
+      ];
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+          setRsFortuneSpinning(false);
+          setRsFortunePrize('🔐 Accedi al tuo account per ricevere il premio.');
+          return;
+        }
+        const reward = rewardMap[winner];
+        const { error } = await supabase.rpc('rs_fortune_credit', {
+          p_reward_type: reward.type,
+          p_reward_label: label,
+          p_rivermoney: reward.rivermoney,
+          p_rsp: reward.rsp,
+          p_metadata: { wheel_index: winner }
+        });
+        if (error) {
+          if (error.message?.includes('FORTUNE_ALREADY_PLAYED')) {
+            setRsFortunePrize('🍀 Hai già usato il tuo unico giro. La fortuna è già stata assegnata.');
+          } else {
+            console.error('RS FORTUNE credit error:', error);
+            setRsFortunePrize('⚠️ Il premio non è stato accreditato. Riprova.');
+          }
+          return;
+        }
+        if (!rsAdmin) {
+          try { localStorage.setItem('riverspend-fortune-played', 'true'); } catch {}
+        }
+        setRsFortunePrize(label);
+      } catch (error) {
+        console.error('RS FORTUNE credit:', error);
+        setRsFortunePrize('⚠️ Il premio non è stato accreditato. Riprova.');
+      } finally {
+        setRsFortuneSpinning(false);
+      }
     }, 5200);
   }
 
@@ -576,7 +627,7 @@ export default function Home() {
               <p className="mt-3 text-sm text-slate-300">Un solo giro. Una sola fortuna. Gira la ruota e scopri il tuo premio.</p>
               <button type="button" disabled={rsFortuneSpinning} onClick={giraRsFortune} className="mt-3 rounded-full bg-amber-300 px-6 py-3 font-extrabold text-amber-950 disabled:opacity-50">{rsFortuneSpinning ? '🎡 La ruota gira…' : '🎡 Gira la ruota'}</button>
               {rsFortunePrize && <div className="mt-4 rounded-2xl border border-amber-400/50 bg-amber-950/30 p-4 text-lg font-extrabold text-amber-200">{rsFortunePrize}</div>}
-              <p className="mt-3 text-[11px] text-slate-400">I premi mostrati sono i premi iniziali della promozione RS FORTUNE. 1 RiverMoney = €0,10. L’assegnazione effettiva di RSP, RiverMoney, sconti e vantaggi richiederà il relativo sistema premi.</p>
+              <p className="mt-3 text-[11px] text-slate-400">I premi mostrati sono i premi iniziali della promozione RS FORTUNE. 1 RiverMoney = €0,10. I premi vengono registrati nel portafoglio RiverSpend dell’account autenticato.</p>
             </div>}
           </section>
 
