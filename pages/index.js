@@ -551,7 +551,11 @@ export default function Home() {
             {rsFortuneAperta && <div className="mt-4">
               <div className="relative mx-auto h-64 w-64">
                 <div className="absolute -top-2 left-1/2 z-20 -translate-x-1/2 text-2xl">🔻</div>
-                <div className="rs-fortune-wheel h-64 w-64 rounded-full border-8 border-amber-300 shadow-[0_0_35px_rgba(251,191,36,.45)]" style={{transform:`rotate(${rsFortuneRotation}deg)`}}>
+                <div className="rs-fortune-wheel relative h-64 w-64 rounded-full border-8 border-amber-300 shadow-[0_0_35px_rgba(251,191,36,.45)]" style={{transform:`rotate(${rsFortuneRotation}deg)`}}>
+                  <div className="rs-fortune-labels" aria-hidden="true">
+                    <span>💰<br/>5 RM</span><span>💰<br/>10 RM</span><span>💰<br/>20 RM</span><span>🚚<br/>FREE</span>
+                    <span>🏷️<br/>5%</span><span>🔥<br/>BOOST</span><span>🎁<br/>SORPRESA</span><span>⭐<br/>500 RSP</span>
+                  </div>
                   <div className="rs-fortune-center">RS<br/>FORTUNE</div>
                 </div>
               </div>
@@ -667,10 +671,28 @@ export default function Home() {
         }
         .rs-fortune-wheel {
           margin: 0 auto;
-          background: conic-gradient(#f59e0b 0deg 51.43deg,#fde68a 51.43deg 102.86deg,#f59e0b 102.86deg 154.29deg,#fde68a 154.29deg 205.72deg,#f59e0b 205.72deg 257.15deg,#fde68a 257.15deg 308.58deg,#f59e0b 308.58deg 360deg);
+          background: conic-gradient(#f59e0b 0deg 45deg,#fde68a 45deg 90deg,#f59e0b 90deg 135deg,#fde68a 135deg 180deg,#f59e0b 180deg 225deg,#fde68a 225deg 270deg,#f59e0b 270deg 315deg,#fde68a 315deg 360deg);
           transition: transform 5.2s cubic-bezier(.12,.72,.18,1);
           will-change: transform;
+          overflow: hidden;
         }
+        .rs-fortune-labels {
+          position:absolute; inset:0; z-index:1; pointer-events:none;
+        }
+        .rs-fortune-labels span {
+          position:absolute; left:50%; top:50%; width:58px; height:52px;
+          margin-left:-29px; margin-top:-26px; text-align:center;
+          color:#451a03; font-size:10px; line-height:1.15; font-weight:900;
+          transform-origin:29px 26px;
+        }
+        .rs-fortune-labels span:nth-child(1){transform:rotate(22.5deg) translateY(-82px);}
+        .rs-fortune-labels span:nth-child(2){transform:rotate(67.5deg) translateY(-82px);}
+        .rs-fortune-labels span:nth-child(3){transform:rotate(112.5deg) translateY(-82px);}
+        .rs-fortune-labels span:nth-child(4){transform:rotate(157.5deg) translateY(-82px);}
+        .rs-fortune-labels span:nth-child(5){transform:rotate(202.5deg) translateY(-82px);}
+        .rs-fortune-labels span:nth-child(6){transform:rotate(247.5deg) translateY(-82px);}
+        .rs-fortune-labels span:nth-child(7){transform:rotate(292.5deg) translateY(-82px);}
+        .rs-fortune-labels span:nth-child(8){transform:rotate(337.5deg) translateY(-82px);}
         .rs-fortune-center {
           position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
           display:flex; align-items:center; justify-content:center; text-align:center;
