@@ -639,10 +639,6 @@ export default function Home() {
             <button type="button" onClick={() => setRsLotteryAperta((v) => !v)} className="w-full text-xs font-bold uppercase tracking-[0.25em] text-violet-300">
               🎟️ RS LOTTERY
             </button>
-<section className="mb-0 rounded-2xl border border-violet-400/40 bg-gradient-to-br from-slate-950 via-violet-950/25 to-slate-900 p-4 text-center shadow-lg">
-            <button type="button" onClick={() => setRsLotteryAperta((v) => !v)} className="w-full text-xs font-bold uppercase tracking-[0.25em] text-violet-300">
-              🎟️ RS LOTTERY
-            </button>
             {rsLotteryAperta && (
               <div className="mt-3">
                 <p className="text-sm font-semibold text-white">RS Lottery Annuale</p>
