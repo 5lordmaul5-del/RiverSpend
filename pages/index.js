@@ -130,8 +130,51 @@ export default function Home() {
 
   useEffect(() => { try { const saved = JSON.parse(localStorage.getItem('riverspend-rete') || '[]'); setReteIds(Array.isArray(saved) ? saved.map((item) => String(item.id)) : []); } catch {} }, []);
 
+  function playRsForceSound() {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      const now = ctx.currentTime;
+      const gain = ctx.createGain();
+      const filter = ctx.createBiquadFilter();
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(0.16, now + 0.08);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.15);
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(900, now);
+      filter.frequency.exponentialRampToValueAtTime(180, now + 1.1);
+      gain.connect(filter);
+      filter.connect(ctx.destination);
+
+      const osc = ctx.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(95, now);
+      osc.frequency.exponentialRampToValueAtTime(420, now + 0.38);
+      osc.frequency.exponentialRampToValueAtTime(75, now + 1.1);
+      osc.connect(gain);
+      osc.start(now);
+      osc.stop(now + 1.2);
+
+      const shimmer = ctx.createOscillator();
+      const shimmerGain = ctx.createGain();
+      shimmer.type = 'triangle';
+      shimmer.frequency.setValueAtTime(620, now);
+      shimmer.frequency.exponentialRampToValueAtTime(180, now + 0.9);
+      shimmerGain.gain.setValueAtTime(0.0001, now);
+      shimmerGain.gain.exponentialRampToValueAtTime(0.045, now + 0.1);
+      shimmerGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.95);
+      shimmer.connect(shimmerGain);
+      shimmerGain.connect(ctx.destination);
+      shimmer.start(now);
+      shimmer.stop(now + 1);
+      window.setTimeout(() => ctx.close().catch(() => {}), 1500);
+    } catch {}
+  }
+
   function apriRsForce() {
     setRsForceAperta(true);
+    playRsForceSound();
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       window.speechSynthesis.cancel();
       const voce = new SpeechSynthesisUtterance('Benvenuto nel futuro.');
