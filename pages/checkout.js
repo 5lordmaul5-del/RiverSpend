@@ -8,6 +8,9 @@ export default function Checkout() {
   const [orderId, setOrderId] = useState('');
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState('');
+  const [email, setEmail] = useState('');
+  const [authMessage, setAuthMessage] = useState('');
+  const [sendingLink, setSendingLink] = useState(false);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setUser(data?.user || null));
@@ -16,6 +19,19 @@ export default function Checkout() {
       if (Array.isArray(saved)) setItems(saved);
     } catch {}
   }, []);
+
+  async function sendLoginLink(event) {
+    event.preventDefault();
+    setAuthMessage('');
+    if (!email.trim()) return setAuthMessage('Inserisci la tua email.');
+    setSendingLink(true);
+    const { error: authError } = await supabase.auth.signInWithOtp({
+      email: email.trim(),
+      options: { emailRedirectTo: window.location.origin + '/checkout' }
+    });
+    setAuthMessage(authError ? '❌ ' + authError.message : '✅ Link inviato. Controlla la tua email e poi torna al Checkout.');
+    setSendingLink(false);
+  }
 
   async function createOrder() {
     setError('');
@@ -132,7 +148,16 @@ export default function Checkout() {
             <p className="text-sm font-semibold text-amber-200">
               {user ? 'Account RiverSpend collegato' : 'Accedi al tuo account RiverSpend per procedere con un ordine.'}
             </p>
-            <p className="mt-1 text-xs text-slate-400">
+            {!user && (
+              <form onSubmit={sendLoginLink} className="mt-4 flex flex-col gap-2 sm:flex-row">
+                <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="La tua email" autoComplete="email" className="min-w-0 flex-1 rounded-xl border border-slate-600 bg-slate-950 px-4 py-3 text-white outline-none focus:border-teal-400" />
+                <button type="submit" disabled={sendingLink} className="rounded-xl bg-teal-500 px-4 py-3 font-bold text-slate-950 disabled:opacity-60">
+                  {sendingLink ? 'Invio…' : '🔐 Accedi'}
+                </button>
+              </form>
+            )}
+            {authMessage && <p className="mt-2 text-sm text-slate-200">{authMessage}</p>}
+            <p className="mt-2 text-xs text-slate-400">
               Il pagamento reale verrà collegato in un passaggio successivo, dopo aver verificato il flusso ordine.
             </p>
           </div>
