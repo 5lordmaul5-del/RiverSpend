@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import { supabase } from '../../lib/supabase';
 
 function countryFlag(country) {
   const value = String(country || '').trim().toLowerCase();
@@ -78,6 +79,11 @@ export default function Prodotto() {
           const desideri = JSON.parse(localStorage.getItem('riverspend-wishlist') || '[]');
           setInRete(Array.isArray(rete) && rete.some((x) => String(x.id) === String(item.id)));
           setWishlist(Array.isArray(desideri) && desideri.some((x) => String(x.id) === String(item.id)));
+          supabase.auth.getUser().then(async ({ data: { user } }) => {
+            if (!user) return;
+            const { data } = await supabase.from('river_net_items').select('product_id').eq('user_id', user.id).eq('product_id', String(item.id)).maybeSingle();
+            if (data) setInRete(true);
+          }).catch(() => {});
         } catch { setInRete(false); setWishlist(false); }
       })
       .catch((err) => { if (attivo) setErrore(err.message || 'Errore nel caricamento.'); })
@@ -124,7 +130,7 @@ export default function Prodotto() {
     image: prodotto.immagini?.[0] || ''
   }) : null, [prodotto]);
 
-  function toggleLista(key, active, setter, added, removed) {
+  async function toggleLista(key, active, setter, added, removed) {
     if (!record) return;
     try {
       const current = JSON.parse(localStorage.getItem(key) || '[]');
@@ -138,6 +144,18 @@ export default function Prodotto() {
         document.cookie = 'riverspend-rete-ids=' + encodeURIComponent(next.map((item) => item.id).join(',')) + '; path=/; max-age=31536000; SameSite=Lax';
       }
       setter(!exists);
+      if (key === 'riverspend-rete') {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          if (exists) {
+            const { error } = await supabase.from('river_net_items').delete().eq('user_id', user.id).eq('product_id', String(record.id));
+            if (error) throw error;
+          } else {
+            const { error } = await supabase.from('river_net_items').upsert({ user_id: user.id, product_id: String(record.id) });
+            if (error) throw error;
+          }
+        }
+      }
       setFeedback(exists ? removed : added);
     } catch { setFeedback('Impossibile salvare su questo dispositivo.'); }
   }
