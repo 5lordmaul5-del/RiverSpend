@@ -5,6 +5,9 @@ import { supabase } from '../lib/supabase';
 export default function Checkout() {
   const [user, setUser] = useState(null);
   const [items, setItems] = useState([]);
+  const [orderId, setOrderId] = useState('');
+  const [creating, setCreating] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setUser(data?.user || null));
@@ -13,6 +16,67 @@ export default function Checkout() {
       if (Array.isArray(saved)) setItems(saved);
     } catch {}
   }, []);
+
+  async function createOrder() {
+    setError('');
+    setCreating(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Accedi al tuo account RiverSpend prima di creare un ordine.');
+      if (!items.length) throw new Error('La Rete è vuota.');
+
+      const { data: products, error: productsError } = await supabase
+        .from('products')
+        .select('id, name, price, stock')
+        .in('id', items.map((item) => String(item.id)))
+        .eq('status', 'published');
+
+      if (productsError) throw productsError;
+
+      const byId = new Map((products || []).map((product) => [String(product.id), product]));
+      const validItems = items.map((item) => byId.get(String(item.id))).filter(Boolean);
+      if (validItems.length !== items.length) throw new Error('Uno o più prodotti non sono più disponibili.');
+
+      const subtotal = validItems.reduce((sum, product) => sum + Number(product.price || 0), 0);
+      const { data: order, error: orderError } = await supabase
+        .from('orders')
+        .insert({
+          buyer_id: user.id,
+          status: 'pending',
+          payment_status: 'unpaid',
+          currency: 'EUR',
+          subtotal,
+          shipping_total: 0,
+          donation_total: 0,
+          total: subtotal
+        })
+        .select('id')
+        .single();
+
+      if (orderError) throw orderError;
+
+      const orderItems = validItems.map((product) => ({
+        order_id: order.id,
+        product_id: String(product.id),
+        product_name: product.name || 'Prodotto',
+        unit_price: Number(product.price || 0),
+        quantity: 1,
+        subtotal: Number(product.price || 0)
+      }));
+
+      const { error: itemsError } = await supabase.from('order_items').insert(orderItems);
+      if (itemsError) {
+        await supabase.from('orders').delete().eq('id', order.id);
+        throw itemsError;
+      }
+
+      setOrderId(order.id);
+    } catch (err) {
+      setError(err?.message || 'Impossibile creare l’ordine.');
+    } finally {
+      setCreating(false);
+    }
+  }
 
   return (
     <main className="min-h-screen bg-slate-950 px-4 py-8 text-white">
@@ -73,7 +137,15 @@ export default function Checkout() {
             </p>
           </div>
 
+          {error && <div className="mt-5 rounded-2xl border border-red-500/40 bg-red-950/30 p-4 text-sm text-red-200">{error}</div>}
+          {orderId && <div className="mt-5 rounded-2xl border border-teal-500/40 bg-teal-950/30 p-4 text-sm text-teal-100">✅ Ordine creato. ID: <span className="font-mono">{orderId}</span><br />Stato: <strong>in attesa di pagamento</strong>.</div>}
+
           <div className="mt-6 flex flex-wrap gap-3">
+            {user && items.length > 0 && !orderId && (
+              <button type="button" onClick={createOrder} disabled={creating} className="rounded-xl bg-teal-500 px-4 py-3 font-bold text-slate-950 disabled:opacity-60">
+                {creating ? 'Creazione ordine…' : '🧾 Crea ordine'}
+              </button>
+            )}
             <Link href="/rete" className="rounded-xl border border-teal-700 px-4 py-3 font-bold text-teal-100">
               🕸️ Vai alla Rete
             </Link>
