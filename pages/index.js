@@ -335,12 +335,37 @@ export default function Home() {
 
         <section className="mx-auto max-w-6xl px-2 py-8 sm:px-4">
           <div className="mb-5 rounded-3xl border border-cyan-400/40 bg-gradient-to-br from-slate-950 via-cyan-950/50 to-indigo-950/60 p-5 text-center shadow-2xl shadow-cyan-950/30 sm:p-8">
-            <button type="button" onClick={apriRsForce} aria-label="Apri RS Force" className="group mx-auto flex h-32 w-32 items-center justify-center rounded-full border border-cyan-200/70 bg-[radial-gradient(circle_at_35%_30%,rgba(255,255,255,.95),rgba(103,232,249,.45)_18%,rgba(8,47,73,.95)_58%,rgba(2,6,23,1)_100%)] text-5xl shadow-[0_0_35px_rgba(34,211,238,.65)] transition duration-500 hover:scale-105 hover:shadow-[0_0_55px_rgba(34,211,238,.9)] active:scale-95" style={{animation:'rs-palantir-pulse 3s ease-in-out infinite'}}>
-              🔮
-            </button>
+            <div className="rs-force-stage relative mx-auto flex h-44 max-w-xl items-center justify-center overflow-visible">
+              {rsForceAperta && prodotti.slice(0, 6).map((p, index) => {
+                const positions = [
+                  { x: '-150px', y: '-45px', r: '-12deg' },
+                  { x: '145px', y: '-42px', r: '12deg' },
+                  { x: '-165px', y: '48px', r: '8deg' },
+                  { x: '160px', y: '50px', r: '-8deg' },
+                  { x: '-70px', y: '-72px', r: '-7deg' },
+                  { x: '72px', y: '72px', r: '7deg' }
+                ];
+                const pos = positions[index];
+                const image = p.immagini?.[0];
+                return image ? (
+                  <a
+                    key={'force-' + p.id}
+                    href={'/prodotto/' + encodeURIComponent(p.id)}
+                    aria-label={'RS Force: ' + (p.titolo || 'prodotto')}
+                    className="rs-force-product absolute left-1/2 top-1/2 z-10 flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden rounded-2xl border border-cyan-200/70 bg-white p-1 shadow-[0_0_20px_rgba(34,211,238,.45)]"
+                    style={{'--force-x': pos.x, '--force-y': pos.y, '--force-r': pos.r, animationDelay: (index * 180) + 'ms'}}
+                  >
+                    <img src={image} alt="" className="h-full w-full object-contain" />
+                  </a>
+                ) : null;
+              })}
+              <button type="button" onClick={apriRsForce} aria-label="Apri RS Force" className="group relative z-20 flex h-32 w-32 items-center justify-center rounded-full border border-cyan-200/70 bg-[radial-gradient(circle_at_35%_30%,rgba(255,255,255,.95),rgba(103,232,249,.45)_18%,rgba(8,47,73,.95)_58%,rgba(2,6,23,1)_100%)] text-5xl shadow-[0_0_35px_rgba(34,211,238,.65)] transition duration-500 hover:scale-105 hover:shadow-[0_0_55px_rgba(34,211,238,.9)] active:scale-95" style={{animation:'rs-palantir-pulse 3s ease-in-out infinite'}}>
+                🔮
+              </button>
+            </div>
             <p className="mt-4 text-xs font-bold uppercase tracking-[0.35em] text-cyan-300">RS FORCE</p>
             <h2 className="mt-1 text-2xl font-extrabold text-white sm:text-3xl">The Force · Il futuro di RiverSpend</h2>
-            <p className="mx-auto mt-2 max-w-2xl text-sm text-slate-300">Tocca la sfera e usa la Forza: cerca prodotti, scopri offerte, guarda concept e viaggia simbolicamente nel futuro.</p>
+            <p className="mx-auto mt-2 max-w-2xl text-sm text-slate-100">Tocca la sfera e usa la Forza: la sfera può attirare simbolicamente i prodotti, guidarti tra le offerte e mostrarti il futuro.</p>
           </div>
 
           {rsForceAperta && (
@@ -442,6 +467,13 @@ export default function Home() {
           0%, 100% { transform: scale(1); filter: brightness(1); }
           50% { transform: scale(1.05); filter: brightness(1.2); }
         }
+        @keyframes rs-force-pull {
+          0% { transform: translate(calc(-50% + var(--force-x)), calc(-50% + var(--force-y))) scale(.9) rotate(var(--force-r)); opacity: .85; }
+          55% { transform: translate(-50%, -50%) scale(.28) rotate(0deg); opacity: 1; filter: brightness(1.35); }
+          75% { transform: translate(-50%, -50%) scale(.55) rotate(0deg); opacity: .95; }
+          100% { transform: translate(calc(-50% + var(--force-x)), calc(-50% + var(--force-y))) scale(.9) rotate(var(--force-r)); opacity: .85; }
+        }
+        .rs-force-product { animation: rs-force-pull 2.8s ease-in-out infinite; will-change: transform, opacity, filter; }
       `}</style>
     </main>
   );
