@@ -605,7 +605,7 @@ export default function Home() {
                 {productIndex === 3 && (
                   <div className="col-span-2 sm:col-span-3 lg:col-span-4 rounded-2xl border border-slate-700 bg-slate-900/95 p-2.5 shadow-lg">
                     <div className="grid grid-cols-3 gap-2">
-                      <button type="button" onClick={() => setRsForceAperta((v) => !v)} className="rounded-xl border border-cyan-400/40 bg-gradient-to-br from-cyan-950/70 to-slate-950 p-2 text-left transition hover:border-cyan-300"> { if (e.key === "Enter" || e.key === " ") setRsForceAperta((v) => !v); }} className="rounded-xl border border-cyan-400/40 bg-gradient-to-br from-cyan-950/70 to-slate-950 p-2 text-left transition hover:border-cyan-300">
+                      <button type="button" onClick={() => setRsForceAperta((v) => !v)} className="rounded-xl border border-cyan-400/40 bg-gradient-to-br from-cyan-950/70 to-slate-950 p-2 text-left transition hover:border-cyan-300">
                         <div className="flex items-center gap-2">
                           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-cyan-200/70 bg-[radial-gradient(circle_at_35%_30%,rgba(255,255,255,.95),rgba(103,232,249,.45)_18%,rgba(8,47,73,.95)_58%,rgba(2,6,23,1)_100%)] text-lg shadow-[0_0_18px_rgba(34,211,238,.55)]">🔮</span>
                           <span><span className="block text-[10px] font-extrabold uppercase tracking-wider text-cyan-300">RS FORCE</span><span className="block text-[11px] font-bold text-white">Potenzia la ricerca</span></span>
@@ -657,7 +657,7 @@ export default function Home() {
                         )}
                       </div>
 
-                      <button type="button" onClick={() => setRsLotteryAperta((v) => !v)} className="rounded-xl border border-violet-400/40 bg-gradient-to-br from-violet-950/70 to-slate-950 p-2 text-left transition hover:border-violet-300"> { if (e.key === "Enter" || e.key === " ") setRsLotteryAperta((v) => !v); }} className="rounded-xl border border-violet-400/40 bg-gradient-to-br from-violet-950/70 to-slate-950 p-2 text-left transition hover:border-violet-300">
+                      <button type="button" onClick={() => setRsLotteryAperta((v) => !v)} className="rounded-xl border border-violet-400/40 bg-gradient-to-br from-violet-950/70 to-slate-950 p-2 text-left transition hover:border-violet-300">
                         <div className="flex items-center gap-2">
                           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-violet-300/70 bg-violet-900 text-xl">🎟️</span>
                           <span><span className="block text-[10px] font-extrabold uppercase tracking-wider text-violet-300">RS LOTTERY</span><span className="block text-[11px] font-bold text-white">1 codice per acquisto</span></span>
