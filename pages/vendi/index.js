@@ -435,18 +435,11 @@ export default function Vendi() {
         throw mediaError;
       }
 
-      setProdotti((current) => [
-        {
-          id: productId,
-          titolo: titolo.trim(),
-          prezzo: prezzoNumero,
-          condizione,
-          categoria,
-          descrizione: descrizione.trim(),
-          immagini: immaginiCaricate
-        },
-        ...current
-      ]);
+      // Dopo la pubblicazione ricarichiamo dal vero endpoint Shop, così la lista
+      // mostrata qui segue esattamente gli stessi dati usati dal Market.
+      if (!categoria.startsWith('18🔞')) {
+        await loadProducts();
+      }
 
       setTitolo('');
       setPrezzo('');
