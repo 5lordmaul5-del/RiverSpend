@@ -95,6 +95,7 @@ export default function Home() {
   const [rsFortuneSpinning, setRsFortuneSpinning] = useState(false);
   const [rsFortunePrize, setRsFortunePrize] = useState('');
   const [rsFortuneRotation, setRsFortuneRotation] = useState(0);
+  const [rsAdmin, setRsAdmin] = useState(false);
 
   const categorie = [
     'AUTO & VEICOLI','Auto','Moto','Scooter','Harley & Custom','Camion & Veicoli commerciali','Trattori & Agricoltura','Edilizia & Macchine da lavoro','Ricambi & Accessori auto','Ricambi & Accessori moto',
@@ -131,6 +132,19 @@ export default function Home() {
     ['RiverSpend Fortress','/servizi/fortress'],
     ['RiverSpend SurroundSpaceAroundExperience','/servizi/experience']
   ];
+
+  useEffect(() => {
+    let active = true;
+    (async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+        const { data } = await supabase.from('rs_admin_roles').select('role').eq('user_id', user.id).maybeSingle();
+        if (active) setRsAdmin(data?.role === 'admin');
+      } catch {}
+    })();
+    return () => { active = false; };
+  }, []);
 
   useEffect(() => { try { const saved = JSON.parse(localStorage.getItem('riverspend-rete') || '[]'); setReteIds(Array.isArray(saved) ? saved.map((item) => String(item.id)) : []); } catch {} }, []);
 
@@ -232,7 +246,7 @@ export default function Home() {
     if (rsFortuneSpinning) return;
     let alreadyPlayed = false;
     try { alreadyPlayed = localStorage.getItem('riverspend-fortune-played') === 'true'; } catch {}
-    if (alreadyPlayed) { setRsFortunePrize('🍀 Hai già usato il tuo unico giro. La fortuna è già stata assegnata.'); setRsFortuneAperta(true); return; }
+    if (alreadyPlayed && !rsAdmin) { setRsFortunePrize('🍀 Hai già usato il tuo unico giro. La fortuna è già stata assegnata.'); setRsFortuneAperta(true); return; }
     const winner = Math.floor(Math.random() * RS_FORTUNE_PRIZES.length);
     const segment = 360 / RS_FORTUNE_PRIZES.length;
     const target = 7 * 360 + (360 - winner * segment - segment / 2);
@@ -240,7 +254,7 @@ export default function Home() {
     setRsFortuneRotation((prev) => prev + target);
     window.setTimeout(() => {
       setRsFortuneSpinning(false); setRsFortunePrize(RS_FORTUNE_PRIZES[winner]);
-      try { localStorage.setItem('riverspend-fortune-played', 'true'); } catch {}
+      if (!rsAdmin) { try { localStorage.setItem('riverspend-fortune-played', 'true'); } catch {} }
     }, 5200);
   }
 
