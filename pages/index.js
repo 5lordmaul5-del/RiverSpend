@@ -90,7 +90,7 @@ export default function Home() {
   const [reteIds, setReteIds] = useState([]);
   const [accesso18, setAccesso18] = useState(false);
   const [mostraGate18, setMostraGate18] = useState(false);
-  const [rsForceAperta, setRS ForceAperta] = useState(false);
+  const [rsForceAperta, setRsForceAperta] = useState(false);
 
   const categorie = [
     'AUTO & VEICOLI','Auto','Moto','Scooter','Harley & Custom','Camion & Veicoli commerciali','Trattori & Agricoltura','Edilizia & Macchine da lavoro','Ricambi & Accessori auto','Ricambi & Accessori moto',
