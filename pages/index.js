@@ -233,19 +233,8 @@ export default function Home() {
       }
     } catch {}
 
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      const voce = new SpeechSynthesisUtterance('Benvenuto nel futuro.');
-      voce.lang = language === 'it' ? 'it-IT' : 'en-US';
-      voce.rate = 0.68;
-      voce.pitch = 0.62;
-      voce.volume = 1;
-      // Voce più lenta e solenne; il soundscape entra dopo che ha finito.
-      voce.onend = () => window.setTimeout(() => playRsForceSound(forceAudioCtx), 720);
-      window.speechSynthesis.speak(voce);
-    } else {
-      window.setTimeout(() => playRsForceSound(forceAudioCtx), 720);
-    }
+    // RS FORCE è puramente sonoro: nessuna voce sintetica.
+    window.setTimeout(() => playRsForceSound(forceAudioCtx), 120);
   }
 
   async function toggleReteFromCatalog(p) {
@@ -476,7 +465,7 @@ export default function Home() {
           {rsForceAperta && (
             <div className="mb-5 rounded-3xl border border-cyan-300/50 bg-slate-900 p-5 shadow-2xl shadow-cyan-950/30">
               <div className="flex items-start justify-between gap-3">
-                <div><p className="text-xs font-bold uppercase tracking-[0.25em] text-cyan-300">🔮 RS FORCE</p><h3 className="mt-1 text-xl font-extrabold">Benvenuto nel futuro</h3></div>
+                <div><p className="text-xs font-bold uppercase tracking-[0.25em] text-cyan-300">🔮 RS FORCE</p><h3 className="mt-1 text-xl font-extrabold">La Forza di RiverSpend</h3></div>
                 <button type="button" onClick={() => setRsForceAperta(false)} className="rounded-full border border-slate-700 px-3 py-1 text-slate-300">✕</button>
               </div>
               <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
@@ -485,7 +474,7 @@ export default function Home() {
                 <a href={categoriaAttiva ? `/?category=${encodeURIComponent(categoriaAttiva)}&future=concepts` : '/?future=concepts'} className="rounded-2xl border border-violet-400/40 bg-violet-950/30 p-4 text-center"><span className="text-2xl">💡</span><p className="mt-2 text-sm font-bold">Concept</p></a>
                 <a href={categoriaAttiva ? `/?category=${encodeURIComponent(categoriaAttiva)}&future=arrivals` : '/?future=arrivals'} className="rounded-2xl border border-emerald-400/40 bg-emerald-950/30 p-4 text-center"><span className="text-2xl">🔭</span><p className="mt-2 text-sm font-bold">In arrivo</p></a>
               </div>
-              <p className="mt-4 text-center text-xs text-slate-400">La voce dice: “Benvenuto nel futuro.” · La sfera reagisce con un effetto telecinetico.</p>
+              <p className="mt-4 text-center text-xs text-slate-400">Sound Design RS FORCE originale · la sfera reagisce con un effetto telecinetico.</p>
             </div>
           )}
 
