@@ -90,6 +90,7 @@ export default function Home() {
   const [reteIds, setReteIds] = useState([]);
   const [accesso18, setAccesso18] = useState(false);
   const [mostraGate18, setMostraGate18] = useState(false);
+  const [palantirAperta, setPalantirAperta] = useState(false);
 
   const categorie = [
     'AUTO & VEICOLI','Auto','Moto','Scooter','Harley & Custom','Camion & Veicoli commerciali','Trattori & Agricoltura','Edilizia & Macchine da lavoro','Ricambi & Accessori auto','Ricambi & Accessori moto',
@@ -128,6 +129,19 @@ export default function Home() {
   ];
 
   useEffect(() => { try { const saved = JSON.parse(localStorage.getItem('riverspend-rete') || '[]'); setReteIds(Array.isArray(saved) ? saved.map((item) => String(item.id)) : []); } catch {} }, []);
+
+  function apriPalantir() {
+    setPalantirAperta(true);
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const voce = new SpeechSynthesisUtterance('Benvenuto nel futuro.');
+      voce.lang = language === 'it' ? 'it-IT' : 'en-US';
+      voce.rate = 0.82;
+      voce.pitch = 0.72;
+      voce.volume = 1;
+      window.speechSynthesis.speak(voce);
+    }
+  }
 
   async function toggleReteFromCatalog(p) {
     const key = 'riverspend-rete';
@@ -320,6 +334,31 @@ export default function Home() {
         </header>
 
         <section className="mx-auto max-w-6xl px-2 py-8 sm:px-4">
+          <div className="mb-5 rounded-3xl border border-cyan-400/40 bg-gradient-to-br from-slate-950 via-cyan-950/50 to-indigo-950/60 p-5 text-center shadow-2xl shadow-cyan-950/30 sm:p-8">
+            <button type="button" onClick={apriPalantir} aria-label="Apri Palantir" className="group mx-auto flex h-32 w-32 items-center justify-center rounded-full border border-cyan-200/70 bg-[radial-gradient(circle_at_35%_30%,rgba(255,255,255,.95),rgba(103,232,249,.45)_18%,rgba(8,47,73,.95)_58%,rgba(2,6,23,1)_100%)] text-5xl shadow-[0_0_35px_rgba(34,211,238,.65)] transition duration-500 hover:scale-105 hover:shadow-[0_0_55px_rgba(34,211,238,.9)] active:scale-95" style={{animation:'rs-palantir-pulse 3s ease-in-out infinite'}}>
+              🔮
+            </button>
+            <p className="mt-4 text-xs font-bold uppercase tracking-[0.35em] text-cyan-300">PALANTIR</p>
+            <h2 className="mt-1 text-2xl font-extrabold text-white sm:text-3xl">Il futuro di RiverSpend</h2>
+            <p className="mx-auto mt-2 max-w-2xl text-sm text-slate-300">Tocca la sfera e guarda oltre il catalogo: offerte, novità, concept e prodotti futuri.</p>
+          </div>
+
+          {palantirAperta && (
+            <div className="mb-5 rounded-3xl border border-cyan-300/50 bg-slate-900 p-5 shadow-2xl shadow-cyan-950/30">
+              <div className="flex items-start justify-between gap-3">
+                <div><p className="text-xs font-bold uppercase tracking-[0.25em] text-cyan-300">🔮 PALANTIR</p><h3 className="mt-1 text-xl font-extrabold">Benvenuto nel futuro</h3></div>
+                <button type="button" onClick={() => setPalantirAperta(false)} className="rounded-full border border-slate-700 px-3 py-1 text-slate-300">✕</button>
+              </div>
+              <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
+                <a href={categoriaAttiva ? `/?category=${encodeURIComponent(categoriaAttiva)}&future=offers` : '/?future=offers'} className="rounded-2xl border border-amber-400/40 bg-amber-950/30 p-4 text-center"><span className="text-2xl">🏷️</span><p className="mt-2 text-sm font-bold">Promozioni</p></a>
+                <a href={categoriaAttiva ? `/?category=${encodeURIComponent(categoriaAttiva)}&future=new` : '/?future=new'} className="rounded-2xl border border-cyan-400/40 bg-cyan-950/30 p-4 text-center"><span className="text-2xl">🆕</span><p className="mt-2 text-sm font-bold">Novità</p></a>
+                <a href={categoriaAttiva ? `/?category=${encodeURIComponent(categoriaAttiva)}&future=concepts` : '/?future=concepts'} className="rounded-2xl border border-violet-400/40 bg-violet-950/30 p-4 text-center"><span className="text-2xl">💡</span><p className="mt-2 text-sm font-bold">Concept</p></a>
+                <a href={categoriaAttiva ? `/?category=${encodeURIComponent(categoriaAttiva)}&future=arrivals` : '/?future=arrivals'} className="rounded-2xl border border-emerald-400/40 bg-emerald-950/30 p-4 text-center"><span className="text-2xl">🔭</span><p className="mt-2 text-sm font-bold">In arrivo</p></a>
+              </div>
+              <p className="mt-4 text-center text-xs text-slate-400">La voce dice: “Benvenuto nel futuro.”</p>
+            </div>
+          )}
+
           <div className="rs-hero mb-5 rounded-2xl border border-teal-800 bg-gradient-to-br from-slate-900 to-sky-950 px-5 py-4 sm:px-7 sm:py-5">
             <span className="rs-gold-pebble one" aria-hidden="true" />
             <span className="rs-gold-pebble two" aria-hidden="true" />
@@ -398,6 +437,12 @@ export default function Home() {
           </div>
         </footer>
       </div>
+      <style jsx>{`
+        @keyframes rs-palantir-pulse {
+          0%, 100% { transform: scale(1); filter: brightness(1); }
+          50% { transform: scale(1.05); filter: brightness(1.2); }
+        }
+      `}</style>
     </main>
   );
 }
