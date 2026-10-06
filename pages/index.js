@@ -132,7 +132,6 @@ export default function Home() {
 
   function apriRsForce() {
     setRsForceAperta(true);
-    setRsForceAperta(true);
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       window.speechSynthesis.cancel();
       const voce = new SpeechSynthesisUtterance('Benvenuto nel futuro.');
