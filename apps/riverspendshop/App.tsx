@@ -1,65 +1,69 @@
-import React, { useState } from 'react';
-import { SafeAreaView, StyleSheet, Text, View, Pressable, ScrollView } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
+import React from 'react';
+import { SafeAreaView, StyleSheet, Text, View, Pressable, ScrollView, TextInput } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 
+const categories = ['🔥 In evidenza', '📱 Elettronica', '👟 Moda', '🏠 Casa', '🚲 Sport', '🎮 Gaming'];
+
 export default function App() {
-  const [media, setMedia] = useState<any[]>([]);
-  const [message, setMessage] = useState('Nessun file selezionato.');
-
-  async function takePhoto() {
-    const permission = await ImagePicker.requestCameraPermissionsAsync();
-    if (!permission.granted) { setMessage('📷 Permesso fotocamera non concesso.'); return; }
-    const result = await ImagePicker.launchCameraAsync({ mediaTypes: ['images'] as any, quality: 0.85 });
-    if (!result.canceled) { setMedia(prev => [...prev, ...result.assets]); setMessage('📷 Foto acquisita.'); }
-  }
-
-  async function recordVideo() {
-    const permission = await ImagePicker.requestCameraPermissionsAsync();
-    if (!permission.granted) { setMessage('🎥 Permesso fotocamera non concesso.'); return; }
-    const result = await ImagePicker.launchCameraAsync({ mediaTypes: ['videos'] as any, videoMaxDuration: 60 });
-    if (!result.canceled) { setMedia(prev => [...prev, ...result.assets]); setMessage('🎥 Video acquisito.'); }
-  }
-
-  async function pickMedia() {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images', 'videos'] as any,
-      allowsMultipleSelection: true,
-      selectionLimit: 20,
-      quality: 0.85
-    });
-    if (!result.canceled) { setMedia(result.assets); setMessage('✅ Foto/video pronti per l’annuncio.'); }
-  }
-
   return (
     <SafeAreaView style={styles.safe}>
       <StatusBar style="dark" />
-      <ScrollView contentContainerStyle={styles.container}>
-        <View style={styles.brand}>
-          <Text style={styles.logo}>RiverSpend</Text>
-          <View style={styles.shopRow}>
-            <Text style={styles.shopS}>S</Text>
-            <Text style={styles.shopRest}>hop</Text>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.container}>
+        <View style={styles.header}>
+          <View>
+            <Text style={styles.logo}>RiverSpend</Text>
+            <Text style={styles.shop}>Shop</Text>
           </View>
-          <View style={styles.waveLine}><Text style={styles.wave}>〰</Text></View>
+          <Pressable style={styles.netButton}>
+            <Text style={styles.netIcon}>🕸️</Text>
+            <Text style={styles.netText}>La mia Rete</Text>
+          </Pressable>
         </View>
+
         <Text style={styles.tagline}>YOUR SHOP • YOUR FLOW</Text>
 
-        <View style={styles.card}>
-          <Text style={styles.title}>📸 Crea il tuo annuncio</Text>
-          <Text style={styles.text}>Scatta foto, registra un video direttamente dal telefono oppure scegli foto e video dalla galleria. Fino a 20 elementi nella selezione.</Text>
-          <View style={styles.row}>
-            <Pressable onPress={takePhoto} style={styles.primary}><Text style={styles.primaryText}>📷 Scatta foto</Text></Pressable>
-            <Pressable onPress={recordVideo} style={styles.primary}><Text style={styles.primaryText}>🎥 Registra video</Text></Pressable>
-            <Pressable onPress={pickMedia} style={styles.secondary}><Text style={styles.secondaryText}>🖼️ Foto / video</Text></Pressable>
-          </View>
-          <Text style={styles.status}>{message}</Text>
-          <Text style={styles.count}>Media selezionati: {media.length} / 20</Text>
+        <View style={styles.searchBox}>
+          <Text style={styles.searchIcon}>⌕</Text>
+          <TextInput
+            placeholder="Cerca nel RiverSpendShop"
+            placeholderTextColor="#789096"
+            style={styles.search}
+          />
         </View>
 
-        <View style={styles.card}>
-          <Text style={styles.title}>🕸️ La mia rete</Text>
-          <Text style={styles.text}>Qui collegheremo catalogo, wishlist, carrello/Rete, ordini e pagamenti RiverSpend Pay.</Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.categories}>
+          {categories.map((item) => (
+            <Pressable key={item} style={styles.category}>
+              <Text style={styles.categoryText}>{item}</Text>
+            </Pressable>
+          ))}
+        </ScrollView>
+
+        <View style={styles.hero}>
+          <Text style={styles.heroEyebrow}>RIVERSPENDSHOP</Text>
+          <Text style={styles.heroTitle}>Il tuo mercato.</Text>
+          <Text style={styles.heroTitle}>Il tuo flusso.</Text>
+          <Text style={styles.heroText}>Scopri prodotti, occasioni e nuovi arrivi nella tua Rete.</Text>
+          <Pressable style={styles.heroButton}>
+            <Text style={styles.heroButtonText}>Esplora il Market →</Text>
+          </Pressable>
+        </View>
+
+        <View style={styles.sectionHead}>
+          <Text style={styles.sectionTitle}>✨ Scelti per te</Text>
+          <Text style={styles.sectionLink}>Vedi tutti</Text>
+        </View>
+
+        <View style={styles.emptyCard}>
+          <Text style={styles.emptyIcon}>🌊</Text>
+          <Text style={styles.emptyTitle}>Il Market sta arrivando</Text>
+          <Text style={styles.emptyText}>Nel prossimo step colleghiamo qui i prodotti reali del RiverSpendShop.</Text>
+        </View>
+
+        <View style={styles.appsRow}>
+          <View style={styles.miniCard}><Text style={styles.miniIcon}>🔮</Text><Text style={styles.miniTitle}>RS FORCE</Text></View>
+          <View style={styles.miniCard}><Text style={styles.miniIcon}>🎡</Text><Text style={styles.miniTitle}>RS FORTUNE</Text></View>
+          <View style={styles.miniCard}><Text style={styles.miniIcon}>🎟️</Text><Text style={styles.miniTitle}>RS LOTTERY</Text></View>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -68,23 +72,35 @@ export default function App() {
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: '#f7fbfb' },
-  container: { padding: 22, paddingBottom: 40 },
-  brand: { alignItems: 'center', marginTop: 20 },
-  logo: { fontSize: 42, fontWeight: '900', color: '#111827', textAlign: 'center' },
-  shopRow: { flexDirection: 'row', alignItems: 'center', marginTop: -6 },
-  shopS: { fontSize: 38, fontStyle: 'italic', fontWeight: '900', color: '#0ea5a8' },
-  shopRest: { fontSize: 34, fontStyle: 'italic', fontWeight: '800', color: '#b08a3c' },
-  waveLine: { height: 14, marginTop: -5, overflow: 'hidden' },
-  wave: { fontSize: 28, lineHeight: 18, color: '#0ea5a8', transform: [{ scaleX: 2 }] },
-  tagline: { marginTop: 8, fontSize: 11, letterSpacing: 2, color: '#64748b', textAlign: 'center' },
-  card: { width: '100%', marginTop: 24, padding: 20, borderRadius: 22, backgroundColor: '#fff', borderWidth: 1, borderColor: '#dbe4e7' },
-  title: { fontSize: 21, fontWeight: '800', color: '#111827' },
-  text: { marginTop: 9, fontSize: 15, lineHeight: 22, color: '#475569' },
-  row: { marginTop: 18, gap: 10 },
-  primary: { padding: 14, borderRadius: 14, backgroundColor: '#0f766e', alignItems: 'center' },
-  primaryText: { color: '#fff', fontWeight: '900' },
-  secondary: { padding: 14, borderRadius: 14, borderWidth: 1, borderColor: '#0f766e', alignItems: 'center' },
-  secondaryText: { color: '#0f766e', fontWeight: '900' },
-  status: { marginTop: 14, color: '#334155', fontWeight: '600' },
-  count: { marginTop: 6, color: '#64748b', fontSize: 13 }
+  container: { padding: 18, paddingBottom: 40 },
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 8 },
+  logo: { fontSize: 30, fontWeight: '900', color: '#111827' },
+  shop: { marginTop: -5, fontSize: 25, fontStyle: 'italic', fontWeight: '900', color: '#b08a3c', marginLeft: 7 },
+  tagline: { marginTop: 3, fontSize: 9, letterSpacing: 1.7, color: '#64748b' },
+  netButton: { alignItems: 'center', paddingVertical: 8, paddingHorizontal: 10, borderRadius: 14, backgroundColor: '#e5f8f7' },
+  netIcon: { fontSize: 20 },
+  netText: { marginTop: 2, fontSize: 9, fontWeight: '800', color: '#0f766e' },
+  searchBox: { marginTop: 18, flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff', borderWidth: 1, borderColor: '#dbe4e7', borderRadius: 16, paddingHorizontal: 13 },
+  searchIcon: { fontSize: 25, color: '#0f766e' },
+  search: { flex: 1, paddingVertical: 13, paddingHorizontal: 8, fontSize: 14, color: '#111827' },
+  categories: { paddingVertical: 14, gap: 8 },
+  category: { backgroundColor: '#fff', borderWidth: 1, borderColor: '#dbe4e7', borderRadius: 18, paddingHorizontal: 12, paddingVertical: 9 },
+  categoryText: { fontSize: 11, fontWeight: '700', color: '#334155' },
+  hero: { marginTop: 5, borderRadius: 24, padding: 22, backgroundColor: '#dffcff', borderWidth: 1, borderColor: '#b8e9eb' },
+  heroEyebrow: { fontSize: 10, fontWeight: '900', letterSpacing: 2, color: '#0f766e' },
+  heroTitle: { marginTop: 2, fontSize: 30, lineHeight: 32, fontWeight: '900', color: '#10252a' },
+  heroText: { marginTop: 10, maxWidth: 300, fontSize: 14, lineHeight: 20, color: '#31555b' },
+  heroButton: { alignSelf: 'flex-start', marginTop: 17, paddingHorizontal: 16, paddingVertical: 11, borderRadius: 14, backgroundColor: '#0f766e' },
+  heroButtonText: { color: '#fff', fontSize: 12, fontWeight: '900' },
+  sectionHead: { marginTop: 25, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  sectionTitle: { fontSize: 19, fontWeight: '900', color: '#111827' },
+  sectionLink: { fontSize: 11, fontWeight: '800', color: '#0f766e' },
+  emptyCard: { marginTop: 12, alignItems: 'center', padding: 25, borderRadius: 20, backgroundColor: '#fff', borderWidth: 1, borderColor: '#dbe4e7' },
+  emptyIcon: { fontSize: 30 },
+  emptyTitle: { marginTop: 7, fontSize: 17, fontWeight: '800', color: '#111827' },
+  emptyText: { marginTop: 6, textAlign: 'center', fontSize: 13, lineHeight: 19, color: '#64748b' },
+  appsRow: { flexDirection: 'row', gap: 8, marginTop: 14 },
+  miniCard: { flex: 1, alignItems: 'center', paddingVertical: 13, borderRadius: 16, backgroundColor: '#fff', borderWidth: 1, borderColor: '#dbe4e7' },
+  miniIcon: { fontSize: 20 },
+  miniTitle: { marginTop: 5, fontSize: 8, fontWeight: '900', color: '#334155', textAlign: 'center' }
 });
