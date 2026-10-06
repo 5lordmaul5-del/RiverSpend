@@ -96,7 +96,6 @@ export default function Home() {
   const [rsFortunePrize, setRsFortunePrize] = useState('');
   const [rsFortuneRotation, setRsFortuneRotation] = useState(0);
   const [rsFortuneCelebration, setRsFortuneCelebration] = useState(false);
-  const [rsLotteryAperta, setRsLotteryAperta] = useState(false);
   const [rsAdmin, setRsAdmin] = useState(false);
 
   const categorie = [
@@ -551,6 +550,89 @@ export default function Home() {
         </header>
 
         <section className="mx-auto max-w-6xl px-2 py-8 sm:px-4">
+          <div className="mb-5 rounded-3xl border border-cyan-400/40 bg-gradient-to-br from-slate-950 via-cyan-950/50 to-indigo-950/60 p-5 text-center shadow-2xl shadow-cyan-950/30 sm:p-8">
+            <div className="rs-force-stage relative mx-auto flex h-44 max-w-xl items-center justify-center overflow-visible">
+              {rsForceAperta && prodottiVisibili.slice(0, 6).map((p, index) => {
+                const positions = [
+                  { x: '-150px', y: '-45px', r: '-12deg' },
+                  { x: '145px', y: '-42px', r: '12deg' },
+                  { x: '-165px', y: '48px', r: '8deg' },
+                  { x: '160px', y: '50px', r: '-8deg' },
+                  { x: '-70px', y: '-72px', r: '-7deg' },
+                  { x: '72px', y: '72px', r: '7deg' }
+                ];
+                const pos = positions[index];
+                const image = p.immagini?.[0];
+                return image ? (
+                  <span
+                    key={'force-orbit-' + p.id}
+                    className="rs-force-orbit z-10"
+                    style={{
+                      '--orbit-radius': index % 2 ? '145px' : '135px',
+                      '--orbit-duration': (10 + index * 0.7) + 's',
+                      animationDelay: (-index * 1.45) + 's'
+                    }}
+                  >
+                    <a
+                      href={'/prodotto/' + encodeURIComponent(p.id)}
+                      aria-label={'RS Force: ' + (p.titolo || 'prodotto')}
+                      className="rs-force-product absolute left-0 top-0 flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl border border-cyan-200/70 bg-white p-1 shadow-[0_0_20px_rgba(34,211,238,.45)]"
+                    >
+                      <img src={image} alt="" className="h-full w-full object-contain" />
+                    </a>
+                  </span>                ) : null;
+              })}
+              <button type="button" onClick={apriRsForce} aria-label="Apri RS Force" className="group relative z-20 flex h-32 w-32 items-center justify-center rounded-full border border-cyan-200/70 bg-[radial-gradient(circle_at_35%_30%,rgba(255,255,255,.95),rgba(103,232,249,.45)_18%,rgba(8,47,73,.95)_58%,rgba(2,6,23,1)_100%)] text-5xl shadow-[0_0_35px_rgba(34,211,238,.65)] transition duration-500 hover:scale-105 hover:shadow-[0_0_55px_rgba(34,211,238,.9)] active:scale-95" style={{animation:'rs-palantir-pulse 3s ease-in-out infinite'}}>
+                🔮
+              </button>
+            </div>
+            <p className="mt-4 text-xs font-bold uppercase tracking-[0.35em] text-cyan-300">RS FORCE</p>
+            <h2 className="mt-1 text-2xl font-extrabold text-white sm:text-3xl">RS FORCE · Potenzia la tua ricerca</h2>
+            <p className="mx-auto mt-2 max-w-2xl text-sm text-slate-100">Tocca la sfera: RS FORCE collega la tua ricerca ai prodotti più pertinenti e li porta nel suo campo.</p>
+          </div>
+
+          {rsForceAperta && (
+            <div className="mb-5 rounded-3xl border border-cyan-300/50 bg-slate-900 p-5 shadow-2xl shadow-cyan-950/30">
+              <div className="flex items-start justify-between gap-3">
+                <div><p className="text-xs font-bold uppercase tracking-[0.25em] text-cyan-300">🔮 RS FORCE</p><h3 className="mt-1 text-xl font-extrabold">La Forza di RiverSpend</h3></div>
+                <button type="button" onClick={() => setRsForceAperta(false)} className="rounded-full border border-slate-700 px-3 py-1 text-slate-300">✕</button>
+              </div>
+              <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
+                <a href={categoriaAttiva ? `/?category=${encodeURIComponent(categoriaAttiva)}&future=offers` : '/?future=offers'} className="rounded-2xl border border-amber-400/40 bg-amber-950/30 p-4 text-center"><span className="text-2xl">🏷️</span><p className="mt-2 text-sm font-bold">Promozioni</p></a>
+                <a href={categoriaAttiva ? `/?category=${encodeURIComponent(categoriaAttiva)}&future=new` : '/?future=new'} className="rounded-2xl border border-cyan-400/40 bg-cyan-950/30 p-4 text-center"><span className="text-2xl">🆕</span><p className="mt-2 text-sm font-bold">Novità</p></a>
+                <a href={categoriaAttiva ? `/?category=${encodeURIComponent(categoriaAttiva)}&future=concepts` : '/?future=concepts'} className="rounded-2xl border border-violet-400/40 bg-violet-950/30 p-4 text-center"><span className="text-2xl">💡</span><p className="mt-2 text-sm font-bold">Concept</p></a>
+                <a href={categoriaAttiva ? `/?category=${encodeURIComponent(categoriaAttiva)}&future=arrivals` : '/?future=arrivals'} className="rounded-2xl border border-emerald-400/40 bg-emerald-950/30 p-4 text-center"><span className="text-2xl">🔭</span><p className="mt-2 text-sm font-bold">In arrivo</p></a>
+              </div>
+              <p className="mt-4 text-center text-xs text-slate-400">Sound Design RS FORCE originale · la sfera reagisce con un effetto telecinetico.</p>
+            </div>
+          )}
+
+          <section className="mb-5 rounded-3xl border border-amber-400/40 bg-gradient-to-br from-slate-950 via-amber-950/30 to-slate-900 p-5 text-center shadow-2xl shadow-amber-950/20">
+            <button type="button" onClick={() => setRsFortuneAperta((v) => !v)} className="text-xs font-bold uppercase tracking-[0.3em] text-amber-300">🎡 RS FORTUNE · La ruota della fortuna</button>
+            {rsFortuneAperta && <div className="mt-4">
+              <div className="relative mx-auto h-64 w-64">
+                <div className="absolute -top-2 left-1/2 z-20 -translate-x-1/2 text-2xl">🔻</div>
+                <div className="rs-fortune-wheel relative h-64 w-64 rounded-full border-8 border-amber-300 shadow-[0_0_35px_rgba(251,191,36,.45)]" style={{transform:`rotate(${rsFortuneRotation}deg)`}}>
+                  <div className="rs-fortune-labels" aria-hidden="true">
+                    <span>💰<br/>5 RM</span><span>💰<br/>10 RM</span><span>💰<br/>20 RM</span><span>🚚<br/>FREE</span>
+                    <span>🏷️<br/>5%</span><span>🔥<br/>BOOST</span><span>🎁<br/>SORPRESA</span><span>⭐<br/>500 RSP</span>
+                  </div>
+                  <div className="rs-fortune-center">RS<br/>FORTUNE</div>
+                </div>
+              </div>
+              <p className="mt-3 text-sm text-slate-300">Un solo giro. Una sola fortuna. Gira la ruota e scopri il tuo premio.</p>
+              <button type="button" disabled={rsFortuneSpinning} onClick={giraRsFortune} className="mt-3 rounded-full bg-amber-300 px-6 py-3 font-extrabold text-amber-950 disabled:opacity-50">{rsFortuneSpinning ? '🎡 La ruota gira…' : '🎡 Gira la ruota'}</button>
+              {rsFortunePrize && <div className="mt-4 rounded-2xl border border-amber-400/50 bg-amber-950/30 p-4 text-lg font-extrabold text-amber-200">{rsFortunePrize}</div>}
+              {rsFortuneCelebration && (
+                <div className="rs-fortune-celebration" aria-hidden="true">
+                  {Array.from({ length: 22 }).map((_, i) => <i key={'confetti-'+i} className="rs-confetti" style={{'--i': i, '--dx': ((i % 2 ? 1 : -1) * (35 + (i * 17) % 85)) + 'px', '--delay': ((i % 5) * 0.04) + 's'}} />)}
+                  {Array.from({ length: 12 }).map((_, i) => <i key={'drop-'+i} className="rs-water-drop" style={{'--i': i, '--dx': ((i % 2 ? 1 : -1) * (25 + (i * 23) % 75)) + 'px', '--delay': ((i % 4) * 0.05) + 's'}} />)}
+                </div>
+              )}
+              <p className="mt-3 text-[11px] text-slate-400">I premi mostrati sono i premi iniziali della promozione RS FORTUNE. 1 RiverMoney = €0,10. I premi vengono registrati nel portafoglio RiverSpend dell’account autenticato.</p>
+            </div>}
+          </section>
+
           <div className="rs-hero mb-5 rounded-2xl border border-teal-800 bg-gradient-to-br from-slate-900 to-sky-950 px-5 py-4 sm:px-7 sm:py-5">
             <span className="rs-gold-pebble one" aria-hidden="true" />
             <span className="rs-gold-pebble two" aria-hidden="true" />
@@ -582,7 +664,7 @@ export default function Home() {
             </div>
           ) : (
             <div className="grid grid-cols-2 gap-2 sm:gap-4 sm:grid-cols-3 lg:grid-cols-4">
-              {prodottiVisibili.map((p, productIndex) => (
+              {prodottiVisibili.map((p) => (
                 <article key={p.id} className="rs-product-card group overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 transition hover:border-teal-500"><a href={`/prodotto/${encodeURIComponent(p.id)}`} className="block focus:outline-none focus:ring-2 focus:ring-teal-400">
                   <div className="relative">{p.immagini?.[0] ? <div className="rs-product-media flex aspect-[4/3] w-full items-center justify-center overflow-hidden bg-white p-0"><img src={p.immagini[0]} alt={p.titolo || 'Prodotto'} className="h-full w-full scale-110 object-contain transition-transform duration-300 group-hover:scale-[1.16]" /></div> : <div className="flex aspect-[4/3] items-center justify-center bg-white text-xs text-slate-500">Foto non disponibile</div>}{(() => { const tipo = String(p.venditoreTipo || "Privato").toLowerCase(); const river = tipo.includes("river"); const azienda = tipo.includes("aziend") || tipo.includes("business") || tipo.includes("iva"); const label = river ? "RSS" : azienda ? "RS azienda" : "RSprivato"; const color = river ? "border-cyan-300 bg-cyan-100 text-cyan-950" : azienda ? "border-green-300 bg-green-100 text-green-950" : "border-red-300 bg-red-100 text-red-950"; return <span className={`absolute left-2 top-2 z-10 rounded-md border px-2.5 py-1 text-[11px] font-extrabold shadow-sm ${color}`}>{label}</span>; })()} {countryFlag(p.paeseOrigine || p.paeseVenditore) && <span className="absolute right-2 top-2 z-10 flex h-8 w-8 items-center justify-center rounded-full border border-slate-300 bg-white/95 text-lg shadow-sm" title={"Paese: " + (p.paeseOrigine || p.paeseVenditore)} aria-label={"Paese: " + (p.paeseOrigine || p.paeseVenditore)}>{countryFlag(p.paeseOrigine || p.paeseVenditore)}</span>}{p.sponsorizzatoFino && new Date(p.sponsorizzatoFino) > new Date() && <span className="absolute right-2 top-11 rounded-md border border-amber-300 bg-amber-100 px-2 py-1 text-[10px] font-bold text-amber-900">RS Spons</span>}</div>
                   <div className="p-2 sm:p-3">
@@ -601,78 +683,6 @@ export default function Home() {
                   </a>
                 </div>
               </article>
-
-                {productIndex === 3 && (
-                  <div className="col-span-2 sm:col-span-3 lg:col-span-4 rounded-2xl border border-slate-700 bg-slate-900/95 p-2.5 shadow-lg">
-                    <div className="grid grid-cols-3 gap-2">
-                      <button type="button" onClick={() => setRsForceAperta((v) => !v)} className="rounded-xl border border-cyan-400/40 bg-gradient-to-br from-cyan-950/70 to-slate-950 p-2 text-left transition hover:border-cyan-300">
-                        <div className="flex items-center gap-2">
-                          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-cyan-200/70 bg-[radial-gradient(circle_at_35%_30%,rgba(255,255,255,.95),rgba(103,232,249,.45)_18%,rgba(8,47,73,.95)_58%,rgba(2,6,23,1)_100%)] text-lg shadow-[0_0_18px_rgba(34,211,238,.55)]">🔮</span>
-                          <span><span className="block text-[10px] font-extrabold uppercase tracking-wider text-cyan-300">RS FORCE</span><span className="block text-[11px] font-bold text-white">Potenzia la ricerca</span></span>
-                        </div>
-                        {rsForceAperta && (
-                          <div className="mt-2 rounded-lg border border-cyan-400/30 bg-slate-950/70 p-2 text-[10px] text-slate-300">
-                            <div className="rs-force-compact-stage relative mx-auto h-16 w-full overflow-visible">
-                              {prodottiVisibili.slice(0, 3).map((fp, fi) => {
-                                const image = fp.immagini?.[0];
-                                return image ? (
-                                  <span key={'compact-force-' + fp.id} className="rs-force-orbit z-10" style={{'--orbit-radius': (48 + fi * 6) + 'px','--orbit-duration': (7 + fi * .6) + 's',animationDelay:(-fi * 1.1) + 's'}}>
-                                    <a href={'/prodotto/' + encodeURIComponent(fp.id)} aria-label={'RS Force: ' + (fp.titolo || 'prodotto')} className="rs-force-product absolute left-0 top-0 flex h-9 w-9 items-center justify-center overflow-hidden rounded-lg border border-cyan-200/70 bg-white p-0.5 shadow-[0_0_10px_rgba(34,211,238,.35)]"><img src={image} alt="" className="h-full w-full object-contain" /></a>
-                                  </span>
-                                ) : null;
-                              })}
-                              <span className="absolute left-1/2 top-1/2 z-20 flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-cyan-200/70 bg-slate-950 text-lg">🔮</span>
-                            </div>
-                            <p className="mt-1 text-center">Tocca per chiudere.</p>
-                          </div>
-                        )}
-                      </button>
-
-                      <div role="button" tabIndex={0} onClick={() => setRsFortuneAperta((v) => !v)} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") setRsFortuneAperta((v) => !v); }} className="rounded-xl border border-amber-400/40 bg-gradient-to-br from-amber-950/70 to-slate-950 p-2 text-left transition hover:border-amber-300">
-                        <div className="flex items-center gap-2">
-                          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-amber-300/70 bg-amber-200 text-xl">🎡</span>
-                          <span><span className="block text-[10px] font-extrabold uppercase tracking-wider text-amber-300">RS FORTUNE</span><span className="block text-[11px] font-bold text-white">La ruota</span></span>
-                        </div>
-                        {rsFortuneAperta && (
-                          <div className="mt-2 rounded-lg border border-amber-400/30 bg-slate-950/70 p-2 text-center">
-                            <div className="relative mx-auto h-44 w-44">
-                              <div className="absolute -top-1 left-1/2 z-30 -translate-x-1/2 text-lg">🔻</div>
-                              <div className="rs-fortune-wheel relative h-44 w-44 rounded-full border-4 border-amber-300 shadow-[0_0_25px_rgba(251,191,36,.4)]" style={{transform:`rotate(${rsFortuneRotation}deg)`}}>
-                                <div className="rs-fortune-labels" aria-hidden="true">
-                                  <span>💰<br/>5 RM</span><span>💰<br/>10 RM</span><span>💰<br/>20 RM</span><span>🚚<br/>FREE</span>
-                                  <span>🏷️<br/>5%</span><span>🔥<br/>BOOST</span><span>🎁<br/>SORPRESA</span><span>⭐<br/>500 RSP</span>
-                                </div>
-                              </div>
-                              <div className="rs-fortune-center rs-fortune-center-fixed">RS<br/>FORTUNE</div>
-                            </div>
-                            <button type="button" disabled={rsFortuneSpinning} onClick={(e) => { e.stopPropagation(); giraRsFortune(); }} className="mt-2 rounded-full bg-amber-300 px-4 py-2 text-xs font-extrabold text-amber-950 disabled:opacity-50">{rsFortuneSpinning ? '🎡 Gira…' : '🎡 Gira la ruota'}</button>
-                            {rsFortunePrize && <div className="mt-2 rounded-lg border border-amber-400/40 bg-amber-950/30 p-2 text-xs font-extrabold text-amber-200">{rsFortunePrize}</div>}
-                            {rsFortuneCelebration && (
-                              <div className="rs-fortune-celebration" aria-hidden="true">
-                                {Array.from({ length: 22 }).map((_, i) => <i key={'compact-confetti-'+i} className="rs-confetti" style={{'--i': i, '--dx': ((i % 2 ? 1 : -1) * (25 + (i * 13) % 60)) + 'px', '--delay': ((i % 5) * 0.04) + 's'}} />)}
-                                {Array.from({ length: 12 }).map((_, i) => <i key={'compact-drop-'+i} className="rs-water-drop" style={{'--i': i, '--dx': ((i % 2 ? 1 : -1) * (20 + (i * 17) % 55)) + 'px', '--delay': ((i % 4) * 0.05) + 's'}} />)}
-                              </div>
-                            )}
-                          </div>
-                        )}
-                      </div>
-
-                      <button type="button" onClick={() => setRsLotteryAperta((v) => !v)} className="rounded-xl border border-violet-400/40 bg-gradient-to-br from-violet-950/70 to-slate-950 p-2 text-left transition hover:border-violet-300">
-                        <div className="flex items-center gap-2">
-                          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-violet-300/70 bg-violet-900 text-xl">🎟️</span>
-                          <span><span className="block text-[10px] font-extrabold uppercase tracking-wider text-violet-300">RS LOTTERY</span><span className="block text-[11px] font-bold text-white">1 codice per acquisto</span></span>
-                        </div>
-                        {rsLotteryAperta && (
-                          <div className="mt-2 rounded-lg border border-violet-400/30 bg-slate-950/70 p-2 text-[10px] leading-4 text-slate-300">
-                            <p className="font-bold text-violet-200">🎟️ Regola RS Lottery</p>
-                            <p className="mt-1">Con un acquisto completato di almeno <strong className="text-white">€10</strong> ricevi <strong className="text-white">1 codice</strong>. Anche €100 o €500 generano sempre 1 solo codice per ordine.</p>
-                            <p className="mt-1 text-violet-200">I codici saranno visibili nel Profilo → RS Lottery.</p>
-                          </div>
-                        )}
-                      </button>
-                    </div>
-                  </div>
-                )}
               ))}
             </div>
           )}
@@ -731,7 +741,6 @@ export default function Home() {
         .rs-confetti { width:7px; height:13px; border-radius:2px; background:linear-gradient(135deg,#f59e0b,#22d3ee); transform:translateX(-50%); }
         .rs-water-drop { width:8px; height:12px; border-radius:60% 60% 65% 65%; background:rgba(103,232,249,.9); box-shadow:0 0 8px rgba(34,211,238,.7); transform:translateX(-50%); }
         @keyframes rs-fortune-burst { 0% { opacity:1; transform:translate(-50%,0) rotate(0deg) scale(.7); } 100% { opacity:0; transform:translate(calc(-50% + var(--dx)),110px) rotate(300deg) scale(1); } }
-        .rs-force-compact-stage { perspective: 700px; transform-style: preserve-3d; }
         .rs-fortune-wheel {
           margin: 0 auto;
           background: conic-gradient(#f59e0b 0deg 45deg,#fde68a 45deg 90deg,#f59e0b 90deg 135deg,#fde68a 135deg 180deg,#f59e0b 180deg 225deg,#fde68a 225deg 270deg,#f59e0b 270deg 315deg,#fde68a 315deg 360deg);
@@ -762,10 +771,7 @@ export default function Home() {
           width:82px; height:82px; border-radius:9999px; border:4px solid #fef3c7;
           background:#111827; color:#fcd34d; font-size:12px; font-weight:900;
           box-shadow:0 0 20px rgba(251,191,36,.45);
-        }
-        .rs-fortune-center-fixed { z-index: 40; pointer-events:none; }
-        .rs-fortune-wheel + .rs-fortune-center-fixed { }
-        `}</style>
+        }      `}</style>
     </main>
   );
 }
