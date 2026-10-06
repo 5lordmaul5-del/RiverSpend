@@ -322,21 +322,60 @@ export default function Home() {
     window.location.href = '/';
   }
 
+  // RS FORCE — collegamento intelligente alla ricerca: per ora è locale e sicuro,
+  // senza API AI esterne. Interpreta parole correlate e porta in cima i risultati più pertinenti.
   const prodottiVisibili = useMemo(() => {
     const q = ricerca.trim().toLowerCase();
     const categoria18 = ['18🔞 ADULTI', '18🔞 Sex Toys'];
     const richiesta18 = categoria18.some((cat) => cat.toLowerCase() === categoriaAttiva.trim().toLowerCase());
-    return prodotti.filter((p) => {
-      const categoriaProdotto = String(p.categoria || '').trim();
-      const prodotto18 = categoria18.some((cat) => cat.toLowerCase() === categoriaProdotto.toLowerCase());
-      // Gli articoli 18+ non entrano mai nella vetrina/homepage generale.
-      // Sono visibili esclusivamente quando l'utente apre esplicitamente una categoria 18+.
-      if (prodotto18 && !richiesta18) return false;
-      const testo = [p.titolo, p.descrizione, p.condizione, p.categoria].filter(Boolean).join(' ').toLowerCase();
-      const categoriaOk = !categoriaAttiva || (p.categoria || '').toLowerCase() === categoriaAttiva.toLowerCase() || testo.includes(categoriaAttiva.toLowerCase());
-      const ricercaOk = !q || testo.includes(q);
-      return categoriaOk && ricercaOk;
-    });
+    const alias = {
+      iphone: ['iphone', 'smartphone', 'telefonia', 'apple'],
+      smartphone: ['smartphone', 'iphone', 'android', 'telefonia', 'cellulare'],
+      cellulare: ['smartphone', 'iphone', 'android', 'telefonia', 'cellulare'],
+      ps5: ['ps5', 'playstation', 'console', 'gaming', 'videogiochi'],
+      playstation: ['playstation', 'ps5', 'ps4', 'console', 'gaming'],
+      macbook: ['macbook', 'apple', 'computer', 'notebook'],
+      computer: ['computer', 'pc', 'notebook', 'informatica'],
+      notebook: ['notebook', 'laptop', 'computer', 'informatica'],
+      tv: ['tv', 'televisore', 'home cinema'],
+      cuffie: ['cuffie', 'headphones', 'audio', 'musica'],
+      audio: ['audio', 'cuffie', 'musica', 'speaker'],
+      bici: ['bici', 'bicicletta', 'ebike', 'e-bike'],
+      ebike: ['ebike', 'e-bike', 'bici', 'bicicletta'],
+      auto: ['auto', 'automobile', 'veicolo', 'macchina'],
+      moto: ['moto', 'motocicletta', 'scooter'],
+      scarpe: ['scarpe', 'sneakers', 'calzature'],
+      casa: ['casa', 'arredamento', 'cucina', 'elettrodomestici']
+    };
+    const termini = q ? Array.from(new Set(q.split(/\\s+/).filter(Boolean).flatMap((term) => [term, ...(alias[term] || [])]))) : [];
+    return prodotti
+      .map((p, index) => {
+        const categoriaProdotto = String(p.categoria || '').trim();
+        const prodotto18 = categoria18.some((cat) => cat.toLowerCase() === categoriaProdotto.toLowerCase());
+        if (prodotto18 && !richiesta18) return null;
+        const titolo = String(p.titolo || '').toLowerCase();
+        const descrizione = String(p.descrizione || '').toLowerCase();
+        const condizione = String(p.condizione || '').toLowerCase();
+        const categoria = String(p.categoria || '').toLowerCase();
+        const testo = [titolo, descrizione, condizione, categoria].join(' ');
+        const categoriaQuery = categoriaAttiva.trim().toLowerCase();
+        const categoriaOk = !categoriaQuery || categoria === categoriaQuery || testo.includes(categoriaQuery);
+        if (!categoriaOk) return null;
+        if (!q) return { p, score: 0, index };
+        let score = 0;
+        for (const term of termini) {
+          if (titolo.includes(term)) score += 12;
+          if (categoria.includes(term)) score += 9;
+          if (descrizione.includes(term)) score += 5;
+          if (condizione.includes(term)) score += 2;
+        }
+        if (titolo === q) score += 30;
+        if (titolo.includes(q)) score += 20;
+        return score > 0 ? { p, score, index } : null;
+      })
+      .filter(Boolean)
+      .sort((a, b) => b.score - a.score || a.index - b.index)
+      .map(({ p }) => p);
   }, [prodotti, ricerca, categoriaAttiva]);
 
   return (
@@ -430,7 +469,7 @@ export default function Home() {
         <section className="mx-auto max-w-6xl px-2 py-8 sm:px-4">
           <div className="mb-5 rounded-3xl border border-cyan-400/40 bg-gradient-to-br from-slate-950 via-cyan-950/50 to-indigo-950/60 p-5 text-center shadow-2xl shadow-cyan-950/30 sm:p-8">
             <div className="rs-force-stage relative mx-auto flex h-44 max-w-xl items-center justify-center overflow-visible">
-              {rsForceAperta && prodotti.slice(0, 6).map((p, index) => {
+              {rsForceAperta && prodottiVisibili.slice(0, 6).map((p, index) => {
                 const positions = [
                   { x: '-150px', y: '-45px', r: '-12deg' },
                   { x: '145px', y: '-42px', r: '12deg' },
@@ -465,8 +504,8 @@ export default function Home() {
               </button>
             </div>
             <p className="mt-4 text-xs font-bold uppercase tracking-[0.35em] text-cyan-300">RS FORCE</p>
-            <h2 className="mt-1 text-2xl font-extrabold text-white sm:text-3xl">The Force · Il futuro di RiverSpend</h2>
-            <p className="mx-auto mt-2 max-w-2xl text-sm text-slate-100">Tocca la sfera e usa la Forza: la sfera può attirare simbolicamente i prodotti, guidarti tra le offerte e mostrarti il futuro.</p>
+            <h2 className="mt-1 text-2xl font-extrabold text-white sm:text-3xl">RS FORCE · Potenzia la tua ricerca</h2>
+            <p className="mx-auto mt-2 max-w-2xl text-sm text-slate-100">Tocca la sfera: RS FORCE collega la tua ricerca ai prodotti più pertinenti e li porta nel suo campo.</p>
           </div>
 
           {rsForceAperta && (
