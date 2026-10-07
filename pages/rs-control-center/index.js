@@ -56,7 +56,7 @@ export default function RSControlCenter() {
 
     async function loadCollaborators() {
       const { data } = await supabase.from("rs_collaborators")
-        .select("id,full_name,email,status,permissions,invite_expires_at")
+        .select("id,full_name,email,status,permissions,invite_expires_at,user_id")
         .order("created_at", { ascending: false });
       setCollaborators(data || []);
     }
