@@ -552,109 +552,85 @@ export default function Home() {
 
         <section className="mx-auto max-w-6xl px-2 py-4 sm:px-4">
           <div className="rs-apps-grid mb-5">
-          <div className="mb-0 rounded-2xl border border-cyan-400/40 bg-gradient-to-br from-slate-950 via-cyan-950/50 to-indigo-950/60 p-5 text-center shadow-2xl shadow-cyan-950/30 sm:p-8">
-            <div className="rs-force-stage relative mx-auto flex h-44 max-w-xl items-center justify-center overflow-visible">
-              {rsForceAperta && prodottiVisibili.slice(0, 6).map((p, index) => {
-                const positions = [
-                  { x: '-150px', y: '-45px', r: '-12deg' },
-                  { x: '145px', y: '-42px', r: '12deg' },
-                  { x: '-165px', y: '48px', r: '8deg' },
-                  { x: '160px', y: '50px', r: '-8deg' },
-                  { x: '-70px', y: '-72px', r: '-7deg' },
-                  { x: '72px', y: '72px', r: '7deg' }
-                ];
-                const pos = positions[index];
-                const image = p.immagini?.[0];
-                return image ? (
-                  <span
-                    key={'force-orbit-' + p.id}
-                    className="rs-force-orbit z-10"
-                    style={{
-                      '--orbit-radius': index % 2 ? '145px' : '135px',
-                      '--orbit-duration': (10 + index * 0.7) + 's',
-                      animationDelay: (-index * 1.45) + 's'
-                    }}
-                  >
-                    <a
-                      href={'/prodotto/' + encodeURIComponent(p.id)}
-                      aria-label={'RS Force: ' + (p.titolo || 'prodotto')}
-                      className="rs-force-product absolute left-0 top-0 flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl border border-cyan-200/70 bg-white p-1 shadow-[0_0_20px_rgba(34,211,238,.45)]"
-                    >
-                      <img src={image} alt="" className="h-full w-full object-contain" />
-                    </a>
-                  </span>                ) : null;
-              })}
-              <button type="button" onClick={apriRsForce} aria-label="Apri RS Force" className="group relative z-20 flex h-32 w-32 items-center justify-center rounded-full border border-cyan-200/70 bg-[radial-gradient(circle_at_35%_30%,rgba(255,255,255,.95),rgba(103,232,249,.45)_18%,rgba(8,47,73,.95)_58%,rgba(2,6,23,1)_100%)] text-5xl shadow-[0_0_35px_rgba(34,211,238,.65)] transition duration-500 hover:scale-105 hover:shadow-[0_0_55px_rgba(34,211,238,.9)] active:scale-95" style={{animation:'rs-palantir-pulse 3s ease-in-out infinite'}}>
-                🔮
-              </button>
-            </div>
-            <p className="mt-4 text-xs font-bold uppercase tracking-[0.35em] text-cyan-300">RS FORCE</p>
-            <h2 className="mt-1 text-2xl font-extrabold text-white sm:text-3xl">RS FORCE · Potenzia la tua ricerca</h2>
-            <p className="mx-auto mt-2 max-w-2xl text-sm text-slate-100">Tocca la sfera: RS FORCE collega la tua ricerca ai prodotti più pertinenti e li porta nel suo campo.</p>
-          </div>
-
-          {rsForceAperta && (
-            <div className="mb-5 rounded-3xl border border-cyan-300/50 bg-slate-900 p-5 shadow-2xl shadow-cyan-950/30">
-              <div className="flex items-start justify-between gap-3">
-                <div><p className="text-xs font-bold uppercase tracking-[0.25em] text-cyan-300">🔮 RS FORCE</p><h3 className="mt-1 text-xl font-extrabold">La Forza di RiverSpend</h3></div>
-                <button type="button" onClick={() => setRsForceAperta(false)} className="rounded-full border border-slate-700 px-3 py-1 text-slate-300">✕</button>
-              </div>
-              <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
-                <a href={categoriaAttiva ? `/?category=${encodeURIComponent(categoriaAttiva)}&future=offers` : '/?future=offers'} className="rounded-2xl border border-amber-400/40 bg-amber-950/30 p-4 text-center"><span className="text-2xl">🏷️</span><p className="mt-2 text-sm font-bold">Promozioni</p></a>
-                <a href={categoriaAttiva ? `/?category=${encodeURIComponent(categoriaAttiva)}&future=new` : '/?future=new'} className="rounded-2xl border border-cyan-400/40 bg-cyan-950/30 p-4 text-center"><span className="text-2xl">🆕</span><p className="mt-2 text-sm font-bold">Novità</p></a>
-                <a href={categoriaAttiva ? `/?category=${encodeURIComponent(categoriaAttiva)}&future=concepts` : '/?future=concepts'} className="rounded-2xl border border-violet-400/40 bg-violet-950/30 p-4 text-center"><span className="text-2xl">💡</span><p className="mt-2 text-sm font-bold">Concept</p></a>
-                <a href={categoriaAttiva ? `/?category=${encodeURIComponent(categoriaAttiva)}&future=arrivals` : '/?future=arrivals'} className="rounded-2xl border border-emerald-400/40 bg-emerald-950/30 p-4 text-center"><span className="text-2xl">🔭</span><p className="mt-2 text-sm font-bold">In arrivo</p></a>
-              </div>
-              <p className="mt-4 text-center text-xs text-slate-400">Sound Design RS FORCE originale · la sfera reagisce con un effetto telecinetico.</p>
-            </div>
-          )}
-
-          <section className="mb-0 rounded-2xl border border-amber-400/40 bg-gradient-to-br from-slate-950 via-amber-950/30 to-slate-900 p-5 text-center shadow-2xl shadow-amber-950/20">
-            <button type="button" onClick={() => setRsFortuneAperta((v) => !v)} className="text-xs font-bold uppercase tracking-[0.3em] text-amber-300">🎡 RS FORTUNE · La ruota della fortuna</button>
-            {rsFortuneAperta && <div className="mt-4">
-              <div className="relative mx-auto h-64 w-64">
-                <div className="absolute -top-2 left-1/2 z-20 -translate-x-1/2 text-2xl">🔻</div>
-                <div className="rs-fortune-wheel relative h-64 w-64 rounded-full border-8 border-amber-300 shadow-[0_0_35px_rgba(251,191,36,.45)]" style={{transform:`rotate(${rsFortuneRotation}deg)`}}>
-                  <div className="rs-fortune-labels" aria-hidden="true">
-                    <span>💰<br/>5 RM</span><span>💰<br/>10 RM</span><span>💰<br/>20 RM</span><span>🚚<br/>FREE</span>
-                    <span>🏷️<br/>5%</span><span>🔥<br/>BOOST</span><span>🎁<br/>SORPRESA</span><span>⭐<br/>500 RSP</span>
+            <section className="rs-feature-card rs-force-card rounded-2xl border border-cyan-400/40 bg-gradient-to-br from-slate-950 via-cyan-950/50 to-indigo-950/60 p-3 text-center shadow-xl shadow-cyan-950/20">
+              <button type="button" onClick={() => { if (rsForceAperta) setRsForceAperta(false); else apriRsForce(); }} className="flex h-full w-full flex-col items-center overflow-hidden text-center">
+                <div className="rs-force-stage relative mx-auto flex h-24 w-full shrink-0 items-center justify-center overflow-hidden">
+                  {rsForceAperta && prodottiVisibili.slice(0, 4).map((p, index) => {
+                    const positions = [{ x: '-82px', y: '-26px' }, { x: '82px', y: '-26px' }, { x: '-82px', y: '26px' }, { x: '82px', y: '26px' }];
+                    const pos = positions[index];
+                    const image = p.immagini?.[0];
+                    return image ? (
+                      <a key={'force-orbit-' + p.id} href={'/prodotto/' + encodeURIComponent(p.id)} onClick={(e) => e.stopPropagation()} aria-label={'RS Force: ' + (p.titolo || 'prodotto')} className="absolute z-10 flex h-11 w-11 items-center justify-center overflow-hidden rounded-xl border border-cyan-200/70 bg-white p-0.5 shadow-lg" style={{left:'50%', top:'50%', transform:`translate(calc(-50% + ${pos.x}), calc(-50% + ${pos.y}))`}}>
+                        <img src={image} alt="" className="h-full w-full object-contain" />
+                      </a>
+                    ) : null;
+                  })}
+                  <span className="relative z-20 flex h-20 w-20 items-center justify-center rounded-full border border-cyan-200/70 bg-[radial-gradient(circle_at_35%_30%,rgba(255,255,255,.95),rgba(103,232,249,.45)_18%,rgba(8,47,73,.95)_58%,rgba(2,6,23,1)_100%)] text-3xl shadow-[0_0_25px_rgba(34,211,238,.55)]" style={{animation:'rs-palantir-pulse 3s ease-in-out infinite'}}>🔮</span>
+                </div>
+                <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.25em] text-cyan-200">RS FORCE</p>
+                <h2 className="mt-1 text-base font-extrabold leading-tight text-white">RS FORCE · Potenzia la tua ricerca</h2>
+                {!rsForceAperta ? <p className="mt-2 px-1 text-[11px] leading-4 text-slate-100">Tocca la sfera per collegare la ricerca ai prodotti più pertinenti.</p> : (
+                  <div className="mt-2 grid w-full grid-cols-2 gap-1.5">
+                    <a onClick={(e) => e.stopPropagation()} href={categoriaAttiva ? `/?category=${encodeURIComponent(categoriaAttiva)}&future=offers` : '/?future=offers'} className="rounded-xl border border-amber-300/50 bg-amber-950/50 p-2 text-[10px] font-bold text-white">🏷️ Promozioni</a>
+                    <a onClick={(e) => e.stopPropagation()} href={categoriaAttiva ? `/?category=${encodeURIComponent(categoriaAttiva)}&future=new` : '/?future=new'} className="rounded-xl border border-cyan-300/50 bg-cyan-950/50 p-2 text-[10px] font-bold text-white">🆕 Novità</a>
+                    <a onClick={(e) => e.stopPropagation()} href={categoriaAttiva ? `/?category=${encodeURIComponent(categoriaAttiva)}&future=concepts` : '/?future=concepts'} className="rounded-xl border border-violet-300/50 bg-violet-950/50 p-2 text-[10px] font-bold text-white">💡 Concept</a>
+                    <a onClick={(e) => e.stopPropagation()} href={categoriaAttiva ? `/?category=${encodeURIComponent(categoriaAttiva)}&future=arrivals` : '/?future=arrivals'} className="rounded-xl border border-emerald-300/50 bg-emerald-950/50 p-2 text-[10px] font-bold text-white">🔭 In arrivo</a>
                   </div>
-                  <div className="rs-fortune-center">RS<br/>FORTUNE</div>
-                </div>
-              </div>
-              <p className="mt-3 text-sm text-slate-300">Un solo giro. Una sola fortuna. Gira la ruota e scopri il tuo premio.</p>
-              <button type="button" disabled={rsFortuneSpinning} onClick={giraRsFortune} className="mt-3 rounded-full bg-amber-300 px-6 py-3 font-extrabold text-amber-950 disabled:opacity-50">{rsFortuneSpinning ? '🎡 La ruota gira…' : '🎡 Gira la ruota'}</button>
-              {rsFortunePrize && <div className="mt-4 rounded-2xl border border-amber-400/50 bg-amber-950/30 p-4 text-lg font-extrabold text-amber-200">{rsFortunePrize}</div>}
-              {rsFortuneCelebration && (
-                <div className="rs-fortune-celebration" aria-hidden="true">
-                  {Array.from({ length: 22 }).map((_, i) => <i key={'confetti-'+i} className="rs-confetti" style={{'--i': i, '--dx': ((i % 2 ? 1 : -1) * (35 + (i * 17) % 85)) + 'px', '--delay': ((i % 5) * 0.04) + 's'}} />)}
-                  {Array.from({ length: 12 }).map((_, i) => <i key={'drop-'+i} className="rs-water-drop" style={{'--i': i, '--dx': ((i % 2 ? 1 : -1) * (25 + (i * 23) % 75)) + 'px', '--delay': ((i % 4) * 0.05) + 's'}} />)}
-                </div>
-              )}
-              <p className="mt-3 text-[11px] text-slate-400">I premi mostrati sono i premi iniziali della promozione RS FORTUNE. 1 RiverMoney = €0,10. I premi vengono registrati nel portafoglio RiverSpend dell’account autenticato.</p>
-            </div>}
-          </section>
+                )}
+              </button>
+            </section>
 
-          <section className="mb-0 rounded-2xl border border-violet-400/40 bg-gradient-to-br from-slate-950 via-violet-950/25 to-slate-900 p-4 text-center shadow-lg">
-            <button type="button" onClick={() => setRsLotteryAperta((v) => !v)} className="w-full text-xs font-bold uppercase tracking-[0.25em] text-violet-300">
-              🎟️ RS LOTTERY
-            </button>
-            {rsLotteryAperta && (
-              <div className="mt-3">
-                <p className="text-sm font-semibold text-white">RS Lottery Annuale</p>
-                <p className="mt-1 text-xs leading-5 text-slate-300">1 codice per ogni acquisto di almeno €10. Il codice viene associato all'ordine e al tuo account.</p>
-                <a href="/profilo" className="mt-3 inline-block rounded-xl border border-violet-400/50 bg-violet-950/40 px-4 py-2 text-xs font-bold text-violet-200">🎟️ I miei codici</a>
-              </div>
-            )}
-          </section>
-          <section className="mb-0 rounded-2xl border border-orange-400/40 bg-gradient-to-br from-slate-950 via-orange-950/25 to-slate-900 p-4 text-center shadow-lg">
-            <button type="button" className="w-full text-xs font-bold uppercase tracking-[0.25em] text-orange-300">
-              ⚡ RS FOLGORE
-            </button>
-            <div className="mt-2 text-2xl" aria-hidden="true">✈️ 🪂</div>
-            <p className="mt-1 text-[11px] font-semibold text-white">Offerte che arrivano dal cielo</p>
-            <p className="mt-1 text-[10px] leading-4 text-slate-400">Stock, sconti e offerte lampo in un'esperienza cinematografica.</p>
-          </section>
+            <section className="rs-feature-card rounded-2xl border border-amber-400/40 bg-gradient-to-br from-slate-950 via-amber-950/30 to-slate-900 p-3 text-center shadow-xl shadow-amber-950/20">
+              <button type="button" onClick={() => setRsFortuneAperta((v) => !v)} className="flex h-full w-full flex-col items-center overflow-hidden text-center">
+                <p className="shrink-0 text-[10px] font-bold uppercase tracking-[0.22em] text-amber-100">🎡 RS FORTUNE</p>
+                <h2 className="mt-1 shrink-0 text-base font-extrabold leading-tight text-white">La ruota della fortuna</h2>
+                {rsFortuneAperta ? (
+                  <div className="mt-2 flex min-h-0 w-full flex-1 flex-col items-center overflow-hidden">
+                    <div className="relative mx-auto h-[170px] w-[170px] shrink-0">
+                      <div className="absolute -top-1 left-1/2 z-20 -translate-x-1/2 text-lg">🔻</div>
+                      <div className="rs-fortune-wheel relative h-[170px] w-[170px] rounded-full border-4 border-amber-300 shadow-[0_0_22px_rgba(251,191,36,.4)]" style={{transform:`rotate(${rsFortuneRotation}deg)`}}>
+                        <div className="rs-fortune-labels" aria-hidden="true">
+                          <span>💰<br/>5 RM</span><span>💰<br/>10 RM</span><span>💰<br/>20 RM</span><span>🚚<br/>FREE</span>
+                          <span>🏷️<br/>5%</span><span>🔥<br/>BOOST</span><span>🎁<br/>SORPRESA</span><span>⭐<br/>500 RSP</span>
+                        </div>
+                        <div className="rs-fortune-center">RS<br/>FORTUNE</div>
+                      </div>
+                    </div>
+                    <p className="mt-2 text-[10px] leading-4 text-slate-100">Un solo giro. Una sola fortuna.</p>
+                    <button type="button" disabled={rsFortuneSpinning} onClick={(e) => { e.stopPropagation(); giraRsFortune(); }} className="mt-2 shrink-0 rounded-full bg-amber-300 px-4 py-2 text-xs font-extrabold text-amber-950 disabled:opacity-50">{rsFortuneSpinning ? '🎡 Gira…' : '🎡 Gira la ruota'}</button>
+                    {rsFortunePrize && <div className="mt-2 max-w-full rounded-xl border border-amber-400/50 bg-amber-950/50 px-2 py-1 text-[10px] font-extrabold text-amber-100">{rsFortunePrize}</div>}
+                  </div>
+                ) : <p className="mt-3 px-1 text-[11px] leading-4 text-slate-100">Tocca per aprire la ruota.</p>}
+              </button>
+            </section>
+
+            <section className="rs-feature-card rounded-2xl border border-violet-400/40 bg-gradient-to-br from-slate-950 via-violet-950/25 to-slate-900 p-3 text-center shadow-xl shadow-violet-950/20">
+              <button type="button" onClick={() => setRsLotteryAperta((v) => !v)} className="flex h-full w-full flex-col items-center overflow-hidden text-center">
+                <p className="shrink-0 text-[10px] font-bold uppercase tracking-[0.22em] text-violet-100">🎟️ RS LOTTERY</p>
+                {rsLotteryAperta ? (
+                  <div className="mt-3 flex min-h-0 flex-1 flex-col items-center justify-center overflow-hidden">
+                    <p className="text-sm font-extrabold text-white">RS Lottery Annuale</p>
+                    <p className="mt-2 text-[10px] leading-4 text-slate-100">1 codice per ogni acquisto di almeno €10. Il codice viene associato all'ordine e al tuo account.</p>
+                    <a onClick={(e) => e.stopPropagation()} href="/profilo" className="mt-3 rounded-xl border border-violet-300/60 bg-violet-900/50 px-3 py-2 text-[10px] font-bold text-white">🎟️ I miei codici</a>
+                  </div>
+                ) : (
+                  <div className="flex flex-1 flex-col items-center justify-center">
+                    <div className="text-4xl">🎟️</div>
+                    <p className="mt-2 text-[11px] font-bold text-white">Premi e codici</p>
+                    <p className="mt-1 text-[10px] leading-4 text-slate-100">Tocca per vedere.</p>
+                  </div>
+                )}
+              </button>
+            </section>
+
+            <section className="rs-feature-card rounded-2xl border border-orange-400/40 bg-gradient-to-br from-slate-950 via-orange-950/25 to-slate-900 p-3 text-center shadow-xl shadow-orange-950/20">
+              <button type="button" className="flex h-full w-full flex-col items-center justify-center overflow-hidden text-center">
+                <p className="shrink-0 text-[10px] font-bold uppercase tracking-[0.22em] text-orange-100">⚡ RS FOLGORE</p>
+                <div className="mt-3 text-3xl" aria-hidden="true">✈️ 🪂</div>
+                <p className="mt-3 text-sm font-extrabold text-white">Offerte che arrivano dal cielo</p>
+                <p className="mt-2 text-[10px] leading-4 text-slate-100">Stock, sconti e offerte lampo in un'esperienza cinematografica.</p>
+              </button>
+            </section>
           </div>
 
           <div className="rs-hero mb-5 rounded-2xl border border-teal-800 bg-gradient-to-br from-slate-900 to-sky-950 px-5 py-4 sm:px-7 sm:py-5">
@@ -736,20 +712,17 @@ export default function Home() {
         </footer>
       </div>
       <style jsx>{`
-        .rs-apps-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; align-items:start; }
-        .rs-apps-grid > section, .rs-apps-grid > div { min-width:0; }
-        .rs-apps-grid .rs-force-stage { height:88px; }
-        .rs-apps-grid .rs-force-stage .group { height:68px; width:68px; font-size:1.75rem; }
-        .rs-apps-grid .rs-force-stage + p { margin-top:6px; font-size:9px; }
-        .rs-apps-grid h2 { font-size:15px; line-height:1.2; }
-        .rs-apps-grid > div:first-child > p:not(.mt-4) { margin-top:4px; font-size:10px; line-height:1.35; }
+        .rs-apps-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; align-items:stretch; }
+        .rs-feature-card { min-width:0; height:290px; overflow:hidden; }
+        .rs-feature-card > button { min-width:0; min-height:0; }
+        .rs-feature-card a, .rs-feature-card button { -webkit-tap-highlight-color:transparent; }
         @media (max-width:640px) {
           .rs-apps-grid { gap:8px; }
-          .rs-apps-grid > div:first-child { padding:10px; }
-          .rs-apps-grid > section { padding:10px; }
+          .rs-feature-card { height:280px; }
         }
         @media (min-width:768px) {
-          .rs-apps-grid { grid-template-columns:1fr 1fr; }
+          .rs-apps-grid { grid-template-columns:repeat(4,minmax(0,1fr)); }
+          .rs-feature-card { height:300px; }
         }
         @keyframes rs-palantir-pulse {
           0%, 100% { transform: scale(1); filter: brightness(1); }
@@ -791,24 +764,24 @@ export default function Home() {
           position:absolute; inset:0; z-index:1; pointer-events:none;
         }
         .rs-fortune-labels span {
-          position:absolute; left:50%; top:50%; width:58px; height:52px;
-          margin-left:-29px; margin-top:-26px; text-align:center;
-          color:#451a03; font-size:10px; line-height:1.15; font-weight:900;
-          transform-origin:29px 26px;
+          position:absolute; left:50%; top:50%; width:46px; height:42px;
+          margin-left:-23px; margin-top:-21px; text-align:center;
+          color:#451a03; font-size:8px; line-height:1.05; font-weight:900;
+          transform-origin:23px 21px;
         }
-        .rs-fortune-labels span:nth-child(1){transform:rotate(22.5deg) translateY(-82px);}
-        .rs-fortune-labels span:nth-child(2){transform:rotate(67.5deg) translateY(-82px);}
-        .rs-fortune-labels span:nth-child(3){transform:rotate(112.5deg) translateY(-82px);}
-        .rs-fortune-labels span:nth-child(4){transform:rotate(157.5deg) translateY(-82px);}
-        .rs-fortune-labels span:nth-child(5){transform:rotate(202.5deg) translateY(-82px);}
-        .rs-fortune-labels span:nth-child(6){transform:rotate(247.5deg) translateY(-82px);}
-        .rs-fortune-labels span:nth-child(7){transform:rotate(292.5deg) translateY(-82px);}
-        .rs-fortune-labels span:nth-child(8){transform:rotate(337.5deg) translateY(-82px);}
+        .rs-fortune-labels span:nth-child(1){transform:rotate(22.5deg) translateY(-53px);}
+        .rs-fortune-labels span:nth-child(2){transform:rotate(67.5deg) translateY(-53px);}
+        .rs-fortune-labels span:nth-child(3){transform:rotate(112.5deg) translateY(-53px);}
+        .rs-fortune-labels span:nth-child(4){transform:rotate(157.5deg) translateY(-53px);}
+        .rs-fortune-labels span:nth-child(5){transform:rotate(202.5deg) translateY(-53px);}
+        .rs-fortune-labels span:nth-child(6){transform:rotate(247.5deg) translateY(-53px);}
+        .rs-fortune-labels span:nth-child(7){transform:rotate(292.5deg) translateY(-53px);}
+        .rs-fortune-labels span:nth-child(8){transform:rotate(337.5deg) translateY(-53px);}
         .rs-fortune-center {
           position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
           display:flex; align-items:center; justify-content:center; text-align:center;
-          width:82px; height:82px; border-radius:9999px; border:4px solid #fef3c7;
-          background:#111827; color:#fcd34d; font-size:12px; font-weight:900;
+          width:58px; height:58px; border-radius:9999px; border:4px solid #fef3c7;
+          background:#111827; color:#fcd34d; font-size:9px; font-weight:900;
           box-shadow:0 0 20px rgba(251,191,36,.45);
         }      `}</style>
     </main>
