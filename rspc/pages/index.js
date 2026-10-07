@@ -1,0 +1,48 @@
+import {useEffect,useState} from "react";
+import {supabase} from "../lib/supabase";
+
+const modules=[
+ ["shop","🛒","RiverSpendShop","Marketplace, prodotti e ordini","marketplace"],
+ ["stream","📺","RiverSpendStream","Abbonamenti e visioni","stream"],
+ ["park","🎢","RiverSpend Park","Ingressi, affluenza e incassi","park"],
+ ["pay","💳","RiverSpend Pay","Pagamenti e rinnovi","finance"],
+ ["box","📦","RiverSpend Box","Spedizioni e consegne","logistics"],
+ ["music","🎵","RSMusic","Ascolti e contenuti","analytics"],
+ ["broadcast","📡","RSBroadcast","Trasmissioni e audience","analytics"],
+ ["security","🛡️","Sicurezza","Ruoli e attività","security"]
+];
+
+function Metric({title,value,note}){return <div className="metric"><span>{title}</span><strong>{value==null?"—":value}</strong>{note&&<small>{note}</small>}</div>}
+
+export default function RSPC(){
+ const [session,setSession]=useState(null),[role,setRole]=useState(null),[permissions,setPermissions]=useState({}),[login,setLogin]=useState({email:"",password:""}),[error,setError]=useState(""),[busy,setBusy]=useState(false),[tab,setTab]=useState("shop"),[d,setD]=useState({});
+ useEffect(()=>{supabase.auth.getSession().then(({data})=>setSession(data.session));const {data:{subscription}}=supabase.auth.onAuthStateChange((_e,s)=>setSession(s));return()=>subscription.unsubscribe()},[]);
+ useEffect(()=>{if(session)authorize()},[session]);
+ async function authorize(){
+  const email=(session.user.email||"").toLowerCase();
+  const {data:a}=await supabase.from("rs_admin_roles").select("role").eq("user_id",session.user.id).maybeSingle();
+  if(a?.role==="admin"){setRole("admin");setPermissions({marketplace:true,stream:true,park:true,finance:true,logistics:true,security:true,analytics:true});load();return}
+  const {data:c}=await supabase.from("rs_collaborators").select("status,permissions").eq("email",email).maybeSingle();
+  if(c?.status==="active"){setRole("collaborator");setPermissions(c.permissions||{});load();return}
+  setRole("denied");setError("Account non autorizzato a RSPC.");
+ }
+ async function load(){
+  const out={};
+  const p=await supabase.from("products").select("id",{count:"exact",head:true}).eq("status","published");out.products=p.error?null:p.count;
+  const o=await supabase.from("orders").select("id",{count:"exact",head:true});out.orders=o.error?null:o.count;
+  const s=await supabase.from("rs_stream_subscriptions").select("id",{count:"exact",head:true}).eq("status","active");out.subscribers=s.error?null:s.count;
+  const r=await supabase.from("rs_stream_subscriptions").select("id",{count:"exact",head:true}).in("status",["active","past_due"]).lte("expires_at",new Date(Date.now()+7*86400000).toISOString());out.renew7=r.error?null:r.count;
+  const live=await supabase.from("rs_stream_sessions").select("id",{count:"exact",head:true}).is("ended_at",null).gte("last_seen_at",new Date(Date.now()-5*60000).toISOString());out.live=live.error?null:live.count;
+  const cs=await supabase.from("rs_stream_sessions").select("country_code").is("ended_at",null).gte("last_seen_at",new Date(Date.now()-5*60000).toISOString());out.countries=cs.data||[];
+  const pv=await supabase.from("rs_park_visits").select("id",{count:"exact",head:true}).eq("visit_date",new Date().toISOString().slice(0,10));out.parkToday=pv.error?null:pv.count;
+  const pr=await supabase.from("rs_park_revenue").select("amount").gte("occurred_at",new Date(new Date().getFullYear(),new Date().getMonth(),1).toISOString());out.parkRevenue=pr.error?null:(pr.data||[]).reduce((n,x)=>n+Number(x.amount||0),0);
+  setD(out);
+ }
+ async function signIn(e){e.preventDefault();setBusy(true);setError("");const {error}=await supabase.auth.signInWithPassword(login);if(error)setError(error.message);setBusy(false)}
+ if(!session)return <div className="login"><div className="loginbox"><div className="brand">RiverSpend</div><h1>RSPC</h1><p>RiverSpend Panel Control · area privata</p><form onSubmit={signIn}><input type="email" placeholder="Email" value={login.email} onChange={e=>setLogin({...login,email:e.target.value})}/><input type="password" placeholder="Password" value={login.password} onChange={e=>setLogin({...login,password:e.target.value})}/><button>{busy?"Accesso…":"Accedi"}</button></form>{error&&<div className="error">{error}</div>}<small>Solo CEO e collaboratori autorizzati.</small></div></div>;
+ if(role==="denied")return <div className="login"><div className="loginbox"><h1>Accesso negato</h1><p>{error}</p><button onClick={()=>supabase.auth.signOut()}>Esci</button></div></div>;
+ const countries=(d.countries||[]).reduce((m,x)=>{const k=x.country_code||"??";m[k]=(m[k]||0)+1;return m},{});
+ const can=p=>role==="admin"||permissions[p];
+ const visible=modules.filter(m=>can(m[4]));
+ return <main className="app"><header className="top"><div><div className="brand">RiverSpend</div><div className="sub">RSPC · Panel Control</div></div><div className="account">{session.user.email}<button onClick={()=>supabase.auth.signOut()}>Esci</button></div></header><div className="layout"><aside><div className="sideTitle">CENTRALE ECOSISTEMA</div>{visible.map(m=><button className={tab===m[0]?"active":""} onClick={()=>setTab(m[0])} key={m[0]}>{m[1]} <span>{m[2]}</span></button>)}</aside><section className="content"><div className="hero"><div><span className="pill">● {role==="admin"?"CEO / AMMINISTRATORE":"COLLABORATORE"}</span><h1>Controllo dell'ecosistema</h1><p>Una centrale autonoma ed estendibile: ogni nuovo programma RiverSpend può collegarsi senza cambiare il nucleo RSPC.</p></div><button onClick={load}>↻ Aggiorna</button></div>{tab==="shop"&&<div className="grid"><Metric title="🛍️ Prodotti pubblicati" value={d.products}/><Metric title="📦 Ordini" value={d.orders}/><Metric title="📊 Stato collegamento" value="LIVE" note="Supabase collegato"/><div className="panel wide"><h2>🛒 RiverSpendShop</h2><p>Controllo marketplace predisposto per prodotti, ordini, venditori, utenti e analytics.</p></div></div>}{tab==="stream"&&<div className="grid"><Metric title="📺 Abbonati attivi" value={d.subscribers}/><Metric title="🔄 Rinnovi entro 7 giorni" value={d.renew7}/><Metric title="🔴 Guardano ora" value={d.live} note="attivi negli ultimi 5 minuti"/><div className="panel wide"><h2>🌍 Utenti Stream attivi per Paese</h2>{Object.entries(countries).length?Object.entries(countries).sort((a,b)=>b[1]-a[1]).map(([c,n])=><div className="row" key={c}><b>{c}</b><span>{n} sessioni</span></div>):<p>Nessuna sessione attiva registrata.</p>}</div></div>}{tab==="park"&&<div className="grid"><Metric title="🎟️ Ingressi oggi" value={d.parkToday}/><Metric title="💰 Incassi mese" value={d.parkRevenue==null?null:d.parkRevenue.toFixed(2)+" €"}/><Metric title="📈 Modulo Park" value="PRONTO" note="Database predisposto"/><div className="panel wide"><h2>🎢 RiverSpend Park</h2><p>Predisposto per ingressi giornalieri/mensili/annuali, affluenza, stagionalità, incassi, attrazioni e capacità del parco.</p></div></div>}{tab==="pay"&&<div className="panel"><h2>💳 RiverSpend Pay</h2><p>Modulo predisposto per transazioni, abbonamenti, rinnovi, rimborsi e pagamenti falliti.</p></div>}{tab==="box"&&<div className="panel"><h2>📦 RiverSpend Box</h2><p>Modulo predisposto per spedizioni, consegne, ritardi e corrieri.</p></div>}{tab==="music"&&<div className="panel"><h2>🎵 RSMusic</h2><p>Modulo estendibile per ascolti, contenuti, artisti e ricavi.</p></div>}{tab==="broadcast"&&<div className="panel"><h2>📡 RSBroadcast</h2><p>Modulo estendibile per trasmissioni e audience.</p></div>}{tab==="security"&&<div className="panel"><h2>🛡️ Sicurezza</h2><p>Ruoli, collaboratori, accessi e attività amministrative.</p></div>}<div className="panel roadmap"><h2>🧩 Estensione futura</h2><p>Nuovo programma? Si aggiunge come modulo RSPC con proprie metriche ed eventi.</p><div className="chips"><span>Shop</span><span>Stream</span><span>Park</span><span>Pay</span><span>Box</span><span>Music</span><span>Broadcast</span><span>+ NUOVO</span></div></div></section></div></main>
+}
