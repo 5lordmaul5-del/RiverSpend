@@ -11,6 +11,8 @@ export default function Checkout() {
   const [email, setEmail] = useState('');
   const [authMessage, setAuthMessage] = useState('');
   const [sendingLink, setSendingLink] = useState(false);
+  const [simulatingPayment, setSimulatingPayment] = useState(false);
+  const [sandboxMessage, setSandboxMessage] = useState('');
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setUser(data?.user || null));
@@ -94,6 +96,28 @@ export default function Checkout() {
     }
   }
 
+
+  async function simulatePayment() {
+    setError('');
+    setSandboxMessage('');
+    setSimulatingPayment(true);
+    try {
+      if (!orderId) throw new Error('Prima crea l’ordine.');
+      const response = await fetch('/api/pay/sandbox', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId })
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result?.error || 'Sandbox non disponibile.');
+      setSandboxMessage('🧪 Pagamento simulato con successo. Nessun denaro reale è stato movimentato.');
+    } catch (err) {
+      setError(err?.message || 'Impossibile eseguire il test.');
+    } finally {
+      setSimulatingPayment(false);
+    }
+  }
+
   return (
     <main className="min-h-screen bg-slate-950 px-4 py-8 text-white">
       <div className="mx-auto max-w-2xl">
@@ -164,11 +188,18 @@ export default function Checkout() {
 
           {error && <div className="mt-5 rounded-2xl border border-red-500/40 bg-red-950/30 p-4 text-sm text-red-200">{error}</div>}
           {orderId && <div className="mt-5 rounded-2xl border border-teal-500/40 bg-teal-950/30 p-4 text-sm text-teal-100">✅ Ordine creato. ID: <span className="font-mono">{orderId}</span><br />Stato: <strong>in attesa di pagamento</strong>.</div>}
+          {sandboxMessage && <div className="mt-4 rounded-2xl border border-amber-500/40 bg-amber-950/20 p-4 text-sm text-amber-100">{sandboxMessage}</div>}
 
           <div className="mt-6 flex flex-wrap gap-3">
             {user && items.length > 0 && !orderId && (
               <button type="button" onClick={createOrder} disabled={creating} className="rounded-xl bg-teal-500 px-4 py-3 font-bold text-slate-950 disabled:opacity-60">
                 {creating ? 'Creazione ordine…' : '🧾 Crea ordine'}
+              </button>
+            )}
+
+            {orderId && (
+              <button type="button" onClick={simulatePayment} disabled={simulatingPayment} className="rounded-xl border border-amber-400 bg-amber-500/10 px-4 py-3 font-bold text-amber-200 disabled:opacity-60">
+                {simulatingPayment ? 'Test pagamento…' : '🧪 Simula pagamento — SOLO TEST'}
               </button>
             )}
             <Link href="/rete" className="rounded-xl border border-teal-700 px-4 py-3 font-bold text-teal-100">
