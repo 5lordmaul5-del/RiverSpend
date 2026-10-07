@@ -11,6 +11,7 @@ export default function Checkout() {
   const [email, setEmail] = useState('');
   const [authMessage, setAuthMessage] = useState('');
   const [sendingLink, setSendingLink] = useState(false);
+  const [selectedPayment, setSelectedPayment] = useState('sandbox');
   const [simulatingPayment, setSimulatingPayment] = useState(false);
   const [sandboxMessage, setSandboxMessage] = useState('');
 
@@ -153,6 +154,34 @@ export default function Checkout() {
             )}
           </div>
 
+          <section className="mt-6 rounded-2xl border border-teal-100 bg-white p-4">
+            <p className="text-sm font-black uppercase tracking-[0.18em] text-teal-600">RiverSpend Pay</p>
+            <h2 className="mt-2 text-xl font-black text-slate-900">💳 Scegli come pagare</h2>
+            <p className="mt-1 text-sm text-slate-500">I metodi reali verranno collegati in modo sicuro, uno per volta. Per ora puoi usare solo il test sandbox.</p>
+            <div className="mt-4 grid gap-3">
+              {[
+                ['sandbox','🧪','Pagamento Sandbox','SOLO TEST'],
+                ['card','💳','Carta Visa / Mastercard / Amex','In arrivo'],
+                ['paypal','🅿️','PayPal','In arrivo'],
+                ['applepay','','Apple Pay','In arrivo'],
+                ['googlepay','G','Google Pay','In arrivo'],
+                ['bancomat','🇮🇹','BANCOMAT Pay / Postepay','In arrivo'],
+                ['klarna','🩷','Klarna / Scalapay','In arrivo'],
+                ['global','🌍','Metodi internazionali','In arrivo']
+              ].map(([id, icon, title, status]) => (
+                <button
+                  key={id}
+                  type="button"
+                  onClick={() => status === 'SOLO TEST' && setSelectedPayment(id)}
+                  className={`flex items-center justify-between rounded-xl border px-4 py-3 text-left ${selectedPayment === id ? 'border-teal-500 bg-teal-50' : 'border-slate-200 bg-white'} ${status !== 'SOLO TEST' ? 'opacity-70' : ''}`}
+                >
+                  <span className="flex items-center gap-3"><span className="text-xl">{icon}</span><span><strong className="block text-slate-900">{title}</strong><span className="text-xs text-slate-500">{status}</span></span></span>
+                  {selectedPayment === id && <span className="font-black text-teal-600">✓</span>}
+                </button>
+              ))}
+            </div>
+          </section>
+
           <div className="mt-6 grid gap-3">
             {[
               ['🛒', 'Riepilogo ordine', 'Prodotti, quantità e totale'],
@@ -197,7 +226,7 @@ export default function Checkout() {
               </button>
             )}
 
-            {orderId && (
+            {orderId && selectedPayment === 'sandbox' && (
               <button type="button" onClick={simulatePayment} disabled={simulatingPayment} className="rounded-xl border border-amber-400 bg-amber-500/10 px-4 py-3 font-bold text-amber-700 disabled:opacity-60">
                 {simulatingPayment ? 'Test pagamento…' : '🧪 Simula pagamento — SOLO TEST'}
               </button>
