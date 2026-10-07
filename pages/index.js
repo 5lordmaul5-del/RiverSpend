@@ -522,7 +522,6 @@ export default function Home() {
           {menuCategorie && (
             <div className="mx-auto mt-3 max-h-[45vh] w-full max-w-6xl overflow-y-auto rounded-2xl border border-teal-800 bg-slate-900 p-4 shadow-2xl">
               <div className="mb-3 flex items-center justify-between"><strong className="text-teal-200">{t('categories')}</strong><button onClick={() => setMenuCategorie(false)} aria-label={t('close')}>✕</button></div>
-              <div className="mb-3 rounded-xl border border-red-500/40 bg-red-950/40 px-3 py-2 text-xs text-red-100">🔞 Sezione riservata agli adulti (18+).</div>
               <div className="grid grid-cols-1 gap-1">
                 {categorie.map((cat) => (
                   <a key={cat} href={`/?category=${encodeURIComponent(cat)}`} onClick={() => setMenuCategorie(false)} className="rounded-lg px-3 py-2 text-sm text-slate-100 hover:bg-teal-900">
