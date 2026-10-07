@@ -200,6 +200,9 @@ export default function RSControlCenter() {
     <main
       style={{
         minHeight: "100vh",
+        position: "relative",
+        zIndex: 1,
+        pointerEvents: "auto",
         background: "#f3fbfd",
         color: "#12343b",
         fontFamily: "Arial,sans-serif",
@@ -266,7 +269,7 @@ export default function RSControlCenter() {
                 title === "Ordini visibili" ? value("orders") : "—";
               return (
                 <button key={title} onClick={() => setActivePanel(title)}
-                  style={{...panel, textAlign:"left", border:"1px solid #dcecef", cursor:"pointer", background:"#fff"}}>
+                  style={{...panel, textAlign:"left", border:"1px solid #dcecef", cursor:"pointer", background:"#fff", position:"relative", zIndex:2, pointerEvents:"auto", touchAction:"manipulation"}}>
                   <div style={{fontSize:24}}>{icon}</div>
                   <b style={{display:"block", marginTop:8}}>{title}</b>
                   <div style={{fontSize:25,fontWeight:700,margin:"8px 0",color:"#087f9e"}}>{metric}</div>
@@ -380,7 +383,7 @@ export default function RSControlCenter() {
                   <h2 style={{margin:"0 0 5px"}}>📊 Report: {activePanel}</h2>
                   <div style={{color:"#63818a"}}>Sezione interattiva RSPC.</div>
                 </div>
-                <button onClick={()=>setActivePanel("")} style={{padding:"8px 12px",border:0,borderRadius:9}}>Chiudi</button>
+                <button onClick={()=>setActivePanel("")} style={{padding:"8px 12px",border:0,borderRadius:9,cursor:"pointer",position:"relative",zIndex:3,touchAction:"manipulation"}}>Chiudi</button>
               </div>
               <div style={{marginTop:16,display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(180px,1fr))",gap:10}}>
                 <div style={{padding:14,borderRadius:12,background:"#f3fbfd"}}><b>Ordini</b><div style={{fontSize:24,marginTop:6}}>{value("orders")}</div></div>
@@ -397,13 +400,13 @@ export default function RSControlCenter() {
             <div style={{fontSize:28,fontWeight:800,color:"#12343b"}}>🌊 RiverSpend</div>
             <div style={{fontSize:18,fontWeight:800,color:"#087f9e",letterSpacing:2,marginTop:3}}>MEET</div>
             <div style={{color:"#63818a",marginTop:6}}>Video conference privata dell'ecosistema RiverSpend</div>
-            <button onClick={()=>setActivePanel("RiverSpend Meet")} style={{marginTop:12,padding:"11px 18px",border:0,borderRadius:10,background:"#087f9e",color:"#fff",fontWeight:700,cursor:"pointer"}}>🎥 Apri RiverSpend Meet</button>
+            <button onClick={()=>setActivePanel("RiverSpend Meet")} style={{marginTop:12,padding:"11px 18px",border:0,borderRadius:10,background:"#087f9e",color:"#fff",fontWeight:700,cursor:"pointer",position:"relative",zIndex:3,pointerEvents:"auto",touchAction:"manipulation"}}>🎥 Apri RiverSpend Meet</button>
           </section>
 
           <h2 style={{ marginTop: 30 }}>💡 Idee · Riunioni · Messaggi riservati</h2>
           <section style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))",gap:12}}>
             <article style={panel}>
-              <button onClick={()=>setActivePanel("Aggiungi idee")} style={{width:"100%",padding:12,border:0,borderRadius:10,background:"#087f9e",color:"white",fontWeight:700}}>💡 Aggiungi idee</button>
+              <button onClick={()=>setActivePanel("Aggiungi idee")} style={{width:"100%",padding:12,border:0,borderRadius:10,background:"#087f9e",color:"white",fontWeight:700,cursor:"pointer",position:"relative",zIndex:3,touchAction:"manipulation"}}>💡 Aggiungi idee</button>
               <input value={ideaTitle} onChange={e=>setIdeaTitle(e.target.value)} placeholder="Titolo idea" style={{marginTop:10,width:"100%",boxSizing:"border-box",padding:11,borderRadius:9,border:"1px solid #d7e5e9"}} />
               <textarea value={ideaBody} onChange={e=>setIdeaBody(e.target.value)} placeholder="Scrivi l'idea..." rows={4} style={{marginTop:8,width:"100%",boxSizing:"border-box",padding:11,borderRadius:9,border:"1px solid #d7e5e9"}} />
               <select value={ideaAudience} onChange={e=>setIdeaAudience(e.target.value)} style={{marginTop:8,width:"100%",padding:11,borderRadius:9}}>
@@ -414,7 +417,7 @@ export default function RSControlCenter() {
             </article>
 
             <article style={panel}>
-              <button onClick={()=>setActivePanel("Riunioni / Video call")} style={{width:"100%",padding:12,border:0,borderRadius:10,background:"#168454",color:"white",fontWeight:700}}>🎥 Riunione / Video call</button>
+              <button onClick={()=>setActivePanel("Riunioni / Video call")} style={{width:"100%",padding:12,border:0,borderRadius:10,background:"#168454",color:"white",fontWeight:700,cursor:"pointer",position:"relative",zIndex:3,touchAction:"manipulation"}}>🎥 Riunione / Video call</button>
               <input value={meetingTitle} onChange={e=>setMeetingTitle(e.target.value)} placeholder="Titolo riunione" style={{marginTop:10,width:"100%",boxSizing:"border-box",padding:11,borderRadius:9,border:"1px solid #d7e5e9"}} />
               <input type="datetime-local" value={meetingStart} onChange={e=>setMeetingStart(e.target.value)} style={{marginTop:8,width:"100%",padding:10}} />
               <input type="datetime-local" value={meetingEnd} onChange={e=>setMeetingEnd(e.target.value)} style={{marginTop:8,width:"100%",padding:10}} />
@@ -425,7 +428,7 @@ export default function RSControlCenter() {
             </article>
 
             <article style={panel}>
-              <button onClick={()=>setActivePanel("Messaggi segreti")} style={{width:"100%",padding:12,border:0,borderRadius:10,background:"#6b3f8f",color:"white",fontWeight:700}}>🔐 Messaggio segreto</button>
+              <button onClick={()=>setActivePanel("Messaggi segreti")} style={{width:"100%",padding:12,border:0,borderRadius:10,background:"#6b3f8f",color:"white",fontWeight:700,cursor:"pointer",position:"relative",zIndex:3,touchAction:"manipulation"}}>🔐 Messaggio segreto</button>
               <input value={secretSubject} onChange={e=>setSecretSubject(e.target.value)} placeholder="Oggetto" style={{marginTop:10,width:"100%",boxSizing:"border-box",padding:11,borderRadius:9,border:"1px solid #d7e5e9"}} />
               <textarea value={secretBody} onChange={e=>setSecretBody(e.target.value)} placeholder="Messaggio riservato..." rows={4} style={{marginTop:8,width:"100%",boxSizing:"border-box",padding:11,borderRadius:9,border:"1px solid #d7e5e9"}} />
               <div style={{marginTop:8}}><b>Chi può leggerlo?</b>{collaborators.filter(c=>c.user_id).map(c=><label key={c.id} style={{display:"block"}}><input type="checkbox" checked={secretRecipients.includes(c.user_id)} onChange={e=>setSecretRecipients(p=>e.target.checked?[...p,c.user_id]:p.filter(x=>x!==c.user_id))}/>{c.full_name||c.email}</label>)}</div>
