@@ -17,6 +17,19 @@ export default function RSControlCenter() {
   const [email, setEmail] = useState("");
   const [metrics, setMetrics] = useState({});
   const [error, setError] = useState("");
+  const [insights, setInsights] = useState(null);
+  const [insightsError, setInsightsError] = useState("");
+
+  async function loadInsights() {
+    setInsightsError("");
+    const { data, error } = await supabase.rpc("rs_admin_insights");
+    if (error) {
+      setInsightsError(error.message || "Dati Insights non ancora disponibili.");
+      return;
+    }
+    setInsights(data || null);
+  }
+
 
   useEffect(() => {
     let alive = true;
@@ -68,6 +81,7 @@ export default function RSControlCenter() {
         products: results[0].error ? null : results[0].count,
         orders: results[1].error ? null : results[1].count,
       });
+      await loadInsights();
     }
 
     load();
@@ -187,6 +201,66 @@ export default function RSControlCenter() {
               );
             })}
           </section>
+
+          <h2 style={{ marginTop: 30 }}>📊 RS Insights · Andamento clienti</h2>
+          <p style={{ color: "#63818a", marginTop: 0 }}>
+            Dati aggregati degli ultimi 30 giorni: cosa cercano, guardano, desiderano, aggiungono alla Rete e acquistano.
+          </p>
+
+          {insightsError ? (
+            <section style={{ ...panel, borderLeft: "5px solid #d99a00", marginBottom: 16 }}>
+              <b>RS Insights in attesa di dati</b>
+              <div style={{ color: "#718a91", marginTop: 6 }}>{insightsError}</div>
+            </section>
+          ) : (
+            <>
+              <section style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(135px,1fr))", gap: 12, marginBottom: 16 }}>
+                {[
+                  ["👀", "Visualizzazioni", insights?.totals?.views],
+                  ["🔎", "Ricerche", insights?.totals?.searches],
+                  ["❤️", "Desideri", insights?.totals?.wishlist],
+                  ["🕸️", "Nella Rete", insights?.totals?.net_add],
+                  ["🛒", "Acquisti", insights?.totals?.purchases],
+                ].map(([icon, title, metric]) => (
+                  <article key={title} style={panel}>
+                    <div style={{ fontSize: 22 }}>{icon}</div>
+                    <b style={{ display: "block", marginTop: 6 }}>{title}</b>
+                    <div style={{ fontSize: 25, fontWeight: 700, marginTop: 6, color: "#087f9e" }}>
+                      {metric ?? "—"}
+                    </div>
+                  </article>
+                ))}
+              </section>
+
+              <section style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))", gap: 12 }}>
+                <article style={panel}>
+                  <b>🔥 Categorie più richieste</b>
+                  <p style={{ color: "#718a91", fontSize: 13 }}>Visualizzazioni, ricerche e azioni aggregate.</p>
+                  {(insights?.top_categories || []).length ? (
+                    insights.top_categories.map((row, index) => (
+                      <div key={row.category} style={{ display: "flex", justifyContent: "space-between", gap: 12, padding: "9px 0", borderBottom: "1px solid #edf3f5" }}>
+                        <span><b>{index + 1}.</b> {row.category}</span>
+                        <b>{row.events}</b>
+                      </div>
+                    ))
+                  ) : <div style={{ color: "#8aa0a6" }}>Nessun dato ancora.</div>}
+                </article>
+
+                <article style={panel}>
+                  <b>🔎 Ricerche più frequenti</b>
+                  <p style={{ color: "#718a91", fontSize: 13 }}>Termini cercati dagli utenti.</p>
+                  {(insights?.top_searches || []).length ? (
+                    insights.top_searches.map((row, index) => (
+                      <div key={row.term} style={{ display: "flex", justifyContent: "space-between", gap: 12, padding: "9px 0", borderBottom: "1px solid #edf3f5" }}>
+                        <span><b>{index + 1}.</b> {row.term}</span>
+                        <b>{row.searches}</b>
+                      </div>
+                    ))
+                  ) : <div style={{ color: "#8aa0a6" }}>Nessuna ricerca registrata ancora.</div>}
+                </article>
+              </section>
+            </>
+          )}
 
           <h2 style={{ marginTop: 26 }}>Gestione ecosistema</h2>
           <section
