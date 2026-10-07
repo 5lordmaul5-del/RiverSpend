@@ -25,6 +25,20 @@ export default function RSControlCenter() {
   const [newPermissions, setNewPermissions] = useState({ marketplace:false, users:false, analytics:true, logistics:false, security:false, finance:false });
   const [inviteCode, setInviteCode] = useState("");
   const [actionMessage, setActionMessage] = useState("");
+  const [activePanel, setActivePanel] = useState("");
+  const [ideaTitle, setIdeaTitle] = useState("");
+  const [ideaBody, setIdeaBody] = useState("");
+  const [ideaAudience, setIdeaAudience] = useState("all");
+  const [ideaRecipients, setIdeaRecipients] = useState([]);
+  const [meetingTitle, setMeetingTitle] = useState("");
+  const [meetingDescription, setMeetingDescription] = useState("");
+  const [meetingStart, setMeetingStart] = useState("");
+  const [meetingEnd, setMeetingEnd] = useState("");
+  const [meetingUrl, setMeetingUrl] = useState("");
+  const [meetingParticipants, setMeetingParticipants] = useState([]);
+  const [secretSubject, setSecretSubject] = useState("");
+  const [secretBody, setSecretBody] = useState("");
+  const [secretRecipients, setSecretRecipients] = useState([]);
 
   async function loadInsights() {
     setInsightsError("");
@@ -129,6 +143,39 @@ export default function RSControlCenter() {
     await loadCollaborators();
   }
 
+  async function addIdea() {
+    if (!ideaTitle.trim() || !ideaBody.trim()) return setActionMessage("Inserisci titolo e testo dell'idea.");
+    const { error } = await supabase.from("rs_collaborator_ideas").insert({
+      title: ideaTitle.trim(), body: ideaBody.trim(), audience: ideaAudience,
+      recipient_user_ids: ideaRecipients
+    });
+    if (error) return setActionMessage(error.message);
+    setIdeaTitle(""); setIdeaBody(""); setIdeaRecipients([]);
+    setActionMessage("Idea inviata.");
+  }
+
+  async function scheduleMeeting() {
+    if (!meetingTitle || !meetingStart || !meetingEnd) return setActionMessage("Inserisci titolo, orari di inizio e fine.");
+    const { error } = await supabase.from("rs_meetings").insert({
+      title: meetingTitle.trim(), description: meetingDescription.trim() || null,
+      starts_at: new Date(meetingStart).toISOString(), ends_at: new Date(meetingEnd).toISOString(),
+      meeting_url: meetingUrl.trim() || null, participant_user_ids: meetingParticipants
+    });
+    if (error) return setActionMessage(error.message);
+    setMeetingTitle(""); setMeetingDescription(""); setMeetingStart(""); setMeetingEnd(""); setMeetingUrl(""); setMeetingParticipants([]);
+    setActionMessage("Riunione programmata.");
+  }
+
+  async function sendSecretMessage() {
+    if (!secretBody.trim() || !secretRecipients.length) return setActionMessage("Scrivi il messaggio e seleziona almeno un destinatario.");
+    const { error } = await supabase.from("rs_secret_messages").insert({
+      subject: secretSubject.trim() || null, body: secretBody.trim(), recipient_user_ids: secretRecipients
+    });
+    if (error) return setActionMessage(error.message);
+    setSecretSubject(""); setSecretBody(""); setSecretRecipients([]);
+    setActionMessage("Messaggio segreto inviato solo ai destinatari selezionati.");
+  }
+
   async function savePermissions(id, next) {
     const { error } = await supabase.from("rs_collaborators")
       .update({ permissions: next, updated_at: new Date().toISOString() })
@@ -215,30 +262,17 @@ export default function RSControlCenter() {
           >
             {cards.map(([icon, title, note]) => {
               const metric =
-                title === "Prodotti pubblicati"
-                  ? value("products")
-                  : title === "Ordini visibili"
-                    ? value("orders")
-                    : "—";
-
+                title === "Prodotti pubblicati" ? value("products") :
+                title === "Ordini visibili" ? value("orders") : "—";
               return (
-                <article key={title} style={panel}>
-                  <div style={{ fontSize: 24 }}>{icon}</div>
-                  <b style={{ display: "block", marginTop: 8 }}>{title}</b>
-                  <div
-                    style={{
-                      fontSize: 25,
-                      fontWeight: 700,
-                      margin: "8px 0",
-                      color: "#087f9e",
-                    }}
-                  >
-                    {metric}
-                  </div>
-                  <small style={{ color: "#718a91", lineHeight: 1.4 }}>
-                    {note}
-                  </small>
-                </article>
+                <button key={title} onClick={() => setActivePanel(title)}
+                  style={{...panel, textAlign:"left", border:"1px solid #dcecef", cursor:"pointer", background:"#fff"}}>
+                  <div style={{fontSize:24}}>{icon}</div>
+                  <b style={{display:"block", marginTop:8}}>{title}</b>
+                  <div style={{fontSize:25,fontWeight:700,margin:"8px 0",color:"#087f9e"}}>{metric}</div>
+                  <small style={{color:"#718a91",lineHeight:1.4}}>{note}</small>
+                  <div style={{marginTop:10,color:"#08a7cf",fontWeight:700}}>Apri report →</div>
+                </button>
               );
             })}
           </section>
@@ -338,6 +372,60 @@ export default function RSControlCenter() {
               </article>
             ))}
           </section>
+
+          {activePanel && (
+            <section style={{...panel, marginTop:22, borderLeft:"5px solid #08a7cf"}}>
+              <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:10}}>
+                <div>
+                  <h2 style={{margin:"0 0 5px"}}>📊 Report: {activePanel}</h2>
+                  <div style={{color:"#63818a"}}>Sezione interattiva RSPC.</div>
+                </div>
+                <button onClick={()=>setActivePanel("")} style={{padding:"8px 12px",border:0,borderRadius:9}}>Chiudi</button>
+              </div>
+              <div style={{marginTop:16,display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(180px,1fr))",gap:10}}>
+                <div style={{padding:14,borderRadius:12,background:"#f3fbfd"}}><b>Ordini</b><div style={{fontSize:24,marginTop:6}}>{value("orders")}</div></div>
+                <div style={{padding:14,borderRadius:12,background:"#f3fbfd"}}><b>Prodotti</b><div style={{fontSize:24,marginTop:6}}>{value("products")}</div></div>
+                <div style={{padding:14,borderRadius:12,background:"#f3fbfd"}}><b>Ricerche</b><div style={{fontSize:24,marginTop:6}}>{insights?.totals?.searches ?? "—"}</div></div>
+                <div style={{padding:14,borderRadius:12,background:"#f3fbfd"}}><b>Desideri</b><div style={{fontSize:24,marginTop:6}}>{insights?.totals?.wishlist ?? "—"}</div></div>
+                <div style={{padding:14,borderRadius:12,background:"#f3fbfd"}}><b>Nella Rete</b><div style={{fontSize:24,marginTop:6}}>{insights?.totals?.net_add ?? "—"}</div></div>
+              </div>
+              <p style={{color:"#718a91",fontSize:13,marginBottom:0}}>I dati finanziari reali restano riservati al CEO e non vengono mostrati ai collaboratori tramite questo spazio.</p>
+            </section>
+          )}
+
+          <h2 style={{ marginTop: 30 }}>💡 Idee · Riunioni · Messaggi riservati</h2>
+          <section style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))",gap:12}}>
+            <article style={panel}>
+              <button onClick={()=>setActivePanel("Aggiungi idee")} style={{width:"100%",padding:12,border:0,borderRadius:10,background:"#087f9e",color:"white",fontWeight:700}}>💡 Aggiungi idee</button>
+              <input value={ideaTitle} onChange={e=>setIdeaTitle(e.target.value)} placeholder="Titolo idea" style={{marginTop:10,width:"100%",boxSizing:"border-box",padding:11,borderRadius:9,border:"1px solid #d7e5e9"}} />
+              <textarea value={ideaBody} onChange={e=>setIdeaBody(e.target.value)} placeholder="Scrivi l'idea..." rows={4} style={{marginTop:8,width:"100%",boxSizing:"border-box",padding:11,borderRadius:9,border:"1px solid #d7e5e9"}} />
+              <select value={ideaAudience} onChange={e=>setIdeaAudience(e.target.value)} style={{marginTop:8,width:"100%",padding:11,borderRadius:9}}>
+                <option value="all">Tutti i collaboratori</option><option value="collaborators">Solo collaboratori</option><option value="ceo">Solo CEO</option><option value="selected">Solo selezionati</option>
+              </select>
+              {ideaAudience==="selected" && <div style={{marginTop:8}}>{collaborators.filter(c=>c.user_id).map(c=><label key={c.id} style={{display:"block"}}><input type="checkbox" checked={ideaRecipients.includes(c.user_id)} onChange={e=>setIdeaRecipients(p=>e.target.checked?[...p,c.user_id]:p.filter(x=>x!==c.user_id))}/>{c.full_name||c.email}</label>)}</div>}
+              <button onClick={addIdea} style={{marginTop:9,padding:10,border:0,borderRadius:9}}>Invia idea</button>
+            </article>
+
+            <article style={panel}>
+              <button onClick={()=>setActivePanel("Riunioni / Video call")} style={{width:"100%",padding:12,border:0,borderRadius:10,background:"#168454",color:"white",fontWeight:700}}>🎥 Riunione / Video call</button>
+              <input value={meetingTitle} onChange={e=>setMeetingTitle(e.target.value)} placeholder="Titolo riunione" style={{marginTop:10,width:"100%",boxSizing:"border-box",padding:11,borderRadius:9,border:"1px solid #d7e5e9"}} />
+              <input type="datetime-local" value={meetingStart} onChange={e=>setMeetingStart(e.target.value)} style={{marginTop:8,width:"100%",padding:10}} />
+              <input type="datetime-local" value={meetingEnd} onChange={e=>setMeetingEnd(e.target.value)} style={{marginTop:8,width:"100%",padding:10}} />
+              <input value={meetingUrl} onChange={e=>setMeetingUrl(e.target.value)} placeholder="Link video call (es. Meet/Zoom)" style={{marginTop:8,width:"100%",boxSizing:"border-box",padding:11,borderRadius:9,border:"1px solid #d7e5e9"}} />
+              <textarea value={meetingDescription} onChange={e=>setMeetingDescription(e.target.value)} placeholder="Agenda / note" rows={2} style={{marginTop:8,width:"100%",boxSizing:"border-box",padding:11,borderRadius:9,border:"1px solid #d7e5e9"}} />
+              <div style={{marginTop:8}}><b>Partecipanti</b>{collaborators.filter(c=>c.user_id).map(c=><label key={c.id} style={{display:"block"}}><input type="checkbox" checked={meetingParticipants.includes(c.user_id)} onChange={e=>setMeetingParticipants(p=>e.target.checked?[...p,c.user_id]:p.filter(x=>x!==c.user_id))}/>{c.full_name||c.email}</label>)}</div>
+              <button onClick={scheduleMeeting} style={{marginTop:9,padding:10,border:0,borderRadius:9}}>Programma riunione</button>
+            </article>
+
+            <article style={panel}>
+              <button onClick={()=>setActivePanel("Messaggi segreti")} style={{width:"100%",padding:12,border:0,borderRadius:10,background:"#6b3f8f",color:"white",fontWeight:700}}>🔐 Messaggio segreto</button>
+              <input value={secretSubject} onChange={e=>setSecretSubject(e.target.value)} placeholder="Oggetto" style={{marginTop:10,width:"100%",boxSizing:"border-box",padding:11,borderRadius:9,border:"1px solid #d7e5e9"}} />
+              <textarea value={secretBody} onChange={e=>setSecretBody(e.target.value)} placeholder="Messaggio riservato..." rows={4} style={{marginTop:8,width:"100%",boxSizing:"border-box",padding:11,borderRadius:9,border:"1px solid #d7e5e9"}} />
+              <div style={{marginTop:8}}><b>Chi può leggerlo?</b>{collaborators.filter(c=>c.user_id).map(c=><label key={c.id} style={{display:"block"}}><input type="checkbox" checked={secretRecipients.includes(c.user_id)} onChange={e=>setSecretRecipients(p=>e.target.checked?[...p,c.user_id]:p.filter(x=>x!==c.user_id))}/>{c.full_name||c.email}</label>)}</div>
+              <button onClick={sendSecretMessage} style={{marginTop:9,padding:10,border:0,borderRadius:9}}>Invia messaggio segreto</button>
+            </article>
+          </section>
+          {actionMessage && <div style={{...panel,marginTop:12,color:"#63818a"}}>{actionMessage}</div>}
 
           <h2 style={{ marginTop: 26 }}>Gestione ecosistema</h2>
           <section
