@@ -108,7 +108,8 @@ export default function RSControlCenter() {
         products: results[0].error ? null : results[0].count,
         orders: results[1].error ? null : results[1].count,
       });
-      await loadInsights();\n      await loadCollaborators();
+      await loadInsights();
+      await loadCollaborators();
     }
 
     load();
