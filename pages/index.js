@@ -100,19 +100,36 @@ export default function Home() {
   const [rsAdmin, setRsAdmin] = useState(false);
 
   const categorie = [
+    'DONNA','Abbigliamento Donna','Scarpe Donna','Borse & Accessori Donna','Gioielli & Orologi Donna','Bellezza & Cura personale Donna','Sport & Benessere Donna',
+    'UOMO','Abbigliamento Uomo','Scarpe Uomo','Borse & Accessori Uomo','Gioielli & Orologi Uomo','Bellezza & Cura personale Uomo','Sport & Benessere Uomo',
+    'BAMBINI','Abbigliamento Bambini','Scarpe Bambini','Borse & Accessori Bambini','Gioielli & Orologi Bambini','Giochi & Giocattoli','Prima infanzia','Sport & Benessere Bambini',
+    'GIOCHI & TEMPO LIBERO','Giochi & Giocattoli','Hobby & Modellismo','Gadget & Regali','Viaggi & Valigeria',
+    'CASA & ARREDAMENTO','Casa & Arredamento','Mobili','Cucina','Elettrodomestici','Fai da te & Ferramenta','Giardino','Illuminazione','Tessile casa',
+    'TECNOLOGIA','Elettronica & Informatica','Smartphone & Telefonia','Computer & Notebook','Gaming','Console & Videogiochi','Fotografia & Video','Musica & Audio','TV & Home cinema',
+    'SPORT & BENESSERE','Sport','Arti marziali & Combattimento','Fitness & Palestra','Outdoor & Avventura','Pesca','Caccia & Accessori consentiti','Integratori',
     'AUTO & VEICOLI','Auto','Moto','Scooter','Harley & Custom','Camion & Veicoli commerciali','Trattori & Agricoltura','Edilizia & Macchine da lavoro','Ricambi & Accessori auto','Ricambi & Accessori moto',
     'NAUTICA & TRASPORTI','Nautica','Navale','Barche & Gommoni','Motori marini','Aeronautica','Militaria & Storia',
-    'SPORT & BENESSERE','Sport','Arti marziali & Combattimento','Fitness & Palestra','Outdoor & Avventura','Pesca','Caccia & Accessori consentiti','Integratori',
-    'TECNOLOGIA','Elettronica & Informatica','Smartphone & Telefonia','Computer & Notebook','Gaming','Console & Videogiochi','Fotografia & Video','Musica & Audio','TV & Home cinema',
-    'MODA & ACCESSORI','Abbigliamento','Scarpe','Borse & Accessori','Gioielli & Orologi','Bellezza & Cura personale',
-    'CASA & VITA','Casa & Arredamento','Cucina','Elettrodomestici','Fai da te & Ferramenta','Giardino','Illuminazione','Tessile casa',
-    'FAMIGLIA & ANIMALI','Animali','Bambini & Giocattoli','Prima infanzia',
-    'CULTURA & TEMPO LIBERO','Libri & Cultura','Arte','Antiquariato','Collezionismo','Hobby & Modellismo','Viaggi & Valigeria',
+    'CULTURA & COLLEZIONISMO','Libri & Cultura','Arte','Antiquariato','Collezionismo','Vintage & Second hand',
     'LAVORO & IMPRESA','Ufficio & Professionale','Industria','Attrezzature professionali','Energia & Smart Home','Servizi digitali',
-    'COLLEZIONI & REGALI','Gadget & Regali','Vintage & Second hand','Altro',
+    'ALTRO','Altro',
     '18🔞 ADULTI','18🔞 Sex Toys'
   ];
 
+  const categorieSezioni = [
+    ['👩 DONNA', ['Abbigliamento Donna','Scarpe Donna','Borse & Accessori Donna','Gioielli & Orologi Donna','Bellezza & Cura personale Donna','Sport & Benessere Donna']],
+    ['👨 UOMO', ['Abbigliamento Uomo','Scarpe Uomo','Borse & Accessori Uomo','Gioielli & Orologi Uomo','Bellezza & Cura personale Uomo','Sport & Benessere Uomo']],
+    ['👶 BAMBINI', ['Abbigliamento Bambini','Scarpe Bambini','Borse & Accessori Bambini','Gioielli & Orologi Bambini','Giochi & Giocattoli','Prima infanzia','Sport & Benessere Bambini']],
+    ['🧸 GIOCHI & TEMPO LIBERO', ['Giochi & Giocattoli','Hobby & Modellismo','Gadget & Regali','Viaggi & Valigeria']],
+    ['🏠 CASA & ARREDAMENTO', ['Casa & Arredamento','Mobili','Cucina','Elettrodomestici','Fai da te & Ferramenta','Giardino','Illuminazione','Tessile casa']],
+    ['📱 TECNOLOGIA', ['Elettronica & Informatica','Smartphone & Telefonia','Computer & Notebook','Gaming','Console & Videogiochi','Fotografia & Video','Musica & Audio','TV & Home cinema']],
+    ['⚽ SPORT & BENESSERE', ['Sport','Arti marziali & Combattimento','Fitness & Palestra','Outdoor & Avventura','Pesca','Caccia & Accessori consentiti','Integratori']],
+    ['🚗 AUTO & VEICOLI', ['Auto','Moto','Scooter','Harley & Custom','Camion & Veicoli commerciali','Trattori & Agricoltura','Edilizia & Macchine da lavoro','Ricambi & Accessori auto','Ricambi & Accessori moto']],
+    ['🚤 NAUTICA & TRASPORTI', ['Nautica','Navale','Barche & Gommoni','Motori marini','Aeronautica','Militaria & Storia']],
+    ['📚 CULTURA & COLLEZIONISMO', ['Libri & Cultura','Arte','Antiquariato','Collezionismo','Vintage & Second hand']],
+    ['💼 LAVORO & IMPRESA', ['Ufficio & Professionale','Industria','Attrezzature professionali','Energia & Smart Home','Servizi digitali']],
+    ['🎁 ALTRO', ['Altro']],
+    ['18🔞 ADULTI', ['18🔞 Sex Toys']]
+  ];
   const areeRiverSpend = [
     ['Profilo','/profilo'],
     ['RiverSpendShop','/'],
@@ -522,11 +539,18 @@ export default function Home() {
           {menuCategorie && (
             <div className="mx-auto mt-3 max-h-[45vh] w-full max-w-6xl overflow-y-auto rounded-2xl border border-teal-800 bg-slate-900 p-4 shadow-2xl">
               <div className="mb-3 flex items-center justify-between"><strong className="text-teal-200">{t('categories')}</strong><button onClick={() => setMenuCategorie(false)} aria-label={t('close')}>✕</button></div>
-              <div className="grid grid-cols-1 gap-1">
-                {categorie.map((cat) => (
-                  <a key={cat} href={`/?category=${encodeURIComponent(cat)}`} onClick={() => setMenuCategorie(false)} className="rounded-lg px-3 py-2 text-sm text-slate-100 hover:bg-teal-900">
-                    {cat} <span className="float-right text-teal-300">›</span>
-                  </a>
+              <div className="space-y-3">
+                {categorieSezioni.map(([section, items]) => (
+                  <div key={section} className="rounded-xl border border-teal-700/50 bg-slate-800/60 p-2">
+                    <div className="px-3 py-2 text-sm font-bold tracking-wide text-teal-200">{section}</div>
+                    <div className="grid grid-cols-1 gap-1">
+                      {items.map((cat) => (
+                        <a key={cat} href={`/?category=${encodeURIComponent(cat)}`} onClick={() => setMenuCategorie(false)} className="rounded-lg px-4 py-2 text-sm text-slate-100 hover:bg-teal-900">
+                          {cat} <span className="float-right text-teal-300">›</span>
+                        </a>
+                      ))}
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>
