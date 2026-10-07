@@ -119,22 +119,22 @@ export default function Checkout() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-8 text-white">
+    <main className="min-h-screen bg-white px-4 py-8 text-slate-900">
       <div className="mx-auto max-w-2xl">
-        <Link href="/" className="text-teal-300 underline">← Torna al RiverSpendShop</Link>
+        <Link href="/" className="text-teal-600 underline">← Torna al RiverSpendShop</Link>
 
-        <section className="mt-6 rounded-3xl border border-teal-800 bg-slate-900 p-6 shadow-xl sm:p-8">
-          <p className="text-sm font-black uppercase tracking-[0.25em] text-teal-300">RiverSpend Pay</p>
+        <section className="mt-6 rounded-3xl border border-teal-200 bg-white p-6 shadow-xl sm:p-8">
+          <p className="text-sm font-black uppercase tracking-[0.25em] text-teal-600">RiverSpend Pay</p>
           <h1 className="mt-2 text-3xl font-black sm:text-4xl">💳 Checkout RiverSpend</h1>
-          <p className="mt-3 leading-7 text-slate-300">
+          <p className="mt-3 leading-7 text-slate-600">
             Qui nascerà il flusso ufficiale di pagamento RiverSpend: ordine, metodo di pagamento,
             conferma, protezione Shield e gestione della spedizione.
           </p>
 
-          <div className="mt-6 rounded-2xl border border-slate-700 bg-slate-950/70 p-4">
+          <div className="mt-6 rounded-2xl border border-teal-100 bg-white p-4">
             <h2 className="font-bold">🛒 Riepilogo</h2>
             {items.length === 0 ? (
-              <p className="mt-2 text-sm text-slate-400">La tua Rete non contiene ancora prodotti da portare al checkout.</p>
+              <p className="mt-2 text-sm text-slate-500">La tua Rete non contiene ancora prodotti da portare al checkout.</p>
             ) : (
               <>
                 <div className="mt-3 space-y-2">
@@ -145,9 +145,9 @@ export default function Checkout() {
                     </div>
                   ))}
                 </div>
-                <div className="mt-4 flex justify-between border-t border-slate-700 pt-3 text-lg font-black">
+                <div className="mt-4 flex justify-between border-t border-teal-100 pt-3 text-lg font-black">
                   <span>Totale</span>
-                  <span className="text-teal-300">€ {items.reduce((sum, item) => sum + Number(item.price || 0), 0).toFixed(2)}</span>
+                  <span className="text-teal-600">€ {items.reduce((sum, item) => sum + Number(item.price || 0), 0).toFixed(2)}</span>
                 </div>
               </>
             )}
@@ -160,52 +160,52 @@ export default function Checkout() {
               ['🛡️', 'RiverSpend Shield', 'Protezione dell’acquirente'],
               ['💳', 'Pagamento', 'Provider di pagamento sicuro'],
             ].map(([icon, title, text]) => (
-              <article key={title} className="rounded-2xl border border-slate-700 bg-slate-950/70 p-4">
+              <article key={title} className="rounded-2xl border border-teal-100 bg-white p-4">
                 <div className="text-2xl">{icon}</div>
                 <h2 className="mt-2 font-bold">{title}</h2>
-                <p className="mt-1 text-sm text-slate-400">{text}</p>
+                <p className="mt-1 text-sm text-slate-500">{text}</p>
               </article>
             ))}
           </div>
 
-          <div className="mt-6 rounded-2xl border border-amber-500/40 bg-amber-950/20 p-4">
-            <p className="text-sm font-semibold text-amber-200">
+          <div className="mt-6 rounded-2xl border border-amber-500/40 bg-amber-50 p-4">
+            <p className="text-sm font-semibold text-amber-700">
               {user ? 'Account RiverSpend collegato' : 'Accedi al tuo account RiverSpend per procedere con un ordine.'}
             </p>
             {!user && (
               <form onSubmit={sendLoginLink} className="mt-4 flex flex-col gap-2 sm:flex-row">
-                <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="La tua email" autoComplete="email" className="min-w-0 flex-1 rounded-xl border border-slate-600 bg-slate-950 px-4 py-3 text-white outline-none focus:border-teal-400" />
-                <button type="submit" disabled={sendingLink} className="rounded-xl bg-teal-500 px-4 py-3 font-bold text-slate-950 disabled:opacity-60">
+                <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="La tua email" autoComplete="email" className="min-w-0 flex-1 rounded-xl border border-slate-600 bg-white px-4 py-3 text-white outline-none focus:border-teal-500" />
+                <button type="submit" disabled={sendingLink} className="rounded-xl bg-teal-500 px-4 py-3 font-bold text-white disabled:opacity-60">
                   {sendingLink ? 'Invio…' : '🔐 Accedi'}
                 </button>
               </form>
             )}
             {authMessage && <p className="mt-2 text-sm text-slate-200">{authMessage}</p>}
-            <p className="mt-2 text-xs text-slate-400">
+            <p className="mt-2 text-xs text-slate-500">
               Il pagamento reale verrà collegato in un passaggio successivo, dopo aver verificato il flusso ordine.
             </p>
           </div>
 
-          {error && <div className="mt-5 rounded-2xl border border-red-500/40 bg-red-950/30 p-4 text-sm text-red-200">{error}</div>}
-          {orderId && <div className="mt-5 rounded-2xl border border-teal-500/40 bg-teal-950/30 p-4 text-sm text-teal-100">✅ Ordine creato. ID: <span className="font-mono">{orderId}</span><br />Stato: <strong>in attesa di pagamento</strong>.</div>}
-          {sandboxMessage && <div className="mt-4 rounded-2xl border border-amber-500/40 bg-amber-950/20 p-4 text-sm text-amber-100">{sandboxMessage}</div>}
+          {error && <div className="mt-5 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">{error}</div>}
+          {orderId && <div className="mt-5 rounded-2xl border border-teal-200 bg-teal-50 p-4 text-sm text-teal-700">✅ Ordine creato. ID: <span className="font-mono">{orderId}</span><br />Stato: <strong>in attesa di pagamento</strong>.</div>}
+          {sandboxMessage && <div className="mt-4 rounded-2xl border border-amber-500/40 bg-amber-50 p-4 text-sm text-amber-100">{sandboxMessage}</div>}
 
           <div className="mt-6 flex flex-wrap gap-3">
             {user && items.length > 0 && !orderId && (
-              <button type="button" onClick={createOrder} disabled={creating} className="rounded-xl bg-teal-500 px-4 py-3 font-bold text-slate-950 disabled:opacity-60">
+              <button type="button" onClick={createOrder} disabled={creating} className="rounded-xl bg-teal-500 px-4 py-3 font-bold text-white disabled:opacity-60">
                 {creating ? 'Creazione ordine…' : '🧾 Crea ordine'}
               </button>
             )}
 
             {orderId && (
-              <button type="button" onClick={simulatePayment} disabled={simulatingPayment} className="rounded-xl border border-amber-400 bg-amber-500/10 px-4 py-3 font-bold text-amber-200 disabled:opacity-60">
+              <button type="button" onClick={simulatePayment} disabled={simulatingPayment} className="rounded-xl border border-amber-400 bg-amber-500/10 px-4 py-3 font-bold text-amber-700 disabled:opacity-60">
                 {simulatingPayment ? 'Test pagamento…' : '🧪 Simula pagamento — SOLO TEST'}
               </button>
             )}
-            <Link href="/rete" className="rounded-xl border border-teal-700 px-4 py-3 font-bold text-teal-100">
+            <Link href="/rete" className="rounded-xl border border-teal-300 px-4 py-3 font-bold text-teal-700">
               🕸️ Vai alla Rete
             </Link>
-            <Link href="/servizi/pay" className="rounded-xl bg-teal-500 px-4 py-3 font-bold text-slate-950">
+            <Link href="/servizi/pay" className="rounded-xl bg-teal-500 px-4 py-3 font-bold text-white">
               RiverSpend Pay
             </Link>
           </div>
