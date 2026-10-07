@@ -393,6 +393,13 @@ export default function RSControlCenter() {
             </section>
           )}
 
+          <section style={{...panel,marginTop:24,marginBottom:18,textAlign:"center",background:"linear-gradient(135deg,#ffffff,#eefbfe)"}}>
+            <div style={{fontSize:28,fontWeight:800,color:"#12343b"}}>🌊 RiverSpend</div>
+            <div style={{fontSize:18,fontWeight:800,color:"#087f9e",letterSpacing:2,marginTop:3}}>MEET</div>
+            <div style={{color:"#63818a",marginTop:6}}>Video conference privata dell'ecosistema RiverSpend</div>
+            <button onClick={()=>setActivePanel("RiverSpend Meet")} style={{marginTop:12,padding:"11px 18px",border:0,borderRadius:10,background:"#087f9e",color:"#fff",fontWeight:700,cursor:"pointer"}}>🎥 Apri RiverSpend Meet</button>
+          </section>
+
           <h2 style={{ marginTop: 30 }}>💡 Idee · Riunioni · Messaggi riservati</h2>
           <section style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))",gap:12}}>
             <article style={panel}>
