@@ -219,24 +219,35 @@ export default function Checkout() {
           {orderId && <div className="mt-5 rounded-2xl border border-teal-200 bg-teal-50 p-4 text-sm text-teal-700">✅ Ordine creato. ID: <span className="font-mono">{orderId}</span><br />Stato: <strong>in attesa di pagamento</strong>.</div>}
           {sandboxMessage && <div className="mt-4 rounded-2xl border border-amber-500/40 bg-amber-50 p-4 text-sm text-amber-100">{sandboxMessage}</div>}
 
-          <div className="mt-6 flex flex-wrap gap-3">
-            {user && items.length > 0 && !orderId && (
-              <button type="button" onClick={createOrder} disabled={creating} className="rounded-xl bg-teal-500 px-4 py-3 font-bold text-white disabled:opacity-60">
-                {creating ? 'Creazione ordine…' : '🧾 Crea ordine'}
-              </button>
-            )}
+          <div className="mt-6 rounded-2xl border border-teal-100 bg-white p-4">
+            <div className="flex flex-wrap gap-3">
+              {user && items.length > 0 && !orderId && (
+                <button type="button" onClick={createOrder} disabled={creating} className="rounded-xl bg-teal-500 px-4 py-3 font-bold text-white disabled:opacity-60">
+                  {creating ? 'Creazione ordine…' : '🧾 Crea ordine'}
+                </button>
+              )}
 
-            {orderId && selectedPayment === 'sandbox' && (
-              <button type="button" onClick={simulatePayment} disabled={simulatingPayment} className="rounded-xl border border-amber-400 bg-amber-500/10 px-4 py-3 font-bold text-amber-700 disabled:opacity-60">
-                {simulatingPayment ? 'Test pagamento…' : '🧪 Simula pagamento — SOLO TEST'}
-              </button>
+              {selectedPayment === 'sandbox' && (
+                <button
+                  type="button"
+                  onClick={simulatePayment}
+                  disabled={!orderId || simulatingPayment}
+                  className="rounded-xl border border-amber-400 bg-amber-500 px-5 py-3 font-black text-white disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  {simulatingPayment ? '⏳ Test pagamento…' : '🧪 Paga ora — SOLO TEST'}
+                </button>
+              )}
+
+              <Link href="/rete" className="rounded-xl border border-teal-300 px-4 py-3 font-bold text-teal-700">
+                🕸️ Vai alla Rete
+              </Link>
+              <Link href="/servizi/pay" className="rounded-xl bg-teal-500 px-4 py-3 font-bold text-white">
+                RiverSpend Pay
+              </Link>
+            </div>
+            {!orderId && user && items.length > 0 && (
+              <p className="mt-3 text-xs text-slate-500">Prima premi <strong>Crea ordine</strong>, poi si attiva <strong>🧪 Paga ora — SOLO TEST</strong>.</p>
             )}
-            <Link href="/rete" className="rounded-xl border border-teal-300 px-4 py-3 font-bold text-teal-700">
-              🕸️ Vai alla Rete
-            </Link>
-            <Link href="/servizi/pay" className="rounded-xl bg-teal-500 px-4 py-3 font-bold text-white">
-              RiverSpend Pay
-            </Link>
           </div>
         </section>
       </div>
