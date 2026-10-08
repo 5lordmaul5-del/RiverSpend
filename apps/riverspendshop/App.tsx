@@ -25,6 +25,15 @@ export default function App() {
   const [error, setError] = useState('');
   const [query, setQuery] = useState('');
   const [media, setMedia] = useState<MediaAsset[]>([]);
+  const [showPublish, setShowPublish] = useState(false);
+  const [title, setTitle] = useState('');
+  const [price, setPrice] = useState('');
+  const [description, setDescription] = useState('');
+  const [condition, setCondition] = useState('Usato');
+  const [category, setCategory] = useState('Elettronica');
+  const [locality, setLocality] = useState('');
+  const [province, setProvince] = useState('');
+  const [publishMessage, setPublishMessage] = useState('');
 
   useEffect(() => {
     let active = true;
@@ -130,10 +139,62 @@ export default function App() {
           <Text style={styles.heroTitle}>Il tuo mercato.</Text>
           <Text style={styles.heroTitle}>Il tuo flusso.</Text>
           <Text style={styles.heroText}>Scopri prodotti, occasioni e nuovi arrivi nella tua Rete.</Text>
-          <Pressable style={styles.heroButton} onPress={openMediaMenu}>
-            <Text style={styles.heroButtonText}>📷 Aggiungi foto / video</Text>
-          </Pressable>
+          <View style={styles.heroActions}>
+            <Pressable style={styles.heroButton} onPress={() => setShowPublish(true)}>
+              <Text style={styles.heroButtonText}>📦 Pubblica prodotto</Text>
+            </Pressable>
+            <Pressable style={styles.heroButtonSecondary} onPress={openMediaMenu}>
+              <Text style={styles.heroButtonSecondaryText}>📷 Foto / video</Text>
+            </Pressable>
+          </View>
         </View>
+
+        {showPublish && (
+          <View style={styles.publishCard}>
+            <View style={styles.mediaHead}>
+              <View>
+                <Text style={styles.mediaTitle}>📦 Pubblica prodotto</Text>
+                <Text style={styles.mediaSub}>Compila l'annuncio direttamente da RiverSpendShop.</Text>
+              </View>
+              <Pressable onPress={() => setShowPublish(false)}><Text style={styles.closeText}>×</Text></Pressable>
+            </View>
+            <TextInput value={title} onChangeText={setTitle} placeholder="Titolo prodotto" placeholderTextColor="#789096" style={styles.field} />
+            <TextInput value={price} onChangeText={setPrice} placeholder="Prezzo €" placeholderTextColor="#789096" keyboardType="decimal-pad" style={styles.field} />
+            <TextInput value={description} onChangeText={setDescription} placeholder="Descrizione" placeholderTextColor="#789096" multiline style={[styles.field, styles.textArea]} />
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.choiceRow}>
+              {['Nuovo','Usato','Come nuovo'].map((item) => (
+                <Pressable key={item} onPress={() => setCondition(item)} style={[styles.choice, condition === item && styles.choiceActive]}>
+                  <Text style={[styles.choiceText, condition === item && styles.choiceTextActive]}>{item}</Text>
+                </Pressable>
+              ))}
+            </ScrollView>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.choiceRow}>
+              {['Elettronica','Moda','Casa','Sport','Gaming','Altro'].map((item) => (
+                <Pressable key={item} onPress={() => setCategory(item)} style={[styles.choice, category === item && styles.choiceActive]}>
+                  <Text style={[styles.choiceText, category === item && styles.choiceTextActive]}>{item}</Text>
+                </Pressable>
+              ))}
+            </ScrollView>
+            <View style={styles.twoFields}>
+              <TextInput value={locality} onChangeText={setLocality} placeholder="Località" placeholderTextColor="#789096" style={[styles.field, styles.halfField]} />
+              <TextInput value={province} onChangeText={setProvince} placeholder="Provincia" placeholderTextColor="#789096" style={[styles.field, styles.halfField]} />
+            </View>
+            <Pressable style={styles.mediaAddLarge} onPress={openMediaMenu}>
+              <Text style={styles.mediaAddText}>📷 Aggiungi fino a 20 foto/video</Text>
+            </Pressable>
+            {media.length > 0 && <Text style={styles.mediaSub}>{media.length}/20 media pronti per l'annuncio.</Text>}
+            <Pressable style={styles.publishButton} onPress={() => {
+              if (!title.trim() || !price.trim()) {
+                setPublishMessage('Inserisci almeno titolo e prezzo.');
+                return;
+              }
+              setPublishMessage('Annuncio preparato. Il collegamento sicuro al backend verrà attivato nel prossimo blocco.');
+            }}>
+              <Text style={styles.publishButtonText}>🕸️ Prepara pubblicazione</Text>
+            </Pressable>
+            {!!publishMessage && <Text style={styles.publishMessage}>{publishMessage}</Text>}
+          </View>
+        )}
 
         {media.length > 0 && (
           <View style={styles.mediaCard}>
