@@ -623,7 +623,21 @@ export default function Home() {
                     <button type="button" disabled={rsFortuneSpinning} onClick={(e) => { e.stopPropagation(); giraRsFortune(); }} className="mt-2 shrink-0 rounded-full bg-amber-300 px-4 py-2 text-xs font-extrabold text-amber-950 disabled:opacity-50">{rsFortuneSpinning ? '🎡 Gira…' : '🎡 Gira la ruota'}</button>
                     {rsFortunePrize && <div className="mt-2 max-w-full rounded-xl border border-amber-400/50 bg-amber-950/50 px-2 py-1 text-[10px] font-extrabold text-amber-100">{rsFortunePrize}</div>}
                   </div>
-                ) : <p className="mt-3 px-1 text-[11px] leading-4 text-slate-100">Tocca per aprire la ruota.</p>}
+                ) : (
+                  <div className="mt-2 flex flex-1 flex-col items-center justify-center overflow-hidden">
+                    <div className="relative h-[145px] w-[145px] shrink-0">
+                      <div className="absolute -top-1 left-1/2 z-20 -translate-x-1/2 text-base">🔻</div>
+                      <div className="rs-fortune-wheel relative h-[145px] w-[145px] rounded-full border-4 border-amber-300 shadow-[0_0_20px_rgba(251,191,36,.35)]">
+                        <div className="rs-fortune-labels" aria-hidden="true">
+                          <span>💰<br/>5 RM</span><span>💰<br/>10 RM</span><span>💰<br/>20 RM</span><span>🚚<br/>FREE</span>
+                          <span>🏷️<br/>5%</span><span>🔥<br/>BOOST</span><span>🎁<br/>SORPRESA</span><span>⭐<br/>500 RSP</span>
+                        </div>
+                        <div className="rs-fortune-center">RS<br/>FORTUNE</div>
+                      </div>
+                    </div>
+                    <p className="mt-2 px-1 text-[10px] leading-4 text-slate-100">Tocca per aprire e girare la ruota.</p>
+                  </div>
+                )}
               </button>
             </section>
 
