@@ -13,8 +13,18 @@ import {
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import * as ImagePicker from 'expo-image-picker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { createClient } from '@supabase/supabase-js';
+import * as Crypto from 'expo-crypto';
 
 const API_URL = 'https://river-spend-mauryle75-8055s-projects.vercel.app/api/products';
+const SUPABASE_URL = 'https://rkwqmteuxpdgdhgowbpn.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY = process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY || '';
+const supabase = SUPABASE_PUBLISHABLE_KEY
+  ? createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+      auth: { storage: AsyncStorage, autoRefreshToken: true, persistSession: true, detectSessionInUrl: false },
+    })
+  : null;
 const categories = ['🔥 In evidenza', '📱 Elettronica', '👟 Moda', '🏠 Casa', '🚲 Sport', '🎮 Gaming'];
 
 type MediaAsset = ImagePicker.ImagePickerAsset;
@@ -34,6 +44,13 @@ export default function App() {
   const [locality, setLocality] = useState('');
   const [province, setProvince] = useState('');
   const [publishMessage, setPublishMessage] = useState('');
+  const [user, setUser] = useState<any>(null);
+  const [showAuth, setShowAuth] = useState(false);
+  const [authEmail, setAuthEmail] = useState('');
+  const [authPassword, setAuthPassword] = useState('');
+  const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
+  const [authMessage, setAuthMessage] = useState('');
+  const [authLoading, setAuthLoading] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -47,6 +64,153 @@ export default function App() {
       .finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
   }, []);
+
+  useEffect(() => {
+    if (!supabase) return;
+    supabase.auth.getSession().then(({ data }) => {
+      if (activeSession) setUser(data.session?.user ?? null);
+    });
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+    let activeSession = true;
+    return () => {
+      activeSession = false;
+      listener.subscription.unsubscribe();
+    };
+  }, []);
+
+  const handleAuth = async () => {
+    if (!supabase) {
+      setAuthMessage('Configurazione Supabase non ancora inserita nell’app.');
+      return;
+    }
+    if (!authEmail.trim() || !authPassword) {
+      setAuthMessage('Inserisci email e password.');
+      return;
+    }
+    setAuthLoading(true);
+    setAuthMessage('');
+    try {
+      const result = authMode === 'login'
+        ? await supabase.auth.signInWithPassword({ email: authEmail.trim(), password: authPassword })
+        : await supabase.auth.signUp({ email: authEmail.trim(), password: authPassword });
+      if (result.error) throw result.error;
+      if (authMode === 'signup' && !result.data.session) {
+        setAuthMessage('Account creato. Controlla la tua email per confermare l’account.');
+      } else {
+        setAuthMessage('Accesso effettuato.');
+        setShowAuth(false);
+      }
+    } catch (err: any) {
+      setAuthMessage(err?.message || 'Impossibile completare l’accesso.');
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
+  const signOut = async () => {
+    if (supabase) await supabase.auth.signOut();
+  };
+
+  const refreshProducts = async () => {
+    try {
+      const response = await fetch(API_URL);
+      if (!response.ok) return;
+      const data = await response.json();
+      setProducts(Array.isArray(data) ? data : []);
+    } catch {}
+  };
+
+  const publishProduct = async () => {
+    if (!title.trim() || !price.trim()) {
+      setPublishMessage('Inserisci almeno titolo e prezzo.');
+      return;
+    }
+    if (!supabase) {
+      setPublishMessage('Supabase non è ancora configurato nell’app.');
+      return;
+    }
+    if (!user) {
+      setPublishMessage('Devi accedere al tuo account RiverSpend prima di pubblicare.');
+      setShowAuth(true);
+      return;
+    }
+
+    const numericPrice = Number(String(price).replace(',', '.'));
+    if (!Number.isFinite(numericPrice) || numericPrice < 0) {
+      setPublishMessage('Inserisci un prezzo valido.');
+      return;
+    }
+
+    setPublishMessage('Pubblicazione in corso…');
+    try {
+      const productId = Crypto.randomUUID();
+      const uploaded = [];
+
+      for (let index = 0; index < media.length; index += 1) {
+        const asset = media[index];
+        const response = await fetch(asset.uri);
+        const body = await response.arrayBuffer();
+        const isVideo = asset.type === 'video';
+        const mimeType = asset.mimeType || (isVideo ? 'video/mp4' : 'image/jpeg');
+        const extension = (asset.fileName?.split('.').pop() || (isVideo ? 'mp4' : 'jpg')).toLowerCase();
+        const path = `${user.id}/${productId}/${index + 1}.${extension}`;
+
+        const upload = await supabase.storage.from('product-images').upload(path, body, {
+          contentType: mimeType,
+          upsert: false,
+        });
+        if (upload.error) throw upload.error;
+
+        const publicUrl = supabase.storage.from('product-images').getPublicUrl(path).data.publicUrl;
+        uploaded.push({ media_type: isVideo ? 'video' : 'image', media_url: publicUrl, sort_order: index, seller_id: user.id });
+      }
+
+      const product = {
+        id: productId,
+        name: title.trim(),
+        price: numericPrice,
+        condition,
+        category,
+        description: description.trim(),
+        image: uploaded.find((item) => item.media_type === 'image')?.media_url || null,
+        seller_id: user.id,
+        seller_type: 'Privato',
+        locality: locality.trim() || null,
+        province: province.trim() || null,
+        original_language: 'it',
+        homepage_expires_at: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
+        status: 'published',
+      };
+
+      const productInsert = await supabase.from('products').insert(product);
+      if (productInsert.error) throw productInsert.error;
+
+      if (uploaded.length) {
+        const mediaInsert = await supabase.from('product_media').insert(
+          uploaded.map((item) => ({ product_id: productId, ...item }))
+        );
+        if (mediaInsert.error) {
+          await supabase.from('products').delete().eq('id', productId);
+          throw mediaInsert.error;
+        }
+      }
+
+      setPublishMessage('✅ Prodotto pubblicato nel RiverSpend Market.');
+      setTitle('');
+      setPrice('');
+      setDescription('');
+      setCondition('Usato');
+      setCategory('Elettronica');
+      setLocality('');
+      setProvince('');
+      setMedia([]);
+      await refreshProducts();
+    } catch (err: any) {
+      setPublishMessage(err?.message || 'Pubblicazione non riuscita.');
+    }
+  };
 
   const addCameraPhoto = async () => {
     const permission = await ImagePicker.requestCameraPermissionsAsync();
@@ -116,6 +280,12 @@ export default function App() {
           <Pressable style={styles.netButton}><Text style={styles.netIcon}>🕸️</Text><Text style={styles.netText}>La mia Rete</Text></Pressable>
         </View>
         <Text style={styles.tagline}>YOUR SHOP • YOUR FLOW</Text>
+        <View style={styles.accountBar}>
+          <Text style={styles.accountText}>{user ? `👤 ${user.email}` : '👤 Account RiverSpend non collegato'}</Text>
+          <Pressable style={styles.accountButton} onPress={() => user ? signOut() : setShowAuth(true)}>
+            <Text style={styles.accountButtonText}>{user ? 'Esci' : 'Accedi'}</Text>
+          </Pressable>
+        </View>
 
         <View style={styles.searchBox}>
           <Text style={styles.searchIcon}>⌕</Text>
@@ -148,6 +318,27 @@ export default function App() {
             </Pressable>
           </View>
         </View>
+
+        {showAuth && (
+          <View style={styles.publishCard}>
+            <View style={styles.mediaHead}>
+              <View>
+                <Text style={styles.mediaTitle}>{authMode === 'login' ? '🔐 Accedi a RiverSpend' : '🆕 Crea account RiverSpend'}</Text>
+                <Text style={styles.mediaSub}>Serve un account per pubblicare prodotti.</Text>
+              </View>
+              <Pressable onPress={() => setShowAuth(false)}><Text style={styles.closeText}>×</Text></Pressable>
+            </View>
+            <TextInput value={authEmail} onChangeText={setAuthEmail} autoCapitalize="none" keyboardType="email-address" placeholder="Email" placeholderTextColor="#789096" style={styles.field} />
+            <TextInput value={authPassword} onChangeText={setAuthPassword} secureTextEntry placeholder="Password" placeholderTextColor="#789096" style={styles.field} />
+            <Pressable style={styles.publishButton} onPress={handleAuth} disabled={authLoading}>
+              <Text style={styles.publishButtonText}>{authLoading ? 'Attendi…' : authMode === 'login' ? '🔐 Accedi' : '🆕 Crea account'}</Text>
+            </Pressable>
+            <Pressable onPress={() => setAuthMode((mode) => mode === 'login' ? 'signup' : 'login')}>
+              <Text style={styles.switchAuth}>{authMode === 'login' ? 'Non hai un account? Crealo' : 'Hai già un account? Accedi'}</Text>
+            </Pressable>
+            {!!authMessage && <Text style={styles.publishMessage}>{authMessage}</Text>}
+          </View>
+        )}
 
         {showPublish && (
           <View style={styles.publishCard}>
@@ -183,14 +374,8 @@ export default function App() {
               <Text style={styles.mediaAddText}>📷 Aggiungi fino a 20 foto/video</Text>
             </Pressable>
             {media.length > 0 && <Text style={styles.mediaSub}>{media.length}/20 media pronti per l'annuncio.</Text>}
-            <Pressable style={styles.publishButton} onPress={() => {
-              if (!title.trim() || !price.trim()) {
-                setPublishMessage('Inserisci almeno titolo e prezzo.');
-                return;
-              }
-              setPublishMessage('Annuncio preparato. Il collegamento sicuro al backend verrà attivato nel prossimo blocco.');
-            }}>
-              <Text style={styles.publishButtonText}>🕸️ Prepara pubblicazione</Text>
+            <Pressable style={styles.publishButton} onPress={publishProduct}>
+              <Text style={styles.publishButtonText}>🕸️ Pubblica nel Market</Text>
             </Pressable>
             {!!publishMessage && <Text style={styles.publishMessage}>{publishMessage}</Text>}
           </View>
@@ -284,6 +469,7 @@ const styles = StyleSheet.create({
   searchBox:{marginTop:18,flexDirection:'row',alignItems:'center',backgroundColor:'#fff',borderWidth:1,borderColor:'#dbe4e7',borderRadius:16,paddingHorizontal:13},searchIcon:{fontSize:25,color:'#0f766e'},search:{flex:1,paddingVertical:13,paddingHorizontal:8,fontSize:14,color:'#111827'},
   categories:{paddingVertical:14,gap:8},category:{backgroundColor:'#fff',borderWidth:1,borderColor:'#dbe4e7',borderRadius:18,paddingHorizontal:12,paddingVertical:9},categoryText:{fontSize:11,fontWeight:'700',color:'#334155'},
   hero:{marginTop:5,borderRadius:24,padding:22,backgroundColor:'#dffcff',borderWidth:1,borderColor:'#b8e9eb'},heroEyebrow:{fontSize:10,fontWeight:'900',letterSpacing:2,color:'#0f766e'},heroTitle:{marginTop:2,fontSize:30,lineHeight:32,fontWeight:'900',color:'#10252a'},heroText:{marginTop:10,maxWidth:300,fontSize:14,lineHeight:20,color:'#31555b'},heroButton:{alignSelf:'flex-start',marginTop:17,paddingHorizontal:16,paddingVertical:11,borderRadius:14,backgroundColor:'#0f766e'},heroButtonText:{color:'#fff',fontSize:12,fontWeight:'900'},
+  accountBar:{marginTop:10,flexDirection:'row',alignItems:'center',justifyContent:'space-between',padding:10,borderRadius:14,backgroundColor:'#fff',borderWidth:1,borderColor:'#dbe4e7'},accountText:{fontSize:10,color:'#475569',flex:1},accountButton:{paddingHorizontal:12,paddingVertical:7,borderRadius:10,backgroundColor:'#e5f8f7'},accountButtonText:{fontSize:10,fontWeight:'900',color:'#0f766e'},switchAuth:{marginTop:10,textAlign:'center',fontSize:11,fontWeight:'800',color:'#0f766e'},
   mediaCard:{marginTop:14,padding:15,borderRadius:20,backgroundColor:'#fff',borderWidth:1,borderColor:'#b8e9eb'},mediaHead:{flexDirection:'row',alignItems:'center',justifyContent:'space-between'},mediaTitle:{fontSize:17,fontWeight:'900',color:'#111827'},mediaSub:{marginTop:3,fontSize:11,color:'#64748b'},mediaAdd:{paddingHorizontal:11,paddingVertical:8,borderRadius:12,backgroundColor:'#e5f8f7'},mediaAddText:{fontSize:11,fontWeight:'900',color:'#0f766e'},mediaRow:{paddingTop:12,gap:8},mediaItem:{position:'relative',width:82,height:82},mediaImage:{width:82,height:82,borderRadius:12},videoThumb:{width:82,height:82,borderRadius:12,backgroundColor:'#10252a',alignItems:'center',justifyContent:'center'},videoIcon:{fontSize:24,color:'#fff'},videoLabel:{marginTop:3,fontSize:8,fontWeight:'900',color:'#fff'},removeMedia:{position:'absolute',right:-5,top:-5,width:23,height:23,borderRadius:12,alignItems:'center',justifyContent:'center',backgroundColor:'#111827'},removeMediaText:{color:'#fff',fontSize:18,lineHeight:20},mediaNote:{marginTop:11,fontSize:10,lineHeight:15,color:'#64748b'},
   sectionHead:{marginTop:25,flexDirection:'row',justifyContent:'space-between',alignItems:'center'},sectionTitle:{fontSize:19,fontWeight:'900',color:'#111827'},sectionLink:{fontSize:11,fontWeight:'800',color:'#0f766e'},
   stateCard:{marginTop:12,alignItems:'center',padding:25,borderRadius:20,backgroundColor:'#fff',borderWidth:1,borderColor:'#dbe4e7'},emptyIcon:{fontSize:30},emptyTitle:{marginTop:7,fontSize:17,fontWeight:'800',color:'#111827'},stateText:{marginTop:7,textAlign:'center',fontSize:13,lineHeight:19,color:'#64748b'},
