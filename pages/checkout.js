@@ -33,7 +33,13 @@ export default function Checkout() {
     const token = params.get('token');
     const sumup = params.get('sumup');
     const returnedOrderId = params.get('order_id');
-    const checkoutId = params.get('checkout_id');
+    let checkoutId = params.get('checkout_id');
+    if (!checkoutId) {
+      try {
+        const saved = JSON.parse(localStorage.getItem('riverspend-sumup-checkout') || 'null');
+        if (saved?.orderId === returnedOrderId) checkoutId = saved.checkoutId;
+      } catch {}
+    }
     if (paypal === 'success' && token) capturePayPalPayment(token);
     if (paypal === 'cancel') setPaypalMessage('Pagamento PayPal annullato. Nessun addebito confermato.');
     if (sumup === 'return' && returnedOrderId && checkoutId) verifySumUpPayment(returnedOrderId, checkoutId);
@@ -198,8 +204,12 @@ export default function Checkout() {
       if (!response.ok) throw new Error(result?.error || 'SumUp Sandbox non disponibile.');
       if (!result?.url || !result?.checkoutId) throw new Error('SumUp non ha restituito il checkout.');
 
-      const returnUrl = new URL(result.url);
-      returnUrl.searchParams.set('return_url', window.location.origin + '/checkout?sumup=return&order_id=' + encodeURIComponent(orderId) + '&checkout_id=' + encodeURIComponent(result.checkoutId));
+      try {
+        localStorage.setItem('riverspend-sumup-checkout', JSON.stringify({
+          orderId: String(orderId),
+          checkoutId: String(result.checkoutId)
+        }));
+      } catch {}
       window.location.href = result.url;
     } catch (err) {
       setError(err?.message || 'Impossibile avviare SumUp Sandbox.');
@@ -230,7 +240,11 @@ export default function Checkout() {
       setOrderId(result.orderId || returnedOrderId);
       if (result.paid) {
         setSumupMessage('✅ Pagamento SumUp Sandbox completato. Ordine confermato.');
-        try { localStorage.removeItem('riverspend-rete'); setItems([]); } catch {}
+        try {
+          localStorage.removeItem('riverspend-rete');
+          localStorage.removeItem('riverspend-sumup-checkout');
+          setItems([]);
+        } catch {}
       } else {
         setSumupMessage('🧪 SumUp Sandbox: ' + (result.message || 'Pagamento non ancora confermato.'));
       }
