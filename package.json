@@ -12,7 +12,8 @@
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "tailwindcss": "^4.1.13",
-    "@bg0/browser": "^0.1.1"
+    "@bg0/browser": "^0.1.1",
+    "stripe": "^18.5.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.13",
