@@ -15,6 +15,8 @@ export default function Checkout() {
   const [simulatingPayment, setSimulatingPayment] = useState(false);
   const [sandboxMessage, setSandboxMessage] = useState('');
   const [stripeLoading, setStripeLoading] = useState(false);
+  const [paypalLoading, setPaypalLoading] = useState(false);
+  const [paypalMessage, setPaypalMessage] = useState('');
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setUser(data?.user || null));
@@ -22,6 +24,14 @@ export default function Checkout() {
       const saved = JSON.parse(localStorage.getItem('riverspend-rete') || '[]');
       if (Array.isArray(saved)) setItems(saved);
     } catch {}
+  }, []);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const paypal = params.get('paypal');
+    const token = params.get('token');
+    if (paypal === 'success' && token) capturePayPalPayment(token);
+    if (paypal === 'cancel') setPaypalMessage('Pagamento PayPal annullato. Nessun addebito confermato.');
   }, []);
 
   async function sendLoginLink(event) {
@@ -123,6 +133,36 @@ export default function Checkout() {
     }
   }
 
+  async function startPayPalPayment() {
+    setError(''); setPaypalMessage(''); setPaypalLoading(true);
+    try {
+      if (!orderId) throw new Error('Prima crea l’ordine.');
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token;
+      if (!token) throw new Error('Sessione RiverSpend non valida. Accedi di nuovo.');
+      const response = await fetch('/api/pay/paypal/create-order', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }, body: JSON.stringify({ orderId }) });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result?.error || 'PayPal non disponibile.');
+      window.location.href = result.url;
+    } catch (err) { setError(err?.message || 'Impossibile avviare PayPal.'); setPaypalLoading(false); }
+  }
+
+  async function capturePayPalPayment(paypalOrderId) {
+    setPaypalLoading(true); setError('');
+    try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token;
+      if (!token) throw new Error('Accedi di nuovo al tuo account RiverSpend.');
+      const response = await fetch('/api/pay/paypal/capture-order', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }, body: JSON.stringify({ paypalOrderId }) });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result?.error || 'Impossibile confermare PayPal.');
+      setPaypalMessage('✅ Pagamento PayPal completato. Ordine confermato.');
+      setOrderId(result.orderId || orderId);
+      try { localStorage.removeItem('riverspend-rete'); setItems([]); } catch {}
+    } catch (err) { setError(err?.message || 'Errore nella conferma PayPal.'); }
+    finally { setPaypalLoading(false); }
+  }
+
   async function simulatePayment() {
     setError('');
     setSandboxMessage('');
@@ -187,18 +227,18 @@ export default function Checkout() {
               {[
                 ['sandbox','🧪','Pagamento Sandbox','SOLO TEST'],
                 ['card','💳','Carta Visa / Mastercard / Amex','In arrivo'],
-                ['paypal','🅿️','PayPal','In arrivo'],
+                ['paypal','🅿️','PayPal Business','Disponibile TEST'],
                 ['applepay','','Apple Pay','In arrivo'],
                 ['googlepay','G','Google Pay','In arrivo'],
-                ['bancomat','🇮🇹','BANCOMAT Pay / Postepay','In arrivo'],
+                ['bancomat','🇮🇹','PostePay / BANCOMAT Pay','Disponibile da configurare'],
                 ['klarna','🩷','Klarna / Scalapay','In arrivo'],
                 ['global','🌍','Metodi internazionali','In arrivo']
               ].map(([id, icon, title, status]) => (
                 <button
                   key={id}
                   type="button"
-                  onClick={() => status === 'SOLO TEST' && setSelectedPayment(id)}
-                  className={`flex items-center justify-between rounded-xl border px-4 py-3 text-left ${selectedPayment === id ? 'border-teal-500 bg-teal-50' : 'border-slate-200 bg-white'} ${status !== 'SOLO TEST' ? 'opacity-70' : ''}`}
+                  onClick={() => ['SOLO TEST','Disponibile TEST','Disponibile da configurare'].includes(status) && setSelectedPayment(id)}
+                  className={`flex items-center justify-between rounded-xl border px-4 py-3 text-left ${selectedPayment === id ? 'border-teal-500 bg-teal-50' : 'border-slate-200 bg-white'} ${status === 'In arrivo' ? 'opacity-70' : ''}`}
                 >
                   <span className="flex items-center gap-3"><span className="text-xl">{icon}</span><span><strong className="block text-slate-900">{title}</strong><span className="text-xs text-slate-500">{status}</span></span></span>
                   {selectedPayment === id && <span className="font-black text-teal-600">✓</span>}
@@ -242,6 +282,7 @@ export default function Checkout() {
 
           {error && <div className="mt-5 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">{error}</div>}
           {orderId && <div className="mt-5 rounded-2xl border border-teal-200 bg-teal-50 p-4 text-sm text-teal-700">✅ Ordine creato. ID: <span className="font-mono">{orderId}</span><br />Stato: <strong>in attesa di pagamento</strong>.</div>}
+          {paypalMessage && <div className="mt-4 rounded-2xl border border-sky-200 bg-sky-50 p-4 text-sm text-sky-700">{paypalMessage}</div>}
           {sandboxMessage && <div className="mt-4 rounded-2xl border border-amber-500/40 bg-amber-50 p-4 text-sm text-amber-100">{sandboxMessage}</div>}
 
           <div className="mt-6 rounded-2xl border border-teal-100 bg-white p-4">
@@ -261,6 +302,16 @@ export default function Checkout() {
                 >
                   {stripeLoading ? '⏳ Apertura Stripe TEST…' : '💳 Paga con carta — TEST'}
                 </button>
+              )}
+
+              {selectedPayment === 'paypal' && (
+                <button type="button" onClick={startPayPalPayment} disabled={!orderId || paypalLoading} className="rounded-xl border border-sky-400 bg-sky-600 px-5 py-3 font-black text-white disabled:cursor-not-allowed disabled:opacity-40">
+                  {paypalLoading ? '⏳ Apertura PayPal…' : '🅿️ Paga con PayPal — TEST'}
+                </button>
+              )}
+
+              {selectedPayment === 'bancomat' && (
+                <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">🇮🇹 <strong>PostePay / BANCOMAT Pay</strong>: predisposto nel checkout; l’integrazione POS/e-commerce Poste verrà collegata dopo l’attivazione del servizio e delle credenziali dell’esercente.</div>
               )}
 
               {selectedPayment === 'sandbox' && (
