@@ -14,6 +14,7 @@ export default function Checkout() {
   const [selectedPayment, setSelectedPayment] = useState('sandbox');
   const [simulatingPayment, setSimulatingPayment] = useState(false);
   const [sandboxMessage, setSandboxMessage] = useState('');
+  const [stripeLoading, setStripeLoading] = useState(false);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setUser(data?.user || null));
@@ -97,6 +98,30 @@ export default function Checkout() {
     }
   }
 
+
+  async function startStripePayment() {
+    setError('');
+    setSandboxMessage('');
+    setStripeLoading(true);
+    try {
+      if (!orderId) throw new Error('Prima crea l’ordine.');
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token;
+      if (!token) throw new Error('Sessione RiverSpend non valida. Accedi di nuovo.');
+      const response = await fetch('/api/pay/stripe/create-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+        body: JSON.stringify({ orderId })
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result?.error || 'Stripe TEST non disponibile.');
+      if (!result?.url) throw new Error('Stripe non ha restituito il link Checkout.');
+      window.location.href = result.url;
+    } catch (err) {
+      setError(err?.message || 'Impossibile avviare Stripe TEST.');
+      setStripeLoading(false);
+    }
+  }
 
   async function simulatePayment() {
     setError('');
@@ -224,6 +249,17 @@ export default function Checkout() {
               {user && items.length > 0 && !orderId && (
                 <button type="button" onClick={createOrder} disabled={creating} className="rounded-xl bg-teal-500 px-4 py-3 font-bold text-white disabled:opacity-60">
                   {creating ? 'Creazione ordine…' : '🧾 Crea ordine'}
+                </button>
+              )}
+
+              {selectedPayment === 'card' && (
+                <button
+                  type="button"
+                  onClick={startStripePayment}
+                  disabled={!orderId || stripeLoading}
+                  className="rounded-xl border border-sky-400 bg-sky-600 px-5 py-3 font-black text-white disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  {stripeLoading ? '⏳ Apertura Stripe TEST…' : '💳 Paga con carta — TEST'}
                 </button>
               )}
 
