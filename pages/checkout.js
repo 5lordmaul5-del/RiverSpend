@@ -236,7 +236,6 @@ export default function Checkout() {
               {[
                 ['sandbox','🧪','Pagamento Sandbox','SOLO TEST'],
                 ['card','💳','Carta Visa / Mastercard / Amex','In arrivo'],
-                ['paypal','🅿️','PayPal Business','Disponibile TEST'],
                 ['applepay','','Apple Pay','In arrivo'],
                 ['googlepay','G','Google Pay','In arrivo'],
                 ['cod','🚚','Pagamento alla consegna','Disponibile'],
