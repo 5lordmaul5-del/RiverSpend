@@ -17,6 +17,7 @@ export default function Checkout() {
   const [stripeLoading, setStripeLoading] = useState(false);
   const [paypalLoading, setPaypalLoading] = useState(false);
   const [paypalMessage, setPaypalMessage] = useState('');
+  const [codMessage, setCodMessage] = useState('');
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setUser(data?.user || null));
@@ -163,6 +164,14 @@ export default function Checkout() {
     finally { setPaypalLoading(false); }
   }
 
+  async function selectCashOnDelivery() {
+    setError(''); setCodMessage('');
+    if (!orderId) return setError('Prima crea l’ordine.');
+    const { error: updateError } = await supabase.from('orders').update({ payment_status: 'cod_pending' }).eq('id', orderId);
+    if (updateError) return setError('Impossibile impostare il pagamento alla consegna.');
+    setCodMessage('🚚 Pagamento alla consegna selezionato. L’ordine resta in attesa di consegna.');
+  }
+
   async function simulatePayment() {
     setError('');
     setSandboxMessage('');
@@ -230,14 +239,15 @@ export default function Checkout() {
                 ['paypal','🅿️','PayPal Business','Disponibile TEST'],
                 ['applepay','','Apple Pay','In arrivo'],
                 ['googlepay','G','Google Pay','In arrivo'],
-                ['bancomat','🇮🇹','PostePay / BANCOMAT Pay','Disponibile da configurare'],
+                ['cod','🚚','Pagamento alla consegna','Disponibile'],
+                ['bancomat','🇮🇹','PostePay / BANCOMAT Pay','Da configurare'],
                 ['klarna','🩷','Klarna / Scalapay','In arrivo'],
                 ['global','🌍','Metodi internazionali','In arrivo']
               ].map(([id, icon, title, status]) => (
                 <button
                   key={id}
                   type="button"
-                  onClick={() => ['SOLO TEST','Disponibile TEST','Disponibile da configurare'].includes(status) && setSelectedPayment(id)}
+                  onClick={() => ['SOLO TEST','Disponibile TEST','Disponibile','Da configurare'].includes(status) && setSelectedPayment(id)}
                   className={`flex items-center justify-between rounded-xl border px-4 py-3 text-left ${selectedPayment === id ? 'border-teal-500 bg-teal-50' : 'border-slate-200 bg-white'} ${status === 'In arrivo' ? 'opacity-70' : ''}`}
                 >
                   <span className="flex items-center gap-3"><span className="text-xl">{icon}</span><span><strong className="block text-slate-900">{title}</strong><span className="text-xs text-slate-500">{status}</span></span></span>
@@ -283,6 +293,7 @@ export default function Checkout() {
           {error && <div className="mt-5 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">{error}</div>}
           {orderId && <div className="mt-5 rounded-2xl border border-teal-200 bg-teal-50 p-4 text-sm text-teal-700">✅ Ordine creato. ID: <span className="font-mono">{orderId}</span><br />Stato: <strong>in attesa di pagamento</strong>.</div>}
           {paypalMessage && <div className="mt-4 rounded-2xl border border-sky-200 bg-sky-50 p-4 text-sm text-sky-700">{paypalMessage}</div>}
+          {codMessage && <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">{codMessage}</div>}
           {sandboxMessage && <div className="mt-4 rounded-2xl border border-amber-500/40 bg-amber-50 p-4 text-sm text-amber-100">{sandboxMessage}</div>}
 
           <div className="mt-6 rounded-2xl border border-teal-100 bg-white p-4">
@@ -301,6 +312,12 @@ export default function Checkout() {
                   className="rounded-xl border border-sky-400 bg-sky-600 px-5 py-3 font-black text-white disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   {stripeLoading ? '⏳ Apertura Stripe TEST…' : '💳 Paga con carta — TEST'}
+                </button>
+              )}
+
+              {selectedPayment === 'cod' && (
+                <button type="button" onClick={selectCashOnDelivery} disabled={!orderId} className="rounded-xl border border-amber-400 bg-amber-500 px-5 py-3 font-black text-white disabled:cursor-not-allowed disabled:opacity-40">
+                  🚚 Conferma pagamento alla consegna
                 </button>
               )}
 
