@@ -174,18 +174,18 @@ export default function Checkout() {
   async function selectCashOnDelivery() {
     setError(''); setCodMessage(''); setTransferMessage('');
     if (!orderId) return setError('Prima crea l’ordine.');
-    const { error: updateError } = await supabase.from('orders').update({ payment_status: 'cod_pending' }).eq('id', orderId);
-    if (updateError) return setError('Impossibile impostare il pagamento alla consegna.');
-    setCodMessage('🚚 Pagamento alla consegna selezionato. L’ordine resta in attesa di consegna.');
+    const { error: updateError } = await supabase.from('orders').update({ payment_status: 'pending' }).eq('id', orderId);
+    if (updateError) return setError('Impossibile aggiornare lo stato dell’ordine.');
+    setCodMessage('🚚 Metodo scelto: pagamento alla consegna. L’ordine non risulta pagato: il pagamento va verificato alla consegna.');
   }
 
 
   async function selectInstantTransfer() {
     setError(''); setTransferMessage(''); setCodMessage('');
     if (!orderId) return setError('Prima crea l’ordine.');
-    const { error: updateError } = await supabase.from('orders').update({ payment_status: 'transfer_pending' }).eq('id', orderId);
-    if (updateError) return setError('Impossibile impostare il bonifico. Contatta l’assistenza prima di ripetere l’ordine.');
-    setTransferMessage('Bonifico istantaneo selezionato. L’ordine resta non pagato finché il trasferimento non viene verificato. Le coordinate del beneficiario devono essere comunicate dal titolare o dal venditore.');
+    const { error: updateError } = await supabase.from('orders').update({ payment_status: 'pending' }).eq('id', orderId);
+    if (updateError) return setError('Impossibile aggiornare lo stato dell’ordine. Contatta l’assistenza prima di ripetere l’ordine.');
+    setTransferMessage('🏦 Metodo scelto: bonifico istantaneo. L’ordine resta in attesa e NON è considerato pagato. Il pagamento va verificato prima di confermare l’ordine; le coordinate bancarie devono essere comunicate tramite un canale ufficiale sicuro.');
   }
 
   return (
