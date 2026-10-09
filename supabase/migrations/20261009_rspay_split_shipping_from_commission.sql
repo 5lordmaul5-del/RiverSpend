@@ -150,3 +150,23 @@ EXCEPTION
     RETURN v_movement_id;
 END;
 $function$;
+
+
+-- Keep the legacy five-argument RPC signature, but route it through the corrected
+-- six-argument implementation so sandbox callers also separate shipping correctly.
+CREATE OR REPLACE FUNCTION public.rs_create_treasury_allocation(
+  p_order_id text,
+  p_payment_id text,
+  p_gross_amount numeric,
+  p_currency text DEFAULT 'EUR',
+  p_rule_id uuid DEFAULT NULL
+)
+RETURNS uuid
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path TO 'public'
+AS $function$
+  SELECT public.rs_create_treasury_allocation(
+    p_order_id, p_payment_id, p_gross_amount, p_currency, p_rule_id, NULL::text
+  );
+$function$;
