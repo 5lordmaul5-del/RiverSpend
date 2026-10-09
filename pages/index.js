@@ -575,20 +575,22 @@ export default function Home() {
 
         <section className="mx-auto max-w-6xl px-2 py-4 sm:px-4">
           <div className="rs-apps-grid mb-5">
-            <section className="rs-feature-card rs-force-card rounded-2xl border border-cyan-400/40 bg-gradient-to-br from-slate-950 via-cyan-950/50 to-indigo-950/60 p-3 text-center shadow-xl shadow-cyan-950/20">
-              <button type="button" onClick={() => { if (rsForceAperta) setRsForceAperta(false); else apriRsForce(); }} className="flex h-full w-full flex-col items-center overflow-hidden text-center">
-                <div className="rs-force-stage relative mx-auto flex h-24 w-full shrink-0 items-center justify-center overflow-hidden">
+            <section className={`rs-feature-card rs-force-card rounded-2xl border border-cyan-400/40 bg-gradient-to-br from-slate-950 via-cyan-950/50 to-indigo-950/60 p-3 text-center shadow-xl shadow-cyan-950/20 ${rsForceAperta ? 'fixed inset-x-0 bottom-0 top-[150px] z-[9999] m-0 flex min-h-0 w-full flex-col justify-center overflow-y-auto rounded-t-3xl border border-cyan-300/50 p-5 sm:p-8' : ''}`}>
+              <div role="button" tabIndex={0} onClick={() => { if (!rsForceAperta) apriRsForce(); }} onKeyDown={(e) => { if (!rsForceAperta && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); apriRsForce(); } }} className={`relative flex h-full w-full flex-col items-center overflow-hidden text-center cursor-pointer ${rsForceAperta ? 'min-h-0 flex-1 justify-center gap-4' : ''}`}>
+                {rsForceAperta && <button type="button" onClick={(e) => { e.stopPropagation(); setRsForceAperta(false); }} className="absolute right-0 top-0 z-50 rounded-full border border-white/30 bg-slate-900/80 px-4 py-2 text-sm font-bold text-white shadow-lg">✕ Chiudi</button>}
+                <style>{`@keyframes rs-force-spin { 0% { transform: rotate(0deg) scale(1); } 55% { transform: rotate(540deg) scale(1.18); } 100% { transform: rotate(1080deg) scale(1); } } @keyframes rs-force-float { 0%,100% { transform: translate(-50%,-50%) translateY(0) scale(1); } 50% { transform: translate(-50%,-50%) translateY(-18px) scale(1.08); } }`}</style>
+                <div className={`rs-force-stage relative mx-auto flex w-full shrink-0 items-center justify-center overflow-hidden ${rsForceAperta ? 'h-[38vh] max-h-[420px]' : 'h-24'}`}>
                   {rsForceAperta && prodottiVisibili.slice(0, 4).map((p, index) => {
-                    const positions = [{ x: '-82px', y: '-26px' }, { x: '82px', y: '-26px' }, { x: '-82px', y: '26px' }, { x: '82px', y: '26px' }];
+                    const positions = [{ x: '30%', y: '34%' }, { x: '70%', y: '34%' }, { x: '30%', y: '68%' }, { x: '70%', y: '68%' }];
                     const pos = positions[index];
                     const image = p.immagini?.[0];
                     return image ? (
-                      <a key={'force-orbit-' + p.id} href={'/prodotto/' + encodeURIComponent(p.id)} onClick={(e) => e.stopPropagation()} aria-label={'RS Force: ' + (p.titolo || 'prodotto')} className="absolute z-10 flex h-11 w-11 items-center justify-center overflow-hidden rounded-xl border border-cyan-200/70 bg-white p-0.5 shadow-lg" style={{left:'50%', top:'50%', transform:`translate(calc(-50% + ${pos.x}), calc(-50% + ${pos.y}))`}}>
+                      <a key={'force-orbit-' + p.id} href={'/prodotto/' + encodeURIComponent(p.id)} onClick={(e) => e.stopPropagation()} aria-label={'RS Force: ' + (p.titolo || 'prodotto')} className={`absolute z-10 flex items-center justify-center overflow-hidden rounded-xl border border-cyan-200/70 bg-white p-0.5 shadow-lg ${rsForceAperta ? 'h-16 w-16 sm:h-20 sm:w-20' : 'h-11 w-11'}`} style={{left:pos.x, top:pos.y, transform:'translate(-50%,-50%)', animation:rsForceAperta ? 'rs-force-float 2.4s ease-in-out infinite' : 'none', animationDelay:(index * 180) + 'ms'}}>
                         <img src={image} alt="" className="h-full w-full object-contain" />
                       </a>
                     ) : null;
                   })}
-                  <span className="relative z-20 flex h-20 w-20 items-center justify-center rounded-full border border-cyan-200/70 bg-[radial-gradient(circle_at_35%_30%,rgba(255,255,255,.95),rgba(103,232,249,.45)_18%,rgba(8,47,73,.95)_58%,rgba(2,6,23,1)_100%)] text-3xl shadow-[0_0_25px_rgba(34,211,238,.55)]" style={{animation:'rs-palantir-pulse 3s ease-in-out infinite'}}>🔮</span>
+                  <span className={`relative z-20 flex items-center justify-center rounded-full border border-cyan-200/70 bg-[radial-gradient(circle_at_35%_30%,rgba(255,255,255,.95),rgba(103,232,249,.45)_18%,rgba(8,47,73,.95)_58%,rgba(2,6,23,1)_100%)] shadow-[0_0_25px_rgba(34,211,238,.55)] ${rsForceAperta ? 'h-36 w-36 text-6xl sm:h-48 sm:w-48 sm:text-7xl' : 'h-20 w-20 text-3xl'}`} style={{animation:rsForceAperta ? 'rs-force-spin 1.15s cubic-bezier(.2,.8,.2,1), rs-palantir-pulse 3s ease-in-out infinite' : 'rs-palantir-pulse 3s ease-in-out infinite'}}>🔮</span>
                 </div>
                 <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.25em] text-cyan-200">RS FORCE</p>
                 <h2 className="mt-1 text-base font-extrabold leading-tight text-white">RS FORCE · Potenzia la tua ricerca</h2>
@@ -600,7 +602,7 @@ export default function Home() {
                     <a onClick={(e) => e.stopPropagation()} href={categoriaAttiva ? `/?category=${encodeURIComponent(categoriaAttiva)}&future=arrivals` : '/?future=arrivals'} className="rounded-xl border border-emerald-300/50 bg-emerald-950/50 p-2 text-[10px] font-bold text-white">🔭 In arrivo</a>
                   </div>
                 )}
-              </button>
+              </div>
             </section>
 
             <section className="rs-feature-card rounded-2xl border border-amber-400/40 bg-gradient-to-br from-slate-950 via-amber-950/30 to-slate-900 p-3 text-center shadow-xl shadow-amber-950/20">
