@@ -16,6 +16,13 @@ export default async function handler(req, res) {
   if (!apiKey || !merchantCode) {
     return res.status(503).json({ error: 'SumUp Sandbox non ancora configurato sul server.' });
   }
+  // Fail clearly before fetch: SumUp secret keys must be copied in full, without display ellipses.
+  if (apiKey && /[^\x00-\x7F]/.test(apiKey)) {
+    return res.status(503).json({ error: 'La variabile SUMUP_API_KEY contiene caratteri non validi (ad esempio …). Inserisci la chiave segreta SumUp completa, copiata senza puntini di sospensione.' });
+  }
+  if (apiKey && !apiKey.startsWith('sup_sk_')) {
+    return res.status(503).json({ error: 'SUMUP_API_KEY non sembra una chiave segreta SumUp: deve essere la chiave completa che inizia con sup_sk_, non una chiave pubblica o di un altro servizio.' });
+  }
 
   try {
     const auth = req.headers.authorization || '';
