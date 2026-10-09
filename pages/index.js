@@ -576,7 +576,7 @@ export default function Home() {
         <section className="mx-auto max-w-6xl px-2 py-4 sm:px-4">
           <div className="rs-apps-grid mb-5">
             <section className="rs-feature-card rs-force-card rounded-2xl border border-cyan-400/40 bg-gradient-to-br from-slate-950 via-cyan-950/50 to-indigo-950/60 p-3 text-center shadow-xl shadow-cyan-950/20">
-              <button type="button" onClick={() => { if (rsForceAperta) setRsForceAperta(false); else apriRsForce(); }} className="flex h-full w-full flex-col items-center overflow-hidden text-center">
+              <div role="button" tabIndex={0} onClick={() => { if (rsForceAperta) setRsForceAperta(false); else apriRsForce(); }} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); if (rsForceAperta) setRsForceAperta(false); else apriRsForce(); } }} className="flex h-full w-full flex-col items-center overflow-hidden text-center cursor-pointer"><button type="button" onClick={() => { if (rsForceAperta) setRsForceAperta(false); else apriRsForce(); }} className="flex h-full w-full flex-col items-center overflow-hidden text-center">
                 <div className="rs-force-stage relative mx-auto flex h-24 w-full shrink-0 items-center justify-center overflow-hidden">
                   {rsForceAperta && prodottiVisibili.slice(0, 4).map((p, index) => {
                     const positions = [{ x: '-82px', y: '-26px' }, { x: '82px', y: '-26px' }, { x: '-82px', y: '26px' }, { x: '82px', y: '26px' }];
@@ -600,7 +600,7 @@ export default function Home() {
                     <a onClick={(e) => e.stopPropagation()} href={categoriaAttiva ? `/?category=${encodeURIComponent(categoriaAttiva)}&future=arrivals` : '/?future=arrivals'} className="rounded-xl border border-emerald-300/50 bg-emerald-950/50 p-2 text-[10px] font-bold text-white">🔭 In arrivo</a>
                   </div>
                 )}
-              </button>
+              </div>
             </section>
 
             <section className="rs-feature-card rounded-2xl border border-amber-400/40 bg-gradient-to-br from-slate-950 via-amber-950/30 to-slate-900 p-3 text-center shadow-xl shadow-amber-950/20">
