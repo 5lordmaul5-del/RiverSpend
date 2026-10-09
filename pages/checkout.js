@@ -20,11 +20,21 @@ export default function Checkout() {
   const [codMessage, setCodMessage] = useState('');
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setUser(data?.user || null));
+    let active = true;
+    supabase.auth.getUser().then(({ data, error }) => {
+      if (active && !error) setUser(data?.user || null);
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (active) setUser(session?.user || null);
+    });
     try {
       const saved = JSON.parse(localStorage.getItem('riverspend-rete') || '[]');
       if (Array.isArray(saved)) setItems(saved);
     } catch {}
+    return () => {
+      active = false;
+      subscription?.unsubscribe();
+    };
   }, []);
 
   useEffect(() => {
@@ -50,12 +60,19 @@ export default function Checkout() {
     setAuthMessage('');
     if (!email.trim()) return setAuthMessage('Inserisci la tua email.');
     setSendingLink(true);
-    const { error: authError } = await supabase.auth.signInWithOtp({
-      email: email.trim(),
-      options: { emailRedirectTo: window.location.origin + '/checkout' }
-    });
-    setAuthMessage(authError ? '❌ ' + authError.message : '✅ Link inviato. Controlla la tua email e poi torna al Checkout.');
-    setSendingLink(false);
+    try {
+      const { error: authError } = await supabase.auth.signInWithOtp({
+        email: email.trim(),
+        options: { emailRedirectTo: window.location.origin + '/checkout' }
+      });
+      setAuthMessage(authError
+        ? '❌ ' + (authError.message.includes('rate limit') ? 'Limite temporaneo di invio email raggiunto. Riprova più tardi.' : authError.message)
+        : '✅ Link inviato. Aprilo dalla stessa email e torna al Checkout.');
+    } catch (err) {
+      setAuthMessage('❌ ' + (err?.message || 'Impossibile inviare il link di accesso.'));
+    } finally {
+      setSendingLink(false);
+    }
   }
 
   async function createOrder() {
@@ -122,7 +139,6 @@ export default function Checkout() {
 
   async function startStripePayment() {
     setError('');
-    setSandboxMessage('');
     setStripeLoading(true);
     try {
       if (!orderId) throw new Error('Prima crea l’ordine.');
@@ -298,6 +314,7 @@ export default function Checkout() {
             <div className="mt-4 grid gap-3">
               {[
                 ['sumup','🟢','SumUp — Pagamento online','Disponibile TEST'],
+                ['paypal','🅿️','PayPal','Da configurare'],
                 ['card','💳','Carta Visa / Mastercard / Amex','In arrivo'],
                 ['applepay','','Apple Pay','In arrivo'],
                 ['googlepay','G','Google Pay','In arrivo'],
