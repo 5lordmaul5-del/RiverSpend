@@ -302,7 +302,7 @@ export default function Checkout() {
                   <div className="flex justify-between gap-3"><span>Subtotale articoli</span><strong>€ {(checkoutBreakdown?.subtotal ?? items.reduce((sum, item) => sum + Number(item.price || 0), 0)).toFixed(2)}</strong></div>
                   <div className="flex justify-between gap-3"><span>Spedizione (pagata dall’acquirente)</span><strong>{checkoutBreakdown ? '€ ' + checkoutBreakdown.shippingTotal.toFixed(2) : 'calcolata dal venditore'}</strong></div>
                   <div className="flex justify-between gap-3 border-t border-teal-100 pt-2 text-lg font-black"><span>Totale da pagare</span><span className="text-teal-600">€ {(checkoutBreakdown?.total ?? items.reduce((sum, item) => sum + Number(item.price || 0), 0)).toFixed(2)}</span></div>
-                  {checkoutBreakdown && <p className="text-xs leading-5 text-slate-500">La commissione RiverSpend del 10% (€ {checkoutBreakdown.commissionTotal.toFixed(2)}) viene conteggiata sulla quota del venditore e non si aggiunge al totale dell’acquirente. Le spese del fornitore di pagamento sono registrate separatamente.</p>}
+                  {checkoutBreakdown && <p className="text-xs leading-5 text-slate-500">La commissione RiverSpend del 10% (€ {checkoutBreakdown.commissionTotal.toFixed(2)}) viene conteggiata sulla quota del venditore e non si aggiunge al totale dell’acquirente. I costi del fornitore saranno contabilizzati quando disponibili; non sono ancora inclusi nel calcolo dell’utile.</p>}
                 </div>
               </>
             )}
