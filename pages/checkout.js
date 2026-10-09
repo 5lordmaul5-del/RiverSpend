@@ -122,7 +122,6 @@ export default function Checkout() {
 
   async function startStripePayment() {
     setError('');
-    setSandboxMessage('');
     setStripeLoading(true);
     try {
       if (!orderId) throw new Error('Prima crea l’ordine.');
@@ -298,6 +297,7 @@ export default function Checkout() {
             <div className="mt-4 grid gap-3">
               {[
                 ['sumup','🟢','SumUp — Pagamento online','Disponibile TEST'],
+                ['paypal','🅿️','PayPal','Sandbox da verificare'],
                 ['card','💳','Carta Visa / Mastercard / Amex','In arrivo'],
                 ['applepay','','Apple Pay','In arrivo'],
                 ['googlepay','G','Google Pay','In arrivo'],
@@ -309,7 +309,7 @@ export default function Checkout() {
                 <button
                   key={id}
                   type="button"
-                  onClick={() => ['SOLO TEST','Disponibile TEST','Disponibile','Da configurare'].includes(status) && setSelectedPayment(id)}
+                  onClick={() => ['SOLO TEST','Disponibile TEST','Disponibile','Da configurare','Sandbox da verificare'].includes(status) && setSelectedPayment(id)}
                   className={`flex items-center justify-between rounded-xl border px-4 py-3 text-left ${selectedPayment === id ? 'border-teal-500 bg-teal-50' : 'border-slate-200 bg-white'} ${status === 'In arrivo' ? 'opacity-70' : ''}`}
                 >
                   <span className="flex items-center gap-3"><span className="text-xl">{icon}</span><span><strong className="block text-slate-900">{title}</strong><span className="text-xs text-slate-500">{status}</span></span></span>
