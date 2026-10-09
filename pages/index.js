@@ -576,7 +576,7 @@ export default function Home() {
         <section className="mx-auto max-w-6xl px-2 py-4 sm:px-4">
           <div className="rs-apps-grid mb-5">
             <section className="rs-feature-card rs-force-card rounded-2xl border border-cyan-400/40 bg-gradient-to-br from-slate-950 via-cyan-950/50 to-indigo-950/60 p-3 text-center shadow-xl shadow-cyan-950/20">
-              <button type="button" onClick={() => { if (rsForceAperta) setRsForceAperta(false); else apriRsForce(); }} className="flex h-full w-full flex-col items-center overflow-hidden text-center">
+              <div role="button" tabIndex={0} onClick={() => { if (rsForceAperta) setRsForceAperta(false); else apriRsForce(); }} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); if (rsForceAperta) setRsForceAperta(false); else apriRsForce(); } }} className="flex h-full w-full flex-col items-center overflow-hidden text-center">
                 <div className="rs-force-stage relative mx-auto flex h-24 w-full shrink-0 items-center justify-center overflow-hidden">
                   {rsForceAperta && prodottiVisibili.slice(0, 4).map((p, index) => {
                     const positions = [{ x: '-82px', y: '-26px' }, { x: '82px', y: '-26px' }, { x: '-82px', y: '26px' }, { x: '82px', y: '26px' }];
@@ -600,11 +600,11 @@ export default function Home() {
                     <a onClick={(e) => e.stopPropagation()} href={categoriaAttiva ? `/?category=${encodeURIComponent(categoriaAttiva)}&future=arrivals` : '/?future=arrivals'} className="rounded-xl border border-emerald-300/50 bg-emerald-950/50 p-2 text-[10px] font-bold text-white">🔭 In arrivo</a>
                   </div>
                 )}
-              </button>
+              </div>
             </section>
 
             <section className="rs-feature-card rounded-2xl border border-amber-400/40 bg-gradient-to-br from-slate-950 via-amber-950/30 to-slate-900 p-3 text-center shadow-xl shadow-amber-950/20">
-              <button type="button" onClick={() => setRsFortuneAperta((v) => !v)} className="flex h-full w-full flex-col items-center overflow-hidden text-center">
+              <div role="button" tabIndex={0} onClick={() => setRsFortuneAperta((v) => !v)} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setRsFortuneAperta((v) => !v); } }} className="flex h-full w-full flex-col items-center overflow-hidden text-center">
                 <p className="shrink-0 text-[10px] font-bold uppercase tracking-[0.22em] text-amber-100">🎡 RS FORTUNE</p>
                 <h2 className="mt-1 shrink-0 text-base font-extrabold leading-tight text-white">La ruota della fortuna</h2>
                 {rsFortuneAperta ? (
@@ -638,7 +638,7 @@ export default function Home() {
                     <p className="mt-2 px-1 text-[10px] leading-4 text-slate-100">Tocca per aprire e girare la ruota.</p>
                   </div>
                 )}
-              </button>
+              </div>
             </section>
 
             <section className="rs-feature-card rounded-2xl border border-violet-400/40 bg-gradient-to-br from-slate-950 via-violet-950/25 to-slate-900 p-3 text-center shadow-xl shadow-violet-950/20">
@@ -712,7 +712,7 @@ export default function Home() {
                   </div>
                 </a>
                 <div className="px-2 pb-2 space-y-1.5 sm:px-3 sm:pb-3 sm:space-y-2">
-                  <button type="button" onClick={() => toggleReteFromCatalog(p)} className={`w-full rounded-lg border px-2 py-1.5 text-[11px] leading-tight font-extrabold transition sm:rounded-xl sm:px-3 sm:py-2.5 sm:text-xs ${reteIds.includes(String(p.id)) ? 'border-teal-400 bg-teal-900 text-teal-100' : 'border-teal-600 bg-teal-500 text-slate-950 hover:bg-teal-400'}`} aria-pressed={reteIds.includes(String(p.id))}>
+                  <button type="button" onClick={() => toggleReteFromCatalog(p)} className={`w-full touch-manipulation rounded-lg border px-2 py-1.5 text-[11px] leading-tight font-extrabold transition active:scale-[0.98] sm:rounded-xl sm:px-3 sm:py-2.5 sm:text-xs ${reteIds.includes(String(p.id)) ? 'border-teal-400 bg-teal-900 text-teal-100' : 'border-teal-600 bg-teal-500 text-slate-950 hover:bg-teal-400'}`} aria-pressed={reteIds.includes(String(p.id))}>
                     {reteIds.includes(String(p.id)) ? '✓ Nella tua Rete' : '🕸️ Aggiungi alla Rete'}
                   </button>
                   <a href={`/piggybank?product=${encodeURIComponent(p.id)}`} className="flex w-full items-center justify-center rounded-lg border border-amber-400 bg-amber-300 px-2 py-1.5 text-[11px] leading-tight font-extrabold text-amber-950 shadow-sm hover:bg-amber-200 sm:rounded-xl sm:px-3 sm:py-2.5 sm:text-xs">
