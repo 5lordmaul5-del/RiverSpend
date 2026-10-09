@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 
-function paypalBase() { return (process.env.PAYPAL_MODE || 'sandbox') === 'live' ? 'https://api-m.paypal.com' : 'https://api-m.sandbox.paypal.com'; }
+function paypalBase() { return (process.env.PAYPAL_MODE || 'live') === 'live' ? 'https://api-m.paypal.com' : 'https://api-m.sandbox.paypal.com'; }
 async function accessToken() {
   const clientId = process.env.PAYPAL_CLIENT_ID; const secret = process.env.PAYPAL_CLIENT_SECRET;
   if (!clientId || !secret) throw new Error('PayPal non configurato sul server.');
@@ -27,7 +27,7 @@ export default async function handler(req, res) {
     const { data: order, error: orderError } = await admin.from('orders').select('id,total,currency,buyer_id').eq('id', orderId).eq('buyer_id', user.id).single();
     if (orderError || !order) return res.status(404).json({ error: 'Ordine RiverSpend non trovato.' });
     const amount = Number(order.total || 0); const currency = String(order.currency || 'EUR').toUpperCase();
-    const { data: paymentOrder, error: paymentOrderError } = await admin.from('payment_orders').upsert({ user_id: order.buyer_id, order_reference: order.id, amount, currency, status: 'paid', provider: 'paypal', provider_order_id: paypalOrderId, idempotency_key: 'paypal-' + paypalCapture.id, metadata: { paypal_order_id: paypalOrderId, capture_id: paypalCapture.id, test_mode: (process.env.PAYPAL_MODE || 'sandbox') !== 'live' } }, { onConflict: 'idempotency_key' }).select('id').single();
+    const { data: paymentOrder, error: paymentOrderError } = await admin.from('payment_orders').upsert({ user_id: order.buyer_id, order_reference: order.id, amount, currency, status: 'paid', provider: 'paypal', provider_order_id: paypalOrderId, idempotency_key: 'paypal-' + paypalCapture.id, metadata: { paypal_order_id: paypalOrderId, capture_id: paypalCapture.id, test_mode: (process.env.PAYPAL_MODE || 'live') !== 'live' } }, { onConflict: 'idempotency_key' }).select('id').single();
     if (paymentOrderError) return res.status(500).json({ error: paymentOrderError.message });
     const { data: existingTx } = await admin.from('payment_transactions').select('id').eq('payment_order_id', paymentOrder.id).eq('provider', 'paypal').eq('type', 'payment').limit(1);
     if (!existingTx?.length) {
