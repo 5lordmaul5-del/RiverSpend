@@ -13,6 +13,8 @@ export default function Vendi() {
   const [aggiornamentoVendita, setAggiornamentoVendita] = useState('');
   const [titolo, setTitolo] = useState('');
   const [prezzo, setPrezzo] = useState('');
+  const [costoSpedizione, setCostoSpedizione] = useState('');
+  const [modificheSpedizione, setModificheSpedizione] = useState({});
   const [descrizione, setDescrizione] = useState('');
   const [condizione, setCondizione] = useState('Nuovo');
   const [categoria, setCategoria] = useState('Altro');
@@ -51,7 +53,7 @@ export default function Vendi() {
     if (!userId) { setMieInserzioni([]); return; }
     const { data, error } = await supabase
       .from('products')
-      .select('id, name, price, status, locality, province, region, sold_at')
+      .select('id, name, price, shipping_price, status, locality, province, region, sold_at')
       .eq('seller_id', userId)
       .order('created_at', { ascending: false });
     if (error) {
@@ -60,12 +62,35 @@ export default function Vendi() {
       return;
     }
     setMieInserzioni(data || []);
+    setModificheSpedizione(Object.fromEntries((data || []).map((item) => [String(item.id), item.shipping_price == null ? '' : String(item.shipping_price)])));
   }
 
   useEffect(() => {
     if (session?.user?.id) loadMieInserzioni(session.user.id);
     else setMieInserzioni([]);
   }, [session?.user?.id]);
+
+  async function salvaSpedizione(prodotto) {
+    if (!session?.user?.id || !prodotto?.id) return;
+    const raw = modificheSpedizione[String(prodotto.id)];
+    const amount = Number(String(raw ?? '').replace(',', '.'));
+    if (!Number.isFinite(amount) || amount <= 0) {
+      setMessaggio('Inserisci un costo di spedizione maggiore di zero.');
+      return;
+    }
+    setAggiornamentoVendita(String(prodotto.id));
+    try {
+      const { data, error } = await supabase.from('products').update({ shipping_price: Number(amount.toFixed(2)) }).eq('id', prodotto.id).eq('seller_id', session.user.id).select('id, shipping_price').maybeSingle();
+      if (error) throw error;
+      if (!data) throw new Error('Non è stato possibile aggiornare la spedizione di questo annuncio.');
+      setMieInserzioni((current) => current.map((item) => String(item.id) === String(prodotto.id) ? { ...item, shipping_price: data.shipping_price } : item));
+      setMessaggio('✅ Spese di spedizione aggiornate: le paga l’acquirente e restano separate dalla commissione RiverSpend.');
+    } catch (error) {
+      setMessaggio('❌ ' + (error.message || 'Aggiornamento spedizione non riuscito.'));
+    } finally {
+      setAggiornamentoVendita('');
+    }
+  }
 
   async function segnaComeVenduto(prodotto) {
     if (!session?.user?.id || !prodotto?.id || prodotto.status !== 'published') return;
@@ -337,10 +362,15 @@ export default function Vendi() {
       return;
     }
 
-    const prezzoNumero = Number(prezzo);
+    const prezzoNumero = Number(String(prezzo).replace(',', '.'));
+    const spedizioneNumero = Number(String(costoSpedizione).replace(',', '.'));
 
     if (!titolo.trim() || !prezzo || !Number.isFinite(prezzoNumero) || prezzoNumero <= 0) {
       setMessaggio('⚠️ Inserisci nome e prezzo valido.');
+      return;
+    }
+    if (!costoSpedizione || !Number.isFinite(spedizioneNumero) || spedizioneNumero <= 0) {
+      setMessaggio('⚠️ Inserisci il costo di spedizione che pagherà l’acquirente.');
       return;
     }
 
@@ -394,7 +424,8 @@ export default function Vendi() {
         .insert({
           id: productId,
           name: titolo.trim(),
-          price: prezzoNumero,
+          price: Number(prezzoNumero.toFixed(2)),
+          shipping_price: Number(spedizioneNumero.toFixed(2)),
           condition: condizione,
           category: categoria,
           description: descrizione.trim(),
@@ -443,6 +474,7 @@ export default function Vendi() {
 
       setTitolo('');
       setPrezzo('');
+      setCostoSpedizione('');
       setDescrizione('');
       setCondizione('Nuovo');
       setCategoria('Altro');
@@ -546,6 +578,12 @@ export default function Vendi() {
                       <div className="min-w-0">
                         <p className="font-semibold">{item.name}</p>
                         <p className="text-sm text-slate-600">€ {Number(item.price || 0).toFixed(2)}{item.locality ? ` · ${item.locality}` : ''}{item.province ? ` · ${item.province}` : ''}</p>
+                        <div className="mt-2 flex flex-wrap items-end gap-2">
+                          <label className="text-xs font-semibold text-slate-600">Spedizione pagata dall’acquirente (€)
+                            <input type="number" min="0.01" step="0.01" className="mt-1 block w-36 rounded-lg border p-2 text-sm" value={modificheSpedizione[String(item.id)] ?? ''} onChange={(e) => setModificheSpedizione((current) => ({ ...current, [String(item.id)]: e.target.value }))} />
+                          </label>
+                          {item.status === 'published' && <button type="button" onClick={() => salvaSpedizione(item)} disabled={Boolean(aggiornamentoVendita)} className="rounded-lg border border-teal-700 px-3 py-2 text-sm font-bold text-teal-800 disabled:opacity-50">Salva spedizione</button>}
+                        </div>
                         <span className={`mt-1 inline-flex rounded-full px-2 py-1 text-xs font-bold ${item.status === 'sold' ? 'bg-slate-200 text-slate-700' : 'bg-emerald-100 text-emerald-800'}`}>{item.status === 'sold' ? '✓ Venduto' : item.status === 'published' ? '● Disponibile' : item.status}</span>
                       </div>
                       {item.status === 'published' && (
@@ -586,6 +624,19 @@ export default function Vendi() {
                 onChange={(e) => setPrezzo(e.target.value)}
                 required
               />
+
+              <label className="mb-1 block font-semibold">Spese di spedizione (€)</label>
+              <input
+                className="w-full border rounded-xl p-3 mb-2"
+                type="number"
+                min="0.01"
+                step="0.01"
+                placeholder="Costo reale del corriere"
+                value={costoSpedizione}
+                onChange={(e) => setCostoSpedizione(e.target.value)}
+                required
+              />
+              <p className="mb-3 text-xs text-slate-500">L’acquirente paga questa spesa in aggiunta al prezzo dell’articolo. RiverSpend non la finanzia con la propria commissione.</p>
 
               <select
                 className="w-full border rounded-xl p-3 mb-3"

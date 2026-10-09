@@ -5,12 +5,20 @@ import { supabase } from '../lib/supabase';
 export default function Profilo() {
   const [session, setSession] = useState(null);
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [msg, setMsg] = useState('');
   useEffect(() => {
     supabase.auth.getSession().then(({data}) => setSession(data?.session || null));
     const {data:{subscription}} = supabase.auth.onAuthStateChange((_e,s) => setSession(s || null));
     return () => subscription?.unsubscribe();
   }, []);
+  async function loginWithPassword(e) {
+    e.preventDefault();
+    if (!email.trim() || !password) return;
+    setMsg('Accesso in corso…');
+    const {error} = await supabase.auth.signInWithPassword({email:email.trim(), password});
+    setMsg(error ? '❌ Accesso con password non riuscito. Verifica le credenziali; non è stato inviato un link email.' : '✅ Accesso effettuato.');
+  }
   async function login(e) {
     e.preventDefault();
     if (!email.trim()) return;
@@ -41,10 +49,14 @@ export default function Profilo() {
               <button onClick={logout} className="mt-6 rounded-xl border border-slate-300 bg-white px-5 py-3 text-slate-800">Esci</button>
             </>
           ) : (
-            <form onSubmit={login} className="mt-6">
-              <p className="mb-4 text-slate-600">Accedi con un link email.</p>
-              <input className="w-full rounded-xl border border-slate-300 bg-white p-3 text-slate-900 placeholder:text-slate-400" type="email" placeholder="La tua email" value={email} onChange={e=>setEmail(e.target.value)} required />
-              <button className="mt-3 w-full rounded-xl bg-teal-600 p-3 font-bold text-white" type="submit">📩 Invia link di accesso</button>
+            <form onSubmit={loginWithPassword} className="mt-6">
+              <p className="mb-4 text-slate-600">Accedi con email e password, senza richiedere un nuovo link email.</p>
+              <input className="w-full rounded-xl border border-slate-300 bg-white p-3 text-slate-900 placeholder:text-slate-400" type="email" placeholder="La tua email" autoComplete="email" value={email} onChange={e=>setEmail(e.target.value)} required />
+              <input className="mt-3 w-full rounded-xl border border-slate-300 bg-white p-3 text-slate-900 placeholder:text-slate-400" type="password" placeholder="Password account" autoComplete="current-password" value={password} onChange={e=>setPassword(e.target.value)} required />
+              <button className="mt-3 w-full rounded-xl bg-teal-600 p-3 font-bold text-white" type="submit">🔐 Accedi con password</button>
+            </form>
+            <form onSubmit={login} className="mt-2">
+              <button className="w-full rounded-xl border border-teal-200 bg-white p-3 font-semibold text-teal-800" type="submit">📩 Invia link di accesso via email</button>
             </form>
           )}
           {msg && <p className="mt-4 text-teal-800">{msg}</p>}

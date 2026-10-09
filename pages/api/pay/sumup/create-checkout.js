@@ -69,8 +69,16 @@ export default async function handler(req, res) {
 
     const data = await response.json().catch(() => ({}));
     if (!response.ok) {
+      // Return SumUp's safe diagnostic metadata without exposing credentials or request headers.
       return res.status(response.status).json({
-        error: data?.message || data?.detail || 'SumUp non ha creato il checkout.'
+        error: data?.detail || data?.message || 'SumUp non ha creato il checkout.',
+        provider: 'sumup',
+        stage: 'create_checkout',
+        providerStatus: response.status,
+        providerTitle: data?.title || null,
+        providerType: data?.type || null,
+        providerCode: data?.error_code || data?.error_message || null,
+        providerTraceId: data?.trace_id || null
       });
     }
 

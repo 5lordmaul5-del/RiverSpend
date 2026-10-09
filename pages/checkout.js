@@ -6,11 +6,14 @@ export default function Checkout() {
   const [user, setUser] = useState(null);
   const [items, setItems] = useState([]);
   const [orderId, setOrderId] = useState('');
+  const [checkoutBreakdown, setCheckoutBreakdown] = useState(null);
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState('');
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [authMessage, setAuthMessage] = useState('');
   const [sendingLink, setSendingLink] = useState(false);
+  const [passwordLoading, setPasswordLoading] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState('sumup');
   const [sumupLoading, setSumupLoading] = useState(false);
   const [sumupMessage, setSumupMessage] = useState('');
@@ -45,17 +48,58 @@ export default function Checkout() {
     if (sumup === 'return' && returnedOrderId && checkoutId) verifySumUpPayment(returnedOrderId, checkoutId);
   }, []);
 
+  async function signInWithPassword(event) {
+    event.preventDefault();
+    setAuthMessage('');
+    if (!email.trim() || !password) return setAuthMessage('Inserisci email e password.');
+    setPasswordLoading(true);
+    try {
+      const { data, error: authError } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password
+      });
+      if (authError) throw authError;
+      setUser(data?.user || null);
+      setAuthMessage('✅ Accesso effettuato. Puoi continuare con il checkout.');
+    } catch (err) {
+      setAuthMessage('❌ Accesso con password non riuscito. Verifica le credenziali; non è stato inviato un nuovo link email.');
+    } finally {
+      setPasswordLoading(false);
+    }
+  }
+
   async function sendLoginLink(event) {
     event.preventDefault();
     setAuthMessage('');
     if (!email.trim()) return setAuthMessage('Inserisci la tua email.');
     setSendingLink(true);
-    const { error: authError } = await supabase.auth.signInWithOtp({
-      email: email.trim(),
-      options: { emailRedirectTo: window.location.origin + '/checkout' }
+    try {
+      const { error: authError } = await supabase.auth.signInWithOtp({
+        email: email.trim(),
+        options: { emailRedirectTo: window.location.origin + '/checkout' }
+      });
+      setAuthMessage(authError ? '❌ ' + authError.message : '✅ Link inviato. Controlla la tua email e poi torna al Checkout.');
+    } catch {
+      setAuthMessage('❌ Non è stato possibile inviare il link email. Puoi usare l’accesso con password se hai già impostato una password.');
+    } finally {
+      setSendingLink(false);
+    }
+  }
+
+  async function loadOrderBreakdown(id) {
+    if (!id) return;
+    const { data, error: breakdownError } = await supabase
+      .from('orders')
+      .select('subtotal, shipping_total, total, platform_commission_total')
+      .eq('id', id)
+      .single();
+    if (breakdownError || !data) return;
+    setCheckoutBreakdown({
+      subtotal: Number(data.subtotal || 0),
+      shippingTotal: Number(data.shipping_total || 0),
+      total: Number(data.total || 0),
+      commissionTotal: Number(data.platform_commission_total || 0)
     });
-    setAuthMessage(authError ? '❌ ' + authError.message : '✅ Link inviato. Controlla la tua email e poi torna al Checkout.');
-    setSendingLink(false);
   }
 
   async function createOrder() {
@@ -68,7 +112,7 @@ export default function Checkout() {
 
       const { data: products, error: productsError } = await supabase
         .from('products')
-        .select('id, name, price, stock')
+        .select('id, name, price, stock, seller_id, shipping_price')
         .in('id', items.map((item) => String(item.id)))
         .eq('status', 'published');
 
@@ -77,8 +121,13 @@ export default function Checkout() {
       const byId = new Map((products || []).map((product) => [String(product.id), product]));
       const validItems = items.map((item) => byId.get(String(item.id))).filter(Boolean);
       if (validItems.length !== items.length) throw new Error('Uno o più prodotti non sono più disponibili.');
+      if (validItems.some((product) => !product.seller_id)) throw new Error('Un annuncio non è collegato a un venditore verificabile. Contatta il venditore prima di acquistare.');
+      if (validItems.some((product) => !Number.isFinite(Number(product.shipping_price)) || Number(product.shipping_price) <= 0)) throw new Error('Un venditore non ha ancora impostato le spese di spedizione. Scegli un annuncio con spedizione configurata o contatta il venditore.');
 
-      const subtotal = validItems.reduce((sum, product) => sum + Number(product.price || 0), 0);
+      const subtotal = Number(validItems.reduce((sum, product) => sum + Number(product.price || 0), 0).toFixed(2));
+      const shippingTotal = Number(validItems.reduce((sum, product) => sum + Number(product.shipping_price || 0), 0).toFixed(2));
+      const commissionTotal = Number((subtotal * 0.10).toFixed(2));
+      const total = Number((subtotal + shippingTotal).toFixed(2));
       const { data: order, error: orderError } = await supabase
         .from('orders')
         .insert({
@@ -87,9 +136,15 @@ export default function Checkout() {
           payment_status: 'unpaid',
           currency: 'EUR',
           subtotal,
-          shipping_total: 0,
+          shipping_total: shippingTotal,
           donation_total: 0,
-          total: subtotal
+          total,
+          platform_commission_total: commissionTotal,
+          tax_metadata: {
+            seller_tax_assessment: 'not_assessed',
+            platform_commission_tax_assessment: 'not_assessed',
+            note: 'RSPay registra gli importi; il trattamento fiscale dipende dal caso concreto e non viene presunto automaticamente.'
+          }
         })
         .select('id')
         .single();
@@ -99,10 +154,13 @@ export default function Checkout() {
       const orderItems = validItems.map((product) => ({
         order_id: order.id,
         product_id: String(product.id),
+        seller_id: product.seller_id,
         product_name: product.name || 'Prodotto',
         unit_price: Number(product.price || 0),
         quantity: 1,
-        subtotal: Number(product.price || 0)
+        subtotal: Number(product.price || 0),
+        shipping_price: Number(product.shipping_price || 0),
+        platform_commission: Number((Number(product.price || 0) * 0.10).toFixed(2))
       }));
 
       const { error: itemsError } = await supabase.from('order_items').insert(orderItems);
@@ -111,6 +169,7 @@ export default function Checkout() {
         throw itemsError;
       }
 
+      setCheckoutBreakdown({ subtotal, shippingTotal, commissionTotal, total });
       setOrderId(order.id);
     } catch (err) {
       setError(err?.message || 'Impossibile creare l’ordine.');
@@ -122,7 +181,6 @@ export default function Checkout() {
 
   async function startStripePayment() {
     setError('');
-    setSandboxMessage('');
     setStripeLoading(true);
     try {
       if (!orderId) throw new Error('Prima crea l’ordine.');
@@ -169,6 +227,7 @@ export default function Checkout() {
       if (!response.ok) throw new Error(result?.error || 'Impossibile confermare PayPal.');
       setPaypalMessage('✅ Pagamento PayPal completato. Ordine confermato.');
       setOrderId(result.orderId || orderId);
+      await loadOrderBreakdown(result.orderId || orderId);
       try { localStorage.removeItem('riverspend-rete'); setItems([]); } catch {}
     } catch (err) { setError(err?.message || 'Errore nella conferma PayPal.'); }
     finally { setPaypalLoading(false); }
@@ -238,6 +297,7 @@ export default function Checkout() {
       if (!response.ok) throw new Error(result?.error || 'Impossibile verificare SumUp.');
 
       setOrderId(result.orderId || returnedOrderId);
+      await loadOrderBreakdown(result.orderId || returnedOrderId);
       if (result.paid) {
         setSumupMessage('✅ Pagamento SumUp Sandbox completato. Ordine confermato.');
         try {
@@ -283,9 +343,11 @@ export default function Checkout() {
                     </div>
                   ))}
                 </div>
-                <div className="mt-4 flex justify-between border-t border-teal-100 pt-3 text-lg font-black">
-                  <span>Totale</span>
-                  <span className="text-teal-600">€ {items.reduce((sum, item) => sum + Number(item.price || 0), 0).toFixed(2)}</span>
+                <div className="mt-4 space-y-2 border-t border-teal-100 pt-3 text-sm">
+                  <div className="flex justify-between gap-3"><span>Subtotale articoli</span><strong>€ {(checkoutBreakdown?.subtotal ?? items.reduce((sum, item) => sum + Number(item.price || 0), 0)).toFixed(2)}</strong></div>
+                  <div className="flex justify-between gap-3"><span>Spedizione (pagata dall’acquirente)</span><strong>{checkoutBreakdown ? '€ ' + checkoutBreakdown.shippingTotal.toFixed(2) : 'calcolata dal venditore'}</strong></div>
+                  <div className="flex justify-between gap-3 border-t border-teal-100 pt-2 text-lg font-black"><span>Totale da pagare</span><span className="text-teal-600">€ {(checkoutBreakdown?.total ?? items.reduce((sum, item) => sum + Number(item.price || 0), 0)).toFixed(2)}</span></div>
+                  {checkoutBreakdown && <p className="text-xs leading-5 text-slate-500">La commissione RiverSpend del 10% (€ {checkoutBreakdown.commissionTotal.toFixed(2)}) viene conteggiata sulla quota del venditore e non si aggiunge al totale dell’acquirente. I costi del fornitore saranno contabilizzati quando disponibili; non sono ancora inclusi nel calcolo dell’utile.</p>}
                 </div>
               </>
             )}
@@ -298,6 +360,7 @@ export default function Checkout() {
             <div className="mt-4 grid gap-3">
               {[
                 ['sumup','🟢','SumUp — Pagamento online','Disponibile TEST'],
+                ['paypal','🅿️','PayPal','Sandbox da verificare'],
                 ['card','💳','Carta Visa / Mastercard / Amex','In arrivo'],
                 ['applepay','','Apple Pay','In arrivo'],
                 ['googlepay','G','Google Pay','In arrivo'],
@@ -309,7 +372,7 @@ export default function Checkout() {
                 <button
                   key={id}
                   type="button"
-                  onClick={() => ['SOLO TEST','Disponibile TEST','Disponibile','Da configurare'].includes(status) && setSelectedPayment(id)}
+                  onClick={() => ['SOLO TEST','Disponibile TEST','Disponibile','Da configurare','Sandbox da verificare'].includes(status) && setSelectedPayment(id)}
                   className={`flex items-center justify-between rounded-xl border px-4 py-3 text-left ${selectedPayment === id ? 'border-teal-500 bg-teal-50' : 'border-slate-200 bg-white'} ${status === 'In arrivo' ? 'opacity-70' : ''}`}
                 >
                   <span className="flex items-center gap-3"><span className="text-xl">{icon}</span><span><strong className="block text-slate-900">{title}</strong><span className="text-xs text-slate-500">{status}</span></span></span>
@@ -339,10 +402,16 @@ export default function Checkout() {
               {user ? 'Account RiverSpend collegato' : 'Accedi al tuo account RiverSpend per procedere con un ordine.'}
             </p>
             {!user && (
-              <form onSubmit={sendLoginLink} className="mt-4 flex flex-col gap-2 sm:flex-row">
-                <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="La tua email" autoComplete="email" className="min-w-0 flex-1 rounded-xl border border-slate-600 bg-white px-4 py-3 text-white outline-none focus:border-teal-500" />
-                <button type="submit" disabled={sendingLink} className="rounded-xl bg-teal-500 px-4 py-3 font-bold text-white disabled:opacity-60">
-                  {sendingLink ? 'Invio…' : '🔐 Accedi'}
+              <form onSubmit={signInWithPassword} className="mt-4 flex flex-col gap-2">
+                <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="La tua email" autoComplete="email" required className="min-w-0 flex-1 rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none focus:border-teal-500" />
+                <input type="password" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Password account" autoComplete="current-password" required className="min-w-0 flex-1 rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none focus:border-teal-500" />
+                <button type="submit" disabled={passwordLoading} className="rounded-xl bg-teal-600 px-4 py-3 font-bold text-white disabled:opacity-60">
+                  {passwordLoading ? 'Accesso…' : '🔐 Accedi con password'}
+                </button>
+              </form>
+              <form onSubmit={sendLoginLink} className="mt-2 flex flex-col gap-2">
+                <button type="submit" disabled={sendingLink} className="rounded-xl border border-teal-300 bg-white px-4 py-3 font-semibold text-teal-800 disabled:opacity-60">
+                  {sendingLink ? 'Invio…' : '📩 Invia link via email (alternativa)'}
                 </button>
               </form>
             )}

@@ -708,6 +708,7 @@ export default function Home() {
                     <h3 className="line-clamp-2 text-sm font-semibold leading-tight sm:text-base">{p.titolo}</h3>
                     <p className="mt-1 text-base font-bold text-teal-300 sm:text-lg">€ {Number(p.prezzo || 0).toFixed(2)}</p>
                     <p className="text-[11px] leading-tight text-slate-400 sm:text-xs">{p.categoria || 'Altro'} · {p.condizione}</p>
+                    <p className="mt-1 text-[11px] leading-tight text-cyan-300 sm:text-xs">{Number(p.spedizione || 0) > 0 ? `🚚 Spedizione € ${Number(p.spedizione).toFixed(2)} · a carico acquirente` : '🚚 Spedizione da configurare'}</p>
                     <p className="mt-2 text-xs font-semibold text-teal-300 sm:text-sm">{t('openProduct')}</p>
                   </div>
                 </a>
