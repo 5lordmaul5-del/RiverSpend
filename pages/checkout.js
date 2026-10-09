@@ -258,9 +258,6 @@ export default function Checkout() {
               <Link href="/rete" className="rounded-xl border border-teal-300 px-4 py-3 font-bold text-teal-700">
                 🕸️ Vai alla Rete
               </Link>
-              <Link href="/servizi/pay" className="rounded-xl bg-teal-500 px-4 py-3 font-bold text-white">
-                RiverSpend Pay
-              </Link>
             </div>
             {!orderId && user && items.length > 0 && (
               <p className="mt-3 text-xs text-slate-500">Prima premi <strong>Crea ordine</strong>, poi conferma il metodo di pagamento scelto.</p>
