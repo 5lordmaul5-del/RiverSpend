@@ -10,8 +10,10 @@ export default function Checkout() {
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState('');
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [authMessage, setAuthMessage] = useState('');
   const [sendingLink, setSendingLink] = useState(false);
+  const [passwordLoading, setPasswordLoading] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState('sumup');
   const [sumupLoading, setSumupLoading] = useState(false);
   const [sumupMessage, setSumupMessage] = useState('');
@@ -46,17 +48,42 @@ export default function Checkout() {
     if (sumup === 'return' && returnedOrderId && checkoutId) verifySumUpPayment(returnedOrderId, checkoutId);
   }, []);
 
+  async function signInWithPassword(event) {
+    event.preventDefault();
+    setAuthMessage('');
+    if (!email.trim() || !password) return setAuthMessage('Inserisci email e password.');
+    setPasswordLoading(true);
+    try {
+      const { data, error: authError } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password
+      });
+      if (authError) throw authError;
+      setUser(data?.user || null);
+      setAuthMessage('✅ Accesso effettuato. Puoi continuare con il checkout.');
+    } catch (err) {
+      setAuthMessage('❌ Accesso con password non riuscito. Verifica le credenziali; non è stato inviato un nuovo link email.');
+    } finally {
+      setPasswordLoading(false);
+    }
+  }
+
   async function sendLoginLink(event) {
     event.preventDefault();
     setAuthMessage('');
     if (!email.trim()) return setAuthMessage('Inserisci la tua email.');
     setSendingLink(true);
-    const { error: authError } = await supabase.auth.signInWithOtp({
-      email: email.trim(),
-      options: { emailRedirectTo: window.location.origin + '/checkout' }
-    });
-    setAuthMessage(authError ? '❌ ' + authError.message : '✅ Link inviato. Controlla la tua email e poi torna al Checkout.');
-    setSendingLink(false);
+    try {
+      const { error: authError } = await supabase.auth.signInWithOtp({
+        email: email.trim(),
+        options: { emailRedirectTo: window.location.origin + '/checkout' }
+      });
+      setAuthMessage(authError ? '❌ ' + authError.message : '✅ Link inviato. Controlla la tua email e poi torna al Checkout.');
+    } catch {
+      setAuthMessage('❌ Non è stato possibile inviare il link email. Puoi usare l’accesso con password se hai già impostato una password.');
+    } finally {
+      setSendingLink(false);
+    }
   }
 
   async function loadOrderBreakdown(id) {
@@ -375,10 +402,16 @@ export default function Checkout() {
               {user ? 'Account RiverSpend collegato' : 'Accedi al tuo account RiverSpend per procedere con un ordine.'}
             </p>
             {!user && (
-              <form onSubmit={sendLoginLink} className="mt-4 flex flex-col gap-2 sm:flex-row">
-                <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="La tua email" autoComplete="email" className="min-w-0 flex-1 rounded-xl border border-slate-600 bg-white px-4 py-3 text-white outline-none focus:border-teal-500" />
-                <button type="submit" disabled={sendingLink} className="rounded-xl bg-teal-500 px-4 py-3 font-bold text-white disabled:opacity-60">
-                  {sendingLink ? 'Invio…' : '🔐 Accedi'}
+              <form onSubmit={signInWithPassword} className="mt-4 flex flex-col gap-2">
+                <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="La tua email" autoComplete="email" required className="min-w-0 flex-1 rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none focus:border-teal-500" />
+                <input type="password" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Password account" autoComplete="current-password" required className="min-w-0 flex-1 rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none focus:border-teal-500" />
+                <button type="submit" disabled={passwordLoading} className="rounded-xl bg-teal-600 px-4 py-3 font-bold text-white disabled:opacity-60">
+                  {passwordLoading ? 'Accesso…' : '🔐 Accedi con password'}
+                </button>
+              </form>
+              <form onSubmit={sendLoginLink} className="mt-2 flex flex-col gap-2">
+                <button type="submit" disabled={sendingLink} className="rounded-xl border border-teal-300 bg-white px-4 py-3 font-semibold text-teal-800 disabled:opacity-60">
+                  {sendingLink ? 'Invio…' : '📩 Invia link via email (alternativa)'}
                 </button>
               </form>
             )}
