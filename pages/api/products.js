@@ -49,8 +49,15 @@ export default async function handler(req, res) {
         .in('product_id', ids)
         .order('sort_order', { ascending: true });
 
-      if (mediaError) throw mediaError;
-      media = data || [];
+      if (mediaError) {
+        // Il catalogo deve restare visibile anche se product_media non è
+        // disponibile temporaneamente o la tabella non è ancora configurata.
+        // In quel caso usiamo il campo products.image come fallback.
+        console.error('Products API: media secondari non disponibili, uso le immagini principali.', mediaError);
+        media = [];
+      } else {
+        media = data || [];
+      }
     }
 
     const mediaByProduct = new Map();
