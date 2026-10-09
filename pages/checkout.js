@@ -59,6 +59,22 @@ export default function Checkout() {
     setSendingLink(false);
   }
 
+  async function loadOrderBreakdown(id) {
+    if (!id) return;
+    const { data, error: breakdownError } = await supabase
+      .from('orders')
+      .select('subtotal, shipping_total, total, platform_commission_total')
+      .eq('id', id)
+      .single();
+    if (breakdownError || !data) return;
+    setCheckoutBreakdown({
+      subtotal: Number(data.subtotal || 0),
+      shippingTotal: Number(data.shipping_total || 0),
+      total: Number(data.total || 0),
+      commissionTotal: Number(data.platform_commission_total || 0)
+    });
+  }
+
   async function createOrder() {
     setError('');
     setCreating(true);
@@ -184,6 +200,7 @@ export default function Checkout() {
       if (!response.ok) throw new Error(result?.error || 'Impossibile confermare PayPal.');
       setPaypalMessage('✅ Pagamento PayPal completato. Ordine confermato.');
       setOrderId(result.orderId || orderId);
+      await loadOrderBreakdown(result.orderId || orderId);
       try { localStorage.removeItem('riverspend-rete'); setItems([]); } catch {}
     } catch (err) { setError(err?.message || 'Errore nella conferma PayPal.'); }
     finally { setPaypalLoading(false); }
@@ -253,6 +270,7 @@ export default function Checkout() {
       if (!response.ok) throw new Error(result?.error || 'Impossibile verificare SumUp.');
 
       setOrderId(result.orderId || returnedOrderId);
+      await loadOrderBreakdown(result.orderId || returnedOrderId);
       if (result.paid) {
         setSumupMessage('✅ Pagamento SumUp Sandbox completato. Ordine confermato.');
         try {
