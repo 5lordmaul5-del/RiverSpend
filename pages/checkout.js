@@ -11,13 +11,10 @@ export default function Checkout() {
   const [email, setEmail] = useState('');
   const [authMessage, setAuthMessage] = useState('');
   const [sendingLink, setSendingLink] = useState(false);
-  const [selectedPayment, setSelectedPayment] = useState('sumup');
-  const [sumupLoading, setSumupLoading] = useState(false);
-  const [sumupMessage, setSumupMessage] = useState('');
-  const [stripeLoading, setStripeLoading] = useState(false);
-  const [paypalLoading, setPaypalLoading] = useState(false);
-  const [paypalMessage, setPaypalMessage] = useState('');
+  const [selectedPayment, setSelectedPayment] = useState('cod');
   const [codMessage, setCodMessage] = useState('');
+  const [transferMessage, setTransferMessage] = useState('');
+  const [transferMessage, setTransferMessage] = useState('');
 
   useEffect(() => {
     let active = true;
@@ -38,21 +35,9 @@ export default function Checkout() {
   }, []);
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const paypal = params.get('paypal');
-    const token = params.get('token');
-    const sumup = params.get('sumup');
-    const returnedOrderId = params.get('order_id');
-    let checkoutId = params.get('checkout_id');
-    if (!checkoutId) {
-      try {
-        const saved = JSON.parse(localStorage.getItem('riverspend-sumup-checkout') || 'null');
-        if (saved?.orderId === returnedOrderId) checkoutId = saved.checkoutId;
-      } catch {}
-    }
-    if (paypal === 'success' && token) capturePayPalPayment(token);
-    if (paypal === 'cancel') setPaypalMessage('Pagamento PayPal annullato. Nessun addebito confermato.');
-    if (sumup === 'return' && returnedOrderId && checkoutId) verifySumUpPayment(returnedOrderId, checkoutId);
+    // Il checkout utilizza esclusivamente pagamento alla consegna o bonifico istantaneo.
+    // Rimuove eventuali dati di checkout online rimasti da tentativi precedenti.
+    try { localStorage.removeItem('riverspend-sumup-checkout'); } catch {}
   }, []);
 
   async function sendLoginLink(event) {
@@ -137,139 +122,21 @@ export default function Checkout() {
   }
 
 
-  async function startStripePayment() {
-    setError('');
-    setStripeLoading(true);
-    try {
-      if (!orderId) throw new Error('Prima crea l’ordine.');
-      const { data: sessionData } = await supabase.auth.getSession();
-      const token = sessionData?.session?.access_token;
-      if (!token) throw new Error('Sessione RiverSpend non valida. Accedi di nuovo.');
-      const response = await fetch('/api/pay/stripe/create-checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
-        body: JSON.stringify({ orderId })
-      });
-      const result = await response.json();
-      if (!response.ok) throw new Error(result?.error || 'Stripe TEST non disponibile.');
-      if (!result?.url) throw new Error('Stripe non ha restituito il link Checkout.');
-      window.location.href = result.url;
-    } catch (err) {
-      setError(err?.message || 'Impossibile avviare Stripe TEST.');
-      setStripeLoading(false);
-    }
-  }
-
-  async function startPayPalPayment() {
-    setError(''); setPaypalMessage(''); setPaypalLoading(true);
-    try {
-      if (!orderId) throw new Error('Prima crea l’ordine.');
-      const { data: sessionData } = await supabase.auth.getSession();
-      const token = sessionData?.session?.access_token;
-      if (!token) throw new Error('Sessione RiverSpend non valida. Accedi di nuovo.');
-      const response = await fetch('/api/pay/paypal/create-order', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }, body: JSON.stringify({ orderId }) });
-      const result = await response.json();
-      if (!response.ok) throw new Error(result?.error || 'PayPal non disponibile.');
-      window.location.href = result.url;
-    } catch (err) { setError(err?.message || 'Impossibile avviare PayPal.'); setPaypalLoading(false); }
-  }
-
-  async function capturePayPalPayment(paypalOrderId) {
-    setPaypalLoading(true); setError('');
-    try {
-      const { data: sessionData } = await supabase.auth.getSession();
-      const token = sessionData?.session?.access_token;
-      if (!token) throw new Error('Accedi di nuovo al tuo account RiverSpend.');
-      const response = await fetch('/api/pay/paypal/capture-order', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }, body: JSON.stringify({ paypalOrderId }) });
-      const result = await response.json();
-      if (!response.ok) throw new Error(result?.error || 'Impossibile confermare PayPal.');
-      setPaypalMessage('✅ Pagamento PayPal completato. Ordine confermato.');
-      setOrderId(result.orderId || orderId);
-      try { localStorage.removeItem('riverspend-rete'); setItems([]); } catch {}
-    } catch (err) { setError(err?.message || 'Errore nella conferma PayPal.'); }
-    finally { setPaypalLoading(false); }
-  }
-
   async function selectCashOnDelivery() {
-    setError(''); setCodMessage('');
+    setError(''); setCodMessage(''); setTransferMessage('');
     if (!orderId) return setError('Prima crea l’ordine.');
     const { error: updateError } = await supabase.from('orders').update({ payment_status: 'cod_pending' }).eq('id', orderId);
     if (updateError) return setError('Impossibile impostare il pagamento alla consegna.');
     setCodMessage('🚚 Pagamento alla consegna selezionato. L’ordine resta in attesa di consegna.');
   }
 
-  async function startSumUpPayment() {
-    setError('');
-    setSumupMessage('');
-    setSumupLoading(true);
-    try {
-      if (!orderId) throw new Error('Prima crea l’ordine.');
-      const { data: sessionData } = await supabase.auth.getSession();
-      const token = sessionData?.session?.access_token;
-      if (!token) throw new Error('Sessione RiverSpend non valida. Accedi di nuovo.');
 
-      const response = await fetch('/api/pay/sumup/create-checkout', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + token
-        },
-        body: JSON.stringify({ orderId })
-      });
-      const result = await response.json();
-      if (!response.ok) throw new Error(result?.error || 'SumUp Sandbox non disponibile.');
-      if (!result?.url || !result?.checkoutId) throw new Error('SumUp non ha restituito il checkout.');
-
-      try {
-        localStorage.setItem('riverspend-sumup-checkout', JSON.stringify({
-          orderId: String(orderId),
-          checkoutId: String(result.checkoutId)
-        }));
-      } catch {}
-      window.location.href = result.url;
-    } catch (err) {
-      setError(err?.message || 'Impossibile avviare SumUp Sandbox.');
-      setSumupLoading(false);
-    }
-  }
-
-  async function verifySumUpPayment(returnedOrderId, checkoutId) {
-    setError('');
-    setSumupMessage('⏳ Verifica del pagamento SumUp in corso…');
-    setSumupLoading(true);
-    try {
-      const { data: sessionData } = await supabase.auth.getSession();
-      const token = sessionData?.session?.access_token;
-      if (!token) throw new Error('Sessione RiverSpend non valida. Accedi di nuovo.');
-
-      const response = await fetch('/api/pay/sumup/verify', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + token
-        },
-        body: JSON.stringify({ orderId: returnedOrderId, checkoutId })
-      });
-      const result = await response.json();
-      if (!response.ok) throw new Error(result?.error || 'Impossibile verificare SumUp.');
-
-      setOrderId(result.orderId || returnedOrderId);
-      if (result.paid) {
-        setSumupMessage('✅ Pagamento SumUp Sandbox completato. Ordine confermato.');
-        try {
-          localStorage.removeItem('riverspend-rete');
-          localStorage.removeItem('riverspend-sumup-checkout');
-          setItems([]);
-        } catch {}
-      } else {
-        setSumupMessage('🧪 SumUp Sandbox: ' + (result.message || 'Pagamento non ancora confermato.'));
-      }
-    } catch (err) {
-      setError(err?.message || 'Errore nella verifica SumUp.');
-      setSumupMessage('');
-    } finally {
-      setSumupLoading(false);
-    }
+  async function selectInstantTransfer() {
+    setError(''); setTransferMessage(''); setCodMessage('');
+    if (!orderId) return setError('Prima crea l’ordine.');
+    const { error: updateError } = await supabase.from('orders').update({ payment_status: 'transfer_pending' }).eq('id', orderId);
+    if (updateError) return setError('Impossibile impostare il bonifico. Contatta l’assistenza prima di ripetere l’ordine.');
+    setTransferMessage('Bonifico istantaneo selezionato. L’ordine resta non pagato finché il trasferimento non viene verificato. Le coordinate del beneficiario devono essere comunicate dal titolare o dal venditore.');
   }
 
   return (
@@ -309,27 +176,15 @@ export default function Checkout() {
 
           <section className="mt-6 rounded-2xl border border-teal-100 bg-white p-4">
             <p className="text-sm font-black uppercase tracking-[0.18em] text-teal-600">RiverSpend Pay</p>
-            <h2 className="mt-2 text-xl font-black text-slate-900">💳 Scegli come pagare</h2>
-            <p className="mt-1 text-sm text-slate-500">SumUp Sandbox è collegato al checkout RiverSpend per il primo test end-to-end. Nessun denaro reale viene movimentato.</p>
+            <h2 className="mt-2 text-xl font-black text-slate-900">Scegli come pagare</h2>
+            <p className="mt-1 text-sm text-slate-500">Sono disponibili soltanto pagamento alla consegna in contanti e bonifico istantaneo.</p>
             <div className="mt-4 grid gap-3">
               {[
-                ['sumup','🟢','SumUp — Pagamento online','Disponibile TEST'],
-                ['paypal','🅿️','PayPal','Da configurare'],
-                ['card','💳','Carta Visa / Mastercard / Amex','In arrivo'],
-                ['applepay','','Apple Pay','In arrivo'],
-                ['googlepay','G','Google Pay','In arrivo'],
-                ['cod','🚚','Pagamento alla consegna','Disponibile'],
-                ['bancomat','🇮🇹','PostePay / BANCOMAT Pay','Da configurare'],
-                ['klarna','🩷','Klarna / Scalapay','In arrivo'],
-                ['global','🌍','Metodi internazionali','In arrivo']
-              ].map(([id, icon, title, status]) => (
-                <button
-                  key={id}
-                  type="button"
-                  onClick={() => ['SOLO TEST','Disponibile TEST','Disponibile','Da configurare'].includes(status) && setSelectedPayment(id)}
-                  className={`flex items-center justify-between rounded-xl border px-4 py-3 text-left ${selectedPayment === id ? 'border-teal-500 bg-teal-50' : 'border-slate-200 bg-white'} ${status === 'In arrivo' ? 'opacity-70' : ''}`}
-                >
-                  <span className="flex items-center gap-3"><span className="text-xl">{icon}</span><span><strong className="block text-slate-900">{title}</strong><span className="text-xs text-slate-500">{status}</span></span></span>
+                ['cod','🚚','Pagamento alla consegna in contanti'],
+                ['transfer','🏦','Bonifico istantaneo']
+              ].map(([id, icon, title]) => (
+                <button key={id} type="button" onClick={() => setSelectedPayment(id)} className={`flex items-center justify-between rounded-xl border px-4 py-3 text-left ${selectedPayment === id ? 'border-teal-500 bg-teal-50' : 'border-slate-200 bg-white'}`}>
+                  <span className="flex items-center gap-3"><span className="text-xl">{icon}</span><strong className="text-slate-900">{title}</strong></span>
                   {selectedPayment === id && <span className="font-black text-teal-600">✓</span>}
                 </button>
               ))}
@@ -341,7 +196,7 @@ export default function Checkout() {
               ['🛒', 'Riepilogo ordine', 'Prodotti, quantità e totale'],
               ['📦', 'Consegna', 'Indirizzo e opzioni di spedizione'],
               ['🛡️', 'RiverSpend Shield', 'Protezione dell’acquirente'],
-              ['💳', 'Pagamento', 'Provider di pagamento sicuro'],
+              ['💶', 'Pagamento', 'Contanti alla consegna o bonifico istantaneo'],
             ].map(([icon, title, text]) => (
               <article key={title} className="rounded-2xl border border-teal-100 bg-white p-4">
                 <div className="text-2xl">{icon}</div>
@@ -365,15 +220,14 @@ export default function Checkout() {
             )}
             {authMessage && <p className="mt-2 text-sm text-slate-200">{authMessage}</p>}
             <p className="mt-2 text-xs text-slate-500">
-              Il pagamento reale verrà collegato in un passaggio successivo, dopo aver verificato il flusso ordine.
+              Nessun pagamento online con carta o provider esterno è attivo in questo checkout.
             </p>
           </div>
 
           {error && <div className="mt-5 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">{error}</div>}
           {orderId && <div className="mt-5 rounded-2xl border border-teal-200 bg-teal-50 p-4 text-sm text-teal-700">✅ Ordine creato. ID: <span className="font-mono">{orderId}</span><br />Stato: <strong>in attesa di pagamento</strong>.</div>}
-          {paypalMessage && <div className="mt-4 rounded-2xl border border-sky-200 bg-sky-50 p-4 text-sm text-sky-700">{paypalMessage}</div>}
           {codMessage && <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">{codMessage}</div>}
-          {sumupMessage && <div className="mt-4 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800">{sumupMessage}</div>}
+          {transferMessage && <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">{transferMessage}</div>}
 
           <div className="mt-6 rounded-2xl border border-teal-100 bg-white p-4">
             <div className="flex flex-wrap gap-3">
@@ -383,43 +237,23 @@ export default function Checkout() {
                 </button>
               )}
 
-              {selectedPayment === 'card' && (
-                <button
-                  type="button"
-                  onClick={startStripePayment}
-                  disabled={!orderId || stripeLoading}
-                  className="rounded-xl border border-sky-400 bg-sky-600 px-5 py-3 font-black text-white disabled:cursor-not-allowed disabled:opacity-40"
-                >
-                  {stripeLoading ? '⏳ Apertura Stripe TEST…' : '💳 Paga con carta — TEST'}
-                </button>
-              )}
-
               {selectedPayment === 'cod' && (
                 <button type="button" onClick={selectCashOnDelivery} disabled={!orderId} className="rounded-xl border border-amber-400 bg-amber-500 px-5 py-3 font-black text-white disabled:cursor-not-allowed disabled:opacity-40">
                   🚚 Conferma pagamento alla consegna
                 </button>
               )}
 
-              {selectedPayment === 'paypal' && (
-                <button type="button" onClick={startPayPalPayment} disabled={!orderId || paypalLoading} className="rounded-xl border border-sky-400 bg-sky-600 px-5 py-3 font-black text-white disabled:cursor-not-allowed disabled:opacity-40">
-                  {paypalLoading ? '⏳ Apertura PayPal…' : '🅿️ Paga con PayPal — TEST'}
+              {selectedPayment === 'transfer' && (
+                <button type="button" onClick={selectInstantTransfer} disabled={!orderId} className="rounded-xl border border-teal-400 bg-teal-600 px-5 py-3 font-black text-white disabled:cursor-not-allowed disabled:opacity-40">
+                  🏦 Conferma bonifico istantaneo
                 </button>
               )}
 
-              {selectedPayment === 'bancomat' && (
-                <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">🇮🇹 <strong>PostePay / BANCOMAT Pay</strong>: predisposto nel checkout; l’integrazione POS/e-commerce Poste verrà collegata dopo l’attivazione del servizio e delle credenziali dell’esercente.</div>
-              )}
 
-              {selectedPayment === 'sumup' && (
-                <button
-                  type="button"
-                  onClick={startSumUpPayment}
-                  disabled={!orderId || sumupLoading}
-                  className="rounded-xl border border-emerald-400 bg-emerald-500 px-5 py-3 font-black text-white disabled:cursor-not-allowed disabled:opacity-40"
-                >
-                  {sumupLoading ? '⏳ Apertura SumUp…' : '🟢 Paga con SumUp — TEST'}
-                </button>
-              )}
+
+
+
+
 
               <Link href="/rete" className="rounded-xl border border-teal-300 px-4 py-3 font-bold text-teal-700">
                 🕸️ Vai alla Rete
@@ -429,7 +263,7 @@ export default function Checkout() {
               </Link>
             </div>
             {!orderId && user && items.length > 0 && (
-              <p className="mt-3 text-xs text-slate-500">Prima premi <strong>Crea ordine</strong>, poi si attiva <strong>🟢 Paga con SumUp — TEST</strong>.</p>
+              <p className="mt-3 text-xs text-slate-500">Prima premi <strong>Crea ordine</strong>, poi conferma il metodo di pagamento scelto.</p>
             )}
           </div>
         </section>
