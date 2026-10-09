@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 
 function paypalBase() {
-  return (process.env.PAYPAL_MODE || 'sandbox') === 'live' ? 'https://api-m.paypal.com' : 'https://api-m.sandbox.paypal.com';
+  return (process.env.PAYPAL_MODE || 'live') === 'live' ? 'https://api-m.paypal.com' : 'https://api-m.sandbox.paypal.com';
 }
 
 async function paypalAccessToken() {
