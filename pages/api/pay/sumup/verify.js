@@ -48,8 +48,16 @@ export default async function handler(req, res) {
     const checkout = await response.json().catch(() => ({}));
 
     if (!response.ok) {
+      // Return SumUp's safe diagnostic metadata without exposing credentials or request headers.
       return res.status(response.status).json({
-        error: checkout?.message || checkout?.detail || 'Impossibile verificare il checkout SumUp.'
+        error: checkout?.detail || checkout?.message || 'Impossibile verificare il checkout SumUp.',
+        provider: 'sumup',
+        stage: 'verify_checkout',
+        providerStatus: response.status,
+        providerTitle: checkout?.title || null,
+        providerType: checkout?.type || null,
+        providerCode: checkout?.error_code || checkout?.error_message || null,
+        providerTraceId: checkout?.trace_id || null
       });
     }
 

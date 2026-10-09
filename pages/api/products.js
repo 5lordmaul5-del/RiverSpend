@@ -19,7 +19,7 @@ export default async function handler(req, res) {
     // declared foreign key to products, so PostgREST cannot reliably embed it.
     const { data: products, error: productsError } = await supabase
       .from('products')
-      .select('id, name, description, price, condition, category, image, created_at, origin_country, seller_country, seller_type, locality, province, region, stock, promo, homepage_expires_at, sponsored_until, sponsored_label')
+      .select('id, name, description, price, shipping_price, condition, category, image, created_at, origin_country, seller_country, seller_type, locality, province, region, stock, promo, homepage_expires_at, sponsored_until, sponsored_label')
       .eq('status', 'published')
       .order('created_at', { ascending: false });
 
@@ -70,6 +70,7 @@ export default async function handler(req, res) {
         id: product.id,
         titolo: product.name,
         prezzo: Number(product.price || 0),
+        spedizione: Number(product.shipping_price || 0),
         condizione: product.condition || '',
         categoria: product.category || '',
         descrizione: product.description || '',
