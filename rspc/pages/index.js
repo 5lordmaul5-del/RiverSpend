@@ -35,13 +35,6 @@ export default function RSPC(){
   const shippedOrders=await supabase.from("orders").select("id",{count:"exact",head:true}).in("status",["shipped","delivered"]);out.shippedOrders=shippedOrders.error?null:shippedOrders.count;
   const sellers=await supabase.from("products").select("seller_id",{count:"exact",head:true}).not("seller_id","is",null);out.sellers=sellers.error?null:sellers.count;
   const s=await supabase.from("rs_stream_subscriptions").select("id",{count:"exact",head:true}).eq("status","active");out.subscribers=s.error?null:s.count;
-  const payOrders=await supabase.from("payment_orders").select("id",{count:"exact",head:true});out.payOrders=payOrders.error?null:payOrders.count;
-  const payPending=await supabase.from("payment_orders").select("id",{count:"exact",head:true}).in("status",["pending","created","requires_action"]);out.payPending=payPending.error?null:payPending.count;
-  const payTransactions=await supabase.from("payment_transactions").select("id",{count:"exact",head:true});out.payTransactions=payTransactions.error?null:payTransactions.count;
-  const payRefunds=await supabase.from("payment_refunds").select("id",{count:"exact",head:true});out.payRefunds=payRefunds.error?null:payRefunds.count;
-  const payouts=await supabase.from("seller_payouts").select("id",{count:"exact",head:true});out.payouts=payouts.error?null:payouts.count;
-  const providers=await supabase.from("rs_payment_providers").select("id",{count:"exact",head:true}).eq("active",true);out.providers=providers.error?null:providers.count;
-  const methods=await supabase.from("rs_payment_methods").select("id",{count:"exact",head:true}).eq("active",true);out.methods=methods.error?null:methods.count;
   const musicWorks=await supabase.from("music_works").select("id",{count:"exact",head:true});out.musicWorks=musicWorks.error?null:musicWorks.count;
   const musicRecordings=await supabase.from("music_recordings").select("id",{count:"exact",head:true});out.musicRecordings=musicRecordings.error?null:musicRecordings.count;
   const videos=await supabase.from("cast_videos").select("id",{count:"exact",head:true});out.videos=videos.error?null:videos.count;
@@ -57,6 +50,13 @@ export default function RSPC(){
     const pr=await supabase.from("rs_park_revenue").select("amount").eq("currency","EUR").gte("occurred_at",new Date(new Date().getFullYear(),new Date().getMonth(),1).toISOString());out.parkRevenue=pr.error?null:(pr.data||[]).reduce((n,x)=>n+Number(x.amount||0),0);
   }
   if(includeFinance){
+  const payOrders=await supabase.from("payment_orders").select("id",{count:"exact",head:true});out.payOrders=payOrders.error?null:payOrders.count;
+  const payPending=await supabase.from("payment_orders").select("id",{count:"exact",head:true}).in("status",["pending","created","requires_action"]);out.payPending=payPending.error?null:payPending.count;
+  const payTransactions=await supabase.from("payment_transactions").select("id",{count:"exact",head:true});out.payTransactions=payTransactions.error?null:payTransactions.count;
+  const payRefunds=await supabase.from("payment_refunds").select("id",{count:"exact",head:true});out.payRefunds=payRefunds.error?null:payRefunds.count;
+  const payouts=await supabase.from("seller_payouts").select("id",{count:"exact",head:true});out.payouts=payouts.error?null:payouts.count;
+  const providers=await supabase.from("rs_payment_providers").select("id",{count:"exact",head:true}).eq("active",true);out.providers=providers.error?null:providers.count;
+  const methods=await supabase.from("rs_payment_methods").select("id",{count:"exact",head:true}).eq("active",true);out.methods=methods.error?null:methods.count;
     const tm=await supabase.from("rs_treasury_movements").select("id,gross_amount,currency,status,created_at").order("created_at",{ascending:false}).limit(100);out.treasuryMovements=tm.error?[]:(tm.data||[]);
     const ta=await supabase.from("rs_treasury_allocations").select("movement_id,amount,currency,allocation_type,payout_status,account_id,rs_treasury_accounts(code,name)").in("movement_id",(out.treasuryMovements||[]).map(x=>x.id));out.treasuryAllocations=ta.error?[]:(ta.data||[]);
     const tTotals={gross:0,seller:0,river_spend:0,shipping:0,reserve:0,other:0,pending:0,paid:0};
