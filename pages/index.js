@@ -670,6 +670,19 @@ export default function Home() {
             </section>
           </div>
 
+          <a href="/park" aria-label="Scopri RiverSpend Park: apri il catalogo del parco" className="group mb-5 block overflow-hidden rounded-3xl border border-cyan-300/60 bg-slate-950 shadow-xl shadow-cyan-950/20 transition hover:-translate-y-0.5 hover:border-cyan-200 focus:outline-none focus:ring-4 focus:ring-cyan-300/70">
+            <div className="relative">
+              <img src="https://raw.githubusercontent.com/5lordmaul5-del/RiverSpend/main/file_00000000070081f4be8d351d407b4017.png" alt="RiverSpend Park: ingresso scenografico, attrazioni e mondo d'avventura" className="block aspect-[16/8] w-full object-cover transition duration-500 group-hover:scale-[1.02]" loading="eager" />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
+              <div className="absolute inset-x-0 bottom-0 p-4 sm:p-7">
+                <p className="text-xs font-extrabold uppercase tracking-[.24em] text-cyan-200 sm:text-sm">Natura • Avventura • Tecnologia</p>
+                <h2 className="mt-1 text-2xl font-black text-white drop-shadow sm:text-4xl">RiverSpend Park</h2>
+                <p className="mt-1 max-w-2xl text-sm font-medium text-white sm:text-base">Entra in un altro mondo. Scopri le attrazioni, le aree tematiche e le nuove esperienze.</p>
+                <span className="mt-3 inline-flex items-center gap-2 rounded-full bg-cyan-300 px-5 py-2.5 text-sm font-extrabold text-slate-950 shadow-lg">SCOPRI IL PARCO <span aria-hidden="true">↗</span></span>
+              </div>
+            </div>
+          </a>
+
           <div className="rs-hero mb-5 rounded-2xl border border-teal-800 bg-gradient-to-br from-slate-900 to-sky-950 px-5 py-4 sm:px-7 sm:py-5">
             <span className="rs-gold-pebble one" aria-hidden="true" />
             <span className="rs-gold-pebble two" aria-hidden="true" />
