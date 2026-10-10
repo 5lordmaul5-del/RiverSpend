@@ -12,7 +12,28 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Configurazione Supabase server mancante.' });
   }
 
+  const auth = req.headers.authorization || '';
+  const token = auth.startsWith('Bearer ') ? auth.slice(7) : '';
+  if (!token) return res.status(401).json({ error: 'Sessione RiverSpend mancante.' });
+
   const supabase = createClient(supabaseUrl, serviceRoleKey);
+  const { data: authData, error: authError } = await supabase.auth.getUser(token);
+  const user = authData?.user;
+  if (authError || !user) return res.status(401).json({ error: 'Sessione RiverSpend non valida.' });
+
+  // La tabella rs_admin_roles è la fonte dei ruoli amministrativi usata dal pannello RSPC.
+  // Il controllo avviene lato server con la service-role key, mai con un ruolo nel body.
+  const { data: adminRole, error: roleError } = await supabase
+    .from('rs_admin_roles')
+    .select('role')
+    .eq('user_id', user.id)
+    .maybeSingle();
+
+  if (roleError) return res.status(500).json({ error: 'Impossibile verificare il ruolo amministrativo.' });
+  if (!['admin', 'ceo'].includes(String(adminRole?.role || '').toLowerCase())) {
+    return res.status(403).json({ error: 'Solo un amministratore autorizzato può eseguire pagamenti simulati.' });
+  }
+
   const { orderId } = req.body || {};
   if (!orderId) return res.status(400).json({ error: 'orderId obbligatorio.' });
 
@@ -24,6 +45,9 @@ export default async function handler(req, res) {
 
   if (orderError || !order) return res.status(404).json({ error: 'Ordine non trovato.' });
   if (order.payment_status === 'paid') return res.status(409).json({ error: 'Ordine già pagato.' });
+  if (order.status !== 'pending' || !['unpaid', 'pending'].includes(String(order.payment_status || '').toLowerCase())) {
+    return res.status(409).json({ error: 'Solo gli ordini in attesa e non pagati possono essere usati nel sandbox.' });
+  }
 
   const amount = Number(order.total || 0);
   if (!Number.isFinite(amount) || amount <= 0) return res.status(400).json({ error: 'Totale ordine non valido.' });

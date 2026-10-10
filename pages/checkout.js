@@ -14,8 +14,6 @@ export default function Checkout() {
   const [selectedPayment, setSelectedPayment] = useState('cod');
   const [codMessage, setCodMessage] = useState('');
   const [transferMessage, setTransferMessage] = useState('');
-  const [paypalLoading, setPaypalLoading] = useState(false);
-  const [paypalMessage, setPaypalMessage] = useState('');
 
   useEffect(() => {
     let active = true;
@@ -36,11 +34,6 @@ export default function Checkout() {
   }, []);
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const paypal = params.get('paypal');
-    const token = params.get('token');
-    if (paypal === 'success' && token) capturePayPalPayment(token);
-    if (paypal === 'cancel') setPaypalMessage('Pagamento PayPal annullato. Nessun pagamento è stato confermato.');
     try { localStorage.removeItem('riverspend-sumup-checkout'); } catch {}
   }, []);
 
@@ -81,10 +74,22 @@ export default function Checkout() {
       if (productsError) throw productsError;
 
       const byId = new Map((products || []).map((product) => [String(product.id), product]));
-      const validItems = items.map((item) => byId.get(String(item.id))).filter(Boolean);
-      if (validItems.length !== items.length) throw new Error('Uno o più prodotti non sono più disponibili.');
+      const validItems = items.map((item) => {
+        const product = byId.get(String(item.id));
+        if (!product) return null;
+        const rawQuantity = Number(item.quantity ?? item.quantita ?? 1);
+        if (!Number.isInteger(rawQuantity) || rawQuantity < 1) {
+          throw new Error('Quantità non valida per un prodotto della Rete.');
+        }
+        const quantity = rawQuantity;
+        if (Number.isInteger(product.stock) && product.stock >= 0 && quantity > product.stock) {
+          throw new Error('Quantità non disponibile per il prodotto: ' + (product.name || 'Prodotto') + '.');
+        }
+        return { product, quantity };
+      });
+      if (validItems.some((item) => !item)) throw new Error('Uno o più prodotti non sono più disponibili.');
 
-      const subtotal = validItems.reduce((sum, product) => sum + Number(product.price || 0), 0);
+      const subtotal = validItems.reduce((sum, item) => sum + Number(item.product.price || 0) * item.quantity, 0);
       const { data: order, error: orderError } = await supabase
         .from('orders')
         .insert({
@@ -102,13 +107,13 @@ export default function Checkout() {
 
       if (orderError) throw orderError;
 
-      const orderItems = validItems.map((product) => ({
+      const orderItems = validItems.map(({ product, quantity }) => ({
         order_id: order.id,
         product_id: String(product.id),
         product_name: product.name || 'Prodotto',
         unit_price: Number(product.price || 0),
-        quantity: 1,
-        subtotal: Number(product.price || 0)
+        quantity,
+        subtotal: Number(product.price || 0) * quantity
       }));
 
       const { error: itemsError } = await supabase.from('order_items').insert(orderItems);
@@ -125,67 +130,41 @@ export default function Checkout() {
     }
   }
 
+  async function savePaymentMethod(paymentMethod) {
+    setError('');
+    setCodMessage('');
+    setTransferMessage('');
+    if (!orderId) return setError('Prima crea l’ordine.');
 
-  async function startPayPalPayment() {
-    setError(''); setPaypalMessage(''); setPaypalLoading(true);
     try {
-      if (!orderId) throw new Error('Prima crea l’ordine.');
-      const { data: sessionData } = await supabase.auth.getSession();
-      const token = sessionData?.session?.access_token;
-      if (!token) throw new Error('Sessione RiverSpend non valida. Accedi di nuovo.');
-      const response = await fetch('/api/pay/paypal/create-order', {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.access_token) throw new Error('Sessione scaduta. Accedi di nuovo a RiverSpend.');
+      const response = await fetch('/api/orders/payment-method', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
-        body: JSON.stringify({ orderId })
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + session.access_token
+        },
+        body: JSON.stringify({ orderId, paymentMethod })
       });
-      const result = await response.json();
-      if (!response.ok) throw new Error(result?.error || 'PayPal non disponibile.');
-      if (!result?.url) throw new Error('PayPal non ha restituito il link di approvazione.');
-      window.location.href = result.url;
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(result.error || 'Impossibile salvare il metodo di pagamento.');
+      if (paymentMethod === 'cash_on_delivery') {
+        setCodMessage('🚚 Metodo registrato: pagamento in contanti alla consegna. L’ordine NON è pagato; l’incasso dovrà essere verificato alla consegna.');
+      } else {
+        setTransferMessage('🏦 Metodo registrato: bonifico BancoPosta. Riferimento ordine: ' + result.reference + '. Stato: IN ATTESA DI PAGAMENTO, non pagato. Non effettuare il bonifico finché RiverSpend non comunica le coordinate bancarie tramite un canale ufficiale verificato. Ricevute e screenshot non dimostrano l’accredito.');
+      }
     } catch (err) {
-      setError(err?.message || 'Impossibile avviare PayPal.');
-      setPaypalLoading(false);
-    }
-  }
-
-  async function capturePayPalPayment(paypalOrderId) {
-    setPaypalLoading(true); setError('');
-    try {
-      const { data: sessionData } = await supabase.auth.getSession();
-      const token = sessionData?.session?.access_token;
-      if (!token) throw new Error('Accedi di nuovo al tuo account RiverSpend.');
-      const response = await fetch('/api/pay/paypal/capture-order', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
-        body: JSON.stringify({ paypalOrderId })
-      });
-      const result = await response.json();
-      if (!response.ok) throw new Error(result?.error || 'Impossibile confermare PayPal.');
-      setPaypalMessage('Pagamento PayPal completato. Ordine confermato.');
-      setOrderId(result.orderId || orderId);
-      try { localStorage.removeItem('riverspend-rete'); setItems([]); } catch {}
-    } catch (err) {
-      setError(err?.message || 'Errore nella conferma PayPal.');
-    } finally {
-      setPaypalLoading(false);
+      setError(err?.message || 'Errore durante la scelta del pagamento.');
     }
   }
 
   async function selectCashOnDelivery() {
-    setError(''); setCodMessage(''); setTransferMessage('');
-    if (!orderId) return setError('Prima crea l’ordine.');
-    const { error: updateError } = await supabase.from('orders').update({ payment_status: 'cod_pending' }).eq('id', orderId);
-    if (updateError) return setError('Impossibile impostare il pagamento alla consegna.');
-    setCodMessage('🚚 Pagamento alla consegna selezionato. L’ordine resta in attesa di consegna.');
+    return savePaymentMethod('cash_on_delivery');
   }
 
-
   async function selectInstantTransfer() {
-    setError(''); setTransferMessage(''); setCodMessage('');
-    if (!orderId) return setError('Prima crea l’ordine.');
-    const { error: updateError } = await supabase.from('orders').update({ payment_status: 'transfer_pending' }).eq('id', orderId);
-    if (updateError) return setError('Impossibile impostare il bonifico. Contatta l’assistenza prima di ripetere l’ordine.');
-    setTransferMessage('Bonifico istantaneo selezionato. L’ordine resta non pagato finché il trasferimento non viene verificato. Le coordinate del beneficiario devono essere comunicate dal titolare o dal venditore.');
+    return savePaymentMethod('bank_transfer');
   }
 
   return (
@@ -211,13 +190,13 @@ export default function Checkout() {
                   {items.map((item) => (
                     <div key={item.id} className="flex items-center justify-between gap-3 text-sm">
                       <span className="min-w-0 truncate">{item.title || 'Prodotto'}</span>
-                      <strong>€ {Number(item.price || 0).toFixed(2)}</strong>
+                      <strong>{Number(item.quantity ?? item.quantita ?? 1)} × € {Number(item.price || 0).toFixed(2)} = € {(Number(item.price || 0) * Number(item.quantity ?? item.quantita ?? 1)).toFixed(2)}</strong>
                     </div>
                   ))}
                 </div>
                 <div className="mt-4 flex justify-between border-t border-teal-100 pt-3 text-lg font-black">
                   <span>Totale</span>
-                  <span className="text-teal-600">€ {items.reduce((sum, item) => sum + Number(item.price || 0), 0).toFixed(2)}</span>
+                  <span className="text-teal-600">€ {items.reduce((sum, item) => sum + Number(item.price || 0) * Number(item.quantity ?? item.quantita ?? 1), 0).toFixed(2)}</span>
                 </div>
               </>
             )}
@@ -226,12 +205,11 @@ export default function Checkout() {
           <section className="mt-6 rounded-2xl border border-teal-100 bg-white p-4">
             <p className="text-sm font-black uppercase tracking-[0.18em] text-teal-600">RiverSpend Pay</p>
             <h2 className="mt-2 text-xl font-black text-slate-900">Scegli come pagare</h2>
-            <p className="mt-1 text-sm text-slate-500">Scegli tra pagamento alla consegna in contanti, bonifico istantaneo e PayPal.</p>
+            <p className="mt-1 text-sm text-slate-500">Scegli tra pagamento alla consegna in contanti e bonifico BancoPosta (con verifica manuale dell’accredito).</p>
             <div className="mt-4 grid gap-3">
               {[
                 ['cod','🚚','Pagamento alla consegna in contanti'],
-                ['transfer','🏦','Bonifico istantaneo'],
-                ['paypal','🅿️','PayPal — pagamento online']
+                ['transfer','🏦','Bonifico BancoPosta (verifica manuale)'],
               ].map(([id, icon, title]) => (
                 <button key={id} type="button" onClick={() => setSelectedPayment(id)} className={`flex items-center justify-between rounded-xl border px-4 py-3 text-left ${selectedPayment === id ? 'border-teal-500 bg-teal-50' : 'border-slate-200 bg-white'}`}>
                   <span className="flex items-center gap-3"><span className="text-xl">{icon}</span><strong className="text-slate-900">{title}</strong></span>
@@ -246,7 +224,7 @@ export default function Checkout() {
               ['🛒', 'Riepilogo ordine', 'Prodotti, quantità e totale'],
               ['📦', 'Consegna', 'Indirizzo e opzioni di spedizione'],
               ['🛡️', 'RiverSpend Shield', 'Protezione dell’acquirente'],
-              ['💶', 'Pagamento', 'Contanti alla consegna o bonifico istantaneo'],
+              ['💶', 'Pagamento', 'Contanti alla consegna o bonifico BancoPosta con verifica manuale'],
             ].map(([icon, title, text]) => (
               <article key={title} className="rounded-2xl border border-teal-100 bg-white p-4">
                 <div className="text-2xl">{icon}</div>
@@ -270,14 +248,13 @@ export default function Checkout() {
             )}
             {authMessage && <p className="mt-2 text-sm text-slate-200">{authMessage}</p>}
             <p className="mt-2 text-xs text-slate-500">
-              PayPal richiede credenziali Live valide configurate in Vercel. Non inserire qui chiavi segrete.
+              Il bonifico non è ancora attivo finché non ricevi coordinate verificate tramite un canale ufficiale RiverSpend. Non inviare PIN, password, CVV o credenziali bancarie. Una ricevuta caricata dal cliente non prova da sola l’accredito: il pagamento va verificato sul conto da un operatore autorizzato.
             </p>
           </div>
 
           {error && <div className="mt-5 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">{error}</div>}
           {orderId && <div className="mt-5 rounded-2xl border border-teal-200 bg-teal-50 p-4 text-sm text-teal-700">✅ Ordine creato. ID: <span className="font-mono">{orderId}</span><br />Stato: <strong>in attesa di pagamento</strong>.</div>}
           {codMessage && <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">{codMessage}</div>}
-          {paypalMessage && <div className="mt-4 rounded-2xl border border-sky-200 bg-sky-50 p-4 text-sm text-sky-800">{paypalMessage}</div>}
           {transferMessage && <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">{transferMessage}</div>}
 
           <div className="mt-6 rounded-2xl border border-teal-100 bg-white p-4">
@@ -294,15 +271,9 @@ export default function Checkout() {
                 </button>
               )}
 
-              {selectedPayment === 'paypal' && (
-                <button type="button" onClick={startPayPalPayment} disabled={!orderId || paypalLoading} className="rounded-xl border border-sky-400 bg-sky-600 px-5 py-3 font-black text-white disabled:cursor-not-allowed disabled:opacity-40">
-                  {paypalLoading ? 'Apertura PayPal…' : 'Paga con PayPal'}
-                </button>
-              )}
-
               {selectedPayment === 'transfer' && (
                 <button type="button" onClick={selectInstantTransfer} disabled={!orderId} className="rounded-xl border border-teal-400 bg-teal-600 px-5 py-3 font-black text-white disabled:cursor-not-allowed disabled:opacity-40">
-                  🏦 Conferma bonifico istantaneo
+                  🏦 Ho scelto il bonifico BancoPosta
                 </button>
               )}
 
