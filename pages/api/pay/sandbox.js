@@ -45,6 +45,9 @@ export default async function handler(req, res) {
 
   if (orderError || !order) return res.status(404).json({ error: 'Ordine non trovato.' });
   if (order.payment_status === 'paid') return res.status(409).json({ error: 'Ordine già pagato.' });
+  if (order.status !== 'pending' || !['unpaid', 'pending'].includes(String(order.payment_status || '').toLowerCase())) {
+    return res.status(409).json({ error: 'Solo gli ordini in attesa e non pagati possono essere usati nel sandbox.' });
+  }
 
   const amount = Number(order.total || 0);
   if (!Number.isFinite(amount) || amount <= 0) return res.status(400).json({ error: 'Totale ordine non valido.' });
