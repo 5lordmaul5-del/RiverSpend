@@ -242,46 +242,42 @@ body {
   }
 }
 
-/* RIVERSPEND STREAM & BROADCAST */
-.rs-media-hub {
-  padding: 18px 16px 24px;
-  background: linear-gradient(145deg, #e7faff 0%, #f7fcff 58%, #fffaf0 100%);
-  border-top: 1px solid #d6edf4;
-  border-bottom: 1px solid #d6edf4;
-}
-.rs-media-heading { margin: 0 0 6px; font-size: 25px; color: #102a43; }
-.rs-media-intro { margin: 0 0 16px; line-height: 1.55; color: #53717c; }
-.rs-media-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
-.rs-media-card {
-  overflow: hidden; border: 1px solid #d5e9f0; border-radius: 20px;
-  background: #fff; box-shadow: 0 8px 24px rgba(10, 85, 115, .09);
-}
-.rs-media-banner { padding: 20px; color: white; position: relative; }
-.rs-stream-banner { background: radial-gradient(circle at 85% 10%, #36c5ee 0, transparent 36%), linear-gradient(125deg, #071d49, #0759b8 62%, #0a9bd0); }
-.rs-broadcast-banner { background: radial-gradient(circle at 85% 10%, #ffd36b 0, transparent 32%), linear-gradient(125deg, #132d4a, #087f9e 62%, #16a9bc); }
-.rs-media-kicker { font-size: 11px; font-weight: 900; letter-spacing: 1.8px; opacity: .88; }
-.rs-media-title { margin: 7px 0 4px; font-size: 27px; font-weight: 900; letter-spacing: -.5px; }
-.rs-media-tagline { margin: 0; font-size: 14px; line-height: 1.5; opacity: .94; }
-.rs-media-body { padding: 16px; }
-.rs-media-points { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin: 0 0 16px; }
-.rs-media-point { border-radius: 12px; padding: 10px; background: #f0f9fc; color: #275361; font-size: 13px; }
-.rs-media-point strong { display:block; margin-bottom: 3px; color:#0a6588; }
-.rs-media-button {
-  width: 100%; min-height: 46px; padding: 12px 16px; border: 0; border-radius: 13px;
-  background: #087fbd; color: #fff; font-size: 15px; font-weight: 800; cursor:pointer;
-}
-.rs-media-button.gold { background: linear-gradient(100deg, #c28a19, #e6b949); color: #172b3c; }
-.rs-media-note { margin: 11px 0 0; color:#617b84; font-size:12px; line-height:1.45; }
-.rs-media-subpanel { display:none; padding:16px; border-top:1px solid #e1eef2; background:#fbfeff; }
-.rs-media-subpanel.open { display:block; }
-.rs-media-subpanel h3 { margin:0 0 8px; color:#123b50; }
-.rs-media-subpanel p { line-height:1.55; color:#506d77; }
-.rs-media-subpanel input[type="text"], .rs-media-subpanel input[type="email"] {
-  width:100%; padding:12px; margin:6px 0 10px; border:1px solid #cfe3eb; border-radius:10px; font-size:15px;
-}
-.rs-media-subpanel input[type="file"] { display:block; max-width:100%; margin:10px 0; }
-.rs-media-status { padding:10px 12px; border-radius:10px; background:#eef8fb; color:#265767; font-size:13px; line-height:1.5; }
-.rs-media-preview { display:none; width:100%; max-height:240px; margin-top:12px; border-radius:12px; background:#071d30; }
+
+/* RS MEDIA ECOSYSTEM: STREAM, RADIO, BROADCAST */
+.rs-media-hub{padding:20px 16px 26px;background:linear-gradient(145deg,#e7faff 0%,#f7fcff 58%,#fffaf0 100%);border-block:1px solid #d6edf4}
+.rs-media-heading{margin:0 0 6px;font-size:25px;color:#102a43}
+.rs-media-intro{margin:0 0 16px;line-height:1.55;color:#53717c}
+.rs-media-grid{display:grid;grid-template-columns:1fr;gap:14px}
+.rs-media-card{overflow:hidden;border:1px solid #d5e9f0;border-radius:20px;background:#fff;box-shadow:0 8px 24px rgba(10,85,115,.09)}
+.rs-media-banner{padding:20px;color:#fff;position:relative}
+.rs-stream-banner{background:radial-gradient(circle at 85% 10%,#36c5ee 0,transparent 36%),linear-gradient(125deg,#071d49,#0759b8 62%,#0a9bd0)}
+.rs-radio-banner{background:radial-gradient(circle at 85% 10%,#efb9ff 0,transparent 34%),linear-gradient(125deg,#28154e,#6a3ca4 60%,#bf4a9b)}
+.rs-broadcast-banner{background:radial-gradient(circle at 85% 10%,#ffd36b 0,transparent 32%),linear-gradient(125deg,#132d4a,#087f9e 62%,#16a9bc)}
+.rs-media-kicker{font-size:11px;font-weight:900;letter-spacing:1.8px;opacity:.9}
+.rs-media-title{margin:7px 0 4px;font-size:27px;font-weight:900;letter-spacing:-.5px}
+.rs-media-tagline{margin:0;font-size:14px;line-height:1.5;opacity:.96}
+.rs-media-body{padding:16px}
+.rs-media-points{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:0 0 16px}
+.rs-media-point{border-radius:12px;padding:10px;background:#f0f9fc;color:#275361;font-size:13px}
+.rs-media-point strong{display:block;margin-bottom:3px;color:#0a6588}
+.rs-media-button{width:100%;min-height:46px;padding:12px 16px;border:0;border-radius:13px;background:#087fbd;color:#fff;font-size:15px;font-weight:800;cursor:pointer}
+.rs-media-button.purple{background:linear-gradient(100deg,#7140a5,#bd4d9a);color:#fff}
+.rs-media-button.gold{background:linear-gradient(100deg,#c28a19,#e6b949);color:#172b3c}
+.rs-media-note{margin:11px 0 0;color:#617b84;font-size:12px;line-height:1.45}
+.rs-media-subpanel{display:none;padding:16px;border-top:1px solid #e1eef2;background:#fbfeff}
+.rs-media-subpanel.open{display:block}
+.rs-media-subpanel h3{margin:0 0 8px;color:#123b50}
+.rs-media-subpanel p{line-height:1.55;color:#506d77}
+.rs-media-subpanel label{display:block;margin:8px 0 4px;color:#284d5a;font-weight:700;font-size:13px}
+.rs-media-subpanel input[type=text],.rs-media-subpanel input[type=email],.rs-media-subpanel select{width:100%;padding:12px;margin:6px 0 10px;border:1px solid #cfe3eb;border-radius:10px;font-size:15px;background:white}
+.rs-media-subpanel input[type=file]{display:block;max-width:100%;margin:10px 0}
+.rs-media-status{padding:10px 12px;border-radius:10px;background:#eef8fb;color:#265767;font-size:13px;line-height:1.5}
+.rs-media-preview{display:none;width:100%;max-height:240px;margin-top:12px;border-radius:12px;background:#071d30}
+.rs-media-terms{display:flex;gap:9px;align-items:flex-start;font-size:13px;line-height:1.45;color:#506d77;margin:10px 0}
+.rs-media-terms input{margin-top:3px}
+.rs-media-pay{margin-top:12px;padding:12px;border:1px solid #e8d9a8;border-radius:12px;background:#fff9e8;color:#6d5317;font-size:13px;line-height:1.5}
+.rs-media-queue{margin-top:12px;padding:12px;border-radius:12px;background:#f1f8fa;color:#355966;font-size:13px;line-height:1.5}
+@media(min-width:700px){.rs-media-grid{grid-template-columns:1fr 1fr 1fr}}
 @media (min-width:700px) { .rs-media-grid { grid-template-columns: 1fr 1fr; } .rs-media-card { height:100%; } }
 
   </style>
@@ -376,90 +372,94 @@ body {
   <button>❤️ Desideri</button>
   <button type="button" data-scroll-target="rs-stream">🎬 RSStream</button>
   <button type="button" data-scroll-target="rs-broadcast">📡 RSBroadcast</button>
+  <button type="button" data-scroll-target="rs-radio">📻 RSRadio</button>
 
 </nav>
 
 
+
 <section class="rs-media-hub" aria-labelledby="rs-media-heading">
-  <h2 class="rs-media-heading" id="rs-media-heading">Il mondo video e audio RiverSpend</h2>
-  <p class="rs-media-intro">Film, serie, musica e contenuti originali: guarda, crea e condividi nel mondo RiverSpend.</p>
+  <h2 class="rs-media-heading" id="rs-media-heading">RiverSpend Media Network</h2>
+  <p class="rs-media-intro">La casa degli artisti emergenti: musica in radio, film e fiction in streaming, video e trasmissioni originali.</p>
   <div class="rs-media-grid">
     <article class="rs-media-card" id="rs-stream">
-      <div class="rs-media-banner rs-stream-banner">
-        <div class="rs-media-kicker">RIVERSPEND PREMIUM</div>
-        <h2 class="rs-media-title">▶ RSStream</h2>
-        <p class="rs-media-tagline">Film, serie e contenuti premium su TV, smartphone e tablet.</p>
-      </div>
+      <div class="rs-media-banner rs-stream-banner"><div class="rs-media-kicker">RIVERSPEND PREMIUM</div><h2 class="rs-media-title">▶ RSStream</h2><p class="rs-media-tagline">Film, serie, fiction e video premium da guardare su smartphone, tablet e TV.</p></div>
       <div class="rs-media-body">
         <div class="rs-media-points">
-          <div class="rs-media-point"><strong>🎬 Video premium</strong>Catalogo riservato agli abbonati</div>
-          <div class="rs-media-point"><strong>📺 Multi-dispositivo</strong>Esperienza pensata per schermi diversi</div>
-          <div class="rs-media-point"><strong>👤 Il tuo account</strong>Area personale e abbonamento</div>
-          <div class="rs-media-point"><strong>🔒 Accesso premium</strong>I contenuti non sono presentati come gratuiti</div>
+          <div class="rs-media-point"><strong>🎬 Film e fiction</strong>Catalogo di produzioni e serie</div>
+          <div class="rs-media-point"><strong>📺 Multi-dispositivo</strong>Esperienza per schermi diversi</div>
+          <div class="rs-media-point"><strong>🌟 Nuovi talenti</strong>Spazio per creator e produttori</div>
+          <div class="rs-media-point"><strong>🔐 Premium</strong>Accesso con piano o titolo valido</div>
         </div>
-        <button class="rs-media-button" type="button" data-toggle-panel="rs-stream-panel">Scopri RSStream</button>
-        <p class="rs-media-note">RSStream è previsto come servizio a pagamento. Attivazione abbonamenti, catalogo video e riproduzione protetta devono essere collegati prima del lancio.</p>
+        <button class="rs-media-button" type="button" data-toggle-panel="rs-stream-panel" aria-expanded="false">Scopri RSStream</button>
+        <p class="rs-media-note">Gli abbonamenti, il catalogo autorizzato e la riproduzione online devono essere collegati prima del lancio commerciale.</p>
       </div>
       <div class="rs-media-subpanel" id="rs-stream-panel">
-        <h3>RSStream Premium</h3>
-        <p>Il servizio è progettato per contenuti accessibili con abbonamento. In questa versione non viene simulato un pagamento né dichiarato attivo un catalogo che non è ancora collegato.</p>
-        <div class="rs-media-status">Stato: interfaccia inserita. Da collegare: piani e rinnovi, pagamento reale, autorizzazione dell'abbonato e catalogo video con diritti di distribuzione.</div>
+        <h3>RSStream — invia una produzione</h3>
+        <p>Sei un autore o una casa di produzione? Prepara la candidatura della tua fiction, del film o della serie. Ogni contenuto sarà verificato prima della pubblicazione.</p>
+        <label for="rs-stream-title">Titolo della produzione</label><input id="rs-stream-title" type="text" maxlength="140" placeholder="Titolo di film, serie o fiction">
+        <label for="rs-stream-owner">Nome artista o produzione</label><input id="rs-stream-owner" type="text" maxlength="140" placeholder="Nome pubblico o casa di produzione">
+        <label for="rs-stream-file">Video da candidare</label><input id="rs-stream-file" type="file" accept="video/*">
+        <video id="rs-stream-video-preview" class="rs-media-preview" controls playsinline></video>
+        <label class="rs-media-terms"><input id="rs-stream-rights" type="checkbox"><span>Confermo di possedere o controllare i diritti necessari per proporre questo contenuto e la relativa musica, immagini e interpretazioni.</span></label>
+        <button class="rs-media-button" type="button" id="rs-stream-submit">Prepara candidatura</button>
+        <div class="rs-media-status" id="rs-stream-status" role="status">Seleziona un video per creare una candidatura locale.</div>
+        <div class="rs-media-pay"><strong>Quota di pubblicazione:</strong> il modello previsto è a pagamento, ma importo, checkout e attivazione del catalogo saranno mostrati solo quando il pagamento reale sarà collegato. Non verrà addebitato nulla da questo modulo.</div>
       </div>
     </article>
-
-    <article class="rs-media-card" id="rs-broadcast">
-      <div class="rs-media-banner rs-broadcast-banner">
-        <div class="rs-media-kicker">CREATOR • LIVE • AUDIO</div>
-        <h2 class="rs-media-title">📡 RSBroadcast</h2>
-        <p class="rs-media-tagline">La tua voce, la tua musica e i tuoi contenuti nel network RiverSpend.</p>
-      </div>
+    <article class="rs-media-card" id="rs-radio">
+      <div class="rs-media-banner rs-radio-banner"><div class="rs-media-kicker">EMERGING ARTISTS • MUSIC</div><h2 class="rs-media-title">📻 RSRadio</h2><p class="rs-media-tagline">Una radio per scoprire artisti emergenti, nuovi singoli, album e podcast.</p></div>
       <div class="rs-media-body">
         <div class="rs-media-points">
-          <div class="rs-media-point"><strong>🎙️ Audio e podcast</strong>Programmi e contenuti vocali</div>
-          <div class="rs-media-point"><strong>🎵 RSMusic</strong>Musica e anteprime degli artisti</div>
-          <div class="rs-media-point"><strong>🔴 Dirette</strong>Spazio per eventi e trasmissioni live</div>
-          <div class="rs-media-point"><strong>📊 Statistiche</strong>Ascolti, visualizzazioni e ricavi da collegare</div>
+          <div class="rs-media-point"><strong>🎵 Brani originali</strong>Singoli, EP e album</div>
+          <div class="rs-media-point"><strong>🎙️ Nuove voci</strong>Artisti indipendenti e podcast</div>
+          <div class="rs-media-point"><strong>🗂️ Scheda artista</strong>Nome, titolo e descrizione</div>
+          <div class="rs-media-point"><strong>💿 Invio a pagamento</strong>Proposta soggetta a verifica</div>
         </div>
-        <button class="rs-media-button gold" type="button" data-toggle-panel="rs-broadcast-panel">Apri RSBroadcast Studio</button>
-        <p class="rs-media-note">Puoi scegliere un file per l’anteprima locale. La selezione non pubblica né carica automaticamente il contenuto online.</p>
+        <button class="rs-media-button purple" type="button" data-toggle-panel="rs-radio-panel" aria-expanded="false">Entra in RSRadio</button>
+        <p class="rs-media-note">L'invio a pagamento non garantisce passaggi in onda: la selezione editoriale, i diritti e gli obblighi musicali saranno gestiti con regole trasparenti.</p>
+      </div>
+      <div class="rs-media-subpanel" id="rs-radio-panel">
+        <h3>RSRadio — proponi la tua musica</h3>
+        <p>Invia i dettagli del brano e ascoltane l'anteprima prima di procedere. La selezione non pubblica automaticamente il brano in radio.</p>
+        <label for="rs-radio-artist">Nome artista</label><input id="rs-radio-artist" type="text" maxlength="140" placeholder="Nome d'arte o band">
+        <label for="rs-radio-title">Titolo del brano</label><input id="rs-radio-title" type="text" maxlength="140" placeholder="Titolo del singolo o podcast">
+        <label for="rs-radio-genre">Genere</label><select id="rs-radio-genre"><option>Pop</option><option>Rock</option><option>Rap / Hip-hop</option><option>Dance / Electronic</option><option>Indie</option><option>Jazz / Blues</option><option>Classica</option><option>World / Folk</option><option>Podcast / Parlato</option><option>Altro</option></select>
+        <label for="rs-radio-file">File audio</label><input id="rs-radio-file" type="file" accept="audio/*">
+        <audio id="rs-radio-audio-preview" class="rs-media-preview" controls></audio>
+        <label class="rs-media-terms"><input id="rs-radio-rights" type="checkbox"><span>Confermo di possedere o controllare i diritti del brano, del master e di tutti i campioni utilizzati.</span></label>
+        <button class="rs-media-button purple" type="button" id="rs-radio-submit">Prepara invio musicale</button>
+        <div class="rs-media-status" id="rs-radio-status" role="status">Seleziona un file audio per preparare la proposta.</div>
+        <div class="rs-media-pay"><strong>Quota di invio:</strong> modello previsto a pagamento; prezzo, checkout e pubblicazione radio saranno attivati solo con pagamenti e gestione dei diritti realmente collegati. Nessun addebito da questo modulo.</div>
+      </div>
+    </article>
+    <article class="rs-media-card" id="rs-broadcast">
+      <div class="rs-media-banner rs-broadcast-banner"><div class="rs-media-kicker">CREATOR • LIVE • VIDEO</div><h2 class="rs-media-title">📡 RSBroadcast</h2><p class="rs-media-tagline">Uno spazio per creator, registi e autori che vogliono proporre video, fiction e programmi.</p></div>
+      <div class="rs-media-body">
+        <div class="rs-media-points">
+          <div class="rs-media-point"><strong>🎥 Video e webserie</strong>Contenuti originali</div>
+          <div class="rs-media-point"><strong>🔴 Live</strong>Eventi e dirette da collegare</div>
+          <div class="rs-media-point"><strong>🧑‍🎨 Creator studio</strong>Invio e revisione contenuti</div>
+          <div class="rs-media-point"><strong>💶 Modello a pagamento</strong>Tariffe da configurare</div>
+        </div>
+        <button class="rs-media-button gold" type="button" data-toggle-panel="rs-broadcast-panel" aria-expanded="false">Apri RSBroadcast Studio</button>
+        <p class="rs-media-note">L'upload remoto, le dirette e la monetizzazione richiedono backend, storage, transcodifica e provider video. Questa interfaccia non simula un caricamento completato.</p>
       </div>
       <div class="rs-media-subpanel" id="rs-broadcast-panel">
-        <h3>RSBroadcast Studio</h3>
-        <label for="rs-broadcast-title">Titolo del contenuto</label>
-        <input id="rs-broadcast-title" type="text" maxlength="120" placeholder="Es. La mia prima trasmissione">
-        <label for="rs-broadcast-type">File audio o video</label>
-        <input id="rs-broadcast-file" type="file" accept="audio/*,video/*">
-        <video id="rs-broadcast-video-preview" class="rs-media-preview" controls playsinline></video>
-        <audio id="rs-broadcast-audio-preview" class="rs-media-preview" controls></audio>
-        <p class="rs-media-status" id="rs-broadcast-status" role="status">Scegli un file per ascoltarlo o vederlo in anteprima su questo dispositivo.</p>
-        <p class="rs-media-note">La pubblicazione online, le dirette, i diritti musicali, la moderazione e la monetizzazione richiedono ancora il collegamento al backend e ai relativi servizi.</p>
+        <h3>RSBroadcast Studio — proponi il tuo video</h3>
+        <label for="rs-broadcast-title">Titolo del contenuto</label><input id="rs-broadcast-title" type="text" maxlength="140" placeholder="Titolo di video, fiction o programma">
+        <label for="rs-broadcast-creator">Nome creator o produzione</label><input id="rs-broadcast-creator" type="text" maxlength="140" placeholder="Nome pubblico o produzione">
+        <label for="rs-broadcast-file">File audio o video</label><input id="rs-broadcast-file" type="file" accept="audio/*,video/*">
+        <video id="rs-broadcast-video-preview" class="rs-media-preview" controls playsinline></video><audio id="rs-broadcast-audio-preview" class="rs-media-preview" controls></audio>
+        <label class="rs-media-terms"><input id="rs-broadcast-rights" type="checkbox"><span>Confermo di avere i diritti per caricare e distribuire il contenuto e le relative musiche, immagini e interpretazioni.</span></label>
+        <button class="rs-media-button gold" type="button" id="rs-broadcast-submit">Prepara candidatura video</button>
+        <div class="rs-media-status" id="rs-broadcast-status" role="status">Scegli un file per creare una candidatura locale.</div>
+        <div class="rs-media-pay"><strong>Quota di pubblicazione:</strong> prevista nel modello commerciale, da collegare a un checkout reale. La tariffa e l'eventuale promozione saranno definite prima di attivare gli addebiti.</div>
       </div>
     </article>
   </div>
 </section>
 
-<section style="padding:8px 16px 20px;">
-
-  <h1 style="
-    margin:0;
-    font-size:26px;
-    color:#12343b;
-  ">
-    In evidenza nel Fiume
-  </h1>
-
-  <p style="
-    margin:6px 0 18px;
-    color:#63818a;
-  ">
-    Scopri i prodotti del tuo mondo RiverSpend
-  </p>
-
-  <div class="product-grid">
-    <!-- qui arriveranno i prodotti reali -->
-  </div>
-
-</section>
   
   </section>
 
@@ -1914,15 +1914,14 @@ profileButton.addEventListener("click", () => {
 
 });
 
-  // Navigazione diretta verso RSStream e RSBroadcast
+
+  // Navigazione diretta verso i tre servizi media
   document.querySelectorAll("[data-scroll-target]").forEach((button) => {
     button.addEventListener("click", () => {
       const target = document.getElementById(button.dataset.scrollTarget);
       if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
     });
   });
-
-  // Pannelli espandibili dei servizi multimediali
   document.querySelectorAll("[data-toggle-panel]").forEach((button) => {
     button.addEventListener("click", () => {
       const panel = document.getElementById(button.dataset.togglePanel);
@@ -1932,36 +1931,58 @@ profileButton.addEventListener("click", () => {
       if (panel.classList.contains("open")) panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
     });
   });
-
-  // Anteprima locale dei media: nessun upload automatico.
-  const broadcastFile = document.getElementById("rs-broadcast-file");
-  if (broadcastFile) {
-    let currentPreviewUrl = null;
-    broadcastFile.addEventListener("change", () => {
-      const file = broadcastFile.files && broadcastFile.files[0];
-      const status = document.getElementById("rs-broadcast-status");
-      const video = document.getElementById("rs-broadcast-video-preview");
-      const audio = document.getElementById("rs-broadcast-audio-preview");
-      if (currentPreviewUrl) URL.revokeObjectURL(currentPreviewUrl);
-      currentPreviewUrl = null;
-      video.pause(); video.removeAttribute("src"); video.load(); video.style.display = "none";
-      audio.pause(); audio.removeAttribute("src"); audio.load(); audio.style.display = "none";
-      if (!file) {
-        status.textContent = "Scegli un file per ascoltarlo o vederlo in anteprima su questo dispositivo.";
-        return;
-      }
-      if (!(file.type.startsWith("audio/") || file.type.startsWith("video/"))) {
-        status.textContent = "Formato non riconosciuto. Scegli un file audio o video.";
-        broadcastFile.value = "";
-        return;
-      }
-      currentPreviewUrl = URL.createObjectURL(file);
-      const player = file.type.startsWith("video/") ? video : audio;
-      player.src = currentPreviewUrl;
-      player.style.display = "block";
-      status.textContent = "Anteprima locale pronta: " + file.name + ". Il file non è stato caricato sul sito.";
+  const rsMediaPreviewUrls = {};
+  function wireMediaPreview(inputId, audioId, videoId, statusId, label) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    input.addEventListener("change", () => {
+      const file = input.files && input.files[0];
+      const status = document.getElementById(statusId);
+      const audio = audioId ? document.getElementById(audioId) : null;
+      const video = videoId ? document.getElementById(videoId) : null;
+      if (rsMediaPreviewUrls[inputId]) URL.revokeObjectURL(rsMediaPreviewUrls[inputId]);
+      delete rsMediaPreviewUrls[inputId];
+      [audio, video].filter(Boolean).forEach((player) => {
+        player.pause(); player.removeAttribute("src"); player.load(); player.style.display = "none";
+      });
+      if (!file) { status.textContent = "Scegli un file per l'anteprima locale."; return; }
+      const isAudio = file.type.startsWith("audio/");
+      const isVideo = file.type.startsWith("video/");
+      if (!(isAudio || isVideo)) { status.textContent = "Formato non riconosciuto: scegli audio o video."; input.value = ""; return; }
+      const player = isAudio ? audio : video;
+      if (!player) { status.textContent = "Questo formato non è supportato da questa anteprima."; return; }
+      rsMediaPreviewUrls[inputId] = URL.createObjectURL(file);
+      player.src = rsMediaPreviewUrls[inputId]; player.style.display = "block";
+      status.textContent = label + ": " + file.name + ". Anteprima locale pronta; il file non è stato caricato online.";
     });
   }
+  wireMediaPreview("rs-radio-file", "rs-radio-audio-preview", null, "rs-radio-status", "Brano selezionato");
+  wireMediaPreview("rs-stream-file", null, "rs-stream-video-preview", "rs-stream-status", "Video selezionato");
+  wireMediaPreview("rs-broadcast-file", "rs-broadcast-audio-preview", "rs-broadcast-video-preview", "rs-broadcast-status", "File selezionato");
+  function wireSubmission({buttonId, titleId, creatorId, fileId, rightsId, statusId, kind}) {
+    const button = document.getElementById(buttonId);
+    if (!button) return;
+    button.addEventListener("click", () => {
+      const title = document.getElementById(titleId)?.value.trim();
+      const creator = document.getElementById(creatorId)?.value.trim();
+      const file = document.getElementById(fileId)?.files?.[0];
+      const rights = document.getElementById(rightsId)?.checked;
+      const status = document.getElementById(statusId);
+      if (!title || !creator || !file) { status.textContent = "Completa titolo, nome artista/produzione e seleziona il file prima di proseguire."; return; }
+      if (!rights) { status.textContent = "Per proseguire devi confermare di avere i diritti necessari sul contenuto."; return; }
+      status.textContent = "Candidatura preparata su questo dispositivo per " + creator + " — " + title + " (" + file.name + "). Non è stata inviata al server, non è stata pubblicata e non è stato addebitato alcun pagamento: caricamento, revisione e checkout devono essere collegati.";
+      const queue = document.createElement("div");
+      queue.className = "rs-media-queue";
+      queue.textContent = "Riepilogo locale: " + kind + " • " + title + " • " + creator + " • " + file.name + ". Salva i dati prima di chiudere questa pagina: non sono ancora archiviati online.";
+      const old = status.parentElement.querySelector("[data-local-summary='" + kind + "']");
+      if (old) old.remove();
+      queue.dataset.localSummary = kind;
+      status.after(queue);
+    });
+  }
+  wireSubmission({buttonId:"rs-radio-submit", titleId:"rs-radio-title", creatorId:"rs-radio-artist", fileId:"rs-radio-file", rightsId:"rs-radio-rights", statusId:"rs-radio-status", kind:"RSRadio"});
+  wireSubmission({buttonId:"rs-stream-submit", titleId:"rs-stream-title", creatorId:"rs-stream-owner", fileId:"rs-stream-file", rightsId:"rs-stream-rights", statusId:"rs-stream-status", kind:"RSStream"});
+  wireSubmission({buttonId:"rs-broadcast-submit", titleId:"rs-broadcast-title", creatorId:"rs-broadcast-creator", fileId:"rs-broadcast-file", rightsId:"rs-broadcast-rights", statusId:"rs-broadcast-status", kind:"RSBroadcast"});
 
 </script>
 </body>
