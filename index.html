@@ -128,18 +128,50 @@ body {
 }
 .rs-logo {
   flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  white-space: nowrap;
   text-align: center;
-  font-size: 26px;
+  font-size: clamp(19px, 5vw, 26px);
   font-weight: 900;
-  letter-spacing: -.5px;
-  color: #08a7cf;
-  text-shadow:
-   1px -1px 0 #f6c84a,
-  -1px  1px 0 #f6c84a,
-   1px  1px 0 #f6c84a,
-   text-shadow:
-  0 2px 0 #ffffff,
-  0 3px 6px rgba(0, 120, 150, 0.35);
+  letter-spacing: -.7px;
+  color: #10203d;
+  text-shadow: 0 2px 0 #ffffff;
+}
+.rs-logo .rs-word {
+  background: linear-gradient(100deg, #101b35 0%, #0759d8 55%, #00a8df 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.rs-logo .rs-shop {
+  margin-left: 1px;
+  color: #c58a17;
+  font-family: "Brush Script MT", "Segoe Script", cursive;
+  font-size: 1.12em;
+  font-style: italic;
+  font-weight: 700;
+  letter-spacing: -1.1px;
+  text-shadow: 0 1px 0 #fff2ce, 0 2px 2px rgba(116, 74, 0, .2);
+}
+.rs-shop-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  white-space: nowrap;
+}
+.rs-shop-tab span {
+  color: #0759d8;
+  font-weight: 900;
+}
+.rs-shop-tab em {
+  color: #c58a17;
+  font-family: "Brush Script MT", "Segoe Script", cursive;
+  font-size: 1.2em;
+  font-weight: 700;
 }
 
 .rs-actions {
@@ -242,7 +274,7 @@ body {
 <header class="rs-header">
   <button class="rs-menu" aria-label="Apri categorie">☰</button>
 
-  <div class="rs-logo">RiverSpend</div>
+  <div class="rs-logo" aria-label="RiverSpend Shop"><span class="rs-word">RiverSpend</span><span class="rs-shop">Shop</span></div>
 
   <button class="rs-profile" aria-label="Apri servizi RiverSpend">👤</button>
 </header>
@@ -324,7 +356,7 @@ body {
     margin:6px 0 18px;
     color:#63818a;
   ">
-    Scopri i prodotti del RiverSpendShop
+    Scopri i prodotti del tuo mondo RiverSpend
   </p>
 
   <div class="product-grid">
@@ -337,7 +369,7 @@ body {
 
   <nav class="rs-areas">
     <button class="active">RiverSpend</button>
-    <button>RiverSpendShop</button>
+    <button class="rs-shop-tab"><span>RiverSpend</span><em>Shop</em></button>
     <button>Privati</button>
     <button>Aziende</button>
   </nav>
