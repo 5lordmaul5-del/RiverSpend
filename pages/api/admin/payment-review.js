@@ -77,38 +77,20 @@ export default async function handler(req, res) {
       return res.status(409).json({ error: 'L’importo accreditato non coincide con il totale dell’ordine. Non confermare il pagamento.' });
     }
 
-    const verifiedAt = new Date().toISOString();
-    const { data: updated, error: updateError } = await supabase
-      .from('orders')
-      .update({
-        payment_status: 'paid',
-        status: 'confirmed',
-        payment_verified_at: verifiedAt,
-        payment_verified_by: auth.user.id,
-        payment_verification_note: note.trim()
-      })
-      .eq('id', order.id)
-      .eq('status', 'pending')
-      .eq('payment_status', 'unpaid')
-      .eq('payment_method', 'bank_transfer')
-      .select('id')
-      .maybeSingle();
-
-    if (updateError) return res.status(500).json({ error: 'Impossibile registrare la verifica del pagamento.' });
-    if (!updated) return res.status(409).json({ error: 'L’ordine è stato aggiornato da un’altra operazione. Ricarica la coda.' });
-
-    const { error: auditError } = await supabase.from('rs_payment_verification_events').insert({
-      order_id: order.id,
-      actor_user_id: auth.user.id,
-      action: 'payment_verified',
-      payment_method: 'bank_transfer',
-      amount,
-      currency: expectedCurrency,
-      reference: bankReference.trim(),
-      note: note.trim()
+    const { data: verifiedOrderId, error: verifyError } = await supabase.rpc('rs_verify_bank_transfer', {
+      p_order_id: order.id,
+      p_actor_user_id: auth.user.id,
+      p_confirmed_amount: amount,
+      p_confirmed_currency: expectedCurrency,
+      p_bank_reference: bankReference.trim(),
+      p_note: note.trim()
     });
-    if (auditError) {
-      return res.status(500).json({ error: 'Pagamento aggiornato, ma lo storico non è stato salvato. Segnala subito questo ordine per una verifica amministrativa.' });
+
+    if (verifyError) {
+      const message = verifyError.message || '';
+      if (/non trovato/i.test(message)) return res.status(404).json({ error: 'Ordine non trovato.' });
+      if (/non coincide|non in attesa/i.test(message)) return res.status(409).json({ error: message });
+      return res.status(500).json({ error: 'Verifica non registrata. Controlla l’ordine e riprova.' });
     }
 
     return res.status(200).json({
