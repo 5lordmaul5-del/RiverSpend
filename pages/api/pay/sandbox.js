@@ -12,7 +12,22 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Configurazione Supabase server mancante.' });
   }
 
+  const auth = req.headers.authorization || '';
+  const token = auth.startsWith('Bearer ') ? auth.slice(7) : '';
+  if (!token) return res.status(401).json({ error: 'Sessione RiverSpend mancante.' });
+
   const supabase = createClient(supabaseUrl, serviceRoleKey);
+  const { data: authData, error: authError } = await supabase.auth.getUser(token);
+  const user = authData?.user;
+  if (authError || !user) return res.status(401).json({ error: 'Sessione RiverSpend non valida.' });
+
+  // Il ruolo deve provenire da app_metadata, modificabile solo da un amministratore fidato.
+  // Non accettare ruoli inviati nel body o in user_metadata modificabili dall'utente.
+  const role = String(user.app_metadata?.role || '').toLowerCase();
+  if (!['admin', 'ceo'].includes(role)) {
+    return res.status(403).json({ error: 'Solo un amministratore autorizzato può eseguire pagamenti simulati.' });
+  }
+
   const { orderId } = req.body || {};
   if (!orderId) return res.status(400).json({ error: 'orderId obbligatorio.' });
 
