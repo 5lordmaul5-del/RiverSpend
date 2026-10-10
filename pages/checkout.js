@@ -130,21 +130,41 @@ export default function Checkout() {
     }
   }
 
-  async function selectCashOnDelivery() {
-    setError(''); setCodMessage(''); setTransferMessage('');
+  async function savePaymentMethod(paymentMethod) {
+    setError('');
+    setCodMessage('');
+    setTransferMessage('');
     if (!orderId) return setError('Prima crea l’ordine.');
-    const { error: updateError } = await supabase.from('orders').update({ payment_status: 'pending' }).eq('id', orderId);
-    if (updateError) return setError('Impossibile aggiornare lo stato dell’ordine.');
-    setCodMessage('🚚 Metodo scelto: pagamento alla consegna. L’ordine non risulta pagato: il pagamento va verificato alla consegna.');
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.access_token) throw new Error('Sessione scaduta. Accedi di nuovo a RiverSpend.');
+      const response = await fetch('/api/orders/payment-method', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + session.access_token
+        },
+        body: JSON.stringify({ orderId, paymentMethod })
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(result.error || 'Impossibile salvare il metodo di pagamento.');
+      if (paymentMethod === 'cash_on_delivery') {
+        setCodMessage('🚚 Metodo registrato: pagamento in contanti alla consegna. L’ordine NON è pagato; l’incasso dovrà essere verificato alla consegna.');
+      } else {
+        setTransferMessage('🏦 Metodo registrato: bonifico BancoPosta. Riferimento ordine: ' + result.reference + '. Stato: IN ATTESA DI PAGAMENTO, non pagato. Non effettuare il bonifico finché RiverSpend non comunica le coordinate bancarie tramite un canale ufficiale verificato. Ricevute e screenshot non dimostrano l’accredito.');
+      }
+    } catch (err) {
+      setError(err?.message || 'Errore durante la scelta del pagamento.');
+    }
   }
 
+  async function selectCashOnDelivery() {
+    return savePaymentMethod('cash_on_delivery');
+  }
 
   async function selectInstantTransfer() {
-    setError(''); setTransferMessage(''); setCodMessage('');
-    if (!orderId) return setError('Prima crea l’ordine.');
-    // Non modificare lo stato pagamento dal browser: l’ordine rimane unpaid/pending
-    // finché un operatore autorizzato non verifica l’accredito reale sul conto.
-    setTransferMessage('🏦 Hai scelto il bonifico BancoPosta. Riferimento ordine: ' + orderId + '. Stato: IN ATTESA DI PAGAMENTO, non pagato. Non effettuare il bonifico finché RiverSpend non ti comunica le coordinate bancarie tramite un canale ufficiale verificato. Una ricevuta o uno screenshot non bastano per confermare l’incasso: l’ordine potrà essere confermato solo dopo la verifica dell’accredito effettivo da parte di un operatore autorizzato.');
+    return savePaymentMethod('bank_transfer');
   }
 
   return (
