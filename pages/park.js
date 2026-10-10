@@ -38,6 +38,23 @@ export default function RiverSpendPark() {
           <p className="text-sm font-bold uppercase tracking-[.2em] text-teal-300">RiverSpend • Il parco</p>
           <h1 className="mt-3 text-4xl font-black sm:text-5xl">🎢 RiverSpend Park</h1>
           <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-300">Un mondo di acqua, avventura, velocità, fantasia e tecnologia. Questa è la raccolta iniziale delle attrazioni da sviluppare con schede, immagini, planimetria e requisiti tecnici.</p>
+
+        <section className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3" aria-label="Galleria RiverSpend Park">
+          <figure className="overflow-hidden rounded-2xl border border-teal-800 bg-slate-900">
+            <img src="https://raw.githubusercontent.com/5lordmaul5-del/RiverSpend/main/file_00000000070081f4be8d351d407b4017.png" alt="Concept panoramico di RiverSpend Park" className="aspect-[4/3] w-full object-cover" loading="lazy" />
+            <figcaption className="p-3 text-sm font-semibold text-teal-100">Il mondo RiverSpend Park</figcaption>
+          </figure>
+          <figure className="overflow-hidden rounded-2xl border border-teal-800 bg-slate-900">
+            <img src="https://raw.githubusercontent.com/5lordmaul5-del/RiverSpend/main/file_0000000017408243a1a21bd3fec53f5f.png" alt="Concept di attrazioni e ambientazioni RiverSpend" className="aspect-[4/3] w-full object-cover" loading="lazy" />
+            <figcaption className="p-3 text-sm font-semibold text-teal-100">Attrazioni e avventura</figcaption>
+          </figure>
+          <figure className="overflow-hidden rounded-2xl border border-teal-800 bg-slate-900 sm:col-span-2 lg:col-span-1">
+            <img src="https://raw.githubusercontent.com/5lordmaul5-del/RiverSpend/main/file_00000000db008246926cc5b0d85ffd53.png" alt="Concept di esperienze e aree tematiche RiverSpend" className="aspect-[4/3] w-full object-cover" loading="lazy" />
+            <figcaption className="p-3 text-sm font-semibold text-teal-100">Esperienze da scoprire</figcaption>
+          </figure>
+        </section>
+        <p className="mt-4 rounded-xl border border-cyan-900 bg-cyan-950/50 p-4 text-sm leading-6 text-cyan-100">Questa è la galleria iniziale del progetto. Aggiungeremo progressivamente una foto dedicata a ogni attrazione, mantenendo i nomi ufficiali e senza sostituire l'elenco già approvato.</p>
+
           <div className="mt-6 flex flex-wrap gap-3">
             <span className="rounded-full border border-teal-700 px-4 py-2 text-sm text-teal-100">25 attrazioni in catalogo</span>
             <span className="rounded-full border border-teal-700 px-4 py-2 text-sm text-teal-100">Power Shield • sicurezza prioritaria</span>
