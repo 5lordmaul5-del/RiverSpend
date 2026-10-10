@@ -123,7 +123,7 @@ input::placeholder, textarea::placeholder { color: #71858a; }
   --river-aqua: #168f91;
   --river-gold: #c99735;
 }
-body { background: #f7f3e9; color: #17343a; }
+body { background: #f3fbfd; color: #17343a; }
 ::selection { background: rgba(22, 143, 145, .12); color: #12343a; }
 .rs-glass {
   border-color: rgba(33, 185, 177, .2);
@@ -133,8 +133,8 @@ body { background: #f7f3e9; color: #17343a; }
 .rs-site {
   color: #17343a;
   background:
-    radial-gradient(ellipse at 12% 0%, rgba(197, 158, 83, .10), transparent 34rem),
-    linear-gradient(180deg, #fbf8f0 0%, #f1eadb 58%, #fbf8f0 100%);
+    radial-gradient(ellipse at 12% 0%, rgba(8, 167, 207, .08), transparent 34rem),
+    linear-gradient(180deg, #f3fbfd 0%, #eaf8fb 58%, #f3fbfd 100%);
 }
 .rs-header {
   border-color: #e3d8c1;
