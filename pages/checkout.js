@@ -74,10 +74,22 @@ export default function Checkout() {
       if (productsError) throw productsError;
 
       const byId = new Map((products || []).map((product) => [String(product.id), product]));
-      const validItems = items.map((item) => byId.get(String(item.id))).filter(Boolean);
-      if (validItems.length !== items.length) throw new Error('Uno o più prodotti non sono più disponibili.');
+      const validItems = items.map((item) => {
+        const product = byId.get(String(item.id));
+        if (!product) return null;
+        const rawQuantity = Number(item.quantity ?? item.quantita ?? 1);
+        if (!Number.isInteger(rawQuantity) || rawQuantity < 1) {
+          throw new Error('Quantità non valida per un prodotto della Rete.');
+        }
+        const quantity = rawQuantity;
+        if (Number.isInteger(product.stock) && product.stock >= 0 && quantity > product.stock) {
+          throw new Error('Quantità non disponibile per il prodotto: ' + (product.name || 'Prodotto') + '.');
+        }
+        return { product, quantity };
+      });
+      if (validItems.some((item) => !item)) throw new Error('Uno o più prodotti non sono più disponibili.');
 
-      const subtotal = validItems.reduce((sum, product) => sum + Number(product.price || 0), 0);
+      const subtotal = validItems.reduce((sum, item) => sum + Number(item.product.price || 0) * item.quantity, 0);
       const { data: order, error: orderError } = await supabase
         .from('orders')
         .insert({
@@ -95,13 +107,13 @@ export default function Checkout() {
 
       if (orderError) throw orderError;
 
-      const orderItems = validItems.map((product) => ({
+      const orderItems = validItems.map(({ product, quantity }) => ({
         order_id: order.id,
         product_id: String(product.id),
         product_name: product.name || 'Prodotto',
         unit_price: Number(product.price || 0),
-        quantity: 1,
-        subtotal: Number(product.price || 0)
+        quantity,
+        subtotal: Number(product.price || 0) * quantity
       }));
 
       const { error: itemsError } = await supabase.from('order_items').insert(orderItems);
@@ -158,13 +170,13 @@ export default function Checkout() {
                   {items.map((item) => (
                     <div key={item.id} className="flex items-center justify-between gap-3 text-sm">
                       <span className="min-w-0 truncate">{item.title || 'Prodotto'}</span>
-                      <strong>€ {Number(item.price || 0).toFixed(2)}</strong>
+                      <strong>{Number(item.quantity ?? item.quantita ?? 1)} × € {Number(item.price || 0).toFixed(2)} = € {(Number(item.price || 0) * Number(item.quantity ?? item.quantita ?? 1)).toFixed(2)}</strong>
                     </div>
                   ))}
                 </div>
                 <div className="mt-4 flex justify-between border-t border-teal-100 pt-3 text-lg font-black">
                   <span>Totale</span>
-                  <span className="text-teal-600">€ {items.reduce((sum, item) => sum + Number(item.price || 0), 0).toFixed(2)}</span>
+                  <span className="text-teal-600">€ {items.reduce((sum, item) => sum + Number(item.price || 0) * Number(item.quantity ?? item.quantita ?? 1), 0).toFixed(2)}</span>
                 </div>
               </>
             )}
