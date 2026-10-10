@@ -130,9 +130,9 @@ export default function Checkout() {
   async function selectInstantTransfer() {
     setError(''); setTransferMessage(''); setCodMessage('');
     if (!orderId) return setError('Prima crea l’ordine.');
-    const { error: updateError } = await supabase.from('orders').update({ payment_status: 'pending' }).eq('id', orderId);
-    if (updateError) return setError('Impossibile aggiornare lo stato dell’ordine. Contatta l’assistenza prima di ripetere l’ordine.');
-    setTransferMessage('🏦 Metodo scelto: bonifico verso BancoPosta. L’ordine resta in attesa e NON è considerato pagato. Il pagamento va verificato prima di confermare l’ordine; le coordinate bancarie devono essere comunicate tramite un canale ufficiale sicuro.');
+    // Non modificare lo stato pagamento dal browser: l’ordine rimane unpaid/pending
+    // finché un operatore autorizzato non verifica l’accredito reale sul conto.
+    setTransferMessage('🏦 Hai scelto il bonifico BancoPosta. Riferimento ordine: ' + orderId + '. Stato: IN ATTESA DI PAGAMENTO, non pagato. Non effettuare il bonifico finché RiverSpend non ti comunica le coordinate bancarie tramite un canale ufficiale verificato. Una ricevuta o uno screenshot non bastano per confermare l’incasso: l’ordine potrà essere confermato solo dopo la verifica dell’accredito effettivo da parte di un operatore autorizzato.');
   }
 
   return (
@@ -173,11 +173,11 @@ export default function Checkout() {
           <section className="mt-6 rounded-2xl border border-teal-100 bg-white p-4">
             <p className="text-sm font-black uppercase tracking-[0.18em] text-teal-600">RiverSpend Pay</p>
             <h2 className="mt-2 text-xl font-black text-slate-900">Scegli come pagare</h2>
-            <p className="mt-1 text-sm text-slate-500">Scegli tra pagamento alla consegna in contanti e bonifico verso BancoPosta.</p>
+            <p className="mt-1 text-sm text-slate-500">Scegli tra pagamento alla consegna in contanti e bonifico BancoPosta (con verifica manuale dell’accredito).</p>
             <div className="mt-4 grid gap-3">
               {[
                 ['cod','🚚','Pagamento alla consegna in contanti'],
-                ['transfer','🏦','Bonifico verso BancoPosta'],
+                ['transfer','🏦','Bonifico BancoPosta (verifica manuale)'],
               ].map(([id, icon, title]) => (
                 <button key={id} type="button" onClick={() => setSelectedPayment(id)} className={`flex items-center justify-between rounded-xl border px-4 py-3 text-left ${selectedPayment === id ? 'border-teal-500 bg-teal-50' : 'border-slate-200 bg-white'}`}>
                   <span className="flex items-center gap-3"><span className="text-xl">{icon}</span><strong className="text-slate-900">{title}</strong></span>
@@ -192,7 +192,7 @@ export default function Checkout() {
               ['🛒', 'Riepilogo ordine', 'Prodotti, quantità e totale'],
               ['📦', 'Consegna', 'Indirizzo e opzioni di spedizione'],
               ['🛡️', 'RiverSpend Shield', 'Protezione dell’acquirente'],
-              ['💶', 'Pagamento', 'Contanti alla consegna o bonifico istantaneo'],
+              ['💶', 'Pagamento', 'Contanti alla consegna o bonifico BancoPosta con verifica manuale'],
             ].map(([icon, title, text]) => (
               <article key={title} className="rounded-2xl border border-teal-100 bg-white p-4">
                 <div className="text-2xl">{icon}</div>
@@ -216,7 +216,7 @@ export default function Checkout() {
             )}
             {authMessage && <p className="mt-2 text-sm text-slate-200">{authMessage}</p>}
             <p className="mt-2 text-xs text-slate-500">
-              Il bonifico resterà in attesa di verifica. Le coordinate BancoPosta non vengono mostrate finché non sono configurate e verificate in un canale sicuro. Non inserire qui PIN, CVV o credenziali bancarie.
+              Il bonifico non è ancora attivo finché non ricevi coordinate verificate tramite un canale ufficiale RiverSpend. Non inviare PIN, password, CVV o credenziali bancarie. Una ricevuta caricata dal cliente non prova da sola l’accredito: il pagamento va verificato sul conto da un operatore autorizzato.
             </p>
           </div>
 
@@ -241,7 +241,7 @@ export default function Checkout() {
 
               {selectedPayment === 'transfer' && (
                 <button type="button" onClick={selectInstantTransfer} disabled={!orderId} className="rounded-xl border border-teal-400 bg-teal-600 px-5 py-3 font-black text-white disabled:cursor-not-allowed disabled:opacity-40">
-                  🏦 Conferma bonifico istantaneo
+                  🏦 Ho scelto il bonifico BancoPosta
                 </button>
               )}
 
