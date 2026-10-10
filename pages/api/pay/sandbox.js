@@ -21,10 +21,16 @@ export default async function handler(req, res) {
   const user = authData?.user;
   if (authError || !user) return res.status(401).json({ error: 'Sessione RiverSpend non valida.' });
 
-  // Il ruolo deve provenire da app_metadata, modificabile solo da un amministratore fidato.
-  // Non accettare ruoli inviati nel body o in user_metadata modificabili dall'utente.
-  const role = String(user.app_metadata?.role || '').toLowerCase();
-  if (!['admin', 'ceo'].includes(role)) {
+  // La tabella rs_admin_roles è la fonte dei ruoli amministrativi usata dal pannello RSPC.
+  // Il controllo avviene lato server con la service-role key, mai con un ruolo nel body.
+  const { data: adminRole, error: roleError } = await supabase
+    .from('rs_admin_roles')
+    .select('role')
+    .eq('user_id', user.id)
+    .maybeSingle();
+
+  if (roleError) return res.status(500).json({ error: 'Impossibile verificare il ruolo amministrativo.' });
+  if (!['admin', 'ceo'].includes(String(adminRole?.role || '').toLowerCase())) {
     return res.status(403).json({ error: 'Solo un amministratore autorizzato può eseguire pagamenti simulati.' });
   }
 
