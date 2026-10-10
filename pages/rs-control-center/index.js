@@ -54,15 +54,19 @@ export default function RSControlCenter() {
   }
 
 
+  async function loadCollaborators() {
+    const { data, error } = await supabase.from("rs_collaborators")
+      .select("id,full_name,email,status,permissions,invite_expires_at,user_id")
+      .order("created_at", { ascending: false });
+    if (error) {
+      setActionMessage(error.message || "Impossibile caricare i collaboratori.");
+      return;
+    }
+    setCollaborators(data || []);
+  }
+
   useEffect(() => {
     let alive = true;
-
-    async function loadCollaborators() {
-      const { data } = await supabase.from("rs_collaborators")
-        .select("id,full_name,email,status,permissions,invite_expires_at,user_id")
-        .order("created_at", { ascending: false });
-      setCollaborators(data || []);
-    }
 
     async function load() {
       const {
