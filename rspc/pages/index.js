@@ -3,7 +3,6 @@ import {supabase} from "../lib/supabase";
 
 const modules=[
  ["shop","🛒","RiverSpendShop","Marketplace, prodotti e ordini","marketplace"],
- ["stream","📺","RiverSpendStream","Abbonamenti e visioni","stream"],
  ["park","🎢","RiverSpend Park","Ingressi, affluenza e incassi","park"],
  ["pay","💳","RiverSpend Pay","Pagamenti e rinnovi","finance"],
  ["box","📦","RiverSpend Box","Spedizioni e consegne","logistics"],
