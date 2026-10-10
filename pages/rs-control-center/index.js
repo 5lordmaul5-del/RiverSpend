@@ -26,6 +26,9 @@ export default function RSControlCenter() {
   const [inviteCode, setInviteCode] = useState("");
   const [actionMessage, setActionMessage] = useState("");
   const [activePanel, setActivePanel] = useState("");
+  const [panelRows, setPanelRows] = useState([]);
+  const [panelLoading, setPanelLoading] = useState(false);
+  const [panelError, setPanelError] = useState("");
   const [ideaTitle, setIdeaTitle] = useState("");
   const [ideaBody, setIdeaBody] = useState("");
   const [ideaAudience, setIdeaAudience] = useState("all");
@@ -124,6 +127,56 @@ export default function RSControlCenter() {
     };
   }, []);
 
+  async function openPanel(name) {
+    setActivePanel(name);
+    setPanelRows([]);
+    setPanelError("");
+    setPanelLoading(true);
+
+    const configs = {
+      "Incassi": { table: "orders", select: "id,total,currency,status,payment_status,created_at", order: "created_at", filter: ["payment_status", "paid"] },
+      "Spese": { table: "rs_treasury_movements", select: "id,description,gross_amount,currency,status,created_at", order: "created_at" },
+      "Ordini visibili": { table: "orders", select: "id,status,payment_status,total,currency,created_at", order: "created_at" },
+      "Resi": { table: "orders", select: "id,status,payment_status,total,currency,created_at", order: "created_at", filter: ["status", "refunded"] },
+      "Iscritti": { table: "profiles", select: "id,display_name,seller_type,created_at", order: "created_at" },
+      "Venditori": { table: "profiles", select: "id,display_name,seller_type,created_at", order: "created_at" },
+      "Aziende": { table: "profiles", select: "id,display_name,seller_type,created_at", order: "created_at", filter: ["seller_type", "Azienda"] },
+      "Prodotti pubblicati": { table: "products", select: "id,name,price,status,created_at", order: "created_at", filter: ["status", "published"] },
+      "Marketplace": { table: "products", select: "id,name,price,status,created_at", order: "created_at" },
+      "Utenti": { table: "profiles", select: "id,display_name,seller_type,created_at", order: "created_at" },
+      "Collaboratori": { table: "rs_collaborators", select: "id,full_name,email,status,permissions,created_at", order: "created_at" },
+      "Statistiche": { table: "rs_ecosystem_events", select: "id,module,event_type,created_at", order: "created_at" },
+      "Sicurezza": { table: "rs_admin_roles", select: "user_id,role,created_at", order: "created_at" },
+      "RiverSpend Meet": { table: "rs_meetings", select: "id,title,description,starts_at,ends_at,meeting_url,participant_user_ids,created_at", order: "starts_at" },
+      "Riunioni / Video call": { table: "rs_meetings", select: "id,title,description,starts_at,ends_at,meeting_url,participant_user_ids,created_at", order: "starts_at" },
+      "Aggiungi idee": { table: "rs_collaborator_ideas", select: "id,title,body,audience,recipient_user_ids,created_at", order: "created_at" },
+      "Messaggi segreti": { table: "rs_secret_messages", select: "id,subject,body,recipient_user_ids,created_at", order: "created_at" }
+    };
+
+    const config = configs[name];
+    if (!config) {
+      setPanelLoading(false);
+      return;
+    }
+
+    try {
+      let request = supabase.from(config.table).select(config.select).order(config.order, { ascending: false }).limit(50);
+      if (config.filter) request = request.eq(config.filter[0], config.filter[1]);
+      if (name === "Resi") request = request.or("status.eq.refunded,payment_status.eq.refunded");
+      if (name === "Venditori") request = request.eq("seller_type", "Privato");
+      const { data, error } = await request;
+      if (error) {
+        setPanelError(error.message || "Impossibile caricare i dati della sezione.");
+      } else {
+        setPanelRows(data || []);
+      }
+    } catch (err) {
+      setPanelError(err?.message || "Errore durante il caricamento della sezione.");
+    } finally {
+      setPanelLoading(false);
+    }
+  }
+
   async function createCollaborator() {
     setActionMessage("");
     setInviteCode("");
@@ -146,9 +199,10 @@ export default function RSControlCenter() {
 
   async function addIdea() {
     if (!ideaTitle.trim() || !ideaBody.trim()) return setActionMessage("Inserisci titolo e testo dell'idea.");
+    const { data: { user } } = await supabase.auth.getUser();
     const { error } = await supabase.from("rs_collaborator_ideas").insert({
       title: ideaTitle.trim(), body: ideaBody.trim(), audience: ideaAudience,
-      recipient_user_ids: ideaRecipients
+      recipient_user_ids: ideaRecipients, created_by: user?.id || null
     });
     if (error) return setActionMessage(error.message);
     setIdeaTitle(""); setIdeaBody(""); setIdeaRecipients([]);
@@ -157,10 +211,13 @@ export default function RSControlCenter() {
 
   async function scheduleMeeting() {
     if (!meetingTitle || !meetingStart || !meetingEnd) return setActionMessage("Inserisci titolo, orari di inizio e fine.");
+    if (new Date(meetingEnd) <= new Date(meetingStart)) return setActionMessage("La fine della riunione deve essere successiva all’inizio.");
+    const { data: { user } } = await supabase.auth.getUser();
     const { error } = await supabase.from("rs_meetings").insert({
       title: meetingTitle.trim(), description: meetingDescription.trim() || null,
       starts_at: new Date(meetingStart).toISOString(), ends_at: new Date(meetingEnd).toISOString(),
-      meeting_url: meetingUrl.trim() || null, participant_user_ids: meetingParticipants
+      meeting_url: meetingUrl.trim() || null, participant_user_ids: meetingParticipants,
+      created_by: user?.id || null
     });
     if (error) return setActionMessage(error.message);
     setMeetingTitle(""); setMeetingDescription(""); setMeetingStart(""); setMeetingEnd(""); setMeetingUrl(""); setMeetingParticipants([]);
@@ -169,8 +226,10 @@ export default function RSControlCenter() {
 
   async function sendSecretMessage() {
     if (!secretBody.trim() || !secretRecipients.length) return setActionMessage("Scrivi il messaggio e seleziona almeno un destinatario.");
+    const { data: { user } } = await supabase.auth.getUser();
     const { error } = await supabase.from("rs_secret_messages").insert({
-      subject: secretSubject.trim() || null, body: secretBody.trim(), recipient_user_ids: secretRecipients
+      subject: secretSubject.trim() || null, body: secretBody.trim(), recipient_user_ids: secretRecipients,
+      sender_user_id: user?.id || null
     });
     if (error) return setActionMessage(error.message);
     setSecretSubject(""); setSecretBody(""); setSecretRecipients([]);
@@ -269,7 +328,7 @@ export default function RSControlCenter() {
                 title === "Prodotti pubblicati" ? value("products") :
                 title === "Ordini visibili" ? value("orders") : "—";
               return (
-                <button key={title} onClick={() => setActivePanel(title)}
+                <button key={title} onClick={() => openPanel(title)}
                   style={{...panel, textAlign:"left", border:"1px solid #dcecef", cursor:"pointer", background:"#fff", position:"relative", zIndex:2, pointerEvents:"auto", touchAction:"manipulation"}}>
                   <div style={{fontSize:24}}>{icon}</div>
                   <b style={{display:"block", marginTop:8}}>{title}</b>
@@ -386,14 +445,32 @@ export default function RSControlCenter() {
                 </div>
                 <button onClick={()=>setActivePanel("")} style={{padding:"8px 12px",border:0,borderRadius:9,cursor:"pointer",position:"relative",zIndex:3,touchAction:"manipulation"}}>Chiudi</button>
               </div>
-              <div style={{marginTop:16,display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(180px,1fr))",gap:10}}>
-                <div style={{padding:14,borderRadius:12,background:"#f3fbfd"}}><b>Ordini</b><div style={{fontSize:24,marginTop:6}}>{value("orders")}</div></div>
-                <div style={{padding:14,borderRadius:12,background:"#f3fbfd"}}><b>Prodotti</b><div style={{fontSize:24,marginTop:6}}>{value("products")}</div></div>
-                <div style={{padding:14,borderRadius:12,background:"#f3fbfd"}}><b>Ricerche</b><div style={{fontSize:24,marginTop:6}}>{insights?.totals?.searches ?? "—"}</div></div>
-                <div style={{padding:14,borderRadius:12,background:"#f3fbfd"}}><b>Desideri</b><div style={{fontSize:24,marginTop:6}}>{insights?.totals?.wishlist ?? "—"}</div></div>
-                <div style={{padding:14,borderRadius:12,background:"#f3fbfd"}}><b>Nella Rete</b><div style={{fontSize:24,marginTop:6}}>{insights?.totals?.net_add ?? "—"}</div></div>
+              <div style={{marginTop:16}}>
+                {panelLoading ? (
+                  <div style={{padding:14,background:"#f3fbfd",borderRadius:10}}>Caricamento dati reali…</div>
+                ) : panelError ? (
+                  <div role="alert" style={{padding:14,background:"#fff5e8",borderRadius:10,color:"#8a4b08"}}>Non è stato possibile caricare questa sezione: {panelError}</div>
+                ) : panelRows.length ? (
+                  <div style={{display:"grid",gap:10}}>
+                    {panelRows.map((row, index) => (
+                      <article key={row.id || row.user_id || index} style={{padding:14,border:"1px solid #e0edf0",borderRadius:12,background:"#fbfeff"}}>
+                        <b>{row.title || row.name || row.full_name || row.display_name || row.description || row.email || row.subject || row.module || row.role || row.id || row.user_id || "Elemento"}</b>
+                        <div style={{display:"grid",gap:4,marginTop:7,color:"#526d74",fontSize:13}}>
+                          {Object.entries(row).filter(([key, val]) => !["id","title","name","full_name","display_name","description","email","subject","module","role","permissions","recipient_user_ids","participant_user_ids"].includes(key) && val !== null && val !== "").map(([key,val]) => (
+                            <div key={key}><b>{key.replaceAll("_"," ")}:</b> {typeof val === "object" ? JSON.stringify(val) : String(val)}</div>
+                          ))}
+                          {row.body && <div style={{whiteSpace:"pre-wrap",marginTop:4}}>{row.body}</div>}
+                          {row.description && row.title && <div style={{whiteSpace:"pre-wrap",marginTop:4}}>{row.description}</div>}
+                          {row.meeting_url && <a href={row.meeting_url} target="_blank" rel="noreferrer" style={{color:"#087f9e",fontWeight:700,marginTop:6}}>Apri link della riunione ↗</a>}
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+                ) : (
+                  <div style={{padding:14,background:"#f3fbfd",borderRadius:10,color:"#63818a"}}>Nessun elemento da mostrare in questa sezione per ora.</div>
+                )}
+                <p style={{color:"#718a91",fontSize:13,marginBottom:0,marginTop:12}}>Dati caricati dal database RiverSpend in base ai permessi dell’account. Le videochiamate si aprono tramite il link inserito nella riunione; questa schermata non avvia da sola una chiamata.</p>
               </div>
-              <p style={{color:"#718a91",fontSize:13,marginBottom:0}}>I dati finanziari reali restano riservati al CEO e non vengono mostrati ai collaboratori tramite questo spazio.</p>
             </section>
           )}
 
@@ -401,13 +478,13 @@ export default function RSControlCenter() {
             <div style={{fontSize:28,fontWeight:800,color:"#12343b"}}>🌊 RiverSpend</div>
             <div style={{fontSize:18,fontWeight:800,color:"#087f9e",letterSpacing:2,marginTop:3}}>MEET</div>
             <div style={{color:"#63818a",marginTop:6}}>Video conference privata dell'ecosistema RiverSpend</div>
-            <button onClick={()=>setActivePanel("RiverSpend Meet")} style={{marginTop:12,padding:"11px 18px",border:0,borderRadius:10,background:"#087f9e",color:"#fff",fontWeight:700,cursor:"pointer",position:"relative",zIndex:3,pointerEvents:"auto",touchAction:"manipulation"}}>🎥 Apri RiverSpend Meet</button>
+            <button onClick={()=>openPanel("RiverSpend Meet")} style={{marginTop:12,padding:"11px 18px",border:0,borderRadius:10,background:"#087f9e",color:"#fff",fontWeight:700,cursor:"pointer",position:"relative",zIndex:3,pointerEvents:"auto",touchAction:"manipulation"}}>🎥 Apri RiverSpend Meet</button>
           </section>
 
           <h2 style={{ marginTop: 30 }}>💡 Idee · Riunioni · Messaggi riservati</h2>
           <section style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))",gap:12}}>
             <article style={panel}>
-              <button onClick={()=>setActivePanel("Aggiungi idee")} style={{width:"100%",padding:12,border:0,borderRadius:10,background:"#087f9e",color:"white",fontWeight:700,cursor:"pointer",position:"relative",zIndex:3,touchAction:"manipulation"}}>💡 Aggiungi idee</button>
+              <button onClick={()=>openPanel("Aggiungi idee")} style={{width:"100%",padding:12,border:0,borderRadius:10,background:"#087f9e",color:"white",fontWeight:700,cursor:"pointer",position:"relative",zIndex:3,touchAction:"manipulation"}}>💡 Aggiungi idee</button>
               <input value={ideaTitle} onChange={e=>setIdeaTitle(e.target.value)} placeholder="Titolo idea" style={{marginTop:10,width:"100%",boxSizing:"border-box",padding:11,borderRadius:9,border:"1px solid #d7e5e9"}} />
               <textarea value={ideaBody} onChange={e=>setIdeaBody(e.target.value)} placeholder="Scrivi l'idea..." rows={4} style={{marginTop:8,width:"100%",boxSizing:"border-box",padding:11,borderRadius:9,border:"1px solid #d7e5e9"}} />
               <select value={ideaAudience} onChange={e=>setIdeaAudience(e.target.value)} style={{marginTop:8,width:"100%",padding:11,borderRadius:9}}>
@@ -418,7 +495,7 @@ export default function RSControlCenter() {
             </article>
 
             <article style={panel}>
-              <button onClick={()=>setActivePanel("Riunioni / Video call")} style={{width:"100%",padding:12,border:0,borderRadius:10,background:"#168454",color:"white",fontWeight:700,cursor:"pointer",position:"relative",zIndex:3,touchAction:"manipulation"}}>🎥 Riunione / Video call</button>
+              <button onClick={()=>openPanel("Riunioni / Video call")} style={{width:"100%",padding:12,border:0,borderRadius:10,background:"#168454",color:"white",fontWeight:700,cursor:"pointer",position:"relative",zIndex:3,touchAction:"manipulation"}}>🎥 Riunione / Video call</button>
               <input value={meetingTitle} onChange={e=>setMeetingTitle(e.target.value)} placeholder="Titolo riunione" style={{marginTop:10,width:"100%",boxSizing:"border-box",padding:11,borderRadius:9,border:"1px solid #d7e5e9"}} />
               <input type="datetime-local" value={meetingStart} onChange={e=>setMeetingStart(e.target.value)} style={{marginTop:8,width:"100%",padding:10}} />
               <input type="datetime-local" value={meetingEnd} onChange={e=>setMeetingEnd(e.target.value)} style={{marginTop:8,width:"100%",padding:10}} />
@@ -429,7 +506,7 @@ export default function RSControlCenter() {
             </article>
 
             <article style={panel}>
-              <button onClick={()=>setActivePanel("Messaggi segreti")} style={{width:"100%",padding:12,border:0,borderRadius:10,background:"#6b3f8f",color:"white",fontWeight:700,cursor:"pointer",position:"relative",zIndex:3,touchAction:"manipulation"}}>🔐 Messaggio segreto</button>
+              <button onClick={()=>openPanel("Messaggi segreti")} style={{width:"100%",padding:12,border:0,borderRadius:10,background:"#6b3f8f",color:"white",fontWeight:700,cursor:"pointer",position:"relative",zIndex:3,touchAction:"manipulation"}}>🔐 Messaggio segreto</button>
               <input value={secretSubject} onChange={e=>setSecretSubject(e.target.value)} placeholder="Oggetto" style={{marginTop:10,width:"100%",boxSizing:"border-box",padding:11,borderRadius:9,border:"1px solid #d7e5e9"}} />
               <textarea value={secretBody} onChange={e=>setSecretBody(e.target.value)} placeholder="Messaggio riservato..." rows={4} style={{marginTop:8,width:"100%",boxSizing:"border-box",padding:11,borderRadius:9,border:"1px solid #d7e5e9"}} />
               <div style={{marginTop:8}}><b>Chi può leggerlo?</b>{collaborators.filter(c=>c.user_id).map(c=><label key={c.id} style={{display:"block"}}><input type="checkbox" checked={secretRecipients.includes(c.user_id)} onChange={e=>setSecretRecipients(p=>e.target.checked?[...p,c.user_id]:p.filter(x=>x!==c.user_id))}/>{c.full_name||c.email}</label>)}</div>
@@ -447,18 +524,16 @@ export default function RSControlCenter() {
             }}
           >
             {[
-              ["🛒 Marketplace", "Prodotti · Vetrine · Categorie · ADS · Ordini"],
-              ["👥 Utenti", "Privati · Aziende · Acquirenti · Venditori"],
-              ["👷 Collaboratori", "Elenco · Ruoli · Permessi · Attività"],
-              ["📊 Statistiche", "Iscrizioni · Crescita · Vendite · Rimborsi"],
-              ["🛡️ Sicurezza", "Accesso admin · Ruoli · Registro attività"],
-            ].map(([title, detail]) => (
-              <article key={title} style={panel}>
+              ["🛒 Marketplace", "Prodotti · Vetrine · Categorie · Spons · Ordini", "Marketplace"],
+              ["👥 Utenti", "Privati · Aziende · Acquirenti · Venditori", "Utenti"],
+              ["👷 Collaboratori", "Elenco · Ruoli · Permessi · Attività", "Collaboratori"],
+              ["📊 Statistiche", "Iscrizioni · Crescita · Vendite · Rimborsi", "Statistiche"],
+              ["🛡️ Sicurezza", "Accesso admin · Ruoli · Registro attività", "Sicurezza"],
+            ].map(([title, detail, panelName]) => (
+              <article key={title} style={{...panel,border:"1px solid #dcecef"}}>
                 <b>{title}</b>
                 <p style={{ color: "#63818a", lineHeight: 1.5 }}>{detail}</p>
-                <small style={{ color: "#8aa0a6" }}>
-                  Collegamento dati in corso
-                </small>
+                <button onClick={() => openPanel(panelName)} style={{padding:"8px 10px",border:0,borderRadius:8,background:"#e8f8fc",color:"#087f9e",fontWeight:700,cursor:"pointer"}}>Apri sezione →</button>
               </article>
             ))}
           </section>
