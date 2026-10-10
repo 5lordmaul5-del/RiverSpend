@@ -577,9 +577,8 @@ export default function Home() {
           <div className="rs-apps-grid mb-5">
             <section className="rs-feature-card rs-force-card rounded-2xl border border-cyan-400/40 bg-gradient-to-br from-slate-950 via-cyan-950/50 to-indigo-950/60 p-3 text-center shadow-xl shadow-cyan-950/20">
               <button type="button" onClick={() => { if (rsForceAperta) setRsForceAperta(false); else apriRsForce(); }} className="flex h-full w-full flex-col items-center overflow-hidden text-center">
-                <div className="rs-force-stage relative mx-auto flex h-24 w-full shrink-0 items-center justify-center overflow-hidden rounded-xl">
+                <div className="rs-force-stage relative mx-auto flex h-24 w-full shrink-0 items-center justify-center overflow-hidden">
                   <img src="/rs-force.svg" alt="RS Force: sfera energetica e fulmini" className="absolute inset-0 h-full w-full object-cover opacity-90" />
-                  <div className="absolute inset-0 bg-slate-950/15" />
                   {rsForceAperta && prodottiVisibili.slice(0, 4).map((p, index) => {
                     const positions = [{ x: '-82px', y: '-26px' }, { x: '82px', y: '-26px' }, { x: '-82px', y: '26px' }, { x: '82px', y: '26px' }];
                     const pos = positions[index];
@@ -608,7 +607,7 @@ export default function Home() {
             <section className="rs-feature-card rounded-2xl border border-amber-400/40 bg-gradient-to-br from-slate-950 via-amber-950/30 to-slate-900 p-3 text-center shadow-xl shadow-amber-950/20">
               <button type="button" onClick={() => setRsFortuneAperta((v) => !v)} className="flex h-full w-full flex-col items-center overflow-hidden text-center">
                 <p className="shrink-0 text-[10px] font-bold uppercase tracking-[0.22em] text-amber-100">🎡 RS FORTUNE</p>
-                <img src="/rs-fortune.svg" alt="RS Fortune: ruota dorata della fortuna" className="mt-2 h-20 w-full shrink-0 rounded-xl border border-amber-300/40 object-cover" />
+                
                 <h2 className="mt-1 shrink-0 text-base font-extrabold leading-tight text-white">La ruota della fortuna</h2>
                 {rsFortuneAperta ? (
                   <div className="mt-2 flex min-h-0 w-full flex-1 flex-col items-center overflow-hidden">
@@ -647,7 +646,7 @@ export default function Home() {
             <section className="rs-feature-card rounded-2xl border border-violet-400/40 bg-gradient-to-br from-slate-950 via-violet-950/25 to-slate-900 p-3 text-center shadow-xl shadow-violet-950/20">
               <button type="button" onClick={() => setRsLotteryAperta((v) => !v)} className="flex h-full w-full flex-col items-center overflow-hidden text-center">
                 <p className="shrink-0 text-[10px] font-bold uppercase tracking-[0.22em] text-violet-100">🎟️ RS LOTTERY</p>
-                <img src="/rs-lottery.svg" alt="RS Lottery: estrazione, biglietti e premi" className="mt-2 h-24 w-full shrink-0 rounded-xl border border-violet-300/40 object-cover" />
+                <img src="/rs-lottery.svg" alt="RS Lottery: estrazione, biglietti e premi" className="mt-2 h-28 w-full shrink-0 rounded-xl border border-violet-300/40 object-cover" />
                 {rsLotteryAperta ? (
                   <div className="mt-3 flex min-h-0 flex-1 flex-col items-center justify-center overflow-hidden">
                     <p className="text-sm font-extrabold text-white">RS Lottery Annuale</p>
@@ -667,7 +666,7 @@ export default function Home() {
             <section className="rs-feature-card rounded-2xl border border-orange-400/40 bg-gradient-to-br from-slate-950 via-orange-950/25 to-slate-900 p-3 text-center shadow-xl shadow-orange-950/20">
               <button type="button" className="flex h-full w-full flex-col items-center justify-center overflow-hidden text-center">
                 <p className="shrink-0 text-[10px] font-bold uppercase tracking-[0.22em] text-orange-100">⚡ RS FOLGORE</p>
-                <img src="/rs-folgore.svg" alt="RS Folgore: aereo cargo e pacchi con paracadute" className="mt-3 h-28 w-full shrink-0 rounded-xl border border-orange-300/40 object-cover" />
+                <img src="/rs-folgore.svg" alt="RS Folgore: aereo cargo e pacchi con paracadute" className="mt-3 h-32 w-full shrink-0 rounded-xl border border-orange-300/40 object-cover" />
                 <p className="mt-3 text-sm font-extrabold text-white">Offerte che arrivano dal cielo</p>
                 <p className="mt-2 text-[10px] leading-4 text-slate-100">Stock, sconti e offerte lampo in un'esperienza cinematografica.</p>
               </button>
