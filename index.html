@@ -280,6 +280,37 @@ body {
 @media(min-width:700px){.rs-media-grid{grid-template-columns:1fr 1fr 1fr}}
 @media (min-width:700px) { .rs-media-grid { grid-template-columns: 1fr 1fr; } .rs-media-card { height:100%; } }
 
+  
+/* RIVERSPEND PARK + INVESTITOR + AMBIENTAL */
+.rs-project-hub{padding:24px 16px;background:linear-gradient(180deg,#eefbff,#fff);border-block:1px solid #d7edf2}
+.rs-project-heading{font-size:26px;line-height:1.15;margin:0 0 8px;color:#12343b}
+.rs-project-intro{color:#587781;line-height:1.6;margin:0 0 18px}
+.rs-project-grid{display:grid;grid-template-columns:1fr;gap:14px}
+.rs-project-card{overflow:hidden;border:1px solid #d4e8ed;border-radius:20px;background:#fff;box-shadow:0 8px 24px rgba(10,85,115,.08)}
+.rs-project-art{min-height:150px;padding:18px;display:flex;flex-direction:column;justify-content:flex-end;color:#fff;background:linear-gradient(135deg,#073b59,#08a7cf 60%,#68d6c8)}
+.rs-project-art strong{font-size:24px;text-shadow:0 2px 8px #1239}
+.rs-project-art span{font-size:13px;margin-top:5px}
+.rs-project-content{padding:16px}
+.rs-project-content p{color:#587781;line-height:1.55;margin:0 0 14px}
+.rs-project-tags{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0 14px}
+.rs-project-tags span{font-size:12px;padding:6px 9px;border-radius:999px;background:#eaf8fb;color:#176178}
+.rs-project-btn{width:100%;padding:12px 14px;border:0;border-radius:12px;background:#087f9e;color:white;font-weight:800;font-size:14px;cursor:pointer}
+.rs-project-btn.gold{background:linear-gradient(100deg,#bd8516,#e6bd54);color:#24313b}
+.rs-project-btn.green{background:linear-gradient(100deg,#146c43,#299b61);color:white}
+.rs-project-panel{display:none;margin-top:12px;padding:14px;border-radius:12px;background:#f3fafb;border:1px solid #d8edf1}
+.rs-project-panel.open{display:block}
+.rs-project-panel label{display:block;font-weight:700;font-size:13px;color:#234d59;margin:10px 0 5px}
+.rs-project-panel input,.rs-project-panel select,.rs-project-panel textarea{width:100%;padding:11px;border:1px solid #cfe3eb;border-radius:10px;background:white;font:inherit}
+.rs-project-panel textarea{min-height:86px;resize:vertical}
+.rs-project-note{font-size:12px;color:#637d84;line-height:1.5;margin:10px 0 0}
+.rs-park-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.rs-park-card{border:1px solid #d4e8ed;border-radius:14px;overflow:hidden;background:#fff}
+.rs-park-art{height:86px;background:linear-gradient(135deg,#072b50,#087eaa,#20c7d8);display:flex;align-items:center;justify-content:center;font-size:34px}
+.rs-park-card div:last-child{padding:10px}
+.rs-park-card strong{font-size:13px;color:#123b50;display:block}
+.rs-park-card small{font-size:11px;color:#67818a}
+@media(min-width:700px){.rs-project-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.rs-park-cards{grid-template-columns:repeat(4,minmax(0,1fr))}}
+
   </style>
 </head>
 
@@ -373,6 +404,9 @@ body {
   <button type="button" data-scroll-target="rs-stream">🎬 RSStream</button>
   <button type="button" data-scroll-target="rs-broadcast">📡 RSBroadcast</button>
   <button type="button" data-scroll-target="rs-radio">📻 RSRadio</button>
+  <button type="button" data-scroll-target="rs-park">🎢 RiverSpend Park</button>
+  <button type="button" data-scroll-target="rs-investitor">💎 RSInvestitor</button>
+  <button type="button" data-scroll-target="rs-ambiental">🌱 RiverSpend Ambiental</button>
 
 </nav>
 
@@ -458,6 +492,44 @@ body {
       </div>
     </article>
   </div>
+</section>
+
+
+<section class="rs-project-hub" id="rs-park" aria-labelledby="rs-park-heading">
+  <h2 class="rs-project-heading" id="rs-park-heading">🎢 RiverSpend Park</h2>
+  <p class="rs-project-intro">Un mondo di avventure tra acqua, velocità, natura, misteri e tecnologia. Seleziona un'area per esplorare il progetto delle attrazioni.</p>
+  <div class="rs-park-cards">
+    <article class="rs-park-card"><div class="rs-park-art">🌊</div><div><strong>RiverSpeed</strong><small>Il grande viaggio • percorso in 12 tappe da completare</small></div></article>
+    <article class="rs-park-card"><div class="rs-park-art">🌋</div><div><strong>Monster Vulcan</strong><small>Vulcano, miniera e mondo preistorico</small></div></article>
+    <article class="rs-park-card"><div class="rs-park-art">👽</div><div><strong>Crop Circles — Area 51</strong><small>Spazio, UFO e portali</small></div></article>
+    <article class="rs-park-card"><div class="rs-park-art">🚂</div><div><strong>Wild West Wood</strong><small>Avventura western e miniere</small></div></article>
+    <article class="rs-park-card"><div class="rs-park-art">⚡</div><div><strong>Velocity</strong><small>Il potere della velocità</small></div></article>
+    <article class="rs-park-card"><div class="rs-park-art">🛩️</div><div><strong>WWII Air Combat Coaster</strong><small>Avventura aerea a tema storico</small></div></article>
+    <article class="rs-park-card"><div class="rs-park-art">🦈</div><div><strong>RiverSpend WaterPark</strong><small>Megalodonte, Tsunami Wave, Octopus e altre aree acquatiche</small></div></article>
+    <article class="rs-park-card"><div class="rs-park-art">🧒</div><div><strong>Kids / WaterPark</strong><small>Zone e attrazioni per famiglie</small></div></article>
+  </div>
+  <p class="rs-project-note">Queste sono schede iniziali del progetto, non attrazioni già operative. Le immagini inviate in chat e i dati tecnici devono ancora essere caricati e associati alle schede; velocità, capienza e requisiti di sicurezza saranno pubblicati solo dopo verifica.</p>
+</section>
+
+<section class="rs-project-hub" id="rs-investitor" aria-labelledby="rs-investitor-heading">
+  <h2 class="rs-project-heading" id="rs-investitor-heading">💎 RSInvestitor</h2>
+  <p class="rs-project-intro"><strong>Investi anche tu in RiverSpend.</strong> Scopri i progetti dell'ecosistema, i loro obiettivi, le fasi di sviluppo e le informazioni disponibili per valutare possibili opportunità.</p>
+  <div class="rs-project-grid">
+    <article class="rs-project-card"><div class="rs-project-art"><strong>RSInvestitor Park</strong><span>Il progetto del parco e del WaterPark</span></div><div class="rs-project-content"><p>Concept, aree tematiche, fasi di sviluppo e necessità di capitale da definire.</p><div class="rs-project-tags"><span>Parco</span><span>Attrazioni</span><span>Sviluppo</span></div><button class="rs-project-btn" type="button" data-toggle-panel="rs-invest-park-panel">Richiedi informazioni</button><div class="rs-project-panel" id="rs-invest-park-panel"><p>Invia una manifestazione d'interesse informativa, senza impegno economico.</p><label for="rs-invest-park-name">Nome</label><input id="rs-invest-park-name" autocomplete="name" placeholder="Il tuo nome"><label for="rs-invest-park-email">Email</label><input id="rs-invest-park-email" type="email" autocomplete="email" placeholder="nome@esempio.it"><button class="rs-project-btn" type="button" data-interest-status="rs-invest-park-status">Prepara richiesta</button><p id="rs-invest-park-status" class="rs-project-note" role="status">Il modulo è solo dimostrativo e non invia dati a un server.</p></div></div></article>
+    <article class="rs-project-card"><div class="rs-project-art" style="background:linear-gradient(135deg,#10264e,#087fbd,#51c9e6)"><strong>RSInvestitor Shop</strong><span>Marketplace e tecnologia</span></div><div class="rs-project-content"><p>Marketplace, logistica, strumenti digitali e crescita commerciale.</p><div class="rs-project-tags"><span>Shop</span><span>Digitale</span><span>Logistica</span></div><button class="rs-project-btn" type="button" data-toggle-panel="rs-invest-shop-panel">Richiedi informazioni</button><div class="rs-project-panel" id="rs-invest-shop-panel"><p>Manifestazione d'interesse informativa, senza impegno economico.</p><label for="rs-invest-shop-name">Nome</label><input id="rs-invest-shop-name" autocomplete="name" placeholder="Il tuo nome"><label for="rs-invest-shop-email">Email</label><input id="rs-invest-shop-email" type="email" autocomplete="email" placeholder="nome@esempio.it"><button class="rs-project-btn" type="button" data-interest-status="rs-invest-shop-status">Prepara richiesta</button><p id="rs-invest-shop-status" class="rs-project-note" role="status">Il modulo è solo dimostrativo e non invia dati a un server.</p></div></div></article>
+    <article class="rs-project-card"><div class="rs-project-art" style="background:linear-gradient(135deg,#241345,#7542a5,#c653a2)"><strong>RSInvestitor Stream</strong><span>Film, serie e produzioni</span></div><div class="rs-project-content"><p>Streaming, contenuti originali, creator e distribuzione multimediale.</p><div class="rs-project-tags"><span>Streaming</span><span>Media</span><span>Produzioni</span></div><button class="rs-project-btn" type="button" data-toggle-panel="rs-invest-stream-panel">Richiedi informazioni</button><div class="rs-project-panel" id="rs-invest-stream-panel"><p>Manifestazione d'interesse informativa, senza impegno economico.</p><label for="rs-invest-stream-name">Nome</label><input id="rs-invest-stream-name" autocomplete="name" placeholder="Il tuo nome"><label for="rs-invest-stream-email">Email</label><input id="rs-invest-stream-email" type="email" autocomplete="email" placeholder="nome@esempio.it"><button class="rs-project-btn" type="button" data-interest-status="rs-invest-stream-status">Prepara richiesta</button><p id="rs-invest-stream-status" class="rs-project-note" role="status">Il modulo è solo dimostrativo e non invia dati a un server.</p></div></div></article>
+  </div>
+  <p class="rs-project-note">RSInvestitor è una presentazione informativa. Non raccoglie capitali, non vende quote o strumenti finanziari e non promette rendimenti. Eventuali offerte future richiederanno verifiche legali e regolamentari.</p>
+</section>
+
+<section class="rs-project-hub" id="rs-ambiental" aria-labelledby="rs-ambiental-heading" style="background:linear-gradient(180deg,#effaf2,#fff)">
+  <h2 class="rs-project-heading" id="rs-ambiental-heading">🌱 RiverSpend Ambiental</h2>
+  <p class="rs-project-intro"><strong>Contribuisci anche tu. Piantiamo oggi il futuro di domani.</strong> Un progetto per sostenere la protezione dei terreni, la riforestazione e la cura degli alberi.</p>
+  <div class="rs-project-grid">
+    <article class="rs-project-card"><div class="rs-project-art" style="background:linear-gradient(135deg,#123e2a,#23784b,#8bcf79)"><strong>La tua foresta</strong><span>Contributi per progetti ambientali</span></div><div class="rs-project-content"><p>Le risorse potranno sostenere terreni, piante autoctone, semi, piantagioni e manutenzione secondo progetti approvati e documentati.</p><div class="rs-project-tags"><span>🌳 Riforestazione</span><span>🌿 Biodiversità</span><span>🗺️ Mappa privata</span></div><button class="rs-project-btn green" type="button" data-toggle-panel="rs-ambiental-panel">Scopri come contribuire</button><div class="rs-project-panel" id="rs-ambiental-panel"><p>La futura area personale potrà mostrare la zona di piantagione assegnata, le specie e gli aggiornamenti verificati. L'area sarà privata; l'accesso sarà limitato al donatore e al personale autorizzato necessario a gestire il progetto.</p><label for="rs-ambiental-name">Nome (facoltativo)</label><input id="rs-ambiental-name" autocomplete="name" placeholder="Il tuo nome"><label for="rs-ambiental-email">Email per ricevere informazioni</label><input id="rs-ambiental-email" type="email" autocomplete="email" placeholder="nome@esempio.it"><label for="rs-ambiental-interest">Come vuoi contribuire?</label><select id="rs-ambiental-interest"><option>Ricevere informazioni sul progetto</option><option>Contribuire con una donazione quando sarà attiva</option><option>Collaborare a una piantagione</option></select><button class="rs-project-btn green" type="button" data-interest-status="rs-ambiental-status">Prepara richiesta</button><p id="rs-ambiental-status" class="rs-project-note" role="status">Modulo informativo dimostrativo: non invia dati e non raccoglie donazioni.</p></div></div></article>
+    <article class="rs-project-card"><div class="rs-project-art" style="background:linear-gradient(135deg,#174b36,#2f925d,#b4dc89)"><strong>La tua mappa riservata</strong><span>Le tue zone di piantagione</span></div><div class="rs-project-content"><p>Quando saranno disponibili terreni e piantagioni verificate, l'area personale potrà mostrare le zone assegnate e gli aggiornamenti.</p><div class="rs-project-tags"><span>🔒 Privata</span><span>🌱 Aggiornamenti</span></div><p class="rs-project-note">La mappa non è ancora collegata a terreni reali. Una zona assegnata non equivale alla proprietà del terreno.</p></div></article>
+  </div>
+  <p class="rs-project-note">Donazioni e acquisti di terreni non sono attivi in questa versione. Prima di raccogliere fondi dovranno essere definiti il soggetto responsabile, la rendicontazione, le condizioni e le modalità di assegnazione delle zone.</p>
 </section>
 
   <nav class="rs-areas">
@@ -1981,6 +2053,32 @@ profileButton.addEventListener("click", () => {
   wireSubmission({buttonId:"rs-stream-submit", titleId:"rs-stream-title", creatorId:"rs-stream-owner", fileId:"rs-stream-file", rightsId:"rs-stream-rights", statusId:"rs-stream-status", kind:"RSStream"});
   wireSubmission({buttonId:"rs-broadcast-submit", titleId:"rs-broadcast-title", creatorId:"rs-broadcast-creator", fileId:"rs-broadcast-file", rightsId:"rs-broadcast-rights", statusId:"rs-broadcast-status", kind:"RSBroadcast"});
 
+</script>
+
+<script>
+(function(){
+  document.querySelectorAll('[data-scroll-target]').forEach(function(button){
+    button.addEventListener('click', function(){
+      var target=document.getElementById(button.getAttribute('data-scroll-target'));
+      if(target) target.scrollIntoView({behavior:'smooth',block:'start'});
+    });
+  });
+  document.querySelectorAll('[data-toggle-panel]').forEach(function(button){
+    button.addEventListener('click', function(){
+      var panel=document.getElementById(button.getAttribute('data-toggle-panel'));
+      if(!panel) return;
+      var opened=panel.classList.toggle('open');
+      button.setAttribute('aria-expanded',String(opened));
+      if(opened) panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+    });
+  });
+  document.querySelectorAll('[data-interest-status]').forEach(function(button){
+    button.addEventListener('click',function(){
+      var target=document.getElementById(button.getAttribute('data-interest-status'));
+      if(target) target.textContent='Modulo dimostrativo: richiesta non inviata. Il collegamento a un sistema sicuro di raccolta contatti deve ancora essere realizzato.';
+    });
+  });
+})();
 </script>
 </body>
 </html>
