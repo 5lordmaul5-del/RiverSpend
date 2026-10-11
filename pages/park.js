@@ -31,7 +31,7 @@ const attrazioni = [
 
 export default function RiverSpendPark() {
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-8 text-white">
+    <main className="min-h-screen bg-cyan-50 px-4 py-8 text-slate-800">
       <div className="mx-auto max-w-6xl">
         <Link href="/ecosistema" className="text-teal-300 underline">← Ecosistema RiverSpend</Link>
         <header className="mt-6 overflow-hidden rounded-3xl border border-teal-800 bg-gradient-to-br from-slate-900 via-sky-950 to-slate-950 p-6 sm:p-10">
