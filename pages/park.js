@@ -23,7 +23,7 @@ const attrazioni = [
   ['Time Machine','Viaggio nel tempo','Percorso attraverso epoche e ambientazioni differenti.'],
   ['RiverSpend Infinity','Icona del parco','Esperienza simbolo che unisce scenografia, tecnologia e panorama.'],
   ['The Minator','Miniera','Carrelli da miniera in un percorso tematizzato.'],
-  ['Velocity – The Power of Speed','Velocità','Attrazione ad alta velocità con identità originale RiverSpend.'],
+  ['RiverSpeed','Acqua e viaggio nel tempo','Preparati a partire per un viaggio straordinario attraverso epoche e mondi incredibili. RiverSpeed è un’avventura acquatica immersiva che combina rapide, cascate, tunnel luminosi e scenari spettacolari: dalla preistoria alle città antiche, fino ai paesaggi del futuro e dello spazio. A bordo del tuo veicolo attraverserai ambientazioni sorprendenti, vivendo un percorso ricco di emozioni, effetti visivi e colpi di scena.'],
   ['Viking Norway Rune','Avventura nordica','Esperienza ispirata a rune e paesaggi norreni.'],
   ['Future City','Esperienza digitale','Città futuristica animata con nuvole in movimento e droni.'],
   ['WW2 Battle Experience','Storia immersiva','Percorso narrativo in nove tappe: sbarco su Omaha Beach, villaggio, ponte, tunnel U-Boot, hangar Zeppelin, portaerei, battaglia aerea e atterraggio finale.']
@@ -151,6 +151,20 @@ export default function RiverSpendPark() {
               <h3 className="mt-4 text-xl font-bold">{nome}</h3>
               <img src={immaginiAttrazioni[i]} alt={nome} className="mt-4 aspect-[4/3] w-full rounded-xl object-cover" loading="lazy" />
               <p className="mt-2 text-sm leading-6 text-slate-600">{descrizione}</p>
+              {nome === 'RiverSpeed' && (
+                <div className="mt-4 space-y-3 border-t border-cyan-100 pt-4 text-sm leading-6 text-slate-700">
+                  <h4 className="font-bold text-slate-800">Cosa ti aspetta</h4>
+                  <ul className="list-disc space-y-1 pl-5">
+                    <li>Rapide e cascate scenografiche.</li>
+                    <li>Tunnel luminosi ed effetti immersivi.</li>
+                    <li>Ambientazioni preistoriche, storiche e futuristiche.</li>
+                    <li>Un viaggio attraverso mondi fantastici.</li>
+                    <li>Un’avventura da vivere in compagnia.</li>
+                  </ul>
+                  <p><strong>Sicurezza:</strong> accesso, altezza minima, condizioni di partecipazione e modalità d’imbarco saranno definiti in base al progetto tecnico e alle verifiche di sicurezza dell’attrazione.</p>
+                  <p className="font-bold text-teal-800">RiverSpend Park — Vivi ogni epoca in un’unica avventura.</p>
+                </div>
+              )}
             </article>
           ))}
         </section>
