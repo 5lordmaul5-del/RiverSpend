@@ -1,6 +1,7 @@
 import Link from 'next/link';
 
 const attrazioni = [
+  ['RiverSpeed','Viaggio nel tempo e mondi fantastici','Preparati a partire per un viaggio straordinario attraverso epoche e mondi incredibili. RiverSpeed è un’avventura acquatica immersiva che combina rapide, cascate, tunnel luminosi e scenari spettacolari: dalla preistoria alle città antiche, fino ai paesaggi del futuro e dello spazio. A bordo del tuo veicolo attraverserai ambientazioni sorprendenti, vivendo un percorso ricco di emozioni, effetti visivi e colpi di scena. Cosa ti aspetta: rapide e cascate scenografiche; tunnel luminosi ed effetti immersivi; ambientazioni preistoriche, storiche e futuristiche; un viaggio attraverso mondi fantastici; un’avventura da vivere in compagnia. Sicurezza: accesso, altezza minima, condizioni di partecipazione e modalità d’imbarco saranno definiti in base al progetto tecnico e alle verifiche di sicurezza dell’attrazione. RiverSpend Park — Vivi ogni epoca in un’unica avventura.'],
   ['RiverStorm','Acqua e avventura','Un percorso scenografico tra rapide, spruzzi e scenografie fluviali.'],
   ['Volcano Escape','Avventura indoor','Missione immersiva tra ambientazioni vulcaniche, effetti e passaggi dinamici.'],
   ['SkyRocket','Adrenalina','Attrazione panoramica ad alta velocità, da progettare con standard certificati.'],
@@ -30,6 +31,7 @@ const attrazioni = [
 ];
 
 const immaginiAttrazioni = [
+  "/1000186325.png",
   "/1000186325.png",
   "/1000186326.png",
   "/1000186327.png",
