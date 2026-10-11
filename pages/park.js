@@ -114,7 +114,7 @@ export default function RiverSpendPark() {
         </div>
         <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {attrazioni.map(([nome,tema,descrizione],i) => (
-            <article key={nome} className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
+            <article key={nome} className="rounded-2xl border border-cyan-200 bg-white p-5 text-slate-800 shadow-sm">
               <div className="flex items-center justify-between gap-3">
                 <span className="rounded-full bg-teal-950 px-3 py-1 text-xs font-bold text-teal-200">#{String(i+1).padStart(2,'0')}</span>
                 <span className="text-xs text-slate-400">{tema}</span>
