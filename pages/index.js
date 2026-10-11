@@ -658,8 +658,8 @@ export default function Home() {
           <div className="rs-apps-grid mb-5">
             <section className="rs-feature-card rs-force-card rounded-2xl border border-cyan-400/40 bg-gradient-to-br from-slate-950 via-cyan-950/50 to-indigo-950/60 p-3 text-center shadow-xl shadow-cyan-950/20">
               <button type="button" onClick={() => { if (rsForceAperta) setRsForceAperta(false); else apriRsForce(); }} className="flex h-full w-full flex-col items-center overflow-hidden text-center">
-                <div className="rs-force-stage relative mx-auto flex h-24 w-full shrink-0 items-center justify-center overflow-hidden">
-                  <img src="/rs-force.jpg" alt="RS FORCE: sfera energetica RiverSpend blu e oro" className="absolute inset-0 h-full w-full object-cover opacity-90" />
+                <div className="rs-force-stage relative mx-auto flex h-36 w-full shrink-0 items-center justify-center overflow-hidden rounded-xl border border-cyan-300/50">
+                  <img src="/rs-force.jpg" alt="RS FORCE: sfera energetica RiverSpend blu e oro" className="absolute inset-0 h-full w-full object-cover object-center opacity-100" />
                   {rsForceAperta && prodottiVisibili.slice(0, 4).map((p, index) => {
                     const positions = [{ x: '-82px', y: '-26px' }, { x: '82px', y: '-26px' }, { x: '-82px', y: '26px' }, { x: '82px', y: '26px' }];
                     const pos = positions[index];
@@ -708,7 +708,7 @@ export default function Home() {
                   </div>
                 ) : (
                   <div className="mt-2 flex flex-1 flex-col items-center justify-center overflow-hidden">
-                    <img src="/rs-fortune.jpg" alt="RS FORTUNE: ruota dei premi RiverSpend" className="h-28 w-full rounded-xl border border-amber-300/50 object-cover" loading="lazy" />
+                    <img src="/rs-fortune.jpg" alt="RS FORTUNE: ruota dei premi RiverSpend" className="mt-2 h-36 w-full rounded-xl border border-amber-300/50 object-cover object-center" loading="lazy" />
                     <p className="mt-2 px-1 text-[10px] leading-4 text-slate-100">Tocca per aprire e girare la ruota.</p>
                   </div>
                 )}
@@ -718,7 +718,7 @@ export default function Home() {
             <section className="rs-feature-card rounded-2xl border border-violet-400/40 bg-gradient-to-br from-slate-950 via-violet-950/25 to-slate-900 p-3 text-center shadow-xl shadow-violet-950/20">
               <button type="button" onClick={() => setRsLotteryAperta((v) => !v)} className="flex h-full w-full flex-col items-center overflow-hidden text-center">
                 <p className="shrink-0 text-[10px] font-bold uppercase tracking-[0.22em] text-violet-100">🎟️ RS LOTTERY</p>
-                <img src="/rs-lottery.jpg" alt="RS LOTTERY: estrazione, biglietti e premi RiverSpend" className="mt-2 h-28 w-full shrink-0 rounded-xl border border-violet-300/40 object-cover" />
+                <img src="/rs-lottery.jpg" alt="RS LOTTERY: estrazione, biglietti e premi RiverSpend" className="mt-2 h-36 w-full shrink-0 rounded-xl border border-violet-300/40 object-cover object-center" />
                 {rsLotteryAperta ? (
                   <div className="mt-3 flex min-h-0 flex-1 flex-col items-center justify-center overflow-hidden">
                     <p className="text-sm font-extrabold text-white">RS Lottery Annuale</p>
