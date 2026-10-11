@@ -32,55 +32,36 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Metodo di pagamento non supportato.' });
     }
 
-    const { data: order, error: orderError } = await supabase
-      .from('orders')
-      .select('id,buyer_id,status,payment_status,total,currency')
-      .eq('id', orderId)
-      .eq('buyer_id', user.id)
-      .maybeSingle();
-
-    if (orderError) return res.status(500).json({ error: 'Impossibile verificare l’ordine.' });
-    if (!order) return res.status(404).json({ error: 'Ordine non trovato per questo account.' });
-    if (order.status !== 'pending' || !['unpaid', 'pending'].includes(String(order.payment_status || '').toLowerCase())) {
-      return res.status(409).json({ error: 'Il metodo può essere scelto solo per un ordine in attesa e non pagato.' });
-    }
-
-    const { data: updated, error: updateError } = await supabase
-      .from('orders')
-      .update({
-        payment_method: paymentMethod,
-        payment_reference: paymentMethod === 'bank_transfer' ? order.id : null,
-        payment_selected_at: new Date().toISOString(),
-        payment_status: 'unpaid'
-      })
-      .eq('id', order.id)
-      .eq('buyer_id', user.id)
-      .eq('status', 'pending')
-      .in('payment_status', ['unpaid', 'pending'])
-      .select('id,payment_method,payment_reference,payment_status')
-      .maybeSingle();
-
-    if (updateError) return res.status(500).json({ error: 'Impossibile salvare il metodo di pagamento.' });
-    if (!updated) return res.status(409).json({ error: 'L’ordine è cambiato. Ricarica il checkout e riprova.' });
-
-    const { error: auditError } = await supabase.from('rs_payment_verification_events').insert({
-      order_id: order.id,
-      actor_user_id: user.id,
-      action: 'payment_method_selected',
-      payment_method: paymentMethod,
-      amount: Number(order.total || 0),
-      currency: order.currency || 'EUR',
-      reference: paymentMethod === 'bank_transfer' ? order.id : null
+    // The database function locks the order and writes the selection plus audit event
+    // in one transaction, preventing a saved method without its audit trail.
+    const { data, error } = await supabase.rpc('rs_select_order_payment_method', {
+      p_order_id: orderId.trim(),
+      p_actor_user_id: user.id,
+      p_payment_method: paymentMethod
     });
 
-    if (auditError) {
-      // Do not claim the audit trail was saved if the event could not be recorded.
-      return res.status(500).json({ error: 'Metodo salvato, ma non è stato possibile registrare lo storico. Contatta l’assistenza prima di pagare.' });
+    if (error) {
+      const message = error.message || '';
+      if (/non trovato per questo account/i.test(message)) {
+        return res.status(404).json({ error: 'Ordine non trovato per questo account.' });
+      }
+      if (/solo per un ordine in attesa|non pagato/i.test(message)) {
+        return res.status(409).json({ error: 'Il metodo può essere scelto solo per un ordine in attesa e non pagato.' });
+      }
+      if (/metodo di pagamento non supportato/i.test(message)) {
+        return res.status(400).json({ error: 'Metodo di pagamento non supportato.' });
+      }
+      return res.status(500).json({ error: 'Impossibile salvare il metodo e il relativo storico.' });
+    }
+
+    const updated = Array.isArray(data) ? data[0] : data;
+    if (!updated) {
+      return res.status(409).json({ error: 'L’ordine è cambiato. Ricarica il checkout e riprova.' });
     }
 
     return res.status(200).json({
       ok: true,
-      orderId: updated.id,
+      orderId: updated.order_id,
       paymentMethod: updated.payment_method,
       reference: updated.payment_reference,
       paymentStatus: updated.payment_status
