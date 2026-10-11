@@ -503,7 +503,7 @@ export default function Home() {
                     const image = p.immagini?.[0];
                     return image ? (
                       <a key={'force-orbit-' + p.id} href={'/prodotto/' + encodeURIComponent(p.id)} onClick={(e) => e.stopPropagation()} aria-label={'RS Force: ' + (p.titolo || 'prodotto')} className="absolute z-10 flex h-11 w-11 items-center justify-center overflow-hidden rounded-xl border border-cyan-200/70 bg-white p-0.5 shadow-lg" style={{left:'50%', top:'50%', transform:`translate(calc(-50% + ${pos.x}), calc(-50% + ${pos.y}))`}}>
-                        <img src={image} alt="" className="h-full w-full object-contain" />
+                        <img src={image} alt="" className="h-full w-full object-contain" style={{animation:'rs-force-object-spin 5s linear infinite', animationDelay:(index * -0.8)+'s'}} />
                       </a>
                     ) : null;
                   })}
@@ -702,6 +702,11 @@ export default function Home() {
         @keyframes rs-force-rotate {
           from { rotate: 0deg; }
           to { rotate: 360deg; }
+        }
+        @keyframes rs-force-object-spin {
+          from { transform: rotate(0deg) scale(.92); }
+          50% { transform: rotate(180deg) scale(1.08); }
+          to { transform: rotate(360deg) scale(.92); }
         }
         /* RS FORCE: orbita orizzontale tipo pianeti attorno al sole.
            Il movimento resta sul piano orizzontale: destra/sinistra + avanti/indietro,
