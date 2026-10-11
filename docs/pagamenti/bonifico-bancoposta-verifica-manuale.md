@@ -24,5 +24,11 @@ Il checkout può indicare il bonifico come metodo scelto, ma non mostra coordina
 - Il ruolo amministrativo non va dedotto da campi del client né da un semplice parametro della richiesta.
 - Testare i casi di pagamento assente, importo errato, doppio accredito, ordine già pagato, utente non autorizzato e servizio bancario non disponibile.
 
+## Sandbox pagamenti
+- L'endpoint sandbox è disabilitato in ambiente Vercel Production.
+- In Preview richiede `RS_PAY_SANDBOX_ENABLED=true` e un progetto Supabase dedicato, separato da quello di produzione, configurato tramite `RS_PAY_SANDBOX_SUPABASE_URL` e `RS_PAY_SANDBOX_SERVICE_ROLE_KEY`.
+- Il token di sessione e i ruoli `admin/ceo` devono appartenere al progetto sandbox isolato. Non riutilizzare token o credenziali del progetto di produzione.
+- Se le variabili dedicate mancano, l'endpoint risponde senza modificare dati. Non configurare il sandbox sul database di produzione.
+
 ## Nota
-Finché non esiste e non è stato collaudato un pannello amministrativo protetto, la verifica manuale deve essere eseguita fuori dal sito da un operatore autorizzato; non dichiarare l'automazione pronta e non pubblicare il flusso come pagamento attivo.
+La verifica manuale del bonifico deve essere eseguita da un operatore autorizzato che controlla l'accredito reale. La conferma bancaria aggiorna ordine e audit in modo atomico, ma l'integrazione automatica con Treasury/PiggyBank e il relativo collaudo devono essere verificati separatamente prima di dichiarare il flusso pronto.
