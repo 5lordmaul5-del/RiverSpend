@@ -395,6 +395,7 @@ export default function Vendi() {
           id: productId,
           name: titolo.trim(),
           price: prezzoNumero,
+          stock: 1,
           condition: condizione,
           category: categoria,
           description: descrizione.trim(),
