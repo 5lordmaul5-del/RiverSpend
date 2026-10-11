@@ -97,6 +97,7 @@ export default function Home() {
   const [rsFortuneRotation, setRsFortuneRotation] = useState(0);
   const [rsFortuneCelebration, setRsFortuneCelebration] = useState(false);
   const [rsLotteryAperta, setRsLotteryAperta] = useState(false);
+  const [rsFolgoreAperta, setRsFolgoreAperta] = useState(false);
   const [rsAdmin, setRsAdmin] = useState(false);
 
   const categorie = [
@@ -167,96 +168,22 @@ export default function Home() {
 
   useEffect(() => { try { const saved = JSON.parse(localStorage.getItem('riverspend-rete') || '[]'); setReteIds(Array.isArray(saved) ? saved.map((item) => String(item.id)) : []); } catch {} }, []);
 
-  function playRsForceSound(ctx) {
+  function parlaRsForce() {
     try {
-      if (!ctx) return;
-      const now = ctx.currentTime;
-
-      // RS FORCE — soundscape originale: profondo, lento, avvolgente.
-      const master = ctx.createGain();
-      const lowpass = ctx.createBiquadFilter();
-      const compressor = ctx.createDynamicsCompressor();
-      master.gain.setValueAtTime(0.0001, now);
-      master.gain.exponentialRampToValueAtTime(0.58, now + 0.9);
-      master.gain.exponentialRampToValueAtTime(0.0001, now + 6.8);
-      lowpass.type = 'lowpass';
-      lowpass.frequency.setValueAtTime(680, now);
-      lowpass.frequency.exponentialRampToValueAtTime(115, now + 6.4);
-      lowpass.Q.value = 0.9;
-      compressor.threshold.value = -20;
-      compressor.knee.value = 24;
-      compressor.ratio.value = 4;
-      compressor.attack.value = 0.03;
-      compressor.release.value = 1.2;
-      master.connect(lowpass);
-      lowpass.connect(compressor);
-      compressor.connect(ctx.destination);
-
-      const sub = ctx.createOscillator();
-      const subGain = ctx.createGain();
-      sub.type = 'sine';
-      sub.frequency.setValueAtTime(43, now);
-      sub.frequency.exponentialRampToValueAtTime(31, now + 6.2);
-      subGain.gain.setValueAtTime(0.0001, now);
-      subGain.gain.exponentialRampToValueAtTime(0.95, now + 1.15);
-      subGain.gain.exponentialRampToValueAtTime(0.0001, now + 6.65);
-      sub.connect(subGain);
-      subGain.connect(master);
-      sub.start(now);
-      sub.stop(now + 6.9);
-
-      const body = ctx.createOscillator();
-      const bodyGain = ctx.createGain();
-      body.type = 'triangle';
-      body.frequency.setValueAtTime(72, now);
-      body.frequency.exponentialRampToValueAtTime(49, now + 5.7);
-      bodyGain.gain.setValueAtTime(0.0001, now);
-      bodyGain.gain.exponentialRampToValueAtTime(0.5, now + 1.0);
-      bodyGain.gain.exponentialRampToValueAtTime(0.0001, now + 6.35);
-      body.connect(bodyGain);
-      bodyGain.connect(master);
-      body.start(now);
-      body.stop(now + 6.6);
-
-      // Movimento lento nel campo stereo: dà la sensazione di "spazio" in cuffia.
-      const air = ctx.createOscillator();
-      const airGain = ctx.createGain();
-      const airFilter = ctx.createBiquadFilter();
-      const pan = ctx.createStereoPanner ? ctx.createStereoPanner() : null;
-      air.type = 'sine';
-      air.frequency.setValueAtTime(155, now + 0.4);
-      air.frequency.exponentialRampToValueAtTime(330, now + 2.6);
-      air.frequency.exponentialRampToValueAtTime(125, now + 6.0);
-      airGain.gain.setValueAtTime(0.0001, now);
-      airGain.gain.exponentialRampToValueAtTime(0.12, now + 1.5);
-      airGain.gain.exponentialRampToValueAtTime(0.0001, now + 6.2);
-      airFilter.type = 'lowpass';
-      airFilter.frequency.value = 850;
-      air.connect(airGain);
-      airGain.connect(airFilter);
-      if (pan) {
-        airFilter.connect(pan);
-        pan.pan.setValueAtTime(-0.7, now);
-        pan.pan.linearRampToValueAtTime(0.7, now + 3.0);
-        pan.pan.linearRampToValueAtTime(-0.45, now + 6.0);
-        pan.connect(master);
-      } else {
-        airFilter.connect(master);
-      }
-      air.start(now + 0.4);
-      air.stop(now + 6.25);
-
-      // Coda morbida: piccola eco filtrata, non un "beep".
-      const echo = ctx.createDelay(1.0);
-      const echoGain = ctx.createGain();
-      echo.delayTime.value = 0.72;
-      echoGain.gain.value = 0.18;
-      master.connect(echo);
-      echo.connect(echoGain);
-      echoGain.connect(lowpass);
-
-      window.setTimeout(() => ctx.close().catch(() => {}), 7400);
-    } catch {}
+      if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      const voice = new SpeechSynthesisUtterance('Utilizza la forza');
+      voice.lang = 'it-IT';
+      voice.rate = 0.88;
+      voice.pitch = 0.82;
+      voice.volume = 1;
+      const voices = window.speechSynthesis.getVoices();
+      const italian = voices.find((item) => item.lang?.toLowerCase().startsWith('it'));
+      if (italian) voice.voice = italian;
+      window.speechSynthesis.speak(voice);
+    } catch (error) {
+      console.warn('Voce RS FORCE non disponibile sul dispositivo:', error);
+    }
   }
 
   const RS_FORTUNE_PRIZES = ['💰 +5 RiverMoney (€0,50)','💰 +10 RiverMoney (€1)','💰 +20 RiverMoney (€2)','🚚 Spedizione gratuita','🏷️ Sconto 5%','🔥 RS Booster','🎁 Premio sorpresa','⭐ +500 RSP'];
@@ -325,17 +252,8 @@ export default function Home() {
 
   function apriRsForce() {
     setRsForceAperta(true);
-    let forceAudioCtx = null;
-    try {
-      const AudioCtx = window.AudioContext || window.webkitAudioContext;
-      if (AudioCtx) {
-        forceAudioCtx = new AudioCtx();
-        if (forceAudioCtx.state === 'suspended') forceAudioCtx.resume().catch(() => {});
-      }
-    } catch {}
-
-    // RS FORCE è puramente sonoro: nessuna voce sintetica.
-    window.setTimeout(() => playRsForceSound(forceAudioCtx), 120);
+    // Niente vecchio effetto sonoro: solo la voce richiesta dall'utente.
+    window.setTimeout(parlaRsForce, 120);
   }
 
   async function toggleReteFromCatalog(p) {
@@ -585,11 +503,11 @@ export default function Home() {
                     const image = p.immagini?.[0];
                     return image ? (
                       <a key={'force-orbit-' + p.id} href={'/prodotto/' + encodeURIComponent(p.id)} onClick={(e) => e.stopPropagation()} aria-label={'RS Force: ' + (p.titolo || 'prodotto')} className="absolute z-10 flex h-11 w-11 items-center justify-center overflow-hidden rounded-xl border border-cyan-200/70 bg-white p-0.5 shadow-lg" style={{left:'50%', top:'50%', transform:`translate(calc(-50% + ${pos.x}), calc(-50% + ${pos.y}))`}}>
-                        <img src={image} alt="" className="h-full w-full object-contain" />
+                        <img src={image} alt="" className="h-full w-full object-contain" style={{animation:'rs-force-object-spin 5s linear infinite', animationDelay:(index * -0.8)+'s'}} />
                       </a>
                     ) : null;
                   })}
-                  <span className="relative z-20 flex h-20 w-20 items-center justify-center rounded-full border border-cyan-200/70 bg-[radial-gradient(circle_at_35%_30%,rgba(255,255,255,.95),rgba(103,232,249,.45)_18%,rgba(8,47,73,.95)_58%,rgba(2,6,23,1)_100%)] text-3xl shadow-[0_0_25px_rgba(34,211,238,.55)]" style={{animation:'rs-palantir-pulse 3s ease-in-out infinite'}}>🔮</span>
+                  <span className="relative z-20 flex h-20 w-20 items-center justify-center rounded-full border border-cyan-200/70 bg-[radial-gradient(circle_at_35%_30%,rgba(255,255,255,.95),rgba(103,232,249,.45)_18%,rgba(8,47,73,.95)_58%,rgba(2,6,23,1)_100%)] text-3xl shadow-[0_0_25px_rgba(34,211,238,.55)]" style={{animation:'rs-palantir-pulse 3s ease-in-out infinite, rs-force-rotate 7s linear infinite'}}>🔮</span>
                 </div>
                 <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.25em] text-cyan-200">RS FORCE</p>
                 <h2 className="mt-1 text-base font-extrabold leading-tight text-white">RS FORCE · Potenzia la tua ricerca</h2>
@@ -650,7 +568,7 @@ export default function Home() {
                 {rsLotteryAperta ? (
                   <div className="mt-3 flex min-h-0 flex-1 flex-col items-center justify-center overflow-hidden">
                     <p className="text-sm font-extrabold text-white">RS Lottery Annuale</p>
-                    <p className="mt-2 text-[10px] leading-4 text-slate-100">1 codice per ogni acquisto di almeno €10. Il codice viene associato all'ordine e al tuo account.</p>
+                    <p className="mt-2 px-2 text-[10px] leading-4 text-slate-100">RS Lottery raccoglie i codici premio associati agli acquisti idonei. Ogni codice viene collegato all'ordine e al tuo account: qui puoi consultare i tuoi codici e le comunicazioni ufficiali dell'estrazione. I premi sono validi solo secondo il regolamento pubblicato.</p>
                     <a onClick={(e) => e.stopPropagation()} href="/profilo" className="mt-3 rounded-xl border border-violet-300/60 bg-violet-900/50 px-3 py-2 text-[10px] font-bold text-white">🎟️ I miei codici</a>
                   </div>
                 ) : (
@@ -664,11 +582,11 @@ export default function Home() {
             </section>
 
             <section className="rs-feature-card rounded-2xl border border-orange-400/40 bg-gradient-to-br from-slate-950 via-orange-950/25 to-slate-900 p-3 text-center shadow-xl shadow-orange-950/20">
-              <button type="button" className="flex h-full w-full flex-col items-center justify-center overflow-hidden text-center">
+              <button type="button" onClick={() => setRsFolgoreAperta((v) => !v)} aria-expanded={rsFolgoreAperta} className="flex h-full w-full flex-col items-center justify-center overflow-hidden text-center">
                 <p className="shrink-0 text-[10px] font-bold uppercase tracking-[0.22em] text-orange-100">⚡ RS FOLGORE</p>
                 <img src="/rs-folgore.svg" alt="RS Folgore: aereo cargo e pacchi con paracadute" className="mt-3 h-32 w-full shrink-0 rounded-xl border border-orange-300/40 object-cover" />
                 <p className="mt-3 text-sm font-extrabold text-white">Offerte che arrivano dal cielo</p>
-                <p className="mt-2 text-[10px] leading-4 text-slate-100">Stock, sconti e offerte lampo in un'esperienza cinematografica.</p>
+                {rsFolgoreAperta ? <p className="mt-2 px-2 text-[10px] leading-4 text-slate-100">RS Folgore mette in evidenza offerte lampo, promozioni e occasioni a disponibilità limitata. Tocca le offerte pubblicate per consultare prezzo, disponibilità e condizioni: il timer o la grafica non garantiscono uno sconto se non è indicato nella scheda prodotto.</p> : <p className="mt-2 text-[10px] leading-4 text-slate-100">Tocca per scoprire come funzionano le offerte lampo.</p>}
               </button>
             </section>
           </div>
@@ -778,8 +696,17 @@ export default function Home() {
           .rs-feature-card { height:300px; }
         }
         @keyframes rs-palantir-pulse {
-          0%, 100% { transform: scale(1); filter: brightness(1); }
-          50% { transform: scale(1.05); filter: brightness(1.2); }
+          0%, 100% { scale: 1; filter: brightness(1); }
+          50% { scale: 1.05; filter: brightness(1.2); }
+        }
+        @keyframes rs-force-rotate {
+          from { rotate: 0deg; }
+          to { rotate: 360deg; }
+        }
+        @keyframes rs-force-object-spin {
+          from { transform: rotate(0deg) scale(.92); }
+          50% { transform: rotate(180deg) scale(1.08); }
+          to { transform: rotate(360deg) scale(.92); }
         }
         /* RS FORCE: orbita orizzontale tipo pianeti attorno al sole.
            Il movimento resta sul piano orizzontale: destra/sinistra + avanti/indietro,

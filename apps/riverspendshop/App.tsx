@@ -171,6 +171,7 @@ export default function App() {
         id: productId,
         name: title.trim(),
         price: numericPrice,
+        stock: 1,
         condition,
         category,
         description: description.trim(),
