@@ -53,7 +53,7 @@ export default function RiverSpendPark() {
             <figcaption className="p-3 text-sm font-semibold text-teal-100">Esperienze da scoprire</figcaption>
           </figure>
         </section>
-        <p className="mt-4 rounded-xl border border-cyan-900 bg-cyan-950/50 p-4 text-sm leading-6 text-cyan-100">Questa è la galleria iniziale del progetto. Aggiungeremo progressivamente una foto dedicata a ogni attrazione, mantenendo i nomi ufficiali e senza sostituire l'elenco già approvato.</p>
+        <p className="mt-4 rounded-xl border border-cyan-900 bg-cyan-950/50 p-4 text-sm leading-6 text-slate-800 ">Questa è la galleria iniziale del progetto. Aggiungeremo progressivamente una foto dedicata a ogni attrazione, mantenendo i nomi ufficiali e senza sostituire l'elenco già approvato.</p>
 
           <div className="mt-6 flex flex-wrap gap-3">
             <span className="rounded-full border border-teal-700 px-4 py-2 text-sm text-teal-100">25 attrazioni in catalogo</span>
