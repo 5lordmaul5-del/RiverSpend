@@ -8,19 +8,8 @@ export default function RiverSpendInvestor() {
 
   function submit(e) {
     e.preventDefault();
-    const subject = encodeURIComponent('Interesse RiverSpend Investor');
-    const body = encodeURIComponent(
-      'Richiesta informazioni RiverSpend Investor\n\n' +
-      'Nome: ' + form.nome + '\nAzienda: ' + (form.azienda || 'Non indicata') +
-      '\nEmail: ' + form.email + '\nProfilo: ' + form.tipologia +
-      '\nFascia indicativa: ' + (form.fascia || 'Non indicata') +
-      '\nMessaggio: ' + (form.messaggio || 'Nessun messaggio aggiuntivo')
-    );
-    const mailto = 'mailto:investor@riverspend.com?subject=' + subject + '&body=' + body;
-    window.location.href = mailto;
     setSubmitted(true);
   }
-
   return (
     <main className="min-h-screen bg-slate-50 text-slate-900">
       <div className="bg-gradient-to-br from-slate-950 via-cyan-950 to-teal-900 px-4 py-14 text-white sm:py-20">
@@ -72,7 +61,7 @@ export default function RiverSpendInvestor() {
             <p className="text-sm font-bold uppercase tracking-widest text-teal-700">Parliamone</p>
             <h2 className="mt-2 text-3xl font-black">Presentaci il tuo interesse.</h2>
             <p className="mt-4 leading-7 text-slate-600">Compila il modulo per preparare una richiesta di contatto. Potrai indicare il tuo profilo e la fascia d’interesse, senza impegno.</p>
-            <p className="mt-4 rounded-xl border border-slate-200 bg-white p-4 text-sm leading-6 text-slate-500">Nota: l’indirizzo email per gli investitori deve essere confermato prima di attivare la raccolta pubblica di richieste.</p>
+            <p className="mt-4 rounded-xl border border-slate-200 bg-white p-4 text-sm leading-6 text-slate-500">Il modulo è predisposto come anteprima. L’invio sarà attivato quando verrà configurato e verificato il contatto ufficiale per gli investitori.</p>
           </div>
           <form onSubmit={submit} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
             <div className="grid gap-4 sm:grid-cols-2">
@@ -100,7 +89,7 @@ export default function RiverSpendInvestor() {
               </label>
             </div>
             <button type="submit" className="mt-5 w-full rounded-xl bg-teal-800 px-5 py-3 font-bold text-white hover:bg-teal-700">Prepara richiesta di contatto</button>
-            {submitted && <p className="mt-3 rounded-lg bg-teal-50 p-3 text-sm text-teal-900">È stato richiesto di aprire il programma email. La richiesta non viene inviata automaticamente dal sito.</p>}
+            {submitted && <p className="mt-3 rounded-lg bg-teal-50 p-3 text-sm text-teal-900">Anteprima: la richiesta non è stata inviata né salvata. Attiveremo l’invio dopo aver configurato il contatto ufficiale.</p>}
           </form>
         </section>
         <footer className="mt-10 border-t border-slate-200 pt-6 text-sm text-slate-500">RiverSpend Investor · YOUR SHOP • YOUR FLOW · Concept in sviluppo</footer>
