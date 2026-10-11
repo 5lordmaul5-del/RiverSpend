@@ -31,6 +31,68 @@ alter table public.rs_payment_verification_events enable row level security;
 comment on table public.rs_payment_verification_events is
   'Server-written audit trail for payment method selection and manual payment verification. No direct client policies.';
 
+-- A bank reference used to verify a real transfer must not be assigned to two orders.
+create unique index if not exists rs_payment_verified_reference_unique
+  on public.rs_payment_verification_events (lower(btrim(reference)))
+  where action = 'payment_verified' and reference is not null and btrim(reference) <> '';
+
+create or replace function public.rs_select_order_payment_method(
+  p_order_id uuid,
+  p_actor_user_id uuid,
+  p_payment_method text
+)
+returns table(order_id uuid, payment_method text, payment_reference text, payment_status text)
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_order public.orders%rowtype;
+  v_reference text;
+begin
+  if p_actor_user_id is null then
+    raise exception 'Sessione RiverSpend non valida';
+  end if;
+  if p_payment_method not in ('cash_on_delivery', 'bank_transfer') then
+    raise exception 'Metodo di pagamento non supportato';
+  end if;
+
+  select * into v_order
+  from public.orders
+  where id = p_order_id and buyer_id = p_actor_user_id
+  for update;
+
+  if not found then
+    raise exception 'Ordine non trovato per questo account';
+  end if;
+  if v_order.status is distinct from 'pending'
+     or lower(coalesce(v_order.payment_status, '')) not in ('unpaid', 'pending') then
+    raise exception 'Il metodo può essere scelto solo per un ordine in attesa e non pagato';
+  end if;
+
+  v_reference := case when p_payment_method = 'bank_transfer' then v_order.id::text else null end;
+
+  update public.orders
+  set payment_method = p_payment_method,
+      payment_reference = v_reference,
+      payment_selected_at = now(),
+      payment_status = 'unpaid',
+      updated_at = now()
+  where id = v_order.id;
+
+  insert into public.rs_payment_verification_events (
+    order_id, actor_user_id, action, payment_method, amount, currency, reference
+  ) values (
+    v_order.id, p_actor_user_id, 'payment_method_selected', p_payment_method,
+    coalesce(v_order.total, 0), coalesce(v_order.currency, 'EUR'), v_reference
+  );
+
+  return query select v_order.id, p_payment_method, v_reference, 'unpaid'::text;
+end;
+$$;
+
+revoke all on function public.rs_select_order_payment_method(uuid, uuid, text) from public, anon, authenticated;
+grant execute on function public.rs_select_order_payment_method(uuid, uuid, text) to service_role;
 
 create or replace function public.rs_verify_bank_transfer(
   p_order_id uuid,
@@ -74,6 +136,16 @@ begin
   if p_confirmed_amount is null or p_confirmed_amount <= 0
      or round(p_confirmed_amount, 2) <> round(coalesce(v_order.total, 0), 2) then
     raise exception 'L’importo accreditato non coincide con il totale dell’ordine';
+  end if;
+
+  if exists (
+    select 1
+    from public.rs_payment_verification_events e
+    where e.action = 'payment_verified'
+      and e.reference is not null
+      and lower(btrim(e.reference)) = lower(btrim(p_bank_reference))
+  ) then
+    raise exception 'Questo riferimento bancario è già stato associato a un pagamento verificato';
   end if;
 
   update public.orders
