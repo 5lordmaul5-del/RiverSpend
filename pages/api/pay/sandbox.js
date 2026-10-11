@@ -21,8 +21,6 @@ export default async function handler(req, res) {
   const user = authData?.user;
   if (authError || !user) return res.status(401).json({ error: 'Sessione RiverSpend non valida.' });
 
-  // La tabella rs_admin_roles è la fonte dei ruoli amministrativi usata dal pannello RSPC.
-  // Il controllo avviene lato server con la service-role key, mai con un ruolo nel body.
   const { data: adminRole, error: roleError } = await supabase
     .from('rs_admin_roles')
     .select('role')
@@ -35,15 +33,18 @@ export default async function handler(req, res) {
   }
 
   const { orderId } = req.body || {};
-  if (!orderId) return res.status(400).json({ error: 'orderId obbligatorio.' });
+  if (typeof orderId !== 'string' || !orderId.trim()) {
+    return res.status(400).json({ error: 'orderId obbligatorio.' });
+  }
 
   const { data: order, error: orderError } = await supabase
     .from('orders')
-    .select('id,total,currency,buyer_id,payment_status')
-    .eq('id', orderId)
-    .single();
+    .select('id,total,currency,buyer_id,payment_status,status')
+    .eq('id', orderId.trim())
+    .maybeSingle();
 
-  if (orderError || !order) return res.status(404).json({ error: 'Ordine non trovato.' });
+  if (orderError) return res.status(500).json({ error: 'Impossibile verificare l’ordine.' });
+  if (!order) return res.status(404).json({ error: 'Ordine non trovato.' });
   if (order.payment_status === 'paid') return res.status(409).json({ error: 'Ordine già pagato.' });
   if (order.status !== 'pending' || !['unpaid', 'pending'].includes(String(order.payment_status || '').toLowerCase())) {
     return res.status(409).json({ error: 'Solo gli ordini in attesa e non pagati possono essere usati nel sandbox.' });
@@ -70,15 +71,17 @@ export default async function handler(req, res) {
     .select('id')
     .single();
 
-  if (paymentOrderError) return res.status(500).json({ error: paymentOrderError.message });
+  if (paymentOrderError) return res.status(500).json({ error: 'Impossibile registrare il pagamento sandbox.' });
 
-  const { data: existingTx } = await supabase
+  const { data: existingTx, error: existingTxError } = await supabase
     .from('payment_transactions')
     .select('id')
     .eq('payment_order_id', paymentOrder.id)
     .eq('provider', 'sandbox')
     .eq('type', 'payment')
     .limit(1);
+
+  if (existingTxError) return res.status(500).json({ error: 'Impossibile verificare la transazione sandbox esistente.' });
 
   if (!existingTx?.length) {
     const { error: txError } = await supabase.from('payment_transactions').insert({
@@ -92,7 +95,7 @@ export default async function handler(req, res) {
       currency: order.currency || 'EUR',
       raw_reference: { test_only: true, simulated: true }
     });
-    if (txError) return res.status(500).json({ error: txError.message });
+    if (txError) return res.status(500).json({ error: 'Impossibile registrare la transazione sandbox.' });
   }
 
   const { data: treasuryMovement, error: treasuryError } = await supabase.rpc(
@@ -105,14 +108,19 @@ export default async function handler(req, res) {
     }
   );
 
-  if (treasuryError) return res.status(500).json({ error: treasuryError.message });
+  if (treasuryError) return res.status(500).json({ error: 'Impossibile registrare l’allocazione Treasury sandbox.' });
 
-  const { error: orderUpdateError } = await supabase
+  const { data: updatedOrder, error: orderUpdateError } = await supabase
     .from('orders')
     .update({ payment_status: 'paid', status: 'confirmed' })
-    .eq('id', order.id);
+    .eq('id', order.id)
+    .eq('status', 'pending')
+    .in('payment_status', ['unpaid', 'pending'])
+    .select('id')
+    .maybeSingle();
 
-  if (orderUpdateError) return res.status(500).json({ error: orderUpdateError.message });
+  if (orderUpdateError) return res.status(500).json({ error: 'Impossibile aggiornare lo stato dell’ordine sandbox.' });
+  if (!updatedOrder) return res.status(409).json({ error: 'L’ordine è cambiato durante il test. Verifica lo stato prima di riprovare.' });
 
   return res.status(200).json({
     ok: true,
