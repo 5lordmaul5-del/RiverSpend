@@ -174,17 +174,30 @@ export default function Checkout() {
   async function selectCashOnDelivery() {
     setError(''); setCodMessage(''); setTransferMessage('');
     if (!orderId) return setError('Prima crea l’ordine.');
-    const { error: updateError } = await supabase.from('orders').update({ payment_status: 'cod_pending' }).eq('id', orderId);
-    if (updateError) return setError('Impossibile impostare il pagamento alla consegna.');
-    setCodMessage('🚚 Pagamento alla consegna selezionato. L’ordine resta in attesa di consegna.');
+    const { data: updatedOrder, error: updateError } = await supabase
+      .from('orders')
+      .update({ status: 'confirmed', payment_status: 'unpaid' })
+      .eq('id', orderId)
+      .select('id')
+      .maybeSingle();
+    if (updateError) return setError('Impossibile confermare l’ordine: ' + updateError.message);
+    if (!updatedOrder) return setError('Ordine non aggiornato. Verifica di essere collegato con l’account che lo ha creato.');
+    setCodMessage('🚚 Ordine confermato con pagamento in contanti alla consegna. Il pagamento resta non effettuato fino alla consegna.');
+    try { localStorage.removeItem('riverspend-rete'); setItems([]); } catch {}
   }
 
 
   async function selectInstantTransfer() {
     setError(''); setTransferMessage(''); setCodMessage('');
     if (!orderId) return setError('Prima crea l’ordine.');
-    const { error: updateError } = await supabase.from('orders').update({ payment_status: 'transfer_pending' }).eq('id', orderId);
-    if (updateError) return setError('Impossibile impostare il bonifico. Contatta l’assistenza prima di ripetere l’ordine.');
+    const { data: updatedOrder, error: updateError } = await supabase
+      .from('orders')
+      .update({ payment_status: 'pending' })
+      .eq('id', orderId)
+      .select('id')
+      .maybeSingle();
+    if (updateError) return setError('Impossibile impostare il bonifico: ' + updateError.message);
+    if (!updatedOrder) return setError('Ordine non aggiornato. Verifica di essere collegato con l’account che lo ha creato.');
     setTransferMessage('Bonifico istantaneo selezionato. L’ordine resta non pagato finché il trasferimento non viene verificato. Le coordinate del beneficiario devono essere comunicate dal titolare o dal venditore.');
   }
 
