@@ -97,6 +97,7 @@ export default function Home() {
   const [rsFortuneRotation, setRsFortuneRotation] = useState(0);
   const [rsFortuneCelebration, setRsFortuneCelebration] = useState(false);
   const [rsLotteryAperta, setRsLotteryAperta] = useState(false);
+  const [rsFolgoreAperta, setRsFolgoreAperta] = useState(false);
   const [rsAdmin, setRsAdmin] = useState(false);
 
   const categorie = [
@@ -336,6 +337,86 @@ export default function Home() {
 
     // RS FORCE è puramente sonoro: nessuna voce sintetica.
     window.setTimeout(() => playRsForceSound(forceAudioCtx), 120);
+  }
+
+  function apriRsFolgore() {
+    setRsFolgoreAperta((v) => !v);
+    // Effetto sonoro originale generato via Web Audio: rombo profondo con passaggio stereo.
+    // Parte solo dopo il clic dell'utente; non richiede un file esterno né autoplay.
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      const now = ctx.currentTime;
+      const master = ctx.createGain();
+      const filter = ctx.createBiquadFilter();
+      const compressor = ctx.createDynamicsCompressor();
+      const pan = ctx.createStereoPanner ? ctx.createStereoPanner() : null;
+      master.gain.setValueAtTime(0.0001, now);
+      master.gain.exponentialRampToValueAtTime(0.42, now + 0.8);
+      master.gain.setValueAtTime(0.42, now + 4.0);
+      master.gain.exponentialRampToValueAtTime(0.0001, now + 8.2);
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(520, now);
+      filter.frequency.linearRampToValueAtTime(900, now + 2.2);
+      filter.frequency.exponentialRampToValueAtTime(170, now + 7.8);
+      filter.Q.value = 0.7;
+      compressor.threshold.value = -22;
+      compressor.knee.value = 24;
+      compressor.ratio.value = 4;
+      compressor.attack.value = 0.04;
+      compressor.release.value = 0.8;
+      master.connect(filter);
+      filter.connect(compressor);
+      if (pan) {
+        compressor.connect(pan);
+        pan.connect(ctx.destination);
+        pan.pan.setValueAtTime(-0.85, now);
+        pan.pan.linearRampToValueAtTime(0.85, now + 3.8);
+        pan.pan.linearRampToValueAtTime(0.15, now + 7.5);
+      } else {
+        compressor.connect(ctx.destination);
+      }
+
+      [42, 56, 83].forEach((frequency, index) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = index === 1 ? 'triangle' : 'sawtooth';
+        osc.frequency.setValueAtTime(frequency * 0.82, now);
+        osc.frequency.linearRampToValueAtTime(frequency * 1.18, now + 2.7);
+        osc.frequency.exponentialRampToValueAtTime(frequency * 0.72, now + 7.7);
+        gain.gain.value = index === 0 ? 0.42 : index === 1 ? 0.12 : 0.035;
+        osc.connect(gain);
+        gain.connect(master);
+        osc.start(now);
+        osc.stop(now + 8.25);
+      });
+
+      // Fruscio filtrato per dare corpo al flusso d'aria del passaggio.
+      const buffer = ctx.createBuffer(1, ctx.sampleRate * 2, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * 0.32;
+      const noise = ctx.createBufferSource();
+      noise.buffer = buffer;
+      noise.loop = true;
+      const noiseFilter = ctx.createBiquadFilter();
+      noiseFilter.type = 'lowpass';
+      noiseFilter.frequency.setValueAtTime(320, now);
+      noiseFilter.frequency.linearRampToValueAtTime(1100, now + 2.5);
+      noiseFilter.frequency.exponentialRampToValueAtTime(240, now + 7.6);
+      const noiseGain = ctx.createGain();
+      noiseGain.gain.setValueAtTime(0.0001, now);
+      noiseGain.gain.linearRampToValueAtTime(0.10, now + 1.1);
+      noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 8.0);
+      noise.connect(noiseFilter);
+      noiseFilter.connect(noiseGain);
+      noiseGain.connect(master);
+      noise.start(now);
+      noise.stop(now + 8.1);
+      window.setTimeout(() => { try { ctx.close(); } catch {} }, 9000);
+    } catch (error) {
+      console.warn('RS FOLGORE audio unavailable:', error);
+    }
   }
 
   async function toggleReteFromCatalog(p) {
@@ -664,11 +745,12 @@ export default function Home() {
             </section>
 
             <section className="rs-feature-card rounded-2xl border border-orange-400/40 bg-gradient-to-br from-slate-950 via-orange-950/25 to-slate-900 p-3 text-center shadow-xl shadow-orange-950/20">
-              <button type="button" className="flex h-full w-full flex-col items-center justify-center overflow-hidden text-center">
+              <button type="button" onClick={apriRsFolgore} aria-expanded={rsFolgoreAperta} className="flex h-full w-full flex-col items-center justify-center overflow-hidden text-center">
                 <p className="shrink-0 text-[10px] font-bold uppercase tracking-[0.22em] text-orange-100">⚡ RS FOLGORE</p>
                 <img src="/rs-folgore.svg" alt="RS Folgore: aereo cargo e pacchi con paracadute" className="mt-3 h-32 w-full shrink-0 rounded-xl border border-orange-300/40 object-cover" />
                 <p className="mt-3 text-sm font-extrabold text-white">Offerte che arrivano dal cielo</p>
-                <p className="mt-2 text-[10px] leading-4 text-slate-100">Stock, sconti e offerte lampo in un'esperienza cinematografica.</p>
+                <p className="mt-2 text-[10px] leading-4 text-slate-100">Tocca per sentire il passaggio dell'aereo e scoprire le offerte.</p>
+                {rsFolgoreAperta && <span className="mt-3 rounded-xl border border-orange-300/50 bg-orange-950/60 px-3 py-2 text-[10px] font-bold text-orange-100">✈️ Rombo in corso · <a href="/?future=offers" onClick={(e) => e.stopPropagation()} className="underline">Scopri le offerte →</a></span>}
               </button>
             </section>
           </div>
