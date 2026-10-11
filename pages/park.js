@@ -29,15 +29,44 @@ const attrazioni = [
   ['WW2 Battle Experience','Storia immersiva','Percorso narrativo in nove tappe: sbarco su Omaha Beach, villaggio, ponte, tunnel U-Boot, hangar Zeppelin, portaerei, battaglia aerea e atterraggio finale.']
 ];
 
+const immaginiAttrazioni = [
+  "/1000186325.png",
+  "/1000186326.png",
+  "/1000186327.png",
+  "/1000186351.png",
+  "/1000186352.png",
+  "/1000186353.png",
+  "/1000186354.png",
+  "/1000186355.png",
+  "/1000186365.png",
+  "/1000186366.png",
+  "/1000186367.png",
+  "/1000186372.png",
+  "/1000186373.png",
+  "/1000186381.png",
+  "/1000186382.png",
+  "/1000186392.png",
+  "/1000186393_2.png",
+  "/1000186394.png",
+  "/1000186395.png",
+  "/1000186396.png",
+  "/1000186397.png",
+  "/1000186398.png",
+  "/1000186399.png",
+  "/1000186400.png",
+  "/1000186402.png",
+  "/1000186423.png"
+];
+
 export default function RiverSpendPark() {
   return (
     <main className="min-h-screen bg-cyan-50 px-4 py-8 text-slate-800">
       <div className="mx-auto max-w-6xl">
         <Link href="/ecosistema" className="text-teal-300 underline">← Ecosistema RiverSpend</Link>
-        <header className="mt-6 overflow-hidden rounded-3xl border border-teal-800 bg-gradient-to-br from-slate-900 via-sky-950 to-slate-950 p-6 sm:p-10">
+        <header className="mt-6 overflow-hidden rounded-3xl border border-teal-800 bg-gradient-to-br from-cyan-100 via-cyan-50 to-white p-6 text-slate-800 sm:p-10">
           <p className="text-sm font-bold uppercase tracking-[.2em] text-teal-300">RiverSpend • Il parco</p>
           <h1 className="mt-3 text-4xl font-black sm:text-5xl">🎢 RiverSpend Park</h1>
-          <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-300">Un mondo di acqua, avventura, velocità, fantasia e tecnologia. Questa è la raccolta iniziale delle attrazioni da sviluppare con schede, immagini, planimetria e requisiti tecnici.</p>
+          <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-700">Un mondo di acqua, avventura, velocità, fantasia e tecnologia. Questa è la raccolta iniziale delle attrazioni da sviluppare con schede, immagini, planimetria e requisiti tecnici.</p>
 
         <section className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3" aria-label="Galleria RiverSpend Park">
           <figure className="overflow-hidden rounded-2xl border border-teal-800 bg-slate-900">
@@ -120,8 +149,8 @@ export default function RiverSpendPark() {
                 <span className="text-xs text-slate-400">{tema}</span>
               </div>
               <h3 className="mt-4 text-xl font-bold">{nome}</h3>
-              <p className="mt-2 text-sm leading-6 text-slate-300">{descrizione}</p>
-              <p className="mt-4 border-t border-slate-800 pt-3 text-xs font-semibold text-amber-200">Scheda tecnica e immagini: da completare</p>
+              <img src={immaginiAttrazioni[i]} alt={nome} className="mt-4 aspect-[4/3] w-full rounded-xl object-cover" loading="lazy" />
+              <p className="mt-2 text-sm leading-6 text-slate-600">{descrizione}</p>
             </article>
           ))}
         </section>
