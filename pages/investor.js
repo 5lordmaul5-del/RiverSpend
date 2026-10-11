@@ -16,7 +16,8 @@ export default function RiverSpendInvestor() {
       '\nFascia indicativa: ' + (form.fascia || 'Non indicata') +
       '\nMessaggio: ' + (form.messaggio || 'Nessun messaggio aggiuntivo')
     );
-    window.location.href = 'mailto:investor@riverspend.com?subject=' + subject + '&body=' + body;
+    const mailto = 'mailto:investor@riverspend.com?subject=' + subject + '&body=' + body;
+    window.location.href = mailto;
     setSubmitted(true);
   }
 
@@ -71,7 +72,7 @@ export default function RiverSpendInvestor() {
             <p className="text-sm font-bold uppercase tracking-widest text-teal-700">Parliamone</p>
             <h2 className="mt-2 text-3xl font-black">Presentaci il tuo interesse.</h2>
             <p className="mt-4 leading-7 text-slate-600">Compila il modulo per preparare una richiesta di contatto. Potrai indicare il tuo profilo e la fascia d’interesse, senza impegno.</p>
-            <p className="mt-4 rounded-xl border border-slate-200 bg-white p-4 text-sm leading-6 text-slate-500">Nota: il pulsante prepara un’email sul tuo dispositivo. L’indirizzo di destinazione deve essere confermato prima di raccogliere richieste pubbliche.</p>
+            <p className="mt-4 rounded-xl border border-slate-200 bg-white p-4 text-sm leading-6 text-slate-500">Nota: l’indirizzo email per gli investitori deve essere confermato prima di attivare la raccolta pubblica di richieste.</p>
           </div>
           <form onSubmit={submit} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
             <div className="grid gap-4 sm:grid-cols-2">
