@@ -88,6 +88,7 @@ export default function Home() {
   const [ricerca, setRicerca] = useState('');
   const [categoriaAttiva, setCategoriaAttiva] = useState('');
   const [reteIds, setReteIds] = useState([]);
+  const [desideriIds, setDesideriIds] = useState([]);
   const [accesso18, setAccesso18] = useState(false);
   const [mostraGate18, setMostraGate18] = useState(false);
   const [rsForceAperta, setRsForceAperta] = useState(false);
@@ -419,6 +420,26 @@ export default function Home() {
     }
   }
 
+  function toggleDesideriFromCatalog(p) {
+    const key = 'riverspend-wishlist';
+    let current = [];
+    try { current = JSON.parse(localStorage.getItem(key) || '[]'); } catch {}
+    if (!Array.isArray(current)) current = [];
+    const exists = current.some((item) => String(item.id) === String(p.id));
+    const record = {
+      id: p.id,
+      title: p.titolo || p.title || 'Prodotto',
+      price: Number(p.prezzo ?? p.price ?? 0),
+      image: p.immagini?.[0] || p.image || ''
+    };
+    const next = exists ? current.filter((item) => String(item.id) !== String(p.id)) : [record, ...current];
+    try {
+      localStorage.setItem(key, JSON.stringify(next));
+      sessionStorage.setItem(key, JSON.stringify(next));
+    } catch {}
+    setDesideriIds(next.map((item) => String(item.id)));
+  }
+
   async function toggleReteFromCatalog(p) {
     const key = 'riverspend-rete';
     let current = [];
@@ -467,6 +488,10 @@ export default function Home() {
     let attivo = true;
     const params = new URLSearchParams(window.location.search);
     const cat = params.get('category') || '';
+    try {
+      const saved = JSON.parse(localStorage.getItem('riverspend-wishlist') || '[]');
+      setDesideriIds(Array.isArray(saved) ? saved.map((item) => String(item.id)) : []);
+    } catch { setDesideriIds([]); }
     setCategoriaAttiva(cat);
     try {
       const verificato = localStorage.getItem('riverspend-18plus') === 'true';
@@ -794,7 +819,14 @@ export default function Home() {
             <div className="grid grid-cols-2 gap-2 sm:gap-4 sm:grid-cols-3 lg:grid-cols-4">
               {prodottiVisibili.map((p) => (
                 <article key={p.id} className="rs-product-card group overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 transition hover:border-teal-500"><a href={`/prodotto/${encodeURIComponent(p.id)}`} className="block focus:outline-none focus:ring-2 focus:ring-teal-400">
-                  <div className="relative">{p.immagini?.[0] ? <div className="rs-product-media flex aspect-[4/3] w-full items-center justify-center overflow-hidden bg-white p-0"><img src={p.immagini[0]} alt={p.titolo || 'Prodotto'} className="h-full w-full scale-110 object-contain transition-transform duration-300 group-hover:scale-[1.16]" /></div> : <div className="flex aspect-[4/3] items-center justify-center bg-white text-xs text-slate-500">Foto non disponibile</div>}{(() => { const tipo = String(p.venditoreTipo || "Privato").toLowerCase(); const river = tipo.includes("river"); const azienda = tipo.includes("aziend") || tipo.includes("business") || tipo.includes("iva"); const label = river ? "RSS" : azienda ? "RS azienda" : "RSprivato"; const color = river ? "border-cyan-300 bg-cyan-100 text-cyan-950" : azienda ? "border-green-300 bg-green-100 text-green-950" : "border-red-300 bg-red-100 text-red-950"; return <span className={`absolute left-2 top-2 z-10 rounded-md border px-2.5 py-1 text-[11px] font-extrabold shadow-sm ${color}`}>{label}</span>; })()} {countryFlag(p.paeseOrigine || p.paeseVenditore) && <span className="absolute right-2 top-2 z-10 flex h-8 w-8 items-center justify-center rounded-full border border-slate-300 bg-white/95 text-lg shadow-sm" title={"Paese: " + (p.paeseOrigine || p.paeseVenditore)} aria-label={"Paese: " + (p.paeseOrigine || p.paeseVenditore)}>{countryFlag(p.paeseOrigine || p.paeseVenditore)}</span>}{p.sponsorizzatoFino && new Date(p.sponsorizzatoFino) > new Date() && <span className="absolute right-2 top-11 rounded-md border border-amber-300 bg-amber-100 px-2 py-1 text-[10px] font-bold text-amber-900">RS Spons</span>}</div>
+                  <div className="relative">{p.immagini?.[0] ? <div className="rs-product-media flex aspect-[4/3] w-full items-center justify-center overflow-hidden bg-white p-0"><img src={p.immagini[0]} alt={p.titolo || 'Prodotto'} className="h-full w-full scale-110 object-contain transition-transform duration-300 group-hover:scale-[1.16]" /></div> : <div className="flex aspect-[4/3] items-center justify-center bg-white text-xs text-slate-500">Foto non disponibile</div>}
+                  <div className="absolute bottom-2 left-2 right-2 z-20 flex items-center justify-between gap-1">
+                    <button type="button" onClick={(event) => { event.preventDefault(); event.stopPropagation(); toggleDesideriFromCatalog(p); }} aria-label={desideriIds.includes(String(p.id)) ? 'Rimuovi dai RS Desideri' : 'Aggiungi ai RS Desideri'} aria-pressed={desideriIds.includes(String(p.id))} className="rounded-full border border-cyan-200 bg-white/95 px-2.5 py-1.5 text-[11px] font-extrabold text-cyan-950 shadow-md backdrop-blur hover:bg-cyan-50">
+                      {desideriIds.includes(String(p.id)) ? '♥ RS Desideri' : '♡ RS Desideri'}
+                    </button>
+                    <a href={'/?category=' + encodeURIComponent(p.categoria || '')} onClick={(event) => event.stopPropagation()} className="rounded-full border border-amber-300 bg-amber-100/95 px-2.5 py-1.5 text-[11px] font-extrabold text-amber-950 shadow-md backdrop-blur hover:bg-amber-200">✦ RS Simili</a>
+                  </div>
+                  {(() => { const tipo = String(p.venditoreTipo || "Privato").toLowerCase(); const river = tipo.includes("river"); const azienda = tipo.includes("aziend") || tipo.includes("business") || tipo.includes("iva"); const label = river ? "RSS" : azienda ? "RS azienda" : "RSprivato"; const color = river ? "border-cyan-300 bg-cyan-100 text-cyan-950" : azienda ? "border-green-300 bg-green-100 text-green-950" : "border-red-300 bg-red-100 text-red-950"; return <span className={`absolute left-2 top-2 z-10 rounded-md border px-2.5 py-1 text-[11px] font-extrabold shadow-sm ${color}`}>{label}</span>; })()} {countryFlag(p.paeseOrigine || p.paeseVenditore) && <span className="absolute right-2 top-2 z-10 flex h-8 w-8 items-center justify-center rounded-full border border-slate-300 bg-white/95 text-lg shadow-sm" title={"Paese: " + (p.paeseOrigine || p.paeseVenditore)} aria-label={"Paese: " + (p.paeseOrigine || p.paeseVenditore)}>{countryFlag(p.paeseOrigine || p.paeseVenditore)}</span>}{p.sponsorizzatoFino && new Date(p.sponsorizzatoFino) > new Date() && <span className="absolute right-2 top-11 rounded-md border border-amber-300 bg-amber-100 px-2 py-1 text-[10px] font-bold text-amber-900">RS Spons</span>}</div>
                   <div className="p-2 sm:p-3">
                     <h3 className="line-clamp-2 text-sm font-semibold leading-tight sm:text-base">{p.titolo}</h3>
                     <p className="mt-1 text-base font-bold text-teal-300 sm:text-lg">€ {Number(p.prezzo || 0).toFixed(2)}</p>
