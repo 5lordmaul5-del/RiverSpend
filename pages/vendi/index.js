@@ -697,6 +697,13 @@ export default function Vendi() {
                           className="w-full h-28 bg-white object-contain p-1"
                         />
                       )}
+                      {item.mediaType !== 'video' && (
+                        <div className="absolute inset-x-1 bottom-7 flex flex-wrap justify-center gap-1 pointer-events-none">
+                          <span className="rounded-full border border-cyan-200 bg-white/95 px-1.5 py-1 text-[9px] font-extrabold text-cyan-950 shadow">♡ RS Desideri</span>
+                          <span className="rounded-full border border-cyan-200 bg-white/95 px-1.5 py-1 text-[9px] font-extrabold text-cyan-950 shadow">🕸️ RS Rete</span>
+                          <span className="rounded-full border border-amber-300 bg-amber-100/95 px-1.5 py-1 text-[9px] font-extrabold text-amber-950 shadow">✦ RS Simili</span>
+                        </div>
+                      )}
                       <span className="block text-center text-xs py-1">{item.mediaType === 'video' ? '🎥 Video originale' : item.processing ? 'Elaborazione…' : item.processed ? '✓ Sfondo rimosso' : item.error ? 'Originale · PhotoAI non riuscita' : 'Originale'}</span>
                       <button
                         type="button"
