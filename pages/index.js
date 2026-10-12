@@ -820,7 +820,7 @@ export default function Home() {
               {prodottiVisibili.map((p) => (
                 <article key={p.id} className="rs-product-card group overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 transition hover:border-teal-500"><a href={`/prodotto/${encodeURIComponent(p.id)}`} className="block focus:outline-none focus:ring-2 focus:ring-teal-400">
                   <div className="relative">{p.immagini?.[0] ? <div className="rs-product-media flex aspect-[4/3] w-full items-center justify-center overflow-hidden bg-white p-0"><img src={p.immagini[0]} alt={p.titolo || 'Prodotto'} className="h-full w-full scale-110 object-contain transition-transform duration-300 group-hover:scale-[1.16]" /></div> : <div className="flex aspect-[4/3] items-center justify-center bg-white text-xs text-slate-500">Foto non disponibile</div>}
-                  <div className="absolute right-1 top-1 z-20 flex items-center gap-1">
+                  <div className="absolute left-1 top-1 z-20 flex items-center gap-1">
                     <button type="button" onClick={(event) => { event.preventDefault(); event.stopPropagation(); toggleDesideriFromCatalog(p); }} aria-label={desideriIds.includes(String(p.id)) ? 'Rimuovi dai RS Desideri' : 'Aggiungi ai RS Desideri'} aria-pressed={desideriIds.includes(String(p.id))} title="RS Desideri" className="flex h-6 w-6 items-center justify-center rounded-full border border-cyan-200 bg-white/90 text-[12px] leading-none text-cyan-800 shadow-sm backdrop-blur hover:bg-cyan-50">
                       {desideriIds.includes(String(p.id)) ? '♥' : '♡'}
                     </button>
