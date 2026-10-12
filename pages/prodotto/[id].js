@@ -230,15 +230,15 @@ export default function Prodotto() {
                     ) : (
                       <img src={contenuti[fotoAttiva]?.url || immagini[0]} alt={prodotto.titolo || 'Foto prodotto'} className="h-[330px] w-full object-contain sm:h-[510px]" />
                     )}
-                    <div className="absolute left-3 top-3 z-20 flex flex-col gap-2">
-                      <button type="button" onClick={() => toggleLista('riverspend-wishlist', wishlist, setWishlist, '♡ Aggiunto ai tuoi desideri.', 'Rimosso dai desideri.')} aria-pressed={wishlist} className="rounded-full border border-cyan-200 bg-white/95 px-3 py-2 text-sm font-extrabold text-cyan-950 shadow-md backdrop-blur hover:bg-cyan-50">
-                        {wishlist ? '♥ RS Desideri' : '♡ RS Desideri'}
+                    <div className="absolute right-1 top-1 z-20 flex items-center gap-1">
+                      <button type="button" onClick={() => toggleLista('riverspend-wishlist', wishlist, setWishlist, '♡ Aggiunto ai tuoi desideri.', 'Rimosso dai desideri.')} aria-label={wishlist ? 'Rimuovi da RS Desideri' : 'Aggiungi a RS Desideri'} title="RS Desideri" aria-pressed={wishlist} className="flex h-6 w-6 items-center justify-center rounded-full border border-cyan-200 bg-white/90 text-xs leading-none text-cyan-800 shadow-sm backdrop-blur hover:bg-cyan-50">
+                        {wishlist ? '♥' : '♡'}
                       </button>
-                      <button type="button" onClick={() => toggleLista('riverspend-rete', inRete, setInRete, '🕸️ Articolo aggiunto alla tua Rete.', 'Articolo rimosso dalla Rete.')} aria-pressed={inRete} className="rounded-full border border-cyan-200 bg-white/95 px-3 py-2 text-sm font-extrabold text-cyan-950 shadow-md backdrop-blur hover:bg-cyan-50">
-                        {inRete ? '✓ RS Rete' : '🕸️ RS Rete'}
+                      <button type="button" onClick={() => toggleLista('riverspend-rete', inRete, setInRete, '🕸️ Articolo aggiunto alla tua Rete.', 'Articolo rimosso dalla Rete.')} aria-label={inRete ? 'Rimuovi dalla RS Rete' : 'Aggiungi alla RS Rete'} title="RS Rete" aria-pressed={inRete} className="flex h-6 w-6 items-center justify-center rounded-full border border-cyan-200 bg-white/90 text-[10px] leading-none text-cyan-800 shadow-sm backdrop-blur hover:bg-cyan-50">
+                        {inRete ? '✓' : '🕸️'}
                       </button>
-                      <a href={'/?rs_simili=' + encodeURIComponent(prodotto.categoria || '')} className="rounded-full border border-amber-300 bg-amber-100/95 px-3 py-2 text-sm font-extrabold text-amber-950 shadow-md backdrop-blur hover:bg-amber-200">
-                        ✦ RS Simili
+                      <a href={'/?category=' + encodeURIComponent(prodotto.categoria || '')} aria-label="RS Simili" title="RS Simili" className="flex h-6 w-6 items-center justify-center rounded-full border border-amber-300 bg-amber-100/90 text-[11px] leading-none text-amber-900 shadow-sm backdrop-blur hover:bg-amber-200">
+                        ✦
                       </a>
                     </div>
                     {countryFlag(prodotto.paeseOrigine || prodotto.paeseVenditore) && <span className="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-slate-300 bg-white/95 text-xl shadow-sm" title={"Paese: " + (prodotto.paeseOrigine || prodotto.paeseVenditore)} aria-label={"Paese: " + (prodotto.paeseOrigine || prodotto.paeseVenditore)}>{countryFlag(prodotto.paeseOrigine || prodotto.paeseVenditore)}</span>}
