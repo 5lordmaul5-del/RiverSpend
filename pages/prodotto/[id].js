@@ -230,6 +230,17 @@ export default function Prodotto() {
                     ) : (
                       <img src={contenuti[fotoAttiva]?.url || immagini[0]} alt={prodotto.titolo || 'Foto prodotto'} className="h-[330px] w-full object-contain sm:h-[510px]" />
                     )}
+                    <div className="absolute left-3 top-3 z-20 flex flex-col gap-2">
+                      <button type="button" onClick={() => toggleLista('riverspend-wishlist', wishlist, setWishlist, '♡ Aggiunto ai tuoi desideri.', 'Rimosso dai desideri.')} aria-pressed={wishlist} className="rounded-full border border-cyan-200 bg-white/95 px-3 py-2 text-sm font-extrabold text-cyan-950 shadow-md backdrop-blur hover:bg-cyan-50">
+                        {wishlist ? '♥ RS Desideri' : '♡ RS Desideri'}
+                      </button>
+                      <button type="button" onClick={() => toggleLista('riverspend-rete', inRete, setInRete, '🕸️ Articolo aggiunto alla tua Rete.', 'Articolo rimosso dalla Rete.')} aria-pressed={inRete} className="rounded-full border border-cyan-200 bg-white/95 px-3 py-2 text-sm font-extrabold text-cyan-950 shadow-md backdrop-blur hover:bg-cyan-50">
+                        {inRete ? '✓ RS Rete' : '🕸️ RS Rete'}
+                      </button>
+                      <a href={'/?rs_simili=' + encodeURIComponent(prodotto.categoria || '')} className="rounded-full border border-amber-300 bg-amber-100/95 px-3 py-2 text-sm font-extrabold text-amber-950 shadow-md backdrop-blur hover:bg-amber-200">
+                        ✦ RS Simili
+                      </a>
+                    </div>
                     {countryFlag(prodotto.paeseOrigine || prodotto.paeseVenditore) && <span className="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-slate-300 bg-white/95 text-xl shadow-sm" title={"Paese: " + (prodotto.paeseOrigine || prodotto.paeseVenditore)} aria-label={"Paese: " + (prodotto.paeseOrigine || prodotto.paeseVenditore)}>{countryFlag(prodotto.paeseOrigine || prodotto.paeseVenditore)}</span>}
                   </div>
                   {contenuti.length > 1 && <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
