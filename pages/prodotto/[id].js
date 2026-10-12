@@ -230,7 +230,7 @@ export default function Prodotto() {
                     ) : (
                       <img src={contenuti[fotoAttiva]?.url || immagini[0]} alt={prodotto.titolo || 'Foto prodotto'} className="h-[330px] w-full object-contain sm:h-[510px]" />
                     )}
-                    <div className="absolute right-1 top-1 z-20 flex items-center gap-1">
+                    <div className="absolute left-1 top-1 z-20 flex items-center gap-1">
                       <button type="button" onClick={() => toggleLista('riverspend-wishlist', wishlist, setWishlist, '♡ Aggiunto ai tuoi desideri.', 'Rimosso dai desideri.')} aria-label={wishlist ? 'Rimuovi da RS Desideri' : 'Aggiungi a RS Desideri'} title="RS Desideri" aria-pressed={wishlist} className="flex h-6 w-6 items-center justify-center rounded-full border border-cyan-200 bg-white/90 text-xs leading-none text-cyan-800 shadow-sm backdrop-blur hover:bg-cyan-50">
                         {wishlist ? '♥' : '♡'}
                       </button>
