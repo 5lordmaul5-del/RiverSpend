@@ -174,18 +174,51 @@ export default function Checkout() {
   async function selectCashOnDelivery() {
     setError(''); setCodMessage(''); setTransferMessage('');
     if (!orderId) return setError('Prima crea l’ordine.');
-    const { error: updateError } = await supabase.from('orders').update({ payment_status: 'cod_pending' }).eq('id', orderId);
-    if (updateError) return setError('Impossibile impostare il pagamento alla consegna.');
-    setCodMessage('🚚 Pagamento alla consegna selezionato. L’ordine resta in attesa di consegna.');
+    try {
+      const { data: { user: currentUser }, error: authError } = await supabase.auth.getUser();
+      if (authError || !currentUser) throw new Error('Accedi di nuovo al tuo account RiverSpend.');
+      const { data, error: updateError } = await supabase
+        .from('orders')
+        .update({
+          payment_method: 'cash_on_delivery',
+          payment_status: 'unpaid',
+          payment_selected_at: new Date().toISOString()
+        })
+        .eq('id', orderId)
+        .eq('buyer_id', currentUser.id)
+        .select('id')
+        .maybeSingle();
+      if (updateError) throw updateError;
+      if (!data) throw new Error('Ordine non trovato o non appartenente al tuo account.');
+      setCodMessage('🚚 Pagamento in contanti alla consegna selezionato. L’ordine resta non pagato fino alla consegna e alla verifica.');
+    } catch (err) {
+      setError(err?.message || 'Impossibile impostare il pagamento alla consegna.');
+    }
   }
-
 
   async function selectInstantTransfer() {
     setError(''); setTransferMessage(''); setCodMessage('');
     if (!orderId) return setError('Prima crea l’ordine.');
-    const { error: updateError } = await supabase.from('orders').update({ payment_status: 'transfer_pending' }).eq('id', orderId);
-    if (updateError) return setError('Impossibile impostare il bonifico. Contatta l’assistenza prima di ripetere l’ordine.');
-    setTransferMessage('Bonifico istantaneo selezionato. L’ordine resta non pagato finché il trasferimento non viene verificato. Le coordinate del beneficiario devono essere comunicate dal titolare o dal venditore.');
+    try {
+      const { data: { user: currentUser }, error: authError } = await supabase.auth.getUser();
+      if (authError || !currentUser) throw new Error('Accedi di nuovo al tuo account RiverSpend.');
+      const { data, error: updateError } = await supabase
+        .from('orders')
+        .update({
+          payment_method: 'bank_transfer',
+          payment_status: 'unpaid',
+          payment_selected_at: new Date().toISOString()
+        })
+        .eq('id', orderId)
+        .eq('buyer_id', currentUser.id)
+        .select('id')
+        .maybeSingle();
+      if (updateError) throw updateError;
+      if (!data) throw new Error('Ordine non trovato o non appartenente al tuo account.');
+      setTransferMessage('Bonifico istantaneo selezionato. L’ordine resta non pagato finché il trasferimento non viene verificato. Non segnare il pagamento come completato prima della verifica.');
+    } catch (err) {
+      setError(err?.message || 'Impossibile impostare il bonifico. Contatta l’assistenza prima di ripetere l’ordine.');
+    }
   }
 
   return (
@@ -226,12 +259,11 @@ export default function Checkout() {
           <section className="mt-6 rounded-2xl border border-teal-100 bg-white p-4">
             <p className="text-sm font-black uppercase tracking-[0.18em] text-teal-600">RiverSpend Pay</p>
             <h2 className="mt-2 text-xl font-black text-slate-900">Scegli come pagare</h2>
-            <p className="mt-1 text-sm text-slate-500">Scegli tra pagamento alla consegna in contanti, bonifico istantaneo e PayPal.</p>
+            <p className="mt-1 text-sm text-slate-500">Per questa fase sono disponibili contanti alla consegna e bonifico istantaneo. I pagamenti online restano in pausa durante i test.</p>
             <div className="mt-4 grid gap-3">
               {[
                 ['cod','🚚','Pagamento alla consegna in contanti'],
-                ['transfer','🏦','Bonifico istantaneo'],
-                ['paypal','🅿️','PayPal — pagamento online']
+                ['transfer','🏦','Bonifico istantaneo']
               ].map(([id, icon, title]) => (
                 <button key={id} type="button" onClick={() => setSelectedPayment(id)} className={`flex items-center justify-between rounded-xl border px-4 py-3 text-left ${selectedPayment === id ? 'border-teal-500 bg-teal-50' : 'border-slate-200 bg-white'}`}>
                   <span className="flex items-center gap-3"><span className="text-xl">{icon}</span><strong className="text-slate-900">{title}</strong></span>
@@ -270,7 +302,7 @@ export default function Checkout() {
             )}
             {authMessage && <p className="mt-2 text-sm text-slate-200">{authMessage}</p>}
             <p className="mt-2 text-xs text-slate-500">
-              PayPal richiede credenziali Live valide configurate in Vercel. Non inserire qui chiavi segrete.
+              I pagamenti online con carta e PayPal non sono attivi in questa fase di verifica.
             </p>
           </div>
 
