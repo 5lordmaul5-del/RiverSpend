@@ -105,14 +105,14 @@ export default function RiverSpendSocialMarketplace() {
   return (
     <main className="min-h-screen bg-[#f5f2e8] text-slate-900">
       <header className="sticky top-0 z-30 border-b border-teal-900/10 bg-[#f5f2e8]/95 px-4 py-3 backdrop-blur">
-        <div className="mx-auto flex max-w-2xl items-center justify-between gap-3">
+        <div className="mx-auto flex max-w-5xl items-center justify-between gap-3">
           <Link href="/" className="text-sm font-bold text-teal-800 underline underline-offset-4">← RiverSpendShop</Link>
           <Link href="/rete" className="rounded-full border border-teal-700 px-3 py-2 text-sm font-bold text-teal-800">🕸️ La mia Rete</Link>
         </div>
       </header>
 
-      <div className="mx-auto max-w-2xl px-3 pb-10 pt-5 sm:px-5">
-        <section className="mb-5 rounded-3xl border border-teal-800/20 bg-gradient-to-br from-teal-950 to-slate-900 p-5 text-white shadow-sm sm:p-7">
+      <div className="mx-auto w-full max-w-5xl px-2 pb-10 pt-4 sm:px-5 sm:pt-6">
+        <section className="mb-5 rounded-3xl border border-teal-800/20 bg-gradient-to-br from-teal-950 to-slate-900 p-5 text-white shadow-sm sm:mb-7 sm:p-8">
           <p className="text-xs font-bold uppercase tracking-[0.22em] text-teal-200">YOUR SHOP • YOUR FLOW</p>
           <h1 className="mt-2 text-3xl font-black sm:text-4xl">RiverSpend Social Marketplace</h1>
           <p className="mt-3 max-w-xl text-sm leading-6 text-teal-50/90">Scorri il Fiume, scopri prodotti pubblicati e aggiungi alla tua Rete ciò che ti interessa.</p>
@@ -138,7 +138,7 @@ export default function RiverSpendSocialMarketplace() {
             <Link href="/vendi" className="mt-5 inline-flex rounded-xl bg-teal-600 px-5 py-3 font-bold text-white">Pubblica un prodotto</Link>
           </section>
         ) : (
-          <section aria-label="Fiume continuo dei prodotti" className="space-y-5">
+          <section aria-label="Fiume continuo dei prodotti" className="space-y-7 sm:space-y-9">
             {products.map((product) => {
               const mediaItems = product.media?.length
                 ? product.media.filter((item) => item && item.url)
@@ -152,7 +152,7 @@ export default function RiverSpendSocialMarketplace() {
               }));
               const isSponsored = product.sponsorizzatoFino && new Date(product.sponsorizzatoFino) > new Date();
               return (
-              <article key={product.id} className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+              <article key={product.id} className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-md">
                 <div className="flex items-center justify-between gap-3 px-4 py-3">
                   <div>
                     <p className="text-xs font-bold uppercase tracking-wide text-teal-800">RiverSpendShop · {product.venditoreTipo || 'Privato'}</p>
@@ -164,11 +164,11 @@ export default function RiverSpendSocialMarketplace() {
 
                 <div className="relative bg-white">
                   {activeMedia ? (
-                    <div className="flex min-h-64 max-h-[560px] items-center justify-center overflow-hidden bg-white sm:min-h-80">
+                    <div className="flex h-[62vh] min-h-[420px] max-h-[900px] items-center justify-center overflow-hidden bg-white sm:h-[72vh] sm:min-h-[600px]">
                       {isVideo ? (
-                        <video key={activeMedia.url} src={activeMedia.url} controls playsInline preload="metadata" className="max-h-[560px] w-full object-contain" aria-label={product.titolo || 'Video del prodotto'} />
+                        <video key={activeMedia.url} src={activeMedia.url} controls playsInline preload="metadata" className="h-full max-h-[900px] w-full object-contain" aria-label={product.titolo || 'Video del prodotto'} />
                       ) : (
-                        <Link href={'/prodotto/' + encodeURIComponent(product.id)} className="flex max-h-[560px] min-h-64 w-full items-center justify-center focus:outline-none focus:ring-2 focus:ring-inset focus:ring-teal-500 sm:min-h-80">
+                        <Link href={'/prodotto/' + encodeURIComponent(product.id)} className="flex h-full min-h-[420px] w-full items-center justify-center focus:outline-none focus:ring-2 focus:ring-inset focus:ring-teal-500 sm:min-h-[600px]">
                           <img src={activeMedia.url} alt={product.titolo || 'Prodotto in vendita'} loading="lazy" className="max-h-[560px] w-full object-contain" />
                         </Link>
                       )}
@@ -185,23 +185,23 @@ export default function RiverSpendSocialMarketplace() {
                   )}
                 </div>
 
-                <div className="p-4 sm:p-5">
+                <div className="p-5 sm:p-7">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <p className="text-xl font-extrabold">{product.titolo || 'Prodotto RiverSpend'}</p>
-                      <p className="mt-1 text-2xl font-black text-teal-800">€ {Number(product.prezzo || 0).toFixed(2)}</p>
+                      <p className="text-2xl font-extrabold sm:text-3xl">{product.titolo || 'Prodotto RiverSpend'}</p>
+                      <p className="mt-2 text-3xl font-black text-teal-800 sm:text-4xl">€ {Number(product.prezzo || 0).toFixed(2)}</p>
                       <p className="mt-1 text-sm text-slate-500">{product.categoria || 'Altro'}{product.descrizione ? ' · ' + product.descrizione : ''}</p>
                     </div>
                   </div>
-                  <div className="mt-4 grid grid-cols-2 gap-2">
-                    <button type="button" onClick={() => toggleWish(product)} aria-pressed={wishIds.includes(String(product.id))} className={`rounded-xl border px-3 py-3 text-sm font-bold ${wishIds.includes(String(product.id)) ? 'border-cyan-600 bg-cyan-50 text-cyan-900' : 'border-slate-300 bg-white text-slate-800'}`}>
+                  <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    <button type="button" onClick={() => toggleWish(product)} aria-pressed={wishIds.includes(String(product.id))} className={`rounded-xl border px-4 py-4 text-base font-bold ${wishIds.includes(String(product.id)) ? 'border-cyan-600 bg-cyan-50 text-cyan-900' : 'border-slate-300 bg-white text-slate-800'}`}>
                       {wishIds.includes(String(product.id)) ? '♥ RS Desideri' : '♡ RS Desideri'}
                     </button>
-                    <button type="button" onClick={() => toggleNet(product)} aria-pressed={netIds.includes(String(product.id))} className={`rounded-xl px-3 py-3 text-sm font-extrabold ${netIds.includes(String(product.id)) ? 'bg-teal-950 text-white' : 'bg-teal-500 text-slate-950'}`}>
+                    <button type="button" onClick={() => toggleNet(product)} aria-pressed={netIds.includes(String(product.id))} className={`rounded-xl px-4 py-4 text-base font-extrabold ${netIds.includes(String(product.id)) ? 'bg-teal-950 text-white' : 'bg-teal-500 text-slate-950'}`}>
                       {netIds.includes(String(product.id)) ? '✓ Nella tua Rete' : '🕸️ Aggiungi alla Rete'}
                     </button>
                   </div>
-                  <Link href={'/prodotto/' + encodeURIComponent(product.id)} className="mt-3 flex w-full items-center justify-center rounded-xl bg-slate-900 px-4 py-3 font-bold text-white">🛍️ Vedi nello Shop →</Link>
+                  <Link href={'/prodotto/' + encodeURIComponent(product.id)} className="mt-4 flex w-full items-center justify-center rounded-xl bg-slate-900 px-5 py-4 text-lg font-extrabold text-white">🛍️ Vedi nello Shop →</Link>
                 </div>
               </article>
               );
