@@ -33,47 +33,47 @@ function activeSeason(now) {
 
 export default function EventiRiverSpend() {
   const season=useMemo(()=>activeSeason(new Date()),[]);
-  return <main className={`min-h-screen bg-slate-950 text-white ${season.className}`}>
+  return <main className={`min-h-screen bg-white text-slate-900 ${season.className}`}>
     <header className="relative isolate overflow-hidden border-b border-teal-800 px-5 py-14 sm:px-8">
-      <div className="absolute inset-0 -z-20 bg-gradient-to-br from-teal-950 via-slate-950 to-slate-900"/>
+      <div className="absolute inset-0 -z-20 bg-white"/>
       <div className="absolute inset-0 -z-10 opacity-30" style={{backgroundImage:'radial-gradient(circle at 15% 25%, #2dd4bf 0, transparent 35%), radial-gradient(circle at 85% 75%, #fbbf24 0, transparent 28%)'}}/>
-      <a href="/" className="text-sm font-bold text-teal-200">← Torna a RiverSpend</a>
-      <p className="mt-8 text-xs font-black uppercase tracking-[.28em] text-amber-300">YOUR SHOP • YOUR FLOW</p>
+      <a href="/" className="text-sm font-bold text-teal-700">← Torna a RiverSpend</a>
+      <p className="mt-8 text-xs font-black uppercase tracking-[.28em] text-amber-600">YOUR SHOP • YOUR FLOW</p>
       <h1 className="mt-3 max-w-3xl text-4xl font-black sm:text-6xl">Eventi, feste e sfide</h1>
-      <p className="mt-4 max-w-2xl text-base leading-7 text-slate-200 sm:text-lg">Un calendario di esperienze RiverSpend: stagioni automatiche, giornate tematiche e giochi d’intelligenza.</p>
-      <div className="mt-6 inline-flex items-center gap-3 rounded-2xl border border-teal-700 bg-slate-900/80 px-4 py-3">
-        <span className="text-2xl">{season.icon}</span><span><strong className="block">{season.name}</strong><span className="text-sm text-slate-300">{season.detail}</span></span>
+      <p className="mt-4 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">Un calendario di esperienze RiverSpend: stagioni automatiche, giornate tematiche e giochi d’intelligenza.</p>
+      <div className="mt-6 inline-flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
+        <span className="text-2xl">{season.icon}</span><span><strong className="block">{season.name}</strong><span className="text-sm text-slate-600">{season.detail}</span></span>
       </div>
     </header>
     <section className="mx-auto max-w-6xl px-4 py-10 sm:px-8">
-      <div className="mb-5"><p className="text-xs font-black uppercase tracking-[.25em] text-teal-300">CALENDARIO AUTOMATICO</p><h2 className="mt-2 text-2xl font-extrabold sm:text-3xl">Le feste durante l’anno</h2><p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">Natale: dall’8 dicembre al 6 gennaio. Halloween: dal 25 ottobre al 1 novembre. Pasqua: dalla Domenica delle Palme al Lunedì dell’Angelo, con data calcolata ogni anno.</p></div>
+      <div className="mb-5"><p className="text-xs font-black uppercase tracking-[.25em] text-teal-700">CALENDARIO AUTOMATICO</p><h2 className="mt-2 text-2xl font-extrabold sm:text-3xl">Le feste durante l’anno</h2><p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">Natale: dall’8 dicembre al 6 gennaio. Halloween: dal 25 ottobre al 1 novembre. Pasqua: dalla Domenica delle Palme al Lunedì dell’Angelo, con data calcolata ogni anno.</p></div>
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        <article className="overflow-hidden rounded-3xl border border-emerald-700/70 bg-slate-900 shadow-xl">
+        <article className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
           <div className="relative h-52"><img src="https://images.unsplash.com/photo-1512389142860-9c449e58a543?auto=format&fit=crop&w=1200&q=85" alt="Albero di Natale illuminato" className="h-full w-full object-cover"/><span className="absolute bottom-3 left-3 rounded-full bg-slate-950/85 px-3 py-1 text-sm">🎄 8 dic – 6 gen</span></div>
-          <div className="p-5"><h3 className="text-xl font-black">Natale</h3><p className="mt-2 text-sm leading-6 text-slate-300">Luci, neve decorativa, alberi e atmosfera natalizia. Audio facoltativo e animazioni leggere.</p></div>
+          <div className="p-5"><h3 className="text-xl font-black">Natale</h3><p className="mt-2 text-sm leading-6 text-slate-600">Luci, neve decorativa, alberi e atmosfera natalizia. Audio facoltativo e animazioni leggere.</p></div>
         </article>
-        <article className="overflow-hidden rounded-3xl border border-orange-700/70 bg-slate-900 shadow-xl">
+        <article className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
           <div className="relative h-52"><img src="https://images.unsplash.com/photo-1509557965875-b88c97052f0e?auto=format&fit=crop&w=1200&q=85" alt="Zucca decorativa di Halloween" className="h-full w-full object-cover"/><span className="absolute bottom-3 left-3 rounded-full bg-slate-950/85 px-3 py-1 text-sm">🎃 25 ott – 1 nov</span></div>
-          <div className="p-5"><h3 className="text-xl font-black">Halloween</h3><p className="mt-2 text-sm leading-6 text-slate-300">Zucche, ragnatele, ombre e decorazioni misteriose, senza rallentare acquisti e checkout.</p></div>
+          <div className="p-5"><h3 className="text-xl font-black">Halloween</h3><p className="mt-2 text-sm leading-6 text-slate-600">Zucche, ragnatele, ombre e decorazioni misteriose, senza rallentare acquisti e checkout.</p></div>
         </article>
-        <article className="overflow-hidden rounded-3xl border border-pink-700/70 bg-slate-900 shadow-xl">
+        <article className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
           <div className="relative h-52"><img src="https://images.unsplash.com/photo-1457301547464-91995555cd25?auto=format&fit=crop&w=1200&q=85" alt="Uova colorate per Pasqua" className="h-full w-full object-cover"/><span className="absolute bottom-3 left-3 rounded-full bg-slate-950/85 px-3 py-1 text-sm">🐣 Date mobili</span></div>
-          <div className="p-5"><h3 className="text-xl font-black">Pasqua</h3><p className="mt-2 text-sm leading-6 text-slate-300">Uova colorate, fiori e dettagli primaverili. Il periodo si aggiorna automaticamente ogni anno.</p></div>
+          <div className="p-5"><h3 className="text-xl font-black">Pasqua</h3><p className="mt-2 text-sm leading-6 text-slate-600">Uova colorate, fiori e dettagli primaverili. Il periodo si aggiorna automaticamente ogni anno.</p></div>
         </article>
       </div>
     </section>
     <section className="mx-auto max-w-6xl px-4 pb-14 sm:px-8">
-      <p className="text-xs font-black uppercase tracking-[.25em] text-amber-300">ESPERIENZE RIVERSPEND</p><h2 className="mt-2 text-2xl font-extrabold sm:text-3xl">Eventi Day e Codice Enigma</h2>
-      <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{events.map(event=><article key={event.id} className="overflow-hidden rounded-3xl border border-slate-700 bg-slate-900 shadow-xl">
+      <p className="text-xs font-black uppercase tracking-[.25em] text-amber-600">ESPERIENZE RIVERSPEND</p><h2 className="mt-2 text-2xl font-extrabold sm:text-3xl">Eventi Day e Codice Enigma</h2>
+      <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{events.map(event=><article key={event.id} className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
         <div className="relative h-48"><img src={event.image} alt={event.title} loading="lazy" className="h-full w-full object-cover"/><div className={`absolute inset-0 bg-gradient-to-t ${event.tone} to-transparent`}/><span className="absolute bottom-3 left-4 rounded-full border border-white/20 bg-slate-950/70 px-3 py-1 text-xs font-bold">{event.badge}</span></div>
-        <div className="p-5"><p className="text-[10px] font-black tracking-[.2em] text-teal-300">{event.eyebrow}</p><h3 className="mt-2 text-xl font-black">{event.title}</h3><p className="mt-2 text-sm leading-6 text-slate-300">{event.description}</p><p className="mt-4 text-xs font-semibold text-amber-200">{event.date}</p></div>
+        <div className="p-5"><p className="text-[10px] font-black tracking-[.2em] text-teal-700">{event.eyebrow}</p><h3 className="mt-2 text-xl font-black">{event.title}</h3><p className="mt-2 text-sm leading-6 text-slate-600">{event.description}</p><p className="mt-4 text-xs font-semibold text-amber-700">{event.date}</p></div>
       </article>)}</div>
-      <p className="mt-6 rounded-2xl border border-slate-700 bg-slate-900 p-4 text-sm leading-6 text-slate-300">Le date di Ambient Day, VulcanDay, Glacial Day e TsunamiDay sono da definire nel pannello di controllo. La pagina presenta il programma; l’attivazione automatica dei temi su tutte le pagine e la gestione RSPC richiedono un’integrazione successiva.</p>
+      <p className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm leading-6 text-slate-600">Le date di Ambient Day, VulcanDay, Glacial Day e TsunamiDay sono da definire nel pannello di controllo. La pagina presenta il programma; l’attivazione automatica dei temi su tutte le pagine e la gestione RSPC richiedono un’integrazione successiva.</p>
     </section>
     <style jsx>{`
-      .season-christmas { background-image: radial-gradient(circle at 12% 8%,rgba(16,185,129,.2),transparent 25%),linear-gradient(180deg,#071c20,#020617); }
-      .season-halloween { background-image: radial-gradient(circle at 85% 5%,rgba(249,115,22,.22),transparent 26%),linear-gradient(180deg,#21100c,#020617); }
-      .season-easter { background-image: radial-gradient(circle at 85% 5%,rgba(244,114,182,.18),transparent 26%),linear-gradient(180deg,#102b2c,#020617); }
+      .season-christmas { background-color: #ffffff; }
+      .season-halloween { background-color: #ffffff; }
+      .season-easter { background-color: #ffffff; }
     `}</style>
   </main>;
 }
