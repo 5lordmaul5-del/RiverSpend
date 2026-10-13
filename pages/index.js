@@ -767,15 +767,15 @@ export default function Home() {
             </section>
 
             <section className="rs-feature-card rounded-2xl border border-orange-400/40 bg-gradient-to-br from-slate-950 via-orange-950/25 to-slate-900 p-3 text-center shadow-xl shadow-orange-950/20">
-              <button type="button" onClick={apriRsFolgore} aria-expanded={rsFolgoreAperta} className="flex h-full w-full flex-col items-center justify-center overflow-hidden text-center">
+              <a href="/rs-folgore" aria-label="Apri la missione RS Folgore" className="flex h-full w-full flex-col items-center justify-center overflow-hidden rounded-xl text-center focus:outline-none focus:ring-4 focus:ring-orange-300/70">
                 <p className="shrink-0 text-[10px] font-bold uppercase tracking-[0.22em] text-orange-100">⚡ RS FOLGORE</p>
                 <div className="mt-3 w-full overflow-hidden rounded-xl border border-orange-300/40">
                   <img src="/rs-folgore-pacchi.png" alt="RS FOLGORE: C-130 RiverSpend che consegna pacchi RS con paracadute" className="h-36 w-full object-cover" loading="lazy" />
                 </div>
                 <p className="mt-3 text-sm font-extrabold text-white">Offerte che arrivano dal cielo</p>
-                <p className="mt-2 text-[10px] leading-4 text-slate-100">Tocca per aprire la missione RS Folgore e scoprire le offerte.</p>
-                {rsFolgoreAperta && <div className="mt-3 w-full space-y-2 rounded-xl border border-orange-300/50 bg-orange-950/60 p-2 text-left text-[10px] text-orange-100"><p className="font-bold">✈️ RS FOLGORE · Missione in volo</p><img src="/rs-folgore-pacchi.png" alt="C-130 RiverSpend con pacchi RS paracadutati" className="h-36 w-full rounded-lg object-cover" loading="lazy" /><a href="/?future=offers" onClick={(e) => e.stopPropagation()} className="block text-center font-bold underline">Scopri le offerte →</a><p className="text-[9px] opacity-80">Foto: Wikimedia Commons; immagini di riferimento del C-130 Hercules.</p></div>}
-              </button>
+                <p className="mt-2 text-[10px] leading-4 text-slate-100">Apri la missione RS Folgore e scopri il progetto.</p>
+                <span className="mt-3 inline-flex items-center justify-center rounded-full border border-orange-300/50 bg-orange-950/70 px-4 py-2 text-[11px] font-extrabold text-orange-100">APRI LA MISSIONE →</span>
+              </a>
             </section>
           </div>
 
