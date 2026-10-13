@@ -48,6 +48,16 @@ export default function Prodotto() {
   const [spotInCorso, setSpotInCorso] = useState(false);
   const [spotCompletato, setSpotCompletato] = useState(false);
   const [spotSecondi, setSpotSecondi] = useState(5);
+  const [gradimento, setGradimento] = useState(0);
+  const [gradimentoSalvato, setGradimentoSalvato] = useState(false);
+
+  useEffect(() => {
+    if (!prodotto?.id) return;
+    try {
+      const saved = window.localStorage.getItem('riverspend-gradimento-' + String(prodotto.id));
+      if (saved) { setGradimento(Number(saved)); setGradimentoSalvato(true); }
+    } catch {}
+  }, [prodotto?.id]);
 
   useEffect(() => {
     let attivo = true;
@@ -292,6 +302,18 @@ export default function Prodotto() {
               </div>
             </section>
           </div>
+
+          <section id="recensioni" className="scroll-mt-4 border-t border-rose-200 bg-rose-50/40 p-4 sm:p-7">
+            <p className="text-xs font-bold uppercase tracking-[.2em] text-rose-700">Gradimento RiverSpend</p>
+            <h2 className="mt-2 text-xl font-extrabold">Quanto ti piace questo prodotto?</h2>
+            <p className="mt-1 text-sm text-slate-600">Scegli da 1 a 5 pesciolini. Il voto demo viene salvato su questo dispositivo.</p>
+            <div className="mt-4 flex flex-wrap items-center gap-2" role="group" aria-label="Scegli da uno a cinque pesciolini">
+              {[1,2,3,4,5].map((n) => <button key={n} type="button" onClick={() => { setGradimento(n); setGradimentoSalvato(false); try { window.localStorage.setItem('riverspend-gradimento-' + String(prodotto.id), String(n)); setGradimentoSalvato(true); } catch {} }} aria-label={n + ' pesciolini su 5'} aria-pressed={gradimento === n} className={'rounded-xl border px-3 py-2 text-2xl transition ' + (gradimento >= n ? 'border-rose-400 bg-white shadow-sm' : 'border-slate-200 bg-white/70 grayscale opacity-60')}>🐟</button>)}
+              <span className="ml-1 text-sm font-bold text-slate-700">{gradimento ? gradimento + '/5' : 'Nessun voto scelto'}</span>
+            </div>
+            {gradimentoSalvato && <p role="status" className="mt-3 text-sm font-semibold text-teal-800">Voto demo salvato su questo dispositivo.</p>}
+            <p className="mt-3 text-xs leading-5 text-slate-500">Le recensioni pubbliche, i commenti e la verifica dell’acquisto devono ancora essere collegati al database: questo voto non viene ancora pubblicato agli altri utenti.</p>
+          </section>
 
           <section className="border-t border-slate-200 bg-white p-4 sm:p-7">
             <div className="grid gap-6 md:grid-cols-[1.4fr_.6fr]">
