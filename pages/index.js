@@ -793,21 +793,21 @@ export default function Home() {
             </div>
           </a>
 
-          <div className="rs-hero mb-5 overflow-hidden rounded-2xl border border-teal-800 bg-gradient-to-br from-slate-900 to-sky-950 shadow-lg">
-            
-            <div className="relative px-5 py-4 sm:px-7 sm:py-5">
-            <span className="rs-gold-pebble one" aria-hidden="true" />
-            <span className="rs-gold-pebble two" aria-hidden="true" />
-            <span className="rs-river-decor" aria-hidden="true"><i className="rs-fish" /><i className="rs-fish" /><i className="rs-fish" /></span>
-            <p className="mb-1 text-[10px] font-semibold uppercase tracking-widest text-teal-300 sm:text-xs">{t('experience')}</p>
-            <h2 className="mb-2 text-2xl font-bold sm:text-3xl">{t('heroTitle')}</h2>
-            <p className="mb-3 max-w-2xl text-sm leading-5 text-slate-300 sm:text-base">{t('heroBody')}</p>
-            <div className="flex flex-wrap gap-3">
-              <a href="/vendi" className="rs-button rs-button-primary rounded-xl px-4 py-2.5 text-sm font-bold text-slate-950">{t('sellPhoto')}</a>
-              <a href="/ecosistema" className="rounded-xl border border-teal-700 px-4 py-2.5 text-sm font-bold text-teal-100">{t('explore')}</a>
+          <section className="rs-hero mb-5 overflow-hidden rounded-2xl border border-slate-200 bg-white text-slate-800 shadow-sm">
+            <img src="https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=1400&q=85" alt="Paesaggio naturale sul fiume, esperienza RiverSpend" className="block h-48 w-full object-cover sm:h-64" loading="eager" />
+            <div className="relative bg-white px-5 py-4 sm:px-7 sm:py-5">
+              <span className="rs-gold-pebble one" aria-hidden="true" />
+              <span className="rs-gold-pebble two" aria-hidden="true" />
+              <p className="mb-1 text-[10px] font-semibold uppercase tracking-widest text-teal-700 sm:text-xs">{t('experience')}</p>
+              <h2 className="mb-2 text-2xl font-bold text-slate-800 sm:text-3xl">{t('heroTitle')}</h2>
+              <p className="mb-3 max-w-2xl text-sm leading-5 text-slate-600 sm:text-base">{t('heroBody')}</p>
+              <div className="flex flex-wrap gap-3">
+                <a href="/vendi" className="rs-button rs-button-primary rounded-xl px-4 py-2.5 text-sm font-bold text-slate-950">{t('sellPhoto')}</a>
+                <a href="/ecosistema" className="rounded-xl border border-teal-700 px-4 py-2.5 text-sm font-bold text-teal-800">{t('explore')}</a>
+                <a href="/eventi" className="rounded-xl border border-amber-500 px-4 py-2.5 text-sm font-bold text-amber-700">Eventi e festività</a>
+              </div>
             </div>
-            </div>
-          </div>
+          </section>
 
           <div className="mb-5 flex items-end justify-between gap-3">
             <div>
