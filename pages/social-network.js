@@ -11,7 +11,7 @@ function readList(key) {
   }
 }
 
-export default function RiverSpendSocialNetwork() {
+export default function RiverSpendSocialMarketplace() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -77,10 +77,10 @@ export default function RiverSpendSocialNetwork() {
         const result = exists
           ? await query.delete().eq('user_id', user.id).eq('product_id', String(product.id))
           : await query.upsert({ user_id: user.id, product_id: String(product.id) }, { onConflict: 'user_id,product_id' });
-        if (result.error) console.error('RiverSpend Social Network: sync Rete non riuscita', result.error);
+        if (result.error) console.error('RiverSpend Social Marketplace: sync Rete non riuscita', result.error);
       }
     } catch (err) {
-      console.error('RiverSpend Social Network: sync Rete non riuscita', err);
+      console.error('RiverSpend Social Marketplace: sync Rete non riuscita', err);
     }
   }
 
@@ -113,7 +113,7 @@ export default function RiverSpendSocialNetwork() {
       <div className="mx-auto max-w-2xl px-3 pb-10 pt-5 sm:px-5">
         <section className="mb-5 rounded-3xl border border-teal-800/20 bg-gradient-to-br from-teal-950 to-slate-900 p-5 text-white shadow-sm sm:p-7">
           <p className="text-xs font-bold uppercase tracking-[0.22em] text-teal-200">YOUR SHOP • YOUR FLOW</p>
-          <h1 className="mt-2 text-3xl font-black sm:text-4xl">RiverSpend Social Network</h1>
+          <h1 className="mt-2 text-3xl font-black sm:text-4xl">RiverSpend Social Marketplace</h1>
           <p className="mt-3 max-w-xl text-sm leading-6 text-teal-50/90">Scorri il Fiume, scopri prodotti pubblicati e aggiungi alla tua Rete ciò che ti interessa.</p>
           <div className="mt-4 flex flex-wrap gap-2 text-xs font-bold">
             <span className="rounded-full bg-white/10 px-3 py-2">🌊 Fiume continuo</span>
