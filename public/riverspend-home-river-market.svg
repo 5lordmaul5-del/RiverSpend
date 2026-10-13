@@ -15,6 +15,6 @@
 <!-- friendly person -->
 <circle cx="535" cy="250" r="42" fill="#dba477"/><path d="M490 246q-1-59 50-56 50 3 48 57l-20-23-58 0z" fill="#442a1e"/><path d="M480 224q54-39 112 0l-12-21q-44-29-88 0z" fill="#edbd61" stroke="#ffe4a2" stroke-width="4"/><rect x="510" y="248" width="22" height="10" rx="5" fill="#092d3a"/><rect x="538" y="248" width="22" height="10" rx="5" fill="#092d3a"/><path d="M521 275q14 10 27-1" fill="none" stroke="#844c37" stroke-width="4" stroke-linecap="round"/><path d="M490 300q45-20 91 0l27 72H470z" fill="#f5eee0" stroke="#e9c56f" stroke-width="4"/>
 <!-- foreground fade and overlay label -->
-<rect y="390" width="1200" height="170" fill="url(#shade)"/><text x="48" y="455" font-family="Arial,sans-serif" font-size="22" font-weight="800" letter-spacing="4" fill="#b8fff2">LA TUA ESPERIENZA SUL FIUME</text><text x="48" y="510" font-family="Arial,sans-serif" font-size="43" font-weight="900" fill="#ffffff">La tua rete. Il tuo mercato.</text>
-<rect x="48" y="522" width="300" height="3" fill="url(#gold)"/>
+<rect y="390" width="1200" height="170" fill="url(#shade)"/>
+
 </svg>
