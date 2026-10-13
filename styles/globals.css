@@ -257,7 +257,9 @@ body { background: #f7f3e9; color: #17343a; }
 
 /* Official RiverSpendShop wordmark: black RiverSpend + gold Shop */
 .rs-header .rs-brand { color: #111111 !important; font-size: 1.875rem; letter-spacing: -.045em; }
-.rs-header .rs-shop-word { color: #c99735 !important; line-height: 1; transform: rotate(-8deg) translateY(-.08em); }
+.rs-header .rs-shop-word { color: #c99735 !important; line-height: 1.05; transform: none; }
+.rs-header .rs-river-wave { display:block; height: .28rem; margin-top: .12rem; color:#159f9a; font-size:1.5rem; font-weight:900; line-height:.3rem; transform:scaleX(1.7) rotate(-5deg); }
+.rs-header .rs-brand { color:#111 !important; }
 @media (min-width: 640px) { .rs-header .rs-brand { font-size: 2.25rem; } .rs-header .rs-shop-word { font-size: 1.25rem; } }
 
 
