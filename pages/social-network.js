@@ -105,14 +105,14 @@ export default function RiverSpendSocialMarketplace() {
   return (
     <main className="min-h-screen bg-[#f5f2e8] text-slate-900">
       <header className="sticky top-0 z-30 border-b border-teal-900/10 bg-[#f5f2e8]/95 px-4 py-3 backdrop-blur">
-        <div className="mx-auto flex max-w-5xl items-center justify-between gap-3">
+        <div className="mx-auto flex max-w-none items-center justify-between gap-3">
           <Link href="/" className="text-sm font-bold text-teal-800 underline underline-offset-4">← RiverSpendShop</Link>
           <Link href="/rete" className="rounded-full border border-teal-700 px-3 py-2 text-sm font-bold text-teal-800">🕸️ La mia Rete</Link>
         </div>
       </header>
 
-      <div className="mx-auto w-full max-w-5xl px-2 pb-10 pt-4 sm:px-5 sm:pt-6">
-        <section className="mb-5 rounded-3xl border border-teal-800/20 bg-gradient-to-br from-teal-950 to-slate-900 p-5 text-white shadow-sm sm:mb-7 sm:p-8">
+      <div className="mx-auto w-full max-w-none px-0 pb-10 pt-2 sm:px-4 sm:pt-6">
+        <section className="mb-4 rounded-none border-y border-teal-800/20 bg-gradient-to-br from-teal-950 to-slate-900 p-5 text-white shadow-sm sm:mb-7 sm:rounded-3xl sm:border sm:p-8">
           <p className="text-xs font-bold uppercase tracking-[0.22em] text-teal-200">YOUR SHOP • YOUR FLOW</p>
           <h1 className="mt-2 text-3xl font-black sm:text-4xl">RiverSpend Social Marketplace</h1>
           <p className="mt-3 max-w-xl text-sm leading-6 text-teal-50/90">Scorri il Fiume, scopri prodotti pubblicati e aggiungi alla tua Rete ciò che ti interessa.</p>
@@ -138,7 +138,7 @@ export default function RiverSpendSocialMarketplace() {
             <Link href="/vendi" className="mt-5 inline-flex rounded-xl bg-teal-600 px-5 py-3 font-bold text-white">Pubblica un prodotto</Link>
           </section>
         ) : (
-          <section aria-label="Fiume continuo dei prodotti" className="space-y-7 sm:space-y-9">
+          <section aria-label="Fiume continuo dei prodotti" className="space-y-5 sm:space-y-9">
             {products.map((product) => {
               const mediaItems = product.media?.length
                 ? product.media.filter((item) => item && item.url)
@@ -152,7 +152,7 @@ export default function RiverSpendSocialMarketplace() {
               }));
               const isSponsored = product.sponsorizzatoFino && new Date(product.sponsorizzatoFino) > new Date();
               return (
-              <article key={product.id} className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-md">
+              <article key={product.id} className="overflow-hidden rounded-none border-y border-slate-200 bg-white shadow-md sm:rounded-3xl sm:border">
                 <div className="flex items-center justify-between gap-3 px-4 py-3">
                   <div>
                     <p className="text-xs font-bold uppercase tracking-wide text-teal-800">RiverSpendShop · {product.venditoreTipo || 'Privato'}</p>
@@ -164,11 +164,11 @@ export default function RiverSpendSocialMarketplace() {
 
                 <div className="relative bg-white">
                   {activeMedia ? (
-                    <div className="flex h-[62vh] min-h-[420px] max-h-[900px] items-center justify-center overflow-hidden bg-white sm:h-[72vh] sm:min-h-[600px]">
+                    <div className="flex h-[76svh] min-h-[540px] max-h-[1000px] items-center justify-center overflow-hidden bg-white sm:h-[78vh] sm:min-h-[650px]">
                       {isVideo ? (
-                        <video key={activeMedia.url} src={activeMedia.url} controls playsInline preload="metadata" className="h-full max-h-[900px] w-full object-contain" aria-label={product.titolo || 'Video del prodotto'} />
+                        <video key={activeMedia.url} src={activeMedia.url} controls playsInline preload="metadata" className="h-full max-h-[1000px] w-full object-contain" aria-label={product.titolo || 'Video del prodotto'} />
                       ) : (
-                        <Link href={'/prodotto/' + encodeURIComponent(product.id)} className="flex h-full min-h-[420px] w-full items-center justify-center focus:outline-none focus:ring-2 focus:ring-inset focus:ring-teal-500 sm:min-h-[600px]">
+                        <Link href={'/prodotto/' + encodeURIComponent(product.id)} className="flex h-full min-h-[540px] w-full items-center justify-center focus:outline-none focus:ring-2 focus:ring-inset focus:ring-teal-500 sm:min-h-[650px]">
                           <img src={activeMedia.url} alt={product.titolo || 'Prodotto in vendita'} loading="lazy" className="max-h-[560px] w-full object-contain" />
                         </Link>
                       )}
