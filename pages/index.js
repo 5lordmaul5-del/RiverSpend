@@ -84,6 +84,7 @@ export default function Home() {
   const [prodotti, setProdotti] = useState([]);
   const [errore, setErrore] = useState('');
   const [menuCategorie, setMenuCategorie] = useState(false);
+  const [ricercaAperta, setRicercaAperta] = useState(false);
   const [menuRiverSpend, setMenuRiverSpend] = useState(false);
   const [ricerca, setRicerca] = useState('');
   const [categoriaAttiva, setCategoriaAttiva] = useState('');
@@ -605,43 +606,42 @@ export default function Home() {
       {showSplash && <SplashScreen onEnter={() => { try { sessionStorage.setItem('rs-opening-seen', '1'); } catch {} setShowSplash(false); }} />}
 
       <div className={`transition-opacity duration-700 ${showSplash ? 'opacity-0' : 'opacity-100'}`}>
-        <header className="rs-header sm:sticky sm:top-0 z-30 border-b border-slate-800 bg-slate-950/95 px-3 py-3">
+        <header className="rs-header sticky top-0 z-30 border-b border-amber-200 bg-white/95 px-3 py-2 shadow-sm backdrop-blur">
           <div className="mx-auto max-w-6xl">
-            <div className="flex justify-center">
-              <a href="/" aria-label="RiverSpendShop, pagina iniziale" className="inline-flex flex-col items-center rounded-2xl border border-teal-800/80 bg-slate-900/70 px-6 py-2 shadow-lg shadow-teal-950/30">
-                <h1 className="rs-brand text-3xl sm:text-4xl font-extrabold leading-tight text-black">RiverSpend</h1>
-                <span className="rs-shop-word text-lg sm:text-xl font-bold italic">Shop</span>
-                <p className="mt-1 text-[9px] tracking-wide text-slate-400">YOUR SHOP • YOUR FLOW</p>
+            <div className="grid grid-cols-[44px_minmax(0,1fr)_auto] items-center gap-2">
+              <button type="button" onClick={() => { setMenuCategorie(!menuCategorie); setMenuRiverSpend(false); }} aria-label={t('categories')} aria-expanded={menuCategorie} className="flex h-11 w-11 items-center justify-center rounded-xl text-3xl leading-none text-slate-900 hover:bg-amber-50">☰</button>
+              <a href="/" aria-label="RiverSpendShop, pagina iniziale" className="flex min-w-0 flex-col items-center justify-center text-center">
+                <h1 className="rs-brand text-[1.75rem] font-extrabold leading-none tracking-tight text-black sm:text-4xl">RiverSpend</h1>
+                <span className="rs-river-wave" aria-hidden="true">〰</span>
+                <span className="rs-shop-word text-sm font-extrabold uppercase tracking-[.2em] sm:text-base">Shop</span>
+                <span className="mt-0.5 text-[8px] font-semibold tracking-[.14em] text-slate-500 sm:text-[9px]">YOUR SHOP • YOUR FLOW</span>
               </a>
+              <div className="flex items-center justify-end gap-2 text-slate-900 sm:gap-4">
+                <button type="button" onClick={() => setRicercaAperta(!ricercaAperta)} aria-label="Apri ricerca" aria-expanded={ricercaAperta} className="flex h-10 w-9 items-center justify-center text-2xl hover:text-teal-700">⌕</button>
+                <a href="/rete" aria-label="Apri la Rete e gli articoli salvati" className="relative flex h-10 w-10 items-center justify-center text-2xl hover:text-teal-700">
+                  🛒
+                  {reteIds.length > 0 && <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-teal-700 px-1 text-[10px] font-bold text-white">{reteIds.length}</span>}
+                </a>
+                <a href="/profilo" aria-label={t('profile')} className="flex h-10 w-8 items-center justify-center text-2xl hover:text-teal-700">♙</a>
+              </div>
             </div>
-            <div className="mt-3 grid grid-cols-2 gap-2 sm:flex sm:items-center sm:justify-between">
-              <button type="button" onClick={() => { setMenuCategorie(!menuCategorie); setMenuRiverSpend(false); }} aria-label={t('categories')} aria-expanded={menuCategorie} className="col-span-1 rounded-xl border border-teal-800 px-3 py-3 text-xl text-teal-200 sm:order-1 sm:py-2">☰</button>
-              <button type="button" onClick={() => { setMenuRiverSpend(!menuRiverSpend); setMenuCategorie(false); }} aria-expanded={menuRiverSpend} className="col-span-1 min-w-0 rounded-xl border border-teal-800 px-2 py-3 text-sm font-bold text-teal-200 sm:order-3 sm:px-3 sm:py-2">RiverSpend ▾</button>
-              <a href="/rete" className="col-span-1 flex min-w-0 items-center justify-center rounded-xl border border-teal-800 px-2 py-3 text-center text-sm font-bold leading-tight text-teal-200 sm:order-2 sm:flex-1 sm:py-2">🕸️ {t('myNet')}</a>
-              <a href="/vendi" className="rs-button rs-button-primary col-span-1 flex min-w-0 items-center justify-center rounded-full bg-teal-500 px-2 py-3 text-center text-sm font-bold leading-tight text-slate-950 hover:bg-teal-400 sm:order-4 sm:px-4">+ {t('sell')}</a>
+            <div className="mt-2 flex justify-center">
+              <button type="button" onClick={() => { setMenuRiverSpend(!menuRiverSpend); setMenuCategorie(false); }} aria-expanded={menuRiverSpend} className="rounded-full px-3 py-1 text-xs font-bold text-teal-800 hover:bg-teal-50">Esplora RiverSpend ▾</button>
             </div>
-            <div className="mt-2 flex items-center justify-end gap-3 text-xs">
-              <a href="/profilo" className="text-teal-200">👤 {t('profile')}</a>
-              <a href="/desideri" className="text-teal-200">♡ {t('wishes')}</a>
-              <LanguageSelector />
+            <div className={ricercaAperta || ricerca ? "mx-auto mt-2 flex max-w-6xl gap-2" : "hidden"}>
+              <input
+                value={ricerca}
+                onChange={(e) => setRicerca(e.target.value)}
+                placeholder={t('search')}
+                aria-label="Cerca prodotti"
+                className="min-w-0 flex-1 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900"
+              />
+              {categoriaAttiva && (
+                <button type="button" onClick={() => { setCategoriaAttiva(''); window.history.replaceState({}, '', '/'); }} className="rounded-xl border border-amber-300 px-3 text-xs text-amber-800">
+                  {categoriaAttiva} ✕
+                </button>
+              )}
             </div>
-          </div>
-
-          <div className="mx-auto mt-3 flex max-w-6xl gap-2">
-            <input
-              value={ricerca}
-              onChange={(e) => setRicerca(e.target.value)}
-              placeholder={t('search')}
-              aria-label="Cerca prodotti"
-              className="min-w-0 flex-1 rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-white"
-            />
-            {categoriaAttiva && (
-              <button type="button" onClick={() => { setCategoriaAttiva(''); window.history.replaceState({}, '', '/'); }} className="rounded-xl border border-teal-800 px-3 text-xs text-teal-200">
-                {categoriaAttiva} ✕
-              </button>
-            )}
-          </div>
-
           {menuCategorie && (
             <div className="mx-auto mt-3 max-h-[45vh] w-full max-w-6xl overflow-y-auto rounded-2xl border border-teal-800 bg-slate-900 p-4 shadow-2xl">
               <div className="mb-3 flex items-center justify-between"><strong className="text-teal-200">{t('categories')}</strong><button onClick={() => setMenuCategorie(false)} aria-label={t('close')}>✕</button></div>
