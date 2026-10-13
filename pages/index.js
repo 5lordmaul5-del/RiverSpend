@@ -804,7 +804,7 @@ export default function Home() {
               <h2 className="text-2xl font-bold">{t('products')}</h2>
               <p className="text-sm text-slate-400">{prodottiVisibili.length} {t('visible')}</p>
             </div>
-            <a href="/rete" className="text-sm font-semibold text-teal-300 underline">{t('myNet')}</a>
+            <div className="flex flex-col items-end gap-2"><a href="/social-network" className="rounded-full bg-teal-500 px-3 py-2 text-xs font-extrabold text-slate-950 shadow-sm">🌊 RiverSpend Social Network</a><a href="/rete" className="text-sm font-semibold text-teal-700 underline">{t('myNet')}</a></div>
           </div>
 
           {errore ? (
