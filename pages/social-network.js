@@ -18,6 +18,7 @@ export default function RiverSpendSocialMarketplace() {
   const [netIds, setNetIds] = useState([]);
   const [wishIds, setWishIds] = useState([]);
   const [notice, setNotice] = useState('');
+  const [mediaIndexes, setMediaIndexes] = useState({});
 
   useEffect(() => {
     let active = true;
@@ -138,25 +139,51 @@ export default function RiverSpendSocialMarketplace() {
           </section>
         ) : (
           <section aria-label="Fiume continuo dei prodotti" className="space-y-5">
-            {products.map((product) => (
+            {products.map((product) => {
+              const mediaItems = product.media?.length
+                ? product.media.filter((item) => item && item.url)
+                : (product.immagini || []).filter(Boolean).map((url) => ({ url, type: 'image' }));
+              const activeIndex = mediaIndexes[String(product.id)] || 0;
+              const activeMedia = mediaItems[activeIndex] || null;
+              const isVideo = activeMedia && String(activeMedia.type || '').toLowerCase().includes('video');
+              const goMedia = (direction) => setMediaIndexes((current) => ({
+                ...current,
+                [String(product.id)]: (activeIndex + direction + mediaItems.length) % mediaItems.length
+              }));
+              const isSponsored = product.sponsorizzatoFino && new Date(product.sponsorizzatoFino) > new Date();
+              return (
               <article key={product.id} className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
                 <div className="flex items-center justify-between gap-3 px-4 py-3">
                   <div>
                     <p className="text-xs font-bold uppercase tracking-wide text-teal-800">RiverSpendShop · {product.venditoreTipo || 'Privato'}</p>
+                    {isSponsored && <span className="mt-1 inline-flex rounded-full border border-amber-300 bg-amber-100 px-2 py-1 text-[11px] font-extrabold text-amber-900">★ RS Spons · Sponsorizzato</span>}
                     <p className="mt-1 text-xs text-slate-500">{[product.localita, product.provincia].filter(Boolean).join(', ') || 'Annuncio RiverSpend'}</p>
                   </div>
                   <span className="shrink-0 rounded-full bg-teal-50 px-3 py-1 text-xs font-bold text-teal-900">{product.condizione || 'Articolo'}</span>
                 </div>
 
-                <Link href={'/prodotto/' + encodeURIComponent(product.id)} className="block bg-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-teal-500">
-                  {product.immagini?.[0] ? (
-                    <div className="flex max-h-[520px] min-h-64 items-center justify-center overflow-hidden bg-white sm:min-h-80">
-                      <img src={product.immagini[0]} alt={product.titolo || 'Prodotto in vendita'} loading="lazy" className="max-h-[520px] w-full object-contain" />
+                <div className="relative bg-white">
+                  {activeMedia ? (
+                    <div className="flex min-h-64 max-h-[560px] items-center justify-center overflow-hidden bg-white sm:min-h-80">
+                      {isVideo ? (
+                        <video key={activeMedia.url} src={activeMedia.url} controls playsInline preload="metadata" className="max-h-[560px] w-full object-contain" aria-label={product.titolo || 'Video del prodotto'} />
+                      ) : (
+                        <Link href={'/prodotto/' + encodeURIComponent(product.id)} className="flex max-h-[560px] min-h-64 w-full items-center justify-center focus:outline-none focus:ring-2 focus:ring-inset focus:ring-teal-500 sm:min-h-80">
+                          <img src={activeMedia.url} alt={product.titolo || 'Prodotto in vendita'} loading="lazy" className="max-h-[560px] w-full object-contain" />
+                        </Link>
+                      )}
                     </div>
                   ) : (
-                    <div className="flex h-64 items-center justify-center bg-slate-100 text-slate-500">Foto non disponibile</div>
+                    <div className="flex h-64 items-center justify-center bg-slate-100 text-slate-500">Foto o video non disponibile</div>
                   )}
-                </Link>
+                  {mediaItems.length > 1 && (
+                    <div className="absolute inset-x-0 bottom-3 flex items-center justify-between px-3">
+                      <button type="button" onClick={() => goMedia(-1)} aria-label="Media precedente" className="rounded-full bg-slate-950/80 px-3 py-2 text-sm font-bold text-white shadow">‹</button>
+                      <span className="rounded-full bg-slate-950/75 px-3 py-1 text-xs font-bold text-white">{activeIndex + 1} / {mediaItems.length}</span>
+                      <button type="button" onClick={() => goMedia(1)} aria-label="Media successivo" className="rounded-full bg-slate-950/80 px-3 py-2 text-sm font-bold text-white shadow">›</button>
+                    </div>
+                  )}
+                </div>
 
                 <div className="p-4 sm:p-5">
                   <div className="flex items-start justify-between gap-3">
@@ -174,10 +201,11 @@ export default function RiverSpendSocialMarketplace() {
                       {netIds.includes(String(product.id)) ? '✓ Nella tua Rete' : '🕸️ Aggiungi alla Rete'}
                     </button>
                   </div>
-                  <Link href={'/prodotto/' + encodeURIComponent(product.id)} className="mt-3 flex w-full items-center justify-center rounded-xl bg-slate-900 px-4 py-3 font-bold text-white">Apri prodotto e acquista →</Link>
+                  <Link href={'/prodotto/' + encodeURIComponent(product.id)} className="mt-3 flex w-full items-center justify-center rounded-xl bg-slate-900 px-4 py-3 font-bold text-white">🛍️ Vedi nello Shop →</Link>
                 </div>
               </article>
-            ))}
+              );
+            })}
           </section>
         )}
         <footer className="mt-8 pb-5 text-center text-xs text-slate-500">Gli annunci provengono dal catalogo condiviso RiverSpendShop.</footer>
