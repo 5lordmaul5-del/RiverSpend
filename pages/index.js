@@ -793,7 +793,9 @@ export default function Home() {
             </div>
           </a>
 
-          <div className="rs-hero mb-5 rounded-2xl border border-teal-800 bg-gradient-to-br from-slate-900 to-sky-950 px-5 py-4 sm:px-7 sm:py-5">
+          <div className="rs-hero mb-5 overflow-hidden rounded-2xl border border-teal-800 bg-gradient-to-br from-slate-900 to-sky-950 shadow-lg">
+            <img src="/riverspend-home-river-market.svg" alt="Mercato sul fiume RiverSpend con prodotti, smartphone e persone" className="block aspect-[12/5] w-full object-cover" loading="eager" />
+            <div className="relative px-5 py-4 sm:px-7 sm:py-5">
             <span className="rs-gold-pebble one" aria-hidden="true" />
             <span className="rs-gold-pebble two" aria-hidden="true" />
             <span className="rs-river-decor" aria-hidden="true"><i className="rs-fish" /><i className="rs-fish" /><i className="rs-fish" /></span>
@@ -803,6 +805,7 @@ export default function Home() {
             <div className="flex flex-wrap gap-3">
               <a href="/vendi" className="rs-button rs-button-primary rounded-xl px-4 py-2.5 text-sm font-bold text-slate-950">{t('sellPhoto')}</a>
               <a href="/ecosistema" className="rounded-xl border border-teal-700 px-4 py-2.5 text-sm font-bold text-teal-100">{t('explore')}</a>
+            </div>
             </div>
           </div>
 
