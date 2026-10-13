@@ -3,9 +3,9 @@
 import Head from "next/head";
 
 const prizeTypes = [
-  { icon: "📱", title: "Tecnologia", text: "Possibili premi tecnologici come smartphone, tablet e accessori, da confermare nel regolamento ufficiale." },
-  { icon: "🎁", title: "Shopping e buoni", text: "Possibili buoni acquisto e premi legati al mondo RiverSpend, secondo disponibilità e condizioni pubblicate." },
-  { icon: "✨", title: "Premi speciali", text: "Eventuali iniziative speciali saranno annunciate con dettagli verificabili prima dell'apertura." },
+  { icon: "🎁", title: "Buono da 5 €", text: "Un piccolo buono acquisto da utilizzare su RiverSpendShop, se confermato nel regolamento." },
+  { icon: "🛍️", title: "Buono da 10 € o 20 €", text: "Premi semplici e sostenibili per ringraziare i clienti, secondo le condizioni che saranno pubblicate." },
+  { icon: "💛", title: "Premio fino a 30 €", text: "Un premio di valore contenuto. Eventuali importi superiori saranno valutati solo in futuro, in base al budget disponibile." },
 ];
 
 export default function RsLotteryPage() {
@@ -13,7 +13,7 @@ export default function RsLotteryPage() {
     <>
       <Head>
         <title>RS Lottery | RiverSpend</title>
-        <meta name="description" content="Scopri RS Lottery di RiverSpend: come sarà organizzata l'iniziativa, le categorie indicative dei premi e le informazioni ufficiali prima dell'avvio." />
+        <meta name="description" content="Scopri RS Lottery di RiverSpend: un progetto di ringraziamento ai clienti con piccoli buoni acquisto e premi sostenibili, in preparazione." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <main className="min-h-screen bg-[#10091d] text-white">
@@ -72,18 +72,18 @@ export default function RsLotteryPage() {
         <section id="partner-sponsor" className="border-y border-amber-300/20 bg-gradient-to-br from-[#211039] via-[#160b2b] to-[#10091d] px-4 py-12 sm:py-16">
           <div className="mx-auto max-w-5xl">
             <p className="text-xs font-extrabold tracking-[0.22em] text-amber-300">PARTNER UFFICIALI</p>
-            <h2 className="mt-2 text-3xl font-black sm:text-4xl">Il primo premio, insieme a uno sponsor</h2>
-            <p className="mt-3 max-w-3xl leading-7 text-violet-100">Per l'edizione annuale vogliamo cercare un partner che possa offrire o finanziare il primo premio. Lo sponsor ufficiale sarà presentato qui solo dopo un accordo confermato e con autorizzazione all'uso del marchio.</p>
+            <h2 className="mt-2 text-3xl font-black sm:text-4xl">Piccoli premi, un grande grazie</h2>
+            <p className="mt-3 max-w-3xl leading-7 text-violet-100">RS Lottery partirà con premi di valore contenuto, come buoni acquisto da 5 €, 10 €, 20 € o 30 € da utilizzare su RiverSpendShop. Il budget sarà deciso in anticipo e non saranno promessi premi che RiverSpend non può sostenere. Eventuali sponsor potranno contribuire solo dopo un accordo confermato.</p>
             <div className="mt-7 overflow-hidden rounded-3xl border border-amber-300/40 bg-gradient-to-r from-amber-300/10 via-white/[0.04] to-violet-500/10 p-6 sm:p-8">
               <div className="grid items-center gap-6 md:grid-cols-[1fr_auto]">
                 <div>
-                  <span className="inline-flex rounded-full border border-amber-300/50 bg-amber-300/10 px-3 py-1 text-[11px] font-extrabold uppercase tracking-wider text-amber-200">Spazio primo premio</span>
-                  <h3 className="mt-4 text-2xl font-black sm:text-3xl">Il premio principale dell'anno</h3>
-                  <p className="mt-3 max-w-2xl text-sm leading-6 text-violet-100">Auto, moda, tecnologia o un'esperienza speciale: la categoria e il premio effettivo saranno annunciati solo quando confermati. Ferrari, Trussardi e Dior sono esempi di marchi a cui si potrebbe proporre una collaborazione, non sponsor attuali né partnership confermate.</p>
+                  <span className="inline-flex rounded-full border border-amber-300/50 bg-amber-300/10 px-3 py-1 text-[11px] font-extrabold uppercase tracking-wider text-amber-200">Premi iniziali</span>
+                  <h3 className="mt-4 text-2xl font-black sm:text-3xl">Buoni acquisto di piccolo valore</h3>
+                  <p className="mt-3 max-w-2xl text-sm leading-6 text-violet-100">L'idea iniziale è offrire piccoli buoni da 5 €, 10 €, 20 € o 30 €, compatibilmente con il budget disponibile. Gli importi sono esempi di progetto, non premi già attivi o confermati.</p>
                 </div>
-                <div className="flex h-28 w-28 items-center justify-center justify-self-center rounded-full border border-amber-300/50 bg-amber-300/10 text-5xl shadow-lg shadow-amber-950/30" aria-label="Premio speciale">🏆</div>
+                <div className="flex h-28 w-28 items-center justify-center justify-self-center rounded-full border border-amber-300/50 bg-amber-300/10 text-5xl shadow-lg shadow-amber-950/30" aria-label="Buono acquisto">🎁</div>
               </div>
-              <p className="mt-5 border-t border-amber-200/20 pt-4 text-xs leading-5 text-violet-200">I nomi e i loghi dei brand saranno esposti come sponsor soltanto dopo conferma scritta e autorizzazione. Nessuna affiliazione è implicita in questa pagina.</p>
+              <p className="mt-5 border-t border-amber-200/20 pt-4 text-xs leading-5 text-violet-200">Nessun premio è ancora confermato. RiverSpend definirà importi, quantità e budget prima dell'eventuale avvio.</p>
             </div>
 
             <div className="mt-10">
@@ -118,8 +118,8 @@ export default function RsLotteryPage() {
         <section className="border-y border-violet-300/15 bg-white/[0.025] px-4 py-12 sm:py-16">
           <div className="mx-auto max-w-5xl">
             <p className="text-xs font-extrabold tracking-[0.22em] text-amber-300">CATEGORIE INDICATIVE</p>
-            <h2 className="mt-2 text-3xl font-black sm:text-4xl">Quali premi immaginiamo?</h2>
-            <p className="mt-3 max-w-3xl leading-7 text-violet-200">Queste sono idee per il progetto, non premi confermati. I prodotti, i valori, le quantità e il numero di vincitori saranno comunicati solo dopo la definizione del regolamento.</p>
+            <h2 className="mt-2 text-3xl font-black sm:text-4xl">Premi piccoli e sostenibili</h2>
+            <p className="mt-3 max-w-3xl leading-7 text-violet-200">Per iniziare immaginiamo buoni acquisto di piccolo valore, indicativamente da 5 € a 30 €. Gli importi sono proposte e non costituiscono un impegno finché budget e condizioni non saranno confermati.</p>
             <div className="mt-7 grid gap-4 md:grid-cols-3">
               {prizeTypes.map((prize) => (
                 <article key={prize.title} className="rounded-2xl border border-violet-300/20 bg-gradient-to-b from-violet-900/30 to-black/20 p-6">
