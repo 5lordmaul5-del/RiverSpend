@@ -608,16 +608,18 @@ export default function Home() {
       <div className={`transition-opacity duration-700 ${showSplash ? 'opacity-0' : 'opacity-100'}`}>
         <header className="rs-header sticky top-0 z-30 border-b border-amber-200 bg-white/95 px-3 py-2 shadow-sm backdrop-blur">
           <div className="mx-auto max-w-6xl">
-            <div className="grid grid-cols-[44px_minmax(0,1fr)_auto] items-center gap-2">
-              <button type="button" onClick={() => { setMenuCategorie(!menuCategorie); setMenuRiverSpend(false); }} aria-label={t('categories')} aria-expanded={menuCategorie} className="flex h-11 w-11 items-center justify-center rounded-xl text-3xl leading-none text-slate-900 hover:bg-amber-50">☰</button>
-              <a href="/" aria-label="RiverSpendShop, pagina iniziale" className="flex min-w-0 flex-col items-center justify-center text-center">
-                <h1 className="rs-brand text-[1.75rem] font-extrabold leading-none tracking-tight text-black sm:text-4xl">RiverSpend</h1>
+            <div className="relative grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2">
+              <div className="flex items-center gap-1">
+                <button type="button" onClick={() => { setMenuCategorie(!menuCategorie); setMenuRiverSpend(false); }} aria-label={t('categories')} aria-expanded={menuCategorie} className="flex h-11 w-10 items-center justify-center rounded-xl text-3xl leading-none text-slate-900 hover:bg-amber-50">☰</button>
+                <button type="button" onClick={() => setRicercaAperta(!ricercaAperta)} aria-label="Apri ricerca" aria-expanded={ricercaAperta} className="flex h-10 w-9 items-center justify-center text-2xl text-slate-900 hover:text-teal-700">⌕</button>
+              </div>
+              <a href="/" aria-label="RiverSpendShop, pagina iniziale" className="absolute left-1/2 top-1/2 flex w-max max-w-[48%] -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center text-center">
+                <h1 className="rs-brand text-[1.45rem] font-extrabold leading-none tracking-tight text-black sm:text-4xl">RiverSpend</h1>
                 <span className="rs-river-wave" aria-hidden="true">〰</span>
                 <span className="rs-shop-word text-sm font-extrabold uppercase tracking-[.2em] sm:text-base">Shop</span>
-                <span className="mt-0.5 text-[8px] font-semibold tracking-[.14em] text-slate-500 sm:text-[9px]">YOUR SHOP • YOUR FLOW</span>
+                <span className="mt-0.5 whitespace-nowrap text-[7px] font-semibold tracking-[.08em] text-slate-500 sm:text-[9px] sm:tracking-[.14em]">YOUR SHOP • YOUR FLOW</span>
               </a>
               <div className="flex items-center justify-end gap-2 text-slate-900 sm:gap-4">
-                <button type="button" onClick={() => setRicercaAperta(!ricercaAperta)} aria-label="Apri ricerca" aria-expanded={ricercaAperta} className="flex h-10 w-9 items-center justify-center text-2xl hover:text-teal-700">⌕</button>
                 <a href="/rete" aria-label="Apri la Rete e gli articoli salvati" className="relative flex h-10 w-10 items-center justify-center text-2xl hover:text-teal-700">
                   🛒
                   {reteIds.length > 0 && <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-teal-700 px-1 text-[10px] font-bold text-white">{reteIds.length}</span>}
