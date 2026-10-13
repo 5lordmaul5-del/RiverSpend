@@ -786,6 +786,20 @@ export default function Home() {
             </div>
           </a>
 
+          <a href="/social-network" className="group mb-5 block overflow-hidden rounded-3xl border border-teal-300/70 bg-gradient-to-br from-teal-950 via-slate-900 to-cyan-950 text-white shadow-xl shadow-teal-950/20 transition hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-teal-300/70">
+            <div className="relative flex min-h-[250px] items-end overflow-hidden p-5 sm:min-h-[320px] sm:p-8">
+              <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(45,212,191,0.4),transparent_55%),radial-gradient(ellipse_at_bottom_left,rgba(34,211,238,0.24),transparent_60%)]"></div>
+              <div aria-hidden="true" className="absolute -right-8 top-2 h-48 w-48 rounded-full border border-teal-200/20 sm:h-64 sm:w-64"></div>
+              <div aria-hidden="true" className="absolute -right-1 top-9 h-36 w-36 rounded-full border border-cyan-200/20 sm:h-48 sm:w-48"></div>
+              <div className="relative z-10 w-full">
+                <p className="text-xs font-extrabold uppercase tracking-[.24em] text-teal-200 sm:text-sm">YOUR SHOP • YOUR FLOW</p>
+                <h2 className="mt-2 text-3xl font-black leading-tight text-white drop-shadow sm:text-5xl">RiverSpend Social Marketplace</h2>
+                <p className="mt-3 max-w-2xl text-base font-medium leading-6 text-teal-50 sm:text-xl sm:leading-8">Scorri il Fiume. Scopri prodotti, foto e video. Entra in un mondo tutto tuo.</p>
+                <span className="mt-5 inline-flex items-center gap-2 rounded-full bg-teal-300 px-6 py-3 text-base font-extrabold text-slate-950 shadow-lg sm:text-lg">ENTRA NEL FIUME <span aria-hidden="true">↗</span></span>
+              </div>
+            </div>
+          </a>
+
           <div className="rs-hero mb-5 rounded-2xl border border-teal-800 bg-gradient-to-br from-slate-900 to-sky-950 px-5 py-4 sm:px-7 sm:py-5">
             <span className="rs-gold-pebble one" aria-hidden="true" />
             <span className="rs-gold-pebble two" aria-hidden="true" />
