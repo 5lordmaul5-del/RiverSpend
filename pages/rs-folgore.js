@@ -21,7 +21,7 @@ export default function RsFolgorePage() {
           <div className="mx-auto grid max-w-5xl items-center gap-8 md:grid-cols-2">
             <div>
               <p className="mb-4 inline-flex rounded-full border border-orange-300/40 bg-orange-300/10 px-3 py-1.5 text-xs font-extrabold tracking-[0.18em] text-orange-200">✈️ MISSIONE RIVERSPEND</p>
-              <h1 className="text-4xl font-black leading-tight sm:text-6xl">RS <span className="text-orange-300">FOLGORE</span></h1>
+              <h1 className="text-4xl font-black leading-tight sm:text-6xl"><span className="text-orange-300">⚡</span> RS <span className="text-orange-300">Folgore</span> <span className="text-orange-300">⚡</span></h1>
               <p className="mt-4 text-lg font-bold leading-7 text-orange-50">Le offerte arrivano dal cielo.</p>
               <p className="mt-3 max-w-xl text-sm leading-6 text-slate-200">Ispirata alle missioni di lancio con paracadute, RS Folgore è pensata per portare in evidenza offerte, prodotti selezionati, promozioni lampo e iniziative RiverSpend.</p>
               <a href="/?future=offers" className="mt-6 inline-flex items-center justify-center rounded-full bg-orange-300 px-6 py-3 font-extrabold text-slate-950 hover:bg-orange-200">Vai alle offerte →</a>
