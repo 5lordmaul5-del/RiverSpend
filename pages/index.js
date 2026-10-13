@@ -794,7 +794,7 @@ export default function Home() {
           </a>
 
           <div className="rs-hero mb-5 overflow-hidden rounded-2xl border border-teal-800 bg-gradient-to-br from-slate-900 to-sky-950 shadow-lg">
-            <img src="/riverspend-home-river-market.svg" alt="Mercato sul fiume RiverSpend con prodotti, smartphone e persone" className="block aspect-[12/5] w-full object-cover" loading="eager" />
+            
             <div className="relative px-5 py-4 sm:px-7 sm:py-5">
             <span className="rs-gold-pebble one" aria-hidden="true" />
             <span className="rs-gold-pebble two" aria-hidden="true" />
