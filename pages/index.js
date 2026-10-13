@@ -743,21 +743,40 @@ export default function Home() {
               </button>
             </section>
 
-            <section className="rs-feature-card rounded-2xl border border-violet-400/40 bg-gradient-to-br from-slate-950 via-violet-950/25 to-slate-900 p-3 text-center shadow-xl shadow-violet-950/20">
-              <button type="button" onClick={() => setRsLotteryAperta((v) => !v)} className="flex h-full w-full flex-col items-center overflow-hidden text-center">
-                <p className="shrink-0 text-[10px] font-bold uppercase tracking-[0.22em] text-violet-100">🎟️ RS LOTTERY</p>
-                <img src="/rs-lottery.jpg" alt="RS LOTTERY: estrazione, biglietti e premi RiverSpend" className="mt-2 h-36 w-full shrink-0 rounded-xl border border-violet-300/40 object-cover object-center" />
+            <section className="rs-feature-card rounded-2xl border border-violet-300/60 bg-gradient-to-br from-[#160b2c] via-violet-950 to-slate-950 p-3 text-center shadow-xl shadow-violet-950/30">
+              <button
+                type="button"
+                onClick={() => setRsLotteryAperta((v) => !v)}
+                aria-expanded={rsLotteryAperta}
+                aria-label={rsLotteryAperta ? "Chiudi RS Lottery" : "Apri RS Lottery"}
+                className="flex h-full w-full flex-col items-center overflow-hidden text-center"
+              >
+                <div className="flex w-full shrink-0 items-center justify-center gap-2">
+                  <span className="text-lg" aria-hidden="true">🎟️</span>
+                  <p className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-violet-100">RS LOTTERY</p>
+                  <span className="rounded-full border border-amber-300/50 bg-amber-300/10 px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wider text-amber-200">RiverSpend</span>
+                </div>
+                <div className="mt-3 w-full overflow-hidden rounded-xl border border-violet-200/50 bg-black/20">
+                  <img
+                    src="/rs-lottery.jpg"
+                    alt="RS Lottery RiverSpend, iniziative e premi"
+                    className="h-36 w-full object-cover object-center transition-transform duration-300"
+                    loading="lazy"
+                  />
+                </div>
                 {rsLotteryAperta ? (
-                  <div className="mt-3 flex min-h-0 flex-1 flex-col items-center justify-center overflow-hidden">
-                    <p className="text-sm font-extrabold text-white">RS Lottery Annuale</p>
-                    <p className="mt-2 text-[10px] leading-4 text-slate-100">1 codice per ogni acquisto di almeno €10. Il codice viene associato all'ordine e al tuo account.</p>
-                    <a onClick={(e) => e.stopPropagation()} href="/profilo" className="mt-3 rounded-xl border border-violet-300/60 bg-violet-900/50 px-3 py-2 text-[10px] font-bold text-white">🎟️ I miei codici</a>
+                  <div className="mt-3 flex w-full flex-1 flex-col items-center justify-center">
+                    <p className="text-base font-extrabold text-white">Premi, iniziative e regolamento</p>
+                    <p className="mt-2 text-xs leading-5 text-violet-100">RS Lottery è in preparazione. Date, modalità di partecipazione, eventuali costi e premi saranno indicati in un regolamento pubblico prima dell’avvio.</p>
+                    <p className="mt-2 rounded-lg border border-amber-300/30 bg-amber-300/10 px-3 py-2 text-[10px] leading-4 text-amber-100">Nessuna estrazione è attiva da questo banner e nessun premio è garantito con un acquisto.</p>
+                    <a onClick={(e) => e.stopPropagation()} href="/profilo" className="mt-3 inline-flex items-center justify-center rounded-xl border border-violet-200/60 bg-violet-800/60 px-4 py-2.5 text-xs font-extrabold text-white transition hover:bg-violet-700">Vai al profilo <span className="ml-1" aria-hidden="true">→</span></a>
+                    <span className="mt-2 text-[10px] text-violet-200">Tocca il riquadro per richiudere</span>
                   </div>
                 ) : (
-                  <div className="flex flex-1 flex-col items-center justify-center">
-                    <div className="text-4xl">🎟️</div>
-                    <p className="mt-2 text-[11px] font-bold text-white">Premi e codici</p>
-                    <p className="mt-1 text-[10px] leading-4 text-slate-100">Tocca per vedere.</p>
+                  <div className="flex flex-1 flex-col items-center justify-center py-3">
+                    <p className="text-lg font-extrabold text-white">Premi e iniziative</p>
+                    <p className="mt-1 text-xs leading-5 text-violet-100">Scopri come funzionerà RS Lottery</p>
+                    <span className="mt-3 inline-flex items-center gap-2 rounded-full border border-violet-200/50 bg-violet-800/40 px-4 py-2 text-[11px] font-extrabold text-white">Scopri di più <span aria-hidden="true">↓</span></span>
                   </div>
                 )}
               </button>
