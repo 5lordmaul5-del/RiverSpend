@@ -677,6 +677,7 @@ export default function Home() {
               <a href="/tutela" onClick={() => setMenuRiverSpend(false)} className="mt-2 block rounded-lg border border-teal-800 px-3 py-2 text-sm font-semibold text-teal-100">{t('support')}</a>
             </div>
           )}
+          </div>
         </header>
 
         <section className="mx-auto max-w-6xl px-2 py-4 sm:px-4">
