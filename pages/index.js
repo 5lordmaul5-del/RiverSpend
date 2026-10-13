@@ -873,6 +873,7 @@ export default function Home() {
             <div><strong className="text-lg text-teal-300">RiverSpend</strong><p className="text-xs text-slate-400">YOUR SHOP • YOUR FLOW</p></div>
             <nav aria-label="Link di servizio" className="flex flex-wrap gap-x-5 gap-y-3 text-sm">
               <a href="/ecosistema" className="text-teal-200 underline underline-offset-4">{t('ecosystemLink')}</a>
+              <a href="/eventi" className="text-amber-200 underline underline-offset-4">Eventi e festività</a>
               <a href="/nova-shield" className="text-teal-200">RS Nova Shield</a>
               <a href="/tutela" className="text-slate-300">Tutela e assistenza</a>
               <a href="/vendi" className="text-slate-300">{t('sell')}</a>
