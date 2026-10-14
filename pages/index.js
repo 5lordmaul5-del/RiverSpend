@@ -341,7 +341,7 @@ export default function Home() {
     recognition.continuous = false;
     recognition.interimResults = false;
     setRiverVoiceActive(true);
-    setRiverVoiceStatus('River ti ascolta…');
+    setRiverVoiceStatus('Ciao, sono River. Ti ascolto…');
     recognition.onresult = (event) => {
       const spoken = String(event.results?.[0]?.[0]?.transcript || '').trim();
       const q = spoken.toLowerCase();
@@ -384,7 +384,7 @@ export default function Home() {
         return;
       }
       if (route?.href) {
-        speak('Apro ' + route.label);
+        speak('Ciao, sono River. Apro ' + route.label + ' subito.');
         window.location.href = route.href;
         return;
       }
@@ -395,13 +395,14 @@ export default function Home() {
         setCategoriaAttiva(target);
         setRicercaAperta(true);
         window.history.replaceState({}, '', '/?category=' + encodeURIComponent(target));
-        speak('Apro il settore abbigliamento.');
+        speak('Ciao, sono River. Ok, apro subito il settore abbigliamento.');
         window.location.href = '/?category=' + encodeURIComponent(target);
         return;
       }
       const searchTerms = spoken.replace(/^(hey\s+river|river|nova|nov[aà])[, ]*/i, '').replace(/^(cerca|trova|fammi vedere|mostrami|vorrei|voglio)\s+/i, '').trim();
       if (searchTerms) {
-        speak('Cerco ' + searchTerms);
+        speak('Ciao, sono River. Ok, cerco subito ' + searchTerms + '.');
+        setRiverVoiceStatus('Ciao, sono River. Cerco subito: ' + searchTerms);
         if (window.location.pathname === '/' || window.location.pathname === '') {
           setRicerca(searchTerms);
           setRicercaAperta(true);
