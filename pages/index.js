@@ -713,8 +713,8 @@ export default function Home() {
               </button>
             </section>
 
-            <section className="rs-feature-card rounded-2xl border border-amber-400/40 bg-gradient-to-br from-slate-950 via-amber-950/30 to-slate-900 p-3 text-center shadow-xl shadow-amber-950/20">
-              <button type="button" onClick={() => setRsFortuneAperta((v) => !v)} className="flex h-full w-full flex-col items-center overflow-hidden text-center">
+            <section className={`rs-feature-card rs-fortune-card rounded-2xl border border-amber-400/40 bg-gradient-to-br from-slate-950 via-amber-950/30 to-slate-900 p-3 text-center shadow-xl shadow-amber-950/20 ${rsFortuneAperta ? "rs-fortune-open" : ""}`}>
+              <div role="button" tabIndex={0} onClick={() => setRsFortuneAperta((v) => !v)} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setRsFortuneAperta((v) => !v); } }} className="flex h-full w-full flex-col items-center overflow-hidden text-center">
                 <p className="shrink-0 min-h-4 text-[10px] font-bold uppercase tracking-[0.22em] text-amber-100">🎡 RS FORTUNE</p>
                 
                 <h2 className="mt-1 min-h-[44px] shrink-0 text-base font-extrabold leading-tight text-white">La ruota della fortuna</h2>
@@ -740,7 +740,7 @@ export default function Home() {
                     <p className="mt-2 min-h-[32px] px-1 text-[10px] leading-4 text-slate-100">Tocca per aprire e girare la ruota.</p>
                   </div>
                 )}
-              </button>
+              </div>
             </section>
 
             <section className="rs-feature-card rounded-2xl border border-violet-300/60 bg-gradient-to-br from-[#160b2c] via-violet-950 to-slate-950 p-3 text-center shadow-xl shadow-violet-950/30">
@@ -926,6 +926,8 @@ export default function Home() {
       <style jsx>{`
         .rs-apps-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; align-items:stretch; }
         .rs-feature-card { min-width:0; height:300px; overflow:hidden; display:flex; }
+        .rs-fortune-open { height:420px !important; }
+        .rs-fortune-open > div[role="button"] { overflow-y:auto; }
         .rs-feature-card > a, .rs-feature-card > button { display:flex; flex-direction:column; flex:1; min-height:0; }
         .rs-feature-card .rs-feature-media { box-sizing:border-box; height:112px !important; min-height:112px !important; max-height:112px; flex:0 0 112px; }
         .rs-feature-action { margin-top:auto !important; min-height:36px; flex-shrink:0; justify-content:center; }
@@ -946,6 +948,7 @@ export default function Home() {
         @media (min-width:768px) {
           .rs-apps-grid { grid-template-columns:repeat(4,minmax(0,1fr)); }
           .rs-feature-card { height:320px; }
+          .rs-fortune-open { height:440px !important; }
         }
         @keyframes rs-palantir-pulse {
           0%, 100% { transform: scale(1); filter: brightness(1); }
