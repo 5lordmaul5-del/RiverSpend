@@ -793,6 +793,22 @@ export default function Home() {
                 <span className="rs-feature-action mt-3 inline-flex items-center justify-center rounded-full border border-amber-200/60 bg-gradient-to-b from-amber-300 to-amber-500 px-4 py-2 text-[11px] font-extrabold text-slate-950">SCOPRI I SALDI →</span>
               </a>
             </section>
+
+            <section className="rs-feature-card rounded-2xl border border-emerald-300/70 bg-gradient-to-br from-emerald-950 via-green-950 to-slate-950 p-3 text-center shadow-xl shadow-emerald-950/30">
+              <a href={categoriaAttiva ? `/?category=${encodeURIComponent(categoriaAttiva)}&future=offers` : '/?future=offers'} aria-label="Scopri RiverSpend Super Sconti" className="flex h-full w-full flex-col items-center overflow-hidden text-center">
+                <p className="shrink-0 text-[10px] font-extrabold uppercase tracking-[0.2em] text-emerald-200">💚 RS SCONTI</p>
+                <h2 className="mt-1 min-h-[40px] text-base font-extrabold leading-tight text-white">RiverSpend Super Sconti</h2>
+                <div className="rs-feature-media mt-3 flex w-full items-center justify-center overflow-hidden rounded-xl border border-emerald-300/60 bg-gradient-to-br from-emerald-300 via-green-600 to-emerald-950">
+                  <div className="flex flex-col items-center justify-center px-2 py-4 text-white">
+                    <span className="text-4xl font-black tracking-tight">SUPER</span>
+                    <span className="text-2xl font-black tracking-widest">SCONTI</span>
+                    <span className="mt-2 text-2xl" aria-hidden="true">％</span>
+                  </div>
+                </div>
+                <p className="mt-3 min-h-[40px] px-1 text-xs leading-5 text-emerald-50">Le offerte dei venditori, da scoprire tutto l’anno.</p>
+                <span className="rs-feature-action mt-3 inline-flex items-center justify-center rounded-full border border-emerald-200/60 bg-gradient-to-b from-emerald-300 to-green-500 px-4 py-2 text-[11px] font-extrabold text-slate-950">SCOPRI GLI SCONTI →</span>
+              </a>
+            </section>
           </div>
 
           <a href="/park" aria-label="Scopri RiverSpend Park: apri il catalogo del parco" className="group mb-5 block overflow-hidden rounded-3xl border border-cyan-300/60 bg-slate-950 shadow-xl shadow-cyan-950/20 transition hover:-translate-y-0.5 hover:border-cyan-200 focus:outline-none focus:ring-4 focus:ring-cyan-300/70">
