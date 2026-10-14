@@ -720,9 +720,9 @@ export default function Home() {
                 <h2 className="mt-1 min-h-[44px] shrink-0 text-base font-extrabold leading-tight text-white">La ruota della fortuna</h2>
                 {rsFortuneAperta ? (
                   <div className="mt-2 flex min-h-0 w-full flex-1 flex-col items-center overflow-hidden">
-                    <div className="relative mx-auto h-[170px] w-[170px] shrink-0">
+                    <div className="relative mx-auto h-[138px] w-[138px] shrink-0">
                       <div className="absolute -top-1 left-1/2 z-20 -translate-x-1/2 text-lg">🔻</div>
-                      <div className="rs-fortune-wheel relative h-[170px] w-[170px] rounded-full border-4 border-amber-300 shadow-[0_0_22px_rgba(251,191,36,.4)]" style={{transform:`rotate(${rsFortuneRotation}deg)`, transition: rsFortuneSpinning ? "transform 5.2s cubic-bezier(.12,.72,.08,1)" : "none"}}>
+                      <div className="rs-fortune-wheel relative h-[138px] w-[138px] rounded-full border-4 border-amber-300 shadow-[0_0_22px_rgba(251,191,36,.4)]" style={{transform:`rotate(${rsFortuneRotation}deg)`, transition: rsFortuneSpinning ? "transform 5.2s cubic-bezier(.12,.72,.08,1)" : "none"}}>
                         <div className="rs-fortune-labels" aria-hidden="true">
                           <span>💰<br/>5 RM</span><span>💰<br/>10 RM</span><span>💰<br/>20 RM</span><span>🚚<br/>FREE</span>
                           <span>🏷️<br/>5%</span><span>🔥<br/>BOOST</span><span>🎁<br/>SORPRESA</span><span>⭐<br/>500 RSP</span>
@@ -996,7 +996,7 @@ export default function Home() {
           color:#451a03; font-size:8px; line-height:1.05; font-weight:900;
           transform-origin:23px 21px;
         }
-        .rs-fortune-labels span:nth-child(1){transform:rotate(22.5deg) translateY(-53px);}
+        .rs-fortune-labels span:nth-child(1){transform:rotate(22.5deg) translateY(-43px);}
         .rs-fortune-labels span:nth-child(2){transform:rotate(67.5deg) translateY(-53px);}
         .rs-fortune-labels span:nth-child(3){transform:rotate(112.5deg) translateY(-53px);}
         .rs-fortune-labels span:nth-child(4){transform:rotate(157.5deg) translateY(-53px);}
