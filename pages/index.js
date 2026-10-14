@@ -405,8 +405,8 @@ export default function Home() {
         window.location.href = '/?q=' + encodeURIComponent(searchTerms);
       }
     };
-    recognition.onerror = () => setRiverVoiceStatus('Non sono riuscita a sentire la richiesta. Premi il microfono e riprova.');
-    recognition.onend = () => setRiverVoiceStatus((current) => current === 'River ti ascolta…' ? 'Tocca il microfono e parla con River.' : current);
+    recognition.onerror = () => { setRiverVoiceActive(false); setRiverVoiceStatus('Non sono riuscita a sentire la richiesta. Premi il microfono e riprova.'); };
+    recognition.onend = () => { setRiverVoiceActive(false); setRiverVoiceStatus((current) => current === 'River ti ascolta…' ? 'Tocca il microfono e parla con River.' : current); };
     try { recognition.start(); } catch { setRiverVoiceStatus('Il microfono è occupato. Riprova tra poco.'); }
   }
 
