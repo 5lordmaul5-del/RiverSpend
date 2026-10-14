@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="520" viewBox="0 0 1600 520">
+<defs>
+ <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#062f4f"/><stop offset=".55" stop-color="#087d83"/><stop offset="1" stop-color="#36d6c3"/></linearGradient>
+ <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fff0a6"/><stop offset="1" stop-color="#e7a82f"/></linearGradient>
+ <linearGradient id="violet" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#b9a4ff"/><stop offset="1" stop-color="#6851c8"/></linearGradient>
+</defs>
+<rect width="1600" height="520" rx="32" fill="url(#bg)"/>
+<circle cx="1350" cy="80" r="150" fill="#b7fff0" opacity=".12"/><circle cx="1200" cy="470" r="220" fill="#e7bc55" opacity=".12"/>
+<path d="M0 390 Q220 330 440 390 T880 380 T1320 360 T1600 350V520H0Z" fill="#042c45" opacity=".48"/>
+<!-- storefront -->
+<g transform="translate(890 70)">
+ <rect x="90" y="105" width="380" height="260" rx="18" fill="#f8f4e8" stroke="#f6d36b" stroke-width="10"/>
+ <path d="M65 125L110 20H450L495 125Z" fill="#e8b54a" stroke="#fff0ad" stroke-width="8"/>
+ <path d="M110 20H178L156 125H88Z" fill="#f8f1d9"/><path d="M178 20H246L244 125H156Z" fill="#2fc9bd"/><path d="M246 20H314L332 125H244Z" fill="#f8f1d9"/><path d="M314 20H382L420 125H332Z" fill="#2fc9bd"/><path d="M382 20H450L495 125H420Z" fill="#f8f1d9"/>
+ <rect x="125" y="160" width="140" height="130" rx="8" fill="#b9e9e4" stroke="#0b6572" stroke-width="8"/><rect x="290" y="160" width="145" height="205" rx="8" fill="#d8e6f2" stroke="#0b6572" stroke-width="8"/>
+ <path d="M155 220h80M155 245h80" stroke="#fff" stroke-width="10" stroke-linecap="round"/><path d="M325 230l36-35 45 35v70h-81z" fill="#e8b54a"/><path d="M342 230q20-42 40 0" fill="none" stroke="#986523" stroke-width="8"/>
+</g>
+<!-- product boxes -->
+<g transform="translate(640 270)"><path d="M0 50L100 0l105 50-103 60Z" fill="#efc45d"/><path d="M0 50v110l102 60V110Z" fill="#c88932"/><path d="M102 110l103-60v110l-103 60Z" fill="#f4d88b"/><path d="M70 35l62 35" stroke="#fff1b0" stroke-width="10"/></g>
+<g transform="translate(750 340)"><path d="M0 35L65 0l70 35-67 42Z" fill="#8a78db"/><path d="M0 35v75l68 40V77Z" fill="#5e4db5"/><path d="M68 77l67-42v75l-67 40Z" fill="#b6a7fa"/></g>
+<!-- shopping bag -->
+<g transform="translate(500 90) rotate(-8 110 150)"><path d="M35 105h160l-12 235H48Z" fill="#fff7e4" stroke="#e7bb57" stroke-width="9"/><path d="M75 110q0-95 42-95t42 95" fill="none" stroke="#fff7e4" stroke-width="14"/><path d="M70 190h90" stroke="#087d83" stroke-width="12" stroke-linecap="round"/><path d="M70 220h65" stroke="#087d83" stroke-width="12" stroke-linecap="round"/><circle cx="150" cy="285" r="28" fill="url(#gold)"/><text x="150" y="296" text-anchor="middle" font-family="Arial,sans-serif" font-size="34" font-weight="900" fill="#68420d">€</text></g>
+<!-- copy -->
+<text x="70" y="105" font-family="Arial,sans-serif" font-size="28" font-weight="800" letter-spacing="5" fill="#ffe08a">PRIVATI • AZIENDE</text>
+<text x="70" y="185" font-family="Arial,sans-serif" font-size="62" font-weight="900" fill="#ffffff">LA TUA VETRINA.</text>
+<text x="70" y="255" font-family="Arial,sans-serif" font-size="62" font-weight="900" fill="#ffe08a">LE TUE VENDITE.</text>
+<text x="75" y="315" font-family="Arial,sans-serif" font-size="27" font-weight="700" fill="#e4fffb">Registrati • Pubblica • Fatti conoscere</text>
+<rect x="70" y="365" width="400" height="70" rx="35" fill="url(#gold)" stroke="#fff0b0" stroke-width="4"/>
+<text x="270" y="411" text-anchor="middle" font-family="Arial,sans-serif" font-size="28" font-weight="900" fill="#06374b">INIZIA A VENDERE  →</text>
+<rect x="25" y="25" width="1550" height="470" rx="26" fill="none" stroke="#ffe08a" stroke-width="4" opacity=".75"/>
+</svg>
