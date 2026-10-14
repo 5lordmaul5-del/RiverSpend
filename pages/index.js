@@ -339,36 +339,71 @@ export default function Home() {
     const recognition = new SpeechRecognition();
     recognition.lang = document.documentElement.lang || 'it-IT';
     recognition.continuous = false;
-    recognition.interimResults = false;
+    recognition.interimResults = true;
+    recognition.maxAlternatives = 1;
+    let rispostaAvviata = false;
+    let richiestaFinaleGestita = false;
+    let timerRisposta = null;
     setRiverVoiceActive(true);
     setRiverVoiceStatus('Ciao, sono River. Ti ascolto…');
-    recognition.onresult = (event) => {
-      const spoken = String(event.results?.[0]?.[0]?.transcript || '').trim();
-      const q = spoken.toLowerCase();
-      setRiverVoiceStatus(spoken ? 'Hai detto: “' + spoken + '”' : 'Non ho capito la richiesta.');
-      if (!spoken) return;
-      const speak = (message) => {
-        if ('speechSynthesis' in window) {
-          window.speechSynthesis.cancel();
-          const utterance = new SpeechSynthesisUtterance(message);
-          utterance.lang = document.documentElement.lang || 'it-IT';
-          const voiceStyles = {
-            femminile: { pitch: 1.18, rate: 1.0 },
-            maschile: { pitch: 0.78, rate: 0.96 },
-            sensuale: { pitch: 0.88, rate: 0.84 },
-            robotica: { pitch: 0.62, rate: 0.9 }
-          };
-          const style = voiceStyles[riverVoiceStyle] || voiceStyles.femminile;
-          utterance.pitch = style.pitch;
-          utterance.rate = style.rate;
-          const availableVoices = window.speechSynthesis.getVoices();
-          const italianVoice = availableVoices.find((voice) => /^it([-_]|$)/i.test(voice.lang));
-          if (italianVoice) utterance.voice = italianVoice;
-          utterance.onstart = () => setRiverVoiceActive(true);
-          utterance.onend = () => setRiverVoiceActive(false);
-          window.speechSynthesis.speak(utterance);
-        }
+
+    const speak = (message) => {
+      if (!('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(message);
+      utterance.lang = document.documentElement.lang || 'it-IT';
+      const voiceStyles = {
+        femminile: { pitch: 1.18, rate: 1.0 },
+        maschile: { pitch: 0.78, rate: 0.96 },
+        sensuale: { pitch: 0.88, rate: 0.84 },
+        robotica: { pitch: 0.62, rate: 0.9 }
       };
+      const style = voiceStyles[riverVoiceStyle] || voiceStyles.femminile;
+      utterance.pitch = style.pitch;
+      utterance.rate = style.rate;
+      const availableVoices = window.speechSynthesis.getVoices();
+      const italianVoice = availableVoices.find((voice) => /^it([-_]|$)/i.test(voice.lang));
+      if (italianVoice) utterance.voice = italianVoice;
+      utterance.onstart = () => setRiverVoiceActive(true);
+      utterance.onend = () => setRiverVoiceActive(false);
+      window.speechSynthesis.speak(utterance);
+    };
+
+    recognition.onresult = (event) => {
+      let spoken = '';
+      let isFinal = false;
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const result = event.results[i];
+        const transcript = String(result?.[0]?.transcript || '').trim();
+        if (transcript) spoken = transcript;
+        if (result.isFinal) isFinal = true;
+      }
+      if (!spoken) return;
+
+      // Risposta breve sul primo riconoscimento parziale: River non resta in silenzio
+      // mentre il browser completa la trascrizione definitiva.
+      if (!isFinal) {
+        setRiverVoiceStatus('Ti ho sentito… preparo la ricerca.');
+        if (!rispostaAvviata && !timerRisposta) {
+          timerRisposta = window.setTimeout(() => {
+            timerRisposta = null;
+            if (!rispostaAvviata && !richiestaFinaleGestita) {
+              rispostaAvviata = true;
+              speak('Ciao, sono River. Ok, cerco subito.');
+              setRiverVoiceStatus('Ciao, sono River. Sto preparando la ricerca…');
+            }
+          }, 350);
+        }
+        return;
+      }
+
+      if (richiestaFinaleGestita) return;
+      richiestaFinaleGestita = true;
+      if (timerRisposta) window.clearTimeout(timerRisposta);
+      timerRisposta = null;
+      const q = spoken.toLowerCase();
+      setRiverVoiceStatus('Hai detto: “' + spoken + '”');
+
       const routes = [
         { terms: ['river spend park', 'riverspend park', 'aprimi il park', 'apri il parco'], href: '/park', label: 'RiverSpend Park' },
         { terms: ['rs force', 'attiva force', 'apri force'], href: null, label: 'RS FORCE' },
@@ -379,12 +414,12 @@ export default function Home() {
       const route = routes.find((item) => item.terms.some((term) => q.includes(term)));
       if (route?.label === 'RS FORCE') {
         setRsForceAperta(true);
-        speak('RS FORCE pronto. Usa la ricerca per trovare i prodotti più pertinenti.');
+        if (!rispostaAvviata) speak('RS FORCE pronto. Usa la ricerca per trovare i prodotti più pertinenti.');
         document.getElementById('rs-force-card')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         return;
       }
       if (route?.href) {
-        speak('Ciao, sono River. Apro ' + route.label + ' subito.');
+        if (!rispostaAvviata) speak('Ciao, sono River. Apro ' + route.label + ' subito.');
         window.location.href = route.href;
         return;
       }
@@ -395,13 +430,13 @@ export default function Home() {
         setCategoriaAttiva(target);
         setRicercaAperta(true);
         window.history.replaceState({}, '', '/?category=' + encodeURIComponent(target));
-        speak('Ciao, sono River. Ok, apro subito il settore abbigliamento.');
+        if (!rispostaAvviata) speak('Ciao, sono River. Ok, apro subito il settore abbigliamento.');
         window.location.href = '/?category=' + encodeURIComponent(target);
         return;
       }
       const searchTerms = spoken.replace(/^(hey\s+river|river|nova|nov[aà])[, ]*/i, '').replace(/^(cerca|trova|fammi vedere|mostrami|vorrei|voglio)\s+/i, '').trim();
       if (searchTerms) {
-        speak('Ciao, sono River. Ok, cerco subito ' + searchTerms + '.');
+        if (!rispostaAvviata) speak('Ciao, sono River. Ok, cerco subito ' + searchTerms + '.');
         setRiverVoiceStatus('Ciao, sono River. Cerco subito: ' + searchTerms);
         if (window.location.pathname === '/' || window.location.pathname === '') {
           setRicerca(searchTerms);
@@ -414,8 +449,16 @@ export default function Home() {
         }
       }
     };
-    recognition.onerror = () => { setRiverVoiceActive(false); setRiverVoiceStatus('Non sono riuscita a sentire la richiesta. Premi il microfono e riprova.'); };
-    recognition.onend = () => { setRiverVoiceActive(false); setRiverVoiceStatus((current) => current === 'River ti ascolta…' ? 'Tocca il microfono e parla con River.' : current); };
+    recognition.onerror = () => {
+      if (timerRisposta) window.clearTimeout(timerRisposta);
+      setRiverVoiceActive(false);
+      setRiverVoiceStatus('Non sono riuscita a sentire la richiesta. Premi il microfono e riprova.');
+    };
+    recognition.onend = () => {
+      if (timerRisposta) window.clearTimeout(timerRisposta);
+      setRiverVoiceActive(false);
+      setRiverVoiceStatus((current) => current === 'River ti ascolta…' ? 'Tocca il microfono e parla con River.' : current);
+    };
     try { recognition.start(); } catch { setRiverVoiceStatus('Il microfono è occupato. Riprova tra poco.'); }
   }
 
