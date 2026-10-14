@@ -749,7 +749,7 @@ export default function Home() {
             <div className="relative grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2">
               <div className="flex items-center gap-1">
                 <button type="button" onClick={() => { setMenuCategorie(!menuCategorie); setMenuRiverSpend(false); }} aria-label={t('categories')} aria-expanded={menuCategorie} className="flex h-11 w-10 items-center justify-center rounded-xl text-3xl leading-none text-slate-900 hover:bg-amber-50">☰</button>
-                <button type="button" onClick={() => setRicercaAperta(!ricercaAperta)} aria-label="Apri ricerca" aria-expanded={ricercaAperta} className="flex h-10 w-9 items-center justify-center text-2xl text-slate-900 hover:text-teal-700">⌕</button>
+                <button type="button" onClick={() => setRicercaAperta(!ricercaAperta)} aria-label="Apri ricerca" aria-expanded={ricercaAperta} title="Cerca prodotti" className="flex h-10 min-w-10 items-center justify-center rounded-xl border border-teal-200 bg-teal-50 px-2 text-xl text-teal-800 shadow-sm hover:bg-teal-100">🔍</button>
                 
               </div>
               <a href="/" aria-label="RiverSpendShop, pagina iniziale" className="absolute left-1/2 top-1/2 flex w-max max-w-[48%] -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center text-center">
