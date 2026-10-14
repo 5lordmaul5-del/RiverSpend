@@ -752,8 +752,7 @@ export default function Home() {
               >
                 <div className="flex w-full shrink-0 items-center justify-center gap-2">
                   <span className="text-lg" aria-hidden="true">🎟️</span>
-                  <p className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-violet-100">RS LOTTERY</p>
-                  <span className="rounded-full border border-amber-300/50 bg-amber-300/10 px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wider text-amber-200">RiverSpend</span>
+                  <p className="min-w-0 text-[11px] font-extrabold uppercase tracking-[0.1em] text-violet-100">RS LOTTERY</p>
                 </div>
                 <div className="rs-feature-media mt-3 w-full overflow-hidden rounded-xl border border-violet-200/50 bg-black/20">
                   <img src="/rs-lottery.jpg" alt="RS Lottery RiverSpend, iniziative e premi" className="h-36 w-full object-cover object-center transition-transform duration-300" loading="lazy" />
@@ -833,7 +832,7 @@ export default function Home() {
           </a>
 
           <section className="rs-hero mb-5 overflow-hidden rounded-2xl border border-slate-200 bg-white text-slate-800 shadow-sm">
-            <img src="https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=1400&q=85" alt="Paesaggio naturale sul fiume, esperienza RiverSpend" className="block h-48 w-full object-cover sm:h-64" loading="eager" />
+            <img src="/riverspend-social-banner.svg" alt="RiverSpend: il tuo mercato, la tua rete e il tuo mondo sul fiume" className="block h-48 w-full object-cover sm:h-64" loading="eager" />
             <div className="relative bg-white px-5 py-4 sm:px-7 sm:py-5">
               <span className="rs-gold-pebble one" aria-hidden="true" />
               <span className="rs-gold-pebble two" aria-hidden="true" />
@@ -926,7 +925,7 @@ export default function Home() {
       </div>
       <style jsx>{`
         .rs-apps-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; align-items:stretch; }
-        .rs-feature-card { min-width:0; height:300px; overflow:hidden; display:flex; }
+        .rs-feature-card { min-width:0; height:310px; overflow:hidden; display:flex; }
                 .rs-feature-card > a, .rs-feature-card > button { display:flex; flex-direction:column; flex:1; min-height:0; }
         .rs-feature-card .rs-feature-media { box-sizing:border-box; height:112px !important; min-height:112px !important; max-height:112px; flex:0 0 112px; }
         .rs-feature-action { margin-top:auto !important; min-height:36px; flex-shrink:0; justify-content:center; }
@@ -942,7 +941,7 @@ export default function Home() {
         .rs-feature-card .rs-feature-action { margin-top:auto !important; }
         @media (max-width:640px) {
           .rs-apps-grid { gap:8px; }
-          .rs-feature-card { height:300px; }
+          .rs-feature-card { height:310px; }
         }
         @media (min-width:768px) {
           .rs-apps-grid { grid-template-columns:repeat(4,minmax(0,1fr)); }
