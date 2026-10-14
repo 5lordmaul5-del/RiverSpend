@@ -847,6 +847,28 @@ export default function Home() {
             </div>
           </section>
 
+          <a href="/vendi" aria-label="Inizia a vendere su RiverSpendShop" className="group mb-5 block overflow-hidden rounded-3xl border border-teal-300/70 bg-gradient-to-br from-[#063B53] via-slate-900 to-cyan-950 text-white shadow-xl shadow-teal-950/20 transition hover:-translate-y-0.5 hover:border-teal-200 focus:outline-none focus:ring-4 focus:ring-teal-300/70">
+            <div className="grid gap-4 p-4 sm:grid-cols-[1fr_auto] sm:items-center sm:gap-6 sm:p-7">
+              <div>
+                <p className="mb-2 text-xs font-extrabold uppercase tracking-[.2em] text-amber-300 sm:text-sm">Privati e aziende</p>
+                <h2 className="text-2xl font-black leading-tight sm:text-4xl">La tua attività, il tuo futuro</h2>
+                <p className="mt-2 text-sm font-semibold text-teal-200 sm:text-lg">Vendi con RiverSpendShop</p>
+                <p className="mt-3 max-w-2xl text-sm leading-6 text-white/90 sm:text-base">Registrati, apri la tua vetrina e carica i tuoi prodotti. Fatti conoscere e raggiungi nuovi clienti con gli strumenti promozionali RS Spons.</p>
+                <div className="mt-4 grid grid-cols-1 gap-2 text-sm sm:grid-cols-3">
+                  <span className="flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-3 py-2"><span aria-hidden="true">👤</span><span>Registrati</span></span>
+                  <span className="flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-3 py-2"><span aria-hidden="true">🏪</span><span>Apri la tua vetrina</span></span>
+                  <span className="flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-3 py-2"><span aria-hidden="true">📦</span><span>Carica e vendi</span></span>
+                </div>
+                <p className="mt-3 text-xs leading-5 text-cyan-100/90 sm:text-sm">Segui ordini e risultati della tua attività. Consulta le condizioni di vendita e le commissioni applicabili prima di iniziare.</p>
+              </div>
+              <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-teal-200/20 bg-gradient-to-br from-teal-500/20 to-amber-300/10 p-4 sm:min-w-48 sm:p-6">
+                <div className="flex items-center justify-center gap-2 text-4xl sm:text-5xl" aria-hidden="true"><span>🛍️</span><span>💰</span></div>
+                <span className="inline-flex items-center justify-center rounded-full bg-amber-300 px-5 py-3 text-center text-sm font-black text-slate-950 shadow-lg transition group-hover:bg-amber-200 sm:text-base">ENTRA IN RIVERSPEND <span className="ml-2" aria-hidden="true">→</span></span>
+                <span className="text-center text-xs font-medium text-teal-100">Più opportunità. Più visibilità.</span>
+              </div>
+            </div>
+          </a>
+
           <div className="mb-5 flex items-end justify-between gap-3">
             <div>
               <h2 className="text-2xl font-bold">{t('products')}</h2>
