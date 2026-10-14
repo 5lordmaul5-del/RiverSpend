@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="700" viewBox="0 0 1600 700">
+<defs>
+ <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#f8d9a1"/><stop offset=".48" stop-color="#f7efce"/><stop offset="1" stop-color="#a5e5d8"/></linearGradient>
+ <linearGradient id="water" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#41d8cf"/><stop offset="1" stop-color="#087b89"/></linearGradient>
+ <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fff0aa"/><stop offset="1" stop-color="#e8ad3e"/></linearGradient>
+ <linearGradient id="boat" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#a76d3c"/><stop offset="1" stop-color="#603b29"/></linearGradient>
+</defs>
+<rect width="1600" height="700" fill="url(#sky)"/>
+<circle cx="220" cy="120" r="72" fill="#fff5cf" opacity=".9"/>
+<path d="M0 300 Q180 210 360 290 T720 280 T1080 270 T1440 260 T1600 280V450H0Z" fill="#72cbb8" opacity=".55"/>
+<path d="M0 360 Q180 280 360 350 T720 340 T1080 330 T1440 320 T1600 340V700H0Z" fill="#168d8a"/>
+<path d="M0 420 Q180 360 360 420 T720 410 T1080 400 T1440 390 T1600 410V700H0Z" fill="url(#water)"/>
+<g fill="none" stroke="#b7fff0" stroke-linecap="round" opacity=".75"><path d="M0 470Q160 440 320 470T640 470T960 465T1280 460T1600 450" stroke-width="7"/><path d="M0 550Q180 520 360 550T720 545T1080 535T1440 530T1600 520" stroke-width="5"/><path d="M80 620h250m120-30h190m180 35h250m80-30h170" stroke-width="4"/></g>
+<!-- village stalls on the riverbank -->
+<g stroke="#f4c866" stroke-width="7" stroke-linejoin="round">
+ <path d="M850 230h230v180H850Z" fill="#f9f2dc"/><path d="M820 230l145-105 145 105Z" fill="#e9b44e"/>
+ <path d="M1110 270h190v145h-190Z" fill="#fff6e1"/><path d="M1085 270l120-85 120 85Z" fill="#43bfb0"/>
+ <path d="M1330 300h160v125h-160Z" fill="#f9f2dc"/><path d="M1305 300l105-78 105 78Z" fill="#dba13d"/>
+</g>
+<g fill="#14777b"><rect x="890" y="275" width="48" height="60" rx="5"/><rect x="965" y="275" width="48" height="60" rx="5"/><rect x="1140" y="305" width="42" height="52" rx="5"/><rect x="1210" y="305" width="42" height="52" rx="5"/><rect x="1360" y="330" width="42" height="50" rx="5"/></g>
+<!-- lanterns -->
+<g stroke="#fff0b1" stroke-width="5" fill="#f9d16e"><path d="M900 80v60M1090 90v50M1300 75v60"/><circle cx="900" cy="150" r="17"/><circle cx="1090" cy="140" r="17"/><circle cx="1300" cy="145" r="17"/></g>
+<!-- boat -->
+<path d="M280 480Q530 540 800 475L735 595Q520 650 345 585Z" fill="url(#boat)" stroke="#f6d278" stroke-width="9"/>
+<path d="M320 510Q530 560 765 505" fill="none" stroke="#eab65a" stroke-width="12"/>
+<path d="M420 520v-115q60-65 120 0v130" fill="#f8e9bd" stroke="#0c7076" stroke-width="8"/>
+<path d="M405 408q75-95 150 0Z" fill="#e9b14a" stroke="#fff0b0" stroke-width="7"/>
+<rect x="430" y="435" width="35" height="45" rx="5" fill="#2ebfb4"/><rect x="477" y="435" width="35" height="45" rx="5" fill="#2ebfb4"/>
+<!-- parcels and shopping bag -->
+<g stroke="#fff0b0" stroke-width="6" stroke-linejoin="round"><path d="M565 430l75-42 80 42-78 48Z" fill="#f0bd50"/><path d="M565 430v82l77 43v-77Z" fill="#bb7c36"/><path d="M642 478l78-48v82l-78 43Z" fill="#f8d982"/><path d="M680 365h125l-10 130H690Z" fill="#fff8e5"/><path d="M710 365q5-70 38-70t38 70" fill="none" stroke="#fff8e5" stroke-width="12"/></g>
+<path d="M710 405h65M710 430h65" stroke="#16a7a3" stroke-width="9" stroke-linecap="round"/>
+<circle cx="755" cy="465" r="17" fill="url(#gold)" stroke="#c48a2d" stroke-width="3"/>
+<!-- small fish -->
+<g transform="translate(1040 510)" fill="#ffcf65"><ellipse cx="0" cy="0" rx="28" ry="15"/><path d="M-24 0l-23-17v34Z"/><circle cx="12" cy="-3" r="3" fill="#074b58"/></g>
+<g transform="translate(1250 585) scale(.7)" fill="#ffcf65"><ellipse cx="0" cy="0" rx="28" ry="15"/><path d="M-24 0l-23-17v34Z"/><circle cx="12" cy="-3" r="3" fill="#074b58"/></g>
+<!-- foreground glints -->
+<g fill="#fff4bd"><circle cx="160" cy="445" r="6"/><circle cx="215" cy="505" r="4"/><circle cx="870" cy="570" r="5"/><circle cx="1460" cy="490" r="5"/><circle cx="1400" cy="570" r="4"/></g>
+<rect x="14" y="14" width="1572" height="672" rx="30" fill="none" stroke="#e7bd5b" stroke-width="7"/>
+</svg>
