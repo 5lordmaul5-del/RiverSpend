@@ -893,7 +893,10 @@ export default function Home() {
       </div>
       <style jsx>{`
         .rs-apps-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; align-items:stretch; }
-        .rs-feature-card { min-width:0; height:290px; overflow:hidden; display:flex; }\n        .rs-feature-card > a, .rs-feature-card > button { display:flex; flex-direction:column; flex:1; min-height:0; }\n        .rs-feature-card .rs-feature-media { box-sizing:border-box; height:112px !important; min-height:112px !important; max-height:112px; flex:0 0 112px; }\n        .rs-feature-action { margin-top:auto !important; min-height:36px; flex-shrink:0; justify-content:center; }
+        .rs-feature-card { min-width:0; height:290px; overflow:hidden; display:flex; }
+        .rs-feature-card > a, .rs-feature-card > button { display:flex; flex-direction:column; flex:1; min-height:0; }
+        .rs-feature-card .rs-feature-media { box-sizing:border-box; height:112px !important; min-height:112px !important; max-height:112px; flex:0 0 112px; }
+        .rs-feature-action { margin-top:auto !important; min-height:36px; flex-shrink:0; justify-content:center; }
         .rs-feature-card > button { min-width:0; min-height:0; }
         .rs-feature-card a, .rs-feature-card button { -webkit-tap-highlight-color:transparent; }
         /* RS FORCE segue la stessa gerarchia visiva delle altre schede: titolo, immagine, testo. */
