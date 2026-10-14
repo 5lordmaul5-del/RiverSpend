@@ -88,6 +88,7 @@ export default function Home() {
   const [menuRiverSpend, setMenuRiverSpend] = useState(false);
   const [ricerca, setRicerca] = useState('');
   const [riverVoiceStatus, setRiverVoiceStatus] = useState('');
+  const [riverVoiceStyle, setRiverVoiceStyle] = useState('femminile');
   const [categoriaAttiva, setCategoriaAttiva] = useState('');
   const [reteIds, setReteIds] = useState([]);
   const [desideriIds, setDesideriIds] = useState([]);
@@ -349,6 +350,18 @@ export default function Home() {
           window.speechSynthesis.cancel();
           const utterance = new SpeechSynthesisUtterance(message);
           utterance.lang = document.documentElement.lang || 'it-IT';
+          const voiceStyles = {
+            femminile: { pitch: 1.18, rate: 1.0 },
+            maschile: { pitch: 0.78, rate: 0.96 },
+            sensuale: { pitch: 0.88, rate: 0.84 },
+            robotica: { pitch: 0.62, rate: 0.9 }
+          };
+          const style = voiceStyles[riverVoiceStyle] || voiceStyles.femminile;
+          utterance.pitch = style.pitch;
+          utterance.rate = style.rate;
+          const availableVoices = window.speechSynthesis.getVoices();
+          const italianVoice = availableVoices.find((voice) => /^it([-_]|$)/i.test(voice.lang));
+          if (italianVoice) utterance.voice = italianVoice;
           window.speechSynthesis.speak(utterance);
         }
       };
@@ -694,6 +707,15 @@ export default function Home() {
                 </a>
                 <a href="/profilo" aria-label={t('profile')} className="flex h-10 w-8 items-center justify-center text-2xl hover:text-teal-700">♙</a>
               </div>
+            </div>
+            <div className="mx-auto mt-2 flex max-w-6xl flex-wrap items-center justify-center gap-2">
+              <label htmlFor="river-voice-style" className="text-xs font-semibold text-slate-600">Voce River AI</label>
+              <select id="river-voice-style" value={riverVoiceStyle} onChange={(e) => setRiverVoiceStyle(e.target.value)} className="rounded-full border border-teal-200 bg-white px-3 py-1.5 text-xs font-semibold text-teal-900">
+                <option value="femminile">Femminile</option>
+                <option value="maschile">Maschile</option>
+                <option value="sensuale">Calda e profonda</option>
+                <option value="robotica">Robotica sci-fi</option>
+              </select>
             </div>
             {riverVoiceStatus && <p role="status" aria-live="polite" className="mx-auto mt-2 max-w-6xl rounded-lg bg-teal-50 px-3 py-2 text-center text-xs font-medium text-teal-900">{riverVoiceStatus}</p>}
             <div className="mt-2 flex justify-center">
