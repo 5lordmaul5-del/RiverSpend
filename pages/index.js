@@ -785,7 +785,7 @@ export default function Home() {
                 <div className="rs-feature-media mt-3 flex w-full items-center justify-center overflow-hidden rounded-xl border border-amber-300/60 bg-gradient-to-br from-amber-300 via-yellow-600 to-amber-900">
                   <div className="flex flex-col items-center justify-center px-2 text-slate-950">
                     <span className="text-4xl font-black tracking-tight">RSSS</span>
-                    <span className="mt-1 text-center text-[10px] font-extrabold uppercase tracking-widest">Super Saldi</span>
+                    <span className="mt-1 text-center text-[10px] font-extrabold uppercase tracking-widest">Sale</span>
                     <span className="mt-2 text-2xl" aria-hidden="true">％</span>
                   </div>
                 </div>
