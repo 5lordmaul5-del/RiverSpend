@@ -37,8 +37,8 @@
 <g fill="#fff4bd"><circle cx="160" cy="445" r="6"/><circle cx="215" cy="505" r="4"/><circle cx="870" cy="570" r="5"/><circle cx="1460" cy="490" r="5"/><circle cx="1400" cy="570" r="4"/></g>
 <!-- titolo integrato nell'illustrazione -->
 <rect x="48" y="42" width="720" height="178" rx="26" fill="#064b59" fill-opacity=".86" stroke="#f5d278" stroke-width="5"/>
-<text x="82" y="105" font-family="Arial,sans-serif" font-size="25" font-weight="800" letter-spacing="4" fill="#9ef0df">LA TUA ESPERIENZA SUL FIUME</text>
-<text x="82" y="169" font-family="Arial,sans-serif" font-size="54" font-weight="900" fill="#ffffff">La tua rete.</text>
-<text x="390" y="169" font-family="Arial,sans-serif" font-size="54" font-weight="900" fill="#ffe08a">Il tuo mercato.</text>
+<text x="82" y="94" font-family="Arial,sans-serif" font-size="25" font-weight="800" letter-spacing="4" fill="#9ef0df">LA TUA ESPERIENZA SUL FIUME</text>
+<text x="82" y="151" font-family="Arial,sans-serif" font-size="48" font-weight="900" fill="#ffffff">La tua rete.</text>
+<text x="82" y="205" font-family="Arial,sans-serif" font-size="48" font-weight="900" fill="#ffe08a">Il tuo mercato.</text>
 <rect x="14" y="14" width="1572" height="672" rx="30" fill="none" stroke="#e7bd5b" stroke-width="7"/>
 </svg>
