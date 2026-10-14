@@ -89,6 +89,7 @@ export default function Home() {
   const [ricerca, setRicerca] = useState('');
   const [riverVoiceStatus, setRiverVoiceStatus] = useState('');
   const [riverVoiceStyle, setRiverVoiceStyle] = useState('femminile');
+  const [riverVoiceActive, setRiverVoiceActive] = useState(false);
   const [categoriaAttiva, setCategoriaAttiva] = useState('');
   const [reteIds, setReteIds] = useState([]);
   const [desideriIds, setDesideriIds] = useState([]);
@@ -339,6 +340,7 @@ export default function Home() {
     recognition.lang = document.documentElement.lang || 'it-IT';
     recognition.continuous = false;
     recognition.interimResults = false;
+    setRiverVoiceActive(true);
     setRiverVoiceStatus('River ti ascolta…');
     recognition.onresult = (event) => {
       const spoken = String(event.results?.[0]?.[0]?.transcript || '').trim();
@@ -362,6 +364,8 @@ export default function Home() {
           const availableVoices = window.speechSynthesis.getVoices();
           const italianVoice = availableVoices.find((voice) => /^it([-_]|$)/i.test(voice.lang));
           if (italianVoice) utterance.voice = italianVoice;
+          utterance.onstart = () => setRiverVoiceActive(true);
+          utterance.onend = () => setRiverVoiceActive(false);
           window.speechSynthesis.speak(utterance);
         }
       };
@@ -692,7 +696,7 @@ export default function Home() {
               <div className="flex items-center gap-1">
                 <button type="button" onClick={() => { setMenuCategorie(!menuCategorie); setMenuRiverSpend(false); }} aria-label={t('categories')} aria-expanded={menuCategorie} className="flex h-11 w-10 items-center justify-center rounded-xl text-3xl leading-none text-slate-900 hover:bg-amber-50">☰</button>
                 <button type="button" onClick={() => setRicercaAperta(!ricercaAperta)} aria-label="Apri ricerca" aria-expanded={ricercaAperta} className="flex h-10 w-9 items-center justify-center text-2xl text-slate-900 hover:text-teal-700">⌕</button>
-                <button type="button" onClick={avviaRiverVoice} aria-label="Parla con River AI — Hey River" title="Parla con River AI — Hey River" className="flex h-10 w-9 items-center justify-center rounded-full border border-teal-200 bg-teal-50 text-xl text-teal-800 hover:bg-teal-100">🎙️</button>
+                <button type="button" onClick={avviaRiverVoice} aria-label="Parla con River AI — Hey River" title="Parla con River AI — Hey River" className={`relative flex h-10 w-10 items-center justify-center rounded-full border border-teal-200 bg-slate-950 text-teal-200 shadow-[0_0_12px_rgba(45,212,191,.28)] transition ${riverVoiceActive ? 'scale-110 shadow-[0_0_22px_rgba(45,212,191,.85)]' : 'hover:bg-slate-900'}`}><svg viewBox="0 0 48 48" className={`h-9 w-9 ${riverVoiceActive ? 'animate-pulse' : ''}`} role="img" aria-label="River AI onde luminose"><circle cx="24" cy="24" r="20" fill="none" stroke="#5eead4" strokeWidth="1.8" opacity=".9"/><path d="M5 24 C12 24 13 35 20 35 S28 13 36 13 S40 24 43 24" fill="none" stroke="#99fff0" strokeWidth="1.8" strokeLinecap="round"><animate attributeName="d" dur="2.2s" repeatCount="indefinite" values="M5 24 C12 24 13 35 20 35 S28 13 36 13 S40 24 43 24;M5 24 C12 24 13 14 20 14 S28 35 36 35 S40 24 43 24;M5 24 C12 24 13 35 20 35 S28 13 36 13 S40 24 43 24"/></path><path d="M5 24 C12 24 13 30 20 30 S28 18 36 18 S40 24 43 24" fill="none" stroke="#2dd4bf" strokeWidth="1.3" strokeLinecap="round" opacity=".9"><animate attributeName="d" dur="1.6s" repeatCount="indefinite" values="M5 24 C12 24 13 30 20 30 S28 18 36 18 S40 24 43 24;M5 24 C12 24 13 18 20 18 S28 30 36 30 S40 24 43 24;M5 24 C12 24 13 30 20 30 S28 18 36 18 S40 24 43 24"/></path></svg></button>
               </div>
               <a href="/" aria-label="RiverSpendShop, pagina iniziale" className="absolute left-1/2 top-1/2 flex w-max max-w-[48%] -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center text-center">
                 <h1 className="rs-brand text-[1.45rem] font-extrabold leading-none tracking-tight text-black sm:text-4xl">RiverSpend</h1>
