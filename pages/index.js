@@ -766,15 +766,19 @@ export default function Home() {
                 <a href="/profilo" aria-label={t('profile')} className="flex h-10 w-8 items-center justify-center text-2xl hover:text-teal-700">♙</a>
               </div>
             </div>
-            <div className="mt-4 flex justify-center"><button type="button" onClick={avviaRiverVoice} aria-label="Parla con River AI — Hey River" title="Parla con River AI — Hey River" className={`relative flex h-10 w-10 items-center justify-center rounded-full border border-teal-200 bg-slate-950 text-teal-200 shadow-[0_0_12px_rgba(45,212,191,.28)] transition ${riverVoiceActive ? 'scale-110 shadow-[0_0_22px_rgba(45,212,191,.85)]' : 'hover:bg-slate-900'}`}><svg viewBox="0 0 48 48" className={`h-9 w-9 ${riverVoiceActive ? 'animate-pulse' : ''}`} role="img" aria-label="River AI onde luminose"><circle cx="24" cy="24" r="20" fill="none" stroke="#5eead4" strokeWidth="1.8" opacity=".9"/><path d="M5 24 C12 24 13 35 20 35 S28 13 36 13 S40 24 43 24" fill="none" stroke="#99fff0" strokeWidth="1.8" strokeLinecap="round"><animate attributeName="d" dur="2.2s" repeatCount="indefinite" values="M5 24 C12 24 13 35 20 35 S28 13 36 13 S40 24 43 24;M5 24 C12 24 13 14 20 14 S28 35 36 35 S40 24 43 24;M5 24 C12 24 13 35 20 35 S28 13 36 13 S40 24 43 24"/></path><path d="M5 24 C12 24 13 30 20 30 S28 18 36 18 S40 24 43 24" fill="none" stroke="#2dd4bf" strokeWidth="1.3" strokeLinecap="round" opacity=".9"><animate attributeName="d" dur="1.6s" repeatCount="indefinite" values="M5 24 C12 24 13 30 20 30 S28 18 36 18 S40 24 43 24;M5 24 C12 24 13 18 20 18 S28 30 36 30 S40 24 43 24;M5 24 C12 24 13 30 20 30 S28 18 36 18 S40 24 43 24"/></path></svg></button></div>
-            <div className="mx-auto mt-2 flex max-w-6xl flex-wrap items-center justify-center gap-2">
-              <label htmlFor="river-voice-style" className="text-xs font-semibold text-slate-600">Voce River AI</label>
-              <select id="river-voice-style" value={riverVoiceStyle} onChange={(e) => setRiverVoiceStyle(e.target.value)} className="rounded-full border border-teal-200 bg-white px-3 py-1.5 text-xs font-semibold text-teal-900">
-                <option value="femminile">Femminile</option>
-                <option value="maschile">Maschile</option>
-                <option value="sensuale">Calda e profonda</option>
-                <option value="robotica">Robotica sci-fi</option>
-              </select>
+            <div className="mx-auto mt-4 flex max-w-xs flex-col items-center rounded-3xl border border-blue-300 bg-gradient-to-b from-blue-100 via-sky-50 to-white px-4 py-4 shadow-[0_8px_28px_rgba(3,105,161,.15)]">
+              <span className="mb-2 text-2xl font-black tracking-wide text-blue-900">River AI</span>
+              <button type="button" onClick={avviaRiverVoice} aria-label="Parla con River AI — Hey River" title="Parla con River AI — Hey River" className={`relative flex h-20 w-20 items-center justify-center rounded-full border-2 border-cyan-300 bg-gradient-to-br from-blue-950 via-blue-800 to-cyan-700 text-cyan-100 shadow-[0_0_22px_rgba(2,132,199,.5)] transition ${riverVoiceActive ? 'scale-110 shadow-[0_0_32px_rgba(14,165,233,.9)]' : 'hover:scale-105'}`}><svg viewBox="0 0 48 48" className={`h-16 w-16 ${riverVoiceActive ? 'animate-pulse' : ''}`} role="img" aria-label="River AI onde luminose"><circle cx="24" cy="24" r="20" fill="none" stroke="#5eead4" strokeWidth="1.8" opacity=".9"/><path d="M5 24 C12 24 13 35 20 35 S28 13 36 13 S40 24 43 24" fill="none" stroke="#99fff0" strokeWidth="1.8" strokeLinecap="round"><animate attributeName="d" dur="2.2s" repeatCount="indefinite" values="M5 24 C12 24 13 35 20 35 S28 13 36 13 S40 24 43 24;M5 24 C12 24 13 14 20 14 S28 35 36 35 S40 24 43 24;M5 24 C12 24 13 35 20 35 S28 13 36 13 S40 24 43 24"/></path><path d="M5 24 C12 24 13 30 20 30 S28 18 36 18 S40 24 43 24" fill="none" stroke="#2dd4bf" strokeWidth="1.3" strokeLinecap="round" opacity=".9"><animate attributeName="d" dur="1.6s" repeatCount="indefinite" values="M5 24 C12 24 13 30 20 30 S28 18 36 18 S40 24 43 24;M5 24 C12 24 13 18 20 18 S28 30 36 30 S40 24 43 24;M5 24 C12 24 13 30 20 30 S28 18 36 18 S40 24 43 24"/></path></svg></button>
+              <span className="mt-2 text-[11px] font-medium text-blue-800">Tocca per parlare con River</span>
+              <div className="mt-3 flex items-center justify-center gap-2">
+                <label htmlFor="river-voice-style" className="text-[11px] font-medium text-slate-600">Voce</label>
+                <select id="river-voice-style" value={riverVoiceStyle} onChange={(e) => setRiverVoiceStyle(e.target.value)} className="max-w-[160px] rounded-full border border-blue-200 bg-white px-2 py-1 text-xs font-medium text-blue-900">
+                  <option value="femminile">Femminile</option>
+                  <option value="maschile">Maschile</option>
+                  <option value="sensuale">Calda e profonda</option>
+                  <option value="robotica">Robotica sci-fi</option>
+                </select>
+              </div>
             </div>
             {riverVoiceStatus && <p role="status" aria-live="polite" className="mx-auto mt-2 max-w-6xl rounded-lg bg-teal-50 px-3 py-2 text-center text-xs font-medium text-teal-900">{riverVoiceStatus}</p>}
             <div className="mt-2 flex justify-center">
