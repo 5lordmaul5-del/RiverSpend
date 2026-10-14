@@ -713,16 +713,16 @@ export default function Home() {
               </button>
             </section>
 
-            <section className={`rs-feature-card rs-fortune-card rounded-2xl border border-amber-400/40 bg-gradient-to-br from-slate-950 via-amber-950/30 to-slate-900 p-3 text-center shadow-xl shadow-amber-950/20 ${rsFortuneAperta ? "rs-fortune-open" : ""}`}>
+            <section className="rs-feature-card rs-fortune-card rounded-2xl border border-amber-400/40 bg-gradient-to-br from-slate-950 via-amber-950/30 to-slate-900 p-3 text-center shadow-xl shadow-amber-950/20">
               <div className="flex h-full w-full flex-col items-center overflow-hidden text-center">
                 <p className="shrink-0 min-h-4 text-[10px] font-bold uppercase tracking-[0.22em] text-amber-100">🎡 RS FORTUNE</p>
                 
                 <h2 className="mt-1 min-h-[44px] shrink-0 text-base font-extrabold leading-tight text-white">La ruota della fortuna</h2>
                 {rsFortuneAperta ? (
                   <div className="mt-2 flex min-h-0 w-full flex-1 flex-col items-center overflow-hidden">
-                    <div className="relative mx-auto h-[138px] w-[138px] shrink-0">
+                    <div className="relative mx-auto h-[112px] w-[112px] shrink-0">
                       <div className="absolute -top-1 left-1/2 z-20 -translate-x-1/2 text-lg">🔻</div>
-                      <div className="rs-fortune-wheel relative h-[138px] w-[138px] rounded-full border-4 border-amber-300 shadow-[0_0_22px_rgba(251,191,36,.4)]" style={{transform:`rotate(${rsFortuneRotation}deg)`, transition: rsFortuneSpinning ? "transform 5.2s cubic-bezier(.12,.72,.08,1)" : "none"}}>
+                      <div className="rs-fortune-wheel relative h-[112px] w-[112px] rounded-full border-4 border-amber-300 shadow-[0_0_22px_rgba(251,191,36,.4)]" style={{transform:`rotate(${rsFortuneRotation}deg)`, transition: rsFortuneSpinning ? "transform 5.2s cubic-bezier(.12,.72,.08,1)" : "none"}}>
                         <div className="rs-fortune-labels" aria-hidden="true">
                           <span>💰<br/>5 RM</span><span>💰<br/>10 RM</span><span>💰<br/>20 RM</span><span>🚚<br/>FREE</span>
                           <span>🏷️<br/>5%</span><span>🔥<br/>BOOST</span><span>🎁<br/>SORPRESA</span><span>⭐<br/>500 RSP</span>
@@ -927,9 +927,7 @@ export default function Home() {
       <style jsx>{`
         .rs-apps-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; align-items:stretch; }
         .rs-feature-card { min-width:0; height:300px; overflow:hidden; display:flex; }
-        .rs-fortune-open { height:420px !important; }
-        .rs-fortune-open > div { overflow-y:auto; }
-        .rs-feature-card > a, .rs-feature-card > button { display:flex; flex-direction:column; flex:1; min-height:0; }
+                .rs-feature-card > a, .rs-feature-card > button { display:flex; flex-direction:column; flex:1; min-height:0; }
         .rs-feature-card .rs-feature-media { box-sizing:border-box; height:112px !important; min-height:112px !important; max-height:112px; flex:0 0 112px; }
         .rs-feature-action { margin-top:auto !important; min-height:36px; flex-shrink:0; justify-content:center; }
         .rs-feature-card > button { min-width:0; min-height:0; }
@@ -949,7 +947,6 @@ export default function Home() {
         @media (min-width:768px) {
           .rs-apps-grid { grid-template-columns:repeat(4,minmax(0,1fr)); }
           .rs-feature-card { height:320px; }
-          .rs-fortune-open { height:440px !important; }
         }
         @keyframes rs-palantir-pulse {
           0%, 100% { transform: scale(1); filter: brightness(1); }
@@ -993,10 +990,10 @@ export default function Home() {
         .rs-fortune-labels span {
           position:absolute; left:50%; top:50%; width:50px; height:44px;
           margin-left:-25px; margin-top:-22px; text-align:center;
-          color:#451a03; font-size:10px; line-height:1.1; font-weight:900;
+          color:#451a03; font-size:9px; line-height:1.05; font-weight:900;
           text-shadow:0 0 2px rgba(255,255,255,.35); transform-origin:25px 22px;
         }
-        .rs-fortune-labels span:nth-child(1){transform:rotate(22.5deg) translateY(-44px);}
+        .rs-fortune-labels span:nth-child(1){transform:rotate(22.5deg) translateY(-35px);}
         .rs-fortune-labels span:nth-child(2){transform:rotate(67.5deg) translateY(-44px);}
         .rs-fortune-labels span:nth-child(3){transform:rotate(112.5deg) translateY(-53px);}
         .rs-fortune-labels span:nth-child(4){transform:rotate(157.5deg) translateY(-53px);}
