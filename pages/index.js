@@ -686,7 +686,7 @@ export default function Home() {
           <div className="rs-apps-grid mb-5">
             <section className="rs-feature-card rs-force-card rounded-2xl border border-cyan-400/40 bg-gradient-to-br from-slate-950 via-cyan-950/50 to-indigo-950/60 p-3 text-center shadow-xl shadow-cyan-950/20">
               <button type="button" onClick={() => { if (rsForceAperta) setRsForceAperta(false); else apriRsForce(); }} className="flex h-full w-full flex-col items-center overflow-hidden text-center">
-                <div className="rs-force-stage relative mx-auto flex h-36 w-full shrink-0 items-center justify-center overflow-hidden rounded-xl border border-cyan-300/50">
+                <div className="rs-force-stage rs-feature-media relative mx-auto flex h-36 w-full shrink-0 items-center justify-center overflow-hidden rounded-xl border border-cyan-300/50">
                   <img src="/rs-force.jpg" alt="RS FORCE: sfera energetica RiverSpend blu e oro" className="absolute inset-0 h-full w-full object-cover object-center opacity-100" />
                   {rsForceAperta && prodottiVisibili.slice(0, 4).map((p, index) => {
                     const positions = [{ x: '-82px', y: '-26px' }, { x: '82px', y: '-26px' }, { x: '-82px', y: '26px' }, { x: '82px', y: '26px' }];
@@ -700,9 +700,9 @@ export default function Home() {
                   })}
                   <span className="relative z-20 flex h-20 w-20 items-center justify-center rounded-full border border-cyan-200/70 bg-[radial-gradient(circle_at_35%_30%,rgba(255,255,255,.95),rgba(103,232,249,.45)_18%,rgba(8,47,73,.95)_58%,rgba(2,6,23,1)_100%)] text-3xl shadow-[0_0_25px_rgba(34,211,238,.55)]" style={{animation:'rs-palantir-pulse 3s ease-in-out infinite'}}>🔮</span>
                 </div>
-                <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.25em] text-cyan-200">RS FORCE</p>
-                <h2 className="mt-1 text-base font-extrabold leading-tight text-white">RS FORCE · Potenzia la tua ricerca</h2>
-                {!rsForceAperta ? <p className="mt-2 px-1 text-[11px] leading-4 text-slate-100">Tocca la sfera per collegare la ricerca ai prodotti più pertinenti.</p> : (
+                <p className="mt-1 min-h-4 text-[10px] font-bold uppercase tracking-[0.25em] text-cyan-200">RS FORCE</p>
+                <h2 className="mt-1 min-h-[44px] text-base font-extrabold leading-tight text-white">RS FORCE · Potenzia la tua ricerca</h2>
+                {!rsForceAperta ? <p className="mt-2 min-h-[32px] px-1 text-[11px] leading-4 text-slate-100">Tocca la sfera per collegare la ricerca ai prodotti più pertinenti.</p> : (
                   <div className="mt-2 grid w-full grid-cols-2 gap-1.5">
                     <a onClick={(e) => e.stopPropagation()} href={categoriaAttiva ? `/?category=${encodeURIComponent(categoriaAttiva)}&future=offers` : '/?future=offers'} className="rounded-xl border border-amber-300/50 bg-amber-950/50 p-2 text-[10px] font-bold text-white">🏷️ Promozioni</a>
                     <a onClick={(e) => e.stopPropagation()} href={categoriaAttiva ? `/?category=${encodeURIComponent(categoriaAttiva)}&future=new` : '/?future=new'} className="rounded-xl border border-cyan-300/50 bg-cyan-950/50 p-2 text-[10px] font-bold text-white">🆕 Novità</a>
@@ -715,9 +715,9 @@ export default function Home() {
 
             <section className="rs-feature-card rounded-2xl border border-amber-400/40 bg-gradient-to-br from-slate-950 via-amber-950/30 to-slate-900 p-3 text-center shadow-xl shadow-amber-950/20">
               <button type="button" onClick={() => setRsFortuneAperta((v) => !v)} className="flex h-full w-full flex-col items-center overflow-hidden text-center">
-                <p className="shrink-0 text-[10px] font-bold uppercase tracking-[0.22em] text-amber-100">🎡 RS FORTUNE</p>
+                <p className="shrink-0 min-h-4 text-[10px] font-bold uppercase tracking-[0.22em] text-amber-100">🎡 RS FORTUNE</p>
                 
-                <h2 className="mt-1 shrink-0 text-base font-extrabold leading-tight text-white">La ruota della fortuna</h2>
+                <h2 className="mt-1 min-h-[44px] shrink-0 text-base font-extrabold leading-tight text-white">La ruota della fortuna</h2>
                 {rsFortuneAperta ? (
                   <div className="mt-2 flex min-h-0 w-full flex-1 flex-col items-center overflow-hidden">
                     <div className="relative mx-auto h-[170px] w-[170px] shrink-0">
@@ -736,8 +736,8 @@ export default function Home() {
                   </div>
                 ) : (
                   <div className="mt-2 flex flex-1 flex-col items-center justify-center overflow-hidden">
-                    <img src="/rs-fortune.jpg" alt="RS FORTUNE: ruota dei premi RiverSpend" className="mt-2 h-36 w-full rounded-xl border border-amber-300/50 object-cover object-center" loading="lazy" />
-                    <p className="mt-2 px-1 text-[10px] leading-4 text-slate-100">Tocca per aprire e girare la ruota.</p>
+                    <img src="/rs-fortune.jpg" alt="RS FORTUNE: ruota dei premi RiverSpend" className="rs-feature-media mt-2 h-36 w-full rounded-xl border border-amber-300/50 object-cover object-center" loading="lazy" />
+                    <p className="mt-2 min-h-[32px] px-1 text-[10px] leading-4 text-slate-100">Tocca per aprire e girare la ruota.</p>
                   </div>
                 )}
               </button>
@@ -754,13 +754,13 @@ export default function Home() {
                   <p className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-violet-100">RS LOTTERY</p>
                   <span className="rounded-full border border-amber-300/50 bg-amber-300/10 px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wider text-amber-200">RiverSpend</span>
                 </div>
-                <div className="mt-3 w-full overflow-hidden rounded-xl border border-violet-200/50 bg-black/20">
+                <div className="rs-feature-media mt-3 w-full overflow-hidden rounded-xl border border-violet-200/50 bg-black/20">
                   <img src="/rs-lottery.jpg" alt="RS Lottery RiverSpend, iniziative e premi" className="h-36 w-full object-cover object-center transition-transform duration-300" loading="lazy" />
                 </div>
                 <div className="flex flex-1 flex-col items-center justify-center py-3">
-                  <p className="text-lg font-extrabold text-white">Premi e iniziative</p>
-                  <p className="mt-1 text-xs leading-5 text-violet-100">Come funzionerà · categorie di premi · calendario</p>
-                  <span className="mt-3 inline-flex items-center gap-2 rounded-full border border-violet-200/50 bg-violet-800/40 px-4 py-2 text-[11px] font-extrabold text-white">Entra in RS Lottery <span aria-hidden="true">→</span></span>
+                  <p className="min-h-[28px] text-lg font-extrabold text-white">Premi e iniziative</p>
+                  <p className="mt-1 min-h-[40px] text-xs leading-5 text-violet-100">Come funzionerà · categorie di premi · calendario</p>
+                  <span className="rs-feature-action mt-3 inline-flex items-center gap-2 rounded-full border border-violet-200/50 bg-violet-800/40 px-4 py-2 text-[11px] font-extrabold text-white">Entra in RS Lottery <span aria-hidden="true">→</span></span>
                   <p className="mt-2 text-[10px] text-amber-200">Iniziativa in preparazione</p>
                 </div>
               </a>
@@ -769,12 +769,12 @@ export default function Home() {
             <section className="rs-feature-card rounded-2xl border border-amber-400/60 p-3 text-center shadow-xl shadow-amber-950/30" style={{backgroundColor:"#252719",backgroundImage:"radial-gradient(ellipse at 15% 20%, #606044 0 8%, transparent 9%), radial-gradient(ellipse at 72% 18%, #41432c 0 11%, transparent 12%), radial-gradient(ellipse at 42% 75%, #56583b 0 10%, transparent 11%), radial-gradient(ellipse at 90% 78%, #353824 0 13%, transparent 14%), radial-gradient(ellipse at 28% 48%, #353824 0 12%, transparent 13%), linear-gradient(135deg,#17190f,#303322,#17190f)"}}>
               <a href="/rs-folgore" aria-label="Apri la missione RS Folgore" className="flex h-full w-full flex-col items-center justify-center overflow-hidden rounded-xl text-center focus:outline-none focus:ring-4 focus:ring-amber-300/70">
                 <p className="shrink-0 text-[10px] font-bold uppercase tracking-[0.22em] text-amber-100">⚡ RS FOLGORE ⚡</p>
-                <div className="mt-3 w-full overflow-hidden rounded-xl border border-amber-300/60">
+                <div className="rs-feature-media mt-3 w-full overflow-hidden rounded-xl border border-amber-300/60">
                   <img src="/rs-folgore-pacchi.png" alt="RS FOLGORE: aereo RiverSpend che consegna pacchi con paracadute" className="h-36 w-full object-cover" loading="lazy" />
                 </div>
-                <p className="mt-3 text-sm font-extrabold text-white">Offerte che arrivano dal cielo</p>
-                <p className="mt-2 text-[10px] leading-4 text-amber-50">Offerte lampo per prodotti di ogni categoria.</p>
-                <span className="mt-3 inline-flex items-center justify-center rounded-full border border-amber-300/60 bg-gradient-to-b from-amber-300 to-amber-600 px-4 py-2 text-[11px] font-extrabold text-slate-950">APRI LA MISSIONE →</span>
+                <p className="mt-3 min-h-[40px] text-sm font-extrabold text-white">Offerte che arrivano dal cielo</p>
+                <p className="mt-2 min-h-[32px] text-[10px] leading-4 text-amber-50">Offerte lampo per prodotti di ogni categoria.</p>
+                <span className="rs-feature-action mt-3 inline-flex items-center justify-center rounded-full border border-amber-300/60 bg-gradient-to-b from-amber-300 to-amber-600 px-4 py-2 text-[11px] font-extrabold text-slate-950">APRI LA MISSIONE →</span>
               </a>
             </section>
           </div>
@@ -893,12 +893,12 @@ export default function Home() {
       </div>
       <style jsx>{`
         .rs-apps-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; align-items:stretch; }
-        .rs-feature-card { min-width:0; height:290px; overflow:hidden; }
+        .rs-feature-card { min-width:0; height:290px; overflow:hidden; display:flex; }\n        .rs-feature-card > a, .rs-feature-card > button { display:flex; flex-direction:column; flex:1; min-height:0; }\n        .rs-feature-media { height:144px; min-height:144px; flex-shrink:0; }\n        .rs-feature-action { margin-top:auto; min-height:36px; justify-content:center; }
         .rs-feature-card > button { min-width:0; min-height:0; }
         .rs-feature-card a, .rs-feature-card button { -webkit-tap-highlight-color:transparent; }
         @media (max-width:640px) {
           .rs-apps-grid { gap:8px; }
-          .rs-feature-card { height:280px; }
+          .rs-feature-card { height:280px; }\n          .rs-feature-media { height:112px; min-height:112px; }
         }
         @media (min-width:768px) {
           .rs-apps-grid { grid-template-columns:repeat(4,minmax(0,1fr)); }
