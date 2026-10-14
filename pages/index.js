@@ -766,15 +766,15 @@ export default function Home() {
               </a>
             </section>
 
-            <section className="rs-feature-card rounded-2xl border border-orange-400/40 bg-gradient-to-br from-slate-950 via-orange-950/25 to-slate-900 p-3 text-center shadow-xl shadow-orange-950/20">
-              <a href="/rs-folgore" aria-label="Apri la missione RS Folgore" className="flex h-full w-full flex-col items-center justify-center overflow-hidden rounded-xl text-center focus:outline-none focus:ring-4 focus:ring-orange-300/70">
-                <p className="shrink-0 text-[10px] font-bold uppercase tracking-[0.22em] text-orange-100">⚡ RS FOLGORE</p>
-                <div className="mt-3 w-full overflow-hidden rounded-xl border border-orange-300/40">
-                  <img src="/rs-folgore-pacchi.png" alt="RS FOLGORE: C-130 RiverSpend che consegna pacchi RS con paracadute" className="h-36 w-full object-cover" loading="lazy" />
+            <section className="rs-feature-card rounded-2xl border border-amber-400/60 p-3 text-center shadow-xl shadow-amber-950/30" style={{backgroundColor:"#252719",backgroundImage:"radial-gradient(ellipse at 15% 20%, #606044 0 8%, transparent 9%), radial-gradient(ellipse at 72% 18%, #41432c 0 11%, transparent 12%), radial-gradient(ellipse at 42% 75%, #56583b 0 10%, transparent 11%), radial-gradient(ellipse at 90% 78%, #353824 0 13%, transparent 14%), radial-gradient(ellipse at 28% 48%, #353824 0 12%, transparent 13%), linear-gradient(135deg,#17190f,#303322,#17190f)"}}>
+              <a href="/rs-folgore" aria-label="Apri la missione RS Folgore" className="flex h-full w-full flex-col items-center justify-center overflow-hidden rounded-xl text-center focus:outline-none focus:ring-4 focus:ring-amber-300/70">
+                <p className="shrink-0 text-[10px] font-bold uppercase tracking-[0.22em] text-amber-100">⚡ RS FOLGORE ⚡</p>
+                <div className="mt-3 w-full overflow-hidden rounded-xl border border-amber-300/60">
+                  <img src="/rs-folgore-pacchi.png" alt="RS FOLGORE: aereo RiverSpend che consegna pacchi con paracadute" className="h-36 w-full object-cover" loading="lazy" />
                 </div>
                 <p className="mt-3 text-sm font-extrabold text-white">Offerte che arrivano dal cielo</p>
-                <p className="mt-2 text-[10px] leading-4 text-slate-100">Apri la missione RS Folgore e scopri il progetto.</p>
-                <span className="mt-3 inline-flex items-center justify-center rounded-full border border-orange-300/50 bg-orange-950/70 px-4 py-2 text-[11px] font-extrabold text-orange-100">APRI LA MISSIONE →</span>
+                <p className="mt-2 text-[10px] leading-4 text-amber-50">Offerte lampo per prodotti di ogni categoria.</p>
+                <span className="mt-3 inline-flex items-center justify-center rounded-full border border-amber-300/60 bg-gradient-to-b from-amber-300 to-amber-600 px-4 py-2 text-[11px] font-extrabold text-slate-950">APRI LA MISSIONE →</span>
               </a>
             </section>
           </div>
