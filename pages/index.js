@@ -836,8 +836,7 @@ export default function Home() {
             <div className="relative bg-white px-5 py-4 sm:px-7 sm:py-5">
               <span className="rs-gold-pebble one" aria-hidden="true" />
               <span className="rs-gold-pebble two" aria-hidden="true" />
-              <p className="mb-1 text-[10px] font-semibold uppercase tracking-widest text-teal-700 sm:text-xs">{t('experience')}</p>
-              <h2 className="mb-2 text-2xl font-bold text-slate-800 sm:text-3xl">{t('heroTitle')}</h2>
+
               <p className="mb-3 max-w-2xl text-sm leading-5 text-slate-600 sm:text-base">{t('heroBody')}</p>
               <div className="flex flex-wrap gap-3">
                 <a href="/vendi" className="rs-button rs-button-primary rounded-xl px-4 py-2.5 text-sm font-bold text-slate-950">{t('sellPhoto')}</a>
