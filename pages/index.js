@@ -87,7 +87,7 @@ export default function Home() {
   const [ricercaAperta, setRicercaAperta] = useState(false);
   const [menuRiverSpend, setMenuRiverSpend] = useState(false);
   const [ricerca, setRicerca] = useState('');
-  const [novaVoiceStatus, setNovaVoiceStatus] = useState('');
+  const [riverVoiceStatus, setRiverVoiceStatus] = useState('');
   const [categoriaAttiva, setCategoriaAttiva] = useState('');
   const [reteIds, setReteIds] = useState([]);
   const [desideriIds, setDesideriIds] = useState([]);
@@ -327,22 +327,22 @@ export default function Home() {
     }, 5200);
   }
 
-  function avviaNovaVoice() {
+  function avviaRiverVoice() {
     if (typeof window === 'undefined') return;
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      setNovaVoiceStatus('Il riconoscimento vocale non è supportato da questo browser. Puoi usare la ricerca testuale.');
+      setRiverVoiceStatus('Il riconoscimento vocale non è supportato da questo browser. Puoi usare la ricerca testuale.');
       return;
     }
     const recognition = new SpeechRecognition();
     recognition.lang = document.documentElement.lang || 'it-IT';
     recognition.continuous = false;
     recognition.interimResults = false;
-    setNovaVoiceStatus('Nova ti ascolta…');
+    setRiverVoiceStatus('River ti ascolta…');
     recognition.onresult = (event) => {
       const spoken = String(event.results?.[0]?.[0]?.transcript || '').trim();
       const q = spoken.toLowerCase();
-      setNovaVoiceStatus(spoken ? 'Hai detto: “' + spoken + '”' : 'Non ho capito la richiesta.');
+      setRiverVoiceStatus(spoken ? 'Hai detto: “' + spoken + '”' : 'Non ho capito la richiesta.');
       if (!spoken) return;
       const speak = (message) => {
         if ('speechSynthesis' in window) {
@@ -388,9 +388,9 @@ export default function Home() {
         window.location.href = '/?q=' + encodeURIComponent(searchTerms);
       }
     };
-    recognition.onerror = () => setNovaVoiceStatus('Non sono riuscita a sentire la richiesta. Premi il microfono e riprova.');
-    recognition.onend = () => setNovaVoiceStatus((current) => current === 'Nova ti ascolta…' ? 'Tocca il microfono e parla con Nova.' : current);
-    try { recognition.start(); } catch { setNovaVoiceStatus('Il microfono è occupato. Riprova tra poco.'); }
+    recognition.onerror = () => setRiverVoiceStatus('Non sono riuscita a sentire la richiesta. Premi il microfono e riprova.');
+    recognition.onend = () => setRiverVoiceStatus((current) => current === 'River ti ascolta…' ? 'Tocca il microfono e parla con River.' : current);
+    try { recognition.start(); } catch { setRiverVoiceStatus('Il microfono è occupato. Riprova tra poco.'); }
   }
 
   function apriRsForce() {
@@ -679,7 +679,7 @@ export default function Home() {
               <div className="flex items-center gap-1">
                 <button type="button" onClick={() => { setMenuCategorie(!menuCategorie); setMenuRiverSpend(false); }} aria-label={t('categories')} aria-expanded={menuCategorie} className="flex h-11 w-10 items-center justify-center rounded-xl text-3xl leading-none text-slate-900 hover:bg-amber-50">☰</button>
                 <button type="button" onClick={() => setRicercaAperta(!ricercaAperta)} aria-label="Apri ricerca" aria-expanded={ricercaAperta} className="flex h-10 w-9 items-center justify-center text-2xl text-slate-900 hover:text-teal-700">⌕</button>
-                <button type="button" onClick={avviaNovaVoice} aria-label="Parla con Nova AI" title="Parla con Nova AI" className="flex h-10 w-9 items-center justify-center rounded-full border border-teal-200 bg-teal-50 text-xl text-teal-800 hover:bg-teal-100">🎙️</button>
+                <button type="button" onClick={avviaRiverVoice} aria-label="Parla con River AI — Hey River" title="Parla con River AI — Hey River" className="flex h-10 w-9 items-center justify-center rounded-full border border-teal-200 bg-teal-50 text-xl text-teal-800 hover:bg-teal-100">🎙️</button>
               </div>
               <a href="/" aria-label="RiverSpendShop, pagina iniziale" className="absolute left-1/2 top-1/2 flex w-max max-w-[48%] -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center text-center">
                 <h1 className="rs-brand text-[1.45rem] font-extrabold leading-none tracking-tight text-black sm:text-4xl">RiverSpend</h1>
@@ -695,7 +695,7 @@ export default function Home() {
                 <a href="/profilo" aria-label={t('profile')} className="flex h-10 w-8 items-center justify-center text-2xl hover:text-teal-700">♙</a>
               </div>
             </div>
-            {novaVoiceStatus && <p role="status" aria-live="polite" className="mx-auto mt-2 max-w-6xl rounded-lg bg-teal-50 px-3 py-2 text-center text-xs font-medium text-teal-900">{novaVoiceStatus}</p>}
+            {riverVoiceStatus && <p role="status" aria-live="polite" className="mx-auto mt-2 max-w-6xl rounded-lg bg-teal-50 px-3 py-2 text-center text-xs font-medium text-teal-900">{riverVoiceStatus}</p>}
             <div className="mt-2 flex justify-center">
               <button type="button" onClick={() => { setMenuRiverSpend(!menuRiverSpend); setMenuCategorie(false); }} aria-expanded={menuRiverSpend} className="rounded-full px-3 py-1 text-xs font-bold text-teal-800 hover:bg-teal-50">Esplora RiverSpend ▾</button>
             </div>
