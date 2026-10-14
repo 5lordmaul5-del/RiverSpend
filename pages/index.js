@@ -991,13 +991,13 @@ export default function Home() {
           position:absolute; inset:0; z-index:1; pointer-events:none;
         }
         .rs-fortune-labels span {
-          position:absolute; left:50%; top:50%; width:46px; height:42px;
-          margin-left:-23px; margin-top:-21px; text-align:center;
-          color:#451a03; font-size:8px; line-height:1.05; font-weight:900;
-          transform-origin:23px 21px;
+          position:absolute; left:50%; top:50%; width:50px; height:44px;
+          margin-left:-25px; margin-top:-22px; text-align:center;
+          color:#451a03; font-size:10px; line-height:1.1; font-weight:900;
+          text-shadow:0 0 2px rgba(255,255,255,.35); transform-origin:25px 22px;
         }
-        .rs-fortune-labels span:nth-child(1){transform:rotate(22.5deg) translateY(-43px);}
-        .rs-fortune-labels span:nth-child(2){transform:rotate(67.5deg) translateY(-53px);}
+        .rs-fortune-labels span:nth-child(1){transform:rotate(22.5deg) translateY(-44px);}
+        .rs-fortune-labels span:nth-child(2){transform:rotate(67.5deg) translateY(-44px);}
         .rs-fortune-labels span:nth-child(3){transform:rotate(112.5deg) translateY(-53px);}
         .rs-fortune-labels span:nth-child(4){transform:rotate(157.5deg) translateY(-53px);}
         .rs-fortune-labels span:nth-child(5){transform:rotate(202.5deg) translateY(-53px);}
