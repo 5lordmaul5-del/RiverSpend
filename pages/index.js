@@ -900,10 +900,13 @@ export default function Home() {
         .rs-feature-card > button { min-width:0; min-height:0; }
         .rs-feature-card a, .rs-feature-card button { -webkit-tap-highlight-color:transparent; }
         /* RS FORCE segue la stessa gerarchia visiva delle altre schede: titolo, immagine, testo. */
-        .rs-force-card > button > .rs-force-stage { order:2; }
-        .rs-force-card > button > p:first-of-type { order:0; }
-        .rs-force-card > button > h2 { order:1; }
-        .rs-force-card > button > p:last-of-type { order:3; }
+        .rs-force-card > button > .rs-force-stage { order:2 !important; }
+        .rs-force-card > button > p:first-of-type { order:0 !important; }
+        .rs-force-card > button > h2 { order:1 !important; }
+        .rs-force-card > button > p:last-of-type { order:3 !important; }
+        .rs-feature-card .rs-feature-media img { display:block; width:100%; height:100% !important; max-height:100%; object-fit:cover; object-position:center; }
+        .rs-feature-card > a, .rs-feature-card > button { justify-content:flex-start; }
+        .rs-feature-card .rs-feature-action { margin-top:auto !important; }
         @media (max-width:640px) {
           .rs-apps-grid { gap:8px; }
           .rs-feature-card { height:280px; }
