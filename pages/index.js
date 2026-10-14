@@ -714,7 +714,7 @@ export default function Home() {
             </section>
 
             <section className={`rs-feature-card rs-fortune-card rounded-2xl border border-amber-400/40 bg-gradient-to-br from-slate-950 via-amber-950/30 to-slate-900 p-3 text-center shadow-xl shadow-amber-950/20 ${rsFortuneAperta ? "rs-fortune-open" : ""}`}>
-              <div role="button" tabIndex={0} onClick={() => setRsFortuneAperta((v) => !v)} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setRsFortuneAperta((v) => !v); } }} className="flex h-full w-full flex-col items-center overflow-hidden text-center">
+              <div className="flex h-full w-full flex-col items-center overflow-hidden text-center">
                 <p className="shrink-0 min-h-4 text-[10px] font-bold uppercase tracking-[0.22em] text-amber-100">🎡 RS FORTUNE</p>
                 
                 <h2 className="mt-1 min-h-[44px] shrink-0 text-base font-extrabold leading-tight text-white">La ruota della fortuna</h2>
@@ -722,7 +722,7 @@ export default function Home() {
                   <div className="mt-2 flex min-h-0 w-full flex-1 flex-col items-center overflow-hidden">
                     <div className="relative mx-auto h-[170px] w-[170px] shrink-0">
                       <div className="absolute -top-1 left-1/2 z-20 -translate-x-1/2 text-lg">🔻</div>
-                      <div className="rs-fortune-wheel relative h-[170px] w-[170px] rounded-full border-4 border-amber-300 shadow-[0_0_22px_rgba(251,191,36,.4)]" style={{transform:`rotate(${rsFortuneRotation}deg)`}}>
+                      <div className="rs-fortune-wheel relative h-[170px] w-[170px] rounded-full border-4 border-amber-300 shadow-[0_0_22px_rgba(251,191,36,.4)]" style={{transform:`rotate(${rsFortuneRotation}deg)`, transition: rsFortuneSpinning ? "transform 5.2s cubic-bezier(.12,.72,.08,1)" : "none"}}>
                         <div className="rs-fortune-labels" aria-hidden="true">
                           <span>💰<br/>5 RM</span><span>💰<br/>10 RM</span><span>💰<br/>20 RM</span><span>🚚<br/>FREE</span>
                           <span>🏷️<br/>5%</span><span>🔥<br/>BOOST</span><span>🎁<br/>SORPRESA</span><span>⭐<br/>500 RSP</span>
@@ -737,7 +737,8 @@ export default function Home() {
                 ) : (
                   <div className="mt-2 flex flex-1 flex-col items-center justify-center overflow-hidden">
                     <img src="/rs-fortune.jpg" alt="RS FORTUNE: ruota dei premi RiverSpend" className="rs-feature-media mt-2 h-36 w-full rounded-xl border border-amber-300/50 object-cover object-center" loading="lazy" />
-                    <p className="mt-2 min-h-[32px] px-1 text-[10px] leading-4 text-slate-100">Tocca per aprire e girare la ruota.</p>
+                    <p className="mt-2 min-h-[32px] px-1 text-[10px] leading-4 text-slate-100">Apri la ruota e prova il giro.</p>
+                    <button type="button" onClick={(e) => { e.stopPropagation(); setRsFortuneAperta(true); }} className="rs-feature-action mt-2 inline-flex min-h-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-b from-amber-300 to-amber-500 px-4 py-2 text-[11px] font-extrabold text-slate-950 shadow-md">APRI E GIRA LA RUOTA →</button>
                   </div>
                 )}
               </div>
@@ -927,7 +928,7 @@ export default function Home() {
         .rs-apps-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; align-items:stretch; }
         .rs-feature-card { min-width:0; height:300px; overflow:hidden; display:flex; }
         .rs-fortune-open { height:420px !important; }
-        .rs-fortune-open > div[role="button"] { overflow-y:auto; }
+        .rs-fortune-open > div { overflow-y:auto; }
         .rs-feature-card > a, .rs-feature-card > button { display:flex; flex-direction:column; flex:1; min-height:0; }
         .rs-feature-card .rs-feature-media { box-sizing:border-box; height:112px !important; min-height:112px !important; max-height:112px; flex:0 0 112px; }
         .rs-feature-action { margin-top:auto !important; min-height:36px; flex-shrink:0; justify-content:center; }
