@@ -779,13 +779,13 @@ export default function Home() {
             </section>
 
             <section className="rs-feature-card rounded-2xl border border-amber-300/70 bg-gradient-to-br from-[#201707] via-amber-950 to-slate-950 p-3 text-center shadow-xl shadow-amber-950/30">
-              <a href={categoriaAttiva ? `/?category=${encodeURIComponent(categoriaAttiva)}&future=offers` : '/?future=offers'} aria-label="Scopri RSSS RiverSpend Saldi Speciali" className="flex h-full w-full flex-col items-center overflow-hidden text-center">
+              <a href={categoriaAttiva ? `/?category=${encodeURIComponent(categoriaAttiva)}&future=offers` : '/?future=offers'} aria-label="Scopri RSSS RiverSpend Super Saldi" className="flex h-full w-full flex-col items-center overflow-hidden text-center">
                 <p className="shrink-0 text-[10px] font-extrabold uppercase tracking-[0.2em] text-amber-200">🏷️ RSSS</p>
-                <h2 className="mt-1 min-h-[40px] text-base font-extrabold leading-tight text-white">RiverSpend Saldi Speciali</h2>
+                <h2 className="mt-1 min-h-[40px] text-base font-extrabold leading-tight text-white">RiverSpend Super Saldi</h2>
                 <div className="rs-feature-media mt-3 flex w-full items-center justify-center overflow-hidden rounded-xl border border-amber-300/60 bg-gradient-to-br from-amber-300 via-yellow-600 to-amber-900">
                   <div className="flex flex-col items-center justify-center px-2 text-slate-950">
                     <span className="text-4xl font-black tracking-tight">RSSS</span>
-                    <span className="mt-1 text-center text-[10px] font-extrabold uppercase tracking-widest">Saldi Speciali</span>
+                    <span className="mt-1 text-center text-[10px] font-extrabold uppercase tracking-widest">Super Saldi</span>
                     <span className="mt-2 text-2xl" aria-hidden="true">％</span>
                   </div>
                 </div>
