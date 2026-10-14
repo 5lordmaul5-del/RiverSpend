@@ -80,7 +80,7 @@ export default function Home() {
     window.addEventListener('riverspend:language-change', sync);
     return () => window.removeEventListener('riverspend:language-change', sync);
   }, []);
-  const [showSplash, setShowSplash] = useState(false);
+  const [showSplash, setShowSplash] = useState(true);
   const [prodotti, setProdotti] = useState([]);
   const [errore, setErrore] = useState('');
   const [menuCategorie, setMenuCategorie] = useState(false);
