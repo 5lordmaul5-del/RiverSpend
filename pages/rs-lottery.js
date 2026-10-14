@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Head from "next/head";
 
 const prizeTypes = [
@@ -8,7 +9,34 @@ const prizeTypes = [
   { icon: "💛", title: "Premio fino a 30 €", text: "Un premio di valore contenuto. Eventuali importi superiori saranno valutati solo in futuro, in base al budget disponibile." },
 ];
 
+const wheelPrizes = [
+  { icon: "🎁", label: "Buono da 5 €" },
+  { icon: "⭐", label: "500 punti RSP (demo)" },
+  { icon: "🏷️", label: "Sconto del 5% (demo)" },
+  { icon: "💛", label: "Buono da 10 €" },
+  { icon: "🚚", label: "Spedizione gratuita (demo)" },
+  { icon: "🎉", label: "Riprova alla prossima" },
+  { icon: "🛍️", label: "Buono da 20 €" },
+  { icon: "✨", label: "Premio sorpresa (demo)" },
+];
+
 export default function RsLotteryPage() {
+  const [wheelRotation, setWheelRotation] = useState(0);
+  const [wheelSpinning, setWheelSpinning] = useState(false);
+  const [wheelResult, setWheelResult] = useState("");
+  
+  function spinLotteryWheel() {
+    if (wheelSpinning) return;
+    setWheelSpinning(true);
+    setWheelResult("");
+    const prize = wheelPrizes[Math.floor(Math.random() * wheelPrizes.length)];
+    setWheelRotation((current) => current + 1800 + Math.floor(Math.random() * 360));
+    window.setTimeout(() => {
+      setWheelResult(prize.label);
+      setWheelSpinning(false);
+    }, 4200);
+  }
+
   return (
     <>
       <Head>
@@ -40,6 +68,29 @@ export default function RsLotteryPage() {
                 <div><p className="font-extrabold">RS Lottery Annuale</p><p className="mt-1 text-xs text-violet-200">Pagina informativa · iniziativa in preparazione</p></div>
                 <span className="rounded-full border border-amber-300/40 bg-amber-300/10 px-3 py-1 text-xs font-bold text-amber-200">In preparazione</span>
               </div>
+            </div>
+          </div>
+        </section>
+
+
+        <section className="border-y border-amber-300/20 bg-[#180d29] px-4 py-12 sm:py-16">
+          <div className="mx-auto grid max-w-5xl items-center gap-8 md:grid-cols-2">
+            <div>
+              <p className="text-xs font-extrabold tracking-[0.22em] text-amber-300">PROVALA ORA</p>
+              <h2 className="mt-2 text-3xl font-black sm:text-4xl">La ruota RS Lottery</h2>
+              <p className="mt-3 leading-7 text-violet-100">Premi il pulsante e guarda girare la ruota. Questa è una demo grafica: il risultato è simulato e non assegna premi, buoni, punti o sconti reali.</p>
+              <button type="button" onClick={spinLotteryWheel} disabled={wheelSpinning} className="mt-6 inline-flex min-h-12 items-center justify-center rounded-full bg-amber-300 px-6 py-3 font-extrabold text-violet-950 shadow-lg shadow-amber-950/30 transition hover:bg-amber-200 disabled:cursor-not-allowed disabled:opacity-60">
+                {wheelSpinning ? "🎡 La ruota gira…" : "🎡 GIRA LA RUOTA"}
+              </button>
+              {wheelResult && <p role="status" className="mt-4 rounded-xl border border-amber-300/40 bg-amber-300/10 p-4 font-extrabold text-amber-200">Risultato della demo: {wheelResult}</p>}
+            </div>
+            <div className="flex flex-col items-center">
+              <span className="z-10 -mb-3 text-3xl" aria-hidden="true">🔻</span>
+              <div className="relative h-72 w-72 max-w-full rounded-full border-8 border-amber-300 shadow-[0_0_35px_rgba(251,191,36,.25)]" style={{ background: "conic-gradient(#7c3aed 0deg 45deg,#f59e0b 45deg 90deg,#0f766e 90deg 135deg,#be185d 135deg 180deg,#2563eb 180deg 225deg,#b45309 225deg 270deg,#6d28d9 270deg 315deg,#047857 315deg 360deg)", transform: `rotate(${wheelRotation}deg)`, transition: wheelSpinning ? "transform 4.2s cubic-bezier(.12,.72,.08,1)" : "none" }}>
+                {wheelPrizes.map((prize, index) => <div key={prize.label} className="absolute left-1/2 top-1/2 flex h-24 w-16 -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-start text-center text-white" style={{ transform: `translate(-50%,-50%) rotate(${index * 45 + 22.5}deg) translateY(-82px) rotate(-${index * 45 + 22.5}deg)` }}><span className="text-2xl">{prize.icon}</span><span className="mt-1 text-[9px] font-black leading-tight">{prize.label}</span></div>)}
+                <div className="absolute left-1/2 top-1/2 flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-4 border-amber-200 bg-[#170b29] text-center text-xs font-black text-amber-200">RS<br/>LOTTERY</div>
+              </div>
+              <p className="mt-4 text-center text-xs text-violet-300">Simulazione dimostrativa · nessun premio reale assegnato</p>
             </div>
           </div>
         </section>
