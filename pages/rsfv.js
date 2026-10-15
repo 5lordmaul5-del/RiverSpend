@@ -14,7 +14,7 @@ export default function RiverSpendFutureVision() {
   return (
     <>
       <Head>
-        <title>RSFV · RiverSpend Future Vision</title>
+        <title>RSFV · RiverSpend Future City</title>
         <meta name="description" content="RSFV — RiverSpend Future Vision: idee e concept futuri concreti, utili e sostenibili." />
         <meta name="theme-color" content="#06212b" />
       </Head>
@@ -29,7 +29,7 @@ export default function RiverSpendFutureVision() {
           <div className="mx-auto grid max-w-7xl items-center gap-10 md:grid-cols-[1.15fr_.85fr]">
             <div>
               <p className="mb-3 inline-flex rounded-full border border-cyan-300/40 bg-cyan-300/10 px-3 py-1 text-xs font-extrabold tracking-[.2em] text-cyan-200">RSFV · CONCEPT FUTURI</p>
-              <h1 className="text-4xl font-black leading-tight sm:text-6xl">RiverSpend <span className="text-cyan-300">Future Vision</span></h1>
+              <h1 className="text-4xl font-black leading-tight sm:text-6xl">RiverSpend <span className="text-cyan-300">Future City</span></h1>
               <p className="mt-5 max-w-2xl text-lg leading-relaxed text-slate-200">Idee per il domani, con i piedi per terra oggi. Una raccolta di concept che potranno essere studiati, prototipati e realizzati quando ci saranno risorse e condizioni adeguate.</p>
               <a href="#concept" className="mt-7 inline-flex rounded-full bg-cyan-300 px-6 py-3 font-extrabold text-slate-950 shadow-lg shadow-cyan-900/30 hover:bg-cyan-200">Esplora i concept <span className="ml-2">→</span></a>
             </div>
@@ -62,7 +62,7 @@ export default function RiverSpendFutureVision() {
         </section>
         <section id="concept" className="mx-auto max-w-7xl px-4 pb-16 sm:px-8">
           <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
-            <div><p className="text-xs font-extrabold tracking-[.2em] text-cyan-300">RSFCcf · FUTURE CITY</p><h2 className="mt-2 text-2xl font-black sm:text-3xl">Concept futuri</h2></div>
+            <div><p className="text-xs font-extrabold tracking-[.2em] text-cyan-300">RSFCcf · RIVERSPEND FUTURE CITY</p><h2 className="mt-2 text-2xl font-black sm:text-3xl">Concept futuri e unità RSUS</h2></div>
             <span className="rounded-full border border-amber-300/30 px-3 py-1 text-xs font-bold text-amber-200">Idee in fase concettuale</span>
           </div>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -77,7 +77,7 @@ export default function RiverSpendFutureVision() {
           <div className="mx-auto max-w-7xl">
             <div className="grid gap-8 lg:grid-cols-[.8fr_1.2fr]">
               <div>
-                <p className="text-xs font-extrabold tracking-[.22em] text-cyan-300">RSFV · SICUREZZA E COMUNITÀ</p>
+                <p className="text-xs font-extrabold tracking-[.22em] text-cyan-300">RSFCcf · RSUS · SICUREZZA E COMUNITÀ</p>
                 <h2 className="mt-3 text-3xl font-black sm:text-4xl"><span className="text-cyan-300">RSUS</span><br />RiverSpend Unità Sicura</h2>
                 <p className="mt-4 text-lg font-bold text-amber-200">I Protettori · Guardiani della città</p>
                 <p className="mt-4 leading-relaxed text-slate-300">Un concept per immaginare un sistema di protezione e assistenza in RiverSpend Park e, in futuro, in altri spazi della comunità. Al centro ci sono le persone: prevenzione, aiuto, rispetto e interventi responsabili.</p>
@@ -91,6 +91,14 @@ export default function RiverSpendFutureVision() {
                   ['🤖','RSUS-04 · Unità infopoint','Robot informativi multilingua per mappe, orari e indicazioni ai visitatori.'],
                   ['🚤','RSUS-05 · Unità acqua','Assistenza e prevenzione nelle zone acquatiche con personale abilitato.'],
                   ['🖥️','RSUS-06 · Centro controllo','Coordinamento delle segnalazioni e delle squadre da parte di personale autorizzato.'],
+                  ['🌬️','RSUS-07 · Unità Aria','Concept per supporto aereo, droni autorizzati e coordinamento dall’alto in collaborazione con i servizi competenti.'],
+                  ['🔥','RSUS-08 · Unità Fuoco','Prevenzione incendi, rilevazione precoce e supporto alle squadre antincendio abilitate.'],
+                  ['🚨','RSUS-09 · Calamità ed Emergenze','Piano di risposta per eventi meteorologici estremi, evacuazioni e coordinamento delle emergenze.'],
+                  ['🚑','RSUS-10 · Primo soccorso','Punti di assistenza e collegamento con personale sanitario e soccorritori qualificati.'],
+                  ['🧭','RSUS-11 · Ricerca e soccorso','Supporto per persone disperse, orientamento e gestione sicura dei punti di raccolta.'],
+                  ['📡','RSUS-12 · Comunicazioni','Rete di comunicazione per allerta, informazioni ai visitatori e continuità operativa.'],
+                  ['🧹','RSUS-13 · Ambiente e rischio','Segnalazione di ostacoli, danni, allagamenti e condizioni potenzialmente pericolose.'],
+                  ['🦺','RSUS-14 · Supporto operativo','Logistica, materiali e assistenza alle squadre sul campo, sempre sotto supervisione umana.'],
                 ].map(([icon,title,body]) => <article key={title} className="rounded-2xl border border-cyan-800 bg-[#06151e]/90 p-4"><div className="text-3xl">{icon}</div><h3 className="mt-3 font-extrabold text-white">{title}</h3><p className="mt-2 text-sm leading-relaxed text-slate-300">{body}</p></article>)}
               </div>
             </div>
@@ -106,7 +114,7 @@ export default function RiverSpendFutureVision() {
             </div>
           </div>
         </section>
-        <footer className="border-t border-cyan-900 bg-[#031018] px-4 py-6 text-center text-xs text-slate-400">RSFV · RiverSpend Future Vision — Idee per il futuro, senza confondere i concept con prodotti già realizzati.</footer>
+        <footer className="border-t border-cyan-900 bg-[#031018] px-4 py-6 text-center text-xs text-slate-400">RSFV · RiverSpend Future City — Idee per il futuro, senza confondere i concept con prodotti già realizzati.</footer>
       </main>
     </>
   );
