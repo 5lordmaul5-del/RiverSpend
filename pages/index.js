@@ -668,7 +668,15 @@ export default function Home() {
         return data;
       })
       .then((data) => {
-        if (attivo) setProdotti(Array.isArray(data) ? data : []);
+        if (attivo) {
+          setProdotti(Array.isArray(data) ? data : []);
+          if (params.get('showProducts') === '1') {
+            window.setTimeout(() => {
+              document.getElementById('rs-products-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              window.history.replaceState({}, '', '/?category=' + encodeURIComponent(cat));
+            }, 180);
+          }
+        }
       })
       .catch((err) => {
         if (attivo) setErrore(err.message || 'Errore nel caricamento del catalogo');
