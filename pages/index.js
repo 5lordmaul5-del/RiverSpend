@@ -81,6 +81,10 @@ export default function Home() {
     return () => window.removeEventListener('riverspend:language-change', sync);
   }, []);
   const [showSplash, setShowSplash] = useState(true);
+  useEffect(() => {
+    // Mostra la schermata di apertura una sola volta per sessione, non a ogni ritorno allo Shop.
+    try { if (sessionStorage.getItem('rs-opening-seen') === '1') setShowSplash(false); } catch {}
+  }, []);
   const [prodotti, setProdotti] = useState([]);
   const [errore, setErrore] = useState('');
   const [menuCategorie, setMenuCategorie] = useState(false);
@@ -421,6 +425,16 @@ export default function Home() {
       if (route?.href) {
         if (!rispostaAvviata) speak('Ciao, sono River. Apro ' + route.label + ' subito.');
         window.location.href = route.href;
+        return;
+      }
+      if (/\\b(integratori|integratore|supplementi|supplemento)\\b/i.test(q)) {
+        const target = 'Integratori';
+        setRicerca('');
+        setCategoriaAttiva(target);
+        setRicercaAperta(true);
+        window.history.replaceState({}, '', '/?category=' + encodeURIComponent(target));
+        if (!rispostaAvviata) speak('Ciao, sono River. Apro la categoria integratori.');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
         return;
       }
       if (q.includes('abbigliamento') || q.includes('vestiti') || q.includes('vestito') || q.includes('moda')) {
