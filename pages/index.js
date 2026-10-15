@@ -433,8 +433,14 @@ export default function Home() {
         setCategoriaAttiva(target);
         setRicercaAperta(true);
         window.history.replaceState({}, '', '/?category=' + encodeURIComponent(target));
-        if (!rispostaAvviata) speak('Ciao, sono River. Apro la categoria integratori.');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        if (!rispostaAvviata) speak('Ciao, sono River. Ti mostro subito gli integratori.');
+        if (window.location.pathname === '/' || window.location.pathname === '') {
+          window.setTimeout(() => {
+            document.getElementById('rs-products-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 120);
+        } else {
+          window.location.href = '/?category=' + encodeURIComponent(target) + '&showProducts=1';
+        }
         return;
       }
       if (q.includes('abbigliamento') || q.includes('vestiti') || q.includes('vestito') || q.includes('moda')) {
@@ -1021,7 +1027,7 @@ export default function Home() {
             <img src="/riverspend-seller-banner.svg" alt="Privati e aziende: apri la tua vetrina e inizia a vendere su RiverSpendShop" className="block aspect-[16/5] w-full object-cover sm:aspect-[16/4]" loading="eager" />
           </a>
 
-          <div className="mb-5 flex items-end justify-between gap-3">
+          <div id="rs-products-section" className="mb-5 scroll-mt-40 flex items-end justify-between gap-3">
             <div>
               <h2 className="text-2xl font-bold">{t('products')}</h2>
               <p className="text-sm text-slate-400">{prodottiVisibili.length} {t('visible')}</p>
