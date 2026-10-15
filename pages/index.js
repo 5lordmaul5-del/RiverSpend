@@ -151,6 +151,7 @@ export default function Home() {
     ['RiverSpend Box','/servizi/box'],
     ['RiverSpend Park','/park'],
     ['RSFCcf · Future City','/river-spend-future-city'],
+    ['RiverSpend Future Visions','/river-spend-future-visions'],
     ['RiverSpend Broadcast','/servizi/broadcast'],
     ['RiverSpend Music','/servizi/music'],
     ['RS Spons','/rs-spons'],
