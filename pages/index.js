@@ -998,33 +998,37 @@ export default function Home() {
 
 
         <section className="mx-auto max-w-6xl px-2 py-4 sm:px-4">
-          <section aria-labelledby="rs-showcase-title" className="mb-6 rounded-2xl border border-teal-200 bg-white p-3 text-slate-900 shadow-sm sm:p-4">
-            <div className="mb-1 flex items-center justify-between gap-2">
-              <h2 id="rs-showcase-title" className="text-lg font-extrabold sm:text-xl">Guarda tra migliaia di prodotti in vendita</h2>
-              <span className="shrink-0 text-xs font-semibold text-teal-800">Vetrina →</span>
+          <div className="rs-world-carousel mb-6 flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain px-1 pb-3" aria-label="Banner RiverSpend: scorri orizzontalmente">
+        <section aria-labelledby="rs-campaigns-title" className="mx-auto mb-8 max-w-6xl px-4">
+          <div className="rounded-3xl border border-emerald-700/60 bg-gradient-to-br from-emerald-950 via-slate-950 to-violet-950 p-5 shadow-xl sm:p-7">
+            <p className="text-xs font-extrabold uppercase tracking-[.22em] text-emerald-300">RiverSpend · Idee in preparazione</p>
+            <h2 id="rs-campaigns-title" className="mt-2 text-2xl font-black text-white sm:text-3xl">Insieme possiamo fare la differenza</h2>
+            <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-200">Stiamo progettando campagne per prenderci cura del pianeta, aiutare chi è in difficoltà e sostenere la ricerca. Per ora sono idee da sviluppare: le raccolte e i pagamenti non sono attivi.</p>
+            <div className="rs-campaign-cards mt-5 flex gap-3 overflow-x-auto pb-2">
+              <a href="/servizi/ecology#missioni" className="rs-campaign-card min-w-[245px] max-w-[280px] shrink-0 rounded-2xl border border-emerald-700 bg-slate-950/80 p-4 transition hover:border-emerald-400">
+                <span className="text-3xl" aria-hidden="true">🌱</span>
+                <h3 className="mt-2 text-lg font-extrabold text-emerald-200">RiverSpend Ecology</h3>
+                <p className="mt-2 text-sm leading-5 text-slate-300">Alberi, terreni, mari, fiumi e biodiversità.</p>
+                <span className="mt-4 inline-flex rounded-full border border-emerald-600 px-3 py-2 text-xs font-bold text-emerald-200">Scopri l’idea →</span>
+                <p className="mt-3 text-[11px] font-bold text-amber-200">In preparazione · Nessuna raccolta attiva</p>
+              </a>
+              <a href="/servizi/ecology#solidale" className="rs-campaign-card min-w-[245px] max-w-[280px] shrink-0 rounded-2xl border border-rose-800 bg-slate-950/80 p-4 transition hover:border-rose-400">
+                <span className="text-3xl" aria-hidden="true">💚</span>
+                <h3 className="mt-2 text-lg font-extrabold text-rose-200">RiverSpend Solidale</h3>
+                <p className="mt-2 text-sm leading-5 text-slate-300">Aiuto a persone fragili e comunità colpite da emergenze.</p>
+                <span className="mt-4 inline-flex rounded-full border border-rose-700 px-3 py-2 text-xs font-bold text-rose-200">Scopri l’idea →</span>
+                <p className="mt-3 text-[11px] font-bold text-amber-200">In preparazione · Nessuna raccolta attiva</p>
+              </a>
+              <a href="/servizi/ecology#future-life" className="rs-campaign-card min-w-[245px] max-w-[280px] shrink-0 rounded-2xl border border-violet-800 bg-slate-950/80 p-4 transition hover:border-violet-400">
+                <span className="text-3xl" aria-hidden="true">🏥</span>
+                <h3 className="mt-2 text-lg font-extrabold text-violet-200">PiggyBank · Future Life</h3>
+                <p className="mt-2 text-sm leading-5 text-slate-300">Ospedali, nuove cure e ricerca scientifica qualificata.</p>
+                <span className="mt-4 inline-flex rounded-full border border-violet-700 px-3 py-2 text-xs font-bold text-violet-200">Scopri l’idea →</span>
+                <p className="mt-3 text-[11px] font-bold text-amber-200">In preparazione · Nessuna raccolta attiva</p>
+              </a>
             </div>
-            <p className="mb-3 text-sm leading-5 text-slate-600">Scorri la pagina per esplorare il mercato oppure chiedi a River AI di trovare un prodotto.</p>
-            {prodottiVisibili.length > 0 ? (
-              <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2" aria-label="Prodotti in vetrina: scorri orizzontalmente">
-                {prodottiVisibili.slice(0, 12).map((p) => (
-                  <a key={'showcase-' + p.id} href={`/prodotto/${encodeURIComponent(p.id)}`} className="w-36 shrink-0 snap-start overflow-hidden rounded-xl border border-slate-200 bg-white transition hover:border-teal-500 sm:w-44">
-                    <div className="flex aspect-[4/3] items-center justify-center overflow-hidden bg-slate-50">
-                      {p.immagini?.[0] ? <img src={p.immagini[0]} alt={p.titolo || 'Prodotto in vendita'} className="h-full w-full object-contain" loading="lazy" /> : <span className="px-2 text-center text-xs text-slate-500">Foto non disponibile</span>}
-                    </div>
-                    <div className="p-2">
-                      <p className="line-clamp-2 min-h-9 text-sm font-semibold">{p.titolo || 'Prodotto in vendita'}</p>
-                      <p className="mt-1 font-extrabold text-teal-800">€ {Number(p.prezzo || 0).toFixed(2)}</p>
-                      <p className="mt-1 line-clamp-1 text-xs text-slate-500">{p.categoria || 'Altro'}</p>
-                    </div>
-                  </a>
-                ))}
-              </div>
-            ) : (
-              <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-5 text-sm text-slate-600">
-                I prodotti pubblicati appariranno qui. Intanto puoi esplorare le categorie o chiedere a River AI.
-              </div>
-            )}
-          </section>
+          </div>
+        </section>
 
           <a href="/park" aria-label="Scopri RiverSpend Park: apri il catalogo del parco" className="group mb-5 block overflow-hidden rounded-3xl border border-cyan-300/60 bg-slate-950 shadow-xl shadow-cyan-950/20 transition hover:-translate-y-0.5 hover:border-cyan-200 focus:outline-none focus:ring-4 focus:ring-cyan-300/70">
             <div className="relative">
@@ -1064,6 +1068,8 @@ export default function Home() {
           <a href="/vendi" aria-label="Inizia a vendere su RiverSpendShop" className="group mb-5 block overflow-hidden rounded-2xl border border-teal-300/70 bg-slate-950 shadow-lg shadow-teal-950/15 transition hover:-translate-y-0.5 hover:border-amber-300 focus:outline-none focus:ring-4 focus:ring-teal-300/70">
             <img src="/riverspend-seller-banner.svg" alt="Privati e aziende: apri la tua vetrina e inizia a vendere su RiverSpendShop" className="block aspect-[16/5] w-full object-cover sm:aspect-[16/4]" loading="eager" />
           </a>
+
+          </div>
 
           <div id="rs-products-section" className="mb-5 scroll-mt-40 flex items-end justify-between gap-3">
             <div>
@@ -1117,37 +1123,6 @@ export default function Home() {
           )}
         </section>
 
-        <section aria-labelledby="rs-campaigns-title" className="mx-auto mb-8 max-w-6xl px-4">
-          <div className="rounded-3xl border border-emerald-700/60 bg-gradient-to-br from-emerald-950 via-slate-950 to-violet-950 p-5 shadow-xl sm:p-7">
-            <p className="text-xs font-extrabold uppercase tracking-[.22em] text-emerald-300">RiverSpend · Idee in preparazione</p>
-            <h2 id="rs-campaigns-title" className="mt-2 text-2xl font-black text-white sm:text-3xl">Insieme possiamo fare la differenza</h2>
-            <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-200">Stiamo progettando campagne per prenderci cura del pianeta, aiutare chi è in difficoltà e sostenere la ricerca. Per ora sono idee da sviluppare: le raccolte e i pagamenti non sono attivi.</p>
-            <div className="mt-5 grid gap-4 sm:grid-cols-3">
-              <a href="/servizi/ecology#missioni" className="rounded-2xl border border-emerald-700 bg-slate-950/80 p-4 transition hover:border-emerald-400">
-                <span className="text-3xl" aria-hidden="true">🌱</span>
-                <h3 className="mt-2 text-lg font-extrabold text-emerald-200">RiverSpend Ecology</h3>
-                <p className="mt-2 text-sm leading-5 text-slate-300">Alberi, terreni, mari, fiumi e biodiversità.</p>
-                <span className="mt-4 inline-flex rounded-full border border-emerald-600 px-3 py-2 text-xs font-bold text-emerald-200">Scopri l’idea →</span>
-                <p className="mt-3 text-[11px] font-bold text-amber-200">In preparazione · Nessuna raccolta attiva</p>
-              </a>
-              <a href="/servizi/ecology#solidale" className="rounded-2xl border border-rose-800 bg-slate-950/80 p-4 transition hover:border-rose-400">
-                <span className="text-3xl" aria-hidden="true">💚</span>
-                <h3 className="mt-2 text-lg font-extrabold text-rose-200">RiverSpend Solidale</h3>
-                <p className="mt-2 text-sm leading-5 text-slate-300">Aiuto a persone fragili e comunità colpite da emergenze.</p>
-                <span className="mt-4 inline-flex rounded-full border border-rose-700 px-3 py-2 text-xs font-bold text-rose-200">Scopri l’idea →</span>
-                <p className="mt-3 text-[11px] font-bold text-amber-200">In preparazione · Nessuna raccolta attiva</p>
-              </a>
-              <a href="/servizi/ecology#future-life" className="rounded-2xl border border-violet-800 bg-slate-950/80 p-4 transition hover:border-violet-400">
-                <span className="text-3xl" aria-hidden="true">🏥</span>
-                <h3 className="mt-2 text-lg font-extrabold text-violet-200">PiggyBank · Future Life</h3>
-                <p className="mt-2 text-sm leading-5 text-slate-300">Ospedali, nuove cure e ricerca scientifica qualificata.</p>
-                <span className="mt-4 inline-flex rounded-full border border-violet-700 px-3 py-2 text-xs font-bold text-violet-200">Scopri l’idea →</span>
-                <p className="mt-3 text-[11px] font-bold text-amber-200">In preparazione · Nessuna raccolta attiva</p>
-              </a>
-            </div>
-          </div>
-        </section>
-
         <section aria-labelledby="nova-honor-title" className="mx-auto mb-7 max-w-6xl px-4">
           <div className="rs-honor-panel rounded-2xl border border-amber-500/40 bg-gradient-to-br from-slate-900 via-slate-900 to-amber-950/30 p-5 text-center shadow-lg shadow-amber-950/20 sm:p-7">
             <div className="mb-2 text-2xl" aria-hidden="true">✨</div>
@@ -1173,7 +1148,14 @@ export default function Home() {
         </footer>
       </div>
       <style jsx>{`
-        .rs-apps-grid { display:flex !important; flex-direction:row; flex-wrap:nowrap; width:100%; max-width:100%; box-sizing:border-box; overflow-x:auto; overflow-y:hidden; gap:10px; align-items:stretch; justify-content:flex-start; margin-left:auto; margin-right:auto; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; }
+        .rs-world-carousel { display:flex !important; flex-direction:row; flex-wrap:nowrap; align-items:stretch; overflow-x:auto; overflow-y:hidden; gap:12px; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; width:100%; max-width:100%; box-sizing:border-box; }
+.rs-world-carousel > * { flex:0 0 88%; width:88%; max-width:680px; min-width:0; margin-bottom:0 !important; scroll-snap-align:start; }
+.rs-world-carousel > section { box-sizing:border-box; }
+.rs-world-carousel > a { align-self:stretch; }
+.rs-world-carousel .rs-campaign-card { min-width:245px; }
+.rs-world-carousel .rs-campaign-cards { scrollbar-width:thin; }
+@media (min-width:768px) { .rs-world-carousel > * { flex-basis: min(680px, 72%); width:min(680px,72%); } }
+.rs-apps-grid { display:flex !important; flex-direction:row; flex-wrap:nowrap; width:100%; max-width:100%; box-sizing:border-box; overflow-x:auto; overflow-y:hidden; gap:10px; align-items:stretch; justify-content:flex-start; margin-left:auto; margin-right:auto; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; }
         .rs-feature-card { box-sizing:border-box; min-width:160px !important; width:160px !important; max-width:160px; height:228px !important; flex:0 0 160px !important; overflow:hidden; display:flex; scroll-snap-align:start; }
         .rs-feature-card > a, .rs-feature-card > button { display:flex; flex-direction:column; flex:1; min-height:0; }
         .rs-feature-card .rs-feature-media { box-sizing:border-box; height:72px !important; min-height:72px !important; max-height:72px; flex:0 0 72px; }
