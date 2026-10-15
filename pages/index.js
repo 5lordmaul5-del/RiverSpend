@@ -868,6 +868,125 @@ export default function Home() {
         </header>
 
         <section className="mx-auto max-w-6xl px-2 py-4 sm:px-4">
+          <section aria-labelledby="rs-showcase-title" className="mb-6 rounded-2xl border border-teal-200 bg-white p-3 text-slate-900 shadow-sm sm:p-4">
+            <div className="mb-1 flex items-center justify-between gap-2">
+              <h2 id="rs-showcase-title" className="text-lg font-extrabold sm:text-xl">Guarda tra migliaia di prodotti in vendita</h2>
+              <span className="shrink-0 text-xs font-semibold text-teal-800">Vetrina →</span>
+            </div>
+            <p className="mb-3 text-sm leading-5 text-slate-600">Scorri la pagina per esplorare il mercato oppure chiedi a River AI di trovare un prodotto.</p>
+            {prodottiVisibili.length > 0 ? (
+              <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2" aria-label="Prodotti in vetrina: scorri orizzontalmente">
+                {prodottiVisibili.slice(0, 12).map((p) => (
+                  <a key={'showcase-' + p.id} href={`/prodotto/${encodeURIComponent(p.id)}`} className="w-36 shrink-0 snap-start overflow-hidden rounded-xl border border-slate-200 bg-white transition hover:border-teal-500 sm:w-44">
+                    <div className="flex aspect-[4/3] items-center justify-center overflow-hidden bg-slate-50">
+                      {p.immagini?.[0] ? <img src={p.immagini[0]} alt={p.titolo || 'Prodotto in vendita'} className="h-full w-full object-contain" loading="lazy" /> : <span className="px-2 text-center text-xs text-slate-500">Foto non disponibile</span>}
+                    </div>
+                    <div className="p-2">
+                      <p className="line-clamp-2 min-h-9 text-sm font-semibold">{p.titolo || 'Prodotto in vendita'}</p>
+                      <p className="mt-1 font-extrabold text-teal-800">€ {Number(p.prezzo || 0).toFixed(2)}</p>
+                      <p className="mt-1 line-clamp-1 text-xs text-slate-500">{p.categoria || 'Altro'}</p>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            ) : (
+              <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-5 text-sm text-slate-600">
+                I prodotti pubblicati appariranno qui. Intanto puoi esplorare le categorie o chiedere a River AI.
+              </div>
+            )}
+          </section>
+
+          <a href="/park" aria-label="Scopri RiverSpend Park: apri il catalogo del parco" className="group mb-5 block overflow-hidden rounded-3xl border border-cyan-300/60 bg-slate-950 shadow-xl shadow-cyan-950/20 transition hover:-translate-y-0.5 hover:border-cyan-200 focus:outline-none focus:ring-4 focus:ring-cyan-300/70">
+            <div className="relative">
+              <img src="https://raw.githubusercontent.com/5lordmaul5-del/RiverSpend/main/file_00000000070081f4be8d351d407b4017.png" alt="RiverSpend Park: ingresso scenografico, attrazioni e mondo d'avventura" className="block aspect-[16/8] w-full object-cover transition duration-500 group-hover:scale-[1.02]" loading="eager" />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
+              <div className="absolute inset-x-0 bottom-0 p-4 sm:p-7">
+                <p className="text-xs font-extrabold uppercase tracking-[.24em] text-cyan-200 sm:text-sm">Natura • Avventura • Tecnologia</p>
+                <h2 className="mt-1 text-2xl font-black text-white drop-shadow sm:text-4xl">RiverSpend Park</h2>
+                <p className="mt-1 max-w-2xl text-sm font-medium text-white sm:text-base">Entra in un altro mondo. Scopri le attrazioni, le aree tematiche e le nuove esperienze.</p>
+                <span className="mt-3 inline-flex items-center gap-2 rounded-full bg-cyan-300 px-5 py-2.5 text-sm font-extrabold text-slate-950 shadow-lg">SCOPRI IL PARCO <span aria-hidden="true">↗</span></span>
+              </div>
+            </div>
+          </a>
+
+          <a href="/social-network" className="group mb-5 block overflow-hidden rounded-3xl border border-teal-300/70 bg-gradient-to-br from-teal-950 via-slate-900 to-cyan-950 text-white shadow-xl shadow-teal-950/20 transition hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-teal-300/70">
+            <div className="relative overflow-hidden bg-slate-950">
+              <img src="/riverspend-social-banner.svg" alt="RiverSpend Social Marketplace: foto, video, prodotti, offerte e community. Entra nel Fiume." className="block aspect-[16/8] w-full object-cover sm:aspect-[16/7]" loading="eager" />
+              <span className="sr-only">Entra nel Fiume</span>
+            </div>
+          </a>
+
+          <section className="rs-hero mb-5 overflow-hidden rounded-2xl border border-teal-200 bg-white text-slate-800 shadow-sm">
+            <img src="/riverspend-river-market.svg?v=3" alt="Il mercato RiverSpend sul fiume, con negozi, barca e pacchi in acqua turchese" className="block aspect-[16/7] w-full object-cover sm:aspect-[16/5]" loading="eager" />
+            <div className="relative bg-white px-5 py-4 sm:px-7 sm:py-5">
+              <span className="rs-gold-pebble one" aria-hidden="true" />
+              <span className="rs-gold-pebble two" aria-hidden="true" />
+
+              <p className="mb-3 max-w-2xl text-sm leading-5 text-slate-600 sm:text-base">{t('heroBody')}</p>
+              <div className="flex flex-wrap gap-3">
+                <a href="/vendi" className="rs-button rs-button-primary rounded-xl px-4 py-2.5 text-sm font-bold text-slate-950">{t('sellPhoto')}</a>
+                <a href="/ecosistema" className="rounded-xl border border-teal-700 px-4 py-2.5 text-sm font-bold text-teal-800">{t('explore')}</a>
+                <a href="/eventi" className="rounded-xl border border-amber-500 px-4 py-2.5 text-sm font-bold text-amber-700">Eventi e festività</a>
+              </div>
+            </div>
+          </section>
+
+          <a href="/vendi" aria-label="Inizia a vendere su RiverSpendShop" className="group mb-5 block overflow-hidden rounded-2xl border border-teal-300/70 bg-slate-950 shadow-lg shadow-teal-950/15 transition hover:-translate-y-0.5 hover:border-amber-300 focus:outline-none focus:ring-4 focus:ring-teal-300/70">
+            <img src="/riverspend-seller-banner.svg" alt="Privati e aziende: apri la tua vetrina e inizia a vendere su RiverSpendShop" className="block aspect-[16/5] w-full object-cover sm:aspect-[16/4]" loading="eager" />
+          </a>
+
+          <div id="rs-products-section" className="mb-5 scroll-mt-40 flex items-end justify-between gap-3">
+            <div>
+              <h2 className="text-2xl font-bold">{t('products')}</h2>
+              <p className="text-sm text-slate-400">{prodottiVisibili.length} {t('visible')}</p>
+            </div>
+            <div className="flex flex-col items-end gap-2"><a href="/rete" className="text-sm font-semibold text-teal-700 underline">{t('myNet')}</a></div>
+          </div>
+
+          {errore ? (
+            <div className="rounded-xl border border-amber-700 bg-amber-950/40 p-4 text-amber-200">{t('catalogError')} {errore}</div>
+          ) : prodottiVisibili.length === 0 ? (
+            <div className="rounded-2xl border border-dashed border-slate-700 p-8 text-center">
+              <p className="mb-2 text-lg font-semibold">{prodotti.length === 0 ? t('noProducts') : t('noMatch')}</p>
+              <p className="mb-5 text-sm text-slate-400">{prodotti.length === 0 ? t('firstItem') : t('changeSearch')}</p>
+              {prodotti.length === 0 ? <a href="/vendi" className="inline-block rounded-xl bg-teal-500 px-6 py-3 font-bold text-slate-950">{t('goUpload')}</a> : <button type="button" onClick={() => { setRicerca(''); setCategoriaAttiva(''); window.history.replaceState({}, '', '/'); }} className="rounded-xl border border-teal-800 px-5 py-3 font-semibold text-teal-200">{t('reset')}</button>}
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-2 sm:gap-4 sm:grid-cols-3 lg:grid-cols-4">
+              {prodottiVisibili.map((p) => (
+                <article key={p.id} className="rs-product-card group overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 transition hover:border-teal-500"><a href={`/prodotto/${encodeURIComponent(p.id)}`} className="block focus:outline-none focus:ring-2 focus:ring-teal-400">
+                  <div className="relative">{p.immagini?.[0] ? <div className="rs-product-media flex aspect-[4/3] w-full items-center justify-center overflow-hidden bg-white p-0"><img src={p.immagini[0]} alt={p.titolo || 'Prodotto'} className="h-full w-full scale-110 object-contain transition-transform duration-300 group-hover:scale-[1.16]" /></div> : <div className="flex aspect-[4/3] items-center justify-center bg-white text-xs text-slate-500">Foto non disponibile</div>}
+                  <div className="absolute bottom-1 left-1 right-1 z-20 flex items-center justify-between gap-1">
+                    <div className="flex items-center gap-1">
+                      <button type="button" onClick={(event) => { event.preventDefault(); event.stopPropagation(); toggleDesideriFromCatalog(p); }} aria-label={desideriIds.includes(String(p.id)) ? 'Rimuovi dai RS Desideri' : 'Aggiungi ai RS Desideri'} aria-pressed={desideriIds.includes(String(p.id))} title="RS Desideri" className="flex h-6 w-6 items-center justify-center rounded-full border border-cyan-200 bg-white/90 text-[12px] leading-none text-cyan-800 shadow-sm backdrop-blur hover:bg-cyan-50">
+                        {desideriIds.includes(String(p.id)) ? '♥' : '♡'}
+                      </button>
+                      <button type="button" onClick={(event) => { event.preventDefault(); event.stopPropagation(); const cat = p.categoria || ''; setRicerca(''); setCategoriaAttiva(cat); window.history.replaceState({}, '', cat ? '/?category=' + encodeURIComponent(cat) : '/'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} aria-label="RS Simili" title="RS Simili" className="flex h-6 w-6 items-center justify-center rounded-full border border-amber-300 bg-amber-100/90 text-[11px] leading-none text-amber-900 shadow-sm backdrop-blur hover:bg-amber-200">✦</button>
+                    </div>
+                    <a href={`/prodotto/${encodeURIComponent(p.id)}#recensioni`} onClick={(event) => event.stopPropagation()} aria-label="Scegli gradimento e leggi recensioni" title="Scegli il gradimento" className="flex h-7 items-center justify-center gap-0.5 rounded-full border border-rose-300 bg-white/95 px-1.5 text-[11px] leading-none shadow-sm backdrop-blur hover:bg-rose-50"><span aria-hidden="true">🐟🐟🐟🐟🐟</span></a>
+                  </div>
+                  {(() => { const tipo = String(p.venditoreTipo || "Privato").toLowerCase(); const river = tipo.includes("river"); const azienda = tipo.includes("aziend") || tipo.includes("business") || tipo.includes("iva"); const label = river ? "RSS" : azienda ? "RS azienda" : "RSprivato"; const color = river ? "border-cyan-300 bg-cyan-100 text-cyan-950" : azienda ? "border-green-300 bg-green-100 text-green-950" : "border-red-300 bg-red-100 text-red-950"; return <span className={`absolute left-2 top-2 z-10 rounded-md border px-2.5 py-1 text-[11px] font-extrabold shadow-sm ${color}`}>{label}</span>; })()} {countryFlag(p.paeseOrigine || p.paeseVenditore) && <span className="absolute right-2 top-2 z-10 flex h-8 w-8 items-center justify-center rounded-full border border-slate-300 bg-white/95 text-lg shadow-sm" title={"Paese: " + (p.paeseOrigine || p.paeseVenditore)} aria-label={"Paese: " + (p.paeseOrigine || p.paeseVenditore)}>{countryFlag(p.paeseOrigine || p.paeseVenditore)}</span>}{p.sponsorizzatoFino && new Date(p.sponsorizzatoFino) > new Date() && <span className="absolute right-2 top-11 rounded-md border border-amber-300 bg-amber-100 px-2 py-1 text-[10px] font-bold text-amber-900">RS Spons</span>}</div>
+                  <div className="p-2 sm:p-3">
+                    <h3 className="line-clamp-2 text-sm font-semibold leading-tight sm:text-base">{p.titolo}</h3>
+                    <p className="mt-1 text-base font-bold text-teal-300 sm:text-lg">€ {Number(p.prezzo || 0).toFixed(2)}</p>
+                    <p className="text-[11px] leading-tight text-slate-400 sm:text-xs">{p.categoria || 'Altro'} · {p.condizione}</p>
+                    <p className="mt-2 text-xs font-semibold text-teal-300 sm:text-sm">{t('openProduct')}</p>
+                  </div>
+                </a>
+                <div className="px-2 pb-2 space-y-1.5 sm:px-3 sm:pb-3 sm:space-y-2">
+                  <button type="button" onClick={() => toggleReteFromCatalog(p)} className={`w-full rounded-lg border px-2 py-1.5 text-[11px] leading-tight font-extrabold transition sm:rounded-xl sm:px-3 sm:py-2.5 sm:text-xs ${reteIds.includes(String(p.id)) ? 'border-teal-400 bg-teal-900 text-teal-100' : 'border-teal-600 bg-teal-500 text-slate-950 hover:bg-teal-400'}`} aria-pressed={reteIds.includes(String(p.id))}>
+                    {reteIds.includes(String(p.id)) ? '✓ Nella tua Rete' : '🕸️ Aggiungi alla Rete'}
+                  </button>
+                  <a href={`/piggybank?product=${encodeURIComponent(p.id)}`} className="flex w-full items-center justify-center rounded-lg border border-amber-400 bg-amber-300 px-2 py-1.5 text-[11px] leading-tight font-extrabold text-amber-950 shadow-sm hover:bg-amber-200 sm:rounded-xl sm:px-3 sm:py-2.5 sm:text-xs">
+                    <span className="mr-0.5 inline-flex h-5 w-5 items-center justify-center rounded-full border-2 border-black bg-white text-sm leading-none">🐷</span><span aria-hidden="true">💰</span> PiggyBank
+                  </a>
+                </div>
+              </article>
+              ))}
+            </div>
+          )}
+        </section>
+
           <div className="rs-apps-grid mb-5">
             <section id="rs-force-card" className="rs-feature-card rs-force-card rounded-2xl border border-cyan-400/40 bg-gradient-to-br from-slate-950 via-cyan-950/50 to-indigo-950/60 p-3 text-center shadow-xl shadow-cyan-950/20">
               <button type="button" onClick={() => { if (rsForceAperta) setRsForceAperta(false); else apriRsForce(); }} className="flex h-full w-full flex-col items-center overflow-hidden text-center">
@@ -995,97 +1114,6 @@ export default function Home() {
               </a>
             </section>
           </div>
-
-          <a href="/park" aria-label="Scopri RiverSpend Park: apri il catalogo del parco" className="group mb-5 block overflow-hidden rounded-3xl border border-cyan-300/60 bg-slate-950 shadow-xl shadow-cyan-950/20 transition hover:-translate-y-0.5 hover:border-cyan-200 focus:outline-none focus:ring-4 focus:ring-cyan-300/70">
-            <div className="relative">
-              <img src="https://raw.githubusercontent.com/5lordmaul5-del/RiverSpend/main/file_00000000070081f4be8d351d407b4017.png" alt="RiverSpend Park: ingresso scenografico, attrazioni e mondo d'avventura" className="block aspect-[16/8] w-full object-cover transition duration-500 group-hover:scale-[1.02]" loading="eager" />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
-              <div className="absolute inset-x-0 bottom-0 p-4 sm:p-7">
-                <p className="text-xs font-extrabold uppercase tracking-[.24em] text-cyan-200 sm:text-sm">Natura • Avventura • Tecnologia</p>
-                <h2 className="mt-1 text-2xl font-black text-white drop-shadow sm:text-4xl">RiverSpend Park</h2>
-                <p className="mt-1 max-w-2xl text-sm font-medium text-white sm:text-base">Entra in un altro mondo. Scopri le attrazioni, le aree tematiche e le nuove esperienze.</p>
-                <span className="mt-3 inline-flex items-center gap-2 rounded-full bg-cyan-300 px-5 py-2.5 text-sm font-extrabold text-slate-950 shadow-lg">SCOPRI IL PARCO <span aria-hidden="true">↗</span></span>
-              </div>
-            </div>
-          </a>
-
-          <a href="/social-network" className="group mb-5 block overflow-hidden rounded-3xl border border-teal-300/70 bg-gradient-to-br from-teal-950 via-slate-900 to-cyan-950 text-white shadow-xl shadow-teal-950/20 transition hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-teal-300/70">
-            <div className="relative overflow-hidden bg-slate-950">
-              <img src="/riverspend-social-banner.svg" alt="RiverSpend Social Marketplace: foto, video, prodotti, offerte e community. Entra nel Fiume." className="block aspect-[16/8] w-full object-cover sm:aspect-[16/7]" loading="eager" />
-              <span className="sr-only">Entra nel Fiume</span>
-            </div>
-          </a>
-
-          <section className="rs-hero mb-5 overflow-hidden rounded-2xl border border-teal-200 bg-white text-slate-800 shadow-sm">
-            <img src="/riverspend-river-market.svg?v=3" alt="Il mercato RiverSpend sul fiume, con negozi, barca e pacchi in acqua turchese" className="block aspect-[16/7] w-full object-cover sm:aspect-[16/5]" loading="eager" />
-            <div className="relative bg-white px-5 py-4 sm:px-7 sm:py-5">
-              <span className="rs-gold-pebble one" aria-hidden="true" />
-              <span className="rs-gold-pebble two" aria-hidden="true" />
-
-              <p className="mb-3 max-w-2xl text-sm leading-5 text-slate-600 sm:text-base">{t('heroBody')}</p>
-              <div className="flex flex-wrap gap-3">
-                <a href="/vendi" className="rs-button rs-button-primary rounded-xl px-4 py-2.5 text-sm font-bold text-slate-950">{t('sellPhoto')}</a>
-                <a href="/ecosistema" className="rounded-xl border border-teal-700 px-4 py-2.5 text-sm font-bold text-teal-800">{t('explore')}</a>
-                <a href="/eventi" className="rounded-xl border border-amber-500 px-4 py-2.5 text-sm font-bold text-amber-700">Eventi e festività</a>
-              </div>
-            </div>
-          </section>
-
-          <a href="/vendi" aria-label="Inizia a vendere su RiverSpendShop" className="group mb-5 block overflow-hidden rounded-2xl border border-teal-300/70 bg-slate-950 shadow-lg shadow-teal-950/15 transition hover:-translate-y-0.5 hover:border-amber-300 focus:outline-none focus:ring-4 focus:ring-teal-300/70">
-            <img src="/riverspend-seller-banner.svg" alt="Privati e aziende: apri la tua vetrina e inizia a vendere su RiverSpendShop" className="block aspect-[16/5] w-full object-cover sm:aspect-[16/4]" loading="eager" />
-          </a>
-
-          <div id="rs-products-section" className="mb-5 scroll-mt-40 flex items-end justify-between gap-3">
-            <div>
-              <h2 className="text-2xl font-bold">{t('products')}</h2>
-              <p className="text-sm text-slate-400">{prodottiVisibili.length} {t('visible')}</p>
-            </div>
-            <div className="flex flex-col items-end gap-2"><a href="/rete" className="text-sm font-semibold text-teal-700 underline">{t('myNet')}</a></div>
-          </div>
-
-          {errore ? (
-            <div className="rounded-xl border border-amber-700 bg-amber-950/40 p-4 text-amber-200">{t('catalogError')} {errore}</div>
-          ) : prodottiVisibili.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-slate-700 p-8 text-center">
-              <p className="mb-2 text-lg font-semibold">{prodotti.length === 0 ? t('noProducts') : t('noMatch')}</p>
-              <p className="mb-5 text-sm text-slate-400">{prodotti.length === 0 ? t('firstItem') : t('changeSearch')}</p>
-              {prodotti.length === 0 ? <a href="/vendi" className="inline-block rounded-xl bg-teal-500 px-6 py-3 font-bold text-slate-950">{t('goUpload')}</a> : <button type="button" onClick={() => { setRicerca(''); setCategoriaAttiva(''); window.history.replaceState({}, '', '/'); }} className="rounded-xl border border-teal-800 px-5 py-3 font-semibold text-teal-200">{t('reset')}</button>}
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 gap-2 sm:gap-4 sm:grid-cols-3 lg:grid-cols-4">
-              {prodottiVisibili.map((p) => (
-                <article key={p.id} className="rs-product-card group overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 transition hover:border-teal-500"><a href={`/prodotto/${encodeURIComponent(p.id)}`} className="block focus:outline-none focus:ring-2 focus:ring-teal-400">
-                  <div className="relative">{p.immagini?.[0] ? <div className="rs-product-media flex aspect-[4/3] w-full items-center justify-center overflow-hidden bg-white p-0"><img src={p.immagini[0]} alt={p.titolo || 'Prodotto'} className="h-full w-full scale-110 object-contain transition-transform duration-300 group-hover:scale-[1.16]" /></div> : <div className="flex aspect-[4/3] items-center justify-center bg-white text-xs text-slate-500">Foto non disponibile</div>}
-                  <div className="absolute bottom-1 left-1 right-1 z-20 flex items-center justify-between gap-1">
-                    <div className="flex items-center gap-1">
-                      <button type="button" onClick={(event) => { event.preventDefault(); event.stopPropagation(); toggleDesideriFromCatalog(p); }} aria-label={desideriIds.includes(String(p.id)) ? 'Rimuovi dai RS Desideri' : 'Aggiungi ai RS Desideri'} aria-pressed={desideriIds.includes(String(p.id))} title="RS Desideri" className="flex h-6 w-6 items-center justify-center rounded-full border border-cyan-200 bg-white/90 text-[12px] leading-none text-cyan-800 shadow-sm backdrop-blur hover:bg-cyan-50">
-                        {desideriIds.includes(String(p.id)) ? '♥' : '♡'}
-                      </button>
-                      <button type="button" onClick={(event) => { event.preventDefault(); event.stopPropagation(); const cat = p.categoria || ''; setRicerca(''); setCategoriaAttiva(cat); window.history.replaceState({}, '', cat ? '/?category=' + encodeURIComponent(cat) : '/'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} aria-label="RS Simili" title="RS Simili" className="flex h-6 w-6 items-center justify-center rounded-full border border-amber-300 bg-amber-100/90 text-[11px] leading-none text-amber-900 shadow-sm backdrop-blur hover:bg-amber-200">✦</button>
-                    </div>
-                    <a href={`/prodotto/${encodeURIComponent(p.id)}#recensioni`} onClick={(event) => event.stopPropagation()} aria-label="Scegli gradimento e leggi recensioni" title="Scegli il gradimento" className="flex h-7 items-center justify-center gap-0.5 rounded-full border border-rose-300 bg-white/95 px-1.5 text-[11px] leading-none shadow-sm backdrop-blur hover:bg-rose-50"><span aria-hidden="true">🐟🐟🐟🐟🐟</span></a>
-                  </div>
-                  {(() => { const tipo = String(p.venditoreTipo || "Privato").toLowerCase(); const river = tipo.includes("river"); const azienda = tipo.includes("aziend") || tipo.includes("business") || tipo.includes("iva"); const label = river ? "RSS" : azienda ? "RS azienda" : "RSprivato"; const color = river ? "border-cyan-300 bg-cyan-100 text-cyan-950" : azienda ? "border-green-300 bg-green-100 text-green-950" : "border-red-300 bg-red-100 text-red-950"; return <span className={`absolute left-2 top-2 z-10 rounded-md border px-2.5 py-1 text-[11px] font-extrabold shadow-sm ${color}`}>{label}</span>; })()} {countryFlag(p.paeseOrigine || p.paeseVenditore) && <span className="absolute right-2 top-2 z-10 flex h-8 w-8 items-center justify-center rounded-full border border-slate-300 bg-white/95 text-lg shadow-sm" title={"Paese: " + (p.paeseOrigine || p.paeseVenditore)} aria-label={"Paese: " + (p.paeseOrigine || p.paeseVenditore)}>{countryFlag(p.paeseOrigine || p.paeseVenditore)}</span>}{p.sponsorizzatoFino && new Date(p.sponsorizzatoFino) > new Date() && <span className="absolute right-2 top-11 rounded-md border border-amber-300 bg-amber-100 px-2 py-1 text-[10px] font-bold text-amber-900">RS Spons</span>}</div>
-                  <div className="p-2 sm:p-3">
-                    <h3 className="line-clamp-2 text-sm font-semibold leading-tight sm:text-base">{p.titolo}</h3>
-                    <p className="mt-1 text-base font-bold text-teal-300 sm:text-lg">€ {Number(p.prezzo || 0).toFixed(2)}</p>
-                    <p className="text-[11px] leading-tight text-slate-400 sm:text-xs">{p.categoria || 'Altro'} · {p.condizione}</p>
-                    <p className="mt-2 text-xs font-semibold text-teal-300 sm:text-sm">{t('openProduct')}</p>
-                  </div>
-                </a>
-                <div className="px-2 pb-2 space-y-1.5 sm:px-3 sm:pb-3 sm:space-y-2">
-                  <button type="button" onClick={() => toggleReteFromCatalog(p)} className={`w-full rounded-lg border px-2 py-1.5 text-[11px] leading-tight font-extrabold transition sm:rounded-xl sm:px-3 sm:py-2.5 sm:text-xs ${reteIds.includes(String(p.id)) ? 'border-teal-400 bg-teal-900 text-teal-100' : 'border-teal-600 bg-teal-500 text-slate-950 hover:bg-teal-400'}`} aria-pressed={reteIds.includes(String(p.id))}>
-                    {reteIds.includes(String(p.id)) ? '✓ Nella tua Rete' : '🕸️ Aggiungi alla Rete'}
-                  </button>
-                  <a href={`/piggybank?product=${encodeURIComponent(p.id)}`} className="flex w-full items-center justify-center rounded-lg border border-amber-400 bg-amber-300 px-2 py-1.5 text-[11px] leading-tight font-extrabold text-amber-950 shadow-sm hover:bg-amber-200 sm:rounded-xl sm:px-3 sm:py-2.5 sm:text-xs">
-                    <span className="mr-0.5 inline-flex h-5 w-5 items-center justify-center rounded-full border-2 border-black bg-white text-sm leading-none">🐷</span><span aria-hidden="true">💰</span> PiggyBank
-                  </a>
-                </div>
-              </article>
-              ))}
-            </div>
-          )}
-        </section>
 
         <section aria-labelledby="nova-honor-title" className="mx-auto mb-7 max-w-6xl px-4">
           <div className="rs-honor-panel rounded-2xl border border-amber-500/40 bg-gradient-to-br from-slate-900 via-slate-900 to-amber-950/30 p-5 text-center shadow-lg shadow-amber-950/20 sm:p-7">
