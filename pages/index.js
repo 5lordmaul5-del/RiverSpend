@@ -1115,6 +1115,38 @@ export default function Home() {
             </section>
           </div>
 
+        
+        <section aria-labelledby="rs-campaigns-title" className="mx-auto mb-8 max-w-6xl px-4">
+          <div className="rounded-3xl border border-emerald-700/60 bg-gradient-to-br from-emerald-950 via-slate-950 to-violet-950 p-5 shadow-xl sm:p-7">
+            <p className="text-xs font-extrabold uppercase tracking-[.22em] text-emerald-300">RiverSpend · Idee in preparazione</p>
+            <h2 id="rs-campaigns-title" className="mt-2 text-2xl font-black text-white sm:text-3xl">Insieme possiamo fare la differenza</h2>
+            <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-200">Stiamo progettando campagne per prenderci cura del pianeta, aiutare chi è in difficoltà e sostenere la ricerca. Per ora sono idee da sviluppare: le raccolte e i pagamenti non sono attivi.</p>
+            <div className="mt-5 grid gap-4 sm:grid-cols-3">
+              <a href="/servizi/ecology#missioni" className="rounded-2xl border border-emerald-700 bg-slate-950/80 p-4 transition hover:border-emerald-400">
+                <span className="text-3xl" aria-hidden="true">🌱</span>
+                <h3 className="mt-2 text-lg font-extrabold text-emerald-200">RiverSpend Ecology</h3>
+                <p className="mt-2 text-sm leading-5 text-slate-300">Alberi, terreni, mari, fiumi e biodiversità.</p>
+                <span className="mt-4 inline-flex rounded-full border border-emerald-600 px-3 py-2 text-xs font-bold text-emerald-200">Scopri l’idea →</span>
+                <p className="mt-3 text-[11px] font-bold text-amber-200">In preparazione · Nessuna raccolta attiva</p>
+              </a>
+              <a href="/servizi/ecology#solidale" className="rounded-2xl border border-rose-800 bg-slate-950/80 p-4 transition hover:border-rose-400">
+                <span className="text-3xl" aria-hidden="true">💚</span>
+                <h3 className="mt-2 text-lg font-extrabold text-rose-200">RiverSpend Solidale</h3>
+                <p className="mt-2 text-sm leading-5 text-slate-300">Aiuto a persone fragili e comunità colpite da emergenze.</p>
+                <span className="mt-4 inline-flex rounded-full border border-rose-700 px-3 py-2 text-xs font-bold text-rose-200">Scopri l’idea →</span>
+                <p className="mt-3 text-[11px] font-bold text-amber-200">In preparazione · Nessuna raccolta attiva</p>
+              </a>
+              <a href="/servizi/ecology#future-life" className="rounded-2xl border border-violet-800 bg-slate-950/80 p-4 transition hover:border-violet-400">
+                <span className="text-3xl" aria-hidden="true">🏥</span>
+                <h3 className="mt-2 text-lg font-extrabold text-violet-200">PiggyBank · Future Life</h3>
+                <p className="mt-2 text-sm leading-5 text-slate-300">Ospedali, nuove cure e ricerca scientifica qualificata.</p>
+                <span className="mt-4 inline-flex rounded-full border border-violet-700 px-3 py-2 text-xs font-bold text-violet-200">Scopri l’idea →</span>
+                <p className="mt-3 text-[11px] font-bold text-amber-200">In preparazione · Nessuna raccolta attiva</p>
+              </a>
+            </div>
+          </div>
+        </section>
+
         <section aria-labelledby="nova-honor-title" className="mx-auto mb-7 max-w-6xl px-4">
           <div className="rs-honor-panel rounded-2xl border border-amber-500/40 bg-gradient-to-br from-slate-900 via-slate-900 to-amber-950/30 p-5 text-center shadow-lg shadow-amber-950/20 sm:p-7">
             <div className="mb-2 text-2xl" aria-hidden="true">✨</div>
