@@ -150,6 +150,7 @@ export default function Home() {
     ['RiverSpend Pay','/servizi/pay'],
     ['RiverSpend Box','/servizi/box'],
     ['RiverSpend Park','/park'],
+    ['RSFV · Future Vision','/rsfv'],
     ['RiverSpend Broadcast','/servizi/broadcast'],
     ['RiverSpend Music','/servizi/music'],
     ['RS Spons','/rs-spons'],
