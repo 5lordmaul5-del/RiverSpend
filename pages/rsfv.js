@@ -7,6 +7,7 @@ const concepts = [
   { icon: '⚡', name: 'RiveR Energy', area: 'Energia', status: 'IDEA DA STUDIARE', text: 'Idee per ridurre i consumi e valorizzare le energie rinnovabili.' },
   { icon: '🌿', name: 'RiveR Ecology', area: 'Ambiente', status: 'IDEA DA STUDIARE', text: 'Progetti pratici per proteggere fiumi, mari, territorio e biodiversità.' },
   { icon: '🎡', name: 'RiveR Park', area: 'Tempo libero', status: 'CONCEPT', text: 'Esperienze di svago che uniscono natura, accessibilità e tecnologia.' },
+  { icon: '🛡️', name: 'RSUS · RiverSpend Unità Sicura', area: 'Sicurezza e protezione', status: 'CONCEPT FUTURO', text: 'Una visione coordinata di personale di sicurezza formato, assistenza ai visitatori e strumenti tecnologici per ambienti più sicuri e accoglienti.' },
 ];
 
 export default function RiverSpendFutureVision() {
@@ -70,6 +71,39 @@ export default function RiverSpendFutureVision() {
               <p className="mt-4 text-xs font-bold uppercase tracking-widest text-cyan-300">{item.area}</p><h3 className="mt-1 text-xl font-black">{item.name}</h3><p className="mt-3 flex-1 text-sm leading-relaxed text-slate-300">{item.text}</p>
               {item.name === 'RiveR A1A1' && <div className="mt-4 rounded-xl border border-cyan-900 bg-black/20 p-3 text-xs leading-relaxed text-slate-300"><strong className="text-cyan-200">Possibili funzioni da studiare:</strong> supporto nelle attività quotidiane, comandi vocali Hey River, assistenza domestica e promemoria. Le funzioni sanitarie, la movimentazione di persone e l’autonomia richiederebbero progettazione e verifiche specialistiche.</div>}
             </article>)}
+          </div>
+        </section>
+        <section id="rsus" className="border-y border-cyan-900/80 bg-gradient-to-br from-[#061923] via-[#081e2a] to-[#111b28] px-4 py-12 sm:px-8">
+          <div className="mx-auto max-w-7xl">
+            <div className="grid gap-8 lg:grid-cols-[.8fr_1.2fr]">
+              <div>
+                <p className="text-xs font-extrabold tracking-[.22em] text-cyan-300">RSFV · SICUREZZA E COMUNITÀ</p>
+                <h2 className="mt-3 text-3xl font-black sm:text-4xl"><span className="text-cyan-300">RSUS</span><br />RiverSpend Unità Sicura</h2>
+                <p className="mt-4 text-lg font-bold text-amber-200">I Protettori · Guardiani della città</p>
+                <p className="mt-4 leading-relaxed text-slate-300">Un concept per immaginare un sistema di protezione e assistenza in RiverSpend Park e, in futuro, in altri spazi della comunità. Al centro ci sono le persone: prevenzione, aiuto, rispetto e interventi responsabili.</p>
+                <span className="mt-5 inline-flex rounded-full border border-amber-300/40 bg-amber-300/10 px-3 py-2 text-xs font-extrabold text-amber-200">CONCEPT FUTURO · NON È UN SERVIZIO OPERATIVO</span>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {[
+                  ['🛡️','RSUS-01 · Unità pattuglia','Presenza e assistenza nelle aree del parco.'],
+                  ['🐕','RSUS-02 · Unità K9','Concept per supporto specializzato e ricerca, con operatori qualificati.'],
+                  ['🚁','RSUS-03 · Unità droni','Possibile monitoraggio di aree nel rispetto di privacy e norme applicabili.'],
+                  ['🤖','RSUS-04 · Unità infopoint','Robot informativi multilingua per mappe, orari e indicazioni ai visitatori.'],
+                  ['🚤','RSUS-05 · Unità acqua','Assistenza e prevenzione nelle zone acquatiche con personale abilitato.'],
+                  ['🖥️','RSUS-06 · Centro controllo','Coordinamento delle segnalazioni e delle squadre da parte di personale autorizzato.'],
+                ].map(([icon,title,body]) => <article key={title} className="rounded-2xl border border-cyan-800 bg-[#06151e]/90 p-4"><div className="text-3xl">{icon}</div><h3 className="mt-3 font-extrabold text-white">{title}</h3><p className="mt-2 text-sm leading-relaxed text-slate-300">{body}</p></article>)}
+              </div>
+            </div>
+            <div className="mt-6 rounded-2xl border border-cyan-900 bg-black/20 p-5">
+              <h3 className="font-extrabold text-cyan-200">Principi RSUS</h3>
+              <div className="mt-3 grid gap-3 text-sm text-slate-300 sm:grid-cols-2 lg:grid-cols-4">
+                <p><strong className="text-white">Prevenzione:</strong> ridurre i rischi prima che diventino emergenze.</p>
+                <p><strong className="text-white">Assistenza:</strong> aiutare visitatori, famiglie e persone con esigenze specifiche.</p>
+                <p><strong className="text-white">Rispetto:</strong> proteggere dignità, privacy e libertà delle persone.</p>
+                <p><strong className="text-white">Responsabilità:</strong> personale formato, procedure chiare e coordinamento con i servizi competenti.</p>
+              </div>
+              <p className="mt-4 text-xs leading-relaxed text-slate-400">Ogni futura attività di sicurezza, sorveglianza, droni o soccorso richiederà valutazioni legali, autorizzazioni, personale qualificato e test adeguati. Le immagini sono riferimenti concettuali, non una descrizione di un servizio già attivo.</p>
+            </div>
           </div>
         </section>
         <footer className="border-t border-cyan-900 bg-[#031018] px-4 py-6 text-center text-xs text-slate-400">RSFV · RiverSpend Future Vision — Idee per il futuro, senza confondere i concept con prodotti già realizzati.</footer>
