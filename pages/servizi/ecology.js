@@ -189,6 +189,36 @@ export default function RiverSpendEcology() {
         </div>
       </section>
 
+      <section id="future-life" className="border-y border-violet-900 bg-gradient-to-br from-violet-950 via-slate-950 to-cyan-950">
+        <div className="mx-auto max-w-6xl px-4 py-12 sm:py-16">
+          <p className="text-sm font-extrabold uppercase tracking-[.22em] text-violet-300">PiggyBank Future Life · RiverSpend Solidale</p>
+          <h2 className="mt-3 max-w-4xl text-3xl font-black leading-tight sm:text-5xl">Siamo RiverSpend: un mondo a parte, un mondo nuovo.</h2>
+          <p className="mt-4 max-w-3xl text-base leading-7 text-slate-200 sm:text-lg">Unire le persone per trasformare la solidarietà in progetti concreti: aiutare gli ospedali, sostenere chi affronta una malattia e contribuire alla ricerca scientifica per una vita più lunga e in salute.</p>
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <article className="rounded-2xl border border-violet-800 bg-slate-950/70 p-5">
+              <div className="text-3xl" aria-hidden="true">🏥</div>
+              <h3 className="mt-3 text-xl font-extrabold">Ospedali più attrezzati</h3>
+              <p className="mt-2 text-sm leading-6 text-slate-300">Sostenere l'acquisto di letti ospedalieri, sedie a rotelle, strumenti diagnostici e attrezzature richieste da strutture sanitarie verificate.</p>
+            </article>
+            <article className="rounded-2xl border border-violet-800 bg-slate-950/70 p-5">
+              <div className="text-3xl" aria-hidden="true">🧬</div>
+              <h3 className="mt-3 text-xl font-extrabold">Ricerca e nuove cure</h3>
+              <p className="mt-2 text-sm leading-6 text-slate-300">Contribuire a studi seri su malattie gravi, prevenzione, diagnosi precoce e terapie, con istituzioni scientifiche qualificate.</p>
+            </article>
+            <article className="rounded-2xl border border-violet-800 bg-slate-950/70 p-5">
+              <div className="text-3xl" aria-hidden="true">🔭</div>
+              <h3 className="mt-3 text-xl font-extrabold">Future Life: longevità</h3>
+              <p className="mt-2 text-sm leading-6 text-slate-300">Esplorare la ricerca sull'invecchiamento, la rigenerazione dei tessuti e gli anni vissuti in buona salute. L'immortalità resta un orizzonte ipotetico, non un risultato scientifico dimostrato.</p>
+            </article>
+          </div>
+          <div className="mt-6 rounded-2xl border border-violet-700/70 bg-slate-950/80 p-5 sm:p-6">
+            <h3 className="text-xl font-extrabold">PiggyBank: progetti sotto controllo</h3>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-300">Per ogni iniziativa pubblicheremo obiettivo, responsabile, budget, fondi effettivamente raccolti, ripartizione prevista, trasferimenti documentati e aggiornamenti. Il modello proposto resta 90% alla causa selezionata e 10% al Fondo iniziative RiverSpendShop per altre cause, con regole chiare e rendicontazione separata.</p>
+            <p className="mt-3 text-sm leading-6 text-amber-200">Questa è una proposta in fase di progettazione: non si raccolgono fondi da questa pagina. Prima dell'attivazione saranno verificati partner, autorizzazioni e gestione legale e contabile. I progetti scientifici saranno valutati da soggetti competenti; non saranno promessi risultati medici garantiti.</p>
+          </div>
+        </div>
+      </section>
+
       <footer className="border-t border-slate-800 px-4 py-7 text-center text-sm text-slate-400">
         <p className="font-bold text-teal-300">RiverSpend Ecology</p>
         <p className="mt-1">YOUR SHOP • YOUR FLOW</p>
