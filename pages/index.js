@@ -1173,11 +1173,11 @@ export default function Home() {
         </footer>
       </div>
       <style jsx>{`
-        .rs-apps-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; align-items:stretch; }
-        .rs-feature-card { min-width:0; height:310px; overflow:hidden; display:flex; }
-                .rs-feature-card > a, .rs-feature-card > button { display:flex; flex-direction:column; flex:1; min-height:0; }
-        .rs-feature-card .rs-feature-media { box-sizing:border-box; height:112px !important; min-height:112px !important; max-height:112px; flex:0 0 112px; }
-        .rs-feature-action { margin-top:auto !important; min-height:36px; flex-shrink:0; justify-content:center; }
+        .rs-apps-grid { display:flex !important; flex-direction:row; flex-wrap:nowrap; width:100%; max-width:100%; box-sizing:border-box; overflow-x:auto; overflow-y:hidden; gap:10px; align-items:stretch; justify-content:flex-start; margin-left:auto; margin-right:auto; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; }
+        .rs-feature-card { box-sizing:border-box; min-width:160px !important; width:160px !important; max-width:160px; height:228px !important; flex:0 0 160px !important; overflow:hidden; display:flex; scroll-snap-align:start; }
+        .rs-feature-card > a, .rs-feature-card > button { display:flex; flex-direction:column; flex:1; min-height:0; }
+        .rs-feature-card .rs-feature-media { box-sizing:border-box; height:72px !important; min-height:72px !important; max-height:72px; flex:0 0 72px; }
+        .rs-feature-action { margin-top:auto !important; min-height:28px; flex-shrink:0; justify-content:center; }
         .rs-feature-card > button { min-width:0; min-height:0; }
         .rs-feature-card a, .rs-feature-card button { -webkit-tap-highlight-color:transparent; }
         /* RS FORCE segue la stessa gerarchia visiva delle altre schede: titolo, immagine, testo. */
@@ -1189,12 +1189,11 @@ export default function Home() {
         .rs-feature-card > a, .rs-feature-card > button { justify-content:flex-start; }
         .rs-feature-card .rs-feature-action { margin-top:auto !important; }
         @media (max-width:640px) {
-          .rs-apps-grid { gap:8px; }
-          .rs-feature-card { height:310px; }
+          .rs-apps-grid { gap:8px; padding-left:4px; padding-right:4px; }
+          .rs-feature-card { height:228px !important; }
         }
         @media (min-width:768px) {
-          .rs-apps-grid { grid-template-columns:repeat(4,minmax(0,1fr)); }
-          .rs-feature-card { height:320px; }
+          .rs-apps-grid { max-width:1152px; }
         }
         @keyframes rs-palantir-pulse {
           0%, 100% { transform: scale(1); filter: brightness(1); }
