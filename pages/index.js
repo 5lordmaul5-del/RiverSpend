@@ -785,8 +785,8 @@ export default function Home() {
               </div>
             </div>
             <div className="mx-auto mt-2 flex max-w-[380px] items-center justify-center gap-2 rounded-full border border-blue-200 bg-gradient-to-r from-blue-50 via-white to-sky-50 px-3 py-1 shadow-[0_2px_8px_rgba(3,105,161,.10)]">
-              <span className="shrink-0 text-xs font-black tracking-tight text-blue-900">Chiedi a River AI</span>
-              <button type="button" onClick={avviaRiverVoice} aria-label="Chiedi a River AI con la voce" title="Tocca per parlare con River AI" className={`relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-cyan-300 bg-gradient-to-br from-blue-950 via-blue-800 to-cyan-700 text-cyan-100 shadow-[0_0_12px_rgba(2,132,199,.4)] transition ${riverVoiceActive ? 'scale-110 shadow-[0_0_20px_rgba(14,165,233,.9)]' : 'hover:scale-105'}`}>
+              <span className="shrink-0 text-xs font-black tracking-tight text-blue-900">Hey River</span>
+              <button type="button" onClick={avviaRiverVoice} aria-label="Chiedi a River AI con la voce" title="Tocca per parlare con Hey River" className={`relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-cyan-300 bg-gradient-to-br from-blue-950 via-blue-800 to-cyan-700 text-cyan-100 shadow-[0_0_12px_rgba(2,132,199,.4)] transition ${riverVoiceActive ? 'scale-110 shadow-[0_0_20px_rgba(14,165,233,.9)]' : 'hover:scale-105'}`}>
                 <svg viewBox="0 0 48 48" className={`h-8 w-8 ${riverVoiceActive ? 'animate-pulse' : ''}`} role="img" aria-label="River AI onde luminose">
                   <circle cx="24" cy="24" r="20" fill="none" stroke="#5eead4" strokeWidth="1.8" opacity=".9"/>
                   <path d="M5 24 C12 24 13 35 20 35 S28 13 36 13 S40 24 43 24" fill="none" stroke="#99fff0" strokeWidth="1.8" strokeLinecap="round"><animate attributeName="d" dur="2.2s" repeatCount="indefinite" values="M5 24 C12 24 13 35 20 35 S28 13 36 13 S40 24 43 24;M5 24 C12 24 13 14 20 14 S28 35 36 35 S40 24 43 24;M5 24 C12 24 13 35 20 35 S28 13 36 13 S40 24 43 24"/></path>
