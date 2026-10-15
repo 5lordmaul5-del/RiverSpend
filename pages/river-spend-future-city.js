@@ -99,6 +99,7 @@ export default function RiverSpendFutureVision() {
                   ['📡','RSUS-12 · Comunicazioni','Rete di comunicazione per allerta, informazioni ai visitatori e continuità operativa.'],
                   ['🧹','RSUS-13 · Ambiente e rischio','Segnalazione di ostacoli, danni, allagamenti e condizioni potenzialmente pericolose.'],
                   ['🦺','RSUS-14 · Supporto operativo','Logistica, materiali e assistenza alle squadre sul campo, sempre sotto supervisione umana.'],
+                  ['🚀','RSUS-15 · Unità Jetpack','Squadra di risposta rapida con jetpack, senza paracadute, concepita per raggiungere zone difficili durante emergenze e calamità. Concept subordinato a fattibilità tecnica, autorizzazioni aeronautiche, addestramento, protezioni e protocolli di soccorso.'],
                 ].map(([icon,title,body]) => <article key={title} className="rounded-2xl border border-cyan-800 bg-[#06151e]/90 p-4"><div className="text-3xl">{icon}</div><h3 className="mt-3 font-extrabold text-white">{title}</h3><p className="mt-2 text-sm leading-relaxed text-slate-300">{body}</p></article>)}
               </div>
             </div>
