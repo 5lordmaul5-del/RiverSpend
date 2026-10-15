@@ -993,43 +993,9 @@ export default function Home() {
                 <span className="rs-feature-action mt-2 inline-flex items-center justify-center rounded-full border border-emerald-200/60 bg-gradient-to-b from-emerald-300 to-green-500 px-4 py-2 text-[11px] font-extrabold text-slate-950">SCOPRI GLI SCONTI →</span>
               </a>
             </section>
-          </div>
-
-
-
-        <section className="mx-auto max-w-6xl px-2 py-4 sm:px-4">
-          <div className="rs-world-carousel mb-6 flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain px-1 pb-3" aria-label="Banner RiverSpend: scorri orizzontalmente">
-        <section aria-labelledby="rs-campaigns-title" className="mx-auto mb-8 max-w-6xl px-4">
-          <div className="rounded-3xl border border-emerald-700/60 bg-gradient-to-br from-emerald-950 via-slate-950 to-violet-950 p-5 shadow-xl sm:p-7">
-            <p className="text-xs font-extrabold uppercase tracking-[.22em] text-emerald-300">RiverSpend · Idee in preparazione</p>
-            <h2 id="rs-campaigns-title" className="mt-2 text-2xl font-black text-white sm:text-3xl">Insieme possiamo fare la differenza</h2>
-            <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-200">Stiamo progettando campagne per prenderci cura del pianeta, aiutare chi è in difficoltà e sostenere la ricerca. Per ora sono idee da sviluppare: le raccolte e i pagamenti non sono attivi.</p>
-            <div className="rs-campaign-cards mt-5 flex gap-3 overflow-x-auto pb-2">
-              <a href="/servizi/ecology#missioni" className="rs-campaign-card min-w-[245px] max-w-[280px] shrink-0 rounded-2xl border border-emerald-700 bg-slate-950/80 p-4 transition hover:border-emerald-400">
-                <span className="text-3xl" aria-hidden="true">🌱</span>
-                <h3 className="mt-2 text-lg font-extrabold text-emerald-200">RiverSpend Ecology</h3>
-                <p className="mt-2 text-sm leading-5 text-slate-300">Alberi, terreni, mari, fiumi e biodiversità.</p>
-                <span className="mt-4 inline-flex rounded-full border border-emerald-600 px-3 py-2 text-xs font-bold text-emerald-200">Scopri l’idea →</span>
-                <p className="mt-3 text-[11px] font-bold text-amber-200">In preparazione · Nessuna raccolta attiva</p>
-              </a>
-              <a href="/servizi/ecology#solidale" className="rs-campaign-card min-w-[245px] max-w-[280px] shrink-0 rounded-2xl border border-rose-800 bg-slate-950/80 p-4 transition hover:border-rose-400">
-                <span className="text-3xl" aria-hidden="true">💚</span>
-                <h3 className="mt-2 text-lg font-extrabold text-rose-200">RiverSpend Solidale</h3>
-                <p className="mt-2 text-sm leading-5 text-slate-300">Aiuto a persone fragili e comunità colpite da emergenze.</p>
-                <span className="mt-4 inline-flex rounded-full border border-rose-700 px-3 py-2 text-xs font-bold text-rose-200">Scopri l’idea →</span>
-                <p className="mt-3 text-[11px] font-bold text-amber-200">In preparazione · Nessuna raccolta attiva</p>
-              </a>
-              <a href="/servizi/ecology#future-life" className="rs-campaign-card min-w-[245px] max-w-[280px] shrink-0 rounded-2xl border border-violet-800 bg-slate-950/80 p-4 transition hover:border-violet-400">
-                <span className="text-3xl" aria-hidden="true">🏥</span>
-                <h3 className="mt-2 text-lg font-extrabold text-violet-200">PiggyBank · Future Life</h3>
-                <p className="mt-2 text-sm leading-5 text-slate-300">Ospedali, nuove cure e ricerca scientifica qualificata.</p>
-                <span className="mt-4 inline-flex rounded-full border border-violet-700 px-3 py-2 text-xs font-bold text-violet-200">Scopri l’idea →</span>
-                <p className="mt-3 text-[11px] font-bold text-amber-200">In preparazione · Nessuna raccolta attiva</p>
-              </a>
-            </div>
-          </div>
-        </section>
-
+            <a href="/servizi/ecology#missioni" className="rs-world-card rs-campaign-compact border-emerald-400 bg-gradient-to-br from-emerald-950 to-slate-950 text-white"><span className="text-3xl">🌱</span><h2 className="mt-2 text-xl font-extrabold text-white">RiverSpend Ecology</h2><p className="mt-2 text-sm leading-5 text-white">Alberi, terreni, mari, fiumi e biodiversità.</p><span className="mt-auto inline-flex rounded-full bg-emerald-300 px-4 py-2 text-sm font-bold text-slate-950">SCOPRI L’IDEA →</span><small className="mt-2 text-xs font-semibold text-amber-200">In preparazione · Nessuna raccolta attiva</small></a>
+            <a href="/servizi/ecology#solidale" className="rs-world-card rs-campaign-compact border-rose-400 bg-gradient-to-br from-rose-950 to-slate-950 text-white"><span className="text-3xl">💚</span><h2 className="mt-2 text-xl font-extrabold text-white">RiverSpend Solidale</h2><p className="mt-2 text-sm leading-5 text-white">Aiuto a persone fragili e comunità colpite da emergenze.</p><span className="mt-auto inline-flex rounded-full bg-rose-300 px-4 py-2 text-sm font-bold text-slate-950">SCOPRI L’IDEA →</span><small className="mt-2 text-xs font-semibold text-amber-200">In preparazione · Nessuna raccolta attiva</small></a>
+            <a href="/servizi/ecology#future-life" className="rs-world-card rs-campaign-compact border-violet-400 bg-gradient-to-br from-violet-950 to-slate-950 text-white"><span className="text-3xl">🏥</span><h2 className="mt-2 text-xl font-extrabold text-white">PiggyBank · Future Life</h2><p className="mt-2 text-sm leading-5 text-white">Ospedali, nuove cure e ricerca scientifica qualificata.</p><span className="mt-auto inline-flex rounded-full bg-violet-300 px-4 py-2 text-sm font-bold text-slate-950">SCOPRI L’IDEA →</span><small className="mt-2 text-xs font-semibold text-amber-200">In preparazione · Nessuna raccolta attiva</small></a>
           <a href="/park" aria-label="Scopri RiverSpend Park: apri il catalogo del parco" className="group mb-5 block overflow-hidden rounded-3xl border border-cyan-300/60 bg-slate-950 shadow-xl shadow-cyan-950/20 transition hover:-translate-y-0.5 hover:border-cyan-200 focus:outline-none focus:ring-4 focus:ring-cyan-300/70">
             <div className="relative">
               <img src="https://raw.githubusercontent.com/5lordmaul5-del/RiverSpend/main/file_00000000070081f4be8d351d407b4017.png" alt="RiverSpend Park: ingresso scenografico, attrazioni e mondo d'avventura" className="block aspect-[16/8] w-full object-cover transition duration-500 group-hover:scale-[1.02]" loading="eager" />
@@ -1071,6 +1037,9 @@ export default function Home() {
 
           </div>
 
+
+
+        <section className="mx-auto max-w-6xl px-2 py-4 sm:px-4">
           <div id="rs-products-section" className="mb-5 scroll-mt-40 flex items-end justify-between gap-3">
             <div>
               <h2 className="text-2xl font-bold">{t('products')}</h2>
@@ -1155,6 +1124,11 @@ export default function Home() {
 .rs-world-carousel .rs-campaign-card { min-width:245px; }
 .rs-world-carousel .rs-campaign-cards { scrollbar-width:thin; }
 @media (min-width:768px) { .rs-world-carousel > * { flex-basis: min(680px, 72%); width:min(680px,72%); } }
+.rs-apps-grid { display:flex !important; flex-direction:row; flex-wrap:nowrap; width:100%; max-width:100%; box-sizing:border-box; overflow-x:auto; overflow-y:hidden; gap:10px; align-items:stretch; justify-content:flex-start; margin-left:auto; margin-right:auto; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; }
+.rs-apps-grid > .rs-world-card { flex:0 0 260px; width:260px; max-width:260px; height:228px; min-width:260px; box-sizing:border-box; overflow:hidden; border-width:1px; border-style:solid; border-radius:18px; padding:14px; scroll-snap-align:start; display:flex; flex-direction:column; text-decoration:none; }
+.rs-apps-grid > a.rs-world-card:not(.rs-campaign-compact) { position:relative; padding:0; background:#082f49; }
+.rs-apps-grid > a.rs-world-card:not(.rs-campaign-compact) > div, .rs-apps-grid > a.rs-world-card:not(.rs-campaign-compact) > img { width:100%; height:100%; object-fit:cover; }
+.rs-apps-grid .rs-campaign-compact p, .rs-apps-grid .rs-campaign-compact h2 { color:#fff !important; }
 .rs-apps-grid { display:flex !important; flex-direction:row; flex-wrap:nowrap; width:100%; max-width:100%; box-sizing:border-box; overflow-x:auto; overflow-y:hidden; gap:10px; align-items:stretch; justify-content:flex-start; margin-left:auto; margin-right:auto; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; }
         .rs-feature-card { box-sizing:border-box; min-width:160px !important; width:160px !important; max-width:160px; height:228px !important; flex:0 0 160px !important; overflow:hidden; display:flex; scroll-snap-align:start; }
         .rs-feature-card > a, .rs-feature-card > button { display:flex; flex-direction:column; flex:1; min-height:0; }
