@@ -337,149 +337,139 @@ export default function Home() {
     if (typeof window === 'undefined') return;
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      setRiverVoiceStatus('Il riconoscimento vocale non è supportato da questo browser. Puoi usare la ricerca testuale.');
+      setRiverVoiceActive(false);
+      setRiverVoiceStatus('La voce non è supportata in questo browser. Apri RiverSpend con Chrome e consenti il microfono.');
       return;
     }
     const recognition = new SpeechRecognition();
-    recognition.lang = document.documentElement.lang || 'it-IT';
+    recognition.lang = 'it-IT';
     recognition.continuous = false;
-    recognition.interimResults = true;
-    recognition.maxAlternatives = 1;
-    let rispostaAvviata = false;
-    let richiestaFinaleGestita = false;
-    let timerRisposta = null;
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 3;
+    let gestita = false;
     setRiverVoiceActive(true);
-    setRiverVoiceStatus('Ciao, sono River. Ti ascolto…');
+    setRiverVoiceStatus('Ti ascolto… parla adesso.');
 
     const speak = (message) => {
       if (!('speechSynthesis' in window)) return;
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(message);
-      utterance.lang = document.documentElement.lang || 'it-IT';
-      const voiceStyles = {
-        femminile: { pitch: 1.18, rate: 1.0 },
-        maschile: { pitch: 0.78, rate: 0.96 },
-        sensuale: { pitch: 0.88, rate: 0.84 },
-        robotica: { pitch: 0.62, rate: 0.9 }
-      };
-      const style = voiceStyles[riverVoiceStyle] || voiceStyles.femminile;
-      utterance.pitch = style.pitch;
-      utterance.rate = style.rate;
-      const availableVoices = window.speechSynthesis.getVoices();
-      const italianVoice = availableVoices.find((voice) => /^it([-_]|$)/i.test(voice.lang));
-      if (italianVoice) utterance.voice = italianVoice;
-      utterance.onstart = () => setRiverVoiceActive(true);
-      utterance.onend = () => setRiverVoiceActive(false);
-      window.speechSynthesis.speak(utterance);
+      try {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(message);
+        utterance.lang = 'it-IT';
+        const styles = {
+          femminile: { pitch: 1.12, rate: 1.12 },
+          maschile: { pitch: 0.82, rate: 1.08 },
+          sensuale: { pitch: 0.9, rate: 1.0 },
+          robotica: { pitch: 0.7, rate: 1.08 }
+        };
+        const style = styles[riverVoiceStyle] || styles.femminile;
+        utterance.pitch = style.pitch;
+        utterance.rate = style.rate;
+        const voice = window.speechSynthesis.getVoices().find((item) => /^it([-_]|$)/i.test(item.lang));
+        if (voice) utterance.voice = voice;
+        window.speechSynthesis.speak(utterance);
+      } catch {}
     };
 
     recognition.onresult = (event) => {
-      let spoken = '';
-      let isFinal = false;
-      for (let i = event.resultIndex; i < event.results.length; i++) {
+      if (gestita) return;
+      gestita = true;
+      const alternatives = [];
+      for (let i = 0; i < event.results.length; i++) {
         const result = event.results[i];
-        const transcript = String(result?.[0]?.transcript || '').trim();
-        if (transcript) spoken = transcript;
-        if (result.isFinal) isFinal = true;
-      }
-      if (!spoken) return;
-
-      // Risposta breve sul primo riconoscimento parziale: River non resta in silenzio
-      // mentre il browser completa la trascrizione definitiva.
-      if (!isFinal) {
-        setRiverVoiceStatus('Ti ho sentito… preparo la ricerca.');
-        if (!rispostaAvviata && !timerRisposta) {
-          timerRisposta = window.setTimeout(() => {
-            timerRisposta = null;
-            if (!rispostaAvviata && !richiestaFinaleGestita) {
-              rispostaAvviata = true;
-              speak('Ciao, sono River. Ok, cerco subito.');
-              setRiverVoiceStatus('Ciao, sono River. Sto preparando la ricerca…');
-            }
-          }, 350);
+        for (let j = 0; j < result.length; j++) {
+          const text = String(result[j]?.transcript || '').trim();
+          if (text) alternatives.push(text);
         }
+      }
+      const spoken = alternatives[0] || '';
+      const q = spoken.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[.,!?;:]/g, ' ').replace(/\s+/g, ' ').trim();
+      if (!q) {
+        setRiverVoiceStatus('Non ho capito. Tocca River e ripeti più vicino al microfono.');
+        setRiverVoiceActive(false);
         return;
       }
-
-      if (richiestaFinaleGestita) return;
-      richiestaFinaleGestita = true;
-      if (timerRisposta) window.clearTimeout(timerRisposta);
-      timerRisposta = null;
-      const q = spoken.toLowerCase();
       setRiverVoiceStatus('Hai detto: “' + spoken + '”');
 
       const routes = [
-        { terms: ['river spend park', 'riverspend park', 'aprimi il park', 'apri il parco', 'fammi vedere il parco', 'fammi vedere il park', 'fammi vedere riverspend park', 'portami al parco', 'vai al parco'], href: '/park', label: 'RiverSpend Park' },
-        { terms: ['rs force', 'attiva force', 'apri force'], href: null, label: 'RS FORCE' },
-        { terms: ['river spend shop', 'riverspendshop', 'apri lo shop', 'aprimi lo shop', 'aprimi riverspend'], href: '/', label: 'RiverSpendShop' },
-        { terms: ['profilo', 'apri il profilo'], href: '/profilo', label: 'Profilo' },
-        { terms: ['i miei ordini', 'apri gli ordini', 'ordini'], href: '/ordini', label: 'Ordini' }
+        { terms: ['river spend park', 'riverspend park', 'apri park', 'apri il park', 'apri il parco', 'apri parco', 'vai al park', 'vai al parco', 'fammi vedere il parco', 'fammi vedere il park', 'portami al parco'], href: '/park', label: 'RiverSpend Park' },
+        { terms: ['rs force', 'attiva force', 'apri force', 'apri rs force'], href: null, label: 'RS FORCE' },
+        { terms: ['river spend shop', 'riverspendshop', 'apri shop', 'apri lo shop', 'apri lo riverspendshop', 'aprimi lo shop', 'aprimi riverspend', 'torna allo shop', 'home'], href: '/', label: 'RiverSpendShop' },
+        { terms: ['profilo', 'apri il profilo', 'apri profilo', 'vai al profilo'], href: '/profilo', label: 'Profilo' },
+        { terms: ['i miei ordini', 'apri gli ordini', 'apri ordini', 'vai agli ordini', 'ordini'], href: '/ordini', label: 'Ordini' },
+        { terms: ['rete', 'la mia rete', 'apri la rete', 'apri rete', 'carrello'], href: '/rete', label: 'La mia Rete' },
+        { terms: ['desideri', 'lista dei desideri', 'wishlist', 'apri i desideri'], href: '/desideri', label: 'Desideri' },
+        { terms: ['ecology', 'river spend ecology', 'apri ecology'], href: '/servizi/ecology', label: 'RiverSpend Ecology' },
+        { terms: ['solidale', 'river spend solidale', 'apri solidale'], href: '/servizi/ecology#solidale', label: 'RiverSpend Solidale' },
+        { terms: ['future life', 'piggybank', 'piggy bank', 'apri future life'], href: '/servizi/ecology#future-life', label: 'PiggyBank Future Life' },
+        { terms: ['vendi', 'vendi un prodotto', 'carica un prodotto', 'pubblica un prodotto'], href: '/vendi', label: 'Vendi un prodotto' }
       ];
-      const route = routes.find((item) => item.terms.some((term) => q.includes(term)));
+      const route = routes.find((item) => item.terms.some((term) => q === term || q.includes(term)));
       if (route?.label === 'RS FORCE') {
         setRsForceAperta(true);
-        if (!rispostaAvviata) speak('RS FORCE pronto. Usa la ricerca per trovare i prodotti più pertinenti.');
+        setRiverVoiceStatus('RS FORCE è pronto.');
         document.getElementById('rs-force-card')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        speak('RS Force pronto.');
         return;
       }
       if (route?.href) {
-        if (!rispostaAvviata) speak('Ciao, sono River. Apro ' + route.label + ' subito.');
-        window.location.href = route.href;
+        setRiverVoiceStatus('Apro ' + route.label + '…');
+        window.location.assign(route.href);
         return;
       }
-      if (/\\b(integratori|integratore|supplementi|supplemento)\\b/i.test(q)) {
-        const target = 'Integratori';
+
+      let searchTerms = q
+        .replace(/^(hey\s+river|ehi\s+river|river|nova|nov[aà])[, ]*/i, '')
+        .replace(/^(per favore\s+)?(cerca|cercami|trova|trovami|fammi vedere|mostrami|apri|vorrei|voglio|cerco)\s+/i, '')
+        .trim();
+      if (/^(integratori|integratore|supplementi|supplemento)$/.test(searchTerms)) {
         setRicerca('');
-        setCategoriaAttiva(target);
+        setCategoriaAttiva('Integratori');
         setRicercaAperta(true);
-        window.history.replaceState({}, '', '/?category=' + encodeURIComponent(target));
-        if (!rispostaAvviata) speak('Ciao, sono River. Ti mostro subito gli integratori.');
-        if (window.location.pathname === '/' || window.location.pathname === '') {
-          window.setTimeout(() => {
-            document.getElementById('rs-products-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }, 120);
-        } else {
-          window.location.href = '/?category=' + encodeURIComponent(target) + '&showProducts=1';
-        }
+        window.history.replaceState({}, '', '/?category=' + encodeURIComponent('Integratori'));
+        setRiverVoiceStatus('Apro la categoria Integratori.');
+        document.getElementById('rs-products-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        speak('Ecco gli integratori.');
         return;
       }
-      if (q.includes('abbigliamento') || q.includes('vestiti') || q.includes('vestito') || q.includes('moda')) {
-        const category = categorieSezioni.flatMap(([, items]) => items).find((item) => /abbigliamento|moda/i.test(item));
-        const target = category || 'Abbigliamento';
-        setRicerca('');
-        setCategoriaAttiva(target);
-        setRicercaAperta(true);
-        window.history.replaceState({}, '', '/?category=' + encodeURIComponent(target));
-        if (!rispostaAvviata) speak('Ciao, sono River. Ok, apro subito il settore abbigliamento.');
-        window.location.href = '/?category=' + encodeURIComponent(target);
-        return;
-      }
-      const searchTerms = spoken.replace(/^(hey\s+river|river|nova|nov[aà])[, ]*/i, '').replace(/^(cerca|trova|fammi vedere|mostrami|vorrei|voglio)\s+/i, '').trim();
+      if (/^(abbigliamento|vestiti|vestito|moda)$/.test(searchTerms)) searchTerms = 'Abbigliamento';
       if (searchTerms) {
-        if (!rispostaAvviata) speak('Ciao, sono River. Ok, cerco subito ' + searchTerms + '.');
-        setRiverVoiceStatus('Ciao, sono River. Cerco subito: ' + searchTerms);
-        if (window.location.pathname === '/' || window.location.pathname === '') {
-          setRicerca(searchTerms);
-          setRicercaAperta(true);
-          setCategoriaAttiva('');
+        setRicerca(searchTerms);
+        setRicercaAperta(true);
+        setCategoriaAttiva('');
+        setRiverVoiceStatus('Cerco: ' + searchTerms);
+        if (window.location.pathname !== '/' && window.location.pathname !== '') {
+          window.location.assign('/?q=' + encodeURIComponent(searchTerms));
+        } else {
           window.history.replaceState({}, '', '/?q=' + encodeURIComponent(searchTerms));
           window.scrollTo({ top: 0, behavior: 'smooth' });
-        } else {
-          window.location.href = '/?q=' + encodeURIComponent(searchTerms);
+          speak('Cerco ' + searchTerms + '.');
         }
+        return;
       }
-    };
-    recognition.onerror = () => {
-      if (timerRisposta) window.clearTimeout(timerRisposta);
+      setRiverVoiceStatus('Non ho riconosciuto il comando. Prova: “apri Park”, “apri la Rete” oppure “cerca iPhone”.');
       setRiverVoiceActive(false);
-      setRiverVoiceStatus('Non sono riuscita a sentire la richiesta. Premi il microfono e riprova.');
+    };
+
+    recognition.onerror = (event) => {
+      setRiverVoiceActive(false);
+      const message = event?.error === 'not-allowed' || event?.error === 'service-not-allowed'
+        ? 'Microfono bloccato: consenti a Chrome di usare il microfono per RiverSpend.'
+        : event?.error === 'no-speech'
+          ? 'Non ho sentito la voce. Tocca River e parla subito.'
+          : 'La voce si è interrotta. Riprova toccando River.';
+      setRiverVoiceStatus(message);
     };
     recognition.onend = () => {
-      if (timerRisposta) window.clearTimeout(timerRisposta);
       setRiverVoiceActive(false);
-      setRiverVoiceStatus((current) => current === 'River ti ascolta…' ? 'Tocca il microfono e parla con River.' : current);
+      setRiverVoiceStatus((current) => current === 'Ti ascolto… parla adesso.' ? 'Non ho sentito la richiesta. Tocca River e riprova.' : current);
     };
-    try { recognition.start(); } catch { setRiverVoiceStatus('Il microfono è occupato. Riprova tra poco.'); }
+    try {
+      recognition.start();
+    } catch {
+      setRiverVoiceActive(false);
+      setRiverVoiceStatus('Microfono già attivo. Attendi un secondo e riprova.');
+    }
   }
 
   function apriRsForce() {
