@@ -189,7 +189,22 @@ export default function RiverSpendEcology() {
         </div>
       </section>
 
-      <section id="future-life" className="border-y border-violet-900 bg-gradient-to-br from-violet-950 via-slate-950 to-cyan-950">
+
+      <section id="solidale" className="border-y border-rose-900 bg-gradient-to-br from-rose-950 via-slate-950 to-emerald-950">
+        <div className="mx-auto max-w-6xl px-4 py-12 sm:py-16">
+          <p className="text-sm font-extrabold uppercase tracking-[.22em] text-rose-300">RiverSpend Solidale · Idea in preparazione</p>
+          <h2 className="mt-3 max-w-4xl text-3xl font-black leading-tight sm:text-5xl">Vicini alle persone, soprattutto nei momenti difficili.</h2>
+          <p className="mt-4 max-w-3xl text-base leading-7 text-slate-200 sm:text-lg">Vogliamo progettare iniziative solidali a sostegno di anziani, persone senza dimora, famiglie in difficoltà e comunità colpite da terremoti o alluvioni. Le attività saranno definite con enti e partner verificati.</p>
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <article className="rounded-2xl border border-rose-800 bg-slate-950/70 p-5"><div className="text-3xl" aria-hidden="true">🤝</div><h3 className="mt-3 text-xl font-extrabold">Aiuto alle persone fragili</h3><p className="mt-2 text-sm leading-6 text-slate-300">Progetti da definire con organizzazioni competenti per sostenere anziani, persone senza dimora e famiglie in difficoltà.</p></article>
+            <article className="rounded-2xl border border-rose-800 bg-slate-950/70 p-5"><div className="text-3xl" aria-hidden="true">🏠</div><h3 className="mt-3 text-xl font-extrabold">Accoglienza e abitare</h3><p className="mt-2 text-sm leading-6 text-slate-300">Valutare soluzioni abitative e percorsi di accoglienza insieme a enti locali e partner qualificati.</p></article>
+            <article className="rounded-2xl border border-rose-800 bg-slate-950/70 p-5"><div className="text-3xl" aria-hidden="true">🆘</div><h3 className="mt-3 text-xl font-extrabold">Emergenze e ricostruzione</h3><p className="mt-2 text-sm leading-6 text-slate-300">Possibili campagne per terremoti, alluvioni e altre emergenze, con beneficiari e utilizzo dei fondi verificati.</p></article>
+          </div>
+          <div className="mt-6 rounded-xl border border-amber-600/50 bg-amber-950/30 p-4 text-sm leading-6 text-amber-100"><strong>Stato:</strong> questa sezione presenta idee da sviluppare, non una raccolta attiva. Non inviare denaro: beneficiari, partner, procedure e rendicontazione devono ancora essere definiti.</div>
+        </div>
+      </section>
+
+            <section id="future-life" className="border-y border-violet-900 bg-gradient-to-br from-violet-950 via-slate-950 to-cyan-950">
         <div className="mx-auto max-w-6xl px-4 py-12 sm:py-16">
           <p className="text-sm font-extrabold uppercase tracking-[.22em] text-violet-300">PiggyBank Future Life · RiverSpend Solidale</p>
           <h2 className="mt-3 max-w-4xl text-3xl font-black leading-tight sm:text-5xl">Siamo RiverSpend: un mondo a parte, un mondo nuovo.</h2>
