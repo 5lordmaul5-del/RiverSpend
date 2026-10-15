@@ -310,7 +310,7 @@ export default function Servizio({ slug }) {
 export function getStaticPaths() {
   return {
     paths: Object.keys(servizi)
-      .filter((slug) => slug !== 'broadcast' && slug !== 'tv' && slug !== 'pay')
+      .filter((slug) => slug !== 'broadcast' && slug !== 'tv' && slug !== 'pay' && slug !== 'ecology')
       .map((slug) => ({ params: { slug } })),
     fallback: false
   };
