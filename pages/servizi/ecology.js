@@ -29,8 +29,39 @@ const missions = [
   }
 ];
 
+// Esempi esclusivamente illustrativi: non rappresentano raccolte reali.
+const reportingExamples = [
+  {
+    icon: '🌳',
+    title: 'Esempio: campagna alberi',
+    cause: 'Progetto ambientale con fondazione partner da identificare',
+    collected: 10000,
+    beneficiary: 9000,
+    solidarity: 1000,
+    status: 'Esempio di rendicontazione',
+    note: 'Prima di pubblicare una campagna reale saranno indicati il partner, il progetto, le date e i documenti di trasferimento.'
+  },
+  {
+    icon: '🤝',
+    title: 'Esempio: emergenza terremoto',
+    cause: 'Intervento di emergenza con ente beneficiario da verificare',
+    collected: 10000,
+    beneficiary: 9000,
+    solidarity: 1000,
+    status: 'Esempio di rendicontazione',
+    note: 'Il beneficiario e il trasferimento saranno pubblicati solo dopo verifica e documentazione. Il fondo solidale potrà sostenere altre cause secondo criteri pubblici.'
+  }
+];
+
+const euro = (amount) => new Intl.NumberFormat('it-IT', {
+  style: 'currency',
+  currency: 'EUR',
+  maximumFractionDigits: 2
+}).format(amount);
+
 export default function RiverSpendEcology() {
   const [expanded, setExpanded] = useState(-1);
+  const [showExamples, setShowExamples] = useState(true);
 
   return (
     <main className="min-h-screen bg-slate-950 text-white">
@@ -45,7 +76,7 @@ export default function RiverSpendEcology() {
         <div className="mx-auto max-w-6xl px-5 py-14 sm:py-20">
           <p className="mb-3 text-sm font-extrabold uppercase tracking-[.24em] text-emerald-300">RiverSpend Ecology · Insieme per il pianeta</p>
           <h1 className="max-w-4xl text-4xl font-black leading-tight sm:text-6xl">Un mondo più verde. Un futuro condiviso.</h1>
-          <p className="mt-5 max-w-2xl text-base leading-7 text-slate-200 sm:text-lg">Dall’Italia al mondo, vogliamo unire persone e comunità per sostenere la natura con progetti concreti, trasparenti e verificabili.</p>
+          <p className="mt-5 max-w-2xl text-base leading-7 text-slate-200 sm:text-lg">Dall’Italia al mondo, vogliamo unire persone e comunità per sostenere la natura e le persone con progetti concreti, trasparenti e verificabili.</p>
           <a href="#missioni" className="mt-7 inline-flex rounded-xl bg-emerald-300 px-5 py-3 font-extrabold text-emerald-950 hover:bg-emerald-200">Scopri le missioni ↓</a>
         </div>
       </section>
@@ -84,11 +115,76 @@ export default function RiverSpendEcology() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 py-12">
+      <section id="rendicontazione" className="mx-auto max-w-6xl px-4 py-12 sm:py-16">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div className="max-w-3xl">
+            <p className="text-sm font-extrabold uppercase tracking-[.2em] text-emerald-300">Registro pubblico</p>
+            <h2 className="mt-2 text-2xl font-black sm:text-3xl">Quanto abbiamo raccolto e dove va ogni euro</h2>
+            <p className="mt-3 leading-6 text-slate-300">Ogni campagna avrà un rendiconto separato: totale raccolto, 90% destinato al beneficiario indicato e 10% accantonato nel Fondo iniziative RiverSpendShop per sostenere altre cause. Pubblicheremo i trasferimenti documentati e gli aggiornamenti dei progetti.</p>
+          </div>
+          <button type="button" onClick={() => setShowExamples(!showExamples)} aria-expanded={showExamples} className="shrink-0 rounded-xl border border-teal-700 px-4 py-3 text-sm font-bold text-teal-200 hover:bg-teal-950">{showExamples ? 'Nascondi esempi' : 'Mostra esempi'}</button>
+        </div>
+
+        <div className="mt-5 rounded-xl border border-amber-600/50 bg-amber-950/30 p-4 text-sm leading-6 text-amber-100">
+          <strong>Importante:</strong> gli importi mostrati qui sotto sono esempi di come apparirà il rendiconto, non sono donazioni realmente raccolte né trasferimenti già effettuati. I dati reali saranno pubblicati solo dopo l’attivazione regolare delle campagne e la verifica dei documenti.
+        </div>
+
+        {showExamples && <div className="mt-6 grid gap-5 lg:grid-cols-2">
+          {reportingExamples.map((report) => (
+            <article key={report.title} className="overflow-hidden rounded-2xl border border-teal-800 bg-slate-900">
+              <div className="border-b border-slate-800 p-5">
+                <div className="flex items-start gap-3">
+                  <span className="text-3xl" aria-hidden="true">{report.icon}</span>
+                  <div className="flex-1">
+                    <span className="inline-flex rounded-full border border-amber-500/50 px-2.5 py-1 text-xs font-bold text-amber-200">{report.status}</span>
+                    <h3 className="mt-3 text-xl font-extrabold">{report.title}</h3>
+                    <p className="mt-1 text-sm leading-5 text-slate-400">{report.cause}</p>
+                  </div>
+                </div>
+                <p className="mt-5 text-sm text-slate-400">Totale raccolto nell’esempio</p>
+                <p className="text-3xl font-black text-white">{euro(report.collected)}</p>
+              </div>
+              <div className="space-y-4 p-5">
+                <div>
+                  <div className="flex items-center justify-between gap-3 text-sm">
+                    <span className="font-semibold text-slate-200">90% · Beneficiario della causa</span>
+                    <strong className="text-emerald-300">{euro(report.beneficiary)}</strong>
+                  </div>
+                  <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-700"><div className="h-full w-[90%] rounded-full bg-emerald-400" /></div>
+                  <p className="mt-1 text-xs text-slate-400">Beneficiario effettivo e ricevuta del trasferimento saranno indicati nel rendiconto reale.</p>
+                </div>
+                <div>
+                  <div className="flex items-center justify-between gap-3 text-sm">
+                    <span className="font-semibold text-slate-200">10% · Fondo iniziative RiverSpendShop</span>
+                    <strong className="text-amber-300">{euro(report.solidarity)}</strong>
+                  </div>
+                  <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-700"><div className="h-full w-[10%] rounded-full bg-amber-400" /></div>
+                  <p className="mt-1 text-xs text-slate-400">Quota riservata ad altre cause, da rendicontare separatamente quando assegnata.</p>
+                </div>
+                <p className="rounded-lg bg-slate-950 p-3 text-sm leading-6 text-slate-300">{report.note}</p>
+              </div>
+            </article>
+          ))}
+        </div>}
+
+        <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-900 p-5">
+          <h3 className="text-lg font-extrabold">Come sarà verificabile ogni movimento</h3>
+          <ol className="mt-3 list-decimal space-y-2 pl-5 text-sm leading-6 text-slate-300">
+            <li>Pubblicazione del nome della campagna, delle date e del totale effettivamente raccolto.</li>
+            <li>Calcolo visibile della ripartizione 90% / 10% e indicazione di eventuali costi ulteriori, se previsti e dichiarati.</li>
+            <li>Nome del beneficiario, data e prova del trasferimento, oscurando i dati personali e bancari non necessari.</li>
+            <li>Registro del Fondo iniziative RiverSpendShop: saldo iniziale, nuove quote del 10%, importi assegnati ad altre cause e saldo residuo.</li>
+            <li>Aggiornamenti sull’utilizzo dei fondi e sui risultati comunicati dai partner.</li>
+          </ol>
+          <p className="mt-4 text-xs leading-5 text-slate-400">Il registro sarà aggiornato con dati verificati. La pagina, da sola, non dimostra che una raccolta o un trasferimento sia avvenuto; la raccolta sarà attivata soltanto dopo aver definito beneficiari, gestione legale e contabile e procedure di rendicontazione.</p>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 pb-12">
         <h2 className="text-2xl font-black sm:text-3xl">Trasparenza prima di tutto</h2>
         <div className="mt-5 grid gap-3 sm:grid-cols-3">
           <div className="rounded-xl border border-slate-800 bg-slate-900 p-4"><h3 className="font-bold text-teal-200">Partner identificati</h3><p className="mt-2 text-sm leading-6 text-slate-300">Ogni progetto dovrà indicare chi lo realizza e dove.</p></div>
-          <div className="rounded-xl border border-slate-800 bg-slate-900 p-4"><h3 className="font-bold text-teal-200">Fondi rendicontati</h3><p className="mt-2 text-sm leading-6 text-slate-300">Obiettivi, spese e costi amministrativi saranno dichiarati.</p></div>
+          <div className="rounded-xl border border-slate-800 bg-slate-900 p-4"><h3 className="font-bold text-teal-200">Fondi rendicontati</h3><p className="mt-2 text-sm leading-6 text-slate-300">Obiettivi, spese e trasferimenti saranno dichiarati.</p></div>
           <div className="rounded-xl border border-slate-800 bg-slate-900 p-4"><h3 className="font-bold text-teal-200">Risultati verificabili</h3><p className="mt-2 text-sm leading-6 text-slate-300">Condivideremo aggiornamenti e prove dei lavori effettivamente svolti.</p></div>
         </div>
       </section>
@@ -96,7 +192,7 @@ export default function RiverSpendEcology() {
       <footer className="border-t border-slate-800 px-4 py-7 text-center text-sm text-slate-400">
         <p className="font-bold text-teal-300">RiverSpend Ecology</p>
         <p className="mt-1">YOUR SHOP • YOUR FLOW</p>
-        <p className="mx-auto mt-3 max-w-3xl">Questa pagina presenta una missione in fase di progettazione. Non è una richiesta di pagamento né una promessa di risultati ambientali già conseguiti.</p>
+        <p className="mx-auto mt-3 max-w-3xl">Questa pagina presenta campagne in fase di progettazione ed esempi di rendicontazione. Non è una richiesta di pagamento né una dichiarazione di raccolte o trasferimenti già avvenuti.</p>
       </footer>
     </main>
   );
