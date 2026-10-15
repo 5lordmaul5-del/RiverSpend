@@ -1118,7 +1118,14 @@ export default function Home() {
       </div>
       <style jsx>{`
         .rs-apps-grid { display:flex !important; flex-direction:row; flex-wrap:nowrap; width:100%; max-width:100%; box-sizing:border-box; overflow-x:auto; overflow-y:hidden; gap:10px; align-items:stretch; justify-content:flex-start; margin-left:auto; margin-right:auto; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; }
-.rs-apps-grid > .rs-banner-slide { flex:0 0 260px; width:260px; min-width:260px; max-width:260px; margin-bottom:0 !important; scroll-snap-align:start; }
+.rs-apps-grid > .rs-banner-slide { flex:0 0 240px; width:240px; min-width:240px; max-width:240px; height:228px; min-height:228px; max-height:228px; margin-bottom:0 !important; scroll-snap-align:start; box-sizing:border-box; overflow:hidden; position:relative; }
+.rs-apps-grid > .rs-banner-slide:not(.rs-hero) > div { height:100%; }
+.rs-apps-grid > .rs-banner-slide:not(.rs-hero) img { display:block; width:100%; height:100% !important; max-height:100%; object-fit:cover; }
+.rs-apps-grid > .rs-banner-slide.rs-hero > img { position:absolute; inset:0; width:100%; height:100% !important; max-height:100%; object-fit:cover; }
+.rs-apps-grid > .rs-banner-slide.rs-hero > div { position:absolute; inset:auto 0 0; z-index:2; padding:10px; background:rgba(255,255,255,.94); }
+.rs-apps-grid > .rs-banner-slide.rs-hero > div p { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; margin-bottom:8px; font-size:12px; line-height:1.35; }
+.rs-apps-grid > .rs-banner-slide.rs-hero > div .flex { gap:6px; }
+.rs-apps-grid > .rs-banner-slide.rs-hero > div a { padding:6px 8px; font-size:11px; }
 .rs-apps-grid { display:flex !important; flex-direction:row; flex-wrap:nowrap; width:100%; max-width:100%; box-sizing:border-box; overflow-x:auto; overflow-y:hidden; gap:10px; align-items:stretch; justify-content:flex-start; margin-left:auto; margin-right:auto; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; }
         .rs-feature-card { box-sizing:border-box; min-width:160px !important; width:160px !important; max-width:160px; height:228px !important; flex:0 0 160px !important; overflow:hidden; display:flex; scroll-snap-align:start; }
         .rs-feature-card > a, .rs-feature-card > button { display:flex; flex-direction:column; flex:1; min-height:0; }
