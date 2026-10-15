@@ -830,16 +830,16 @@ export default function Home() {
               )}
             </div>
           {menuCategorie && (
-            <div className="mx-auto mt-3 max-h-[45vh] w-full max-w-6xl overflow-y-auto rounded-2xl border border-teal-800 bg-slate-900 p-4 shadow-2xl">
-              <div className="mb-3 flex items-center justify-between"><strong className="text-teal-200">{t('categories')}</strong><button onClick={() => setMenuCategorie(false)} aria-label={t('close')}>✕</button></div>
+            <div className="mx-auto mt-3 max-h-[45vh] w-full max-w-6xl overflow-y-auto rounded-2xl border border-teal-200 bg-white p-4 text-slate-900 shadow-2xl">
+              <div className="mb-3 flex items-center justify-between"><strong className="text-teal-800">{t('categories')}</strong><button onClick={() => setMenuCategorie(false)} aria-label={t('close')}>✕</button></div>
               <div className="space-y-3">
                 {categorieSezioni.map(([section, items]) => (
-                  <div key={section} className="rounded-xl border border-teal-700/50 bg-slate-800/60 p-2">
-                    <div className="px-3 py-2 text-sm font-bold tracking-wide text-teal-200">{section}</div>
+                  <div key={section} className="rounded-xl border border-slate-200 bg-slate-50 p-2">
+                    <div className="px-3 py-2 text-sm font-bold tracking-wide text-teal-800">{section}</div>
                     <div className="grid grid-cols-1 gap-1">
                       {items.map((cat) => (
-                        <a key={cat} href={`/?category=${encodeURIComponent(cat)}`} onClick={() => setMenuCategorie(false)} className="rounded-lg px-4 py-2 text-sm text-slate-100 hover:bg-teal-900">
-                          {cat} <span className="float-right text-teal-300">›</span>
+                        <a key={cat} href={`/?category=${encodeURIComponent(cat)}`} onClick={() => setMenuCategorie(false)} className="rounded-lg px-4 py-2 text-sm font-medium text-slate-800 hover:bg-teal-50">
+                          {cat} <span className="float-right text-teal-700">›</span>
                         </a>
                       ))}
                     </div>
