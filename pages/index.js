@@ -996,7 +996,7 @@ export default function Home() {
             <a href="/servizi/ecology#missioni" className="rs-world-card rs-campaign-compact border-emerald-400 bg-gradient-to-br from-emerald-950 to-slate-950 text-white"><span className="text-3xl">🌱</span><h2 className="mt-2 text-xl font-extrabold text-white">RiverSpend Ecology</h2><p className="mt-2 text-sm leading-5 text-white">Alberi, terreni, mari, fiumi e biodiversità.</p><span className="mt-auto inline-flex rounded-full bg-emerald-300 px-4 py-2 text-sm font-bold text-slate-950">SCOPRI L’IDEA →</span><small className="mt-2 text-xs font-semibold text-amber-200">In preparazione · Nessuna raccolta attiva</small></a>
             <a href="/servizi/ecology#solidale" className="rs-world-card rs-campaign-compact border-rose-400 bg-gradient-to-br from-rose-950 to-slate-950 text-white"><span className="text-3xl">💚</span><h2 className="mt-2 text-xl font-extrabold text-white">RiverSpend Solidale</h2><p className="mt-2 text-sm leading-5 text-white">Aiuto a persone fragili e comunità colpite da emergenze.</p><span className="mt-auto inline-flex rounded-full bg-rose-300 px-4 py-2 text-sm font-bold text-slate-950">SCOPRI L’IDEA →</span><small className="mt-2 text-xs font-semibold text-amber-200">In preparazione · Nessuna raccolta attiva</small></a>
             <a href="/servizi/ecology#future-life" className="rs-world-card rs-campaign-compact border-violet-400 bg-gradient-to-br from-violet-950 to-slate-950 text-white"><span className="text-3xl">🏥</span><h2 className="mt-2 text-xl font-extrabold text-white">PiggyBank · Future Life</h2><p className="mt-2 text-sm leading-5 text-white">Ospedali, nuove cure e ricerca scientifica qualificata.</p><span className="mt-auto inline-flex rounded-full bg-violet-300 px-4 py-2 text-sm font-bold text-slate-950">SCOPRI L’IDEA →</span><small className="mt-2 text-xs font-semibold text-amber-200">In preparazione · Nessuna raccolta attiva</small></a>
-          <a href="/park" aria-label="Scopri RiverSpend Park: apri il catalogo del parco" className="group mb-5 block overflow-hidden rounded-3xl border border-cyan-300/60 bg-slate-950 shadow-xl shadow-cyan-950/20 transition hover:-translate-y-0.5 hover:border-cyan-200 focus:outline-none focus:ring-4 focus:ring-cyan-300/70">
+          <a href="/park" aria-label="Scopri RiverSpend Park: apri il catalogo del parco" className="rs-banner-slide group shrink-0 snap-start overflow-hidden rounded-3xl border border-cyan-300/60 bg-slate-950 shadow-xl shadow-cyan-950/20 transition hover:-translate-y-0.5 hover:border-cyan-200 focus:outline-none focus:ring-4 focus:ring-cyan-300/70">
             <div className="relative">
               <img src="https://raw.githubusercontent.com/5lordmaul5-del/RiverSpend/main/file_00000000070081f4be8d351d407b4017.png" alt="RiverSpend Park: ingresso scenografico, attrazioni e mondo d'avventura" className="block aspect-[16/8] w-full object-cover transition duration-500 group-hover:scale-[1.02]" loading="eager" />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
@@ -1009,14 +1009,14 @@ export default function Home() {
             </div>
           </a>
 
-          <a href="/social-network" className="group mb-5 block overflow-hidden rounded-3xl border border-teal-300/70 bg-gradient-to-br from-teal-950 via-slate-900 to-cyan-950 text-white shadow-xl shadow-teal-950/20 transition hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-teal-300/70">
+          <a href="/social-network" className="rs-banner-slide group shrink-0 snap-start overflow-hidden rounded-3xl border border-teal-300/70 bg-gradient-to-br from-teal-950 via-slate-900 to-cyan-950 text-white shadow-xl shadow-teal-950/20 transition hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-teal-300/70">
             <div className="relative overflow-hidden bg-slate-950">
               <img src="/riverspend-social-banner.svg" alt="RiverSpend Social Marketplace: foto, video, prodotti, offerte e community. Entra nel Fiume." className="block aspect-[16/8] w-full object-cover sm:aspect-[16/7]" loading="eager" />
               <span className="sr-only">Entra nel Fiume</span>
             </div>
           </a>
 
-          <section className="rs-hero mb-5 overflow-hidden rounded-2xl border border-teal-200 bg-white text-slate-800 shadow-sm">
+          <section className="rs-hero rs-banner-slide shrink-0 snap-start overflow-hidden rounded-2xl border border-teal-200 bg-white text-slate-800 shadow-sm">
             <img src="/riverspend-river-market.svg?v=3" alt="Il mercato RiverSpend sul fiume, con negozi, barca e pacchi in acqua turchese" className="block aspect-[16/7] w-full object-cover sm:aspect-[16/5]" loading="eager" />
             <div className="relative bg-white px-5 py-4 sm:px-7 sm:py-5">
               <span className="rs-gold-pebble one" aria-hidden="true" />
@@ -1031,7 +1031,7 @@ export default function Home() {
             </div>
           </section>
 
-          <a href="/vendi" aria-label="Inizia a vendere su RiverSpendShop" className="group mb-5 block overflow-hidden rounded-2xl border border-teal-300/70 bg-slate-950 shadow-lg shadow-teal-950/15 transition hover:-translate-y-0.5 hover:border-amber-300 focus:outline-none focus:ring-4 focus:ring-teal-300/70">
+          <a href="/vendi" aria-label="Inizia a vendere su RiverSpendShop" className="rs-banner-slide group shrink-0 snap-start overflow-hidden rounded-2xl border border-teal-300/70 bg-slate-950 shadow-lg shadow-teal-950/15 transition hover:-translate-y-0.5 hover:border-amber-300 focus:outline-none focus:ring-4 focus:ring-teal-300/70">
             <img src="/riverspend-seller-banner.svg" alt="Privati e aziende: apri la tua vetrina e inizia a vendere su RiverSpendShop" className="block aspect-[16/5] w-full object-cover sm:aspect-[16/4]" loading="eager" />
           </a>
 
@@ -1117,18 +1117,8 @@ export default function Home() {
         </footer>
       </div>
       <style jsx>{`
-        .rs-world-carousel { display:flex !important; flex-direction:row; flex-wrap:nowrap; align-items:stretch; overflow-x:auto; overflow-y:hidden; gap:12px; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; width:100%; max-width:100%; box-sizing:border-box; }
-.rs-world-carousel > * { flex:0 0 88%; width:88%; max-width:680px; min-width:0; margin-bottom:0 !important; scroll-snap-align:start; }
-.rs-world-carousel > section { box-sizing:border-box; }
-.rs-world-carousel > a { align-self:stretch; }
-.rs-world-carousel .rs-campaign-card { min-width:245px; }
-.rs-world-carousel .rs-campaign-cards { scrollbar-width:thin; }
-@media (min-width:768px) { .rs-world-carousel > * { flex-basis: min(680px, 72%); width:min(680px,72%); } }
-.rs-apps-grid { display:flex !important; flex-direction:row; flex-wrap:nowrap; width:100%; max-width:100%; box-sizing:border-box; overflow-x:auto; overflow-y:hidden; gap:10px; align-items:stretch; justify-content:flex-start; margin-left:auto; margin-right:auto; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; }
-.rs-apps-grid > .rs-world-card { flex:0 0 260px; width:260px; max-width:260px; height:228px; min-width:260px; box-sizing:border-box; overflow:hidden; border-width:1px; border-style:solid; border-radius:18px; padding:14px; scroll-snap-align:start; display:flex; flex-direction:column; text-decoration:none; }
-.rs-apps-grid > a.rs-world-card:not(.rs-campaign-compact) { position:relative; padding:0; background:#082f49; }
-.rs-apps-grid > a.rs-world-card:not(.rs-campaign-compact) > div, .rs-apps-grid > a.rs-world-card:not(.rs-campaign-compact) > img { width:100%; height:100%; object-fit:cover; }
-.rs-apps-grid .rs-campaign-compact p, .rs-apps-grid .rs-campaign-compact h2 { color:#fff !important; }
+        .rs-apps-grid { display:flex !important; flex-direction:row; flex-wrap:nowrap; width:100%; max-width:100%; box-sizing:border-box; overflow-x:auto; overflow-y:hidden; gap:10px; align-items:stretch; justify-content:flex-start; margin-left:auto; margin-right:auto; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; }
+.rs-apps-grid > .rs-banner-slide { flex:0 0 260px; width:260px; min-width:260px; max-width:260px; margin-bottom:0 !important; scroll-snap-align:start; }
 .rs-apps-grid { display:flex !important; flex-direction:row; flex-wrap:nowrap; width:100%; max-width:100%; box-sizing:border-box; overflow-x:auto; overflow-y:hidden; gap:10px; align-items:stretch; justify-content:flex-start; margin-left:auto; margin-right:auto; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; }
         .rs-feature-card { box-sizing:border-box; min-width:160px !important; width:160px !important; max-width:160px; height:228px !important; flex:0 0 160px !important; overflow:hidden; display:flex; scroll-snap-align:start; }
         .rs-feature-card > a, .rs-feature-card > button { display:flex; flex-direction:column; flex:1; min-height:0; }
