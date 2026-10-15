@@ -867,6 +867,136 @@ export default function Home() {
           </div>
         </header>
 
+          <div className="rs-apps-grid mb-5 flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain px-1 pb-3" aria-label="Scopri le iniziative RiverSpend: scorri orizzontalmente">
+            <section id="rs-force-card" className="rs-feature-card shrink-0 w-[220px] snap-start rs-force-card rounded-2xl border border-cyan-400/40 bg-gradient-to-br from-slate-950 via-cyan-950/50 to-indigo-950/60 p-2 text-center shadow-lg shadow-cyan-950/20">
+              <button type="button" onClick={() => { if (rsForceAperta) setRsForceAperta(false); else apriRsForce(); }} className="flex h-full w-full flex-col items-center overflow-hidden text-center">
+                <div className="rs-force-stage rs-feature-media relative mx-auto flex h-20 w-full shrink-0 items-center justify-center overflow-hidden rounded-xl border border-cyan-300/50">
+                  <img src="/rs-force.jpg" alt="RS FORCE: sfera energetica RiverSpend blu e oro" className="absolute inset-0 h-full w-full object-cover object-center opacity-100" />
+                  {rsForceAperta && prodottiVisibili.slice(0, 4).map((p, index) => {
+                    const positions = [{ x: '-82px', y: '-26px' }, { x: '82px', y: '-26px' }, { x: '-82px', y: '26px' }, { x: '82px', y: '26px' }];
+                    const pos = positions[index];
+                    const image = p.immagini?.[0];
+                    return image ? (
+                      <a key={'force-orbit-' + p.id} href={'/prodotto/' + encodeURIComponent(p.id)} onClick={(e) => e.stopPropagation()} aria-label={'RS Force: ' + (p.titolo || 'prodotto')} className="absolute z-10 flex h-11 w-11 items-center justify-center overflow-hidden rounded-xl border border-cyan-200/70 bg-white p-0.5 shadow-lg" style={{left:'50%', top:'50%', transform:`translate(calc(-50% + ${pos.x}), calc(-50% + ${pos.y}))`}}>
+                        <img src={image} alt="" className="h-full w-full object-contain" />
+                      </a>
+                    ) : null;
+                  })}
+                  <span className="relative z-20 flex h-20 w-20 items-center justify-center rounded-full border border-cyan-200/70 bg-[radial-gradient(circle_at_35%_30%,rgba(255,255,255,.95),rgba(103,232,249,.45)_18%,rgba(8,47,73,.95)_58%,rgba(2,6,23,1)_100%)] text-3xl shadow-[0_0_25px_rgba(34,211,238,.55)]" style={{animation:'rs-palantir-pulse 3s ease-in-out infinite'}}>🔮</span>
+                </div>
+                <p className="mt-1 min-h-4 text-[10px] font-bold uppercase tracking-[0.25em] text-cyan-200">RS FORCE</p>
+                <h2 className="mt-1 min-h-[44px] text-base font-extrabold leading-tight text-white">RS FORCE · Potenzia la tua ricerca</h2>
+                {!rsForceAperta ? <p className="mt-2 min-h-[32px] px-1 text-[11px] leading-4 text-slate-100">Tocca la sfera per collegare la ricerca ai prodotti più pertinenti.</p> : (
+                  <div className="mt-2 grid w-full grid-cols-2 gap-1.5">
+                    <a onClick={(e) => e.stopPropagation()} href={categoriaAttiva ? `/?category=${encodeURIComponent(categoriaAttiva)}&future=offers` : '/?future=offers'} className="rounded-xl border border-amber-300/50 bg-amber-950/50 p-2 text-[10px] font-bold text-white">🏷️ Promozioni</a>
+                    <a onClick={(e) => e.stopPropagation()} href={categoriaAttiva ? `/?category=${encodeURIComponent(categoriaAttiva)}&future=new` : '/?future=new'} className="rounded-xl border border-cyan-300/50 bg-cyan-950/50 p-2 text-[10px] font-bold text-white">🆕 Novità</a>
+                    <a onClick={(e) => e.stopPropagation()} href={categoriaAttiva ? `/?category=${encodeURIComponent(categoriaAttiva)}&future=concepts` : '/?future=concepts'} className="rounded-xl border border-violet-300/50 bg-violet-950/50 p-2 text-[10px] font-bold text-white">💡 Concept</a>
+                    <a onClick={(e) => e.stopPropagation()} href={categoriaAttiva ? `/?category=${encodeURIComponent(categoriaAttiva)}&future=arrivals` : '/?future=arrivals'} className="rounded-xl border border-emerald-300/50 bg-emerald-950/50 p-2 text-[10px] font-bold text-white">🔭 In arrivo</a>
+                  </div>
+                )}
+              </button>
+            </section>
+
+            <section className="rs-feature-card shrink-0 w-[220px] snap-start rs-fortune-card rounded-2xl border border-amber-400/40 bg-gradient-to-br from-slate-950 via-amber-950/30 to-slate-900 p-2 text-center shadow-lg shadow-amber-950/20">
+              <div className="flex h-full w-full flex-col items-center overflow-hidden text-center">
+                <p className="shrink-0 min-h-4 text-[10px] font-bold uppercase tracking-[0.22em] text-amber-100">🎡 RS FORTUNE</p>
+                
+                <h2 className="mt-1 min-h-[44px] shrink-0 text-base font-extrabold leading-tight text-white">La ruota della fortuna</h2>
+                {rsFortuneAperta ? (
+                  <div className="mt-2 flex min-h-0 w-full flex-1 flex-col items-center overflow-hidden">
+                    <div className="relative mx-auto h-[112px] w-[112px] shrink-0">
+                      <div className="absolute -top-1 left-1/2 z-20 -translate-x-1/2 text-lg">🔻</div>
+                      <div className="rs-fortune-wheel relative h-[112px] w-[112px] rounded-full border-4 border-amber-300 shadow-[0_0_22px_rgba(251,191,36,.4)]" style={{transform:`rotate(${rsFortuneRotation}deg)`, transition: rsFortuneSpinning ? "transform 5.2s cubic-bezier(.12,.72,.08,1)" : "none"}}>
+                        <div className="rs-fortune-labels" aria-hidden="true">
+                          <span>💰<br/>5 RM</span><span>💰<br/>10 RM</span><span>💰<br/>20 RM</span><span>🚚<br/>FREE</span>
+                          <span>🏷️<br/>5%</span><span>🔥<br/>BOOST</span><span>🎁<br/>SORPRESA</span><span>⭐<br/>500 RSP</span>
+                        </div>
+                        <div className="rs-fortune-center">RS<br/>FORTUNE</div>
+                      </div>
+                    </div>
+                    <p className="mt-2 text-[10px] leading-4 text-slate-100">Un solo giro. Una sola fortuna.</p>
+                    <button type="button" disabled={rsFortuneSpinning} onClick={(e) => { e.stopPropagation(); giraRsFortune(); }} className="mt-2 shrink-0 rounded-full bg-amber-300 px-4 py-2 text-xs font-extrabold text-amber-950 disabled:opacity-50">{rsFortuneSpinning ? '🎡 Gira…' : '🎡 Gira la ruota'}</button>
+                    {rsFortunePrize && <div className="mt-2 max-w-full rounded-xl border border-amber-400/50 bg-amber-950/50 px-2 py-1 text-[10px] font-extrabold text-amber-100">{rsFortunePrize}</div>}
+                  </div>
+                ) : (
+                  <div className="mt-2 flex flex-1 flex-col items-center justify-center overflow-hidden">
+                    <img src="/rs-fortune.jpg" alt="RS FORTUNE: ruota dei premi RiverSpend" className="rs-feature-media mt-2 h-20 w-full rounded-xl border border-amber-300/50 object-cover object-center" loading="lazy" />
+                    <p className="mt-2 min-h-[32px] px-1 text-[10px] leading-4 text-slate-100">Apri la ruota e prova il giro.</p>
+                    <button type="button" onClick={(e) => { e.stopPropagation(); setRsFortuneAperta(true); }} className="rs-feature-action mt-2 inline-flex min-h-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-b from-amber-300 to-amber-500 px-4 py-2 text-[11px] font-extrabold text-slate-950 shadow-md">APRI E GIRA LA RUOTA →</button>
+                  </div>
+                )}
+              </div>
+            </section>
+
+            <section className="rs-feature-card shrink-0 w-[220px] snap-start rounded-2xl border border-violet-300/60 bg-gradient-to-br from-[#160b2c] via-violet-950 to-slate-950 p-2 text-center shadow-lg shadow-violet-950/30">
+              <a
+                href="/rs-lottery"
+                aria-label="Apri la pagina dedicata RS Lottery"
+                className="flex h-full w-full flex-col items-center overflow-hidden text-center"
+              >
+                <div className="flex w-full shrink-0 items-center justify-center gap-2">
+                  <span className="text-lg" aria-hidden="true">🎟️</span>
+                  <p className="min-w-0 text-[11px] font-extrabold uppercase tracking-[0.1em] text-violet-100">RS LOTTERY</p>
+                </div>
+                <div className="rs-feature-media mt-2 w-full overflow-hidden rounded-xl border border-violet-200/50 bg-black/20">
+                  <img src="/rs-lottery.jpg" alt="RS Lottery RiverSpend, iniziative e premi" className="h-20 w-full object-cover object-center transition-transform duration-300" loading="lazy" />
+                </div>
+                <div className="flex flex-1 flex-col items-center justify-center py-3">
+                  <p className="min-h-[28px] text-lg font-extrabold text-white">Premi e iniziative</p>
+                  <p className="mt-1 min-h-[40px] text-xs leading-5 text-violet-100">Come funzionerà · categorie di premi · calendario</p>
+                  <span className="rs-feature-action mt-2 inline-flex items-center gap-2 rounded-full border border-violet-200/50 bg-violet-800/40 px-4 py-2 text-[11px] font-extrabold text-white">Entra in RS Lottery <span aria-hidden="true">→</span></span>
+                  <p className="mt-2 text-[10px] text-amber-200">Iniziativa in preparazione</p>
+                </div>
+              </a>
+            </section>
+
+            <section className="rs-feature-card shrink-0 w-[220px] snap-start rounded-2xl border border-amber-400/60 p-2 text-center shadow-lg shadow-amber-950/30" style={{backgroundColor:"#252719",backgroundImage:"radial-gradient(ellipse at 15% 20%, #606044 0 8%, transparent 9%), radial-gradient(ellipse at 72% 18%, #41432c 0 11%, transparent 12%), radial-gradient(ellipse at 42% 75%, #56583b 0 10%, transparent 11%), radial-gradient(ellipse at 90% 78%, #353824 0 13%, transparent 14%), radial-gradient(ellipse at 28% 48%, #353824 0 12%, transparent 13%), linear-gradient(135deg,#17190f,#303322,#17190f)"}}>
+              <a href="/rs-folgore" aria-label="Apri la missione RS Folgore" className="flex h-full w-full flex-col items-center justify-center overflow-hidden rounded-xl text-center focus:outline-none focus:ring-4 focus:ring-amber-300/70">
+                <p className="shrink-0 text-[10px] font-bold uppercase tracking-[0.22em] text-amber-100">⚡ RS FOLGORE ⚡</p>
+                <div className="rs-feature-media mt-2 w-full overflow-hidden rounded-xl border border-amber-300/60">
+                  <img src="/rs-folgore-pacchi.png" alt="RS FOLGORE: aereo RiverSpend che consegna pacchi con paracadute" className="h-20 w-full object-cover" loading="lazy" />
+                </div>
+                <p className="mt-3 min-h-[40px] text-sm font-extrabold text-white">Offerte che arrivano dal cielo</p>
+                <p className="mt-2 min-h-[32px] text-[10px] leading-4 text-amber-50">Offerte lampo per prodotti di ogni categoria.</p>
+                <span className="rs-feature-action mt-2 inline-flex items-center justify-center rounded-full border border-amber-300/60 bg-gradient-to-b from-amber-300 to-amber-600 px-4 py-2 text-[11px] font-extrabold text-slate-950">APRI LA MISSIONE →</span>
+              </a>
+            </section>
+
+            <section className="rs-feature-card shrink-0 w-[220px] snap-start rounded-2xl border border-amber-300/70 bg-gradient-to-br from-[#201707] via-amber-950 to-slate-950 p-2 text-center shadow-lg shadow-amber-950/30">
+              <a href={categoriaAttiva ? `/?category=${encodeURIComponent(categoriaAttiva)}&future=offers` : '/?future=offers'} aria-label="Scopri RSSS RiverSpend Super Saldi" className="flex h-full w-full flex-col items-center overflow-hidden text-center">
+                <p className="shrink-0 text-[10px] font-extrabold uppercase tracking-[0.2em] text-amber-200">🏷️ RSSS</p>
+                <h2 className="mt-1 min-h-[40px] text-base font-extrabold leading-tight text-white">RiverSpend Super Saldi</h2>
+                <div className="rs-feature-media mt-3 flex w-full items-center justify-center overflow-hidden rounded-xl border border-amber-300/60 bg-gradient-to-br from-amber-300 via-yellow-600 to-amber-900">
+                  <div className="flex flex-col items-center justify-center px-2 text-slate-950">
+                    <span className="text-4xl font-black tracking-tight">RSSS</span>
+                    <span className="mt-1 text-center text-[10px] font-extrabold uppercase tracking-widest">Sale</span>
+                    <span className="mt-2 text-2xl" aria-hidden="true">％</span>
+                  </div>
+                </div>
+                <p className="mt-3 min-h-[40px] px-1 text-xs leading-5 text-amber-50">Occasioni e promozioni da scoprire nel RiverSpendShop.</p>
+                <span className="rs-feature-action mt-2 inline-flex items-center justify-center rounded-full border border-amber-200/60 bg-gradient-to-b from-amber-300 to-amber-500 px-4 py-2 text-[11px] font-extrabold text-slate-950">SCOPRI I SALDI →</span>
+              </a>
+            </section>
+
+            <section className="rs-feature-card shrink-0 w-[220px] snap-start rounded-2xl border border-emerald-300/70 bg-gradient-to-br from-emerald-950 via-green-950 to-slate-950 p-2 text-center shadow-lg shadow-emerald-950/30">
+              <a href={categoriaAttiva ? `/?category=${encodeURIComponent(categoriaAttiva)}&future=offers` : '/?future=offers'} aria-label="Scopri RiverSpend Super Sconti" className="flex h-full w-full flex-col items-center overflow-hidden text-center">
+                <p className="shrink-0 text-[10px] font-extrabold uppercase tracking-[0.2em] text-emerald-200">💚 RS SCONTI</p>
+                <h2 className="mt-1 min-h-[40px] text-base font-extrabold leading-tight text-white">RiverSpend Super Sconti</h2>
+                <div className="rs-feature-media mt-3 flex w-full items-center justify-center overflow-hidden rounded-xl border border-emerald-300/60 bg-gradient-to-br from-emerald-300 via-green-600 to-emerald-950">
+                  <div className="flex flex-col items-center justify-center px-2 py-4 text-white">
+                    <span className="text-4xl font-black tracking-tight">SUPER</span>
+                    <span className="text-2xl font-black tracking-widest">SCONTI</span>
+                    <span className="mt-2 text-2xl" aria-hidden="true">％</span>
+                  </div>
+                </div>
+                <p className="mt-3 min-h-[40px] px-1 text-xs leading-5 text-emerald-50">Le offerte dei venditori, da scoprire tutto l’anno.</p>
+                <span className="rs-feature-action mt-2 inline-flex items-center justify-center rounded-full border border-emerald-200/60 bg-gradient-to-b from-emerald-300 to-green-500 px-4 py-2 text-[11px] font-extrabold text-slate-950">SCOPRI GLI SCONTI →</span>
+              </a>
+            </section>
+          </div>
+
+
+
         <section className="mx-auto max-w-6xl px-2 py-4 sm:px-4">
           <section aria-labelledby="rs-showcase-title" className="mb-6 rounded-2xl border border-teal-200 bg-white p-3 text-slate-900 shadow-sm sm:p-4">
             <div className="mb-1 flex items-center justify-between gap-2">
@@ -987,135 +1117,6 @@ export default function Home() {
           )}
         </section>
 
-          <div className="rs-apps-grid mb-5">
-            <section id="rs-force-card" className="rs-feature-card rs-force-card rounded-2xl border border-cyan-400/40 bg-gradient-to-br from-slate-950 via-cyan-950/50 to-indigo-950/60 p-3 text-center shadow-xl shadow-cyan-950/20">
-              <button type="button" onClick={() => { if (rsForceAperta) setRsForceAperta(false); else apriRsForce(); }} className="flex h-full w-full flex-col items-center overflow-hidden text-center">
-                <div className="rs-force-stage rs-feature-media relative mx-auto flex h-36 w-full shrink-0 items-center justify-center overflow-hidden rounded-xl border border-cyan-300/50">
-                  <img src="/rs-force.jpg" alt="RS FORCE: sfera energetica RiverSpend blu e oro" className="absolute inset-0 h-full w-full object-cover object-center opacity-100" />
-                  {rsForceAperta && prodottiVisibili.slice(0, 4).map((p, index) => {
-                    const positions = [{ x: '-82px', y: '-26px' }, { x: '82px', y: '-26px' }, { x: '-82px', y: '26px' }, { x: '82px', y: '26px' }];
-                    const pos = positions[index];
-                    const image = p.immagini?.[0];
-                    return image ? (
-                      <a key={'force-orbit-' + p.id} href={'/prodotto/' + encodeURIComponent(p.id)} onClick={(e) => e.stopPropagation()} aria-label={'RS Force: ' + (p.titolo || 'prodotto')} className="absolute z-10 flex h-11 w-11 items-center justify-center overflow-hidden rounded-xl border border-cyan-200/70 bg-white p-0.5 shadow-lg" style={{left:'50%', top:'50%', transform:`translate(calc(-50% + ${pos.x}), calc(-50% + ${pos.y}))`}}>
-                        <img src={image} alt="" className="h-full w-full object-contain" />
-                      </a>
-                    ) : null;
-                  })}
-                  <span className="relative z-20 flex h-20 w-20 items-center justify-center rounded-full border border-cyan-200/70 bg-[radial-gradient(circle_at_35%_30%,rgba(255,255,255,.95),rgba(103,232,249,.45)_18%,rgba(8,47,73,.95)_58%,rgba(2,6,23,1)_100%)] text-3xl shadow-[0_0_25px_rgba(34,211,238,.55)]" style={{animation:'rs-palantir-pulse 3s ease-in-out infinite'}}>🔮</span>
-                </div>
-                <p className="mt-1 min-h-4 text-[10px] font-bold uppercase tracking-[0.25em] text-cyan-200">RS FORCE</p>
-                <h2 className="mt-1 min-h-[44px] text-base font-extrabold leading-tight text-white">RS FORCE · Potenzia la tua ricerca</h2>
-                {!rsForceAperta ? <p className="mt-2 min-h-[32px] px-1 text-[11px] leading-4 text-slate-100">Tocca la sfera per collegare la ricerca ai prodotti più pertinenti.</p> : (
-                  <div className="mt-2 grid w-full grid-cols-2 gap-1.5">
-                    <a onClick={(e) => e.stopPropagation()} href={categoriaAttiva ? `/?category=${encodeURIComponent(categoriaAttiva)}&future=offers` : '/?future=offers'} className="rounded-xl border border-amber-300/50 bg-amber-950/50 p-2 text-[10px] font-bold text-white">🏷️ Promozioni</a>
-                    <a onClick={(e) => e.stopPropagation()} href={categoriaAttiva ? `/?category=${encodeURIComponent(categoriaAttiva)}&future=new` : '/?future=new'} className="rounded-xl border border-cyan-300/50 bg-cyan-950/50 p-2 text-[10px] font-bold text-white">🆕 Novità</a>
-                    <a onClick={(e) => e.stopPropagation()} href={categoriaAttiva ? `/?category=${encodeURIComponent(categoriaAttiva)}&future=concepts` : '/?future=concepts'} className="rounded-xl border border-violet-300/50 bg-violet-950/50 p-2 text-[10px] font-bold text-white">💡 Concept</a>
-                    <a onClick={(e) => e.stopPropagation()} href={categoriaAttiva ? `/?category=${encodeURIComponent(categoriaAttiva)}&future=arrivals` : '/?future=arrivals'} className="rounded-xl border border-emerald-300/50 bg-emerald-950/50 p-2 text-[10px] font-bold text-white">🔭 In arrivo</a>
-                  </div>
-                )}
-              </button>
-            </section>
-
-            <section className="rs-feature-card rs-fortune-card rounded-2xl border border-amber-400/40 bg-gradient-to-br from-slate-950 via-amber-950/30 to-slate-900 p-3 text-center shadow-xl shadow-amber-950/20">
-              <div className="flex h-full w-full flex-col items-center overflow-hidden text-center">
-                <p className="shrink-0 min-h-4 text-[10px] font-bold uppercase tracking-[0.22em] text-amber-100">🎡 RS FORTUNE</p>
-                
-                <h2 className="mt-1 min-h-[44px] shrink-0 text-base font-extrabold leading-tight text-white">La ruota della fortuna</h2>
-                {rsFortuneAperta ? (
-                  <div className="mt-2 flex min-h-0 w-full flex-1 flex-col items-center overflow-hidden">
-                    <div className="relative mx-auto h-[112px] w-[112px] shrink-0">
-                      <div className="absolute -top-1 left-1/2 z-20 -translate-x-1/2 text-lg">🔻</div>
-                      <div className="rs-fortune-wheel relative h-[112px] w-[112px] rounded-full border-4 border-amber-300 shadow-[0_0_22px_rgba(251,191,36,.4)]" style={{transform:`rotate(${rsFortuneRotation}deg)`, transition: rsFortuneSpinning ? "transform 5.2s cubic-bezier(.12,.72,.08,1)" : "none"}}>
-                        <div className="rs-fortune-labels" aria-hidden="true">
-                          <span>💰<br/>5 RM</span><span>💰<br/>10 RM</span><span>💰<br/>20 RM</span><span>🚚<br/>FREE</span>
-                          <span>🏷️<br/>5%</span><span>🔥<br/>BOOST</span><span>🎁<br/>SORPRESA</span><span>⭐<br/>500 RSP</span>
-                        </div>
-                        <div className="rs-fortune-center">RS<br/>FORTUNE</div>
-                      </div>
-                    </div>
-                    <p className="mt-2 text-[10px] leading-4 text-slate-100">Un solo giro. Una sola fortuna.</p>
-                    <button type="button" disabled={rsFortuneSpinning} onClick={(e) => { e.stopPropagation(); giraRsFortune(); }} className="mt-2 shrink-0 rounded-full bg-amber-300 px-4 py-2 text-xs font-extrabold text-amber-950 disabled:opacity-50">{rsFortuneSpinning ? '🎡 Gira…' : '🎡 Gira la ruota'}</button>
-                    {rsFortunePrize && <div className="mt-2 max-w-full rounded-xl border border-amber-400/50 bg-amber-950/50 px-2 py-1 text-[10px] font-extrabold text-amber-100">{rsFortunePrize}</div>}
-                  </div>
-                ) : (
-                  <div className="mt-2 flex flex-1 flex-col items-center justify-center overflow-hidden">
-                    <img src="/rs-fortune.jpg" alt="RS FORTUNE: ruota dei premi RiverSpend" className="rs-feature-media mt-2 h-36 w-full rounded-xl border border-amber-300/50 object-cover object-center" loading="lazy" />
-                    <p className="mt-2 min-h-[32px] px-1 text-[10px] leading-4 text-slate-100">Apri la ruota e prova il giro.</p>
-                    <button type="button" onClick={(e) => { e.stopPropagation(); setRsFortuneAperta(true); }} className="rs-feature-action mt-2 inline-flex min-h-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-b from-amber-300 to-amber-500 px-4 py-2 text-[11px] font-extrabold text-slate-950 shadow-md">APRI E GIRA LA RUOTA →</button>
-                  </div>
-                )}
-              </div>
-            </section>
-
-            <section className="rs-feature-card rounded-2xl border border-violet-300/60 bg-gradient-to-br from-[#160b2c] via-violet-950 to-slate-950 p-3 text-center shadow-xl shadow-violet-950/30">
-              <a
-                href="/rs-lottery"
-                aria-label="Apri la pagina dedicata RS Lottery"
-                className="flex h-full w-full flex-col items-center overflow-hidden text-center"
-              >
-                <div className="flex w-full shrink-0 items-center justify-center gap-2">
-                  <span className="text-lg" aria-hidden="true">🎟️</span>
-                  <p className="min-w-0 text-[11px] font-extrabold uppercase tracking-[0.1em] text-violet-100">RS LOTTERY</p>
-                </div>
-                <div className="rs-feature-media mt-3 w-full overflow-hidden rounded-xl border border-violet-200/50 bg-black/20">
-                  <img src="/rs-lottery.jpg" alt="RS Lottery RiverSpend, iniziative e premi" className="h-36 w-full object-cover object-center transition-transform duration-300" loading="lazy" />
-                </div>
-                <div className="flex flex-1 flex-col items-center justify-center py-3">
-                  <p className="min-h-[28px] text-lg font-extrabold text-white">Premi e iniziative</p>
-                  <p className="mt-1 min-h-[40px] text-xs leading-5 text-violet-100">Come funzionerà · categorie di premi · calendario</p>
-                  <span className="rs-feature-action mt-3 inline-flex items-center gap-2 rounded-full border border-violet-200/50 bg-violet-800/40 px-4 py-2 text-[11px] font-extrabold text-white">Entra in RS Lottery <span aria-hidden="true">→</span></span>
-                  <p className="mt-2 text-[10px] text-amber-200">Iniziativa in preparazione</p>
-                </div>
-              </a>
-            </section>
-
-            <section className="rs-feature-card rounded-2xl border border-amber-400/60 p-3 text-center shadow-xl shadow-amber-950/30" style={{backgroundColor:"#252719",backgroundImage:"radial-gradient(ellipse at 15% 20%, #606044 0 8%, transparent 9%), radial-gradient(ellipse at 72% 18%, #41432c 0 11%, transparent 12%), radial-gradient(ellipse at 42% 75%, #56583b 0 10%, transparent 11%), radial-gradient(ellipse at 90% 78%, #353824 0 13%, transparent 14%), radial-gradient(ellipse at 28% 48%, #353824 0 12%, transparent 13%), linear-gradient(135deg,#17190f,#303322,#17190f)"}}>
-              <a href="/rs-folgore" aria-label="Apri la missione RS Folgore" className="flex h-full w-full flex-col items-center justify-center overflow-hidden rounded-xl text-center focus:outline-none focus:ring-4 focus:ring-amber-300/70">
-                <p className="shrink-0 text-[10px] font-bold uppercase tracking-[0.22em] text-amber-100">⚡ RS FOLGORE ⚡</p>
-                <div className="rs-feature-media mt-3 w-full overflow-hidden rounded-xl border border-amber-300/60">
-                  <img src="/rs-folgore-pacchi.png" alt="RS FOLGORE: aereo RiverSpend che consegna pacchi con paracadute" className="h-36 w-full object-cover" loading="lazy" />
-                </div>
-                <p className="mt-3 min-h-[40px] text-sm font-extrabold text-white">Offerte che arrivano dal cielo</p>
-                <p className="mt-2 min-h-[32px] text-[10px] leading-4 text-amber-50">Offerte lampo per prodotti di ogni categoria.</p>
-                <span className="rs-feature-action mt-3 inline-flex items-center justify-center rounded-full border border-amber-300/60 bg-gradient-to-b from-amber-300 to-amber-600 px-4 py-2 text-[11px] font-extrabold text-slate-950">APRI LA MISSIONE →</span>
-              </a>
-            </section>
-
-            <section className="rs-feature-card rounded-2xl border border-amber-300/70 bg-gradient-to-br from-[#201707] via-amber-950 to-slate-950 p-3 text-center shadow-xl shadow-amber-950/30">
-              <a href={categoriaAttiva ? `/?category=${encodeURIComponent(categoriaAttiva)}&future=offers` : '/?future=offers'} aria-label="Scopri RSSS RiverSpend Super Saldi" className="flex h-full w-full flex-col items-center overflow-hidden text-center">
-                <p className="shrink-0 text-[10px] font-extrabold uppercase tracking-[0.2em] text-amber-200">🏷️ RSSS</p>
-                <h2 className="mt-1 min-h-[40px] text-base font-extrabold leading-tight text-white">RiverSpend Super Saldi</h2>
-                <div className="rs-feature-media mt-3 flex w-full items-center justify-center overflow-hidden rounded-xl border border-amber-300/60 bg-gradient-to-br from-amber-300 via-yellow-600 to-amber-900">
-                  <div className="flex flex-col items-center justify-center px-2 text-slate-950">
-                    <span className="text-4xl font-black tracking-tight">RSSS</span>
-                    <span className="mt-1 text-center text-[10px] font-extrabold uppercase tracking-widest">Sale</span>
-                    <span className="mt-2 text-2xl" aria-hidden="true">％</span>
-                  </div>
-                </div>
-                <p className="mt-3 min-h-[40px] px-1 text-xs leading-5 text-amber-50">Occasioni e promozioni da scoprire nel RiverSpendShop.</p>
-                <span className="rs-feature-action mt-3 inline-flex items-center justify-center rounded-full border border-amber-200/60 bg-gradient-to-b from-amber-300 to-amber-500 px-4 py-2 text-[11px] font-extrabold text-slate-950">SCOPRI I SALDI →</span>
-              </a>
-            </section>
-
-            <section className="rs-feature-card rounded-2xl border border-emerald-300/70 bg-gradient-to-br from-emerald-950 via-green-950 to-slate-950 p-3 text-center shadow-xl shadow-emerald-950/30">
-              <a href={categoriaAttiva ? `/?category=${encodeURIComponent(categoriaAttiva)}&future=offers` : '/?future=offers'} aria-label="Scopri RiverSpend Super Sconti" className="flex h-full w-full flex-col items-center overflow-hidden text-center">
-                <p className="shrink-0 text-[10px] font-extrabold uppercase tracking-[0.2em] text-emerald-200">💚 RS SCONTI</p>
-                <h2 className="mt-1 min-h-[40px] text-base font-extrabold leading-tight text-white">RiverSpend Super Sconti</h2>
-                <div className="rs-feature-media mt-3 flex w-full items-center justify-center overflow-hidden rounded-xl border border-emerald-300/60 bg-gradient-to-br from-emerald-300 via-green-600 to-emerald-950">
-                  <div className="flex flex-col items-center justify-center px-2 py-4 text-white">
-                    <span className="text-4xl font-black tracking-tight">SUPER</span>
-                    <span className="text-2xl font-black tracking-widest">SCONTI</span>
-                    <span className="mt-2 text-2xl" aria-hidden="true">％</span>
-                  </div>
-                </div>
-                <p className="mt-3 min-h-[40px] px-1 text-xs leading-5 text-emerald-50">Le offerte dei venditori, da scoprire tutto l’anno.</p>
-                <span className="rs-feature-action mt-3 inline-flex items-center justify-center rounded-full border border-emerald-200/60 bg-gradient-to-b from-emerald-300 to-green-500 px-4 py-2 text-[11px] font-extrabold text-slate-950">SCOPRI GLI SCONTI →</span>
-              </a>
-            </section>
-          </div>
-
-        
         <section aria-labelledby="rs-campaigns-title" className="mx-auto mb-8 max-w-6xl px-4">
           <div className="rounded-3xl border border-emerald-700/60 bg-gradient-to-br from-emerald-950 via-slate-950 to-violet-950 p-5 shadow-xl sm:p-7">
             <p className="text-xs font-extrabold uppercase tracking-[.22em] text-emerald-300">RiverSpend · Idee in preparazione</p>
