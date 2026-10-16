@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import SplashScreen from './SplashScreen';
 import { supabase } from '../lib/supabase';
+import { riverSpendCategorySections as categorieSezioni, riverSpendCategories as categorie } from '../lib/riverSpendCategories';
 
 const LANGUAGES = [
   ['it', '🇮🇹 Italiano'], ['en', '🇬🇧 English'], ['es', '🇪🇸 Español'], ['fr', '🇫🇷 Français'],
@@ -109,37 +110,6 @@ export default function Home() {
   const [rsFolgoreAperta, setRsFolgoreAperta] = useState(false);
   const [rsAdmin, setRsAdmin] = useState(false);
 
-  const categorie = [
-    'DONNA','Abbigliamento Donna','Scarpe Donna','Borse & Accessori Donna','Gioielli & Orologi Donna','Bellezza & Cura personale Donna','Sport & Benessere Donna',
-    'UOMO','Abbigliamento Uomo','Scarpe Uomo','Borse & Accessori Uomo','Gioielli & Orologi Uomo','Bellezza & Cura personale Uomo','Sport & Benessere Uomo',
-    'BAMBINI','Abbigliamento Bambini','Scarpe Bambini','Borse & Accessori Bambini','Gioielli & Orologi Bambini','Giochi & Giocattoli','Prima infanzia','Sport & Benessere Bambini',
-    'GIOCHI & TEMPO LIBERO','Giochi & Giocattoli','Hobby & Modellismo','Gadget & Regali','Viaggi & Valigeria',
-    'CASA & ARREDAMENTO','Casa & Arredamento','Mobili','Cucina','Elettrodomestici','Fai da te & Ferramenta','Giardino','Illuminazione','Tessile casa',
-    'TECNOLOGIA','Elettronica & Informatica','Smartphone & Telefonia','Computer & Notebook','Gaming','Console & Videogiochi','Fotografia & Video','Musica & Audio','TV & Home cinema',
-    'SPORT & BENESSERE','Sport','Arti marziali & Combattimento','Fitness & Palestra','Outdoor & Avventura','Pesca','Caccia & Accessori consentiti','Integratori',
-    'AUTO & VEICOLI','Auto','Moto','Scooter','Harley & Custom','Camion & Veicoli commerciali','Trattori & Agricoltura','Edilizia & Macchine da lavoro','Ricambi & Accessori auto','Ricambi & Accessori moto',
-    'NAUTICA & TRASPORTI','Nautica','Navale','Barche & Gommoni','Motori marini','Aeronautica','Militaria & Storia',
-    'CULTURA & COLLEZIONISMO','Libri & Cultura','Arte','Antiquariato','Collezionismo','Vintage & Second hand',
-    'LAVORO & IMPRESA','Ufficio & Professionale','Industria','Attrezzature professionali','Energia & Smart Home','Servizi digitali',
-    'ALTRO','Altro',
-    '18🔞 ADULTI','18🔞 Sex Toys'
-  ];
-
-  const categorieSezioni = [
-    ['👩 DONNA', ['Abbigliamento Donna','Scarpe Donna','Borse & Accessori Donna','Gioielli & Orologi Donna','Bellezza & Cura personale Donna','Sport & Benessere Donna']],
-    ['👨 UOMO', ['Abbigliamento Uomo','Scarpe Uomo','Borse & Accessori Uomo','Gioielli & Orologi Uomo','Bellezza & Cura personale Uomo','Sport & Benessere Uomo']],
-    ['👶 BAMBINI', ['Abbigliamento Bambini','Scarpe Bambini','Borse & Accessori Bambini','Gioielli & Orologi Bambini','Giochi & Giocattoli','Prima infanzia','Sport & Benessere Bambini']],
-    ['🧸 GIOCHI & TEMPO LIBERO', ['Giochi & Giocattoli','Hobby & Modellismo','Gadget & Regali','Viaggi & Valigeria']],
-    ['🏠 CASA & ARREDAMENTO', ['Casa & Arredamento','Mobili','Cucina','Elettrodomestici','Fai da te & Ferramenta','Giardino','Illuminazione','Tessile casa']],
-    ['📱 TECNOLOGIA', ['Elettronica & Informatica','Smartphone & Telefonia','Computer & Notebook','Gaming','Console & Videogiochi','Fotografia & Video','Musica & Audio','TV & Home cinema']],
-    ['⚽ SPORT & BENESSERE', ['Sport','Arti marziali & Combattimento','Fitness & Palestra','Outdoor & Avventura','Pesca','Caccia & Accessori consentiti','Integratori']],
-    ['🚗 AUTO & VEICOLI', ['Auto','Moto','Scooter','Harley & Custom','Camion & Veicoli commerciali','Trattori & Agricoltura','Edilizia & Macchine da lavoro','Ricambi & Accessori auto','Ricambi & Accessori moto']],
-    ['🚤 NAUTICA & TRASPORTI', ['Nautica','Navale','Barche & Gommoni','Motori marini','Aeronautica','Militaria & Storia']],
-    ['📚 CULTURA & COLLEZIONISMO', ['Libri & Cultura','Arte','Antiquariato','Collezionismo','Vintage & Second hand']],
-    ['💼 LAVORO & IMPRESA', ['Ufficio & Professionale','Industria','Attrezzature professionali','Energia & Smart Home','Servizi digitali']],
-    ['🎁 ALTRO', ['Altro']],
-    ['18🔞 ADULTI', ['18🔞 Sex Toys']]
-  ];
   const areeRiverSpend = [
     ['Profilo','/profilo'],
     ['RiverSpendShop','/'],
