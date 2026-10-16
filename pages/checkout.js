@@ -17,6 +17,14 @@ export default function Checkout() {
   const [paypalLoading, setPaypalLoading] = useState(false);
   const [paypalMessage, setPaypalMessage] = useState('');
 
+  const cartLines = Object.values(items.reduce((lines, item) => {
+    const id = String(item.id);
+    const quantity = Math.max(1, Math.floor(Number(item.quantity) || 1));
+    if (!lines[id]) lines[id] = { ...item, id, quantity };
+    else lines[id].quantity += quantity;
+    return lines;
+  }, {}));
+
   useEffect(() => {
     let active = true;
     supabase.auth.getUser().then(({ data, error }) => {
@@ -75,16 +83,27 @@ export default function Checkout() {
       const { data: products, error: productsError } = await supabase
         .from('products')
         .select('id, name, price, stock')
-        .in('id', items.map((item) => String(item.id)))
+        .in('id', cartLines.map((item) => String(item.id)))
         .eq('status', 'published');
 
       if (productsError) throw productsError;
 
       const byId = new Map((products || []).map((product) => [String(product.id), product]));
-      const validItems = items.map((item) => byId.get(String(item.id))).filter(Boolean);
-      if (validItems.length !== items.length) throw new Error('Uno o più prodotti non sono più disponibili.');
+      const validItems = cartLines.map((item) => ({
+        product: byId.get(String(item.id)),
+        quantity: Math.max(1, Math.floor(Number(item.quantity) || 1))
+      }));
+      if (validItems.some((item) => !item.product)) {
+        throw new Error('Uno o più prodotti non sono più disponibili. Aggiorna la Rete e riprova.');
+      }
+      for (const item of validItems) {
+        const stock = Number(item.product.stock);
+        if (Number.isFinite(stock) && stock >= 0 && stock < item.quantity) {
+          throw new Error('Disponibilità insufficiente per "' + (item.product.name || 'un prodotto') + '". Riduci la quantità nella Rete.');
+        }
+      }
 
-      const subtotal = validItems.reduce((sum, product) => sum + Number(product.price || 0), 0);
+      const subtotal = validItems.reduce((sum, item) => sum + Number(item.product.price || 0) * item.quantity, 0);
       const { data: order, error: orderError } = await supabase
         .from('orders')
         .insert({
@@ -102,13 +121,13 @@ export default function Checkout() {
 
       if (orderError) throw orderError;
 
-      const orderItems = validItems.map((product) => ({
+      const orderItems = validItems.map(({ product, quantity }) => ({
         order_id: order.id,
         product_id: String(product.id),
         product_name: product.name || 'Prodotto',
         unit_price: Number(product.price || 0),
-        quantity: 1,
-        subtotal: Number(product.price || 0)
+        quantity,
+        subtotal: Number(product.price || 0) * quantity
       }));
 
       const { error: itemsError } = await supabase.from('order_items').insert(orderItems);
@@ -230,8 +249,7 @@ export default function Checkout() {
           <p className="text-sm font-black uppercase tracking-[0.25em] text-teal-600">RiverSpend Pay</p>
           <h1 className="mt-2 text-3xl font-black sm:text-4xl">💳 Checkout RiverSpend</h1>
           <p className="mt-3 leading-7 text-slate-600">
-            Qui nascerà il flusso ufficiale di pagamento RiverSpend: ordine, metodo di pagamento,
-            conferma, protezione Shield e gestione della spedizione.
+Crea l’ordine e registra il metodo scelto. In questa fase non viene addebitato alcun pagamento online: bonifico e contrassegno restano in attesa di verifica.
           </p>
 
           <div className="mt-6 rounded-2xl border border-teal-100 bg-white p-4">
@@ -241,16 +259,16 @@ export default function Checkout() {
             ) : (
               <>
                 <div className="mt-3 space-y-2">
-                  {items.map((item) => (
+                  {cartLines.map((item) => (
                     <div key={item.id} className="flex items-center justify-between gap-3 text-sm">
-                      <span className="min-w-0 truncate">{item.title || 'Prodotto'}</span>
-                      <strong>€ {Number(item.price || 0).toFixed(2)}</strong>
+                      <span className="min-w-0 truncate">{item.title || 'Prodotto'} <span className="text-slate-500">× {item.quantity}</span></span>
+                      <strong>€ {(Number(item.price || 0) * item.quantity).toFixed(2)}</strong>
                     </div>
                   ))}
                 </div>
                 <div className="mt-4 flex justify-between border-t border-teal-100 pt-3 text-lg font-black">
                   <span>Totale</span>
-                  <span className="text-teal-600">€ {items.reduce((sum, item) => sum + Number(item.price || 0), 0).toFixed(2)}</span>
+                  <span className="text-teal-600">€ {cartLines.reduce((sum, item) => sum + Number(item.price || 0) * item.quantity, 0).toFixed(2)}</span>
                 </div>
               </>
             )}
@@ -294,13 +312,13 @@ export default function Checkout() {
             </p>
             {!user && (
               <form onSubmit={sendLoginLink} className="mt-4 flex flex-col gap-2 sm:flex-row">
-                <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="La tua email" autoComplete="email" className="min-w-0 flex-1 rounded-xl border border-slate-600 bg-white px-4 py-3 text-white outline-none focus:border-teal-500" />
+                <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="La tua email" autoComplete="email" className="min-w-0 flex-1 rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-500 outline-none focus:border-teal-500" />
                 <button type="submit" disabled={sendingLink} className="rounded-xl bg-teal-500 px-4 py-3 font-bold text-white disabled:opacity-60">
                   {sendingLink ? 'Invio…' : '🔐 Accedi'}
                 </button>
               </form>
             )}
-            {authMessage && <p className="mt-2 text-sm text-slate-200">{authMessage}</p>}
+            {authMessage && <p className="mt-2 text-sm text-amber-900">{authMessage}</p>}
             <p className="mt-2 text-xs text-slate-500">
               I pagamenti online con carta e PayPal non sono attivi in questa fase di verifica.
             </p>
