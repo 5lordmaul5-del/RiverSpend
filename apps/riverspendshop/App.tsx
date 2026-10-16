@@ -38,6 +38,7 @@ export default function App() {
   const [showPublish, setShowPublish] = useState(false);
   const [title, setTitle] = useState('');
   const [price, setPrice] = useState('');
+  const [stock, setStock] = useState('1');
   const [description, setDescription] = useState('');
   const [condition, setCondition] = useState('Usato');
   const [category, setCategory] = useState('Elettronica');
@@ -143,6 +144,12 @@ export default function App() {
       return;
     }
 
+    const numericStock = Number(stock);
+    if (!Number.isInteger(numericStock) || numericStock < 1) {
+      setPublishMessage('Inserisci una quantità disponibile di almeno 1.');
+      return;
+    }
+
     setPublishMessage('Pubblicazione in corso…');
     try {
       const productId = Crypto.randomUUID();
@@ -171,6 +178,7 @@ export default function App() {
         id: productId,
         name: title.trim(),
         price: numericPrice,
+        stock: numericStock,
         condition,
         category,
         description: description.trim(),
@@ -200,6 +208,7 @@ export default function App() {
       setPublishMessage('✅ Prodotto pubblicato nel RiverSpend Market.');
       setTitle('');
       setPrice('');
+      setStock('1');
       setDescription('');
       setCondition('Usato');
       setCategory('Elettronica');
@@ -351,6 +360,7 @@ export default function App() {
             </View>
             <TextInput value={title} onChangeText={setTitle} placeholder="Titolo prodotto" placeholderTextColor="#789096" style={styles.field} />
             <TextInput value={price} onChangeText={setPrice} placeholder="Prezzo €" placeholderTextColor="#789096" keyboardType="decimal-pad" style={styles.field} />
+            <TextInput value={stock} onChangeText={setStock} placeholder="Quantità disponibile (min. 1)" placeholderTextColor="#789096" keyboardType="number-pad" style={styles.field} />
             <TextInput value={description} onChangeText={setDescription} placeholder="Descrizione" placeholderTextColor="#789096" multiline style={[styles.field, styles.textArea]} />
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.choiceRow}>
               {['Nuovo','Usato','Come nuovo'].map((item) => (
