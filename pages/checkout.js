@@ -80,30 +80,37 @@ export default function Checkout() {
       if (!user) throw new Error('Accedi al tuo account RiverSpend prima di creare un ordine.');
       if (!items.length) throw new Error('La Rete è vuota.');
 
+      const cartById = new Map();
+      for (const item of items) {
+        const id = String(item.id || '');
+        if (!id) throw new Error('Un prodotto nella Rete non ha un identificativo valido.');
+        const existing = cartById.get(id);
+        const itemQuantity = Math.max(1, Math.floor(Number(item.quantity || item.qty || 1)));
+        cartById.set(id, { quantity: (existing?.quantity || 0) + itemQuantity });
+      }
+
       const { data: products, error: productsError } = await supabase
         .from('products')
         .select('id, name, price, stock')
-        .in('id', cartLines.map((item) => String(item.id)))
+        .in('id', [...cartById.keys()])
         .eq('status', 'published');
 
       if (productsError) throw productsError;
 
       const byId = new Map((products || []).map((product) => [String(product.id), product]));
-      const validItems = cartLines.map((item) => ({
-        product: byId.get(String(item.id)),
-        quantity: Math.max(1, Math.floor(Number(item.quantity) || 1))
-      }));
-      if (validItems.some((item) => !item.product)) {
-        throw new Error('Uno o più prodotti non sono più disponibili. Aggiorna la Rete e riprova.');
-      }
-      for (const item of validItems) {
-        const stock = Number(item.product.stock);
-        if (Number.isFinite(stock) && stock >= 0 && stock < item.quantity) {
-          throw new Error('Disponibilità insufficiente per "' + (item.product.name || 'un prodotto') + '". Riduci la quantità nella Rete.');
+      const validItems = [...cartById.entries()].map(([id, cartEntry]) => {
+        const product = byId.get(id);
+        if (!product) throw new Error('Uno o più prodotti non sono più disponibili.');
+        const quantity = cartEntry.quantity;
+        const stock = Number(product.stock);
+        if (Number.isFinite(stock) && stock >= 0 && quantity > stock) {
+          throw new Error(`Quantità non disponibile per ${product.name || 'un prodotto'}: disponibili ${stock}.`);
         }
-      }
+        return { product, quantity };
+      });
 
-      const subtotal = validItems.reduce((sum, item) => sum + Number(item.product.price || 0) * item.quantity, 0);
+      const subtotal = validItems.reduce((sum, entry) => sum + Number(entry.product.price || 0) * entry.quantity, 0);
+
       const { data: order, error: orderError } = await supabase
         .from('orders')
         .insert({
