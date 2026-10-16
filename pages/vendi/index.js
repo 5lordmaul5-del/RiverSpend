@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
+import { riverSpendCategories } from '../../lib/riverSpendCategories';
 
 const MAX_PHOTOS = 20;
 const MAX_PHOTO_SIZE = 10 * 1024 * 1024;
@@ -614,7 +615,7 @@ export default function Vendi() {
               <p className="mb-3 text-xs text-slate-500">Indica l’origine reale del prodotto, non il paese del sito o del fornitore.</p>
               <label className="mb-2 block font-semibold">Categoria</label>
               <select className="mb-3 w-full rounded-xl border p-3" value={categoria} onChange={(e) => setCategoria(e.target.value)}>
-                {["Auto","Moto","Scooter","Harley & Custom","Camion & Veicoli commerciali","Trattori & Agricoltura","Edilizia & Macchine da lavoro","Ricambi & Accessori auto","Ricambi & Accessori moto","Nautica","Navale","Barche & Gommoni","Motori marini","Aeronautica","Militaria & Storia","Sport","Arti marziali & Combattimento","Fitness & Palestra","Outdoor & Avventura","Pesca","Caccia & Accessori consentiti","Integratori","Elettronica & Informatica","Smartphone & Telefonia","Computer & Notebook","Gaming","Console & Videogiochi","Fotografia & Video","Musica & Audio","TV & Home cinema","Abbigliamento","Scarpe","Borse & Accessori","Gioielli & Orologi","Bellezza & Cura personale","18🔞 ADULTI","18🔞 Sex Toys","Casa & Arredamento","Cucina","Elettrodomestici","Fai da te & Ferramenta","Giardino","Illuminazione","Tessile casa","Animali","Bambini & Giocattoli","Prima infanzia","Libri & Cultura","Arte","Antiquariato","Collezionismo","Hobby & Modellismo","Viaggi & Valigeria","Ufficio & Professionale","Industria","Attrezzature professionali","Energia & Smart Home","Servizi digitali","Gadget & Regali","Vintage & Second hand","Altro"].map((item) => <option key={item}>{item}</option>)}
+                 {riverSpendCategories.map((item) => <option key={item}>{item}</option>)}
               </select>
 
               {categoria === '18🔞 Sex Toys' && (
