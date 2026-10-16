@@ -1023,15 +1023,6 @@ export default function Home() {
               {prodottiVisibili.map((p) => (
                 <article key={p.id} className="rs-product-card group overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 transition hover:border-teal-500"><a href={`/prodotto/${encodeURIComponent(p.id)}`} className="block focus:outline-none focus:ring-2 focus:ring-teal-400">
                   <div className="relative">{p.immagini?.[0] ? <div className="rs-product-media flex aspect-[4/3] w-full items-center justify-center overflow-hidden bg-white p-0"><img src={p.immagini[0]} alt={p.titolo || 'Prodotto'} className="h-full w-full scale-110 object-contain transition-transform duration-300 group-hover:scale-[1.16]" /></div> : <div className="flex aspect-[4/3] items-center justify-center bg-white text-xs text-slate-500">Foto non disponibile</div>}
-                  <div className="absolute bottom-1 left-1 right-1 z-20 flex items-center justify-between gap-1">
-                    <div className="flex items-center gap-1">
-                      <button type="button" onClick={(event) => { event.preventDefault(); event.stopPropagation(); toggleDesideriFromCatalog(p); }} aria-label={desideriIds.includes(String(p.id)) ? 'Rimuovi dai RS Desideri' : 'Aggiungi ai RS Desideri'} aria-pressed={desideriIds.includes(String(p.id))} title="RS Desideri" className="flex h-6 w-6 items-center justify-center rounded-full border border-cyan-200 bg-white/90 text-[12px] leading-none text-cyan-800 shadow-sm backdrop-blur hover:bg-cyan-50">
-                        {desideriIds.includes(String(p.id)) ? '♥' : '♡'}
-                      </button>
-                      <button type="button" onClick={(event) => { event.preventDefault(); event.stopPropagation(); const cat = p.categoria || ''; setRicerca(''); setCategoriaAttiva(cat); window.history.replaceState({}, '', cat ? '/?category=' + encodeURIComponent(cat) : '/'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} aria-label="RS Simili" title="RS Simili" className="flex h-6 w-6 items-center justify-center rounded-full border border-amber-300 bg-amber-100/90 text-[11px] leading-none text-amber-900 shadow-sm backdrop-blur hover:bg-amber-200">✦</button>
-                    </div>
-                    <a href={`/prodotto/${encodeURIComponent(p.id)}#recensioni`} onClick={(event) => event.stopPropagation()} aria-label="Scegli gradimento e leggi recensioni" title="Scegli il gradimento" className="flex h-7 items-center justify-center gap-0.5 rounded-full border border-rose-300 bg-white/95 px-1.5 text-[11px] leading-none shadow-sm backdrop-blur hover:bg-rose-50"><span aria-hidden="true">🐟🐟🐟🐟🐟</span></a>
-                  </div>
                   {(() => { const tipo = String(p.venditoreTipo || "Privato").toLowerCase(); const river = tipo.includes("river"); const azienda = tipo.includes("aziend") || tipo.includes("business") || tipo.includes("iva"); const label = river ? "RSS" : azienda ? "RS azienda" : "RSprivato"; const color = river ? "border-cyan-300 bg-cyan-100 text-cyan-950" : azienda ? "border-green-300 bg-green-100 text-green-950" : "border-red-300 bg-red-100 text-red-950"; return <span className={`absolute left-2 top-2 z-10 rounded-md border px-2.5 py-1 text-[11px] font-extrabold shadow-sm ${color}`}>{label}</span>; })()} {countryFlag(p.paeseOrigine || p.paeseVenditore) && <span className="absolute right-2 top-2 z-10 flex h-8 w-8 items-center justify-center rounded-full border border-slate-300 bg-white/95 text-lg shadow-sm" title={"Paese: " + (p.paeseOrigine || p.paeseVenditore)} aria-label={"Paese: " + (p.paeseOrigine || p.paeseVenditore)}>{countryFlag(p.paeseOrigine || p.paeseVenditore)}</span>}{p.sponsorizzatoFino && new Date(p.sponsorizzatoFino) > new Date() && <span className="absolute right-2 top-11 rounded-md border border-amber-300 bg-amber-100 px-2 py-1 text-[10px] font-bold text-amber-900">RS Spons</span>}</div>
                   <div className="p-2 sm:p-3">
                     <h3 className="line-clamp-2 text-sm font-semibold leading-tight sm:text-base">{p.titolo}</h3>
@@ -1040,14 +1031,7 @@ export default function Home() {
                     <p className="mt-2 text-xs font-semibold text-teal-300 sm:text-sm">{t('openProduct')}</p>
                   </div>
                 </a>
-                <div className="px-2 pb-2 space-y-1.5 sm:px-3 sm:pb-3 sm:space-y-2">
-                  <button type="button" onClick={() => toggleReteFromCatalog(p)} className={`w-full rounded-lg border px-2 py-1.5 text-[11px] leading-tight font-extrabold transition sm:rounded-xl sm:px-3 sm:py-2.5 sm:text-xs ${reteIds.includes(String(p.id)) ? 'border-teal-400 bg-teal-900 text-teal-100' : 'border-teal-600 bg-teal-500 text-slate-950 hover:bg-teal-400'}`} aria-pressed={reteIds.includes(String(p.id))}>
-                    {reteIds.includes(String(p.id)) ? '✓ Nella tua Rete' : '🕸️ Aggiungi alla Rete'}
-                  </button>
-                  <a href={`/piggybank?product=${encodeURIComponent(p.id)}`} className="flex w-full items-center justify-center rounded-lg border border-amber-400 bg-amber-300 px-2 py-1.5 text-[11px] leading-tight font-extrabold text-amber-950 shadow-sm hover:bg-amber-200 sm:rounded-xl sm:px-3 sm:py-2.5 sm:text-xs">
-                    <span className="mr-0.5 inline-flex h-5 w-5 items-center justify-center rounded-full border-2 border-black bg-white text-sm leading-none">🐷</span><span aria-hidden="true">💰</span> PiggyBank
-                  </a>
-                </div>
+
               </article>
               ))}
             </div>
