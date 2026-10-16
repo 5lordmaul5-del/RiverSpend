@@ -292,6 +292,9 @@ export default function Prodotto() {
                 <button type="button" onClick={() => toggleLista('riverspend-wishlist', wishlist, setWishlist, '♡ Aggiunto ai tuoi desideri.', 'Rimosso dai desideri.')} className="rounded-xl border border-slate-200 bg-white px-5 py-3 font-bold text-slate-800">
                   {wishlist ? '♥ Nei miei desideri' : '♡ Aggiungi ai desideri'}
                 </button>
+                <Link href={`/piggybank?product=${encodeURIComponent(prodotto.id)}`} className="flex items-center justify-center gap-2 rounded-xl border border-amber-400 bg-amber-300 px-5 py-3 font-extrabold text-amber-950 shadow-sm hover:bg-amber-200">
+                  <span aria-hidden="true">🐷💰</span> PiggyBank · Risparmia per questo prodotto
+                </Link>
               </div>
               {feedback && <p role="status" className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-800">{feedback}</p>}
               <Link href="/rete" className="mt-3 inline-block text-sm font-semibold text-[#8a692b] underline underline-offset-4">Apri la mia Rete →</Link>
