@@ -14,6 +14,7 @@ export default function Vendi() {
   const [aggiornamentoVendita, setAggiornamentoVendita] = useState('');
   const [titolo, setTitolo] = useState('');
   const [prezzo, setPrezzo] = useState('');
+  const [quantita, setQuantita] = useState('1');
   const [descrizione, setDescrizione] = useState('');
   const [condizione, setCondizione] = useState('Nuovo');
   const [categoria, setCategoria] = useState('Altro');
@@ -345,6 +346,12 @@ export default function Vendi() {
       return;
     }
 
+    const quantitaNumero = Number(quantita);
+    if (!Number.isInteger(quantitaNumero) || quantitaNumero < 1) {
+      setMessaggio('⚠️ Inserisci una quantità disponibile di almeno 1.');
+      return;
+    }
+
     if (foto.length === 0) {
       setMessaggio('⚠️ Inserisci almeno una foto o un video.');
       return;
@@ -396,6 +403,7 @@ export default function Vendi() {
           id: productId,
           name: titolo.trim(),
           price: prezzoNumero,
+          stock: quantitaNumero,
           condition: condizione,
           category: categoria,
           description: descrizione.trim(),
@@ -444,6 +452,7 @@ export default function Vendi() {
 
       setTitolo('');
       setPrezzo('');
+      setQuantita('1');
       setDescrizione('');
       setCondizione('Nuovo');
       setCategoria('Altro');
@@ -585,6 +594,17 @@ export default function Vendi() {
                 placeholder="Prezzo €"
                 value={prezzo}
                 onChange={(e) => setPrezzo(e.target.value)}
+                required
+              />
+
+              <label className="mb-2 block font-semibold">Quantità disponibile</label>
+              <input
+                className="w-full border rounded-xl p-3 mb-3"
+                type="number"
+                min="1"
+                step="1"
+                value={quantita}
+                onChange={(e) => setQuantita(e.target.value)}
                 required
               />
 
