@@ -115,7 +115,7 @@ export default function Checkout() {
         .from('orders')
         .insert({
           buyer_id: user.id,
-          status: 'pending',
+          status: 'pending_shipping_quote',
           payment_status: 'unpaid',
           currency: 'EUR',
           subtotal,
@@ -256,7 +256,7 @@ export default function Checkout() {
           <p className="text-sm font-black uppercase tracking-[0.25em] text-teal-600">RiverSpend Pay</p>
           <h1 className="mt-2 text-3xl font-black sm:text-4xl">💳 Checkout RiverSpend</h1>
           <p className="mt-3 leading-7 text-slate-600">
-Crea l’ordine e registra il metodo scelto. In questa fase non viene addebitato alcun pagamento online: bonifico e contrassegno restano in attesa di verifica.
+Invia una richiesta d’ordine. RiverSpendShop è appena partito: il venditore confermerà il costo e la modalità di spedizione prima della conferma definitiva. In questa fase non viene addebitato alcun pagamento online.
           </p>
 
           <div className="mt-6 rounded-2xl border border-teal-100 bg-white p-4">
@@ -274,11 +274,16 @@ Crea l’ordine e registra il metodo scelto. In questa fase non viene addebitato
                   ))}
                 </div>
                 <div className="mt-4 flex justify-between border-t border-teal-100 pt-3 text-lg font-black">
-                  <span>Totale</span>
+                  <span>Totale prodotti</span>
                   <span className="text-teal-600">€ {cartLines.reduce((sum, item) => sum + Number(item.price || 0) * item.quantity, 0).toFixed(2)}</span>
                 </div>
               </>
             )}
+          </div>
+
+          <div className="mt-4 rounded-2xl border border-amber-300 bg-amber-50 p-4">
+            <h2 className="font-bold text-amber-900">📦 Spedizioni in fase di attivazione</h2>
+            <p className="mt-2 text-sm leading-6 text-amber-900">Per ora il venditore organizza la spedizione tramite InPost o Bartolini (BRT). Il costo non è ancora calcolato automaticamente: ti verrà comunicato prima della conferma definitiva. Non effettuare pagamenti finché non hai ricevuto il totale completo dell’ordine.</p>
           </div>
 
           <section className="mt-6 rounded-2xl border border-teal-100 bg-white p-4">
@@ -332,7 +337,7 @@ Crea l’ordine e registra il metodo scelto. In questa fase non viene addebitato
           </div>
 
           {error && <div className="mt-5 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">{error}</div>}
-          {orderId && <div className="mt-5 rounded-2xl border border-teal-200 bg-teal-50 p-4 text-sm text-teal-800">✅ Ordine creato. ID: <span className="font-mono">{orderId}</span><br />Stato: <strong>in attesa di pagamento</strong>.<div className="mt-3"><Link href={`/ricevuta/${encodeURIComponent(orderId)}`} className="inline-flex rounded-xl bg-teal-700 px-4 py-3 font-bold text-white">⬇️ Scarica riepilogo ordine</Link></div><p className="mt-2 text-xs text-teal-900">Il riepilogo non sostituisce fattura o scontrino fiscale.</p></div>}
+          {orderId && <div className="mt-5 rounded-2xl border border-teal-200 bg-teal-50 p-4 text-sm text-teal-800">✅ Richiesta d’ordine registrata. ID: <span className="font-mono">{orderId}</span><br />Stato: <strong>in attesa di conferma della spedizione e del totale finale</strong>.<div className="mt-3"><Link href={`/ricevuta/${encodeURIComponent(orderId)}`} className="inline-flex rounded-xl bg-teal-700 px-4 py-3 font-bold text-white">⬇️ Scarica riepilogo ordine</Link></div><p className="mt-2 text-xs text-teal-900">Il riepilogo non sostituisce fattura o scontrino fiscale.</p></div>}
           {codMessage && <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">{codMessage}</div>}
           {paypalMessage && <div className="mt-4 rounded-2xl border border-sky-200 bg-sky-50 p-4 text-sm text-sky-800">{paypalMessage}</div>}
           {transferMessage && <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">{transferMessage}</div>}
@@ -341,7 +346,7 @@ Crea l’ordine e registra il metodo scelto. In questa fase non viene addebitato
             <div className="flex flex-wrap gap-3">
               {user && items.length > 0 && !orderId && (
                 <button type="button" onClick={createOrder} disabled={creating} className="rounded-xl bg-teal-500 px-4 py-3 font-bold text-white disabled:opacity-60">
-                  {creating ? 'Creazione ordine…' : '🧾 Crea ordine'}
+                  {creating ? 'Invio richiesta…' : '🧾 Invia richiesta d’ordine'}
                 </button>
               )}
 
