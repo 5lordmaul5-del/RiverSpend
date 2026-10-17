@@ -48,7 +48,8 @@ export default function Rete() {
                       title: product.titolo,
                       price: Number(product.prezzo || 0),
                       image: product.immagini?.[0] || '',
-                      stock: Number(product.quantita ?? product.stock ?? 0),
+                      stock: Number(previous?.stock ?? product.quantita ?? product.stock ?? 0),
+                      deliveryOptions: Array.isArray(product.modalitaConsegna) ? product.modalitaConsegna : (previous?.deliveryOptions || ['home_delivery', 'seller_pickup', 'rs_local']),
                       quantity: Math.max(1, Number(previous?.quantity || 1)),
                       variantName: previous?.variantName || null
                     };
