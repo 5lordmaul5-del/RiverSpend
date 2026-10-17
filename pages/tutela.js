@@ -25,7 +25,7 @@ export default function TutelaAssistenza() {
           <div className="rs-tutela-note"><strong>Informazione importante.</strong> Le tutele applicabili possono variare in base alla natura della vendita (privato o professionista), al servizio utilizzato e alla normativa applicabile. Questa pagina non sostituisce i Termini e condizioni né le informazioni legali specifiche.</div>
         </header>
         <section className="rs-tutela-grid" aria-label="Aree di tutela e assistenza">
-          {sections.map(([title, body], i) => <article className="rs-tutela-card" key={title}>
+          {sections.map(([title, body], i) => <article className="rs-tutela-card" id={i === 1 ? "privacy" : undefined} key={title}>
             <span className="rs-tutela-num">{String(i + 1).padStart(2, '0')}</span>
             <h2>{title}</h2><p>{body}</p>
             {i === 1 && <a href="https://www.garanteprivacy.it/" target="_blank" rel="noreferrer">Sito del Garante Privacy ↗</a>}
