@@ -17,7 +17,7 @@ const IMAGES = [
 
 const PLACE_IMAGES = [
   { match: ['PUGLIESI', 'PUGLIA', 'ALBEROBELLO'], url: 'https://images.unsplash.com/photo-1602088113235-229c19758e9f?auto=format&fit=crop&w=900&q=85' },
-  { match: ['PIEMONTESI', 'PIEMONTE', 'TORINO', 'MOLE ANTONELLIANA'], url: 'https://images.unsplash.com/photo-1567157577867-05 ate?auto=format&fit=crop&w=900&q=85' },
+  { match: ['PIEMONTESI', 'PIEMONTE', 'TORINO', 'MOLE ANTONELLIANA'], url: 'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=900&q=85' },
   { match: ['LOMBARDI', 'LOMBARDIA', 'MILANO', 'DUOMO DI MILANO'], url: 'https://images.unsplash.com/photo-1579926629995-8a4c8b5e3f3b?auto=format&fit=crop&w=900&q=85' },
   { match: ['INDIANA', 'INDIANI', 'INDIA', 'CUCINA INDIANA'], url: 'https://images.unsplash.com/photo-1564507592333-c60657eea523?auto=format&fit=crop&w=900&q=85' },
   { match: ['CINESE', 'CINA', 'CUCINA CINESE'], url: 'https://images.unsplash.com/photo-1508804185872-d7badad00f7d?auto=format&fit=crop&w=900&q=85' },
