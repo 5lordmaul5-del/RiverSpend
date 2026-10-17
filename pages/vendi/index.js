@@ -381,6 +381,18 @@ export default function Vendi() {
           </p>
         </header>
 
+        {session?.user && (
+          <section className="mb-6 rounded-2xl border border-amber-300 bg-amber-50 p-5 shadow-sm">
+            <h2 className="text-xl font-extrabold text-amber-950">Importante: vendi sempre tramite RiverSpend</h2>
+            <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-6 text-amber-950">
+              <li><strong>Shop e RS Local:</strong> anche per il ritiro a mano, l’acquirente deve effettuare l’acquisto su RiverSpend. Non concludere accordi esterni per evitare la commissione della piattaforma.</li>
+              <li><strong>Privacy:</strong> non condividere pubblicamente nome completo, telefono, email o altri dati personali dell’acquirente. Condividi solo i dati strettamente necessari per consegna, ritiro e obblighi di legge, tramite procedure sicure.</li>
+              <li><strong>Conferma della vendita:</strong> l’obiettivo è che acquirente e venditore premano entrambi “Vendita conclusa · Tutto OK”. Solo dopo le conferme e gli eventuali controlli su contestazioni, RiverSpend potrà autorizzare lo svincolo del saldo al beneficiario, al netto della commissione.</li>
+            </ul>
+            <p className="mt-3 text-xs leading-5 text-amber-900"><strong>Nota:</strong> la conferma doppia e lo svincolo automatico del saldo devono essere collegati e verificati nel sistema ordini/pagamenti prima di poter essere garantiti. Non considerare questa informativa come prova che la trattenuta o il bonifico automatico siano già attivi.</p>
+          </section>
+        )}
+
         {!session?.user ? (
           <form
             onSubmit={inviaLinkAccesso}
@@ -432,7 +444,7 @@ export default function Vendi() {
 
             <section className="mb-6 rounded-2xl border border-teal-200 bg-white p-5 shadow-sm">
               <h2 className="text-xl font-bold text-teal-800">I miei annunci · Gestione vendite</h2>
-              <p className="mt-1 text-sm text-slate-600">Quando concludi una vendita fuori dal checkout RiverSpend, segna qui l’annuncio come venduto: verrà tolto dagli annunci disponibili in Shop e Local e resterà nel tuo elenco.</p>
+              <p className="mt-1 text-sm text-slate-600">Usa “Segna come venduto” solo per aggiornare la disponibilità di un annuncio non più vendibile: non sostituisce il checkout RiverSpend. Per le vendite concluse tramite RiverSpendShop o RS Local, l’acquisto deve essere registrato sulla piattaforma, così la commissione può essere calcolata e la transazione tracciata.</p>
               {mieInserzioni.length === 0 ? (
                 <p className="mt-4 text-sm text-slate-500">Non hai ancora annunci associati a questo account.</p>
               ) : (
