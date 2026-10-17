@@ -34,13 +34,13 @@ export default function RiverSpendParkGiftCards() {
           <img src="/river-spend-park-world.svg" alt="Paesaggio immaginario di RiverSpend Park con castello, montagne russe e fiume" className="h-56 w-full object-cover sm:h-72" />
           <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-950/65 to-transparent" />
           <div className="absolute inset-y-0 left-0 flex max-w-2xl items-center gap-3 p-4 sm:gap-6 sm:p-8">
-            <img src="/river-spend-park-mascot.svg" alt="Rivù, mascotte proposta di RiverSpend Park" className="hidden h-44 w-32 shrink-0 object-contain drop-shadow-xl sm:block md:h-56 md:w-40" />
+            <img src="/river-spend-park-siamese-family.svg" alt="Famiglia di mascotte siamesi RiverSpendPark" className="hidden w-56 shrink-0 rounded-xl object-cover drop-shadow-xl sm:block md:w-64" />
             <div><p className="text-xs font-extrabold uppercase tracking-[.2em] text-amber-300">Un regalo pieno di magia</p><h2 className="mt-2 text-2xl font-black text-white sm:text-4xl">Regala un’avventura da ricordare</h2><p className="mt-3 text-sm leading-6 text-cyan-50 sm:text-base">Dalla prima giostra alla giornata in famiglia: scegli la Gift Card più adatta e immagina già il prossimo viaggio con Rivù.</p><p className="mt-3 text-xs font-semibold text-amber-200">Illustrazioni e mascotte concettuali • acquisti ancora disattivati</p></div>
           </div>
         </section>
         <section className="mt-5 flex items-center gap-4 rounded-2xl border border-amber-700/70 bg-gradient-to-r from-slate-900 to-teal-950 p-4 sm:p-5">
-          <img src="/river-spend-park-mascot.svg" alt="Rivù" className="h-24 w-20 shrink-0 object-contain sm:h-32 sm:w-28" />
-          <div><p className="text-xs font-extrabold uppercase tracking-[.18em] text-amber-300">La mascotte del parco</p><h2 className="mt-1 text-xl font-black text-white">Conosci Rivù!</h2><p className="mt-1 text-sm leading-6 text-slate-200">Un piccolo spirito del fiume con cappellino blu e oro, pronto a diventare il volto di RiverSpend Park.</p></div>
+          <img src="/river-spend-park-siamese-family.svg" alt="Sylver, Scarlett, Simba, Sofia e Stone" className="w-40 shrink-0 rounded-lg object-cover sm:w-52" />
+          <div><p className="text-xs font-extrabold uppercase tracking-[.18em] text-amber-300">La famiglia del parco</p><h2 className="mt-1 text-xl font-black text-white">Conosci Sylver, Scarlett e i cuccioli!</h2><p className="mt-1 text-sm leading-6 text-slate-200">Cinque gatti siamesi con divise blu e oro: i personaggi che accompagnano le Gift Card e le avventure del parco.</p></div>
         </section>
         <div className="my-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {gifts.map((gift) => (
