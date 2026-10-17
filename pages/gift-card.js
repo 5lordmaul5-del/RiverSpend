@@ -10,7 +10,7 @@ export default function GiftCardPage() {
           <Link href="/" className="text-sm font-semibold text-cyan-200 hover:text-white">← Torna a RiverSpendShop</Link>
           <p className="mt-7 text-xs font-extrabold uppercase tracking-[.28em] text-amber-300">YOUR SHOP • YOUR FLOW</p>
           <h1 className="mt-3 text-3xl font-black sm:text-5xl">RiverSpendShop <span className="text-amber-300">Gift Card</span></h1>
-          <p className="mt-4 max-w-2xl text-base leading-7 text-cyan-50">Un regalo semplice, con un credito da utilizzare sul RiverSpendShop. La stessa carta sarà pensata per l'utilizzo online e fisico, con un saldo residuo condiviso.</p>
+          <p className="mt-4 max-w-2xl text-base leading-7 text-cyan-50">Regala credito da utilizzare su RiverSpendShop. La stessa Gift Card è progettata per essere disponibile online e nei negozi fisici aderenti, con un unico saldo residuo condiviso.</p>
         </div>
       </header>
 
@@ -29,15 +29,30 @@ export default function GiftCardPage() {
           ))}
         </div>
 
+        <div className="mt-8 grid gap-4 md:grid-cols-2">
+          <article className="rounded-2xl border border-cyan-400/40 bg-gradient-to-br from-blue-950 to-slate-900 p-5 sm:p-7">
+            <p className="text-xs font-extrabold uppercase tracking-[.2em] text-cyan-200">Acquisto digitale</p>
+            <h2 className="mt-3 text-xl font-extrabold sm:text-2xl">Compra online, scarica il codice e spendi su RiverSpend</h2>
+            <p className="mt-3 text-sm leading-6 text-slate-300">Dopo l'attivazione del servizio, il cliente potrà scegliere l'importo, completare il pagamento, ricevere un codice digitale univoco e visualizzarlo nell'area personale. Il codice sarà utilizzabile solo dopo la conferma del pagamento.</p>
+            <div className="mt-5 rounded-xl border border-cyan-300/30 bg-cyan-300/10 px-4 py-3 text-sm font-semibold text-cyan-100">Acquisto digitale in preparazione</div>
+          </article>
+          <article className="rounded-2xl border border-amber-300/40 bg-gradient-to-br from-slate-900 to-amber-950/40 p-5 sm:p-7">
+            <p className="text-xs font-extrabold uppercase tracking-[.2em] text-amber-200">Negozi aderenti</p>
+            <h2 className="mt-3 text-xl font-extrabold sm:text-2xl">Acquista la carta fisica in negozio</h2>
+            <p className="mt-3 text-sm leading-6 text-slate-300">Le carte fisiche saranno attivate dal punto vendita autorizzato al momento dell'acquisto. Codice, barcode e QR identificheranno la stessa carta, senza mostrare pubblicamente il saldo o dati segreti.</p>
+            <div className="mt-5 rounded-xl border border-amber-300/30 bg-amber-300/10 px-4 py-3 text-sm font-semibold text-amber-100">Distribuzione nei negozi in preparazione</div>
+          </article>
+        </div>
+
         <div className="mt-8 rounded-2xl border border-amber-300/40 bg-slate-900 p-5 sm:p-7">
           <div className="flex items-start gap-3">
             <span className="text-2xl" aria-hidden="true">🔐</span>
             <div>
               <h2 className="text-xl font-extrabold">Un unico saldo, online e su carta fisica</h2>
-              <p className="mt-2 text-sm leading-6 text-slate-300">Il progetto prevede un codice alfanumerico univoco, un codice a barre e un QR collegati alla stessa Gift Card. Dopo ogni utilizzo, il credito residuo sarà aggiornato nel sistema.</p>
+              <p className="mt-2 text-sm leading-6 text-slate-300">Quando il sistema sarà operativo, ogni acquisto e ogni utilizzo aggiorneranno il saldo centrale. Le carte dovranno avere codici univoci generati in modo sicuro e le operazioni saranno registrate per evitare doppi utilizzi.</p>
             </div>
           </div>
-          <p className="mt-5 rounded-xl border border-amber-300/30 bg-amber-300/10 px-4 py-3 text-sm font-semibold text-amber-100">Servizio in preparazione: acquisto, attivazione, codici e riscatto non sono ancora disponibili. Non effettuare pagamenti per queste carte finché il servizio non sarà attivato ufficialmente.</p>
+          <p className="mt-5 rounded-xl border border-amber-300/30 bg-amber-300/10 px-4 py-3 text-sm font-semibold text-amber-100">Importante: al momento acquisto, pagamento, generazione dei codici, attivazione e riscatto non sono ancora disponibili. Questa pagina presenta il servizio previsto; non effettuare pagamenti per le Gift Card finché non sarà annunciata l'attivazione ufficiale.</p>
         </div>
         <div className="mt-8 text-center">
           <Link href="/" className="inline-flex rounded-full bg-gradient-to-r from-amber-200 to-yellow-500 px-6 py-3 text-sm font-extrabold text-slate-950 hover:brightness-110">Torna al RiverSpendShop</Link>
