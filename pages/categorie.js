@@ -17,7 +17,7 @@ const IMAGES = [
 
 const PLACE_IMAGES = [
   // Regioni italiane: immagini dedicate alle categorie regionali.
-  { match: ['PIEMONTESI', 'PIEMONTE', 'TORINO', 'MOLE ANTONELLIANA'], url: 'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=900&q=85' },
+  { match: ['PIEMONTESI', 'PIEMONTE', 'TORINO', 'MOLE ANTONELLIANA'], url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Torino%20Mole%20Antonelliana.jpg?width=900' },
   { match: ['VALDOSTANI', 'VALLE D’AOSTA', 'VALLE D AOSTA', 'AOSTA'], url: 'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?auto=format&fit=crop&w=900&q=85' },
   { match: ['LOMBARDI', 'LOMBARDIA', 'MILANO', 'DUOMO DI MILANO'], url: 'https://images.unsplash.com/photo-1579926626628-2e6c8f2b7f8a?auto=format&fit=crop&w=900&q=85' },
   { match: ['LIGURI', 'LIGURIA', 'CINQUE TERRE', 'GENOVA'], url: 'https://images.unsplash.com/photo-1498307833015-e7b400441eb8?auto=format&fit=crop&w=900&q=85' },
