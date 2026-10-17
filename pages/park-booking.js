@@ -1,0 +1,43 @@
+import Link from 'next/link';
+import { useMemo, useState } from 'react';
+
+function seasonFor(date) {
+  if (!date) return { label: 'Seleziona una data', area: '—', adult: 0, child: 0 };
+  const month = Number(date.split('-')[1]);
+  if (month >= 5 && month <= 9) return { label: 'Stagione Terra + Acqua', area: 'Terra + Acqua', adult: 50, child: 40 };
+  if (month >= 3 && month <= 4) return { label: 'Stagione Terra', area: 'Terra', adult: 40, child: 30 };
+  return { label: 'Stagione Terra', area: 'Terra', adult: 30, child: 20 };
+}
+
+export default function RiverSpendParkBooking() {
+  const [date, setDate] = useState('');
+  const [adults, setAdults] = useState(1);
+  const [children, setChildren] = useState(0);
+  const [slot, setSlot] = useState('10:00');
+  const season = useMemo(() => seasonFor(date), [date]);
+  const total = adults * season.adult + children * season.child;
+  return (
+    <main className="min-h-screen bg-cyan-50 px-4 py-8 text-slate-800"><div className="mx-auto max-w-4xl">
+      <Link href="/park" className="text-teal-800 underline">← Torna a RiverSpend Park</Link>
+      <header className="mt-6 rounded-3xl border border-teal-200 bg-gradient-to-br from-cyan-100 via-white to-white p-6 sm:p-9"><p className="text-sm font-bold uppercase tracking-[.2em] text-teal-800">RiverSpend Park</p><h1 className="mt-3 text-4xl font-black">Prenota la tua visita</h1><p className="mt-3 max-w-2xl leading-7 text-slate-600">Scegli data, visitatori e fascia d’ingresso. Il riepilogo mostra tariffe stagionali proposte; la prenotazione reale sarà attivata dopo il collegamento al calendario ufficiale, alla capienza e ai biglietti QR.</p></header>
+      <section className="relative mt-6 overflow-hidden rounded-3xl border border-amber-300/60 bg-slate-950 shadow-xl" aria-label="Benvenuto a RiverSpend Park">
+        <img src="/river-spend-park-world.svg" alt="Panorama illustrato del mondo fantastico RiverSpend Park" className="h-56 w-full object-cover sm:h-80" />
+        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950 via-slate-950/85 to-transparent px-5 pb-5 pt-14 sm:px-8 sm:pb-7">
+          <p className="text-xs font-extrabold uppercase tracking-[.2em] text-amber-300">Il tuo viaggio comincia qui</p>
+          <h2 className="mt-2 text-2xl font-black text-white sm:text-3xl">Scegli la tua prossima avventura</h2>
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-cyan-50 sm:text-base">Tra fiumi scintillanti, castelli e attrazioni fantastiche, prepara la visita a RiverSpend Park.</p>
+        </div>
+      </section>
+      <section className="mt-5 flex flex-col gap-4 rounded-2xl border border-cyan-200 bg-white p-4 shadow-sm sm:p-5">
+        <img src="/river-spend-park-siamese-family.svg" alt="Sylver, Scarlett e i cuccioli Simba, Sofia e Stone" className="w-full max-h-72 rounded-xl object-cover" />
+        <div><p className="text-xs font-extrabold uppercase tracking-[.18em] text-teal-700">Le nostre mascotte</p><h2 className="mt-1 text-xl font-black text-slate-900">Sylver, Scarlett e i loro tre cuccioli</h2><p className="mt-1 text-sm leading-6 text-slate-600">La famiglia di siamesi accompagna i visitatori nell’avventura RiverSpendPark.</p></div>
+      </section>
+      <section className="mt-6 grid gap-6 lg:grid-cols-[1.2fr_.8fr]"><div className="rounded-2xl border border-cyan-200 bg-white p-5 shadow-sm sm:p-7"><h2 className="text-xl font-bold">Dettagli della visita</h2><label className="mt-5 block text-sm font-semibold" htmlFor="visit-date">Data della visita</label><input id="visit-date" type="date" value={date} onChange={event => setDate(event.target.value)} className="mt-2 w-full rounded-xl border border-slate-300 bg-white p-3"/><p className="mt-2 text-sm text-slate-500">Il calendario definitivo escluderà le chiusure per manutenzione e mostrerà solo le giornate effettivamente aperte.</p>
+      <div className="mt-5 grid gap-4 sm:grid-cols-2"><div><label className="block text-sm font-semibold" htmlFor="adults">Adulti</label><input id="adults" type="number" min="0" max="20" value={adults} onChange={event => setAdults(Math.max(0, Math.min(20, Number(event.target.value) || 0)))} className="mt-2 w-full rounded-xl border border-slate-300 p-3"/></div><div><label className="block text-sm font-semibold" htmlFor="children">Bambini</label><input id="children" type="number" min="0" max="20" value={children} onChange={event => setChildren(Math.max(0, Math.min(20, Number(event.target.value) || 0)))} className="mt-2 w-full rounded-xl border border-slate-300 p-3"/></div></div>
+      <label className="mt-5 block text-sm font-semibold" htmlFor="entry-slot">Fascia oraria preferita</label><select id="entry-slot" value={slot} onChange={event => setSlot(event.target.value)} className="mt-2 w-full rounded-xl border border-slate-300 bg-white p-3"><option value="10:00">Ingresso indicativo 10:00</option><option value="11:00">Ingresso indicativo 11:00</option><option value="12:00">Ingresso indicativo 12:00</option><option value="14:00">Ingresso indicativo 14:00</option></select><p className="mt-2 text-sm text-slate-500">Orari dimostrativi, non orari di apertura confermati.</p></div>
+      <aside className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm sm:p-7"><h2 className="text-xl font-bold">Riepilogo indicativo</h2><p className="mt-3 rounded-xl bg-cyan-50 p-3 font-semibold text-teal-900">{season.label}</p><div className="mt-4 space-y-3 text-sm"><div className="flex justify-between gap-3"><span>Area prevista</span><strong>{season.area}</strong></div><div className="flex justify-between gap-3"><span>Adulti × {adults}</span><strong>{season.adult ? (adults * season.adult).toFixed(2).replace('.', ',') + ' €' : '—'}</strong></div><div className="flex justify-between gap-3"><span>Bambini × {children}</span><strong>{season.child ? (children * season.child).toFixed(2).replace('.', ',') + ' €' : '—'}</strong></div><div className="flex justify-between gap-3"><span>Fascia richiesta</span><strong>{slot}</strong></div></div><div className="mt-5 border-t border-slate-200 pt-4"><p className="text-sm text-slate-500">Totale stimato, prezzi da approvare</p><p className="mt-1 text-3xl font-black text-amber-700">{date ? total.toFixed(2).replace('.', ',') + ' €' : '—'}</p></div><button type="button" disabled className="mt-5 w-full cursor-not-allowed rounded-xl bg-slate-300 px-5 py-3 font-bold text-slate-600">Prenotazione non ancora attiva</button><p className="mt-3 text-xs leading-5 text-slate-500">Questa bozza non riserva posti e non esegue pagamenti. Prima del lancio servono calendario reale, capienza, conferma tariffe, Gift Card e generazione sicura dei QR.</p></aside></section>
+      <section className="mt-6 rounded-2xl border border-teal-200 bg-white p-5 sm:p-7"><h2 className="text-xl font-bold">Funzioni previste</h2><div className="mt-4 grid gap-3 sm:grid-cols-2">{[['Calendario aperture','Giorni aperti, manutenzione e stagioni Terra/Acqua.'],['Capienza e fasce orarie','Limiti per giorno e orario verificati dal server.'],['Biglietti QR','Codici univoci e verifica anti-duplicazione all’ingresso.'],['Gift Card','Prenotazione con verifica validità e ingressi residui.'],['Area personale','Conferme, biglietti, modifiche e storico.'],['RiverSpend Hotels','Base futura per camere, ospiti, check-in e check-out.'],['Pacchetti soggiorno','Hotel e biglietti in un’unica prenotazione.'],['Pannello gestione','Prenotazioni, ingressi, chiusure e report.']].map(([title,description]) => <article key={title} className="rounded-xl border border-slate-200 p-4"><h3 className="font-bold">{title}</h3><p className="mt-1 text-sm leading-6 text-slate-600">{description}</p></article>)}</div></section>
+      <footer className="mt-8 flex flex-wrap gap-3"><Link href="/park-gift" className="rounded-xl bg-amber-400 px-5 py-3 font-bold text-slate-950">Scopri le Gift Card</Link><Link href="/park" className="rounded-xl border border-teal-800 px-5 py-3 font-semibold text-teal-900">Tutte le attrazioni</Link></footer>
+    </div></main>
+  );
+}

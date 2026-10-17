@@ -26,7 +26,13 @@ const attrazioni = [
   ['Velocity – The Power of Speed','Velocità','Attrazione ad alta velocità con identità originale RiverSpend.'],
   ['Viking Norway Rune','Avventura nordica','Esperienza ispirata a rune e paesaggi norreni.'],
   ['Future City','Esperienza digitale','Città futuristica animata con nuvole in movimento e droni.'],
-  ['WW2 Battle Experience','Storia immersiva','Percorso narrativo in nove tappe: sbarco su Omaha Beach, villaggio, ponte, tunnel U-Boot, hangar Zeppelin, portaerei, battaglia aerea e atterraggio finale.']
+  ['WW2 Battle Experience','Storia immersiva','Percorso narrativo in nove tappe: sbarco su Omaha Beach, villaggio, ponte, tunnel U-Boot, hangar Zeppelin, portaerei, battaglia aerea e atterraggio finale.'],
+  ['River Falls','Acqua e avventura','Grande discesa d’acqua tra cascate scenografiche e spruzzi.'],
+  ['Black Hole','Tunnel acquatico','Percorso immersivo in un tunnel scuro con giochi di luce.'],
+  ['Dino World','Area preistorica','Area tematica con dinosauri scenografici e percorsi d’avventura.'],
+  ['River Wheel','Panoramica','Ruota panoramica con vista sul parco e illuminazione serale.'],
+  ['River VR','Realtà virtuale','Esperienza digitale immersiva con scenari virtuali.'],
+  ['River Aquarium','Esplorazione marina','Tunnel marino scenografico con pesci e grandi creature acquatiche.'],
 ];
 
 export default function RiverSpendPark() {
@@ -56,10 +62,28 @@ export default function RiverSpendPark() {
         <p className="mt-4 rounded-xl border border-cyan-900 bg-cyan-950/50 p-4 text-sm leading-6 text-cyan-100">Questa è la galleria iniziale del progetto. Aggiungeremo progressivamente una foto dedicata a ogni attrazione, mantenendo i nomi ufficiali e senza sostituire l'elenco già approvato.</p>
 
           <div className="mt-6 flex flex-wrap gap-3">
-            <span className="rounded-full border border-teal-700 px-4 py-2 text-sm text-teal-100">25 attrazioni in catalogo</span>
+            <span className="rounded-full border border-teal-700 px-4 py-2 text-sm text-teal-100">{attrazioni.length} attrazioni in catalogo</span>
             <span className="rounded-full border border-teal-700 px-4 py-2 text-sm text-teal-100">Power Shield • sicurezza prioritaria</span>
           </div>
         </header>
+
+        <section className="my-8 overflow-hidden rounded-3xl border border-amber-400/60 bg-slate-950 shadow-xl" aria-label="La famiglia di mascotte RiverSpend Park">
+          <img src="/river-spend-park-siamese-family.svg" alt="La famiglia di gatti siamesi mascotte: Sylver, Scarlett, Simba, Sofia e Stone" className="w-full object-cover" loading="lazy" />
+          <div className="px-5 pb-5 text-center sm:px-8"><h2 className="text-2xl font-black text-amber-200">La famiglia di RiverSpendPark</h2><p className="mt-2 text-sm leading-6 text-cyan-50">Sylver, Scarlett, Simba, Sofia e Stone ti accompagnano tra attrazioni, biglietteria e regali speciali.</p></div>
+        </section>
+
+        <section className="my-8 grid grid-cols-1 gap-4 sm:grid-cols-2" aria-label="Biglietteria online RiverSpend Park">
+          <Link href="/park-booking" className="group flex min-h-44 flex-col justify-between rounded-3xl border border-cyan-300/50 bg-gradient-to-br from-cyan-700 via-sky-800 to-blue-950 p-6 shadow-lg transition hover:border-cyan-200 hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-cyan-300">
+            <span className="text-3xl" aria-hidden="true">🎟️</span>
+            <span><span className="block text-2xl font-black text-white">Acquista Biglietti</span><span className="mt-2 block text-sm leading-6 text-cyan-100">Scegli data, visitatori e fascia oraria e consulta il totale indicativo.</span></span>
+            <span className="mt-4 inline-flex w-fit rounded-xl bg-white px-4 py-2 font-bold text-blue-950">Vai alla biglietteria online →</span>
+          </Link>
+          <Link href="/park-gift" className="group flex min-h-44 flex-col justify-between rounded-3xl border border-amber-300/60 bg-gradient-to-br from-amber-700 via-amber-900 to-slate-950 p-6 shadow-lg transition hover:border-amber-200 hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-amber-300">
+            <span className="text-3xl" aria-hidden="true">🎁</span>
+            <span><span className="block text-2xl font-black text-white">Regala un’esperienza</span><span className="mt-2 block text-sm leading-6 text-amber-100">Scopri le Gift Card Single, Duo, Family e multi-ingresso.</span></span>
+            <span className="mt-4 inline-flex w-fit rounded-xl bg-amber-300 px-4 py-2 font-bold text-slate-950">Scopri le Gift Card →</span>
+          </Link>
+        </section>
 
         <section className="my-8 rounded-2xl border border-amber-800 bg-amber-950/40 p-5">
           <h2 className="text-xl font-bold text-amber-100">🛡️ Power Shield — principio di progettazione</h2>
@@ -125,6 +149,8 @@ export default function RiverSpendPark() {
             </article>
           ))}
         </section>
+
+        <div className="my-6 flex flex-wrap gap-3"><Link href="/park-booking" className="inline-flex rounded-xl bg-teal-600 px-5 py-3 font-black text-white">📅 Prenota la tua visita</Link><Link href="/park-gift" className="inline-flex rounded-xl border border-amber-600 bg-amber-400 px-5 py-3 font-black text-slate-950">🎟️ Scopri le Gift Card del Park</Link></div>
 
         <footer className="mt-8 flex flex-wrap gap-3">
           <Link href="/" className="rounded-xl bg-teal-500 px-5 py-3 font-bold text-slate-950">RiverSpendShop</Link>
