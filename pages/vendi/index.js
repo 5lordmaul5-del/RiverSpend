@@ -381,6 +381,10 @@ export default function Vendi() {
           </p>
         </header>
 
+        <section role="status" className="mb-6 rounded-2xl border border-amber-300 bg-amber-50 p-4 text-amber-950">
+          <h2 className="font-extrabold">⚠️ RiverSpend è online in versione di test</h2>
+          <p className="mt-1 text-sm leading-6">Il sito è ancora in sviluppo e collaudo. Funzioni, regole, disponibilità e procedure di pagamento possono essere modificate e alcune funzioni potrebbero non essere ancora operative. Prima del lancio definitivo pubblicheremo le condizioni aggiornate. Non promettiamo trattenuta o bonifico automatico finché il relativo sistema non sarà attivo e verificato.</p>
+        </section>
         {session?.user && (
           <section className="mb-6 rounded-2xl border border-amber-300 bg-amber-50 p-5 shadow-sm">
             <h2 className="text-xl font-extrabold text-amber-950">Importante: vendi sempre tramite RiverSpend</h2>
