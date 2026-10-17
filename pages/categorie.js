@@ -15,9 +15,24 @@ const IMAGES = [
   { match: ['LAVORO','IMPRESA','UFFICIO'], url: 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=900&q=85' }
 ];
 
+const PLACE_IMAGES = [
+  { match: ['PUGLIESI', 'PUGLIA', 'ALBEROBELLO'], url: 'https://images.unsplash.com/photo-1602088113235-229c19758e9f?auto=format&fit=crop&w=900&q=85' },
+  { match: ['PIEMONTESI', 'PIEMONTE', 'TORINO', 'MOLE ANTONELLIANA'], url: 'https://images.unsplash.com/photo-1567157577867-05 ate?auto=format&fit=crop&w=900&q=85' },
+  { match: ['LOMBARDI', 'LOMBARDIA', 'MILANO', 'DUOMO DI MILANO'], url: 'https://images.unsplash.com/photo-1579926629995-8a4c8b5e3f3b?auto=format&fit=crop&w=900&q=85' },
+  { match: ['INDIANA', 'INDIANI', 'INDIA', 'CUCINA INDIANA'], url: 'https://images.unsplash.com/photo-1564507592333-c60657eea523?auto=format&fit=crop&w=900&q=85' },
+  { match: ['CINESE', 'CINA', 'CUCINA CINESE'], url: 'https://images.unsplash.com/photo-1508804185872-d7badad00f7d?auto=format&fit=crop&w=900&q=85' },
+  { match: ['GIAPPONESE', 'GIAPPONE', 'CUCINA GIAPPONESE'], url: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=900&q=85' },
+  { match: ['AMERICANI', 'AMERICANE', 'STATI UNITI', 'USA', 'CUCINA AMERICANA'], url: 'https://images.unsplash.com/photo-1508697014387-db70aad34f4d?auto=format&fit=crop&w=900&q=85' },
+  { match: ['SICILIANI', 'SICILIA'], url: 'https://images.unsplash.com/photo-1534445867742-43195f401b6c?auto=format&fit=crop&w=900&q=85' },
+  { match: ['TOSCANI', 'TOSCANA'], url: 'https://images.unsplash.com/photo-1515859005217-8a1f08870f59?auto=format&fit=crop&w=900&q=85' },
+  { match: ['VENETI', 'VENETO', 'VENEZIA'], url: 'https://images.unsplash.com/photo-1514890547357-a9ee288728e0?auto=format&fit=crop&w=900&q=85' }
+];
+
 function imageFor(label) {
   const text = String(label || '').toLocaleUpperCase('it');
-  return IMAGES.find((item) => item.match.some((word) => text.includes(word)))?.url || IMAGES[0].url;
+  return PLACE_IMAGES.find((item) => item.match.some((word) => text.includes(word)))?.url
+    || IMAGES.find((item) => item.match.some((word) => text.includes(word)))?.url
+    || IMAGES[0].url;
 }
 
 export default function CategoriePage() {
