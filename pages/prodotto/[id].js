@@ -148,8 +148,9 @@ export default function Prodotto() {
     if (!record) return;
     const varianti = Array.isArray(prodotto.varianti) ? prodotto.varianti : [];
     const variante = varianti.length ? varianti.find((v) => v.name === varianteScelta) : null;
-    if (varianti.length && (!variante || Number(variante.stock) < quantitaScelta)) {
-      setFeedback('Scegli un colore disponibile e una quantità compatibile con le scorte.');
+    const stockDisponibile = varianti.length ? Number(variante?.stock || 0) : Number(prodotto.quantita ?? prodotto.stock ?? 0);
+    if ((varianti.length && !variante) || (Number.isFinite(stockDisponibile) && stockDisponibile >= 0 && quantitaScelta > stockDisponibile)) {
+      setFeedback('Scegli una variante disponibile e una quantità compatibile con le scorte.');
       return;
     }
     const item = { ...record, quantity: quantitaScelta, variantName: variante?.name || null };
@@ -158,8 +159,9 @@ export default function Prodotto() {
       const safe = Array.isArray(current) ? current : [];
       const key = (x) => String(x.id) + '::' + String(x.variantName || '');
       const found = safe.find((x) => key(x) === key(item));
+      const limiteScorte = Number(variante?.stock ?? prodotto.quantita ?? prodotto.stock ?? 999999);
       const next = found
-        ? safe.map((x) => key(x) === key(item) ? { ...x, quantity: Math.min(Number(variante?.stock ?? prodotto.quantita ?? 999999), Number(x.quantity || 1) + quantitaScelta) } : x)
+        ? safe.map((x) => key(x) === key(item) ? { ...x, quantity: Math.min(limiteScorte, Number(x.quantity || 1) + quantitaScelta) } : x)
         : [item, ...safe];
       localStorage.setItem('riverspend-rete', JSON.stringify(next));
       sessionStorage.setItem('riverspend-rete', JSON.stringify(next));
@@ -317,12 +319,12 @@ export default function Prodotto() {
                       <span className="block font-bold">{v.name}</span><span className="mt-1 block text-xs text-slate-600">{Number(v.stock) > 0 ? Number(v.stock) + ' disponibili' : 'Esaurito'}</span>
                     </button>)}
                   </div>
-                  {(() => { const v = prodotto.varianti.find((x) => x.name === varianteScelta); const stockVariante = Number(v?.stock || 0); return <div className="mt-3"><label className="block text-sm font-semibold" htmlFor="rs-variant-quantity">Quantità</label><select id="rs-variant-quantity" className="mt-1 w-full rounded-xl border border-slate-300 p-3" value={Math.min(quantitaScelta, Math.max(1, stockVariante))} disabled={!stockVariante} onChange={(e) => setQuantitaScelta(Number(e.target.value))}>{Array.from({ length: Math.max(1, stockVariante) }, (_, i) => i + 1).map((n) => <option key={n} value={n}>{n}</option>)}</select></div>; })()}
-                </> : <div className="flex items-center justify-between gap-3"><div><p className="text-xs text-slate-600">Disponibilità dichiarata</p><p className="mt-1 font-bold">{quantita > 0 ? (quantita === 1 ? 'Ultimo pezzo disponibile' : quantita + ' pezzi disponibili') : 'Disponibilità da verificare'}</p></div><span className="text-2xl" aria-hidden="true">🪙</span></div>}
+                  {(() => { const v = prodotto.varianti.find((x) => x.name === varianteScelta); const stockVariante = Number(v?.stock || 0); return <div className="mt-3"><label className="block text-sm font-semibold" htmlFor="rs-variant-quantity">Quantità</label><div className="mt-1 flex items-center gap-3"><button type="button" aria-label="Diminuisci quantità" disabled={!stockVariante || quantitaScelta <= 1} onClick={() => setQuantitaScelta((q) => Math.max(1, q - 1))} className="rounded-xl border border-slate-300 px-4 py-3 text-xl font-black disabled:opacity-40">−</button><span className="min-w-10 text-center text-lg font-black">{quantitaScelta}</span><button type="button" aria-label="Aumenta quantità" disabled={!stockVariante || quantitaScelta >= stockVariante} onClick={() => setQuantitaScelta((q) => Math.min(stockVariante, q + 1))} className="rounded-xl border border-slate-300 px-4 py-3 text-xl font-black disabled:opacity-40">+</button><span className="text-xs text-slate-500">{stockVariante} disponibili</span></div></div>; })()}
+                </> : <div><div className="flex items-center justify-between gap-3"><div><p className="text-xs text-slate-600">Disponibilità dichiarata</p><p className="mt-1 font-bold">{quantita > 0 ? (quantita === 1 ? 'Ultimo pezzo disponibile' : quantita + ' pezzi disponibili') : 'Disponibilità da verificare'}</p></div><span className="text-2xl" aria-hidden="true">🪙</span></div><div className="mt-3 flex items-center gap-3"><span className="text-sm font-semibold">Quantità</span><button type="button" aria-label="Diminuisci quantità" disabled={quantitaScelta <= 1} onClick={() => setQuantitaScelta((q) => Math.max(1, q - 1))} className="rounded-xl border border-slate-300 px-4 py-2 text-xl font-black disabled:opacity-40">−</button><span className="min-w-8 text-center text-lg font-black">{quantitaScelta}</span><button type="button" aria-label="Aumenta quantità" disabled={quantita > 0 && quantitaScelta >= quantita} onClick={() => setQuantitaScelta((q) => Math.min(quantita > 0 ? quantita : 999999, q + 1))} className="rounded-xl border border-slate-300 px-4 py-2 text-xl font-black disabled:opacity-40">+</button></div><p className="mt-2 text-sm font-bold text-teal-800">Totale: € {(Number(prodotto.prezzo || 0) * quantitaScelta).toFixed(2)}</p></div>}
               </div>
 
               <div className="mt-5 grid gap-3">
-                <button type="button" onClick={Array.isArray(prodotto.varianti) && prodotto.varianti.length ? aggiungiVarianteAllaRete : () => toggleLista('riverspend-rete', inRete, setInRete, '🕸️ Articolo aggiunto alla tua Rete.', 'Articolo rimosso dalla Rete.')} className="rounded-xl border border-teal-700 bg-teal-500 px-5 py-4 text-base font-extrabold text-slate-950 shadow-sm transition-colors hover:bg-teal-400 active:bg-teal-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700">
+                <button type="button" onClick={aggiungiVarianteAllaRete} className="rounded-xl border border-teal-700 bg-teal-500 px-5 py-4 text-base font-extrabold text-slate-950 shadow-sm transition-colors hover:bg-teal-400 active:bg-teal-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700">
                   {inRete ? '✓ Nella mia Rete' : '🕸️ Aggiungi alla Rete'}
                 </button>
                 <button type="button" onClick={() => toggleLista('riverspend-wishlist', wishlist, setWishlist, '♡ Aggiunto ai tuoi desideri.', 'Rimosso dai desideri.')} className="rounded-xl border border-slate-200 bg-white px-5 py-3 font-bold text-slate-800">
