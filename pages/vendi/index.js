@@ -21,6 +21,9 @@ const DELIVERY_METHODS = [
 export default function Vendi() {
   const [prodotti, setProdotti] = useState([]);
   const [mieInserzioni, setMieInserzioni] = useState([]);
+  const [venditeRicevute, setVenditeRicevute] = useState([]);
+  const [caricamentoVendite, setCaricamentoVendite] = useState(false);
+  const [erroreVendite, setErroreVendite] = useState('');
   const [aggiornamentoVendita, setAggiornamentoVendita] = useState('');
   const [modificaPrezzoId, setModificaPrezzoId] = useState('');
   const [nuovoNome, setNuovoNome] = useState('');
@@ -81,9 +84,39 @@ export default function Vendi() {
     setMieInserzioni(data || []);
   }
 
+  async function loadVenditeRicevute(userId) {
+    if (!userId) { setVenditeRicevute([]); setErroreVendite(''); return; }
+    setCaricamentoVendite(true);
+    setErroreVendite('');
+    try {
+      const { data: products, error: productsError } = await supabase.from('products').select('id').eq('seller_id', userId);
+      if (productsError) throw productsError;
+      const productIds = (products || []).map((product) => product.id);
+      if (!productIds.length) { setVenditeRicevute([]); return; }
+      const { data: items, error: itemsError } = await supabase.from('order_items').select('id, order_id, product_id, product_name, quantity, unit_price, subtotal').in('product_id', productIds);
+      if (itemsError) throw itemsError;
+      const orderIds = [...new Set((items || []).map((item) => item.order_id).filter(Boolean))];
+      if (!orderIds.length) { setVenditeRicevute([]); return; }
+      const { data: orders, error: ordersError } = await supabase.from('orders').select('id, status, payment_status, created_at').in('id', orderIds);
+      if (ordersError) throw ordersError;
+      const orderById = new Map((orders || []).map((order) => [String(order.id), order]));
+      setVenditeRicevute((items || []).filter((item) => orderById.has(String(item.order_id))).map((item) => ({ ...item, order: orderById.get(String(item.order_id)) })).sort((a, b) => new Date(b.order.created_at || 0).getTime() - new Date(a.order.created_at || 0).getTime()));
+    } catch (error) {
+      console.error('Caricamento vendite ricevute:', error);
+      setVenditeRicevute([]);
+      setErroreVendite('Non riesco a leggere le vendite registrate. Potrebbe essere necessario verificare i permessi Supabase per order_items e orders.');
+    } finally { setCaricamentoVendite(false); }
+  }
+
   useEffect(() => {
-    if (session?.user?.id) loadMieInserzioni(session.user.id);
-    else setMieInserzioni([]);
+    if (session?.user?.id) {
+      loadMieInserzioni(session.user.id);
+      loadVenditeRicevute(session.user.id);
+    } else {
+      setMieInserzioni([]);
+      setVenditeRicevute([]);
+      setErroreVendite('');
+    }
   }, [session?.user?.id]);
 
   async function salvaPrezzo(prodotto) {
@@ -754,6 +787,22 @@ export default function Vendi() {
               )}
             </form>
           </>
+        )}
+
+        {session?.user && (
+          <section className="mb-6 rounded-2xl border border-indigo-200 bg-white p-5 shadow-sm">
+            <h2 className="text-xl font-bold text-indigo-900">📈 Le mie vendite</h2>
+            <p className="mt-1 text-sm text-slate-600">Ordini che contengono i tuoi prodotti, quantità acquistate e stato del pagamento.</p>
+            {caricamentoVendite ? <p className="mt-4 text-sm text-slate-500">Caricamento vendite…</p> : erroreVendite ? <p role="status" className="mt-4 rounded-xl bg-amber-50 p-3 text-sm text-amber-900">{erroreVendite}</p> : venditeRicevute.length === 0 ? <p className="mt-4 text-sm text-slate-500">Non risultano ordini registrati per i tuoi prodotti. Gli articoli segnati manualmente come venduti non sono ordini RiverSpend.</p> : (
+              <div className="mt-4 space-y-3">
+                {venditeRicevute.map((item, index) => <article key={item.id || String(item.order_id) + '-' + String(item.product_id) + '-' + index} className="rounded-xl border border-slate-200 p-3">
+                  <div className="flex flex-wrap items-start justify-between gap-2"><div className="min-w-0"><p className="font-semibold">{item.product_name || 'Prodotto'}</p><p className="text-sm text-slate-600">Quantità: {Number(item.quantity || 0)} · € {Number(item.unit_price || 0).toFixed(2)} cad.</p><p className="text-sm font-bold text-slate-800">Totale riga: € {Number(item.subtotal ?? Number(item.unit_price || 0) * Number(item.quantity || 0)).toFixed(2)}</p></div><div className="text-sm sm:text-right"><p className="font-semibold">Ordine #{String(item.order_id).slice(0, 8)}</p><p className="text-slate-600">{item.order.created_at ? new Date(item.order.created_at).toLocaleDateString('it-IT') : 'Data non disponibile'}</p></div></div>
+                  <div className="mt-2 flex flex-wrap gap-2 text-xs font-bold"><span className="rounded-full bg-slate-100 px-2 py-1 text-slate-700">Ordine: {item.order.status || 'da verificare'}</span><span className={`rounded-full px-2 py-1 ${item.order.payment_status === 'paid' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-900'}`}>Pagamento: {item.order.payment_status || 'da verificare'}</span></div>
+                </article>)}
+              </div>
+            )}
+            <button type="button" onClick={() => session?.user?.id && loadVenditeRicevute(session.user.id)} disabled={caricamentoVendite} className="mt-4 rounded-xl border border-indigo-700 px-4 py-2 text-sm font-bold text-indigo-800 disabled:opacity-50">Aggiorna vendite</button>
+          </section>
         )}
 
         <section className="mb-8 rounded-2xl border border-cyan-200 bg-gradient-to-br from-cyan-50 to-white p-5 shadow-sm">
