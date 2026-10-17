@@ -7,6 +7,16 @@ import { riverSpendCategories } from '../../lib/riverSpendCategories';
 const MAX_PHOTOS = 20;
 const MAX_PHOTO_SIZE = 10 * 1024 * 1024;
 const MAX_VIDEO_SIZE = 100 * 1024 * 1024;
+const DELIVERY_METHODS = [
+  ['home_delivery', '🚚 Consegna a domicilio'],
+  ['seller_shop', '🏪 Ritiro al punto vendita / negozio'],
+  ['river_hub', '📦 Ritiro al punto Hub RiverSpend'],
+  ['pickup_point', '🏬 Punto di ritiro convenzionato'],
+  ['locker', '🔐 Locker automatico'],
+  ['seller_pickup', '🤝 Ritiro presso il venditore su appuntamento'],
+  ['scheduled_delivery', '🗓️ Consegna programmata'],
+  ['rs_local', '📍 RS Local · consegna a mano']
+];
 
 export default function Vendi() {
   const [prodotti, setProdotti] = useState([]);
@@ -25,6 +35,7 @@ export default function Vendi() {
   const [locality, setLocality] = useState('');
   const [province, setProvince] = useState('');
   const [region, setRegion] = useState('');
+  const [deliveryOptions, setDeliveryOptions] = useState(['home_delivery', 'seller_pickup', 'rs_local']);
 
   const [foto, setFoto] = useState([]);
   const [session, setSession] = useState(null);
@@ -288,6 +299,7 @@ export default function Vendi() {
           price: prezzoNumero,
           stock: quantitaNumero,
           variants: usaVarianti ? righeVarianti : [],
+          delivery_options: deliveryOptions,
           condition: condizione,
           category: categoria,
           description: descrizione.trim(),
@@ -649,6 +661,19 @@ export default function Vendi() {
                 </div>
               )}
 
+              <section className="mb-4 rounded-2xl border border-teal-200 bg-teal-50/50 p-4">
+                <h3 className="font-extrabold text-slate-900">📦 Modalità di ritiro e consegna offerte</h3>
+                <p className="mt-1 text-sm text-slate-600">Seleziona solo le modalità che puoi davvero offrire per questo articolo. Hub, locker e punti convenzionati richiedono un servizio disponibile; la scelta sarà confermata prima dell’ordine definitivo.</p>
+                <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                  {DELIVERY_METHODS.map(([value, label]) => (
+                    <label key={value} className="flex items-start gap-2 rounded-xl border border-slate-200 bg-white p-3 text-sm">
+                      <input type="checkbox" checked={deliveryOptions.includes(value)} onChange={(event) => setDeliveryOptions((current) => event.target.checked ? [...current, value] : current.filter((option) => option !== value))} className="mt-1 accent-teal-600" />
+                      <span>{label}</span>
+                    </label>
+                  ))}
+                </div>
+                {deliveryOptions.length === 0 && <p className="mt-2 text-sm font-semibold text-red-700">Seleziona almeno una modalità di consegna o ritiro.</p>}
+              </section>
               <textarea
                 className="w-full border rounded-xl p-3 mb-4"
                 rows="4"
@@ -659,7 +684,7 @@ export default function Vendi() {
 
               <button
                 type="submit"
-                disabled={caricamento}
+                disabled={caricamento || deliveryOptions.length === 0}
                 className="w-full bg-teal-600 text-white font-bold rounded-xl p-3 disabled:opacity-50"
               >
                 {caricamento ? '⏳ Pubblicazione...' : '🚀 PUBBLICA PRODOTTO'}
