@@ -22,6 +22,9 @@ export default function Vendi() {
   const [prodotti, setProdotti] = useState([]);
   const [mieInserzioni, setMieInserzioni] = useState([]);
   const [aggiornamentoVendita, setAggiornamentoVendita] = useState('');
+  const [modificaPrezzoId, setModificaPrezzoId] = useState('');
+  const [nuovoPrezzo, setNuovoPrezzo] = useState('');
+  const [salvataggioPrezzo, setSalvataggioPrezzo] = useState(false);
   const [titolo, setTitolo] = useState('');
   const [prezzo, setPrezzo] = useState('');
   const [quantita, setQuantita] = useState('1');
@@ -81,6 +84,38 @@ export default function Vendi() {
     if (session?.user?.id) loadMieInserzioni(session.user.id);
     else setMieInserzioni([]);
   }, [session?.user?.id]);
+
+  async function salvaPrezzo(prodotto) {
+    if (!session?.user?.id || !prodotto?.id || prodotto.status !== 'published' || salvataggioPrezzo) return;
+    const valore = Number(String(nuovoPrezzo).replace(',', '.'));
+    if (!Number.isFinite(valore) || valore <= 0 || valore > 10000000) {
+      setMessaggio('⚠️ Inserisci un prezzo valido maggiore di zero.');
+      return;
+    }
+    setSalvataggioPrezzo(true);
+    setMessaggio('Salvo il nuovo prezzo…');
+    try {
+      const { data, error } = await supabase
+        .from('products')
+        .update({ price: Number(valore.toFixed(2)) })
+        .eq('id', prodotto.id)
+        .eq('seller_id', session.user.id)
+        .eq('status', 'published')
+        .select('id, price')
+        .maybeSingle();
+      if (error) throw error;
+      if (!data) throw new Error('Prezzo non aggiornato: verifica di essere il venditore e che l’annuncio sia ancora pubblicato.');
+      setMieInserzioni((current) => current.map((item) => String(item.id) === String(prodotto.id) ? { ...item, price: data.price } : item));
+      setModificaPrezzoId('');
+      setNuovoPrezzo('');
+      setMessaggio('✅ Prezzo aggiornato. Apri nuovamente l’annuncio per verificare il prezzo mostrato nello Shop.');
+    } catch (error) {
+      console.error('Aggiornamento prezzo annuncio:', error);
+      setMessaggio('❌ Non sono riuscito ad aggiornare il prezzo. ' + (error?.message || 'Riprova.'));
+    } finally {
+      setSalvataggioPrezzo(false);
+    }
+  }
 
   async function segnaComeVenduto(prodotto) {
     if (!session?.user?.id || !prodotto?.id || prodotto.status !== 'published') return;
@@ -473,9 +508,24 @@ export default function Vendi() {
                         <span className={`mt-1 inline-flex rounded-full px-2 py-1 text-xs font-bold ${item.status === 'sold' ? 'bg-slate-200 text-slate-700' : 'bg-emerald-100 text-emerald-800'}`}>{item.status === 'sold' ? '✓ Venduto' : item.status === 'published' ? '● Disponibile' : item.status}</span>
                       </div>
                       {item.status === 'published' && (
-                        <button type="button" onClick={() => segnaComeVenduto(item)} disabled={Boolean(aggiornamentoVendita)} className="rounded-xl bg-teal-700 px-4 py-2 text-sm font-bold text-white disabled:opacity-50">
-                          {aggiornamentoVendita === item.id ? 'Aggiorno…' : 'Segna come venduto'}
-                        </button>
+                        <div className="flex flex-wrap gap-2">
+                          <button type="button" onClick={() => { setModificaPrezzoId(String(item.id)); setNuovoPrezzo(String(Number(item.price || 0).toFixed(2))); }} className="rounded-xl border border-teal-700 px-4 py-2 text-sm font-bold text-teal-800">
+                            Modifica prezzo
+                          </button>
+                          <button type="button" onClick={() => segnaComeVenduto(item)} disabled={Boolean(aggiornamentoVendita) || salvataggioPrezzo} className="rounded-xl bg-teal-700 px-4 py-2 text-sm font-bold text-white disabled:opacity-50">
+                            {aggiornamentoVendita === item.id ? 'Aggiorno…' : 'Segna come venduto'}
+                          </button>
+                        </div>
+                      )}
+                      {modificaPrezzoId === String(item.id) && item.status === 'published' && (
+                        <div className="w-full rounded-xl border border-teal-200 bg-teal-50 p-3">
+                          <label className="block text-sm font-bold text-slate-700" htmlFor={`prezzo-${item.id}`}>Nuovo prezzo (€)</label>
+                          <input id={`prezzo-${item.id}`} type="number" min="0.01" max="10000000" step="0.01" inputMode="decimal" value={nuovoPrezzo} onChange={(event) => setNuovoPrezzo(event.target.value)} className="mt-2 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-lg" />
+                          <div className="mt-3 flex gap-2">
+                            <button type="button" onClick={() => salvaPrezzo(item)} disabled={salvataggioPrezzo} className="rounded-xl bg-teal-700 px-4 py-2 text-sm font-bold text-white disabled:opacity-50">{salvataggioPrezzo ? 'Salvo…' : 'Salva prezzo'}</button>
+                            <button type="button" onClick={() => { setModificaPrezzoId(''); setNuovoPrezzo(''); }} disabled={salvataggioPrezzo} className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-bold text-slate-700">Annulla</button>
+                          </div>
+                        </div>
                       )}
                     </article>
                   ))}
