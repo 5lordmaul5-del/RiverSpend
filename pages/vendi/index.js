@@ -15,6 +15,8 @@ export default function Vendi() {
   const [titolo, setTitolo] = useState('');
   const [prezzo, setPrezzo] = useState('');
   const [quantita, setQuantita] = useState('1');
+  const [usaVarianti, setUsaVarianti] = useState(false);
+  const [varianti, setVarianti] = useState([{ name: 'Giallo', stock: '1' }]);
   const [descrizione, setDescrizione] = useState('');
   const [condizione, setCondizione] = useState('Nuovo');
   const [categoria, setCategoria] = useState('Altro');
@@ -227,7 +229,12 @@ export default function Vendi() {
       return;
     }
 
-    const quantitaNumero = Number(quantita);
+    const righeVarianti = usaVarianti ? varianti.map((v) => ({ name: String(v.name || '').trim(), stock: Number(v.stock) })) : [];
+    if (usaVarianti && (!righeVarianti.length || righeVarianti.some((v) => !v.name || !Number.isInteger(v.stock) || v.stock < 0) || new Set(righeVarianti.map((v) => v.name.toLocaleLowerCase('it'))).size !== righeVarianti.length || righeVarianti.every((v) => v.stock === 0))) {
+      setMessaggio('⚠️ Inserisci colori diversi e quantità intere valide; almeno un colore deve avere scorte.');
+      return;
+    }
+    const quantitaNumero = usaVarianti ? righeVarianti.reduce((totale, v) => totale + v.stock, 0) : Number(quantita);
     if (!Number.isInteger(quantitaNumero) || quantitaNumero < 1) {
       setMessaggio('⚠️ Inserisci una quantità disponibile di almeno 1.');
       return;
@@ -280,6 +287,7 @@ export default function Vendi() {
           name: titolo.trim(),
           price: prezzoNumero,
           stock: quantitaNumero,
+          variants: usaVarianti ? righeVarianti : [],
           condition: condizione,
           category: categoria,
           description: descrizione.trim(),
@@ -329,6 +337,8 @@ export default function Vendi() {
       setTitolo('');
       setPrezzo('');
       setQuantita('1');
+      setUsaVarianti(false);
+      setVarianti([{ name: 'Giallo', stock: '1' }]);
       setDescrizione('');
       setCondizione('Nuovo');
       setCategoria('Altro');
@@ -474,15 +484,20 @@ export default function Vendi() {
               />
 
               <label className="mb-2 block font-semibold">Quantità disponibile</label>
-              <input
-                className="w-full border rounded-xl p-3 mb-3"
-                type="number"
-                min="1"
-                step="1"
-                value={quantita}
-                onChange={(e) => setQuantita(e.target.value)}
-                required
-              />
+              {!usaVarianti && <input className="w-full border rounded-xl p-3 mb-3" type="number" min="1" step="1" value={quantita} onChange={(e) => setQuantita(e.target.value)} required />}
+              <label className="mb-3 flex items-center gap-2 rounded-xl border border-teal-200 bg-teal-50 p-3">
+                <input type="checkbox" checked={usaVarianti} onChange={(e) => setUsaVarianti(e.target.checked)} />
+                <span><strong>Questo prodotto ha colori o varianti</strong><span className="block text-sm text-slate-600">Esempio: collare antipulci giallo, rosso e blu con scorte separate.</span></span>
+              </label>
+              {usaVarianti && <div className="mb-4 rounded-xl border border-slate-200 p-3">
+                <div className="mb-2 flex items-center justify-between gap-2"><strong>Colori e quantità per colore</strong><button type="button" onClick={() => setVarianti((old) => [...old, { name: '', stock: '0' }])} className="rounded-lg bg-teal-700 px-3 py-2 text-sm font-bold text-white">+ Aggiungi colore</button></div>
+                {varianti.map((v, index) => <div key={index} className="mb-2 grid grid-cols-[1fr_90px_auto] gap-2">
+                  <input className="min-w-0 rounded-lg border p-2" placeholder="Colore (es. Rosso)" value={v.name} onChange={(e) => setVarianti((old) => old.map((row, i) => i === index ? { ...row, name: e.target.value } : row))} />
+                  <input className="w-full rounded-lg border p-2" type="number" min="0" step="1" aria-label={"Quantità " + (v.name || "colore")} value={v.stock} onChange={(e) => setVarianti((old) => old.map((row, i) => i === index ? { ...row, stock: e.target.value } : row))} />
+                  <button type="button" disabled={varianti.length === 1} onClick={() => setVarianti((old) => old.filter((_, i) => i !== index))} className="rounded-lg border px-2 disabled:opacity-30" aria-label="Rimuovi colore">✕</button>
+                </div>)}
+                <p className="mt-2 text-sm font-semibold text-teal-800">Pezzi totali: {varianti.reduce((sum, v) => sum + Math.max(0, Number(v.stock) || 0), 0)}</p>
+              </div>}
 
               <select
                 className="w-full border rounded-xl p-3 mb-3"
