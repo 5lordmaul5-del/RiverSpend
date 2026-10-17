@@ -18,9 +18,9 @@ export default function Checkout() {
   const [paypalMessage, setPaypalMessage] = useState('');
 
   const cartLines = Object.values(items.reduce((lines, item) => {
-    const id = String(item.id);
+    const id = String(item.id) + '::' + String(item.variantName || '');
     const quantity = Math.max(1, Math.floor(Number(item.quantity) || 1));
-    if (!lines[id]) lines[id] = { ...item, id, quantity };
+    if (!lines[id]) lines[id] = { ...item, lineId: id, quantity };
     else lines[id].quantity += quantity;
     return lines;
   }, {}));
@@ -84,29 +84,35 @@ export default function Checkout() {
       for (const item of items) {
         const id = String(item.id || '');
         if (!id) throw new Error('Un prodotto nella Rete non ha un identificativo valido.');
-        const existing = cartById.get(id);
+        const variantName = String(item.variantName || '');
+        const key = id + '::' + variantName;
+        const existing = cartById.get(key);
         const itemQuantity = Math.max(1, Math.floor(Number(item.quantity || item.qty || 1)));
-        cartById.set(id, { quantity: (existing?.quantity || 0) + itemQuantity });
+        cartById.set(key, { id, variantName, quantity: (existing?.quantity || 0) + itemQuantity });
       }
 
       const { data: products, error: productsError } = await supabase
         .from('products')
-        .select('id, name, price, stock')
-        .in('id', [...cartById.keys()])
+        .select('id, name, price, stock, variants')
+        .in('id', [...new Set([...cartById.values()].map((entry) => entry.id))])
         .eq('status', 'published');
 
       if (productsError) throw productsError;
 
       const byId = new Map((products || []).map((product) => [String(product.id), product]));
-      const validItems = [...cartById.entries()].map(([id, cartEntry]) => {
-        const product = byId.get(id);
+      const validItems = [...cartById.values()].map((cartEntry) => {
+        const product = byId.get(cartEntry.id);
         if (!product) throw new Error('Uno o più prodotti non sono più disponibili.');
         const quantity = cartEntry.quantity;
         const stock = Number(product.stock);
-        if (Number.isFinite(stock) && stock >= 0 && quantity > stock) {
-          throw new Error(`Quantità non disponibile per ${product.name || 'un prodotto'}: disponibili ${stock}.`);
+        if (cartEntry.variantName) {
+          const variant = (Array.isArray(product.variants) ? product.variants : []).find((v) => v.name === cartEntry.variantName);
+          if (!variant || Number(variant.stock) < quantity) throw new Error(`Quantità non disponibile per ${product.name || 'un prodotto'} (${cartEntry.variantName}).`);
+          return { product, quantity, variantName: cartEntry.variantName };
         }
-        return { product, quantity };
+        if (Array.isArray(product.variants) && product.variants.length) throw new Error(`Scegli un colore per ${product.name || 'un prodotto'} prima di inviare l'ordine.`);
+        if (Number.isFinite(stock) && stock >= 0 && quantity > stock) throw new Error(`Quantità non disponibile per ${product.name || 'un prodotto'}: disponibili ${stock}.`);
+        return { product, quantity, variantName: null };
       });
 
       const subtotal = validItems.reduce((sum, entry) => sum + Number(entry.product.price || 0) * entry.quantity, 0);
@@ -128,10 +134,11 @@ export default function Checkout() {
 
       if (orderError) throw orderError;
 
-      const orderItems = validItems.map(({ product, quantity }) => ({
+      const orderItems = validItems.map(({ product, quantity, variantName }) => ({
         order_id: order.id,
         product_id: String(product.id),
-        product_name: product.name || 'Prodotto',
+        variant_name: variantName,
+        product_name: (product.name || 'Prodotto') + (variantName ? ' · ' + variantName : ''),
         unit_price: Number(product.price || 0),
         quantity,
         subtotal: Number(product.price || 0) * quantity
@@ -267,8 +274,8 @@ Invia una richiesta d’ordine. RiverSpendShop è appena partito: il venditore c
               <>
                 <div className="mt-3 space-y-2">
                   {cartLines.map((item) => (
-                    <div key={item.id} className="flex items-center justify-between gap-3 text-sm">
-                      <span className="min-w-0 truncate">{item.title || 'Prodotto'} <span className="text-slate-500">× {item.quantity}</span></span>
+                    <div key={item.lineId || item.id} className="flex items-center justify-between gap-3 text-sm">
+                      <span className="min-w-0 truncate">{item.title || 'Prodotto'}{item.variantName && <span className="text-teal-700"> · {item.variantName}</span>} <span className="text-slate-500">× {item.quantity}</span></span>
                       <strong>€ {(Number(item.price || 0) * item.quantity).toFixed(2)}</strong>
                     </div>
                   ))}
