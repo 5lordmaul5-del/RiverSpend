@@ -533,49 +533,6 @@ export default function Vendi() {
               </button>
             </div>
 
-            <section className="mb-6 rounded-2xl border border-teal-200 bg-white p-5 shadow-sm">
-              <h2 className="text-xl font-bold text-teal-800">I miei annunci · Gestione vendite</h2>
-              <p className="mt-1 text-sm text-slate-600">Usa “Segna come venduto” solo per aggiornare la disponibilità di un annuncio non più vendibile: non sostituisce il checkout RiverSpend. Per le vendite concluse tramite RiverSpendShop o RS Local, l’acquisto deve essere registrato sulla piattaforma, così la commissione può essere calcolata e la transazione tracciata.</p>
-              {mieInserzioni.length === 0 ? (
-                <p className="mt-4 text-sm text-slate-500">Non hai ancora annunci associati a questo account.</p>
-              ) : (
-                <div className="mt-4 space-y-3">
-                  {mieInserzioni.map((item) => (
-                    <article key={item.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 p-3">
-                      <div className="min-w-0">
-                        <p className="font-semibold">{item.name}</p>
-                        <p className="text-sm text-slate-600">€ {Number(item.price || 0).toFixed(2)}{item.locality ? ` · ${item.locality}` : ''}{item.province ? ` · ${item.province}` : ''}</p>
-                        <span className={`mt-1 inline-flex rounded-full px-2 py-1 text-xs font-bold ${item.status === 'sold' ? 'bg-slate-200 text-slate-700' : 'bg-emerald-100 text-emerald-800'}`}>{item.status === 'sold' ? '✓ Venduto' : item.status === 'published' ? '● Disponibile' : item.status}</span>
-                      </div>
-                      {item.status === 'published' && (
-                        <div className="flex flex-wrap gap-2">
-                          <button type="button" onClick={() => { setModificaPrezzoId(String(item.id)); setNuovoNome(item.name || ''); setNuovoPrezzo(String(Number(item.price || 0).toFixed(2))); }} className="rounded-xl border border-teal-700 px-4 py-2 text-sm font-bold text-teal-800">
-                            Modifica prezzo
-                          </button>
-                          <button type="button" onClick={() => segnaComeVenduto(item)} disabled={Boolean(aggiornamentoVendita) || salvataggioPrezzo} className="rounded-xl bg-teal-700 px-4 py-2 text-sm font-bold text-white disabled:opacity-50">
-                            {aggiornamentoVendita === item.id ? 'Aggiorno…' : 'Segna come venduto'}
-                          </button>
-                        </div>
-                      )}
-                      {modificaPrezzoId === String(item.id) && item.status === 'published' && (
-                        <div className="w-full rounded-xl border border-teal-200 bg-teal-50 p-3">
-                          <label className="block text-sm font-bold text-slate-700" htmlFor={`nome-${item.id}`}>Nome prodotto</label>
-                          <input id={`nome-${item.id}`} type="text" maxLength={140} value={nuovoNome} onChange={(event) => setNuovoNome(event.target.value)} className="mt-2 w-full rounded-lg border border-slate-300 bg-white px-3 py-2" />
-                          <label className="mt-3 block text-sm font-bold text-slate-700" htmlFor={`prezzo-${item.id}`}>Nuovo prezzo (€)</label>
-                          <input id={`prezzo-${item.id}`} type="number" min="0.01" max="10000000" step="0.01" inputMode="decimal" value={nuovoPrezzo} onChange={(event) => setNuovoPrezzo(event.target.value)} className="mt-2 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-lg" />
-                          <div className="mt-3 flex gap-2">
-                            <button type="button" onClick={() => salvaPrezzo(item)} disabled={salvataggioPrezzo} className="rounded-xl bg-teal-700 px-4 py-2 text-sm font-bold text-white disabled:opacity-50">{salvataggioPrezzo ? 'Salvo…' : 'Salva prezzo'}</button>
-                            <button type="button" onClick={() => { setModificaPrezzoId(''); setNuovoNome(''); setNuovoPrezzo(''); }} disabled={salvataggioPrezzo} className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-bold text-slate-700">Annulla</button>
-                          </div>
-                        </div>
-                      )}
-                    </article>
-                  ))}
-                </div>
-              )}
-              {messaggio && <p role="status" className="mt-3 text-sm font-semibold">{messaggio}</p>}
-            </section>
-
             <form
               onSubmit={handleSubmit}
               className="bg-white rounded-2xl shadow p-5 mb-8"
@@ -786,6 +743,50 @@ export default function Vendi() {
                 <p className="mt-4 font-semibold">{messaggio}</p>
               )}
             </form>
+
+            <section className="mb-6 rounded-2xl border border-teal-200 bg-white p-5 shadow-sm">
+              <h2 className="text-xl font-bold text-teal-800">I miei annunci · Gestione vendite</h2>
+              <p className="mt-1 text-sm text-slate-600">Usa “Segna come venduto” solo per aggiornare la disponibilità di un annuncio non più vendibile: non sostituisce il checkout RiverSpend. Per le vendite concluse tramite RiverSpendShop o RS Local, l’acquisto deve essere registrato sulla piattaforma, così la commissione può essere calcolata e la transazione tracciata.</p>
+              {mieInserzioni.length === 0 ? (
+                <p className="mt-4 text-sm text-slate-500">Non hai ancora annunci associati a questo account.</p>
+              ) : (
+                <div className="mt-4 space-y-3">
+                  {mieInserzioni.map((item) => (
+                    <article key={item.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 p-3">
+                      <div className="min-w-0">
+                        <p className="font-semibold">{item.name}</p>
+                        <p className="text-sm text-slate-600">€ {Number(item.price || 0).toFixed(2)}{item.locality ? ` · ${item.locality}` : ''}{item.province ? ` · ${item.province}` : ''}</p>
+                        <span className={`mt-1 inline-flex rounded-full px-2 py-1 text-xs font-bold ${item.status === 'sold' ? 'bg-slate-200 text-slate-700' : 'bg-emerald-100 text-emerald-800'}`}>{item.status === 'sold' ? '✓ Venduto' : item.status === 'published' ? '● Disponibile' : item.status}</span>
+                      </div>
+                      {item.status === 'published' && (
+                        <div className="flex flex-wrap gap-2">
+                          <button type="button" onClick={() => { setModificaPrezzoId(String(item.id)); setNuovoNome(item.name || ''); setNuovoPrezzo(String(Number(item.price || 0).toFixed(2))); }} className="rounded-xl border border-teal-700 px-4 py-2 text-sm font-bold text-teal-800">
+                            Modifica prezzo
+                          </button>
+                          <button type="button" onClick={() => segnaComeVenduto(item)} disabled={Boolean(aggiornamentoVendita) || salvataggioPrezzo} className="rounded-xl bg-teal-700 px-4 py-2 text-sm font-bold text-white disabled:opacity-50">
+                            {aggiornamentoVendita === item.id ? 'Aggiorno…' : 'Segna come venduto'}
+                          </button>
+                        </div>
+                      )}
+                      {modificaPrezzoId === String(item.id) && item.status === 'published' && (
+                        <div className="w-full rounded-xl border border-teal-200 bg-teal-50 p-3">
+                          <label className="block text-sm font-bold text-slate-700" htmlFor={`nome-${item.id}`}>Nome prodotto</label>
+                          <input id={`nome-${item.id}`} type="text" maxLength={140} value={nuovoNome} onChange={(event) => setNuovoNome(event.target.value)} className="mt-2 w-full rounded-lg border border-slate-300 bg-white px-3 py-2" />
+                          <label className="mt-3 block text-sm font-bold text-slate-700" htmlFor={`prezzo-${item.id}`}>Nuovo prezzo (€)</label>
+                          <input id={`prezzo-${item.id}`} type="number" min="0.01" max="10000000" step="0.01" inputMode="decimal" value={nuovoPrezzo} onChange={(event) => setNuovoPrezzo(event.target.value)} className="mt-2 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-lg" />
+                          <div className="mt-3 flex gap-2">
+                            <button type="button" onClick={() => salvaPrezzo(item)} disabled={salvataggioPrezzo} className="rounded-xl bg-teal-700 px-4 py-2 text-sm font-bold text-white disabled:opacity-50">{salvataggioPrezzo ? 'Salvo…' : 'Salva prezzo'}</button>
+                            <button type="button" onClick={() => { setModificaPrezzoId(''); setNuovoNome(''); setNuovoPrezzo(''); }} disabled={salvataggioPrezzo} className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-bold text-slate-700">Annulla</button>
+                          </div>
+                        </div>
+                      )}
+                    </article>
+                  ))}
+                </div>
+              )}
+              {messaggio && <p role="status" className="mt-3 text-sm font-semibold">{messaggio}</p>}
+            </section>
+
           </>
         )}
 
