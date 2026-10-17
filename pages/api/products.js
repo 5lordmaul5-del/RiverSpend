@@ -19,18 +19,25 @@ export default async function handler(req, res) {
     // declared foreign key to products, so PostgREST cannot reliably embed it.
     const { data: products, error: productsError } = await supabase
       .from('products')
-      .select('id, name, description, price, condition, category, image, created_at, origin_country, seller_country, seller_type, locality, province, region, stock, variants, delivery_options, promo, homepage_expires_at, sponsored_until, sponsored_label')
-      .eq('status', 'published')
+      .select('id, name, description, price, condition, category, image, created_at, origin_country, seller_country, seller_type, locality, province, region, stock, variants, delivery_options, promo, homepage_expires_at, sponsored_until, sponsored_label, status, sold_at')
+      .in('status', ['published', 'sold'])
       .order('created_at', { ascending: false });
 
     if (productsError) throw productsError;
+
+    const soldCutoff = Date.now() - 60 * 60 * 1000;
+    const visibleProducts = (products || []).filter((product) => {
+      if (product.status !== 'sold') return product.status === 'published';
+      const soldAt = product.sold_at ? new Date(product.sold_at).getTime() : NaN;
+      return Number.isFinite(soldAt) && soldAt > soldCutoff;
+    });
 
     const locality = typeof req.query.locality === 'string' ? req.query.locality.trim() : '';
     const province = typeof req.query.province === 'string' ? req.query.province.trim() : '';
     const category = typeof req.query.category === 'string' ? req.query.category.trim() : '';
     const categorie18 = ['18🔞 ADULTI', '18🔞 Sex Toys'];
     const richiesta18 = categorie18.some((cat) => cat.toLowerCase() === category.toLowerCase());
-    let filteredProducts = (products || []).filter((p) => {
+    let filteredProducts = visibleProducts.filter((p) => {
       const prodotto18 = categorie18.some((cat) => cat.toLowerCase() === String(p.category || '').trim().toLowerCase());
       // Gli annunci 18+ non vengono mai restituiti al catalogo generale.
       // Sono restituiti solo quando viene richiesta esplicitamente una categoria 18+.
@@ -94,7 +101,10 @@ export default async function handler(req, res) {
         sponsorizzato: Boolean(product.promo) || Boolean(product.sponsored_until && new Date(product.sponsored_until) > new Date()),
         etichettaSponsorizzata: product.sponsored_label || null,
         scadenzaVetrina: product.homepage_expires_at || null,
-        sponsorizzatoFino: product.sponsored_until || null
+        sponsorizzatoFino: product.sponsored_until || null,
+        statoAnnuncio: product.status || 'published',
+        venduto: product.status === 'sold',
+        vendutoAlle: product.sold_at || null
       };
     }));
   } catch (error) {
