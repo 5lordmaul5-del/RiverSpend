@@ -42,6 +42,8 @@ export default function Prodotto() {
   const [errore, setErrore] = useState('');
   const [fotoAttiva, setFotoAttiva] = useState(0);
   const [inRete, setInRete] = useState(false);
+  const [varianteScelta, setVarianteScelta] = useState('');
+  const [quantitaScelta, setQuantitaScelta] = useState(1);
   const [wishlist, setWishlist] = useState(false);
   const [feedback, setFeedback] = useState('');
   const [mappaLocalita, setMappaLocalita] = useState(null);
@@ -84,6 +86,8 @@ export default function Prodotto() {
       .then((item) => {
         if (!attivo) return;
         setProdotto(item);
+        const disponibili = Array.isArray(item.varianti) ? item.varianti.filter((v) => Number(v.stock) > 0) : [];
+        if (disponibili.length) setVarianteScelta(disponibili[0].name);
         try {
           const rete = JSON.parse(localStorage.getItem('riverspend-rete') || '[]');
           const desideri = JSON.parse(localStorage.getItem('riverspend-wishlist') || '[]');
@@ -139,6 +143,31 @@ export default function Prodotto() {
     id: prodotto.id, title: prodotto.titolo, price: Number(prodotto.prezzo || 0),
     image: prodotto.immagini?.[0] || ''
   }) : null, [prodotto]);
+
+  async function aggiungiVarianteAllaRete() {
+    if (!record) return;
+    const varianti = Array.isArray(prodotto.varianti) ? prodotto.varianti : [];
+    const variante = varianti.length ? varianti.find((v) => v.name === varianteScelta) : null;
+    if (varianti.length && (!variante || Number(variante.stock) < quantitaScelta)) {
+      setFeedback('Scegli un colore disponibile e una quantità compatibile con le scorte.');
+      return;
+    }
+    const item = { ...record, quantity: quantitaScelta, variantName: variante?.name || null };
+    try {
+      const current = JSON.parse(localStorage.getItem('riverspend-rete') || '[]');
+      const safe = Array.isArray(current) ? current : [];
+      const key = (x) => String(x.id) + '::' + String(x.variantName || '');
+      const found = safe.find((x) => key(x) === key(item));
+      const next = found
+        ? safe.map((x) => key(x) === key(item) ? { ...x, quantity: Math.min(Number(variante?.stock ?? prodotto.quantita ?? 999999), Number(x.quantity || 1) + quantitaScelta) } : x)
+        : [item, ...safe];
+      localStorage.setItem('riverspend-rete', JSON.stringify(next));
+      sessionStorage.setItem('riverspend-rete', JSON.stringify(next));
+      document.cookie = 'riverspend-rete-ids=' + encodeURIComponent([...new Set(next.map((x) => x.id))].join(',')) + '; path=/; max-age=31536000; SameSite=Lax';
+      setInRete(true);
+      setFeedback(variante ? '🕸️ Aggiunto alla Rete: ' + variante.name + ' × ' + quantitaScelta + '.' : '🕸️ Articolo aggiunto alla tua Rete.');
+    } catch { setFeedback('Impossibile salvare su questo dispositivo.'); }
+  }
 
   async function toggleLista(key, active, setter, added, removed) {
     if (!record) return;
@@ -281,14 +310,19 @@ export default function Prodotto() {
               {(() => { const testoAnimale = String((prodotto.categoria || '') + ' ' + (prodotto.titolo || '')).toLowerCase(); const animaleVivo = /gatt|cani|cane|animali|animale|cucciol|uccell|rettil|pesci vivi|animali vivi/.test(testoAnimale); return animaleVivo ? <div className="mt-4 rounded-2xl border border-amber-300 bg-amber-50 p-4 text-amber-950"><p className="font-extrabold">🐾 Ritiro in loco o accordi con il venditore</p><p className="mt-1 text-sm leading-relaxed">Per il benessere e la sicurezza dell’animale, la consegna deve essere concordata direttamente con il venditore. Non è prevista la spedizione tramite posta o corriere.</p></div> : null; })()}
 
               <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4">
-                <div className="flex items-center justify-between gap-3">
-                  <div><p className="text-xs text-slate-600">Disponibilità dichiarata</p><p className="mt-1 font-bold">{quantita > 0 ? (quantita === 1 ? 'Ultimo pezzo disponibile' : quantita + ' pezzi disponibili') : 'Disponibilità da verificare'}</p></div>
-                  <span className="text-2xl" aria-hidden="true">🪙</span>
-                </div>
+                {Array.isArray(prodotto.varianti) && prodotto.varianti.length > 0 ? <>
+                  <p className="text-sm font-bold text-slate-700">Scegli il colore</p>
+                  <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
+                    {prodotto.varianti.map((v) => <button key={v.name} type="button" disabled={Number(v.stock) < 1} onClick={() => { setVarianteScelta(v.name); setQuantitaScelta(1); }} className={'rounded-xl border p-3 text-left ' + (varianteScelta === v.name ? 'border-teal-600 bg-teal-50 ring-2 ring-teal-200' : 'border-slate-200 bg-white') + (Number(v.stock) < 1 ? ' opacity-40' : '')}>
+                      <span className="block font-bold">{v.name}</span><span className="mt-1 block text-xs text-slate-600">{Number(v.stock) > 0 ? Number(v.stock) + ' disponibili' : 'Esaurito'}</span>
+                    </button>)}
+                  </div>
+                  {(() => { const v = prodotto.varianti.find((x) => x.name === varianteScelta); const stockVariante = Number(v?.stock || 0); return <div className="mt-3"><label className="block text-sm font-semibold" htmlFor="rs-variant-quantity">Quantità</label><select id="rs-variant-quantity" className="mt-1 w-full rounded-xl border border-slate-300 p-3" value={Math.min(quantitaScelta, Math.max(1, stockVariante))} disabled={!stockVariante} onChange={(e) => setQuantitaScelta(Number(e.target.value))}>{Array.from({ length: Math.max(1, stockVariante) }, (_, i) => i + 1).map((n) => <option key={n} value={n}>{n}</option>)}</select></div>; })()}
+                </> : <div className="flex items-center justify-between gap-3"><div><p className="text-xs text-slate-600">Disponibilità dichiarata</p><p className="mt-1 font-bold">{quantita > 0 ? (quantita === 1 ? 'Ultimo pezzo disponibile' : quantita + ' pezzi disponibili') : 'Disponibilità da verificare'}</p></div><span className="text-2xl" aria-hidden="true">🪙</span></div>}
               </div>
 
               <div className="mt-5 grid gap-3">
-                <button type="button" onClick={() => toggleLista('riverspend-rete', inRete, setInRete, '🕸️ Articolo aggiunto alla tua Rete.', 'Articolo rimosso dalla Rete.')} className="rounded-xl border border-teal-700 bg-teal-500 px-5 py-4 text-base font-extrabold text-slate-950 shadow-sm transition-colors hover:bg-teal-400 active:bg-teal-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700">
+                <button type="button" onClick={Array.isArray(prodotto.varianti) && prodotto.varianti.length ? aggiungiVarianteAllaRete : () => toggleLista('riverspend-rete', inRete, setInRete, '🕸️ Articolo aggiunto alla tua Rete.', 'Articolo rimosso dalla Rete.')} className="rounded-xl border border-teal-700 bg-teal-500 px-5 py-4 text-base font-extrabold text-slate-950 shadow-sm transition-colors hover:bg-teal-400 active:bg-teal-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700">
                   {inRete ? '✓ Nella mia Rete' : '🕸️ Aggiungi alla Rete'}
                 </button>
                 <button type="button" onClick={() => toggleLista('riverspend-wishlist', wishlist, setWishlist, '♡ Aggiunto ai tuoi desideri.', 'Rimosso dai desideri.')} className="rounded-xl border border-slate-200 bg-white px-5 py-3 font-bold text-slate-800">
