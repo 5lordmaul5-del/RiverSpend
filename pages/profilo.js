@@ -68,11 +68,31 @@ export default function Profilo() {
             <>
               <p className="mt-6 text-slate-700">Accesso effettuato come <strong>{session.user.email}</strong></p>
               <p className="mt-2 rounded-xl border border-teal-200 bg-teal-50 p-3 text-sm text-teal-900">✓ Resta connesso su questo dispositivo. Quando torni su RiverSpendShop, non devi richiedere un nuovo link email, salvo che tu esca volontariamente o la sessione venga revocata.</p>
-              <div className="mt-6 grid gap-3 sm:grid-cols-3">
-                <Link href="/rete" className="rounded-xl border border-teal-200 bg-white p-4 text-center text-teal-800">🕸️ La mia rete</Link>
-                <Link href="/desideri" className="rounded-xl border border-teal-200 bg-white p-4 text-center text-teal-800">♡ Desideri</Link>
-                <Link href="/vendi" className="rounded-xl border border-teal-200 bg-white p-4 text-center text-teal-800">+ Vendi</Link>
-              </div>
+              <section className="mt-6">
+                <h2 className="text-2xl font-bold text-slate-900">Il mio pannello di controllo</h2>
+                <p className="mt-1 text-sm text-slate-600">Gestisci il tuo account e le tue attività su RiverSpendShop.</p>
+                <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                  <Link href="/vendi" className="rounded-2xl border border-teal-200 bg-teal-50 p-4 text-left text-teal-900">
+                    <span className="block text-lg font-bold">📦 I miei annunci</span>
+                    <span className="mt-1 block text-sm">Consulta gli annunci pubblicati e gestisci le disponibilità. La modifica del prezzo compare qui dopo la pubblicazione dell’aggiornamento.</span>
+                  </Link>
+                  <Link href="/notifiche" className="rounded-2xl border border-slate-200 bg-white p-4 text-left text-slate-900">
+                    <span className="block text-lg font-bold">🔔 Notifiche</span>
+                    <span className="mt-1 block text-sm text-slate-600">Apri le notifiche del tuo account.</span>
+                  </Link>
+                  <Link href="/rete" className="rounded-2xl border border-slate-200 bg-white p-4 text-left text-slate-900">
+                    <span className="block text-lg font-bold">🕸️ La mia rete</span>
+                    <span className="mt-1 block text-sm text-slate-600">Gestisci gli articoli salvati nella tua Rete.</span>
+                  </Link>
+                  <Link href="/desideri" className="rounded-2xl border border-slate-200 bg-white p-4 text-left text-slate-900">
+                    <span className="block text-lg font-bold">♡ Lista dei desideri</span>
+                    <span className="mt-1 block text-sm text-slate-600">Rivedi gli articoli che hai salvato.</span>
+                  </Link>
+                </div>
+                <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950">
+                  <strong>Messaggi, ordini e cancellazione annunci:</strong> queste funzioni richiedono ancora un’area dedicata e collegata ai dati corretti. Non mostro pulsanti finti che potrebbero non funzionare o cancellare dati sbagliati.
+                </div>
+              </section>
               <button onClick={logout} className="mt-6 rounded-xl border border-slate-300 bg-white px-5 py-3 text-slate-800">Esci</button>
             </>
           ) : (
