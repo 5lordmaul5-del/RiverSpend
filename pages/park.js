@@ -67,6 +67,19 @@ export default function RiverSpendPark() {
           </div>
         </header>
 
+        <section className="my-8 grid grid-cols-1 gap-4 sm:grid-cols-2" aria-label="Biglietteria online RiverSpend Park">
+          <Link href="/park-booking" className="group flex min-h-44 flex-col justify-between rounded-3xl border border-cyan-300/50 bg-gradient-to-br from-cyan-700 via-sky-800 to-blue-950 p-6 shadow-lg transition hover:border-cyan-200 hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-cyan-300">
+            <span className="text-3xl" aria-hidden="true">🎟️</span>
+            <span><span className="block text-2xl font-black text-white">Acquista Biglietti</span><span className="mt-2 block text-sm leading-6 text-cyan-100">Scegli data, visitatori e fascia oraria e consulta il totale indicativo.</span></span>
+            <span className="mt-4 inline-flex w-fit rounded-xl bg-white px-4 py-2 font-bold text-blue-950">Vai alla biglietteria online →</span>
+          </Link>
+          <Link href="/park-gift" className="group flex min-h-44 flex-col justify-between rounded-3xl border border-amber-300/60 bg-gradient-to-br from-amber-700 via-amber-900 to-slate-950 p-6 shadow-lg transition hover:border-amber-200 hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-amber-300">
+            <span className="text-3xl" aria-hidden="true">🎁</span>
+            <span><span className="block text-2xl font-black text-white">Regala un’esperienza</span><span className="mt-2 block text-sm leading-6 text-amber-100">Scopri le Gift Card Single, Duo, Family e multi-ingresso.</span></span>
+            <span className="mt-4 inline-flex w-fit rounded-xl bg-amber-300 px-4 py-2 font-bold text-slate-950">Scopri le Gift Card →</span>
+          </Link>
+        </section>
+
         <section className="my-8 rounded-2xl border border-amber-800 bg-amber-950/40 p-5">
           <h2 className="text-xl font-bold text-amber-100">🛡️ Power Shield — principio di progettazione</h2>
           <p className="mt-2 leading-7 text-amber-50/90">Ogni attrazione dovrà avere valutazione dei rischi, progettazione e collaudo da professionisti abilitati, procedure operative, manutenzione documentata, vie di esodo, accessibilità, gestione meteo e piano di emergenza. Questa pagina è un catalogo concettuale: non costituisce certificazione né autorizzazione all’esercizio.</p>
