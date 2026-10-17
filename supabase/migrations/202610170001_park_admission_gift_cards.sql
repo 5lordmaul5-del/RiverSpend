@@ -76,3 +76,75 @@ values
 ('PARK-20-ADULT','Gift 20 ingressi adulti','multi_adult',20,0,0,51000,60000,12,false),
 ('PARK-20-CHILD','Gift 20 ingressi bambini','multi_child',20,0,0,34000,40000,12,false)
 on conflict (code) do nothing;
+
+-- Atomic redemption: callers must be trusted server-side code using the service role.
+create or replace function public.redeem_rs_park_gift_card(
+  p_public_code text,
+  p_secret_hash text,
+  p_admissions_used integer default 1,
+  p_idempotency_key text default null,
+  p_redeemed_by uuid default null,
+  p_note text default null
+)
+returns table(ok boolean, result_code text, remaining integer)
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_card public.rs_park_gift_cards%rowtype;
+begin
+  if p_admissions_used is null or p_admissions_used < 1
+     or p_idempotency_key is null or length(trim(p_idempotency_key)) < 8 then
+    return query select false, 'invalid_request'::text, null::integer;
+    return;
+  end if;
+
+  select * into v_card
+  from public.rs_park_gift_cards
+  where public_code = p_public_code
+  for update;
+
+  if not found or v_card.secret_hash <> p_secret_hash then
+    return query select false, 'invalid_card'::text, null::integer;
+    return;
+  end if;
+
+  if exists(select 1 from public.rs_park_gift_redemptions r where r.idempotency_key = p_idempotency_key) then
+    return query select false, 'already_processed'::text, v_card.remaining_admissions;
+    return;
+  end if;
+
+  if v_card.status = 'blocked' then
+    return query select false, 'blocked'::text, v_card.remaining_admissions;
+    return;
+  elsif v_card.status = 'expired' or (v_card.expires_at is not null and v_card.expires_at <= now()) then
+    update public.rs_park_gift_cards set status = 'expired', updated_at = now() where id = v_card.id;
+    return query select false, 'expired'::text, v_card.remaining_admissions;
+    return;
+  elsif v_card.status <> 'active' then
+    return query select false, v_card.status::text, v_card.remaining_admissions;
+    return;
+  elsif v_card.remaining_admissions < p_admissions_used then
+    return query select false, 'insufficient_admissions'::text, v_card.remaining_admissions;
+    return;
+  end if;
+
+  update public.rs_park_gift_cards
+  set remaining_admissions = remaining_admissions - p_admissions_used,
+      status = case when remaining_admissions - p_admissions_used = 0 then 'exhausted' else 'active' end,
+      updated_at = now()
+  where id = v_card.id
+  returning * into v_card;
+
+  insert into public.rs_park_gift_redemptions
+    (gift_card_id, admissions_used, idempotency_key, redeemed_by, note)
+  values
+    (v_card.id, p_admissions_used, p_idempotency_key, p_redeemed_by, p_note);
+
+  return query select true, 'redeemed'::text, v_card.remaining_admissions;
+end;
+$$;
+
+revoke all on function public.redeem_rs_park_gift_card(text,text,integer,text,uuid,text) from public, anon, authenticated;
+grant execute on function public.redeem_rs_park_gift_card(text,text,integer,text,uuid,text) to service_role;
