@@ -12,6 +12,8 @@ export default function Checkout() {
   const [authMessage, setAuthMessage] = useState('');
   const [sendingLink, setSendingLink] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState('cod');
+  const [deliveryMethod, setDeliveryMethod] = useState('home_delivery');
+  const [deliveryDetails, setDeliveryDetails] = useState('');
   const [codMessage, setCodMessage] = useState('');
   const [transferMessage, setTransferMessage] = useState('');
   const [paypalLoading, setPaypalLoading] = useState(false);
@@ -127,7 +129,10 @@ export default function Checkout() {
           subtotal,
           shipping_total: 0,
           donation_total: 0,
-          total: subtotal
+          total: subtotal,
+          delivery_method: deliveryMethod,
+          delivery_details: deliveryDetails.trim() || null,
+          delivery_status: 'pending_confirmation'
         })
         .select('id')
         .single();
@@ -288,10 +293,24 @@ Invia una richiesta d’ordine. RiverSpendShop è appena partito: il venditore c
             )}
           </div>
 
-          <div className="mt-4 rounded-2xl border border-amber-300 bg-amber-50 p-4">
-            <h2 className="font-bold text-amber-900">📦 Spedizioni in fase di attivazione</h2>
-            <p className="mt-2 text-sm leading-6 text-amber-900">Per ora il venditore organizza la spedizione tramite InPost o Bartolini (BRT). Il costo non è ancora calcolato automaticamente: ti verrà comunicato prima della conferma definitiva. Non effettuare pagamenti finché non hai ricevuto il totale completo dell’ordine.</p>
-          </div>
+          <section className="mt-4 rounded-2xl border border-teal-200 bg-white p-4">
+            <h2 className="font-bold text-slate-900">📦 Scegli ritiro o consegna</h2>
+            <p className="mt-1 text-sm leading-6 text-slate-600">La tua preferenza viene salvata nella richiesta d’ordine. Il venditore deve confermare che la modalità sia disponibile e comunicare l’eventuale costo prima della conferma definitiva. Durante i test, Hub, locker e punti convenzionati non sono garantiti come servizi attivi.</p>
+            <label htmlFor="rs-delivery-method" className="mt-4 block text-sm font-semibold text-slate-800">Modalità preferita</label>
+            <select id="rs-delivery-method" value={deliveryMethod} onChange={(event) => setDeliveryMethod(event.target.value)} disabled={Boolean(orderId)} className="mt-2 w-full rounded-xl border border-slate-300 bg-white p-3 text-slate-900 disabled:bg-slate-100">
+              <option value="home_delivery">🚚 Consegna a domicilio</option>
+              <option value="seller_shop">🏪 Ritiro al punto vendita / negozio</option>
+              <option value="river_hub">📦 Ritiro al punto Hub RiverSpend (da confermare)</option>
+              <option value="pickup_point">🏬 Punto di ritiro convenzionato (da confermare)</option>
+              <option value="locker">🔐 Locker automatico (da confermare)</option>
+              <option value="seller_pickup">🤝 Ritiro presso il venditore su appuntamento</option>
+              <option value="scheduled_delivery">🗓️ Consegna programmata (da confermare)</option>
+              <option value="rs_local">📍 RS Local · consegna a mano concordata</option>
+            </select>
+            <label htmlFor="rs-delivery-details" className="mt-4 block text-sm font-semibold text-slate-800">Indirizzo, zona o punto di ritiro (facoltativo)</label>
+            <textarea id="rs-delivery-details" value={deliveryDetails} onChange={(event) => setDeliveryDetails(event.target.value)} disabled={Boolean(orderId)} maxLength={500} rows={3} placeholder="Inserisci solo le informazioni necessarie alla modalità scelta; il venditore confermerà i dettagli dopo la richiesta." className="mt-2 w-full rounded-xl border border-slate-300 p-3 text-slate-900 disabled:bg-slate-100" />
+            <p className="mt-2 text-xs text-slate-500">Costo spedizione non calcolato automaticamente: attendi il totale completo e la conferma del venditore prima di pagare. La preferenza non garantisce la disponibilità del servizio.</p>
+          </section>
 
           <section className="mt-6 rounded-2xl border border-teal-100 bg-white p-4">
             <p className="text-sm font-black uppercase tracking-[0.18em] text-teal-600">RiverSpend Pay</p>
