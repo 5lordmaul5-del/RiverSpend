@@ -16,16 +16,43 @@ const IMAGES = [
 ];
 
 const PLACE_IMAGES = [
-  { match: ['PUGLIESI', 'PUGLIA', 'ALBEROBELLO'], url: 'https://images.unsplash.com/photo-1602088113235-229c19758e9f?auto=format&fit=crop&w=900&q=85' },
+  // Regioni italiane: immagini dedicate alle categorie regionali.
   { match: ['PIEMONTESI', 'PIEMONTE', 'TORINO', 'MOLE ANTONELLIANA'], url: 'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=900&q=85' },
-  { match: ['LOMBARDI', 'LOMBARDIA', 'MILANO', 'DUOMO DI MILANO'], url: 'https://images.unsplash.com/photo-1579926629995-8a4c8b5e3f3b?auto=format&fit=crop&w=900&q=85' },
+  { match: ['VALDOSTANI', 'VALLE D’AOSTA', 'VALLE D AOSTA', 'AOSTA'], url: 'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?auto=format&fit=crop&w=900&q=85' },
+  { match: ['LOMBARDI', 'LOMBARDIA', 'MILANO', 'DUOMO DI MILANO'], url: 'https://images.unsplash.com/photo-1579926626628-2e6c8f2b7f8a?auto=format&fit=crop&w=900&q=85' },
+  { match: ['LIGURI', 'LIGURIA', 'CINQUE TERRE', 'GENOVA'], url: 'https://images.unsplash.com/photo-1498307833015-e7b400441eb8?auto=format&fit=crop&w=900&q=85' },
+  { match: ['VENETI', 'VENETO', 'VENEZIA'], url: 'https://images.unsplash.com/photo-1514890547357-a9ee288728e0?auto=format&fit=crop&w=900&q=85' },
+  { match: ['TRENTINI', 'TRENTINO', 'TRENTINO-ALTO ADIGE', 'DOLOMITI'], url: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=900&q=85' },
+  { match: ['ALTOATESINI', 'ALTO ADIGE', 'SUDTIROLO', 'BOLZANO'], url: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=900&q=85' },
+  { match: ['FRIULANI', 'FRIULI', 'FRIULI-VENEZIA GIULIA', 'TRIESTE'], url: 'https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=900&q=85' },
+  { match: ['EMILIANI', 'EMILIA', 'BOLOGNA'], url: 'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=900&q=85' },
+  { match: ['ROMAGNOLI', 'ROMAGNA', 'RIMINI'], url: 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=900&q=85' },
+  { match: ['TOSCANI', 'TOSCANA', 'FIRENZE', 'FLORENCE'], url: 'https://images.unsplash.com/photo-1515859005217-8a1f08870f59?auto=format&fit=crop&w=900&q=85' },
+  { match: ['UMBRI', 'UMBRIA', 'ASSISI'], url: 'https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=900&q=85' },
+  { match: ['MARCHIGIANI', 'MARCHE', 'URBINO'], url: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=900&q=85' },
+  { match: ['LAZIALI', 'LAZIO', 'ROMA', 'COLOSSEO'], url: 'https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&w=900&q=85' },
+  { match: ['ABRUZZESI', 'ABRUZZO', 'GRAN SASSO'], url: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=900&q=85' },
+  { match: ['MOLISANI', 'MOLISE'], url: 'https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=900&q=85' },
+  { match: ['CAMPANI', 'CAMPANIA', 'NAPOLI', 'NAPLES'], url: 'https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&w=900&q=85' },
+  { match: ['PUGLIESI', 'PUGLIA', 'ALBEROBELLO', 'TRULLI'], url: 'https://images.unsplash.com/photo-1602088113235-229c19758e9f?auto=format&fit=crop&w=900&q=85' },
+  { match: ['LUCANI', 'BASILICATA', 'MATERA'], url: 'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=900&q=85' },
+  { match: ['CALABRESI', 'CALABRIA'], url: 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=900&q=85' },
+  { match: ['SICILIANI', 'SICILIA', 'PALERMO', 'ETNA'], url: 'https://images.unsplash.com/photo-1534445867742-43195f401b6c?auto=format&fit=crop&w=900&q=85' },
+  { match: ['SARDI', 'SARDEGNA', 'COSTA SMERALDA'], url: 'https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&w=900&q=85' },
+  // Paesi e cucine del mondo: in seguito potremo perfezionare ogni foto con immagini verificate.
   { match: ['INDIANA', 'INDIANI', 'INDIA', 'CUCINA INDIANA'], url: 'https://images.unsplash.com/photo-1564507592333-c60657eea523?auto=format&fit=crop&w=900&q=85' },
   { match: ['CINESE', 'CINA', 'CUCINA CINESE'], url: 'https://images.unsplash.com/photo-1508804185872-d7badad00f7d?auto=format&fit=crop&w=900&q=85' },
   { match: ['GIAPPONESE', 'GIAPPONE', 'CUCINA GIAPPONESE'], url: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=900&q=85' },
+  { match: ['COREANA', 'COREANI', 'COREA', 'CUCINA COREANA'], url: 'https://images.unsplash.com/photo-1498654896293-37a043fdc3b2?auto=format&fit=crop&w=900&q=85' },
+  { match: ['ARABA', 'ARABI', 'MEDIORIENTALE', 'TURCHI', 'TURCHIA'], url: 'https://images.unsplash.com/photo-1541518763669-27fef04b14ea?auto=format&fit=crop&w=900&q=85' },
   { match: ['AMERICANI', 'AMERICANE', 'STATI UNITI', 'USA', 'CUCINA AMERICANA'], url: 'https://images.unsplash.com/photo-1508697014387-db70aad34f4d?auto=format&fit=crop&w=900&q=85' },
-  { match: ['SICILIANI', 'SICILIA'], url: 'https://images.unsplash.com/photo-1534445867742-43195f401b6c?auto=format&fit=crop&w=900&q=85' },
-  { match: ['TOSCANI', 'TOSCANA'], url: 'https://images.unsplash.com/photo-1515859005217-8a1f08870f59?auto=format&fit=crop&w=900&q=85' },
-  { match: ['VENETI', 'VENETO', 'VENEZIA'], url: 'https://images.unsplash.com/photo-1514890547357-a9ee288728e0?auto=format&fit=crop&w=900&q=85' }
+  { match: ['MESSICANA', 'MESSICANI', 'MESSICO'], url: 'https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?auto=format&fit=crop&w=900&q=85' },
+  { match: ['FRANCESI', 'FRANCIA', 'FRANCESE', 'PARIGI'], url: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=900&q=85' },
+  { match: ['SPAGNOLI', 'SPAGNA', 'SPAGNOLO'], url: 'https://images.unsplash.com/photo-1539037116277-4db20889f2d4?auto=format&fit=crop&w=900&q=85' },
+  { match: ['GRECI', 'GRECIA', 'GRECA'], url: 'https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&w=900&q=85' },
+  { match: ['AFRICANI', 'AFRICANA', 'AFRICA'], url: 'https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?auto=format&fit=crop&w=900&q=85' },
+  { match: ['BRASILIANI', 'BRASILE', 'BRASILIANA'], url: 'https://images.unsplash.com/photo-1483729558449-99ef09a8c325?auto=format&fit=crop&w=900&q=85' },
+  { match: ['AUSTRALIANI', 'AUSTRALIA', 'SYDNEY'], url: 'https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?auto=format&fit=crop&w=900&q=85' }
 ];
 
 function imageFor(label) {
