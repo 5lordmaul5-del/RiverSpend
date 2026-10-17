@@ -14,7 +14,7 @@ export default function Desideri() {
   return (
     <main className="min-h-screen bg-slate-950 px-4 py-8 text-white">
       <div className="mx-auto max-w-5xl">
-        <Link href="/" className="text-teal-300 underline">← RiverSpendShop</Link>
+        <div className="flex flex-wrap items-center justify-between gap-3"><Link href="/" className="text-teal-300 underline">← RiverSpendShop</Link><Link href="/notifiche" className="text-teal-300 underline">🔔 Le mie notifiche</Link></div>
         <h1 className="mt-6 text-4xl font-bold">♡ Lista dei desideri</h1>
         <p className="mt-2 text-slate-400">{items.length} articol{items.length === 1 ? 'o' : 'i'}</p>
         {!items.length ? (
