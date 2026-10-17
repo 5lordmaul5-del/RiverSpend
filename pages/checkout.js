@@ -2,6 +2,17 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { supabase } from '../lib/supabase';
 
+const DELIVERY_OPTIONS = [
+  ['home_delivery', '🚚 Consegna a domicilio'],
+  ['seller_shop', '🏪 Ritiro al punto vendita / negozio'],
+  ['river_hub', '📦 Ritiro al punto Hub RiverSpend (da confermare)'],
+  ['pickup_point', '🏬 Punto di ritiro convenzionato (da confermare)'],
+  ['locker', '🔐 Locker automatico (da confermare)'],
+  ['seller_pickup', '🤝 Ritiro presso il venditore su appuntamento'],
+  ['scheduled_delivery', '🗓️ Consegna programmata (da confermare)'],
+  ['rs_local', '📍 RS Local · consegna a mano concordata']
+];
+
 export default function Checkout() {
   const [user, setUser] = useState(null);
   const [items, setItems] = useState([]);
@@ -26,6 +37,10 @@ export default function Checkout() {
     else lines[id].quantity += quantity;
     return lines;
   }, {}));
+  const deliveryMethodsAvailable = DELIVERY_OPTIONS.filter(([method]) =>
+    !items.length || !items.every((item) => Array.isArray(item.deliveryOptions)) ||
+    items.every((item) => item.deliveryOptions.includes(method))
+  );
 
   useEffect(() => {
     let active = true;
@@ -44,6 +59,12 @@ export default function Checkout() {
       subscription?.unsubscribe();
     };
   }, []);
+
+  useEffect(() => {
+    if (deliveryMethodsAvailable.length && !deliveryMethodsAvailable.some(([method]) => method === deliveryMethod)) {
+      setDeliveryMethod(deliveryMethodsAvailable[0][0]);
+    }
+  }, [items, deliveryMethod, deliveryMethodsAvailable.length]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -298,14 +319,7 @@ Invia una richiesta d’ordine. RiverSpendShop è appena partito: il venditore c
             <p className="mt-1 text-sm leading-6 text-slate-600">La tua preferenza viene salvata nella richiesta d’ordine. Il venditore deve confermare che la modalità sia disponibile e comunicare l’eventuale costo prima della conferma definitiva. Durante i test, Hub, locker e punti convenzionati non sono garantiti come servizi attivi.</p>
             <label htmlFor="rs-delivery-method" className="mt-4 block text-sm font-semibold text-slate-800">Modalità preferita</label>
             <select id="rs-delivery-method" value={deliveryMethod} onChange={(event) => setDeliveryMethod(event.target.value)} disabled={Boolean(orderId)} className="mt-2 w-full rounded-xl border border-slate-300 bg-white p-3 text-slate-900 disabled:bg-slate-100">
-              <option value="home_delivery">🚚 Consegna a domicilio</option>
-              <option value="seller_shop">🏪 Ritiro al punto vendita / negozio</option>
-              <option value="river_hub">📦 Ritiro al punto Hub RiverSpend (da confermare)</option>
-              <option value="pickup_point">🏬 Punto di ritiro convenzionato (da confermare)</option>
-              <option value="locker">🔐 Locker automatico (da confermare)</option>
-              <option value="seller_pickup">🤝 Ritiro presso il venditore su appuntamento</option>
-              <option value="scheduled_delivery">🗓️ Consegna programmata (da confermare)</option>
-              <option value="rs_local">📍 RS Local · consegna a mano concordata</option>
+              {deliveryMethodsAvailable.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
             </select>
             <label htmlFor="rs-delivery-details" className="mt-4 block text-sm font-semibold text-slate-800">Indirizzo, zona o punto di ritiro (facoltativo)</label>
             <textarea id="rs-delivery-details" value={deliveryDetails} onChange={(event) => setDeliveryDetails(event.target.value)} disabled={Boolean(orderId)} maxLength={500} rows={3} placeholder="Inserisci solo le informazioni necessarie alla modalità scelta; il venditore confermerà i dettagli dopo la richiesta." className="mt-2 w-full rounded-xl border border-slate-300 p-3 text-slate-900 disabled:bg-slate-100" />
