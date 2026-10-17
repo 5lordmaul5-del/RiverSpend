@@ -803,7 +803,9 @@ export default function Home() {
               <div className="space-y-3">
                 {categorieSezioni.map(([section, items]) => (
                   <div key={section} className="rounded-xl border border-slate-200 bg-slate-50 p-2">
-                    <div className="px-3 py-2 text-sm font-bold tracking-wide text-teal-800">{section}</div>
+                    <a href={`/categorie?section=${encodeURIComponent(section)}`} className="flex items-center justify-between rounded-lg px-3 py-2 text-sm font-bold tracking-wide text-teal-800 hover:bg-teal-100">
+                      <span>{section}</span><span aria-hidden="true">Apri con immagini →</span>
+                    </a>
                     <div className="grid grid-cols-1 gap-1">
                       {items.map((cat) => (
                         <a key={cat} href={`/?category=${encodeURIComponent(cat)}`} onClick={() => setMenuCategorie(false)} className="rounded-lg px-4 py-2 text-sm font-medium text-slate-800 hover:bg-teal-50">
