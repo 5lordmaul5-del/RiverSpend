@@ -3,8 +3,15 @@ import Link from 'next/link';
 
 export default function Desideri() {
   const [items, setItems] = useState([]);
+  const [soldIds, setSoldIds] = useState([]);
   useEffect(() => {
     try { const x = JSON.parse(localStorage.getItem('riverspend-wishlist') || '[]'); setItems(Array.isArray(x) ? x : []); } catch { setItems([]); }
+    let active = true;
+    fetch('/api/products', { cache: 'no-store' })
+      .then((res) => res.ok ? res.json() : [])
+      .then((products) => { if (active && Array.isArray(products)) setSoldIds(products.filter((product) => product.venduto || product.statoAnnuncio === 'sold').map((product) => String(product.id))); })
+      .catch(() => {});
+    return () => { active = false; };
   }, []);
   function remove(id) {
     const next = items.filter((x) => String(x.id) !== String(id));
@@ -29,6 +36,7 @@ export default function Desideri() {
                 {item.image ? <img src={item.image} alt={item.title || 'Prodotto'} className="h-48 w-full object-cover" /> : null}
                 <div className="p-4">
                   <h2 className="font-bold">{item.title}</h2>
+                  {soldIds.includes(String(item.id)) && <p role="status" className="mt-3 rounded-lg border border-rose-300 bg-rose-950 p-3 text-sm font-bold text-rose-100">🔴 L’annuncio che segui è stato venduto. Verrà rimosso dal catalogo dopo un’ora dalla vendita.</p>}
                   <p className="mt-2 text-xl font-bold text-teal-300">€ {Number(item.price || 0).toFixed(2)}</p>
                   <div className="mt-4 flex gap-2">
                     <Link href={'/prodotto/' + encodeURIComponent(item.id)} className="rounded-lg bg-teal-500 px-3 py-2 text-sm font-bold text-slate-950">Apri</Link>
