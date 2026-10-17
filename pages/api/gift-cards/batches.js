@@ -15,7 +15,8 @@ function makeCode(bytes = 16) {
   return crypto.randomBytes(bytes).toString("hex").toUpperCase();
 }
 function secretCode() {
-  return crypto.randomBytes(16).toString("base64url").toUpperCase().match(/.{1,4}/g).join("-");
+  // Hex uses only 0-9/A-F, so separators cannot collide with characters in the secret.
+  return crypto.randomBytes(16).toString("hex").toUpperCase().match(/.{4}/g).join("-");
 }
 
 export default async function handler(req, res) {
