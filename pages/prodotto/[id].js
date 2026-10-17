@@ -45,6 +45,7 @@ export default function Prodotto() {
   const [varianteScelta, setVarianteScelta] = useState('');
   const [quantitaScelta, setQuantitaScelta] = useState(1);
   const [wishlist, setWishlist] = useState(false);
+  const [following, setFollowing] = useState(false);
   const [feedback, setFeedback] = useState('');
   const [mappaLocalita, setMappaLocalita] = useState(null);
   const [spotInCorso, setSpotInCorso] = useState(false);
@@ -91,12 +92,19 @@ export default function Prodotto() {
         try {
           const rete = JSON.parse(localStorage.getItem('riverspend-rete') || '[]');
           const desideri = JSON.parse(localStorage.getItem('riverspend-wishlist') || '[]');
+          const seguiti = JSON.parse(localStorage.getItem('riverspend-following') || '[]');
           setInRete(Array.isArray(rete) && rete.some((x) => String(x.id) === String(item.id)));
           setWishlist(Array.isArray(desideri) && desideri.some((x) => String(x.id) === String(item.id)));
+          setFollowing(Array.isArray(seguiti) && seguiti.some((x) => String(x.id) === String(item.id)));
           supabase.auth.getUser().then(async ({ data: { user } }) => {
             if (!user) return;
             const { data } = await supabase.from('river_net_items').select('product_id').eq('user_id', user.id).eq('product_id', String(item.id)).maybeSingle();
             if (data) setInRete(true);
+            const { data: watches } = await supabase.from('product_watchers').select('watch_type').eq('user_id', user.id).eq('product_id', String(item.id));
+            if (Array.isArray(watches)) {
+              setWishlist(watches.some((watch) => watch.watch_type === 'wishlist') || JSON.parse(localStorage.getItem('riverspend-wishlist') || '[]').some((x) => String(x.id) === String(item.id)));
+              setFollowing(watches.some((watch) => watch.watch_type === 'follow') || JSON.parse(localStorage.getItem('riverspend-following') || '[]').some((x) => String(x.id) === String(item.id)));
+            }
           }).catch(() => {});
         } catch { setInRete(false); setWishlist(false); }
       })
@@ -148,6 +156,7 @@ export default function Prodotto() {
 
   async function aggiungiVarianteAllaRete() {
     if (!record) return;
+    if (prodotto?.venduto || prodotto?.statoAnnuncio === 'sold') { setFeedback('Questo annuncio è stato venduto e non può essere aggiunto alla Rete.'); return; }
     const varianti = Array.isArray(prodotto.varianti) ? prodotto.varianti : [];
     const variante = varianti.length ? varianti.find((v) => v.name === varianteScelta) : null;
     const stockDisponibile = varianti.length ? Number(variante?.stock || 0) : Number(prodotto.quantita ?? prodotto.stock ?? 0);
@@ -187,6 +196,20 @@ export default function Prodotto() {
         document.cookie = 'riverspend-rete-ids=' + encodeURIComponent(next.map((item) => item.id).join(',')) + '; path=/; max-age=31536000; SameSite=Lax';
       }
       setter(!exists);
+      if (key === 'riverspend-wishlist') {
+        try {
+          const { data: { user } } = await supabase.auth.getUser();
+          if (user) {
+            if (exists) {
+              const { error } = await supabase.from('product_watchers').delete().eq('user_id', user.id).eq('product_id', String(record.id)).eq('watch_type', 'wishlist');
+              if (error) console.error('Wishlist watch sync:', error);
+            } else {
+              const { error } = await supabase.from('product_watchers').upsert({ user_id: user.id, product_id: String(record.id), watch_type: 'wishlist' });
+              if (error) console.error('Wishlist watch sync:', error);
+            }
+          }
+        } catch (watchError) { console.error('Wishlist watch sync:', watchError); }
+      }
       if (key === 'riverspend-rete') {
         const { data: { user } } = await supabase.auth.getUser();
         if (user) {
@@ -201,6 +224,34 @@ export default function Prodotto() {
       }
       setFeedback(exists ? removed : added);
     } catch { setFeedback('Impossibile salvare su questo dispositivo.'); }
+  }
+
+  async function toggleFollowAnnouncement() {
+    if (!record) return;
+    const current = JSON.parse(localStorage.getItem('riverspend-following') || '[]');
+    const safe = Array.isArray(current) ? current : [];
+    const exists = safe.some((item) => String(item.id) === String(record.id));
+    const next = exists ? safe.filter((item) => String(item.id) !== String(record.id)) : [record, ...safe];
+    localStorage.setItem('riverspend-following', JSON.stringify(next));
+    sessionStorage.setItem('riverspend-following', JSON.stringify(next));
+    setFollowing(!exists);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        if (exists) {
+          const { error } = await supabase.from('product_watchers').delete().eq('user_id', user.id).eq('product_id', String(record.id)).eq('watch_type', 'follow');
+          if (error) throw error;
+        } else {
+          const { error } = await supabase.from('product_watchers').upsert({ user_id: user.id, product_id: String(record.id), watch_type: 'follow' });
+          if (error) throw error;
+        }
+        setFeedback(exists ? 'Hai smesso di seguire questo annuncio.' : '🔔 Segui l’annuncio: ti avviseremo se viene venduto.');
+      } else {
+        setFeedback(exists ? 'Hai smesso di seguire questo annuncio su questo dispositivo.' : '🔔 Annuncio seguito su questo dispositivo. Accedi al tuo account per ricevere la notifica di vendita.');
+      }
+    } catch {
+      setFeedback('Annuncio salvato su questo dispositivo; non siamo riusciti a sincronizzare la notifica con il tuo account.');
+    }
   }
 
   if (caricamento) return <main className="min-h-screen bg-white p-6 text-slate-800">Il fiume sta preparando la scheda…</main>;
@@ -302,6 +353,7 @@ export default function Prodotto() {
                 {sponsorizzato && <span className="rounded-full border border-amber-300/60 bg-amber-300/15 px-3 py-1 text-xs font-bold text-amber-800">✦ In evidenza</span>}
               </div>
               <h1 className="mt-3 text-2xl font-extrabold leading-tight sm:text-3xl">{prodotto.titolo}</h1>
+              {(prodotto.venduto || prodotto.statoAnnuncio === 'sold') && <div role="status" className="mt-4 rounded-xl border border-rose-300 bg-rose-50 p-4 font-bold text-rose-900">🔴 Annuncio venduto. Non è più possibile acquistarlo. L’annuncio verrà rimosso dal catalogo dopo un’ora dalla vendita.</div>}
               <div className="mt-5 rounded-2xl border border-slate-200 bg-gradient-to-r from-white to-white p-4">
                 <p className="text-xs font-semibold uppercase tracking-wider text-slate-600">Valore dell’articolo</p>
                 <p className="mt-1 text-3xl font-black text-amber-800">€ {Number(prodotto.prezzo || 0).toFixed(2)}</p>
@@ -326,12 +378,16 @@ export default function Prodotto() {
               </div>
 
               <div className="mt-5 grid gap-3">
-                <button type="button" onClick={aggiungiVarianteAllaRete} className="rounded-xl border border-teal-700 bg-teal-500 px-5 py-4 text-base font-extrabold text-slate-950 shadow-sm transition-colors hover:bg-teal-400 active:bg-teal-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700">
-                  {inRete ? '✓ Nella mia Rete' : '🕸️ Aggiungi alla Rete'}
+                <button type="button" disabled={Boolean(prodotto.venduto || prodotto.statoAnnuncio === 'sold')} onClick={aggiungiVarianteAllaRete} className="rounded-xl border border-teal-700 bg-teal-500 px-5 py-4 text-base font-extrabold text-slate-950 shadow-sm transition-colors hover:bg-teal-400 active:bg-teal-500 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700">
+                  {prodotto.venduto || prodotto.statoAnnuncio === 'sold' ? 'Annuncio venduto' : inRete ? '✓ Nella mia Rete' : '🕸️ Aggiungi alla Rete'}
                 </button>
                 <button type="button" onClick={() => toggleLista('riverspend-wishlist', wishlist, setWishlist, '♡ Aggiunto ai tuoi desideri.', 'Rimosso dai desideri.')} className="rounded-xl border border-slate-200 bg-white px-5 py-3 font-bold text-slate-800">
                   {wishlist ? '♥ Nei miei desideri' : '♡ Aggiungi ai desideri'}
                 </button>
+                <button type="button" onClick={toggleFollowAnnouncement} className="rounded-xl border border-amber-300 bg-amber-50 px-5 py-3 font-bold text-amber-950">
+                  {following ? '🔔 Stai seguendo questo annuncio' : '🔔 Segui annuncio e avvisami se venduto'}
+                </button>
+                <Link href="/notifiche" className="text-center text-sm font-semibold text-teal-800 underline">Le mie notifiche →</Link>
                 <Link href={`/piggybank?product=${encodeURIComponent(prodotto.id)}`} className="flex items-center justify-center gap-2 rounded-xl border border-amber-400 bg-amber-300 px-5 py-3 font-extrabold text-amber-950 shadow-sm hover:bg-amber-200">
                   <span aria-hidden="true">🐷💰</span> PiggyBank · Risparmia per questo prodotto
                 </Link>
