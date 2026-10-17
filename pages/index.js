@@ -113,6 +113,7 @@ export default function Home() {
   const areeRiverSpend = [
     ['Profilo','/profilo'],
     ['RiverSpendShop','/'],
+    ['🎁 RiverSpend Gift Card','/gift-card'],
     ['RS Shield','/nova-shield'],
     ['RS Fidelity','/servizi/fidelity'],
     ['RS Nova Shield','/nova-shield'],
