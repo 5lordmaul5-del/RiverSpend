@@ -24,7 +24,7 @@ const piattaforme = [
   ['☁️','RS Cloud','Backend, servizi cloud e collegamento dell’ecosistema','Cloud · attivo'],
   ['📺','RiverSpendStream','Streaming: film, musica, creator, live e Originals · Web attivo','/river-spend-stream'],
   ['📱','RiverSpendShop App','App marketplace per Android e Apple iOS','Android • Apple'],
-  ['🎛️','RiverSpend Panel Control','RSPC: pannello CEO e collaboratori autorizzati','Supabase Auth + ruoli admin · attivo']
+  ['🎛️','RiverSpend Panel Control','Area riservata CEO e collaboratori autorizzati','/rs-control-center']
 ];
 
 export default function Ecosistema() {
@@ -67,7 +67,7 @@ export default function Ecosistema() {
                   <h3 className="mt-3 text-xl font-bold">{title}</h3>
                   <p className="mt-1 text-sm text-slate-600">{note}</p>
                   <p className="mt-4 text-sm font-semibold text-teal-700">
-                    {isLink ? 'Apri →' : linkOrStatus}
+                    {isLink ? 'Apri area riservata →' : linkOrStatus}
                   </p>
                 </>
               );
