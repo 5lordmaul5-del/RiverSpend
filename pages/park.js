@@ -26,7 +26,13 @@ const attrazioni = [
   ['Velocity – The Power of Speed','Velocità','Attrazione ad alta velocità con identità originale RiverSpend.'],
   ['Viking Norway Rune','Avventura nordica','Esperienza ispirata a rune e paesaggi norreni.'],
   ['Future City','Esperienza digitale','Città futuristica animata con nuvole in movimento e droni.'],
-  ['WW2 Battle Experience','Storia immersiva','Percorso narrativo in nove tappe: sbarco su Omaha Beach, villaggio, ponte, tunnel U-Boot, hangar Zeppelin, portaerei, battaglia aerea e atterraggio finale.']
+  ['WW2 Battle Experience','Storia immersiva','Percorso narrativo in nove tappe: sbarco su Omaha Beach, villaggio, ponte, tunnel U-Boot, hangar Zeppelin, portaerei, battaglia aerea e atterraggio finale.'],
+  ['River Falls','Acqua e avventura','Grande discesa d’acqua tra cascate scenografiche e spruzzi.'],
+  ['Black Hole','Tunnel acquatico','Percorso immersivo in un tunnel scuro con giochi di luce.'],
+  ['Dino World','Area preistorica','Area tematica con dinosauri scenografici e percorsi d’avventura.'],
+  ['River Wheel','Panoramica','Ruota panoramica con vista sul parco e illuminazione serale.'],
+  ['River VR','Realtà virtuale','Esperienza digitale immersiva con scenari virtuali.'],
+  ['River Aquarium','Esplorazione marina','Tunnel marino scenografico con pesci e grandi creature acquatiche.'],
 ];
 
 export default function RiverSpendPark() {
@@ -56,7 +62,7 @@ export default function RiverSpendPark() {
         <p className="mt-4 rounded-xl border border-cyan-900 bg-cyan-950/50 p-4 text-sm leading-6 text-cyan-100">Questa è la galleria iniziale del progetto. Aggiungeremo progressivamente una foto dedicata a ogni attrazione, mantenendo i nomi ufficiali e senza sostituire l'elenco già approvato.</p>
 
           <div className="mt-6 flex flex-wrap gap-3">
-            <span className="rounded-full border border-teal-700 px-4 py-2 text-sm text-teal-100">25 attrazioni in catalogo</span>
+            <span className="rounded-full border border-teal-700 px-4 py-2 text-sm text-teal-100">{attrazioni.length} attrazioni in catalogo</span>
             <span className="rounded-full border border-teal-700 px-4 py-2 text-sm text-teal-100">Power Shield • sicurezza prioritaria</span>
           </div>
         </header>
