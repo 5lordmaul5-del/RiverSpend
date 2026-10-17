@@ -142,7 +142,8 @@ export default function Prodotto() {
   const record = useMemo(() => prodotto ? ({
     id: prodotto.id, title: prodotto.titolo, price: Number(prodotto.prezzo || 0),
     image: prodotto.immagini?.[0] || '',
-    stock: Number(prodotto.quantita ?? prodotto.stock ?? 0)
+    stock: Number(prodotto.quantita ?? prodotto.stock ?? 0),
+    deliveryOptions: Array.isArray(prodotto.modalitaConsegna) ? prodotto.modalitaConsegna : ['home_delivery', 'seller_pickup', 'rs_local']
   }) : null, [prodotto]);
 
   async function aggiungiVarianteAllaRete() {
@@ -154,7 +155,7 @@ export default function Prodotto() {
       setFeedback('Scegli una variante disponibile e una quantità compatibile con le scorte.');
       return;
     }
-    const item = { ...record, quantity: quantitaScelta, variantName: variante?.name || null };
+    const item = { ...record, stock: Number(variante?.stock ?? record.stock), quantity: quantitaScelta, variantName: variante?.name || null };
     try {
       const current = JSON.parse(localStorage.getItem('riverspend-rete') || '[]');
       const safe = Array.isArray(current) ? current : [];
