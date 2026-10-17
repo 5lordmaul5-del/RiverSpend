@@ -1,6 +1,7 @@
 import Head from 'next/head';
 
 const sections = [
+  ['Stato attuale della piattaforma: versione di test', 'RiverSpend è online ma è ancora in fase di sviluppo, collaudo e miglioramento. Pagine, funzioni, disponibilità, regole operative e procedure di acquisto o pagamento possono essere aggiornate, modificate o temporaneamente non disponibili. La presenza di una funzione nell’interfaccia non garantisce che sia già operativa. Le condizioni definitive saranno pubblicate prima del lancio ufficiale.'],
   ['Tutela di acquirenti e venditori', 'Consulta le regole della piattaforma, verifica descrizione e condizioni dell’articolo e conserva le comunicazioni relative alla transazione.'],
   ['Privacy e dati personali', 'Qui saranno disponibili l’informativa sul trattamento dei dati, i diritti degli utenti e i contatti privacy. Per informazioni sul Garante: https://www.garanteprivacy.it/.'],
   ['Controversie e reclami', 'In caso di problema, prepara il riferimento dell’ordine o dell’annuncio, una descrizione dei fatti e le prove pertinenti. Il modulo di apertura e tracciamento delle pratiche dovrà essere collegato.'],
