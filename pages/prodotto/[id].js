@@ -141,7 +141,8 @@ export default function Prodotto() {
   const contenuti = media.length ? media : immagini.map((url) => ({ url, type: 'image' }));
   const record = useMemo(() => prodotto ? ({
     id: prodotto.id, title: prodotto.titolo, price: Number(prodotto.prezzo || 0),
-    image: prodotto.immagini?.[0] || ''
+    image: prodotto.immagini?.[0] || '',
+    stock: Number(prodotto.quantita ?? prodotto.stock ?? 0)
   }) : null, [prodotto]);
 
   async function aggiungiVarianteAllaRete() {
