@@ -23,6 +23,7 @@ export default function Vendi() {
   const [mieInserzioni, setMieInserzioni] = useState([]);
   const [aggiornamentoVendita, setAggiornamentoVendita] = useState('');
   const [modificaPrezzoId, setModificaPrezzoId] = useState('');
+  const [nuovoNome, setNuovoNome] = useState('');
   const [nuovoPrezzo, setNuovoPrezzo] = useState('');
   const [salvataggioPrezzo, setSalvataggioPrezzo] = useState(false);
   const [titolo, setTitolo] = useState('');
@@ -87,28 +88,34 @@ export default function Vendi() {
 
   async function salvaPrezzo(prodotto) {
     if (!session?.user?.id || !prodotto?.id || prodotto.status !== 'published' || salvataggioPrezzo) return;
+    const nome = nuovoNome.trim();
     const valore = Number(String(nuovoPrezzo).replace(',', '.'));
+    if (!nome || nome.length > 140) {
+      setMessaggio('⚠️ Inserisci un nome prodotto da 1 a 140 caratteri.');
+      return;
+    }
     if (!Number.isFinite(valore) || valore <= 0 || valore > 10000000) {
       setMessaggio('⚠️ Inserisci un prezzo valido maggiore di zero.');
       return;
     }
     setSalvataggioPrezzo(true);
-    setMessaggio('Salvo il nuovo prezzo…');
+    setMessaggio('Salvo le modifiche dell’annuncio…');
     try {
       const { data, error } = await supabase
         .from('products')
-        .update({ price: Number(valore.toFixed(2)) })
+        .update({ name: nome, price: Number(valore.toFixed(2)) })
         .eq('id', prodotto.id)
         .eq('seller_id', session.user.id)
         .eq('status', 'published')
-        .select('id, price')
+        .select('id, name, price')
         .maybeSingle();
       if (error) throw error;
-      if (!data) throw new Error('Prezzo non aggiornato: verifica di essere il venditore e che l’annuncio sia ancora pubblicato.');
-      setMieInserzioni((current) => current.map((item) => String(item.id) === String(prodotto.id) ? { ...item, price: data.price } : item));
+      if (!data) throw new Error('Modifiche non salvate: verifica di essere il venditore e che l’annuncio sia ancora pubblicato.');
+      setMieInserzioni((current) => current.map((item) => String(item.id) === String(prodotto.id) ? { ...item, name: data.name, price: data.price } : item));
       setModificaPrezzoId('');
+      setNuovoNome('');
       setNuovoPrezzo('');
-      setMessaggio('✅ Prezzo aggiornato. Apri nuovamente l’annuncio per verificare il prezzo mostrato nello Shop.');
+      setMessaggio('✅ Nome e prezzo aggiornati. Verifica l’annuncio nello Shop.');
     } catch (error) {
       console.error('Aggiornamento prezzo annuncio:', error);
       setMessaggio('❌ Non sono riuscito ad aggiornare il prezzo. ' + (error?.message || 'Riprova.'));
@@ -509,7 +516,7 @@ export default function Vendi() {
                       </div>
                       {item.status === 'published' && (
                         <div className="flex flex-wrap gap-2">
-                          <button type="button" onClick={() => { setModificaPrezzoId(String(item.id)); setNuovoPrezzo(String(Number(item.price || 0).toFixed(2))); }} className="rounded-xl border border-teal-700 px-4 py-2 text-sm font-bold text-teal-800">
+                          <button type="button" onClick={() => { setModificaPrezzoId(String(item.id)); setNuovoNome(item.name || ''); setNuovoPrezzo(String(Number(item.price || 0).toFixed(2))); }} className="rounded-xl border border-teal-700 px-4 py-2 text-sm font-bold text-teal-800">
                             Modifica prezzo
                           </button>
                           <button type="button" onClick={() => segnaComeVenduto(item)} disabled={Boolean(aggiornamentoVendita) || salvataggioPrezzo} className="rounded-xl bg-teal-700 px-4 py-2 text-sm font-bold text-white disabled:opacity-50">
@@ -519,11 +526,13 @@ export default function Vendi() {
                       )}
                       {modificaPrezzoId === String(item.id) && item.status === 'published' && (
                         <div className="w-full rounded-xl border border-teal-200 bg-teal-50 p-3">
-                          <label className="block text-sm font-bold text-slate-700" htmlFor={`prezzo-${item.id}`}>Nuovo prezzo (€)</label>
+                          <label className="block text-sm font-bold text-slate-700" htmlFor={`nome-${item.id}`}>Nome prodotto</label>
+                          <input id={`nome-${item.id}`} type="text" maxLength={140} value={nuovoNome} onChange={(event) => setNuovoNome(event.target.value)} className="mt-2 w-full rounded-lg border border-slate-300 bg-white px-3 py-2" />
+                          <label className="mt-3 block text-sm font-bold text-slate-700" htmlFor={`prezzo-${item.id}`}>Nuovo prezzo (€)</label>
                           <input id={`prezzo-${item.id}`} type="number" min="0.01" max="10000000" step="0.01" inputMode="decimal" value={nuovoPrezzo} onChange={(event) => setNuovoPrezzo(event.target.value)} className="mt-2 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-lg" />
                           <div className="mt-3 flex gap-2">
                             <button type="button" onClick={() => salvaPrezzo(item)} disabled={salvataggioPrezzo} className="rounded-xl bg-teal-700 px-4 py-2 text-sm font-bold text-white disabled:opacity-50">{salvataggioPrezzo ? 'Salvo…' : 'Salva prezzo'}</button>
-                            <button type="button" onClick={() => { setModificaPrezzoId(''); setNuovoPrezzo(''); }} disabled={salvataggioPrezzo} className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-bold text-slate-700">Annulla</button>
+                            <button type="button" onClick={() => { setModificaPrezzoId(''); setNuovoNome(''); setNuovoPrezzo(''); }} disabled={salvataggioPrezzo} className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-bold text-slate-700">Annulla</button>
                           </div>
                         </div>
                       )}
