@@ -278,6 +278,8 @@ export default function Prodotto() {
                 </div>
               </div>
 
+              {(() => { const testoAnimale = String((prodotto.categoria || '') + ' ' + (prodotto.titolo || '')).toLowerCase(); const animaleVivo = /gatt|cani|cane|animali|animale|cucciol|uccell|rettil|pesci vivi|animali vivi/.test(testoAnimale); return animaleVivo ? <div className="mt-4 rounded-2xl border border-amber-300 bg-amber-50 p-4 text-amber-950"><p className="font-extrabold">🐾 Ritiro in loco o accordi con il venditore</p><p className="mt-1 text-sm leading-relaxed">Per il benessere e la sicurezza dell’animale, la consegna deve essere concordata direttamente con il venditore. Non è prevista la spedizione tramite posta o corriere.</p></div> : null; })()}
+
               <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4">
                 <div className="flex items-center justify-between gap-3">
                   <div><p className="text-xs text-slate-600">Disponibilità dichiarata</p><p className="mt-1 font-bold">{quantita > 0 ? (quantita === 1 ? 'Ultimo pezzo disponibile' : quantita + ' pezzi disponibili') : 'Disponibilità da verificare'}</p></div>
@@ -286,7 +288,7 @@ export default function Prodotto() {
               </div>
 
               <div className="mt-5 grid gap-3">
-                <button type="button" onClick={() => toggleLista('riverspend-rete', inRete, setInRete, '🕸️ Articolo aggiunto alla tua Rete.', 'Articolo rimosso dalla Rete.')} className="rounded-xl bg-slate-100 border border-slate-300 px-5 py-4 text-base font-extrabold text-slate-900 shadow-sm shadow-slate-200/60">
+                <button type="button" onClick={() => toggleLista('riverspend-rete', inRete, setInRete, '🕸️ Articolo aggiunto alla tua Rete.', 'Articolo rimosso dalla Rete.')} className="rounded-xl border border-teal-700 bg-teal-500 px-5 py-4 text-base font-extrabold text-slate-950 shadow-sm transition-colors hover:bg-teal-400 active:bg-teal-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700">
                   {inRete ? '✓ Nella mia Rete' : '🕸️ Aggiungi alla Rete'}
                 </button>
                 <button type="button" onClick={() => toggleLista('riverspend-wishlist', wishlist, setWishlist, '♡ Aggiunto ai tuoi desideri.', 'Rimosso dai desideri.')} className="rounded-xl border border-slate-200 bg-white px-5 py-3 font-bold text-slate-800">
