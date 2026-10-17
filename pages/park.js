@@ -132,7 +132,7 @@ export default function RiverSpendPark() {
           ))}
         </section>
 
-        <div className="my-6"><Link href="/park-gift" className="inline-flex rounded-xl border border-amber-600 bg-amber-400 px-5 py-3 font-black text-slate-950">🎟️ Scopri le Gift Card del Park</Link></div>
+        <div className="my-6 flex flex-wrap gap-3"><Link href="/park-booking" className="inline-flex rounded-xl bg-teal-600 px-5 py-3 font-black text-white">📅 Prenota la tua visita</Link><Link href="/park-gift" className="inline-flex rounded-xl border border-amber-600 bg-amber-400 px-5 py-3 font-black text-slate-950">🎟️ Scopri le Gift Card del Park</Link></div>
 
         <footer className="mt-8 flex flex-wrap gap-3">
           <Link href="/" className="rounded-xl bg-teal-500 px-5 py-3 font-bold text-slate-950">RiverSpendShop</Link>
