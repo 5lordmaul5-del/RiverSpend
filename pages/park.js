@@ -67,6 +67,11 @@ export default function RiverSpendPark() {
           </div>
         </header>
 
+        <section className="my-8 overflow-hidden rounded-3xl border border-amber-400/60 bg-slate-950 shadow-xl" aria-label="La famiglia di mascotte RiverSpend Park">
+          <img src="/river-spend-park-siamese-family.svg" alt="La famiglia di gatti siamesi mascotte: Sylver, Scarlett, Simba, Sofia e Stone" className="w-full object-cover" loading="lazy" />
+          <div className="px-5 pb-5 text-center sm:px-8"><h2 className="text-2xl font-black text-amber-200">La famiglia di RiverSpendPark</h2><p className="mt-2 text-sm leading-6 text-cyan-50">Sylver, Scarlett, Simba, Sofia e Stone ti accompagnano tra attrazioni, biglietteria e regali speciali.</p></div>
+        </section>
+
         <section className="my-8 grid grid-cols-1 gap-4 sm:grid-cols-2" aria-label="Biglietteria online RiverSpend Park">
           <Link href="/park-booking" className="group flex min-h-44 flex-col justify-between rounded-3xl border border-cyan-300/50 bg-gradient-to-br from-cyan-700 via-sky-800 to-blue-950 p-6 shadow-lg transition hover:border-cyan-200 hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-cyan-300">
             <span className="text-3xl" aria-hidden="true">🎟️</span>
