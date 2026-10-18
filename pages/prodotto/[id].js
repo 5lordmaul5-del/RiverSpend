@@ -177,8 +177,25 @@ export default function Prodotto() {
       localStorage.setItem('riverspend-rete', JSON.stringify(next));
       sessionStorage.setItem('riverspend-rete', JSON.stringify(next));
       document.cookie = 'riverspend-rete-ids=' + encodeURIComponent([...new Set(next.map((x) => x.id))].join(',')) + '; path=/; max-age=31536000; SameSite=Lax';
+      // Sincronizza anche la Rete cloud: la pagina /rete legge prima l'account autenticato.
+      let cloudSyncOk = true;
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { error: cloudError } = await supabase
+            .from('river_net_items')
+            .upsert({ user_id: user.id, product_id: String(item.id) }, { onConflict: 'user_id,product_id' });
+          if (cloudError) {
+            cloudSyncOk = false;
+            console.error('RiverSpend Rete cloud add:', cloudError);
+          }
+        }
+      } catch (cloudError) {
+        cloudSyncOk = false;
+        console.error('RiverSpend Rete cloud sync:', cloudError);
+      }
       setInRete(true);
-      setFeedback(variante ? '🕸️ Aggiunto alla Rete: ' + variante.name + ' × ' + quantitaScelta + '.' : '🕸️ Articolo aggiunto alla tua Rete.');
+      setFeedback((variante ? '🕸️ Aggiunto alla Rete: ' + variante.name + ' × ' + quantitaScelta + '.' : '🕸️ Articolo aggiunto alla tua Rete.') + (cloudSyncOk ? '' : ' Salvato su questo dispositivo; sincronizzazione account non riuscita.'));
     } catch { setFeedback('Impossibile salvare su questo dispositivo.'); }
   }
 
