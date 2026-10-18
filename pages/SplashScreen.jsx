@@ -30,15 +30,13 @@ export default function SplashScreen({ onEnter }) {
       className={`fixed inset-0 z-[9999] flex min-h-[100dvh] items-center justify-center overflow-hidden bg-[#12b7df] transition-opacity duration-300 ${
         visible ? 'opacity-100' : 'opacity-0'
       }`}
-      aria-label="Apertura RiverSpendShop"
+      aria-label="RiverSpendShop"
     >
       <div className="absolute inset-0 bg-gradient-to-b from-[#72edf0] via-[#12b7df] to-[#087f9e]" />
-      <div className="relative flex h-full w-full max-w-5xl flex-col items-center justify-center gap-5 px-4 py-8">
-        <img
-          src="/riverspend-home-river-market.svg"
-          alt="RiverSpend — YOUR SHOP • YOUR FLOW"
-          className="max-h-[68dvh] w-full object-contain drop-shadow-xl"
-        />
+      <div className="relative flex h-full w-full flex-col items-center justify-center gap-8 px-5 py-8">
+        <h1 className="text-center text-4xl font-black tracking-tight text-white drop-shadow-lg sm:text-6xl">
+          RiverSpendShop
+        </h1>
         <button
           type="button"
           onClick={enterShop}
@@ -46,9 +44,6 @@ export default function SplashScreen({ onEnter }) {
         >
           ENTRA IN RIVERSPENDSHOP →
         </button>
-        <p className="text-center text-xs font-semibold tracking-[0.2em] text-white">
-          YOUR SHOP • YOUR FLOW
-        </p>
       </div>
     </div>
   );
