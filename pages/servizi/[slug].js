@@ -357,6 +357,22 @@ export default function Servizio({ slug }) {
 
           {slug === 'local' && <RSLocalFinder />}
 
+          {slug === 'local' && (
+            <section className="mt-7 rounded-2xl border border-teal-200 bg-teal-50 p-5">
+              <h2 className="text-xl font-bold text-teal-900">🤝 Ritiro locale con conferma</h2>
+              <p className="mt-2 text-sm leading-6 text-slate-700">Stiamo progettando il ritiro su appuntamento con zona approssimativa, codice di consegna e conferma dell’acquirente. Prova la simulazione del percorso RS Local; non gestisce ancora pagamenti reali.</p>
+              <Link href="/rs-local-ritiro" className="mt-4 inline-flex rounded-xl bg-teal-700 px-5 py-3 font-bold text-white">Apri la demo del ritiro protetto</Link>
+            </section>
+          )}
+
+          {slug === 'local' && (
+            <section className="mt-7 rounded-2xl border border-teal-200 bg-teal-50 p-5">
+              <h2 className="text-xl font-bold text-teal-900">🤝 Ritiro locale con conferma</h2>
+              <p className="mt-2 text-sm leading-6 text-slate-700">Prova il percorso RS Local: zona approssimativa, appuntamento e conferme di consegna. Questa demo non gestisce pagamenti reali.</p>
+              <Link href="/rs-local-ritiro" className="mt-4 inline-flex rounded-xl bg-teal-700 px-5 py-3 font-bold text-white">Apri la demo del ritiro protetto</Link>
+            </section>
+          )}
+
           <div className={slug === 'local' ? "mt-7 rounded-2xl border border-slate-200 bg-slate-50 p-4" : "mt-7 rounded-2xl border border-slate-700 bg-slate-950/60 p-4"}>
             <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Stato</p>
             <p className={slug === 'local' ? "mt-1 font-semibold text-teal-800" : "mt-1 font-semibold text-teal-200"}>{servizio.stato}</p>
