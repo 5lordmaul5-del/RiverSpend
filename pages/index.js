@@ -114,7 +114,6 @@ export default function Home() {
   const areeRiverSpend = [
     ['Profilo','/profilo'],
     ['RiverSpendShop','/'],
-    ['🤖 RS RiverSpend Robotic Droid','/robotics'],
     ['🎁 RiverSpend Gift Card','/gift-card'],
     ['RS Shield','/nova-shield'],
     ['RS Fidelity','/servizi/fidelity'],
@@ -123,8 +122,7 @@ export default function Home() {
     ['RiverSpend Pay','/servizi/pay'],
     ['RiverSpend Box','/servizi/box'],
     ['RiverSpend Park','/park'],
-    ['RSFCcf · Future City','/river-spend-future-city'],
-    ['RiverSpend Future Visions','/river-spend-future-visions'],
+    ['🌌 RS FutureWorld · FutureCity & Droid','/rs-future-world'],
     ['RiverSpend Broadcast','/servizi/broadcast'],
     ['RiverSpend Music','/servizi/music'],
     ['RS Spons','/rs-spons'],
