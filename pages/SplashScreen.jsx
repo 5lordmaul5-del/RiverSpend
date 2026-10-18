@@ -35,7 +35,7 @@ export default function SplashScreen({ onEnter }) {
       <div className="absolute inset-0 bg-gradient-to-b from-[#72edf0] via-[#12b7df] to-[#087f9e]" />
       <div className="relative flex h-full w-full max-w-5xl flex-col items-center justify-center gap-5 px-4 py-6 sm:gap-6 sm:px-6">
         <img
-          src="/riverspend-opening.jpg"
+          src="https://raw.githubusercontent.com/5lordmaul5-del/RiverSpend/main/riverspend-opening.jpg"
           alt="RiverSpendShop — YOUR SHOP • YOUR FLOW"
           className="max-h-[58dvh] w-full max-w-4xl rounded-sm object-contain drop-shadow-xl sm:max-h-[64dvh]"
           fetchPriority="high"
