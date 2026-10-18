@@ -178,10 +178,10 @@ const servizi = {
     stato: 'Integrazione pagamenti da collegare'
   },
   box: {
-    titolo: 'RiverSpend Box',
+    titolo: 'RS Box Shipping & Delivery',
     icona: '📦',
-    descrizione: 'La logistica di RiverSpendShop: spedizioni tra privati, tracciamento e ritiro presso punti convenzionati, attraverso operatori da integrare.',
-    stato: 'Progettazione del flusso; collegamenti con i corrieri da attivare'
+    descrizione: 'La logistica di RiverSpendShop: spedizioni tra venditori privati, tracking delle consegne e gestione dei resi, con un corriere da collegare.',
+    stato: 'Area informativa preparata; integrazione del corriere in attesa di conferma tecnica e credenziali'
   },
   fidelity: {
     titolo: 'RS Fidelity',
@@ -286,7 +286,19 @@ export default function Servizio({ slug }) {
                   nazionale tra privati.
                 </p>
               </section>
-              <p className="text-sm leading-6 text-slate-400">Nota: RiverSpend Box è in progettazione. Al momento non genera etichette o QR di spedizione e non prenota ritiri: queste funzioni richiedono accordi e integrazioni con gli operatori.</p>
+              <section className="rounded-2xl border border-teal-700/80 bg-slate-950/60 p-5">
+                <h2 className="text-xl font-bold text-teal-200">🔄 RiverSpend Delivery — resi e assistenza</h2>
+                <p className="mt-3 leading-7 text-slate-300">Il flusso previsto consentirà di aprire una richiesta di reso, indicare il motivo, seguire lo stato della pratica e registrare la spedizione di ritorno. Le opzioni effettive dipenderanno dalle condizioni del venditore e dal corriere integrato.</p>
+                <div className="mt-4 grid gap-3 sm:grid-cols-3">
+                  <div className="rounded-xl border border-slate-700 bg-slate-900 p-3"><p className="font-semibold text-white">1. Richiesta</p><p className="mt-1 text-sm text-slate-300">Acquirente e venditore seguono la pratica.</p></div>
+                  <div className="rounded-xl border border-slate-700 bg-slate-900 p-3"><p className="font-semibold text-white">2. Rientro</p><p className="mt-1 text-sm text-slate-300">Etichetta di reso solo se supportata dal corriere.</p></div>
+                  <div className="rounded-xl border border-slate-700 bg-slate-900 p-3"><p className="font-semibold text-white">3. Chiusura</p><p className="mt-1 text-sm text-slate-300">Stato e tracking registrati quando disponibili.</p></div>
+                </div>
+              </section>
+              <section className="rounded-2xl border border-amber-700/70 bg-amber-950/30 p-5">
+                <h2 className="text-lg font-bold text-amber-200">⏳ Attivazione tecnica in attesa</h2>
+                <p className="mt-2 text-sm leading-6 text-slate-200">La pagina e il flusso sono in preparazione. Non vengono ancora emesse etichette o QR reali e non si prenotano ritiri: attendiamo la conferma di SpeedItalia su API, condizioni per marketplace con venditori privati e credenziali. Non inserire dati di pagamento o indirizzi in questa sezione finché il collegamento non è pronto.</p>
+              </section>
             </div>
           )}
 
