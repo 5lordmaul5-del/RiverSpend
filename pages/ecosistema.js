@@ -6,7 +6,7 @@ const aree = [
   ['🛡️','RS Nova Shield','Protezione e controlli di sicurezza','/nova-shield'],
   ['📍','RS Local','Scopri attività, offerte e servizi locali','/servizi/local'],
   ['💳','RiverSpend Pay','Pagamenti e gestione transazioni','/servizi/pay'],
-  ['📦','RiverSpend Box','Spedizioni, tracking e consegne','/servizi/box'],
+  ['📦','RS Box Shipping & Delivery','Spedizioni, tracking e resi tra privati','/servizi/box'],
   ['🎢','RiverSpend Park','Parco, attrazioni e sicurezza Power Shield','/park'],
   ['🤝','RiverSpend Investor','Ricerca investitori e partner per RiverSpend Park','/investor'],
   ['📡','RiverSpend Broadcast','Comunicazione e aggiornamenti','/servizi/broadcast'],
