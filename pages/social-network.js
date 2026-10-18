@@ -197,7 +197,7 @@ export default function RiverSpendSocialMarketplace() {
                     <button type="button" onClick={() => toggleWish(product)} aria-pressed={wishIds.includes(String(product.id))} className={`rounded-xl border px-4 py-4 text-base font-bold ${wishIds.includes(String(product.id)) ? 'border-cyan-600 bg-cyan-50 text-cyan-900' : 'border-slate-300 bg-white text-slate-800'}`}>
                       {wishIds.includes(String(product.id)) ? '♥ RS Desideri' : '♡ RS Desideri'}
                     </button>
-                    <button type="button" onClick={() => toggleNet(product)} aria-pressed={netIds.includes(String(product.id))} className={`rounded-xl px-4 py-4 text-base font-extrabold ${netIds.includes(String(product.id)) ? 'bg-teal-950 text-white' : 'bg-teal-500 text-slate-950'}`}>
+                    <button type="button" onClick={() => toggleNet(product)} aria-pressed={netIds.includes(String(product.id))} className={`flex min-h-12 w-full items-center justify-center whitespace-normal rounded-xl border px-3 py-3 text-center text-sm font-extrabold leading-tight shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700 sm:px-4 sm:text-base ${netIds.includes(String(product.id)) ? 'border-teal-800 bg-teal-800 text-white hover:bg-teal-700' : 'border-teal-600 bg-teal-400 text-slate-950 hover:bg-teal-300'}`}>
                       {netIds.includes(String(product.id)) ? '✓ Nella tua Rete' : '🕸️ Aggiungi alla Rete'}
                     </button>
                   </div>
