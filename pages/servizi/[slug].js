@@ -238,13 +238,31 @@ export default function Servizio({ slug }) {
   const [trackingNumber, setTrackingNumber] = useState('');
   const [trackingMessage, setTrackingMessage] = useState('');
 
-  function cercaTracking(e) {
+  async function cercaTracking(e) {
     e.preventDefault();
-    if (!trackingNumber.trim()) {
+    const numero = trackingNumber.trim();
+    if (!numero) {
       setTrackingMessage('Inserisci il numero di tracking fornito dal corriere.');
       return;
     }
-    setTrackingMessage('Ricerca non ancora disponibile: il collegamento al corriere è in attesa di attivazione. Il numero non è stato verificato e non viene mostrato uno stato inventato.');
+    setTrackingMessage('Controllo la spedizione…');
+    try {
+      const response = await fetch('/api/box/tracking?number=' + encodeURIComponent(numero), { cache: 'no-store' });
+      const data = await response.json();
+      if (!response.ok) {
+        setTrackingMessage(data.error || 'Tracking momentaneamente non disponibile.');
+        return;
+      }
+      const eventi = Array.isArray(data.events) ? data.events : [];
+      const dettagli = eventi.map((evento) => [
+        evento.date ? String(evento.date) : '',
+        evento.status || '',
+        evento.location || ''
+      ].filter(Boolean).join(' · ')).filter(Boolean);
+      setTrackingMessage('Stato: ' + (data.status || 'Aggiornamento ricevuto dal corriere') + (dettagli.length ? '\\n' + dettagli.join('\\n') : ''));
+    } catch {
+      setTrackingMessage('Non riesco a contattare il servizio tracking. Riprova più tardi.');
+    }
   }
 
   if (!servizio) {
@@ -272,7 +290,7 @@ export default function Servizio({ slug }) {
           {slug === 'box' && (
             <section className="mt-7 rounded-2xl border border-teal-700/80 bg-slate-950/60 p-5">
               <h2 className="text-xl font-bold text-teal-200">🔎 Cerca una spedizione</h2>
-              <p className="mt-2 text-sm leading-6 text-slate-300">Inserisci il codice di tracking ricevuto dal corriere. La verifica in tempo reale sarà attivata quando sarà collegato il servizio di spedizione.</p>
+              <p className="mt-2 text-sm leading-6 text-slate-300">Inserisci il codice di tracking ricevuto dal corriere. La ricerca contatta il servizio RS Box quando l’API del corriere è configurata.</p>
               <form onSubmit={cercaTracking} className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto]">
                 <label className="text-sm font-semibold text-slate-200">
                   Numero di tracking
@@ -288,7 +306,7 @@ export default function Servizio({ slug }) {
                 <button type="submit" className="self-end rounded-xl bg-teal-600 px-5 py-3 font-bold text-white hover:bg-teal-500">Cerca tracking</button>
               </form>
               <p aria-live="polite" className="mt-3 rounded-xl border border-amber-700/70 bg-amber-950/30 p-3 text-sm leading-6 text-amber-100">
-                {trackingMessage || 'Tracking reale non ancora attivo: non inserire qui dati personali. Il numero non sarà inviato né verificato finché il corriere non sarà collegato.'}
+                {trackingMessage || 'Il tracking reale richiede le credenziali e la URL API ufficiale del corriere configurate in Vercel. Non inserire dati personali.'}
               </p>
             </section>
           )}
