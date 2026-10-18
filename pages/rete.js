@@ -23,9 +23,11 @@ export default function Rete() {
         const sessionItems = readJson(sessionStorage, 'riverspend-rete');
         let saved = localItems.length ? localItems : sessionItems;
 
-        // Se l'utente è autenticato, la Rete principale arriva dall'account RiverSpend.
+        // Unisci la Rete locale con quella cloud: non perdere articoli appena aggiunti
+        // se la sincronizzazione cloud è vuota o momentaneamente non disponibile.
         const { data: { user } } = await supabase.auth.getUser();
         if (user) {
+          const localSaved = saved;
           const { data: cloudItems, error: cloudError } = await supabase
             .from('river_net_items')
             .select('product_id, created_at')
@@ -33,7 +35,10 @@ export default function Rete() {
             .order('created_at', { ascending: false });
 
           if (!cloudError && Array.isArray(cloudItems)) {
-            const ids = cloudItems.map((item) => String(item.product_id));
+            const ids = [...new Set([
+              ...cloudItems.map((item) => String(item.product_id)),
+              ...localSaved.map((item) => String(item.id))
+            ])];
             if (ids.length) {
               const res = await fetch('/api/products', { cache: 'no-store' });
               const data = await res.json();
@@ -41,7 +46,7 @@ export default function Rete() {
                 saved = data
                   .filter((product) => ids.includes(String(product.id)))
                   .map((product) => {
-                    const previous = saved.find((entry) => String(entry.id) === String(product.id));
+                    const previous = localSaved.find((entry) => String(entry.id) === String(product.id));
                     return {
                       ...(previous || {}),
                       id: product.id,
@@ -54,11 +59,8 @@ export default function Rete() {
                       variantName: previous?.variantName || null
                     };
                   });
-              } else {
-                saved = [];
               }
-            } else {
-              saved = [];
+              // Se il catalogo non risponde, conserva almeno gli articoli salvati localmente.
             }
           }
         }
