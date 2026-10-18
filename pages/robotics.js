@@ -37,8 +37,8 @@ export default function RiverSpendRobotics() {
   return (
     <>
       <Head>
-        <title>RiverSpend Robotics | La famiglia dei droidi</title>
-        <meta name="description" content="Scopri i concept della famiglia RiverSpend Robotics: Nova A1A1 e le future serie di droidi." />
+        <title>RS RiverSpend Robotic Droid | La famiglia dei droidi</title>
+        <meta name="description" content="Scopri i concept della famiglia RS RiverSpend Robotic Droid: Nova A1A1 e le future serie di droidi." />
       </Head>
       <main className="min-h-screen bg-[#06111d] text-white">
         <header className="sticky top-0 z-20 border-b border-cyan-200/20 bg-[#06111d]/90 px-4 py-3 backdrop-blur">
@@ -81,7 +81,7 @@ export default function RiverSpendRobotics() {
                   <h3 className="mt-2 text-2xl font-extrabold">{droid.name}</h3>
                   <p className="mt-1 text-sm font-bold text-slate-300">{droid.role}</p>
                   <p className="mt-3 min-h-[72px] text-sm leading-6 text-slate-400">{droid.description}</p>
-                  <p className="mt-4 border-t border-white/10 pt-3 text-xs text-slate-500">Concept RiverSpend Robotics · Non in vendita</p>
+                  <p className="mt-4 border-t border-white/10 pt-3 text-xs text-slate-500">Concept RS RiverSpend Robotic Droid · Non in vendita</p>
                 </div>
               </article>
             ))}
@@ -89,7 +89,7 @@ export default function RiverSpendRobotics() {
         </section>
         <section id="roadmap" className="border-y border-white/10 bg-slate-900/50 px-4 py-12 sm:py-16">
           <div className="mx-auto max-w-7xl">
-            <p className="text-xs font-extrabold uppercase tracking-[.22em] text-amber-300">Dalla visione al progetto</p><h2 className="mt-2 text-3xl font-black sm:text-4xl">Il percorso RiverSpend Robotics</h2>
+            <p className="text-xs font-extrabold uppercase tracking-[.22em] text-amber-300">Dalla visione al progetto</p><h2 className="mt-2 text-3xl font-black sm:text-4xl">Il percorso RS RiverSpend Robotic Droid</h2>
             <div className="mt-8 grid gap-4 md:grid-cols-3">
               <div className="rounded-2xl border border-cyan-200/20 bg-cyan-200/5 p-5"><span className="text-sm font-black text-cyan-200">FASE 1</span><h3 className="mt-2 text-xl font-extrabold">Nova virtuale</h3><p className="mt-2 text-sm leading-6 text-slate-400">Sviluppare il droide digitale con animazioni, voce e guida nel sito.</p></div>
               <div className="rounded-2xl border border-amber-200/20 bg-amber-200/5 p-5"><span className="text-sm font-black text-amber-200">FASE 2</span><h3 className="mt-2 text-xl font-extrabold">Studio dei prototipi</h3><p className="mt-2 text-sm leading-6 text-slate-400">Definire requisiti, costi, componenti, partner e prove di sicurezza.</p></div>
@@ -98,7 +98,7 @@ export default function RiverSpendRobotics() {
             <p className="mt-7 rounded-2xl border border-white/10 bg-black/20 p-4 text-sm leading-6 text-slate-400">Trasparenza: questa vetrina presenta concept e obiettivi futuri. I robot fisici non sono attualmente in produzione e i modelli non sono in vendita.</p>
           </div>
         </section>
-        <footer className="px-4 py-8 text-center text-xs text-slate-500">RiverSpend Robotics · YOUR SHOP • YOUR FLOW · <a className="text-cyan-200 hover:underline" href="/">RiverSpendShop</a></footer>
+        <footer className="px-4 py-8 text-center text-xs text-slate-500">RS RiverSpend Robotic Droid · YOUR SHOP • YOUR FLOW · <a className="text-cyan-200 hover:underline" href="/">RiverSpendShop</a></footer>
       </main>
       <style jsx global>{`
         .droid-stage{position:relative;isolation:isolate;display:flex;align-items:flex-end;justify-content:center;height:260px;overflow:hidden}
