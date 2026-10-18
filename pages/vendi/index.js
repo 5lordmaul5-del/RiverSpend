@@ -29,6 +29,10 @@ export default function Vendi() {
   const [nuovoNome, setNuovoNome] = useState('');
   const [nuovoPrezzo, setNuovoPrezzo] = useState('');
   const [salvataggioPrezzo, setSalvataggioPrezzo] = useState(false);
+  const [modificaAnnuncioId, setModificaAnnuncioId] = useState('');
+  const [modificaAnnuncio, setModificaAnnuncio] = useState(null);
+  const [fotoModifica, setFotoModifica] = useState([]);
+  const [salvataggioAnnuncio, setSalvataggioAnnuncio] = useState(false);
   const [titolo, setTitolo] = useState('');
   const [prezzo, setPrezzo] = useState('');
   const [quantita, setQuantita] = useState('1');
@@ -154,6 +158,114 @@ export default function Vendi() {
       setMessaggio('❌ Non sono riuscito ad aggiornare il prezzo. ' + (error?.message || 'Riprova.'));
     } finally {
       setSalvataggioPrezzo(false);
+    }
+  }
+
+  async function apriModificaAnnuncio(prodotto) {
+    if (!session?.user?.id || !prodotto?.id) return;
+    setMessaggio('Carico tutti i dati dell’annuncio…');
+    try {
+      const { data, error } = await supabase.from('products').select('*').eq('id', prodotto.id).eq('seller_id', session.user.id).maybeSingle();
+      if (error) throw error;
+      if (!data) throw new Error('Annuncio non trovato o non appartiene al tuo account.');
+      const { data: media, error: mediaError } = await supabase.from('product_media').select('media_url, media_type, sort_order').eq('product_id', prodotto.id).order('sort_order', { ascending: true });
+      if (mediaError) console.warn('Impossibile caricare le foto aggiuntive:', mediaError);
+      setModificaAnnuncioId(String(prodotto.id));
+      setModificaAnnuncio({
+        name: data.name || '', price: String(data.price ?? ''), description: data.description || '',
+        category: data.category || 'Altro', condition: data.condition || 'Nuovo',
+        stock: String(data.stock ?? 1), seller_country: data.seller_country || 'Italia',
+        origin_country: data.origin_country || '', locality: data.locality || '',
+        province: data.province || '', region: data.region || '',
+        delivery_options: Array.isArray(data.delivery_options) ? data.delivery_options : ['home_delivery','seller_pickup','rs_local'],
+        variants: Array.isArray(data.variants) ? data.variants : [],
+        media: (media || []).map((m) => ({ url: m.media_url, type: m.media_type || 'image' })),
+        image: data.image || ''
+      });
+      setFotoModifica([]);
+      setMessaggio('');
+    } catch (error) {
+      console.error('Caricamento modifica annuncio:', error);
+      setMessaggio('❌ Non riesco ad aprire la modifica completa: ' + (error?.message || 'Riprova.'));
+    }
+  }
+
+  async function salvaModificaAnnuncio(prodotto) {
+    if (!session?.user?.id || !prodotto?.id || !modificaAnnuncio || salvataggioAnnuncio) return;
+    const form = modificaAnnuncio;
+    const name = String(form.name || '').trim();
+    const price = Number(String(form.price || '').replace(',', '.'));
+    const stock = Number(form.stock);
+    if (!name || name.length > 140 || !Number.isFinite(price) || price <= 0 || price > 10000000) {
+      setMessaggio('⚠️ Controlla nome e prezzo: il nome deve contenere 1–140 caratteri e il prezzo deve essere valido.');
+      return;
+    }
+    if (!Number.isInteger(stock) || stock < 0) {
+      setMessaggio('⚠️ La quantità deve essere un numero intero pari o superiore a zero.');
+      return;
+    }
+    if (!Array.isArray(form.delivery_options) || form.delivery_options.length === 0) {
+      setMessaggio('⚠️ Seleziona almeno una modalità di consegna o ritiro.');
+      return;
+    }
+    if (fotoModifica.length > MAX_PHOTOS || (fotoModifica.length && fotoModifica.some((item) => !item.file || (!item.file.type.startsWith('image/') && !item.file.type.startsWith('video/')) || (item.file.type.startsWith('image/') && item.file.size > MAX_PHOTO_SIZE) || (item.file.type.startsWith('video/') && item.file.size > MAX_VIDEO_SIZE)))) {
+      setMessaggio('⚠️ Puoi sostituire le foto con massimo 20 file: immagini fino a 10 MB e video fino a 100 MB ciascuno.');
+      return;
+    }
+    setSalvataggioAnnuncio(true);
+    setMessaggio('Salvo tutte le modifiche dell’annuncio…');
+    const uploadedPaths = [];
+    try {
+      let newMedia = null;
+      if (fotoModifica.length) {
+        newMedia = [];
+        for (let i = 0; i < fotoModifica.length; i += 1) {
+          const file = fotoModifica[i].file;
+          const ext = file.name.includes('.') ? file.name.split('.').pop().toLowerCase().replace(/[^a-z0-9]/g, '') : 'jpg';
+          const path = `${session.user.id}/${prodotto.id}/edit-${Date.now()}-${i + 1}.${ext || 'jpg'}`;
+          const { error: uploadError } = await supabase.storage.from('product-images').upload(path, file, { contentType: file.type || 'application/octet-stream', upsert: false });
+          if (uploadError) throw uploadError;
+          uploadedPaths.push(path);
+          const { data: urlData } = supabase.storage.from('product-images').getPublicUrl(path);
+          newMedia.push({ url: urlData.publicUrl, type: file.type.startsWith('video/') ? 'video' : 'image' });
+        }
+      }
+      const update = {
+        name, price: Number(price.toFixed(2)), description: String(form.description || '').trim(),
+        category: form.category, condition: form.condition, stock,
+        seller_country: String(form.seller_country || '').trim() || null,
+        origin_country: String(form.origin_country || '').trim() || null,
+        locality: String(form.locality || '').trim() || null,
+        province: String(form.province || '').trim() || null,
+        region: String(form.region || '').trim() || null,
+        delivery_options: form.delivery_options,
+        variants: Array.isArray(form.variants) ? form.variants : []
+      };
+      if (newMedia) {
+        const firstImage = newMedia.find((m) => m.type === 'image');
+        update.image = firstImage?.url || newMedia[0]?.url || null;
+      }
+      const { data, error } = await supabase.from('products').update(update).eq('id', prodotto.id).eq('seller_id', session.user.id).eq('status', 'published').select('*').maybeSingle();
+      if (error) throw error;
+      if (!data) throw new Error('Annuncio non aggiornato: verifica che sia ancora pubblicato e appartenga al tuo account.');
+      if (newMedia) {
+        const { error: deleteError } = await supabase.from('product_media').delete().eq('product_id', prodotto.id).eq('seller_id', session.user.id);
+        if (deleteError) throw deleteError;
+        const rows = newMedia.map((m, index) => ({ product_id: prodotto.id, media_type: m.type, media_url: m.url, sort_order: index, seller_id: session.user.id }));
+        const { error: insertError } = await supabase.from('product_media').insert(rows);
+        if (insertError) throw insertError;
+      }
+      setModificaAnnuncioId('');
+      setModificaAnnuncio(null);
+      setFotoModifica([]);
+      await Promise.all([loadMieInserzioni(session.user.id), loadProducts()]);
+      setMessaggio('✅ Annuncio aggiornato. Le modifiche sono state salvate.');
+    } catch (error) {
+      console.error('Salvataggio modifica completa:', error);
+      if (uploadedPaths.length) await supabase.storage.from('product-images').remove(uploadedPaths);
+      setMessaggio('❌ Modifiche non completate: ' + (error?.message || 'Riprova.'));
+    } finally {
+      setSalvataggioAnnuncio(false);
     }
   }
 
@@ -760,12 +872,55 @@ export default function Vendi() {
                       </div>
                       {item.status === 'published' && (
                         <div className="flex flex-wrap gap-2">
-                          <button type="button" onClick={() => { setModificaPrezzoId(String(item.id)); setNuovoNome(item.name || ''); setNuovoPrezzo(String(Number(item.price || 0).toFixed(2))); }} className="rounded-xl border border-teal-700 px-4 py-2 text-sm font-bold text-teal-800">
-                            Modifica prezzo
+                          <button type="button" onClick={() => apriModificaAnnuncio(item)} className="rounded-xl border border-teal-700 px-4 py-2 text-sm font-bold text-teal-800">
+                            ✏️ Modifica annuncio
                           </button>
                           <button type="button" onClick={() => segnaComeVenduto(item)} disabled={Boolean(aggiornamentoVendita) || salvataggioPrezzo} className="rounded-xl bg-teal-700 px-4 py-2 text-sm font-bold text-white disabled:opacity-50">
                             {aggiornamentoVendita === item.id ? 'Aggiorno…' : 'Segna come venduto'}
                           </button>
+                        </div>
+                      )}
+                      {modificaAnnuncioId === String(item.id) && modificaAnnuncio && item.status === 'published' && (
+                        <div className="w-full rounded-xl border border-teal-200 bg-teal-50 p-4">
+                          <h3 className="text-lg font-extrabold text-teal-900">Modifica completa dell’annuncio</h3>
+                          <p className="mt-1 mb-4 text-sm text-slate-600">Correggi tutti i campi. Per cambiare le foto, seleziona nuovi file: sostituiranno quelli attuali. Gli ordini già registrati non vengono cancellati.</p>
+                          <label className="mb-1 block text-sm font-bold">Nome prodotto</label>
+                          <input maxLength={140} value={modificaAnnuncio.name} onChange={(e) => setModificaAnnuncio({...modificaAnnuncio, name:e.target.value})} className="mb-3 w-full rounded-lg border bg-white px-3 py-2" />
+                          <label className="mb-1 block text-sm font-bold">Prezzo (€)</label>
+                          <input type="number" min="0.01" step="0.01" value={modificaAnnuncio.price} onChange={(e) => setModificaAnnuncio({...modificaAnnuncio, price:e.target.value})} className="mb-3 w-full rounded-lg border bg-white px-3 py-2" />
+                          <label className="mb-1 block text-sm font-bold">Descrizione</label>
+                          <textarea rows={4} value={modificaAnnuncio.description} onChange={(e) => setModificaAnnuncio({...modificaAnnuncio, description:e.target.value})} className="mb-3 w-full rounded-lg border bg-white px-3 py-2" />
+                          <label className="mb-1 block text-sm font-bold">Categoria</label>
+                          <select value={modificaAnnuncio.category} onChange={(e) => setModificaAnnuncio({...modificaAnnuncio, category:e.target.value})} className="mb-3 w-full rounded-lg border bg-white px-3 py-2">{riverSpendCategories.map((c) => <option key={c}>{c}</option>)}</select>
+                          <label className="mb-1 block text-sm font-bold">Condizione</label>
+                          <select value={modificaAnnuncio.condition} onChange={(e) => setModificaAnnuncio({...modificaAnnuncio, condition:e.target.value})} className="mb-3 w-full rounded-lg border bg-white px-3 py-2"><option>Nuovo</option><option>Usato</option><option>Come nuovo</option></select>
+                          <label className="mb-1 block text-sm font-bold">Quantità disponibile</label>
+                          <input type="number" min="0" step="1" value={modificaAnnuncio.stock} onChange={(e) => setModificaAnnuncio({...modificaAnnuncio, stock:e.target.value})} className="mb-3 w-full rounded-lg border bg-white px-3 py-2" />
+                          <label className="mb-1 block text-sm font-bold">Paese del venditore</label>
+                          <input value={modificaAnnuncio.seller_country} onChange={(e) => setModificaAnnuncio({...modificaAnnuncio, seller_country:e.target.value})} className="mb-3 w-full rounded-lg border bg-white px-3 py-2" />
+                          <label className="mb-1 block text-sm font-bold">Paese di origine del prodotto</label>
+                          <input value={modificaAnnuncio.origin_country} onChange={(e) => setModificaAnnuncio({...modificaAnnuncio, origin_country:e.target.value})} placeholder="Es. Italia, Giappone, Cina" className="mb-3 w-full rounded-lg border bg-white px-3 py-2" />
+                          <label className="mb-1 block text-sm font-bold">Comune / località</label>
+                          <input value={modificaAnnuncio.locality} onChange={(e) => setModificaAnnuncio({...modificaAnnuncio, locality:e.target.value})} className="mb-3 w-full rounded-lg border bg-white px-3 py-2" />
+                          <label className="mb-1 block text-sm font-bold">Provincia</label>
+                          <input value={modificaAnnuncio.province} onChange={(e) => setModificaAnnuncio({...modificaAnnuncio, province:e.target.value})} className="mb-3 w-full rounded-lg border bg-white px-3 py-2" />
+                          <label className="mb-1 block text-sm font-bold">Regione</label>
+                          <input value={modificaAnnuncio.region} onChange={(e) => setModificaAnnuncio({...modificaAnnuncio, region:e.target.value})} className="mb-3 w-full rounded-lg border bg-white px-3 py-2" />
+                          <fieldset className="mb-3 rounded-lg border border-teal-200 bg-white p-3">
+                            <legend className="px-1 text-sm font-bold">Consegna e ritiro</legend>
+                            <div className="grid gap-2 sm:grid-cols-2">{DELIVERY_METHODS.map(([value,label]) => <label key={value} className="flex items-start gap-2 text-sm"><input type="checkbox" checked={modificaAnnuncio.delivery_options.includes(value)} onChange={(e) => setModificaAnnuncio({...modificaAnnuncio, delivery_options:e.target.checked ? [...modificaAnnuncio.delivery_options,value] : modificaAnnuncio.delivery_options.filter((v) => v !== value)})} className="mt-1 accent-teal-600" /><span>{label}</span></label>)}</div>
+                          </fieldset>
+                          <div className="mb-3 rounded-lg border border-slate-200 bg-white p-3">
+                            <p className="text-sm font-bold">Foto/video attuali</p>
+                            <p className="mt-1 text-xs text-slate-600">{modificaAnnuncio.media.length ? `${modificaAnnuncio.media.length} file associati all’annuncio` : 'È presente l’immagine principale, se caricata.'}</p>
+                            <p className="mt-2 text-sm font-bold">Sostituisci tutte le foto/video (facoltativo)</p>
+                            <input type="file" accept="image/*,video/*" multiple onChange={(e) => { const files = Array.from(e.target.files || []); if (files.length > MAX_PHOTOS) { setMessaggio('Puoi selezionare al massimo 20 file.'); return; } setFotoModifica(files.map((file) => ({file}))); }} className="mt-2 block w-full text-sm" />
+                            {fotoModifica.length > 0 && <p className="mt-1 text-sm text-teal-800">{fotoModifica.length} nuovi file selezionati: sostituiranno quelli attuali al salvataggio.</p>}
+                          </div>
+                          <div className="mt-4 flex flex-wrap gap-2">
+                            <button type="button" onClick={() => salvaModificaAnnuncio(item)} disabled={salvataggioAnnuncio} className="rounded-xl bg-teal-700 px-4 py-2 text-sm font-bold text-white disabled:opacity-50">{salvataggioAnnuncio ? 'Salvo…' : '💾 Salva tutte le modifiche'}</button>
+                            <button type="button" onClick={() => { setModificaAnnuncioId(''); setModificaAnnuncio(null); setFotoModifica([]); }} disabled={salvataggioAnnuncio} className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-bold text-slate-700">Annulla</button>
+                          </div>
                         </div>
                       )}
                       {modificaPrezzoId === String(item.id) && item.status === 'published' && (
