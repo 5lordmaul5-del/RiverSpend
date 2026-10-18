@@ -44,7 +44,7 @@ export default function RiverSpendRobotics() {
         <header className="sticky top-0 z-20 border-b border-cyan-200/20 bg-[#06111d]/90 px-4 py-3 backdrop-blur">
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-3">
             <a href="/" className="font-black tracking-tight text-white"><span className="text-cyan-300">RiverSpend</span><span className="ml-2 text-amber-300">Robotics</span></a>
-            <a href="/" className="rounded-full border border-cyan-200/30 px-4 py-2 text-sm font-bold hover:bg-cyan-200/10">← Torna allo Shop</a>
+            <a href="/rs-future-world" className="rounded-full border border-cyan-200/30 px-4 py-2 text-sm font-bold hover:bg-cyan-200/10">← RS FutureWorld</a>
           </div>
         </header>
         <section className="relative overflow-hidden border-b border-cyan-100/10 px-4 py-14 sm:py-20">
