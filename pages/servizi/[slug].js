@@ -305,7 +305,7 @@ export default function Servizio({ slug }) {
                 </label>
                 <button type="submit" className="self-end rounded-xl bg-teal-600 px-5 py-3 font-bold text-white hover:bg-teal-500">Cerca tracking</button>
               </form>
-              <p aria-live="polite" className="mt-3 rounded-xl border border-amber-700/70 bg-amber-950/30 p-3 text-sm leading-6 text-amber-100">
+              <p aria-live="polite" className="mt-3 whitespace-pre-line rounded-xl border border-amber-700/70 bg-amber-950/30 p-3 text-sm leading-6 text-amber-100">
                 {trackingMessage || 'Il tracking reale richiede le credenziali e la URL API ufficiale del corriere configurate in Vercel. Non inserire dati personali.'}
               </p>
             </section>
