@@ -1,40 +1,116 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
+import { supabase } from '../lib/supabase';
 
-const phases = [
-  ['Ordine pagato', 'Il sistema verifica il pagamento prima di mostrare i dati necessari al ritiro.'],
-  ['Ritiro concordato', 'Acquirente e venditore scelgono giorno e fascia oraria tramite l’ordine.'],
-  ['Codice di consegna', 'Un codice monouso conferma che la consegna è avvenuta di persona.'],
-  ['Conferma e accredito', 'La conferma avvia la procedura di accredito prevista dal prestatore di pagamento.']
-];
+const timeSlots = ['09:00–10:00', '10:00–12:00', '12:00–14:00', '14:00–16:00', '16:00–18:00', '18:00–20:00'];
+
+function readableError(error) {
+  return error?.message || 'Si è verificato un errore. Riprova.';
+}
 
 export default function RSLocalRitiro() {
+  const [session, setSession] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [orders, setOrders] = useState([]);
+  const [pickups, setPickups] = useState([]);
+  const [orderId, setOrderId] = useState('');
   const [city, setCity] = useState('Alessandria');
   const [date, setDate] = useState('');
   const [time, setTime] = useState('10:00–12:00');
-  const [orderCode, setOrderCode] = useState('');
-  const [buyerConfirmed, setBuyerConfirmed] = useState(false);
-  const [sellerConfirmed, setSellerConfirmed] = useState(false);
   const [notice, setNotice] = useState('');
+  const [busyId, setBusyId] = useState('');
 
-  const demoStatus = useMemo(() => {
-    if (!orderCode) return 'Nessun ordine dimostrativo creato';
-    if (buyerConfirmed && sellerConfirmed) return 'Consegna registrata nella demo';
-    if (buyerConfirmed) return 'Conferma acquirente registrata nella demo';
-    if (sellerConfirmed) return 'Conferma venditore registrata nella demo';
-    return 'Ritiro da concordare';
-  }, [orderCode, buyerConfirmed, sellerConfirmed]);
-
-  function createDemo() {
-    if (!date) {
-      setNotice('Scegli una data per simulare la proposta di ritiro.');
+  const loadData = useCallback(async (user) => {
+    if (!user) {
+      setOrders([]);
+      setPickups([]);
+      setLoading(false);
       return;
     }
-    setOrderCode('RS-' + Math.random().toString(36).slice(2, 8).toUpperCase());
-    setBuyerConfirmed(false);
-    setSellerConfirmed(false);
-    setNotice('Proposta di ritiro creata solo in questa demo. Non è stato creato un ordine reale.');
+    setLoading(true);
+    const [ordersResult, pickupsResult] = await Promise.all([
+      supabase.from('orders')
+        .select('id,created_at,total,status,order_items(product_name,seller_id)')
+        .eq('buyer_id', user.id)
+        .eq('delivery_method', 'rs_local')
+        .not('status', 'in', '(cancelled,refunded)')
+        .order('created_at', { ascending: false }),
+      supabase.from('rs_local_pickups')
+        .select('id,order_id,buyer_id,seller_id,zone,pickup_date,pickup_time_slot,status,buyer_confirmed_at,seller_confirmed_at,created_at')
+        .order('created_at', { ascending: false })
+    ]);
+    if (ordersResult.error) setNotice('Non riesco a leggere gli ordini RS Local: ' + readableError(ordersResult.error));
+    else {
+      setOrders(ordersResult.data || []);
+      if (!orderId && ordersResult.data?.length) setOrderId(ordersResult.data[0].id);
+    }
+    if (pickupsResult.error) setNotice('Non riesco a leggere i ritiri: ' + readableError(pickupsResult.error));
+    else setPickups(pickupsResult.data || []);
+    setLoading(false);
+  }, [orderId]);
+
+  useEffect(() => {
+    let alive = true;
+    supabase.auth.getSession().then(({ data, error }) => {
+      if (!alive) return;
+      if (error) setNotice(readableError(error));
+      setSession(data?.session || null);
+      loadData(data?.session?.user || null);
+    });
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+      setSession(nextSession);
+      loadData(nextSession?.user || null);
+    });
+    return () => {
+      alive = false;
+      listener?.subscription?.unsubscribe();
+    };
+  }, [loadData]);
+
+  async function createProposal(event) {
+    event.preventDefault();
+    setNotice('');
+    if (!session?.user) {
+      setNotice('Accedi a RiverSpend per creare una proposta reale.');
+      return;
+    }
+    if (!orderId || !date || !city.trim()) {
+      setNotice('Seleziona un ordine RS Local, una zona e una data.');
+      return;
+    }
+    setBusyId('create');
+    const { data, error } = await supabase.rpc('rs_local_create_pickup', {
+      p_order_id: orderId,
+      p_zone: city.trim(),
+      p_pickup_date: date,
+      p_pickup_time_slot: time
+    });
+    if (error) setNotice('Proposta non salvata: ' + readableError(error));
+    else {
+      setNotice('Proposta salvata in Supabase. Codice ritiro: ' + data.id);
+      await loadData(session.user);
+    }
+    setBusyId('');
   }
+
+  async function confirmPickup(pickupId) {
+    if (!session?.user) return;
+    setBusyId(pickupId);
+    setNotice('');
+    const { data, error } = await supabase.rpc('rs_local_confirm_pickup', { p_pickup_id: pickupId });
+    if (error) setNotice('Conferma non salvata: ' + readableError(error));
+    else {
+      setNotice(data.status === 'completed'
+        ? 'Entrambe le parti hanno confermato il ritiro. Stato registrato in Supabase.'
+        : 'La tua conferma è stata registrata in Supabase. Manca la conferma dell’altra parte.');
+      await loadData(session.user);
+    }
+    setBusyId('');
+  }
+
+  const myPickups = pickups.filter((pickup) =>
+    pickup.buyer_id === session?.user?.id || pickup.seller_id === session?.user?.id
+  );
 
   return (
     <main className="min-h-screen bg-white px-4 py-8 text-slate-900">
@@ -43,68 +119,93 @@ export default function RSLocalRitiro() {
         <section className="mt-6 rounded-3xl border border-teal-200 bg-white p-6 shadow-sm sm:p-9">
           <p className="text-sm font-black uppercase tracking-[0.2em] text-teal-700">RiverSpend · RS Local</p>
           <h1 className="mt-2 text-3xl font-black sm:text-4xl">Ritiro locale protetto</h1>
-          <p className="mt-4 max-w-3xl leading-7 text-slate-600">
-            La scheda pubblica mostra solo la zona, ad esempio “{city} e dintorni”. Indirizzo preciso e telefono non devono apparire nell’annuncio pubblico: vengono condivisi con l’acquirente solo quando l’ordine e le regole del servizio lo consentono.
+          <p className="mt-4 leading-7 text-slate-600">
+            La pagina mostra soltanto la zona indicativa, non l’indirizzo preciso. Le proposte e le conferme qui sotto vengono registrate in Supabase e sono visibili ai partecipanti dell’ordine.
           </p>
 
-          <div className="mt-6 grid gap-3 sm:grid-cols-2">
-            {phases.map(([title, description], index) => (
-              <article key={title} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                <div className="flex items-center gap-3">
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-teal-700 font-black text-white">{index + 1}</span>
-                  <h2 className="font-bold">{title}</h2>
-                </div>
-                <p className="mt-3 text-sm leading-6 text-slate-600">{description}</p>
-              </article>
-            ))}
-          </div>
-
-          <section className="mt-7 rounded-2xl border border-teal-200 p-5">
-            <h2 className="text-xl font-black">Prova il flusso di ritiro</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-600">Questa è una simulazione visiva per controllare il percorso. Non crea ordini nel database, non invia notifiche e non riceve né trattiene denaro.</p>
-            <div className="mt-4 grid gap-4 sm:grid-cols-2">
-              <label className="text-sm font-semibold">
-                Zona indicativa
-                <input value={city} onChange={(e) => setCity(e.target.value)} maxLength={80} className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-3" placeholder="Es. Alessandria e dintorni" />
-              </label>
-              <label className="text-sm font-semibold">
-                Giorno proposto
-                <input type="date" value={date} min={new Date().toISOString().slice(0, 10)} onChange={(e) => setDate(e.target.value)} className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-3" />
-              </label>
-              <label className="text-sm font-semibold sm:col-span-2">
-                Fascia oraria proposta
-                <select value={time} onChange={(e) => setTime(e.target.value)} className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-3">
-                  <option>09:00–10:00</option>
-                  <option>10:00–12:00</option>
-                  <option>12:00–14:00</option>
-                  <option>14:00–16:00</option>
-                  <option>16:00–18:00</option>
-                  <option>18:00–20:00</option>
-                </select>
-              </label>
+          {!session && (
+            <div className="mt-6 rounded-2xl border border-amber-300 bg-amber-50 p-4">
+              <h2 className="font-bold text-amber-900">Accedi per usare il servizio reale</h2>
+              <p className="mt-2 text-sm leading-6 text-amber-900">Non è possibile creare o confermare un ritiro reale senza autenticazione. Dopo l’accesso, torna qui per continuare.</p>
+              <Link href="/accedi" className="mt-3 inline-block rounded-xl bg-teal-700 px-5 py-3 font-bold text-white">Accedi a RiverSpend</Link>
             </div>
-            <button type="button" onClick={createDemo} className="mt-4 w-full rounded-xl bg-teal-700 px-5 py-3 font-bold text-white hover:bg-teal-800 sm:w-auto">Simula proposta di ritiro</button>
+          )}
 
-            {notice && <p role="status" className="mt-4 rounded-xl bg-teal-50 p-3 text-sm text-teal-900">{notice}</p>}
-            {orderCode && (
-              <div className="mt-5 rounded-2xl border border-slate-200 p-4">
-                <p className="text-xs font-bold uppercase tracking-wider text-slate-500">Ordine dimostrativo</p>
-                <p className="mt-1 text-2xl font-black">{orderCode}</p>
-                <p className="mt-2 text-sm text-slate-700">Zona: {city || 'non specificata'}</p>
-                <p className="text-sm text-slate-700">Appuntamento proposto: {date} · {time}</p>
-                <p className="mt-3 text-sm font-bold text-teal-800">{demoStatus}</p>
-                <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                  <button type="button" onClick={() => { setBuyerConfirmed(true); setNotice('Conferma acquirente simulata.'); }} className="rounded-xl border border-teal-700 px-4 py-3 font-bold text-teal-800">Simula conferma acquirente</button>
-                  <button type="button" onClick={() => { setSellerConfirmed(true); setNotice('Conferma venditore simulata.'); }} className="rounded-xl border border-teal-700 px-4 py-3 font-bold text-teal-800">Simula conferma venditore</button>
-                </div>
-                {buyerConfirmed && sellerConfirmed && <p className="mt-3 rounded-xl bg-emerald-50 p-3 text-sm text-emerald-900">Demo completata: nella versione reale questa fase dovrà essere collegata alla verifica dell’ordine e alle regole di accredito del provider.</p>}
+          {session && (
+            <form onSubmit={createProposal} className="mt-7 rounded-2xl border border-teal-200 p-5">
+              <h2 className="text-xl font-black">Proponi un ritiro per un ordine esistente</h2>
+              <p className="mt-2 text-sm leading-6 text-slate-600">Puoi proporre un ritiro solo per un ordine reale già impostato con consegna RS Local.</p>
+              <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                <label className="text-sm font-semibold sm:col-span-2">
+                  Ordine RS Local
+                  <select required value={orderId} onChange={(event) => setOrderId(event.target.value)} className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-3">
+                    <option value="">Seleziona un ordine</option>
+                    {orders.map((order) => (
+                      <option key={order.id} value={order.id}>
+                        {order.order_items?.map((item) => item.product_name).filter(Boolean).join(', ') || 'Ordine'} · €{Number(order.total || 0).toFixed(2)} · {order.id.slice(0, 8)}
+                      </option>
+                    ))}
+                  </select>
+                  {!loading && orders.length === 0 && <span className="mt-1 block text-xs font-normal text-slate-500">Non risultano ordini RS Local disponibili nel tuo account.</span>}
+                </label>
+                <label className="text-sm font-semibold">
+                  Zona indicativa
+                  <input required value={city} onChange={(event) => setCity(event.target.value)} maxLength={100} className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-3" placeholder="Es. Alessandria" />
+                </label>
+                <label className="text-sm font-semibold">
+                  Giorno proposto
+                  <input required type="date" value={date} min={new Date().toLocaleDateString('en-CA')} onChange={(event) => setDate(event.target.value)} className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-3" />
+                </label>
+                <label className="text-sm font-semibold sm:col-span-2">
+                  Fascia oraria proposta
+                  <select value={time} onChange={(event) => setTime(event.target.value)} className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-3">
+                    {timeSlots.map((slot) => <option key={slot}>{slot}</option>)}
+                  </select>
+                </label>
               </div>
-            )}
+              <button disabled={busyId === 'create' || loading || orders.length === 0} type="submit" className="mt-4 w-full rounded-xl bg-teal-700 px-5 py-3 font-bold text-white disabled:opacity-50 sm:w-auto">
+                {busyId === 'create' ? 'Salvataggio…' : 'Salva proposta in Supabase'}
+              </button>
+            </form>
+          )}
+
+          {notice && <p role="status" className="mt-4 break-words rounded-xl bg-teal-50 p-3 text-sm text-teal-900">{notice}</p>}
+
+          <section className="mt-7">
+            <h2 className="text-xl font-black">I miei ritiri RS Local</h2>
+            {loading && <p className="mt-3 text-sm text-slate-600">Caricamento dati…</p>}
+            {!loading && session && myPickups.length === 0 && <p className="mt-3 rounded-xl bg-slate-50 p-4 text-sm text-slate-600">Non ci sono ancora ritiri associati al tuo account.</p>}
+            <div className="mt-4 grid gap-4">
+              {myPickups.map((pickup) => {
+                const isBuyer = pickup.buyer_id === session?.user?.id;
+                const ownConfirmed = isBuyer ? pickup.buyer_confirmed_at : pickup.seller_confirmed_at;
+                const otherConfirmed = isBuyer ? pickup.seller_confirmed_at : pickup.buyer_confirmed_at;
+                const statusText = pickup.status === 'completed' ? 'Ritiro confermato da entrambe le parti'
+                  : pickup.status === 'cancelled' ? 'Ritiro annullato'
+                  : ownConfirmed ? 'La tua conferma è registrata; attendiamo l’altra parte'
+                  : 'In attesa delle conferme';
+                return (
+                  <article key={pickup.id} className="rounded-2xl border border-slate-200 p-4">
+                    <p className="text-xs font-bold uppercase tracking-wider text-slate-500">Ritiro RS Local · {isBuyer ? 'Acquirente' : 'Venditore'}</p>
+                    <p className="mt-1 break-all text-lg font-black">{pickup.id}</p>
+                    <p className="mt-2 text-sm text-slate-700">Zona: {pickup.zone}</p>
+                    <p className="text-sm text-slate-700">Appuntamento: {pickup.pickup_date} · {pickup.pickup_time_slot}</p>
+                    <p className="mt-3 font-bold text-teal-800">{statusText}</p>
+                    <p className="mt-1 text-xs text-slate-500">La tua conferma: {ownConfirmed ? 'sì' : 'no'} · Conferma dell’altra parte: {otherConfirmed ? 'sì' : 'no'}</p>
+                    {pickup.status !== 'completed' && pickup.status !== 'cancelled' && !ownConfirmed && (
+                      <button type="button" disabled={busyId === pickup.id} onClick={() => confirmPickup(pickup.id)} className="mt-4 w-full rounded-xl border border-teal-700 px-4 py-3 font-bold text-teal-800 disabled:opacity-50 sm:w-auto">
+                        {busyId === pickup.id ? 'Registrazione…' : 'Conferma ritiro in Supabase'}
+                      </button>
+                    )}
+                  </article>
+                );
+              })}
+            </div>
           </section>
 
-          <section className="mt-6 rounded-2xl border border-amber-300 bg-amber-50 p-4">
-            <h2 className="font-bold text-amber-900">Prima di attivare i pagamenti reali</h2>
-            <p className="mt-2 text-sm leading-6 text-amber-900">Il rilascio del denaro dopo il ritiro richiede un provider che supporti marketplace e accrediti differiti, oltre a controlli server-side. Non è sicuro basarsi solo su un pulsante di conferma nel browser. Questa pagina è una demo del flusso, non un servizio di pagamento protetto attivo.</p>
+          <section className="mt-7 rounded-2xl border border-amber-300 bg-amber-50 p-4">
+            <h2 className="font-bold text-amber-900">Importante sui pagamenti</h2>
+            <p className="mt-2 text-sm leading-6 text-amber-900">Supabase registra l’ordine RS Local e le conferme delle parti. Non trattiene né trasferisce denaro: l’accredito dopo il ritiro resta disattivato finché non integriamo un provider che supporti pagamenti marketplace e accrediti differiti. Non usare le conferme come prova di pagamento.</p>
           </section>
           <div className="mt-7 flex flex-wrap gap-3">
             <Link href="/rete" className="rounded-xl bg-teal-700 px-5 py-3 font-bold text-white">Vai alla mia Rete</Link>
