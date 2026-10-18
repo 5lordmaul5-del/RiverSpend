@@ -395,7 +395,7 @@ export default function Prodotto() {
               </div>
 
               <div className="mt-5 grid gap-3">
-                <button type="button" disabled={Boolean(prodotto.venduto || prodotto.statoAnnuncio === 'sold')} onClick={aggiungiVarianteAllaRete} className="rounded-xl border border-teal-700 bg-teal-500 px-5 py-4 text-base font-extrabold text-slate-950 shadow-sm transition-colors hover:bg-teal-400 active:bg-teal-500 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700">
+                <button type="button" disabled={Boolean(prodotto.venduto || prodotto.statoAnnuncio === 'sold')} onClick={aggiungiVarianteAllaRete} className="flex min-h-12 w-full items-center justify-center whitespace-normal rounded-xl border border-teal-700 bg-teal-500 px-3 py-3 text-center text-sm font-extrabold leading-tight text-slate-950 shadow-sm transition-colors hover:bg-teal-400 active:bg-teal-500 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700 sm:px-5 sm:py-4 sm:text-base">
                   {prodotto.venduto || prodotto.statoAnnuncio === 'sold' ? 'Annuncio venduto' : inRete ? '✓ Nella mia Rete' : '🕸️ Aggiungi alla Rete'}
                 </button>
                 <button type="button" onClick={() => toggleLista('riverspend-wishlist', wishlist, setWishlist, '♡ Aggiunto ai tuoi desideri.', 'Rimosso dai desideri.')} className="rounded-xl border border-slate-200 bg-white px-5 py-3 font-bold text-slate-800">
