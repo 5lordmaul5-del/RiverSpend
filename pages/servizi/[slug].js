@@ -235,6 +235,17 @@ const servizi = {
 
 export default function Servizio({ slug }) {
   const servizio = servizi[slug];
+  const [trackingNumber, setTrackingNumber] = useState('');
+  const [trackingMessage, setTrackingMessage] = useState('');
+
+  function cercaTracking(e) {
+    e.preventDefault();
+    if (!trackingNumber.trim()) {
+      setTrackingMessage('Inserisci il numero di tracking fornito dal corriere.');
+      return;
+    }
+    setTrackingMessage('Ricerca non ancora disponibile: il collegamento al corriere è in attesa di attivazione. Il numero non è stato verificato e non viene mostrato uno stato inventato.');
+  }
 
   if (!servizio) {
     return (
@@ -257,6 +268,30 @@ export default function Servizio({ slug }) {
           <p className={slug === 'local' ? "mt-5 text-sm font-semibold uppercase tracking-widest text-teal-700" : "mt-5 text-sm font-semibold uppercase tracking-widest text-teal-300"}>RiverSpend</p>
           <h1 className="mt-2 text-4xl font-bold">{servizio.titolo}</h1>
           <p className={slug === 'local' ? "mt-5 max-w-2xl text-lg leading-8 text-slate-700" : "mt-5 max-w-2xl text-lg leading-8 text-slate-300"}>{servizio.descrizione}</p>
+
+          {slug === 'box' && (
+            <section className="mt-7 rounded-2xl border border-teal-700/80 bg-slate-950/60 p-5">
+              <h2 className="text-xl font-bold text-teal-200">🔎 Cerca una spedizione</h2>
+              <p className="mt-2 text-sm leading-6 text-slate-300">Inserisci il codice di tracking ricevuto dal corriere. La verifica in tempo reale sarà attivata quando sarà collegato il servizio di spedizione.</p>
+              <form onSubmit={cercaTracking} className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto]">
+                <label className="text-sm font-semibold text-slate-200">
+                  Numero di tracking
+                  <input
+                    type="text"
+                    value={trackingNumber}
+                    onChange={(e) => { setTrackingNumber(e.target.value); setTrackingMessage(''); }}
+                    placeholder="Es. codice riportato sulla ricevuta"
+                    autoComplete="off"
+                    className="mt-1 w-full rounded-xl border border-slate-600 bg-slate-900 px-4 py-3 text-base text-white placeholder:text-slate-500 focus:border-teal-400 focus:outline-none"
+                  />
+                </label>
+                <button type="submit" className="self-end rounded-xl bg-teal-600 px-5 py-3 font-bold text-white hover:bg-teal-500">Cerca tracking</button>
+              </form>
+              <p aria-live="polite" className="mt-3 rounded-xl border border-amber-700/70 bg-amber-950/30 p-3 text-sm leading-6 text-amber-100">
+                {trackingMessage || 'Tracking reale non ancora attivo: non inserire qui dati personali. Il numero non sarà inviato né verificato finché il corriere non sarà collegato.'}
+              </p>
+            </section>
+          )}
 
           {slug === 'box' && (
             <div className="mt-8 grid gap-4">
