@@ -306,6 +306,35 @@ export default function Home() {
     }, 5200);
   }
 
+  function eseguiRichiestaNovaTestuale() {
+    const richiesta = String(ricerca || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[.,!?;:]/g, ' ').replace(/\s+/g, ' ').trim();
+    if (!richiesta) return;
+    const senzaFormula = richiesta
+      .replace(/^(hey\s+river|ehi\s+river|river|nova|nov[aà])[, ]*/i, '')
+      .replace(/^(per favore\s+)?(cerca|cercami|trova|trovami|fammi vedere|mostrami|apri|aprimi|vai a|vai al|vai alla|vorrei|voglio|cerco)\s+/i, '')
+      .replace(/^(la sezione|sezione|il reparto|la categoria|categoria|il|lo|la|i|gli|le|dei|degli|delle|del|della|dello)\s+/i, '')
+      .trim();
+    if (/\b(integratori|integratore|supplementi|supplemento)\b/.test(richiesta) || /^(integratori|integratore|supplementi|supplemento)$/.test(senzaFormula)) {
+      setRicerca('');
+      setCategoriaAttiva('Integratori');
+      setRicercaAperta(true);
+      window.history.replaceState({}, '', '/?category=' + encodeURIComponent('Integratori'));
+      setRiverVoiceStatus('Apro la categoria Integratori.');
+      document.getElementById('rs-products-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const risposta = new SpeechSynthesisUtterance('Ecco la categoria Integratori.');
+        risposta.lang = 'it-IT';
+        window.speechSynthesis.speak(risposta);
+      }
+      return;
+    }
+    setRicerca(senzaFormula || richiesta);
+    setCategoriaAttiva('');
+    setRicercaAperta(true);
+    document.getElementById('rs-products-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
   function apriNovaConSaluto() {
     setNovaOpen(true);
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
@@ -1127,8 +1156,8 @@ export default function Home() {
                 <p className="text-base font-semibold">Ciao! 👋 Sono Nova · River AI.</p>
                 <p className="mt-1 text-sm leading-5 text-slate-300">Posso aiutarti a cercare prodotti e a raggiungere le sezioni di RiverSpend. Tocca il microfono e dimmi cosa vuoi fare.</p>
                 <div className="mt-3 flex gap-2">
-                  <input value={ricerca} onChange={(event) => setRicerca(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter' && ricerca.trim()) { setCategoriaAttiva(''); setRicercaAperta(true); document.getElementById('rs-products-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }} placeholder="Chiedi o cerca un prodotto…" aria-label="Cerca con Nova" className="min-w-0 flex-1 rounded-xl border border-slate-600 bg-slate-900 px-3 py-3 text-sm text-white placeholder:text-slate-400 focus:border-cyan-300 focus:outline-none"/>
-                  <button type="button" onClick={() => { if (!ricerca.trim()) return; setCategoriaAttiva(''); setRicercaAperta(true); document.getElementById('rs-products-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }} className="rounded-xl bg-amber-300 px-4 font-black text-slate-950" aria-label="Cerca">➜</button>
+                  <input value={ricerca} onChange={(event) => setRicerca(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') eseguiRichiestaNovaTestuale(); }} placeholder="Chiedi o cerca un prodotto…" aria-label="Cerca con Nova" className="min-w-0 flex-1 rounded-xl border border-slate-600 bg-slate-900 px-3 py-3 text-sm text-white placeholder:text-slate-400 focus:border-cyan-300 focus:outline-none"/>
+                  <button type="button" onClick={eseguiRichiestaNovaTestuale} className="rounded-xl bg-amber-300 px-4 font-black text-slate-950" aria-label="Cerca">➜</button>
                 </div>
                 <button type="button" onClick={avviaRiverVoice} className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-cyan-300 bg-cyan-400/10 px-4 py-3 font-bold text-cyan-100 hover:bg-cyan-400/20">
                   <span aria-hidden="true">{riverVoiceActive ? '🔴' : '🎙️'}</span>{riverVoiceActive ? 'Ti ascolto…' : 'Parla con Nova'}
