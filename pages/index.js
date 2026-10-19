@@ -1079,7 +1079,7 @@ export default function Home() {
               <div className="flex items-center justify-between border-b border-cyan-400/30 bg-gradient-to-r from-slate-900 to-teal-950 px-4 py-3">
                 <div className="flex items-center gap-3">
                   <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-300/60 bg-slate-900 shadow-[0_0_18px_rgba(34,211,238,.25)]" aria-hidden="true">
-                    <svg viewBox="0 0 64 64" className="h-10 w-10" role="img" aria-label="Volto robot Nova">
+                    <svg viewBox="0 0 76 64" className="h-10 w-10" role="img" aria-label="Volto robot Nova">
                       <defs><linearGradient id="novaMetal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#f8fafc"/><stop offset="1" stopColor="#94a3b8"/></linearGradient></defs>
                       <g className="nova-animated-head"><path d="M13 25 Q10 7 32 6 Q54 7 51 25 L48 43 Q32 57 16 43Z" fill="url(#novaMetal)" stroke="#22d3ee" strokeWidth="1.8"/>
                       <rect x="16" y="17" width="32" height="24" rx="9" fill="#071827" stroke="#38bdf8" strokeWidth="1.5"/>
@@ -1109,7 +1109,7 @@ export default function Home() {
           ) : (
             <button type="button" onClick={() => setNovaOpen(true)} className="ml-auto flex items-center gap-3 rounded-full border border-cyan-300/70 bg-slate-950/95 px-3 py-2 text-left text-white shadow-xl shadow-cyan-950/40 backdrop-blur hover:border-amber-300" aria-label="Apri Nova · River AI">
               <span className="flex h-12 w-12 items-center justify-center rounded-full border border-cyan-300 bg-slate-900 shadow-[0_0_18px_rgba(34,211,238,.3)]" aria-hidden="true">
-                <svg viewBox="0 0 64 64" className="h-10 w-10">
+                <svg viewBox="0 0 76 64" className="h-10 w-10">
                   <path d="M13 25 Q10 7 32 6 Q54 7 51 25 L48 43 Q32 57 16 43Z" fill="#e2e8f0" stroke="#22d3ee" strokeWidth="1.8"/>
                   <rect x="16" y="17" width="32" height="24" rx="9" fill="#071827" stroke="#38bdf8" strokeWidth="1.5"/>
                   <path d="M22 28 Q26 21 30 28 Q26 34 22 28 M34 28 Q38 21 42 28 Q38 34 34 28" fill="#67e8f9"/>
