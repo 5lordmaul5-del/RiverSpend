@@ -306,6 +306,21 @@ export default function Home() {
     }, 5200);
   }
 
+  function apriNovaConSaluto() {
+    setNovaOpen(true);
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+    try {
+      window.speechSynthesis.cancel();
+      const saluto = new SpeechSynthesisUtterance('Ciao, sono River AI A1A1. Sono qui al tuo servizio, fammi una domanda!');
+      saluto.lang = 'it-IT';
+      saluto.rate = 0.96;
+      saluto.pitch = 1.02;
+      window.speechSynthesis.speak(saluto);
+    } catch (error) {
+      console.warn('Voce di benvenuto River AI non disponibile:', error);
+    }
+  }
+
   function avviaRiverVoice() {
     if (typeof window === 'undefined') return;
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -1122,7 +1137,7 @@ export default function Home() {
               </div>
             </section>
           ) : (
-            <button type="button" onClick={() => setNovaOpen(true)} className="ml-auto flex items-center gap-3 rounded-full border border-cyan-300/70 bg-slate-950/95 px-3 py-2 text-left text-white shadow-xl shadow-cyan-950/40 backdrop-blur hover:border-amber-300" aria-label="Apri Nova · River AI">
+            <button type="button" onClick={apriNovaConSaluto} className="ml-auto flex items-center gap-3 rounded-full border border-cyan-300/70 bg-slate-950/95 px-3 py-2 text-left text-white shadow-xl shadow-cyan-950/40 backdrop-blur hover:border-amber-300" aria-label="Apri Nova · River AI">
               <span className="flex h-12 w-12 items-center justify-center rounded-full border border-cyan-300 bg-slate-900 shadow-[0_0_18px_rgba(34,211,238,.3)]" aria-hidden="true">
                 <svg viewBox="0 0 76 64" className="h-10 w-10">
                   <path d="M13 25 Q10 7 32 6 Q54 7 51 25 L48 43 Q32 57 16 43Z" fill="#e2e8f0" stroke="#22d3ee" strokeWidth="1.8"/>
