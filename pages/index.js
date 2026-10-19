@@ -914,13 +914,13 @@ export default function Home() {
               </button>
             </section>
 
-            <a href="/vendi" aria-label="Hai prodotti da vendere? Caricali qui e apri la tua vetrina su RiverSpendShop" className="rs-feature-card flex shrink-0 w-[280px] snap-start flex-col items-center justify-center overflow-hidden rounded-2xl border-2 border-emerald-300 bg-gradient-to-br from-emerald-950 via-teal-900 to-slate-950 p-4 text-center shadow-lg shadow-emerald-950/30 focus:outline-none focus:ring-4 focus:ring-emerald-300/70">
-              <span className="text-4xl" aria-hidden="true">🛍️</span>
-              <p className="mt-2 text-xs font-extrabold uppercase tracking-wider text-emerald-200">VENDI SU RIVERSPEND</p>
-              <h2 className="mt-2 text-xl font-black leading-tight text-white">HAI PRODOTTI DA VENDERE?</h2>
-              <p className="mt-2 text-base font-semibold leading-6 text-white">Carica i tuoi prodotti, apri la tua vetrina e inizia a vendere.</p>
-              <span className="mt-3 inline-flex rounded-full border-2 border-white bg-emerald-300 px-4 py-3 text-sm font-black text-slate-950 shadow-md">CARICA I TUOI PRODOTTI →</span>
-              <p className="mt-2 text-xs leading-4 text-emerald-100">Commissione del 10% secondo le condizioni applicabili.</p>
+            <a id="rs-seller-card" href="/vendi" aria-label="Hai prodotti da vendere? Caricali qui e apri la tua vetrina su RiverSpendShop" className="rs-feature-card flex shrink-0 w-[220px] snap-start flex-col items-center justify-center overflow-hidden rounded-2xl border-2 border-emerald-300 bg-gradient-to-br from-emerald-950 via-teal-900 to-slate-950 p-2 text-center shadow-lg shadow-emerald-950/30 focus:outline-none focus:ring-4 focus:ring-emerald-300/70">
+              <span className="text-2xl" aria-hidden="true">🛍️</span>
+              <p className="mt-1 text-[10px] font-extrabold uppercase tracking-wide text-emerald-200">VENDI SU RIVERSPEND</p>
+              <h2 className="mt-1 text-sm font-black leading-tight text-white">HAI PRODOTTI DA VENDERE?</h2>
+              <p className="mt-1 text-xs font-semibold leading-4 text-white">Carica i tuoi prodotti, apri la tua vetrina e inizia a vendere.</p>
+              <span className="rs-feature-action mt-2 inline-flex rounded-full border-2 border-white bg-emerald-300 px-2 py-2 text-[10px] font-black text-slate-950 shadow-md">CARICA I TUOI PRODOTTI →</span>
+              <p className="mt-1 text-[9px] leading-3 text-emerald-100">Commissione del 10% secondo le condizioni applicabili.</p>
             </a>
 
             <section className="rs-feature-card shrink-0 w-[220px] snap-start rs-fortune-card rounded-2xl border border-amber-400/40 bg-gradient-to-br from-slate-950 via-amber-950/30 to-slate-900 p-2 text-center shadow-lg shadow-amber-950/20">
@@ -1325,6 +1325,11 @@ export default function Home() {
 .rs-apps-grid > .rs-banner-slide.rs-hero > div a { padding:6px 8px; font-size:11px; }
 .rs-apps-grid { display:flex !important; flex-direction:row; flex-wrap:nowrap; width:100%; max-width:100%; box-sizing:border-box; overflow-x:auto; overflow-y:hidden; gap:10px; align-items:stretch; justify-content:flex-start; margin-left:auto; margin-right:auto; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; }
         .rs-feature-card { box-sizing:border-box; min-width:160px !important; width:160px !important; max-width:160px; height:228px !important; flex:0 0 160px !important; overflow:hidden; display:flex; scroll-snap-align:start; }
+        /* Banner venditore: più largo delle altre schede per rendere leggibile l'invito al caricamento. */
+        #rs-seller-card { box-sizing:border-box; min-width:220px !important; width:220px !important; max-width:220px !important; flex:0 0 220px !important; }
+        /* Contrasto leggibile e stato visivo coerente per i pulsanti della Rete. */
+        .rs-product-card button[aria-pressed="true"] { background-color:#6ee7b7 !important; color:#064e3b !important; border-color:#34d399 !important; }
+        .rs-product-card button[aria-pressed="false"] { background-color:#14b8a6 !important; color:#042f2e !important; border-color:#2dd4bf !important; }
         .rs-feature-card > a, .rs-feature-card > button { display:flex; flex-direction:column; flex:1; min-height:0; }
         .rs-feature-card .rs-feature-media { box-sizing:border-box; height:72px !important; min-height:72px !important; max-height:72px; flex:0 0 72px; }
         .rs-feature-action { margin-top:auto !important; min-height:28px; flex-shrink:0; justify-content:center; }
