@@ -1053,6 +1053,36 @@ export default function Home() {
             </div>
           </section>
 
+          <a href="/social-network" aria-label="Scopri RiverSpend TV e condividi i tuoi video" className="rs-banner-slide rs-creator-banner group shrink-0 snap-start overflow-hidden rounded-2xl border border-violet-300/70 bg-gradient-to-br from-violet-950 via-slate-950 to-cyan-950 text-white shadow-lg transition hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-violet-300/70">
+            <div className="flex h-full flex-col p-4 text-left">
+              <span className="text-3xl" aria-hidden="true">🎬</span>
+              <p className="mt-2 text-[10px] font-extrabold uppercase tracking-[.18em] text-cyan-200">Video • Creatività • Community</p>
+              <h2 className="mt-1 text-xl font-black leading-tight">RiverSpend TV</h2>
+              <p className="mt-2 text-xs leading-4 text-slate-100">Fai conoscere i tuoi video e i tuoi progetti. La piattaforma si prepara a dare spazio ai creator.</p>
+              <span className="mt-auto inline-flex self-start rounded-full bg-cyan-300 px-3 py-2 text-[11px] font-extrabold text-slate-950">SCOPRI IL SOCIAL →</span>
+            </div>
+          </a>
+
+          <a href="/vendi" aria-label="Proponi musica, CD e serate musicali su RiverSpend" className="rs-banner-slide rs-creator-banner group shrink-0 snap-start overflow-hidden rounded-2xl border border-amber-300/70 bg-gradient-to-br from-amber-950 via-slate-950 to-fuchsia-950 text-white shadow-lg transition hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-amber-300/70">
+            <div className="flex h-full flex-col p-4 text-left">
+              <span className="text-3xl" aria-hidden="true">🎵</span>
+              <p className="mt-2 text-[10px] font-extrabold uppercase tracking-[.18em] text-amber-200">Artisti • Musica • Eventi</p>
+              <h2 className="mt-1 text-xl font-black leading-tight">RiverSpend Music</h2>
+              <p className="mt-2 text-xs leading-4 text-slate-100">Sei un artista o un musicista? Proponi CD, musica e serate dal vivo. RiverSpend Music è una visione in sviluppo.</p>
+              <span className="mt-auto inline-flex self-start rounded-full bg-amber-300 px-3 py-2 text-[11px] font-extrabold text-slate-950">PROVA A PUBBLICARE →</span>
+            </div>
+          </a>
+
+          <a href="/vendi" aria-label="Carica e vendi prodotti su RiverSpendShop con commissione del 10 per cento" className="rs-banner-slide rs-creator-banner group shrink-0 snap-start overflow-hidden rounded-2xl border border-emerald-300/70 bg-gradient-to-br from-emerald-950 via-slate-950 to-teal-950 text-white shadow-lg transition hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-emerald-300/70">
+            <div className="flex h-full flex-col p-4 text-left">
+              <span className="text-3xl" aria-hidden="true">🛍️</span>
+              <p className="mt-2 text-[10px] font-extrabold uppercase tracking-[.18em] text-emerald-200">La tua vetrina • Il tuo negozio</p>
+              <h2 className="mt-1 text-xl font-black leading-tight">Carica e vendi</h2>
+              <p className="mt-2 text-xs leading-4 text-slate-100">Pubblica i tuoi prodotti, apri la tua vetrina e raggiungi nuovi clienti. Commissione RiverSpendShop: 10% sulla vendita, secondo le condizioni applicabili.</p>
+              <span className="mt-auto inline-flex self-start rounded-full bg-emerald-300 px-3 py-2 text-[11px] font-extrabold text-slate-950">INIZIA A VENDERE →</span>
+            </div>
+          </a>
+
           <a href="/vendi" aria-label="Inizia a vendere su RiverSpendShop" className="rs-banner-slide group shrink-0 snap-start overflow-hidden rounded-2xl border border-teal-300/70 bg-slate-950 shadow-lg shadow-teal-950/15 transition hover:-translate-y-0.5 hover:border-amber-300 focus:outline-none focus:ring-4 focus:ring-teal-300/70">
             <img src="/riverspend-seller-banner.svg" alt="Privati e aziende: apri la tua vetrina e inizia a vendere su RiverSpendShop" className="block aspect-[16/5] w-full object-cover sm:aspect-[16/4]" loading="eager" />
           </a>
@@ -1197,6 +1227,10 @@ export default function Home() {
 
         .rs-apps-grid { display:flex !important; flex-direction:row; flex-wrap:nowrap; width:100%; max-width:100%; box-sizing:border-box; overflow-x:auto; overflow-y:hidden; gap:10px; align-items:stretch; justify-content:flex-start; margin-left:auto; margin-right:auto; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; }
 .rs-apps-grid > .rs-banner-slide { flex:0 0 240px; width:240px; min-width:240px; max-width:240px; height:228px; min-height:228px; max-height:228px; margin-bottom:0 !important; scroll-snap-align:start; box-sizing:border-box; overflow:hidden; position:relative; }
+.rs-apps-grid > .rs-creator-banner { display:flex; flex-direction:column; align-items:stretch; }
+.rs-apps-grid > .rs-creator-banner > div { box-sizing:border-box; min-height:0; height:100%; }
+.rs-apps-grid > .rs-creator-banner h2 { overflow-wrap:anywhere; }
+.rs-apps-grid > .rs-creator-banner p:not(:first-child) { max-width:100%; }
 .rs-apps-grid > .rs-social-banner { display:flex; flex-direction:column; align-items:stretch; }
 .rs-apps-grid > .rs-social-banner > .rs-social-banner-media { height:112px; min-height:112px; max-height:112px; flex:0 0 112px; }
 .rs-apps-grid > .rs-social-banner > .rs-social-banner-media img { height:100% !important; width:100%; object-fit:cover; object-position:center; }
