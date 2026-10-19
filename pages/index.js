@@ -1078,14 +1078,29 @@ export default function Home() {
             <section className="overflow-hidden rounded-3xl border border-cyan-300/70 bg-slate-950/95 text-white shadow-2xl shadow-cyan-950/50 backdrop-blur">
               <div className="flex items-center justify-between border-b border-cyan-400/30 bg-gradient-to-r from-slate-900 to-teal-950 px-4 py-3">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-300/60 bg-slate-900 shadow-[0_0_18px_rgba(34,211,238,.25)]" aria-hidden="true">
-                    <svg viewBox="0 0 76 64" className="h-10 w-10" role="img" aria-label="Volto robot Nova">
-                      <defs><linearGradient id="novaMetal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#f8fafc"/><stop offset="1" stopColor="#94a3b8"/></linearGradient></defs>
-                      <g className="nova-animated-head"><path d="M13 25 Q10 7 32 6 Q54 7 51 25 L48 43 Q32 57 16 43Z" fill="url(#novaMetal)" stroke="#22d3ee" strokeWidth="1.8"/>
-                      <rect x="16" y="17" width="32" height="24" rx="9" fill="#071827" stroke="#38bdf8" strokeWidth="1.5"/>
-                      <path d="M22 28 Q26 21 30 28 Q26 34 22 28 M34 28 Q38 21 42 28 Q38 34 34 28" fill="#67e8f9"/>
-                      <path d="M25 35 Q32 41 39 35" fill="none" stroke="#67e8f9" strokeWidth="2.5" strokeLinecap="round"/>
-                      <path d="M25 6 L32 2 L39 6" fill="none" stroke="#fbbf24" strokeWidth="2"/></g><path className="nova-wave-hand" d="M49 43 Q55 37 55 29 L57 23 Q59 21 60 24 L60 31 Q62 25 64 28 L63 36 Q62 45 55 49Z" fill="#e2e8f0" stroke="#22d3ee" strokeWidth="1.5"/>
+                  <div className="flex h-[76px] w-[72px] shrink-0 items-center justify-center overflow-visible rounded-2xl border border-cyan-300/60 bg-slate-900 shadow-[0_0_22px_rgba(34,211,238,.3)]" aria-hidden="true">
+                    <svg viewBox="0 0 92 112" className="h-[72px] w-[66px] overflow-visible" role="img" aria-label="Nova River AI, droide umanoide">
+                      <defs>
+                        <linearGradient id="novaBodyMetal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#ffffff"/><stop offset=".55" stopColor="#dbeafe"/><stop offset="1" stopColor="#64748b"/></linearGradient>
+                        <linearGradient id="novaBodyGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#fde68a"/><stop offset="1" stopColor="#d97706"/></linearGradient>
+                        <radialGradient id="novaCore"><stop offset="0" stopColor="#a5f3fc"/><stop offset="1" stopColor="#0891b2"/></radialGradient>
+                      </defs>
+                      <ellipse cx="45" cy="105" rx="26" ry="4" fill="#22d3ee" opacity=".22"/>
+                      <g className="nova-animated-head">
+                        <path d="M32 7 Q45 1 58 7 L65 17 L63 37 Q57 48 45 48 Q33 48 27 37 L25 17Z" fill="url(#novaBodyMetal)" stroke="#22d3ee" strokeWidth="1.8"/>
+                        <rect x="29" y="16" width="32" height="23" rx="8" fill="#061827" stroke="#38bdf8" strokeWidth="1.4"/>
+                        <path d="M35 26 Q39 21 42 26 M48 26 Q52 21 55 26" fill="none" stroke="#67e8f9" strokeWidth="2.8" strokeLinecap="round"/>
+                        <path d="M38 33 Q45 37 52 33" fill="none" stroke="#67e8f9" strokeWidth="1.8" strokeLinecap="round"/>
+                        <path d="M39 6 L45 2 L51 6" fill="none" stroke="#fbbf24" strokeWidth="2.2"/>
+                      </g>
+                      <path d="M38 48 L38 54 L52 54 L52 48" fill="url(#novaBodyMetal)" stroke="#22d3ee" strokeWidth="1.4"/>
+                      <path d="M31 53 Q45 48 59 53 L68 65 L64 83 L58 91 L32 91 L26 83 L22 65Z" fill="url(#novaBodyMetal)" stroke="#22d3ee" strokeWidth="1.8"/>
+                      <path d="M34 58 L56 58 L60 72 L45 81 L30 72Z" fill="#071827" stroke="#fbbf24" strokeWidth="1.4"/>
+                      <circle cx="45" cy="68" r="7" fill="url(#novaCore)" stroke="#67e8f9" strokeWidth="1.2"/>
+                      <path d="M28 58 L19 63 L16 78 L22 80 L28 69 M62 58 L71 63 L74 76 L68 80 L62 69" fill="url(#novaBodyMetal)" stroke="#22d3ee" strokeWidth="1.8" strokeLinejoin="round"/>
+                      <path className="nova-wave-hand" d="M68 79 L72 68 L72 58 Q74 55 76 59 L76 66 L79 59 Q82 57 82 61 L80 73 L76 83 L69 87Z" fill="url(#novaBodyMetal)" stroke="#22d3ee" strokeWidth="1.5" strokeLinejoin="round"/>
+                      <path d="M35 90 L34 99 L29 103 L29 106 L41 106 L43 99 L47 99 L49 106 L61 106 L61 103 L56 99 L55 90" fill="url(#novaBodyMetal)" stroke="#22d3ee" strokeWidth="1.6" strokeLinejoin="round"/>
+                      <path d="M34 93 L55 93" stroke="url(#novaBodyGold)" strokeWidth="2.5" strokeLinecap="round"/>
                     </svg>
                   </div>
                   <div><p className="font-black tracking-wide">NOVA · RIVER AI</p><p className="text-xs text-cyan-200">Assistente ufficiale RiverSpendShop</p></div>
