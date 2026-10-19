@@ -1073,7 +1073,7 @@ export default function Home() {
         </footer>
       </div>
       {!showSplash && (
-        <aside className="fixed bottom-4 right-3 z-40 w-[min(360px,calc(100vw-24px))]" aria-label="Assistente Nova A1A1">
+        <aside className="fixed bottom-4 right-3 z-40 w-[min(360px,calc(100vw-24px))]" aria-label="Assistente Nova · River AI">
           {novaOpen ? (
             <section className="overflow-hidden rounded-3xl border border-cyan-300/70 bg-slate-950/95 text-white shadow-2xl shadow-cyan-950/50 backdrop-blur">
               <div className="flex items-center justify-between border-b border-cyan-400/30 bg-gradient-to-r from-slate-900 to-teal-950 px-4 py-3">
@@ -1081,19 +1081,19 @@ export default function Home() {
                   <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-300/60 bg-slate-900 shadow-[0_0_18px_rgba(34,211,238,.25)]" aria-hidden="true">
                     <svg viewBox="0 0 64 64" className="h-10 w-10" role="img" aria-label="Volto robot Nova">
                       <defs><linearGradient id="novaMetal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#f8fafc"/><stop offset="1" stopColor="#94a3b8"/></linearGradient></defs>
-                      <path d="M13 25 Q10 7 32 6 Q54 7 51 25 L48 43 Q32 57 16 43Z" fill="url(#novaMetal)" stroke="#22d3ee" strokeWidth="1.8"/>
+                      <g className="nova-animated-head"><path d="M13 25 Q10 7 32 6 Q54 7 51 25 L48 43 Q32 57 16 43Z" fill="url(#novaMetal)" stroke="#22d3ee" strokeWidth="1.8"/>
                       <rect x="16" y="17" width="32" height="24" rx="9" fill="#071827" stroke="#38bdf8" strokeWidth="1.5"/>
                       <path d="M22 28 Q26 21 30 28 Q26 34 22 28 M34 28 Q38 21 42 28 Q38 34 34 28" fill="#67e8f9"/>
                       <path d="M25 35 Q32 41 39 35" fill="none" stroke="#67e8f9" strokeWidth="2.5" strokeLinecap="round"/>
-                      <path d="M25 6 L32 2 L39 6" fill="none" stroke="#fbbf24" strokeWidth="2"/>
+                      <path d="M25 6 L32 2 L39 6" fill="none" stroke="#fbbf24" strokeWidth="2"/></g><path className="nova-wave-hand" d="M49 43 Q55 37 55 29 L57 23 Q59 21 60 24 L60 31 Q62 25 64 28 L63 36 Q62 45 55 49Z" fill="#e2e8f0" stroke="#22d3ee" strokeWidth="1.5"/>
                     </svg>
                   </div>
-                  <div><p className="font-black tracking-wide">NOVA A1A1</p><p className="text-xs text-cyan-200">Droide assistente RiverSpend</p></div>
+                  <div><p className="font-black tracking-wide">NOVA · RIVER AI</p><p className="text-xs text-cyan-200">Assistente ufficiale RiverSpendShop</p></div>
                 </div>
                 <button type="button" onClick={() => setNovaOpen(false)} aria-label="Riduci Nova" className="rounded-full px-3 py-2 text-xl text-white hover:bg-white/10">−</button>
               </div>
               <div className="p-4">
-                <p className="text-base font-semibold">Ciao! 👋 Sono Nova A1A1.</p>
+                <p className="text-base font-semibold">Ciao! 👋 Sono Nova · River AI.</p>
                 <p className="mt-1 text-sm leading-5 text-slate-300">Posso aiutarti a cercare prodotti e a raggiungere le sezioni di RiverSpend. Tocca il microfono e dimmi cosa vuoi fare.</p>
                 <div className="mt-3 flex gap-2">
                   <input value={ricerca} onChange={(event) => setRicerca(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter' && ricerca.trim()) { setCategoriaAttiva(''); setRicercaAperta(true); document.getElementById('rs-products-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }} placeholder="Chiedi o cerca un prodotto…" aria-label="Cerca con Nova" className="min-w-0 flex-1 rounded-xl border border-slate-600 bg-slate-900 px-3 py-3 text-sm text-white placeholder:text-slate-400 focus:border-cyan-300 focus:outline-none"/>
@@ -1107,7 +1107,7 @@ export default function Home() {
               </div>
             </section>
           ) : (
-            <button type="button" onClick={() => setNovaOpen(true)} className="ml-auto flex items-center gap-3 rounded-full border border-cyan-300/70 bg-slate-950/95 px-3 py-2 text-left text-white shadow-xl shadow-cyan-950/40 backdrop-blur hover:border-amber-300" aria-label="Apri Nova A1A1">
+            <button type="button" onClick={() => setNovaOpen(true)} className="ml-auto flex items-center gap-3 rounded-full border border-cyan-300/70 bg-slate-950/95 px-3 py-2 text-left text-white shadow-xl shadow-cyan-950/40 backdrop-blur hover:border-amber-300" aria-label="Apri Nova · River AI">
               <span className="flex h-12 w-12 items-center justify-center rounded-full border border-cyan-300 bg-slate-900 shadow-[0_0_18px_rgba(34,211,238,.3)]" aria-hidden="true">
                 <svg viewBox="0 0 64 64" className="h-10 w-10">
                   <path d="M13 25 Q10 7 32 6 Q54 7 51 25 L48 43 Q32 57 16 43Z" fill="#e2e8f0" stroke="#22d3ee" strokeWidth="1.8"/>
@@ -1117,12 +1117,19 @@ export default function Home() {
                   <path d="M25 6 L32 2 L39 6" fill="none" stroke="#fbbf24" strokeWidth="2"/>
                 </svg>
               </span>
-              <span className="pr-2"><span className="block text-sm font-black">Nova A1A1</span><span className="block text-xs text-cyan-200">Parla con il droide</span></span>
+              <span className="pr-2"><span className="block text-sm font-black">Nova · River AI</span><span className="block text-xs text-cyan-200">Parla con Nova</span></span>
             </button>
           )}
         </aside>
       )}
       <style jsx>{`
+        /* Nova · River AI: animazioni leggere, senza librerie aggiuntive. */
+        .nova-animated-head { transform-box: fill-box; transform-origin: 50% 85%; animation: nova-head-idle 4.8s ease-in-out infinite; }
+        .nova-wave-hand { transform-box: fill-box; transform-origin: 15% 85%; animation: nova-hand-wave 3.8s ease-in-out infinite; }
+        @keyframes nova-head-idle { 0%,100% { transform: rotate(0deg) translateY(0); } 28% { transform: rotate(-3deg) translateY(-1px); } 58% { transform: rotate(2deg) translateY(0); } 76% { transform: rotate(0deg) translateY(-1px); } }
+        @keyframes nova-hand-wave { 0%,72%,100% { transform: rotate(0deg); } 78% { transform: rotate(-18deg); } 84% { transform: rotate(14deg); } 90% { transform: rotate(-12deg); } 96% { transform: rotate(5deg); } }
+        @media (prefers-reduced-motion: reduce) { .nova-animated-head, .nova-wave-hand { animation:none !important; } }
+
         .rs-apps-grid { display:flex !important; flex-direction:row; flex-wrap:nowrap; width:100%; max-width:100%; box-sizing:border-box; overflow-x:auto; overflow-y:hidden; gap:10px; align-items:stretch; justify-content:flex-start; margin-left:auto; margin-right:auto; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; }
 .rs-apps-grid > .rs-banner-slide { flex:0 0 240px; width:240px; min-width:240px; max-width:240px; height:228px; min-height:228px; max-height:228px; margin-bottom:0 !important; scroll-snap-align:start; box-sizing:border-box; overflow:hidden; position:relative; }
 .rs-apps-grid > .rs-ecology-banner { flex:0 0 240px; width:240px; min-width:240px; max-width:240px; height:228px; min-height:228px; max-height:228px; box-sizing:border-box; overflow:hidden; display:flex; flex-direction:column; align-items:flex-start; padding:12px !important; gap:0; }
