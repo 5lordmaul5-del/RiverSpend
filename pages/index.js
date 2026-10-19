@@ -914,13 +914,13 @@ export default function Home() {
               </button>
             </section>
 
-            <a href="/vendi" aria-label="Hai prodotti da vendere? Caricali qui e apri la tua vetrina su RiverSpendShop" className="rs-feature-card flex shrink-0 w-[220px] snap-start flex-col items-center justify-center overflow-hidden rounded-2xl border-2 border-emerald-300 bg-gradient-to-br from-emerald-950 via-teal-900 to-slate-950 p-3 text-center shadow-lg shadow-emerald-950/30 focus:outline-none focus:ring-4 focus:ring-emerald-300/70">
+            <a href="/vendi" aria-label="Hai prodotti da vendere? Caricali qui e apri la tua vetrina su RiverSpendShop" className="rs-feature-card flex shrink-0 w-[280px] snap-start flex-col items-center justify-center overflow-hidden rounded-2xl border-2 border-emerald-300 bg-gradient-to-br from-emerald-950 via-teal-900 to-slate-950 p-4 text-center shadow-lg shadow-emerald-950/30 focus:outline-none focus:ring-4 focus:ring-emerald-300/70">
               <span className="text-4xl" aria-hidden="true">🛍️</span>
-              <p className="mt-2 text-[10px] font-extrabold uppercase tracking-wider text-emerald-200">Vendi su RiverSpend</p>
-              <h2 className="mt-2 text-lg font-black leading-tight text-white">HAI PRODOTTI DA VENDERE?</h2>
-              <p className="mt-2 text-sm font-semibold leading-5 text-white">Caricali qui, apri la tua vetrina e raggiungi nuovi clienti.</p>
-              <span className="mt-3 inline-flex rounded-full bg-emerald-300 px-3 py-2 text-xs font-black text-slate-950">CARICA I PRODOTTI →</span>
-              <p className="mt-2 text-[10px] leading-4 text-emerald-100">Commissione del 10% secondo le condizioni applicabili.</p>
+              <p className="mt-2 text-xs font-extrabold uppercase tracking-wider text-emerald-200">VENDI SU RIVERSPEND</p>
+              <h2 className="mt-2 text-xl font-black leading-tight text-white">HAI PRODOTTI DA VENDERE?</h2>
+              <p className="mt-2 text-base font-semibold leading-6 text-white">Carica i tuoi prodotti, apri la tua vetrina e inizia a vendere.</p>
+              <span className="mt-3 inline-flex rounded-full border-2 border-white bg-emerald-300 px-4 py-3 text-sm font-black text-slate-950 shadow-md">CARICA I TUOI PRODOTTI →</span>
+              <p className="mt-2 text-xs leading-4 text-emerald-100">Commissione del 10% secondo le condizioni applicabili.</p>
             </a>
 
             <section className="rs-feature-card shrink-0 w-[220px] snap-start rs-fortune-card rounded-2xl border border-amber-400/40 bg-gradient-to-br from-slate-950 via-amber-950/30 to-slate-900 p-2 text-center shadow-lg shadow-amber-950/20">
@@ -1175,7 +1175,18 @@ export default function Home() {
                     <p className="mt-2 text-xs font-semibold text-teal-300 sm:text-sm">{t('openProduct')}</p>
                   </div>
                 </a>
-
+                <div className="px-2 pb-2 sm:px-3 sm:pb-3">
+                  <button
+                    type="button"
+                    aria-pressed={reteIds.includes(String(p.id))}
+                    onClick={() => toggleReteFromCatalog(p)}
+                    className={reteIds.includes(String(p.id))
+                      ? "flex min-h-12 w-full items-center justify-center rounded-xl border-2 border-emerald-400 bg-emerald-300 px-2 py-2 text-center text-sm font-extrabold leading-tight text-emerald-950 shadow-sm transition-colors"
+                      : "flex min-h-12 w-full items-center justify-center rounded-xl border-2 border-teal-400 bg-teal-500 px-2 py-2 text-center text-sm font-extrabold leading-tight text-slate-950 shadow-sm transition-colors hover:bg-teal-300"}
+                  >
+                    {reteIds.includes(String(p.id)) ? "✓ Aggiunto alla mia Rete" : "🕸️ Aggiungi alla Rete"}
+                  </button>
+                </div>
               </article>
               ))}
             </div>
