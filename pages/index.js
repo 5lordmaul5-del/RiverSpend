@@ -914,6 +914,15 @@ export default function Home() {
               </button>
             </section>
 
+            <a href="/vendi" aria-label="Hai prodotti da vendere? Caricali qui e apri la tua vetrina su RiverSpendShop" className="rs-feature-card flex shrink-0 w-[220px] snap-start flex-col items-center justify-center overflow-hidden rounded-2xl border-2 border-emerald-300 bg-gradient-to-br from-emerald-950 via-teal-900 to-slate-950 p-3 text-center shadow-lg shadow-emerald-950/30 focus:outline-none focus:ring-4 focus:ring-emerald-300/70">
+              <span className="text-4xl" aria-hidden="true">🛍️</span>
+              <p className="mt-2 text-[10px] font-extrabold uppercase tracking-wider text-emerald-200">Vendi su RiverSpend</p>
+              <h2 className="mt-2 text-lg font-black leading-tight text-white">HAI PRODOTTI DA VENDERE?</h2>
+              <p className="mt-2 text-sm font-semibold leading-5 text-white">Caricali qui, apri la tua vetrina e raggiungi nuovi clienti.</p>
+              <span className="mt-3 inline-flex rounded-full bg-emerald-300 px-3 py-2 text-xs font-black text-slate-950">CARICA I PRODOTTI →</span>
+              <p className="mt-2 text-[10px] leading-4 text-emerald-100">Commissione del 10% secondo le condizioni applicabili.</p>
+            </a>
+
             <section className="rs-feature-card shrink-0 w-[220px] snap-start rs-fortune-card rounded-2xl border border-amber-400/40 bg-gradient-to-br from-slate-950 via-amber-950/30 to-slate-900 p-2 text-center shadow-lg shadow-amber-950/20">
               <div className="flex h-full w-full flex-col items-center overflow-hidden text-center">
                 <p className="shrink-0 min-h-4 text-[10px] font-bold uppercase tracking-[0.22em] text-amber-100">🎡 RS FORTUNE</p>
@@ -1126,15 +1135,7 @@ export default function Home() {
             </div>
           </a>
 
-          <a href="/vendi" aria-label="Carica e vendi prodotti su RiverSpendShop con commissione del 10 per cento" className="rs-banner-slide rs-creator-banner group shrink-0 snap-start overflow-hidden rounded-2xl border border-emerald-300/70 bg-gradient-to-br from-emerald-950 via-slate-950 to-teal-950 text-white shadow-lg transition hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-emerald-300/70">
-            <div className="flex h-full flex-col p-4 text-left">
-              <span className="text-3xl" aria-hidden="true">🛍️</span>
-              <p className="mt-2 text-[10px] font-extrabold uppercase tracking-[.18em] text-emerald-200">La tua vetrina • Il tuo negozio</p>
-              <h2 className="mt-1 text-xl font-black leading-tight">Carica e vendi</h2>
-              <p className="mt-2 text-xs leading-4 text-slate-100">Pubblica i tuoi prodotti, apri la tua vetrina e raggiungi nuovi clienti. Commissione RiverSpendShop: 10% sulla vendita, secondo le condizioni applicabili.</p>
-              <span className="mt-auto inline-flex self-start rounded-full bg-emerald-300 px-3 py-2 text-[11px] font-extrabold text-slate-950">INIZIA A VENDERE →</span>
-            </div>
-          </a>
+
 
           <a href="/vendi" aria-label="Inizia a vendere su RiverSpendShop" className="rs-banner-slide group shrink-0 snap-start overflow-hidden rounded-2xl border border-teal-300/70 bg-slate-950 shadow-lg shadow-teal-950/15 transition hover:-translate-y-0.5 hover:border-amber-300 focus:outline-none focus:ring-4 focus:ring-teal-300/70">
             <img src="/riverspend-seller-banner.svg" alt="Privati e aziende: apri la tua vetrina e inizia a vendere su RiverSpendShop" className="block aspect-[16/5] w-full object-cover sm:aspect-[16/4]" loading="eager" />
