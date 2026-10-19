@@ -1026,10 +1026,15 @@ export default function Home() {
             </div>
           </a>
 
-          <a href="/social-network" className="rs-banner-slide group shrink-0 snap-start overflow-hidden rounded-3xl border border-teal-300/70 bg-gradient-to-br from-teal-950 via-slate-900 to-cyan-950 text-white shadow-xl shadow-teal-950/20 transition hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-teal-300/70">
-            <div className="relative overflow-hidden bg-slate-950">
-              <img src="/riverspend-social-banner.svg" alt="RiverSpend Social Marketplace: foto, video, prodotti, offerte e community. Entra nel Fiume." className="block aspect-[16/8] w-full object-cover sm:aspect-[16/7]" loading="eager" />
-              <span className="sr-only">Entra nel Fiume</span>
+          <a href="/social-network" aria-label="Apri RiverSpend Social: foto, video e community" className="rs-banner-slide rs-social-banner group shrink-0 snap-start overflow-hidden rounded-2xl border border-teal-300/70 bg-gradient-to-br from-teal-950 via-slate-900 to-cyan-950 text-white shadow-lg shadow-teal-950/20 transition hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-teal-300/70">
+            <div className="rs-social-banner-media relative w-full shrink-0 overflow-hidden bg-slate-950">
+              <img src="/riverspend-social-banner.svg" alt="RiverSpend Social: uno spazio per condividere foto, video e scoprire la community" className="block h-full w-full object-cover object-center" loading="eager" />
+              <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-slate-950/80 to-transparent" aria-hidden="true"></div>
+            </div>
+            <div className="flex min-h-0 flex-1 flex-col items-start p-3 text-left">
+              <h2 className="text-base font-extrabold leading-tight text-white">RiverSpend Social</h2>
+              <p className="mt-1 text-xs leading-4 text-cyan-50">Condividi foto e video, scopri contenuti e incontra la community.</p>
+              <span className="mt-auto inline-flex rounded-full bg-teal-300 px-3 py-1.5 text-[11px] font-extrabold text-slate-950">ENTRA NEL SOCIAL →</span>
             </div>
           </a>
 
@@ -1192,6 +1197,11 @@ export default function Home() {
 
         .rs-apps-grid { display:flex !important; flex-direction:row; flex-wrap:nowrap; width:100%; max-width:100%; box-sizing:border-box; overflow-x:auto; overflow-y:hidden; gap:10px; align-items:stretch; justify-content:flex-start; margin-left:auto; margin-right:auto; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; }
 .rs-apps-grid > .rs-banner-slide { flex:0 0 240px; width:240px; min-width:240px; max-width:240px; height:228px; min-height:228px; max-height:228px; margin-bottom:0 !important; scroll-snap-align:start; box-sizing:border-box; overflow:hidden; position:relative; }
+.rs-apps-grid > .rs-social-banner { display:flex; flex-direction:column; align-items:stretch; }
+.rs-apps-grid > .rs-social-banner > .rs-social-banner-media { height:112px; min-height:112px; max-height:112px; flex:0 0 112px; }
+.rs-apps-grid > .rs-social-banner > .rs-social-banner-media img { height:100% !important; width:100%; object-fit:cover; object-position:center; }
+.rs-apps-grid > .rs-social-banner > div:last-child { height:auto; min-height:0; flex:1 1 auto; box-sizing:border-box; }
+.rs-apps-grid > .rs-social-banner h2, .rs-apps-grid > .rs-social-banner p { max-width:100%; overflow-wrap:anywhere; }
 .rs-apps-grid > .rs-ecology-banner { flex:0 0 240px; width:240px; min-width:240px; max-width:240px; height:228px; min-height:228px; max-height:228px; box-sizing:border-box; overflow:hidden; display:flex; flex-direction:column; align-items:flex-start; padding:12px !important; gap:0; }
 .rs-apps-grid > .rs-ecology-banner > span:first-child { font-size:24px; line-height:1; }
 .rs-apps-grid > .rs-ecology-banner > h2 { margin-top:7px; font-size:18px; line-height:1.12; }
