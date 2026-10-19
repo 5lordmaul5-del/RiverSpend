@@ -408,9 +408,10 @@ export default function Home() {
 
       let searchTerms = q
         .replace(/^(hey\s+river|ehi\s+river|river|nova|nov[aà])[, ]*/i, '')
-        .replace(/^(per favore\s+)?(cerca|cercami|trova|trovami|fammi vedere|mostrami|apri|vorrei|voglio|cerco)\s+/i, '')
+        .replace(/^(per favore\s+)?(cerca|cercami|trova|trovami|fammi vedere|mostrami|apri|aprimi|vorrei|voglio|cerco)\s+/i, '')
+        .replace(/^(il|lo|la|i|gli|le|dei|degli|delle|del|della|dello)\s+/i, '')
         .trim();
-      if (/^(integratori|integratore|supplementi|supplemento)$/.test(searchTerms)) {
+      if (/\b(integratori|integratore|supplementi|supplemento)\b/.test(searchTerms)) {
         setRicerca('');
         setCategoriaAttiva('Integratori');
         setRicercaAperta(true);
