@@ -1053,6 +1053,58 @@ export default function Home() {
             </div>
           </section>
 
+          <a href="/servizi/music" aria-label="Apri RS Music" className="rs-banner-slide rs-creator-banner group shrink-0 snap-start overflow-hidden rounded-2xl border border-amber-300/70 bg-gradient-to-br from-amber-950 via-slate-950 to-fuchsia-950 text-white shadow-lg transition hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-amber-300/70">
+            <div className="rs-world-media relative flex h-[112px] shrink-0 items-center justify-center overflow-hidden bg-gradient-to-br from-indigo-950 via-fuchsia-950 to-amber-900">
+              <span className="text-6xl drop-shadow-lg" role="img" aria-label="Microfono musicale">🎙️</span>
+              <span className="absolute bottom-2 right-3 text-2xl" aria-hidden="true">🎵</span>
+            </div>
+            <div className="flex min-h-0 flex-1 flex-col items-start p-3 text-left">
+              <p className="text-[10px] font-extrabold uppercase tracking-[.18em] text-amber-200">Artisti • CD • Eventi</p>
+              <h2 className="mt-1 text-base font-black leading-tight">RS MUSIC</h2>
+              <p className="mt-1 text-xs leading-4 text-slate-100">Scopri il mondo della musica RiverSpend.</p>
+              <span className="mt-auto inline-flex rounded-full bg-amber-300 px-3 py-1.5 text-[11px] font-extrabold text-slate-950">SCOPRI MUSIC →</span>
+            </div>
+          </a>
+
+          <a href="/servizi/broadcast" aria-label="Apri RS Streaming" className="rs-banner-slide rs-creator-banner group shrink-0 snap-start overflow-hidden rounded-2xl border border-violet-300/70 bg-gradient-to-br from-violet-950 via-slate-950 to-blue-950 text-white shadow-lg transition hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-violet-300/70">
+            <div className="rs-world-media relative flex h-[112px] shrink-0 items-center justify-center overflow-hidden bg-gradient-to-br from-violet-950 via-indigo-900 to-cyan-900">
+              <span className="text-6xl drop-shadow-lg" role="img" aria-label="Schermo streaming">▶️</span>
+              <span className="absolute bottom-2 right-3 text-2xl" aria-hidden="true">✨</span>
+            </div>
+            <div className="flex min-h-0 flex-1 flex-col items-start p-3 text-left">
+              <p className="text-[10px] font-extrabold uppercase tracking-[.18em] text-violet-200">Video • Streaming</p>
+              <h2 className="mt-1 text-base font-black leading-tight">RS STREAMING</h2>
+              <p className="mt-1 text-xs leading-4 text-slate-100">Esplora il progetto video RiverSpend.</p>
+              <span className="mt-auto inline-flex rounded-full bg-violet-300 px-3 py-1.5 text-[11px] font-extrabold text-slate-950">SCOPRI STREAMING →</span>
+            </div>
+          </a>
+
+          <a href="/servizi/tv" aria-label="Apri RS TV" className="rs-banner-slide rs-creator-banner group shrink-0 snap-start overflow-hidden rounded-2xl border border-cyan-300/70 bg-gradient-to-br from-cyan-950 via-slate-950 to-teal-950 text-white shadow-lg transition hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-cyan-300/70">
+            <div className="rs-world-media relative flex h-[112px] shrink-0 items-center justify-center overflow-hidden bg-gradient-to-br from-cyan-950 via-teal-900 to-blue-900">
+              <span className="text-6xl drop-shadow-lg" role="img" aria-label="Televisione">📺</span>
+              <span className="absolute bottom-2 right-3 text-2xl" aria-hidden="true">🎬</span>
+            </div>
+            <div className="flex min-h-0 flex-1 flex-col items-start p-3 text-left">
+              <p className="text-[10px] font-extrabold uppercase tracking-[.18em] text-cyan-200">Video • Intrattenimento</p>
+              <h2 className="mt-1 text-base font-black leading-tight">RS TV</h2>
+              <p className="mt-1 text-xs leading-4 text-slate-100">Scopri la visione televisiva RiverSpend.</p>
+              <span className="mt-auto inline-flex rounded-full bg-cyan-300 px-3 py-1.5 text-[11px] font-extrabold text-slate-950">ENTRA IN RS TV →</span>
+            </div>
+          </a>
+
+          <a href="/rs-future-world" aria-label="Apri RS Droid e Future City" className="rs-banner-slide rs-creator-banner group shrink-0 snap-start overflow-hidden rounded-2xl border border-teal-300/70 bg-gradient-to-br from-slate-900 via-indigo-950 to-teal-950 text-white shadow-lg transition hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-teal-300/70">
+            <div className="rs-world-media relative flex h-[112px] shrink-0 items-center justify-center overflow-hidden bg-gradient-to-br from-slate-800 via-indigo-900 to-teal-800">
+              <span className="text-6xl drop-shadow-lg" role="img" aria-label="Droid futuristico">🤖</span>
+              <span className="absolute bottom-2 right-3 text-2xl" aria-hidden="true">🌆</span>
+            </div>
+            <div className="flex min-h-0 flex-1 flex-col items-start p-3 text-left">
+              <p className="text-[10px] font-extrabold uppercase tracking-[.18em] text-teal-200">Droidi • Future City</p>
+              <h2 className="mt-1 text-base font-black leading-tight">RS DROID</h2>
+              <p className="mt-1 text-xs leading-4 text-slate-100">Entra nel mondo futuristico RiverSpend.</p>
+              <span className="mt-auto inline-flex rounded-full bg-teal-300 px-3 py-1.5 text-[11px] font-extrabold text-slate-950">SCOPRI FUTURE CITY →</span>
+            </div>
+          </a>
+
           <a href="/social-network" aria-label="Scopri RiverSpend TV e condividi i tuoi video" className="rs-banner-slide rs-creator-banner group shrink-0 snap-start overflow-hidden rounded-2xl border border-violet-300/70 bg-gradient-to-br from-violet-950 via-slate-950 to-cyan-950 text-white shadow-lg transition hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-violet-300/70">
             <div className="flex h-full flex-col p-4 text-left">
               <span className="text-3xl" aria-hidden="true">🎬</span>
