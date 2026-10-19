@@ -1060,9 +1060,9 @@ export default function Home() {
             </div>
             <div className="flex min-h-0 flex-1 flex-col items-start p-3 text-left">
               <p className="text-[10px] font-extrabold uppercase tracking-[.18em] text-amber-200">Artisti • CD • Eventi</p>
-              <h2 className="mt-1 text-base font-black leading-tight">RS MUSIC</h2>
+              <h2 className="mt-1 text-base font-black leading-tight">RiverSpendYourMusic</h2>
               <p className="mt-1 text-xs leading-4 text-slate-100">Scopri il mondo della musica RiverSpend.</p>
-              <span className="mt-auto inline-flex rounded-full bg-amber-300 px-3 py-1.5 text-[11px] font-extrabold text-slate-950">SCOPRI MUSIC →</span>
+              <span className="mt-auto inline-flex rounded-full bg-amber-300 px-3 py-1.5 text-[11px] font-extrabold text-slate-950">SCOPRI RIVERSPEND YOUR MUSIC →</span>
             </div>
           </a>
 
@@ -1073,22 +1073,22 @@ export default function Home() {
             </div>
             <div className="flex min-h-0 flex-1 flex-col items-start p-3 text-left">
               <p className="text-[10px] font-extrabold uppercase tracking-[.18em] text-violet-200">Video • Streaming</p>
-              <h2 className="mt-1 text-base font-black leading-tight">RS STREAMING</h2>
+              <h2 className="mt-1 text-base font-black leading-tight">RiverSpend Streaming</h2>
               <p className="mt-1 text-xs leading-4 text-slate-100">Esplora il progetto video RiverSpend.</p>
-              <span className="mt-auto inline-flex rounded-full bg-violet-300 px-3 py-1.5 text-[11px] font-extrabold text-slate-950">SCOPRI STREAMING →</span>
+              <span className="mt-auto inline-flex rounded-full bg-violet-300 px-3 py-1.5 text-[11px] font-extrabold text-slate-950">SCOPRI RIVERSPEND STREAMING →</span>
             </div>
           </a>
 
-          <a href="/servizi/tv" aria-label="Apri RS TV" className="rs-banner-slide rs-creator-banner group shrink-0 snap-start overflow-hidden rounded-2xl border border-cyan-300/70 bg-gradient-to-br from-cyan-950 via-slate-950 to-teal-950 text-white shadow-lg transition hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-cyan-300/70">
+          <a href="/servizi/tv" aria-label="Apri RiverSpend TV" className="rs-banner-slide rs-creator-banner group shrink-0 snap-start overflow-hidden rounded-2xl border border-cyan-300/70 bg-gradient-to-br from-cyan-950 via-slate-950 to-teal-950 text-white shadow-lg transition hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-cyan-300/70">
             <div className="rs-world-media relative flex h-[112px] shrink-0 items-center justify-center overflow-hidden bg-gradient-to-br from-cyan-950 via-teal-900 to-blue-900">
               <span className="text-6xl drop-shadow-lg" role="img" aria-label="Televisione">📺</span>
               <span className="absolute bottom-2 right-3 text-2xl" aria-hidden="true">🎬</span>
             </div>
             <div className="flex min-h-0 flex-1 flex-col items-start p-3 text-left">
               <p className="text-[10px] font-extrabold uppercase tracking-[.18em] text-cyan-200">Video • Intrattenimento</p>
-              <h2 className="mt-1 text-base font-black leading-tight">RS TV</h2>
+              <h2 className="mt-1 text-base font-black leading-tight">RiverSpend TV</h2>
               <p className="mt-1 text-xs leading-4 text-slate-100">Scopri la visione televisiva RiverSpend.</p>
-              <span className="mt-auto inline-flex rounded-full bg-cyan-300 px-3 py-1.5 text-[11px] font-extrabold text-slate-950">ENTRA IN RS TV →</span>
+              <span className="mt-auto inline-flex rounded-full bg-cyan-300 px-3 py-1.5 text-[11px] font-extrabold text-slate-950">ENTRA IN RiverSpend TV →</span>
             </div>
           </a>
 
@@ -1099,9 +1099,9 @@ export default function Home() {
             </div>
             <div className="flex min-h-0 flex-1 flex-col items-start p-3 text-left">
               <p className="text-[10px] font-extrabold uppercase tracking-[.18em] text-teal-200">Droidi • Future City</p>
-              <h2 className="mt-1 text-base font-black leading-tight">RS DROID</h2>
+              <h2 className="mt-1 text-base font-black leading-tight">RiverSpend Droids</h2>
               <p className="mt-1 text-xs leading-4 text-slate-100">Entra nel mondo futuristico RiverSpend.</p>
-              <span className="mt-auto inline-flex rounded-full bg-teal-300 px-3 py-1.5 text-[11px] font-extrabold text-slate-950">SCOPRI FUTURE CITY →</span>
+              <span className="mt-auto inline-flex rounded-full bg-teal-300 px-3 py-1.5 text-[11px] font-extrabold text-slate-950">SCOPRI RIVERSPEND DROIDS →</span>
             </div>
           </a>
 
