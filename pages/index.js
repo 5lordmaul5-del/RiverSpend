@@ -1146,9 +1146,7 @@ export default function Home() {
 
 
 
-          <a href="/vendi" aria-label="Inizia a vendere su RiverSpendShop" className="rs-banner-slide group shrink-0 snap-start overflow-hidden rounded-2xl border border-teal-300/70 bg-slate-950 shadow-lg shadow-teal-950/15 transition hover:-translate-y-0.5 hover:border-amber-300 focus:outline-none focus:ring-4 focus:ring-teal-300/70">
-            <img src="/riverspend-seller-banner.svg" alt="Privati e aziende: apri la tua vetrina e inizia a vendere su RiverSpendShop" className="block aspect-[16/5] w-full object-cover sm:aspect-[16/4]" loading="eager" />
-          </a>
+
 
           </div>
 
