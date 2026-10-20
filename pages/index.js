@@ -914,8 +914,8 @@ export default function Home() {
               </button>
             </section>
 
-            <a id="rs-seller-card" href="/vendi" aria-label="Hai prodotti da vendere? Caricali qui e apri la tua vetrina su RiverSpendShop" className="rs-feature-card flex shrink-0 w-[220px] snap-start flex-col items-center justify-start overflow-hidden rounded-2xl border-2 border-emerald-300 bg-gradient-to-br from-emerald-950 via-teal-900 to-slate-950 p-2 text-center shadow-lg shadow-emerald-950/30 focus:outline-none focus:ring-4 focus:ring-emerald-300/70">
-              <svg viewBox="0 0 320 112" role="img" aria-label="Articoli e accessori da mettere in vendita" className="mb-1 block h-[72px] w-full shrink-0 rounded-xl" preserveAspectRatio="xMidYMid slice">
+            <a id="rs-seller-card" href="/vendi" aria-label="Hai prodotti da vendere? Caricali qui e apri la tua vetrina su RiverSpendShop" className="rs-feature-card flex shrink-0 w-[220px] snap-start flex-col items-center justify-start overflow-hidden rounded-2xl border-2 border-emerald-300 bg-gradient-to-br from-emerald-950 via-teal-900 to-slate-950 p-1.5 text-center shadow-lg shadow-emerald-950/30 focus:outline-none focus:ring-4 focus:ring-emerald-300/70">
+              <svg viewBox="0 0 320 112" role="img" aria-label="Articoli e accessori da mettere in vendita" className="mb-0.5 block h-[48px] w-full shrink-0 rounded-lg" preserveAspectRatio="xMidYMid slice">
                 <defs><linearGradient id="sellerWater" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#052e2b"/><stop offset=".55" stopColor="#0f766e"/><stop offset="1" stopColor="#164e63"/></linearGradient><linearGradient id="sellerGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#fef3c7"/><stop offset="1" stopColor="#d97706"/></linearGradient></defs>
                 <rect width="320" height="112" rx="12" fill="url(#sellerWater)"/><path d="M-10 87 Q65 45 130 83 T260 74 T340 64" fill="none" stroke="#67e8f9" strokeWidth="2" opacity=".65"/><path d="M-5 98 Q75 62 145 95 T330 82" fill="none" stroke="#fbbf24" strokeWidth="1.5" opacity=".8"/>
                 <ellipse cx="160" cy="93" rx="116" ry="12" fill="#022c22" opacity=".6"/><ellipse cx="160" cy="84" rx="112" ry="16" fill="url(#sellerGold)"/><ellipse cx="160" cy="80" rx="108" ry="14" fill="#f8fafc"/>
@@ -925,11 +925,11 @@ export default function Home() {
                 <rect x="238" y="36" width="30" height="31" rx="5" fill="#b45309" stroke="#fde68a" strokeWidth="2"/><path d="M244 36 Q253 20 262 36" fill="none" stroke="#fde68a" strokeWidth="3"/><path d="M246 48 L260 48 M246 55 L260 55" stroke="#fef3c7" strokeWidth="2"/>
                 <circle cx="43" cy="24" r="3" fill="#fde68a"/><circle cx="276" cy="17" r="2.5" fill="#a5f3fc"/><path d="M33 54 l4 -7 l4 7 l-4 7Z M282 51 l3 -5 l3 5 l-3 5Z" fill="#fde68a"/>
               </svg>
-              <p className="mt-1 text-[10px] font-extrabold uppercase tracking-wide text-emerald-200">VENDI SU RIVERSPEND</p>
-              <h2 className="mt-1 text-sm font-black leading-tight text-white">HAI PRODOTTI DA VENDERE?</h2>
-              <p className="mt-1 text-xs font-semibold leading-4 text-white">Carica i tuoi prodotti, apri la tua vetrina e inizia a vendere.</p>
-              <span className="rs-feature-action mt-2 inline-flex rounded-full border-2 border-white bg-emerald-300 px-2 py-2 text-[10px] font-black text-slate-950 shadow-md">CARICA I TUOI PRODOTTI →</span>
-              <p className="mt-1 text-[9px] leading-3 text-emerald-100">Commissione del 10% secondo le condizioni applicabili.</p>
+              <p className="mt-0.5 text-[9px] font-extrabold uppercase tracking-wide text-emerald-200">VENDI SU RIVERSPEND</p>
+              <h2 className="mt-0.5 text-xs font-black leading-tight text-white">HAI PRODOTTI DA VENDERE?</h2>
+              <p className="mt-0.5 text-[11px] font-semibold leading-3 text-white">Carica i tuoi prodotti, apri la tua vetrina e inizia a vendere.</p>
+              <span className="rs-feature-action mt-1 inline-flex rounded-full border-2 border-white bg-emerald-300 px-1.5 py-1 text-[9px] font-black leading-tight text-slate-950 shadow-md">CARICA I TUOI PRODOTTI →</span>
+              <p className="mt-0.5 text-[8px] leading-3 text-emerald-100">Commissione del 10% secondo le condizioni applicabili.</p>
             </a>
 
             <section className="rs-feature-card shrink-0 w-[220px] snap-start rs-fortune-card rounded-2xl border border-amber-400/40 bg-gradient-to-br from-slate-950 via-amber-950/30 to-slate-900 p-2 text-center shadow-lg shadow-amber-950/20">
