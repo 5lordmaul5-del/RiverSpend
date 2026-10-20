@@ -33,7 +33,7 @@ function sellerBadge(tipo) {
   if (value.includes('aziend') || value.includes('business') || value.includes('iva')) {
     return { label: 'RS azienda', style: 'border-emerald-300 bg-emerald-500 text-slate-950', note: 'Venditore professionale' };
   }
-  return { label: 'RSprivato', style: 'border-rose-300 bg-rose-500 text-white', note: 'Venditore privato' };
+  return { label: 'Privato', style: 'border-sky-300 bg-sky-100 text-sky-900', note: 'Venditore privato' };
 }
 
 export default function Prodotto() {
@@ -271,11 +271,26 @@ export default function Prodotto() {
     }
   }
 
-  if (caricamento) return <main className="min-h-screen bg-white p-6 text-slate-800">Il fiume sta preparando la scheda…</main>;
+  if (caricamento) return (
+    <main className="rs-product-page flex min-h-screen items-center justify-center bg-[#f7f3e9] px-5 py-10 text-slate-900" role="status" aria-live="polite">
+      <section className="w-full max-w-md rounded-3xl border border-teal-100 bg-white p-7 text-center shadow-lg shadow-teal-900/5">
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-teal-50 text-3xl" aria-hidden="true">🌊</div>
+        <h1 className="mt-4 text-xl font-extrabold text-slate-900">Stiamo aprendo la vetrina</h1>
+        <p className="mt-2 text-sm leading-6 text-slate-600">Il fiume sta preparando la scheda del prodotto. Attendi qualche istante.</p>
+        <div className="mx-auto mt-5 h-1.5 w-full overflow-hidden rounded-full bg-teal-50">
+          <div className="h-full w-1/3 animate-pulse rounded-full bg-teal-500" />
+        </div>
+      </section>
+    </main>
+  );
   if (errore || !prodotto) return (
-    <main className="min-h-screen bg-white p-6 text-slate-900">
-      <Link href="/" className="text-[#8a692b] underline">← Torna al RiverSpendShop</Link>
-      <p className="mt-6">{errore || 'Prodotto non trovato.'}</p>
+    <main className="rs-product-page flex min-h-screen items-center justify-center bg-[#f7f3e9] px-5 py-10 text-slate-900">
+      <section className="w-full max-w-md rounded-3xl border border-amber-100 bg-white p-7 shadow-lg shadow-teal-900/5">
+        <div className="text-3xl" aria-hidden="true">🛶</div>
+        <h1 className="mt-3 text-xl font-extrabold">Questa vetrina non è disponibile</h1>
+        <p className="mt-2 text-sm leading-6 text-slate-600">{errore || 'Prodotto non trovato.'}</p>
+        <Link href="/" className="mt-5 inline-flex min-h-11 items-center justify-center rounded-full bg-teal-600 px-5 py-2 font-bold text-white underline-offset-4 hover:bg-teal-700">← Torna al RiverSpendShop</Link>
+      </section>
     </main>
   );
 
