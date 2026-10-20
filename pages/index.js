@@ -1328,8 +1328,8 @@ export default function Home() {
 .rs-apps-grid > .rs-banner-slide.rs-hero > div a { padding:6px 8px; font-size:11px; }
 .rs-apps-grid { display:flex !important; flex-direction:row; flex-wrap:nowrap; width:100%; max-width:100%; box-sizing:border-box; overflow-x:auto; overflow-y:hidden; gap:10px; align-items:stretch; justify-content:flex-start; margin-left:auto; margin-right:auto; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; }
         .rs-feature-card { box-sizing:border-box; min-width:160px !important; width:160px !important; max-width:160px; height:228px !important; flex:0 0 160px !important; overflow:hidden; display:flex; scroll-snap-align:start; }
-        /* Banner venditore: più largo delle altre schede per rendere leggibile l'invito al caricamento. */
-        #rs-seller-card { box-sizing:border-box; min-width:220px !important; width:220px !important; max-width:220px !important; flex:0 0 220px !important; }
+        /* Banner venditore: stessa larghezza delle altre schede nel carosello mobile. */
+        #rs-seller-card { box-sizing:border-box; min-width:160px !important; width:160px !important; max-width:160px !important; flex:0 0 160px !important; }
         /* Contrasto leggibile e stato visivo coerente per i pulsanti della Rete. */
         .rs-product-card button[aria-pressed="true"] { background-color:#6ee7b7 !important; color:#064e3b !important; border-color:#34d399 !important; }
         .rs-product-card button[aria-pressed="false"] { background-color:#14b8a6 !important; color:#042f2e !important; border-color:#2dd4bf !important; }
