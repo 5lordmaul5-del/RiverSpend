@@ -1291,7 +1291,10 @@ export default function Home() {
         @media (prefers-reduced-motion: reduce) { .nova-animated-head, .nova-wave-hand { animation:none !important; } }
 
         .rs-apps-grid { display:flex !important; flex-direction:row; flex-wrap:nowrap; width:100%; max-width:100%; box-sizing:border-box; overflow-x:auto; overflow-y:hidden; gap:10px; align-items:stretch; justify-content:flex-start; margin-left:auto; margin-right:auto; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; }
-.rs-apps-grid > .rs-banner-slide { flex:0 0 240px; width:240px; min-width:240px; max-width:240px; height:228px; min-height:228px; max-height:228px; margin-bottom:0 !important; scroll-snap-align:start; box-sizing:border-box; overflow:hidden; position:relative; }
+.rs-apps-grid > .rs-banner-slide { flex:0 0 160px !important; width:160px !important; min-width:160px !important; max-width:160px !important; height:228px !important; min-height:228px !important; max-height:228px !important; margin-bottom:0 !important; scroll-snap-align:start; box-sizing:border-box; overflow:hidden; position:relative; }
+.rs-apps-grid > .rs-park-banner { flex:0 0 160px !important; width:160px !important; min-width:160px !important; max-width:160px !important; height:228px !important; min-height:228px !important; max-height:228px !important; }
+.rs-apps-grid > .rs-ecology-banner { flex:0 0 160px !important; width:160px !important; min-width:160px !important; max-width:160px !important; height:228px !important; min-height:228px !important; max-height:228px !important; }
+.rs-apps-grid > .rs-world-card { flex:0 0 160px !important; width:160px !important; min-width:160px !important; max-width:160px !important; height:228px !important; min-height:228px !important; max-height:228px !important; }
 .rs-apps-grid > .rs-creator-banner { display:flex; flex-direction:column; align-items:stretch; }
 .rs-apps-grid > .rs-creator-banner > div { box-sizing:border-box; min-height:0; height:100%; }
 .rs-apps-grid > .rs-creator-banner h2 { overflow-wrap:anywhere; }
