@@ -92,6 +92,12 @@ export default function RiverSpendPark() {
             <img src="https://raw.githubusercontent.com/5lordmaul5-del/RiverSpend/main/file_00000000070081f4be8d351d407b4017.png" alt="Concept panoramico di RiverSpend Park" className="aspect-[4/3] w-full object-cover" loading="lazy" />
             <figcaption className="p-3 text-sm font-semibold text-teal-100">Il mondo RiverSpend Park</figcaption>
           </figure>
+        </section>
+          <figure className="overflow-hidden rounded-2xl border border-amber-400 bg-slate-950 shadow-lg ">
+            <img src="https://raw.githubusercontent.com/5lordmaul5-del/RiverSpend/main/public/Screenshot_2026-10-20-20-11-58-215_com.openai.chatgpt-edit.jpg" alt="La famiglia ufficiale di RiverSpendPark: Sylver, Scarlett, Simba, Sofia e Stone" className="w-full h-auto object-contain" loading="lazy" />
+            <figcaption className="p-4 text-center text-base font-bold text-amber-200">La famiglia ufficiale di RiverSpendPark — Sylver, Scarlett, Simba, Sofia e Stone</figcaption>
+          </figure>
+        <section className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3" aria-label="Altre immagini di RiverSpend Park">
           <figure className="overflow-hidden rounded-2xl border border-teal-800 bg-slate-900">
             <img src="https://raw.githubusercontent.com/5lordmaul5-del/RiverSpend/main/file_0000000017408243a1a21bd3fec53f5f.png" alt="Concept di attrazioni e ambientazioni RiverSpend" className="aspect-[4/3] w-full object-cover" loading="lazy" />
             <figcaption className="p-3 text-sm font-semibold text-teal-100">Attrazioni e avventura</figcaption>
@@ -101,10 +107,6 @@ export default function RiverSpendPark() {
             <figcaption className="p-3 text-sm font-semibold text-teal-100">Esperienze da scoprire</figcaption>
           </figure>
         </section>
-          <figure className="overflow-hidden rounded-2xl border border-amber-400 bg-slate-950 shadow-lg sm:col-span-2 lg:col-span-3">
-            <img src="https://raw.githubusercontent.com/5lordmaul5-del/RiverSpend/main/public/Screenshot_2026-10-20-20-11-58-215_com.openai.chatgpt-edit.jpg" alt="La famiglia ufficiale di RiverSpendPark: Sylver, Scarlett, Simba, Sofia e Stone" className="w-full h-auto object-contain" loading="lazy" />
-            <figcaption className="p-4 text-center text-base font-bold text-amber-200">La famiglia ufficiale di RiverSpendPark — Sylver, Scarlett, Simba, Sofia e Stone</figcaption>
-          </figure>
         <p className="mt-4 rounded-xl border border-cyan-900 bg-cyan-950/50 p-4 text-sm leading-6 text-slate-800 ">Questa è la galleria iniziale del progetto. Aggiungeremo progressivamente una foto dedicata a ogni attrazione, mantenendo i nomi ufficiali e senza sostituire l'elenco già approvato.</p>
 
           <div className="mt-6 flex flex-wrap gap-3">
