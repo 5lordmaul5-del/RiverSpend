@@ -83,15 +83,6 @@ export default function Home() {
   }, []);
   const [showSplash, setShowSplash] = useState(true);
   useEffect(() => {
-    // Se il browser ripristina la vetrina dalla cache dopo aver aperto un prodotto,
-    // ricarica la pagina per mostrare la versione attuale del catalogo.
-    const aggiornaVetrinaAlRitorno = (event) => {
-      if (event.persisted) window.location.reload();
-    };
-    window.addEventListener('pageshow', aggiornaVetrinaAlRitorno);
-    return () => window.removeEventListener('pageshow', aggiornaVetrinaAlRitorno);
-  }, []);
-  useEffect(() => {
     // Mostra la schermata di apertura una sola volta per sessione, non a ogni ritorno allo Shop.
     try { if (sessionStorage.getItem('rs-opening-seen') === '1') setShowSplash(false); } catch {}
   }, []);
