@@ -1,0 +1,11 @@
+{
+  "name": "RiverSpendShop",
+  "short_name": "RiverSpend",
+  "description": "Il tuo shop, il tuo flow.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#06b6d4",
+  "lang": "it"
+}
