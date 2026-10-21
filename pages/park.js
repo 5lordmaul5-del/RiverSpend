@@ -174,7 +174,7 @@ export default function RiverSpendPark() {
                 <span className="text-xs text-slate-400">{tema}</span>
               </div>
               <h3 className="mt-4 text-xl font-bold">{nome}</h3>
-              <img src={immaginiAttrazioni[i % immaginiAttrazioni.length]} alt={nome} className="mt-4 aspect-[4/3] w-full rounded-xl object-cover" loading="lazy" />
+              <div className="mt-4 flex aspect-[4/3] w-full items-center justify-center rounded-xl border-2 border-dashed border-cyan-300 bg-cyan-50 p-4 text-center text-sm font-semibold text-teal-800" role="img" aria-label={`Foto da associare correttamente: ${nome}`}>Foto dedicata da inserire per<br />{nome}</div>
               <p className="mt-2 text-sm leading-6 text-slate-600">{descrizione}</p>
               {nome === 'RiverSpeed' && (
                 <div className="mt-4 space-y-3 border-t border-cyan-100 pt-4 text-sm leading-6 text-slate-700">
