@@ -90,35 +90,13 @@ export default function RiverSpendPark() {
         <section className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3" aria-label="Galleria RiverSpend Park">
           <figure className="overflow-hidden rounded-2xl border border-teal-800 bg-slate-900">
             <img src="https://raw.githubusercontent.com/5lordmaul5-del/RiverSpend/main/file_00000000070081f4be8d351d407b4017.png" alt="Concept panoramico di RiverSpend Park" className="aspect-[4/3] w-full object-cover" loading="lazy" />
-            <figcaption className="p-3 text-sm font-semibold text-teal-100">Il mondo RiverSpend Park</figcaption>
+            <figcaption className="p-3 text-sm font-semibold text-teal-100">Concept Photo • Progetto in sviluppo — area Terra e area Acqua</figcaption>
           </figure>
         </section>
           <figure className="overflow-hidden rounded-2xl border border-amber-400 bg-slate-950 shadow-lg ">
             <img src="https://raw.githubusercontent.com/5lordmaul5-del/RiverSpend/main/public/Screenshot_2026-10-20-20-11-58-215_com.openai.chatgpt-edit.jpg" alt="La famiglia ufficiale di RiverSpendPark: Sylver, Scarlett, Simba, Sofia e Stone" className="w-full h-auto object-contain" loading="lazy" />
             <figcaption className="p-4 text-center text-base font-bold text-amber-200">La famiglia ufficiale di RiverSpendPark — Sylver, Scarlett, Simba, Sofia e Stone</figcaption>
           </figure>
-        <section className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3" aria-label="Altre immagini di RiverSpend Park">
-          <figure className="overflow-hidden rounded-2xl border border-teal-800 bg-slate-900">
-            <img src="https://raw.githubusercontent.com/5lordmaul5-del/RiverSpend/main/file_0000000017408243a1a21bd3fec53f5f.png" alt="Concept di attrazioni e ambientazioni RiverSpend" className="aspect-[4/3] w-full object-cover" loading="lazy" />
-            <figcaption className="p-3 text-sm font-semibold text-teal-100">Attrazioni e avventura</figcaption>
-          </figure>
-          <figure className="overflow-hidden rounded-2xl border border-teal-800 bg-slate-900 sm:col-span-2 lg:col-span-1">
-            <img src="https://raw.githubusercontent.com/5lordmaul5-del/RiverSpend/main/file_00000000db008246926cc5b0d85ffd53.png" alt="Concept di esperienze e aree tematiche RiverSpend" className="aspect-[4/3] w-full object-cover" loading="lazy" />
-            <figcaption className="p-3 text-sm font-semibold text-teal-100">Esperienze da scoprire</figcaption>
-          </figure>
-        </section>
-        <p className="mt-4 rounded-xl border border-cyan-900 bg-cyan-950/50 p-4 text-sm leading-6 text-slate-800 ">Questa è la galleria iniziale del progetto. Aggiungeremo progressivamente una foto dedicata a ogni attrazione, mantenendo i nomi ufficiali e senza sostituire l'elenco già approvato.</p>
-
-          <div className="mt-6 flex flex-wrap gap-3">
-            <span className="rounded-full border border-teal-700 px-4 py-2 text-sm text-teal-800">Catalogo delle attrazioni</span>
-            <span className="rounded-full border border-teal-700 px-4 py-2 text-sm text-teal-800">Power Shield • sicurezza prioritaria</span>
-          </div>
-        </header>
-
-        <section className="my-8 rounded-2xl border border-amber-800 bg-amber-950/40 p-5">
-          <h2 className="text-xl font-bold text-amber-100">🛡️ Power Shield — principio di progettazione</h2>
-          <p className="mt-2 leading-7 text-amber-50/90">Ogni attrazione dovrà avere valutazione dei rischi, progettazione e collaudo da professionisti abilitati, procedure operative, manutenzione documentata, vie di esodo, accessibilità, gestione meteo e piano di emergenza. Questa pagina è un catalogo concettuale: non costituisce certificazione né autorizzazione all’esercizio.</p>
-        </section>
 
         <section className="my-8 overflow-hidden rounded-3xl border border-red-900/60 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-5 sm:p-7">
           <div className="flex flex-wrap items-start justify-between gap-4">
@@ -161,6 +139,30 @@ export default function RiverSpendPark() {
           </div>
           <div className="mt-4 rounded-xl border border-amber-800 bg-amber-950/30 p-4 text-sm leading-6 text-amber-100">🛡️ <strong>Power Shield:</strong> ogni effetto di suono, luce, movimento, acqua, fumo o simulazione dovrà essere progettato e validato da professionisti qualificati, con vie di esodo indipendenti, arresto di emergenza, accessibilità e procedure operative.</div>
         </section>
+        <section className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3" aria-label="Altre immagini di RiverSpend Park">
+          <figure className="overflow-hidden rounded-2xl border border-teal-800 bg-slate-900">
+            <img src="https://raw.githubusercontent.com/5lordmaul5-del/RiverSpend/main/file_0000000017408243a1a21bd3fec53f5f.png" alt="Concept di attrazioni e ambientazioni RiverSpend" className="aspect-[4/3] w-full object-cover" loading="lazy" />
+            <figcaption className="p-3 text-sm font-semibold text-teal-100">Attrazioni e avventura</figcaption>
+          </figure>
+          <figure className="overflow-hidden rounded-2xl border border-teal-800 bg-slate-900 sm:col-span-2 lg:col-span-1">
+            <img src="https://raw.githubusercontent.com/5lordmaul5-del/RiverSpend/main/file_00000000db008246926cc5b0d85ffd53.png" alt="Concept di esperienze e aree tematiche RiverSpend" className="aspect-[4/3] w-full object-cover" loading="lazy" />
+            <figcaption className="p-3 text-sm font-semibold text-teal-100">Esperienze da scoprire</figcaption>
+          </figure>
+        </section>
+        <p className="mt-4 rounded-xl border border-cyan-900 bg-cyan-950/50 p-4 text-sm leading-6 text-slate-800 ">Questa è la galleria iniziale del progetto. Aggiungeremo progressivamente una foto dedicata a ogni attrazione, mantenendo i nomi ufficiali e senza sostituire l'elenco già approvato.</p>
+
+          <div className="mt-6 flex flex-wrap gap-3">
+            <span className="rounded-full border border-teal-700 px-4 py-2 text-sm text-teal-800">Catalogo delle attrazioni</span>
+            <span className="rounded-full border border-teal-700 px-4 py-2 text-sm text-teal-800">Power Shield • sicurezza prioritaria</span>
+          </div>
+        </header>
+
+        <section className="my-8 rounded-2xl border border-amber-800 bg-amber-950/40 p-5">
+          <h2 className="text-xl font-bold text-amber-100">🛡️ Power Shield — principio di progettazione</h2>
+          <p className="mt-2 leading-7 text-amber-50/90">Ogni attrazione dovrà avere valutazione dei rischi, progettazione e collaudo da professionisti abilitati, procedure operative, manutenzione documentata, vie di esodo, accessibilità, gestione meteo e piano di emergenza. Questa pagina è un catalogo concettuale: non costituisce certificazione né autorizzazione all’esercizio.</p>
+        </section>
+
+
 
         <div className="mb-4 flex items-end justify-between gap-3">
           <h2 className="text-2xl font-bold">Le attrazioni</h2>
