@@ -89,8 +89,8 @@ export default function RiverSpendPark() {
 
         <section className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3" aria-label="Galleria RiverSpend Park">
           <figure className="overflow-hidden rounded-2xl border border-teal-800 bg-slate-900">
-            <img src="https://raw.githubusercontent.com/5lordmaul5-del/RiverSpend/main/file_00000000070081f4be8d351d407b4017.png" alt="Concept panoramico di RiverSpend Park" className="aspect-[4/3] w-full object-cover" loading="lazy" />
-            <figcaption className="p-3 text-sm font-semibold text-teal-100">Concept Photo • Progetto in sviluppo — area Terra e area Acqua</figcaption>
+            <img src="https://raw.githubusercontent.com/5lordmaul5-del/RiverSpend/main/file_00000000070081f4be8d351d407b4017.png" alt="Manifesto panoramico concept di RiverSpend Park: rapide e cascate, dinosauri, tunnel acquatici, castelli e aree tematiche dal passato al futuro" className="aspect-[4/3] w-full object-cover" loading="lazy" />
+            <figcaption className="p-3 text-sm font-semibold text-teal-100">Concept panoramico • Progetto in sviluppo — avventura tra preistoria, civiltà antiche, Medioevo, WWII, spazio, futuro e mondo acquatico. Illustrazione generale del parco, non foto di una singola attrazione.</figcaption>
           </figure>
         </section>
           <figure className="overflow-hidden rounded-2xl border border-amber-400 bg-slate-950 shadow-lg ">
