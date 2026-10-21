@@ -1,5 +1,19 @@
 import Link from 'next/link';
 
+const kidsWaterPark = [
+  ['Megalondontе','Scivolo acquatico tematizzato','Un grande percorso d’acqua con tunnel, curve e una scenografia ispirata al megalodonte. Concept in sviluppo.'],
+  ['Tsunami Wave','Onda e acqua','Un’esperienza acquatica ispirata alla forza delle onde, da definire nel progetto tecnico.'],
+  ['Octopus','Attrazione acquatica a tema marino','Un’area scenografica con tentacoli, spruzzi e giochi d’acqua. Concept in sviluppo.'],
+  ['River Rapidi','Rafting per gruppi','Discesa su gommoni tra rapide, cascate e curve scenografiche. Concept in sviluppo.'],
+  ['Leviatan','Grande attrazione acquatica','Un’avventura acquatica ispirata a una creatura leggendaria. Concept in sviluppo.'],
+  ['Whale','Esperienza marina per famiglie','Un’ambientazione con balena e giochi d’acqua pensata per il divertimento in famiglia. Concept in sviluppo.'],
+  ['Manta','Scivolata acquatica panoramica','Un percorso ispirato al movimento della manta, con curve e spruzzi. Concept in sviluppo.'],
+  ['Orca','Avventura marina','Un’esperienza tematizzata sull’orca, con scenografia oceanica e giochi d’acqua. Concept in sviluppo.'],
+  ['Trichechi','Area marina per famiglie','Un’ambientazione giocosa con trichechi e attività d’acqua. Concept in sviluppo.'],
+  ['FreeFall','Discesa adrenalinica','Un concept di discesa ripida; altezza, velocità e accesso saranno definiti e verificati da progettisti qualificati.'],
+  ['RiverFlow','Percorso d’acqua rilassante','Un percorso acquatico continuo per godersi il fiume e la tematizzazione del parco. Concept in sviluppo.'],
+];
+
 const attrazioni = [
   ['RiverStorm','Acqua e avventura','Segui il corso del fiume tra rapide, spruzzi e passaggi scenografici. RiverStorm è pensata come un’avventura d’acqua da vivere in gruppo, con cambi di ritmo, scorci naturali e momenti sorprendenti. Il percorso e le caratteristiche operative saranno definiti nella fase di progettazione tecnica.'],
   ['Volcano Escape','Avventura indoor','Entra in un mondo vulcanico tra rocce, bagliori di lava scenografica, fumo controllato ed effetti luminosi. Volcano Escape propone una missione immersiva attraverso ambientazioni sotterranee e passaggi narrativi, con sorprese lungo il percorso. Gli effetti reali e le modalità di partecipazione saranno stabiliti dal progetto definitivo e dalle verifiche di sicurezza.'],
@@ -163,6 +177,27 @@ export default function RiverSpendPark() {
         </section>
 
 
+
+        <section className="my-8 rounded-2xl border border-cyan-300 bg-gradient-to-br from-sky-950 via-blue-950 to-teal-950 p-5 text-white" aria-labelledby="kids-waterpark-title">
+          <div className="mb-5">
+            <p className="text-sm font-bold uppercase tracking-[0.18em] text-cyan-300">Zona Kids / WaterPark</p>
+            <h2 id="kids-waterpark-title" className="mt-1 text-2xl font-extrabold">Le 11 attrazioni acquatiche</h2>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-sky-100">Catalogo concettuale in fase di sviluppo. Ogni scheda avrà la propria immagine dedicata, abbinata al nome corretto; le caratteristiche tecniche definitive saranno stabilite da progettisti e fornitori qualificati.</p>
+          </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {kidsWaterPark.map(([nome,tema,descrizione],i) => (
+              <article key={nome} className="overflow-hidden rounded-2xl border border-cyan-800 bg-slate-950/80 p-4">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="rounded-full bg-cyan-300 px-3 py-1 text-xs font-black text-slate-950">{String(i+1).padStart(2,'0')}</span>
+                  <span className="text-xs font-semibold text-cyan-200">{tema}</span>
+                </div>
+                <h3 className="mt-3 text-lg font-extrabold">{nome}</h3>
+                <div className="mt-3 flex aspect-[4/3] items-center justify-center rounded-xl border-2 border-dashed border-cyan-700 bg-slate-900 p-4 text-center text-sm font-semibold text-cyan-200" role="img" aria-label={`Immagine dedicata da inserire per ${nome}`}>Immagine dedicata da associare a<br />{nome}</div>
+                <p className="mt-3 text-sm leading-6 text-slate-200">{descrizione}</p>
+              </article>
+            ))}
+          </div>
+        </section>
 
         <div className="mb-4 flex items-end justify-between gap-3">
           <h2 className="text-2xl font-bold">Le attrazioni</h2>
