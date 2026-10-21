@@ -96,6 +96,39 @@ export default function RsSponsPage() {
 
           <OffertaATempoDemo />
 
+          <section className="mt-7 rounded-2xl border border-amber-300 bg-gradient-to-br from-amber-50 to-white p-5 sm:p-6" aria-labelledby="super-fast-title">
+            <p className="text-xs font-black uppercase tracking-[0.2em] text-amber-700">RiverSpendShop · Offerte speciali</p>
+            <h2 id="super-fast-title" className="mt-2 text-2xl font-extrabold">⚡ Super Fast SuperSpend</h2>
+            <p className="mt-2 text-sm leading-6 text-slate-700">La vetrina dedicata alle offerte che stanno per scadere. Ogni offerta mostra il timer reale della campagna, il prezzo applicabile e lo stato: attiva, ultimi 30 secondi oppure scaduta.</p>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              <article className="rounded-xl border border-cyan-200 bg-white p-4">
+                <p className="font-extrabold text-slate-900">⏱️ Offerta a tempo</p>
+                <p className="mt-1 text-sm text-slate-600">Durata predefinita di 15 minuti, con prezzo a fasce dichiarate in anticipo.</p>
+              </article>
+              <article className="rounded-xl border border-red-200 bg-white p-4">
+                <p className="font-extrabold text-red-700">🔴 Ultimi 30 secondi</p>
+                <p className="mt-1 text-sm text-slate-600">Il timer passa al rosso lampeggiante; l'animazione rispetta l'impostazione di movimento ridotto del dispositivo.</p>
+              </article>
+              <article className="rounded-xl border border-amber-200 bg-white p-4">
+                <p className="font-extrabold text-slate-900">📈 Prezzo a fasce</p>
+                <p className="mt-1 text-sm text-slate-600">Il prezzo cambia solo secondo regole pubblicate prima dell'avvio, senza modifiche casuali o retroattive.</p>
+              </article>
+              <article className="rounded-xl border border-slate-200 bg-white p-4">
+                <p className="font-extrabold text-slate-900">⌛ Offerte in scadenza</p>
+                <p className="mt-1 text-sm text-slate-600">A scadenza raggiunta l'offerta deve risultare terminata e non essere più acquistabile al prezzo precedente.</p>
+              </article>
+            </div>
+            <div className="mt-4 rounded-xl border border-slate-200 bg-white p-4">
+              <p className="font-extrabold text-slate-900">Pacchetti RS Spons Affrettati</p>
+              <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+                {['10 offerte', '25 offerte', '50 offerte', '100 offerte'].map((pacchetto) => (
+                  <div key={pacchetto} className="rounded-lg bg-slate-50 px-3 py-3 text-center text-sm font-bold text-slate-800">{pacchetto}</div>
+                ))}
+              </div>
+              <p className="mt-3 text-xs leading-5 text-slate-500">I pacchetti sono mostrati come proposta commerciale: prezzi, acquisto e attivazione automatica non sono ancora collegati a un pagamento reale.</p>
+            </div>
+          </section>
+
           <div className="mt-6 rounded-2xl border border-cyan-200 bg-cyan-50 p-4">
             <p className="font-black text-slate-900">🧢 Anche i privati possono sponsorizzare</p>
             <p className="mt-1 text-sm text-slate-600">Hai un cappellino, una borsa, una console o qualsiasi altro prodotto? Carica le foto e RS Spons Creator può preparare automaticamente uno spot professionale da promuovere.</p>
