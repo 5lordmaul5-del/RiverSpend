@@ -12,6 +12,7 @@ export default function RiverSpendPushNotifications() {
   const [permission, setPermission] = useState('default');
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
+  const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
     const ok = typeof window !== 'undefined' && 'serviceWorker' in navigator &&
@@ -84,9 +85,10 @@ export default function RiverSpendPushNotifications() {
     }
   }
 
-  if (!supported) return null;
+  if (!supported || dismissed) return null;
   return (
-    <aside className="fixed bottom-4 right-4 z-[90] w-[min( calc(100vw - 2rem), 22rem)] rounded-2xl border border-cyan-200 bg-white p-4 shadow-xl">
+    <aside className="fixed bottom-24 right-3 z-[90] w-[calc(100vw-1.5rem)] max-w-sm rounded-2xl border border-cyan-200 bg-white p-3 pr-10 shadow-xl sm:bottom-6 sm:right-4">
+      <button type="button" onClick={() => setDismissed(true)} aria-label="Chiudi notifiche" className="absolute right-2 top-2 rounded-lg px-2 py-1 text-lg font-bold text-slate-500" style={{ lineHeight: 1 }}>×</button>
       <p className="font-extrabold text-slate-900">🔔 Notifiche RiverSpend</p>
       <p className="mt-1 text-sm text-slate-600">Ricevi gli avvisi sulle offerte e le novità che scegli di seguire.</p>
       <div className="mt-3 flex flex-wrap gap-2">
