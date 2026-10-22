@@ -230,6 +230,27 @@ export default function Checkout() {
     }
   }
 
+  async function runSandboxPayment() {
+    setError(''); setPaypalMessage('');
+    if (!orderId) return setError('Prima crea l’ordine.');
+    try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token;
+      if (!token) throw new Error('Accedi di nuovo al tuo account RiverSpend.');
+      const response = await fetch('/api/pay/sandbox', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+        body: JSON.stringify({ orderId })
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result?.error || 'Pagamento sandbox non riuscito.');
+      setPaypalMessage('✅ Test completato: pagamento simulato, nessun denaro reale movimentato. Ordine ' + result.orderId + '.');
+      try { localStorage.removeItem('riverspend-rete'); setItems([]); } catch {}
+    } catch (err) {
+      setError(err?.message || 'Errore nel test di pagamento.');
+    }
+  }
+
   async function selectCashOnDelivery() {
     setError(''); setCodMessage(''); setTransferMessage('');
     if (!orderId) return setError('Prima crea l’ordine.');
@@ -333,7 +354,7 @@ Invia una richiesta d’ordine. RiverSpendShop è appena partito: il venditore c
             <div className="mt-4 grid gap-3">
               {[
                 ['cod','🚚','Pagamento alla consegna in contanti'],
-                ['transfer','🏦','Bonifico istantaneo']
+                ['transfer','🏦','Bonifico istantaneo'],\n                ['sandbox','🧪','Test RiverSpend Pay (solo simulazione)']
               ].map(([id, icon, title]) => (
                 <button key={id} type="button" onClick={() => setSelectedPayment(id)} className={`flex items-center justify-between rounded-xl border px-4 py-3 text-left ${selectedPayment === id ? 'border-teal-500 bg-teal-50' : 'border-slate-200 bg-white'}`}>
                   <span className="flex items-center gap-3"><span className="text-xl">{icon}</span><strong className="text-slate-900">{title}</strong></span>
@@ -399,6 +420,12 @@ Invia una richiesta d’ordine. RiverSpendShop è appena partito: il venditore c
               {selectedPayment === 'paypal' && (
                 <button type="button" onClick={startPayPalPayment} disabled={!orderId || paypalLoading} className="rounded-xl border border-sky-400 bg-sky-600 px-5 py-3 font-black text-white disabled:cursor-not-allowed disabled:opacity-40">
                   {paypalLoading ? 'Apertura PayPal…' : 'Paga con PayPal'}
+                </button>
+              )}
+
+              {selectedPayment === 'sandbox' && (
+                <button type="button" onClick={runSandboxPayment} disabled={!orderId} className="rounded-xl border border-violet-400 bg-violet-600 px-5 py-3 font-black text-white disabled:cursor-not-allowed disabled:opacity-40">
+                  🧪 Esegui test pagamento (nessun addebito)
                 </button>
               )}
 
