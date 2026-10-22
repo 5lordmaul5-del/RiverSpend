@@ -12,24 +12,37 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Configurazione Supabase server mancante.' });
   }
 
-  const supabase = createClient(supabaseUrl, serviceRoleKey);
+  const auth = req.headers.authorization || '';
+  const token = auth.startsWith('Bearer ') ? auth.slice(7) : '';
+  if (!token) return res.status(401).json({ error: 'Sessione RiverSpend mancante.' });
+
+  const supabase = createClient(supabaseUrl, serviceRoleKey, {
+    auth: { persistSession: false, autoRefreshToken: false }
+  });
+
+  const { data: { user }, error: userError } = await supabase.auth.getUser(token);
+  if (userError || !user) return res.status(401).json({ error: 'Sessione RiverSpend non valida.' });
+
   const { orderId } = req.body || {};
   if (!orderId) return res.status(400).json({ error: 'orderId obbligatorio.' });
 
   const { data: order, error: orderError } = await supabase
     .from('orders')
-    .select('id,total,currency,buyer_id,payment_status')
+    .select('id,total,currency,buyer_id,payment_status,status')
     .eq('id', orderId)
+    .eq('buyer_id', user.id)
     .single();
 
-  if (orderError || !order) return res.status(404).json({ error: 'Ordine non trovato.' });
+  if (orderError || !order) return res.status(404).json({ error: 'Ordine non trovato per questo account.' });
   if (order.payment_status === 'paid') return res.status(409).json({ error: 'Ordine già pagato.' });
+  if (!['pending_shipping_quote', 'pending'].includes(order.status)) {
+    return res.status(409).json({ error: 'Ordine non disponibile per il test di pagamento.' });
+  }
 
   const amount = Number(order.total || 0);
   if (!Number.isFinite(amount) || amount <= 0) return res.status(400).json({ error: 'Totale ordine non valido.' });
 
   const idempotencyKey = `sandbox-${order.id}`;
-
   const { data: paymentOrder, error: paymentOrderError } = await supabase
     .from('payment_orders')
     .upsert({
@@ -46,15 +59,17 @@ export default async function handler(req, res) {
     .select('id')
     .single();
 
-  if (paymentOrderError) return res.status(500).json({ error: paymentOrderError.message });
+  if (paymentOrderError) return res.status(500).json({ error: 'Impossibile registrare il pagamento di test.' });
 
-  const { data: existingTx } = await supabase
+  const { data: existingTx, error: txLookupError } = await supabase
     .from('payment_transactions')
     .select('id')
     .eq('payment_order_id', paymentOrder.id)
     .eq('provider', 'sandbox')
     .eq('type', 'payment')
     .limit(1);
+
+  if (txLookupError) return res.status(500).json({ error: 'Impossibile verificare la transazione di test.' });
 
   if (!existingTx?.length) {
     const { error: txError } = await supabase.from('payment_transactions').insert({
@@ -68,7 +83,7 @@ export default async function handler(req, res) {
       currency: order.currency || 'EUR',
       raw_reference: { test_only: true, simulated: true }
     });
-    if (txError) return res.status(500).json({ error: txError.message });
+    if (txError) return res.status(500).json({ error: 'Impossibile registrare la transazione di test.' });
   }
 
   const { data: treasuryMovement, error: treasuryError } = await supabase.rpc(
@@ -81,14 +96,15 @@ export default async function handler(req, res) {
     }
   );
 
-  if (treasuryError) return res.status(500).json({ error: treasuryError.message });
+  if (treasuryError) return res.status(500).json({ error: 'Impossibile aggiornare la tesoreria di test.' });
 
   const { error: orderUpdateError } = await supabase
     .from('orders')
     .update({ payment_status: 'paid', status: 'confirmed' })
-    .eq('id', order.id);
+    .eq('id', order.id)
+    .eq('buyer_id', user.id);
 
-  if (orderUpdateError) return res.status(500).json({ error: orderUpdateError.message });
+  if (orderUpdateError) return res.status(500).json({ error: 'Impossibile aggiornare lo stato dell’ordine di test.' });
 
   return res.status(200).json({
     ok: true,
