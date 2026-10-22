@@ -32,8 +32,18 @@ export default function RiverSpendPushNotifications() {
       const result = await Notification.requestPermission();
       setPermission(result);
       if (result !== 'granted') throw new Error('Permesso notifiche non concesso.');
-      const registration = await navigator.serviceWorker.register('/sw.js');
-      const subscription = await registration.pushManager.subscribe({
+
+      // Registration may resolve before the worker reaches the activated state.
+      // PushManager.subscribe requires an active service worker registration.
+      const registration = await navigator.serviceWorker.register('/sw.js', { scope: '/' });
+      await registration.update();
+      const activeRegistration = await navigator.serviceWorker.ready;
+      if (!activeRegistration.active) {
+        throw new Error('Il servizio notifiche non è ancora attivo. Ricarica la pagina e riprova.');
+      }
+
+      const existingSubscription = await activeRegistration.pushManager.getSubscription();
+      const subscription = existingSubscription || await activeRegistration.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(keyData.publicKey)
       });
