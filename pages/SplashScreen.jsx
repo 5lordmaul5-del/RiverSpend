@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 export default function SplashScreen({ onEnter }) {
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(true);
   const entered = useRef(false);
 
   function enterShop() {
@@ -16,13 +16,7 @@ export default function SplashScreen({ onEnter }) {
   }
 
   useEffect(() => {
-    const inTimer = window.setTimeout(() => setVisible(true), 30);
-    const outTimer = window.setTimeout(() => enterShop(), 5000);
-
-    return () => {
-      window.clearTimeout(inTimer);
-      window.clearTimeout(outTimer);
-    };
+    return undefined;
   }, []);
 
   return (
@@ -42,7 +36,7 @@ export default function SplashScreen({ onEnter }) {
           onClick={enterShop}
           className="rounded-full border border-white/80 bg-white px-8 py-4 text-base font-extrabold tracking-wide text-[#07566c] shadow-xl transition-transform active:scale-95"
         >
-          ENTRA IN RIVERSPENDSHOP →
+          CLICCA PER ENTRARE
         </button>
       </div>
     </div>
