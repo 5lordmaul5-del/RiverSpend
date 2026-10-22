@@ -81,11 +81,8 @@ export default function Home() {
     window.addEventListener('riverspend:language-change', sync);
     return () => window.removeEventListener('riverspend:language-change', sync);
   }, []);
+  // Mostra la schermata di apertura fin dal primo render, evitando il lampo della homepage.
   const [showSplash, setShowSplash] = useState(true);
-  useEffect(() => {
-    // Mostra la schermata di apertura una sola volta per sessione, non a ogni ritorno allo Shop.
-    try { if (sessionStorage.getItem('rs-opening-seen') === '1') setShowSplash(false); } catch {}
-  }, []);
   const [prodotti, setProdotti] = useState([]);
   const [errore, setErrore] = useState('');
   const [menuCategorie, setMenuCategorie] = useState(false);
@@ -783,7 +780,7 @@ export default function Home() {
         </div>
       )}
 
-      {showSplash && <SplashScreen onEnter={() => { try { sessionStorage.setItem('rs-opening-seen', '1'); } catch {} setShowSplash(false); }} />}
+      {showSplash && <SplashScreen onEnter={() => setShowSplash(false)} />}
 
       <div className={`transition-opacity duration-700 ${showSplash ? 'opacity-0' : 'opacity-100'}`}>
         <header className="rs-header sticky top-0 z-30 border-b border-amber-200 bg-white/95 px-3 py-2 shadow-sm backdrop-blur">
