@@ -354,7 +354,8 @@ Invia una richiesta d’ordine. RiverSpendShop è appena partito: il venditore c
             <div className="mt-4 grid gap-3">
               {[
                 ['cod','🚚','Pagamento alla consegna in contanti'],
-                ['transfer','🏦','Bonifico istantaneo'],\n                ['sandbox','🧪','Test RiverSpend Pay (solo simulazione)']
+                ['transfer','🏦','Bonifico istantaneo'],
+                ['sandbox','🧪','Test RiverSpend Pay (solo simulazione)']
               ].map(([id, icon, title]) => (
                 <button key={id} type="button" onClick={() => setSelectedPayment(id)} className={`flex items-center justify-between rounded-xl border px-4 py-3 text-left ${selectedPayment === id ? 'border-teal-500 bg-teal-50' : 'border-slate-200 bg-white'}`}>
                   <span className="flex items-center gap-3"><span className="text-xl">{icon}</span><strong className="text-slate-900">{title}</strong></span>
