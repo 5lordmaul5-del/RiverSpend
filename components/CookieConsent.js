@@ -283,7 +283,7 @@ export default function CookieConsent() {
         type="button"
         onClick={openSettings}
         aria-label={t.settings}
-        style={{ position: 'fixed', zIndex: 9997, left: 12, bottom: 12, border: '1px solid #b7dcd7', borderRadius: 999, padding: '9px 13px', background: '#fffdf8', color: '#155c60', fontSize: 12, fontWeight: 700, boxShadow: '0 3px 14px #12343a18', cursor: 'pointer' }}
+        style={{ position: 'fixed', zIndex: 9997, left: 12, bottom: 'calc(76px + env(safe-area-inset-bottom, 0px))', border: '1px solid #b7dcd7', borderRadius: 999, padding: '9px 13px', background: '#fffdf8', color: '#155c60', fontSize: 12, fontWeight: 700, boxShadow: '0 3px 14px #12343a18', cursor: 'pointer' }}
       >
         {t.settings}
       </button>
