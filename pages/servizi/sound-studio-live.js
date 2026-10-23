@@ -63,9 +63,9 @@ export default function RiverSpendSoundStudioLive() {
         <section style={{marginTop:16,padding:18,borderRadius:22,background:'#082f49',color:'white',border:'1px solid #155e75',boxShadow:'0 8px 24px rgba(15,23,42,.12)'}}>
           <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(min(100%,280px),1fr))',gap:18,alignItems:'center'}}>
             <div>
-              <div style={{fontSize:12,letterSpacing:2,fontWeight:900,color:'#67e8f9'}}>ISSA • IMMERSIVE SURROUND SYSTEM AMBIENT</div>
-              <h2 style={{fontSize:'clamp(24px,4vw,34px)',lineHeight:1.15,margin:'8px 0'}}>Il mixer deve essere qui, in primo piano.</h2>
-              <p style={{color:'#cffafe',lineHeight:1.6}}>Carica più tracce, ascoltale e regola il volume di ogni canale nel mixer qui sotto. ISSA è il percorso dedicato a spazialità e audio immersivo: i controlli surround avanzati saranno attivati solo quando il motore audio sarà integrato e testato.</p>
+              <div style={{fontSize:12,letterSpacing:2,fontWeight:900,color:'#67e8f9'}}>ESCLUSIVA RIVERSPEND SOUND STUDIO</div>
+              <h2 style={{fontSize:'clamp(24px,4vw,34px)',lineHeight:1.15,margin:'8px 0'}}>ISSA: il sistema audio esclusivo RiverSpend</h2>
+              <p style={{color:'#cffafe',lineHeight:1.6}}>Carica più tracce, ascoltale e regola il volume di ogni canale nel mixer qui sotto. ISSA è il concept proprietario di RiverSpend Sound Studio, dedicato a mix, spazialità e audio immersivo. Il nome e l'esperienza sono riservati al progetto RiverSpend; le funzioni surround avanzate saranno attivate dopo l'integrazione e i test del motore audio.</p>
               <a href="#mixer-multitraccia" style={{display:'inline-block',padding:'11px 15px',borderRadius:11,background:'#22d3ee',color:'#083344',fontWeight:900,textDecoration:'none'}}>↓ Vai al mixer multitraccia</a>
             </div>
             <div style={{borderRadius:16,overflow:'hidden',minHeight:180,background:'#164e63'}}>
@@ -76,7 +76,7 @@ export default function RiverSpendSoundStudioLive() {
             {[
               ['🎚️','MIXER','Volume, mute e solo per traccia'],
               ['🎙️','REGISTRAZIONE','Microfono e tracce live: modulo da sviluppare'],
-              ['🌌','ISSA SURROUND','Audio immersivo e spazialità: modulo da integrare'],
+              ['🌌','ISSA • ESCLUSIVA RIVERSPEND','Sistema audio immersivo proprietario: modulo da integrare'],
               ['🤖','RIVER AI AUDIO','Assistenza intelligente: modulo futuro']
             ].map(([icon,title,desc])=><div key={title} style={{padding:12,border:'1px solid #155e75',borderRadius:12,background:'#164e63'}}>
               <div style={{fontSize:23}}>{icon}</div><strong style={{fontSize:13}}>{title}</strong><div style={{fontSize:12,color:'#cffafe',lineHeight:1.45,marginTop:4}}>{desc}</div>
@@ -148,7 +148,7 @@ export default function RiverSpendSoundStudioLive() {
         </section>
 
         <section style={{marginTop:18,display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(min(100%,230px),1fr))',gap:12}}>
-          {[['🎛️','Preamplificatore & FX','Prossimo modulo: gain, EQ, compressore, riverbero e delay.'],['🌌','Surround 5.1 / 7.1','Progettazione multicanale; rendering ed export richiedono un motore audio compatibile.'],['🎬','Video Edit','Modulo successivo per importare video, sincronizzare l’audio e montare le scene.'],['🤖','River AI Audio Lab','Pulizia, mix assistito e mastering tramite un servizio audio dedicato da integrare.']].map(([icon,title,desc])=><div key={title} style={{padding:16,borderRadius:18,background:'white',border:'1px solid #bae6fd'}}><div style={{fontSize:26}}>{icon}</div><strong>{title}</strong><p style={{fontSize:14,color:'#475569',lineHeight:1.5,marginBottom:0}}>{desc}</p></div>)}
+          {[['🎛️','Preamplificatore & FX','Moduli previsti: gain, EQ, compressore, riverbero e delay.'],['🌌','Surround 5.1 / 7.1','Progettazione multicanale; rendering ed export richiedono un motore audio compatibile.'],['🎬','Video Edit','Modulo successivo per importare video, sincronizzare l’audio e montare le scene.'],['🤖','River AI Audio Lab','Pulizia, mix assistito e mastering tramite un servizio audio dedicato da integrare.']].map(([icon,title,desc])=><div key={title} style={{padding:16,borderRadius:18,background:'white',border:'1px solid #bae6fd'}}><div style={{fontSize:26}}>{icon}</div><strong>{title}</strong><p style={{fontSize:14,color:'#475569',lineHeight:1.5,marginBottom:0}}>{desc}</p></div>)}
         </section>
         <footer style={{marginTop:20,padding:14,borderRadius:14,background:'#fff7ed',color:'#9a3412',fontSize:13,lineHeight:1.55}}>Versione iniziale dello studio: il mixer consente di caricare, ascoltare, regolare e silenziare tracce nel browser. Non salva ancora i progetti sul server e non esegue ancora mastering AI, registrazione live multitraccia, export del mix o depositi SIAE/Soundreef. Questi moduli richiedono integrazioni dedicate prima di essere offerti come servizi operativi.</footer>
       </div>
