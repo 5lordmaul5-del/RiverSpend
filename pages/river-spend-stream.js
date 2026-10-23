@@ -24,7 +24,7 @@ export default function RiverSpendStream() {
 
         <section className="mt-8 rounded-3xl border border-teal-100 bg-gradient-to-br from-white via-[#f2fbfa] to-[#d9f7f4] p-6 shadow-sm sm:p-10">
           <p className="text-sm font-bold uppercase tracking-[0.25em] text-teal-700">RiverSpend</p>
-          <h1 className="mt-2 text-4xl font-black sm:text-6xl">RiverSpendStream</h1>
+          <h1 className="mt-2 break-words text-4xl font-black leading-tight sm:text-6xl">RiverSpendStream</h1>
           <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-700">
             La piattaforma streaming dell'ecosistema RiverSpend: film, musica, serie, creator, concerti,
             live e Originals, progettata fin dall'inizio per smartphone, tablet, web e futura TV.
