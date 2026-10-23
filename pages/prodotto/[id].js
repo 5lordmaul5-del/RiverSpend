@@ -49,7 +49,8 @@ export default function Prodotto() {
   const [feedback, setFeedback] = useState('');
   const [mappaLocalita, setMappaLocalita] = useState(null);
   const [spotInCorso, setSpotInCorso] = useState(false);
-  const [spotCompletato, setSpotCompletato] = useState(false);
+  const [spotCompletato, setSpotCompletato] = useState(true);
+  const [mostraBadgeSpons, setMostraBadgeSpons] = useState(true);
   const [spotSecondi, setSpotSecondi] = useState(5);
   const [gradimento, setGradimento] = useState(0);
   const [gradimentoSalvato, setGradimentoSalvato] = useState(false);
@@ -114,20 +115,10 @@ export default function Prodotto() {
   }, []);
 
   useEffect(() => {
-    if (!spotInCorso) return;
-    const timer = setInterval(() => {
-      setSpotSecondi((secondi) => {
-        if (secondi <= 1) {
-          clearInterval(timer);
-          setSpotInCorso(false);
-          setSpotCompletato(true);
-          return 0;
-        }
-        return secondi - 1;
-      });
-    }, 1000);
-    return () => clearInterval(timer);
-  }, [spotInCorso]);
+    setMostraBadgeSpons(true);
+    const timer = setTimeout(() => setMostraBadgeSpons(false), 3000);
+    return () => clearTimeout(timer);
+  }, [fotoAttiva, prodotto?.id]);
 
   useEffect(() => {
     if (!prodotto) return;
@@ -318,11 +309,15 @@ export default function Prodotto() {
                   <div className="relative flex min-h-[330px] items-center justify-center overflow-hidden rounded-2xl border border-slate-200 bg-white sm:min-h-[510px]">
                     {contenuti[fotoAttiva]?.type === 'video' ? (
                       <div className="relative h-[330px] w-full overflow-hidden rounded-2xl bg-black sm:h-[510px]">
-                        {!spotCompletato ? (
-                          <div className="flex h-full flex-col items-center justify-center bg-gradient-to-br from-cyan-950 via-slate-950 to-slate-900 p-6 text-center text-white">
-                            <div className="rounded-full border border-amber-300/60 bg-amber-300/10 px-4 py-2 text-xs font-extrabold uppercase tracking-[.2em] text-amber-300">
-                              🎬 RS Spons · DEMO
-                            </div>
+                        <video controls playsInline preload="metadata" onPlay={() => setMostraBadgeSpons(false)} className="h-[330px] w-full object-contain sm:h-[510px]">
+                          <source src={contenuti[fotoAttiva].url} />
+                        </video>
+                        {mostraBadgeSpons && (
+                          <div className="pointer-events-none absolute left-3 top-3 z-10 rounded-full bg-black/75 px-3 py-1 text-xs font-bold text-white shadow">
+                            📢 RS Spons · Pubblicità
+                          </div>
+                        )}
+                      </div>
                             <h3 className="mt-5 text-2xl font-black sm:text-3xl">Spot pubblicitario</h3>
                             <p className="mt-2 max-w-md text-sm text-slate-300">
                               In questa demo lo sponsor viene mostrato prima del video dell'utente.
