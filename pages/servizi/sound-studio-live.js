@@ -9,6 +9,8 @@ export default function RiverSpendSoundStudioLive() {
   const [playing, setPlaying] = useState(false);
   const [notice, setNotice] = useState('Carica le tue tracce audio per iniziare il mix.');
   const audioRefs = useRef({});
+  const audioGraphs = useRef({});
+  const audioContextRef = useRef(null);
   const uploadRef = useRef(null);
   const soloActive = tracks.some(t => t.solo);
   const totalDuration = useMemo(() => tracks.reduce((max, t) => Math.max(max, t.duration || 0), 0), [tracks]);
@@ -20,10 +22,10 @@ export default function RiverSpendSoundStudioLive() {
       id: (Date.now() + i).toString() + Math.random().toString(36).slice(2, 7),
       name: file.name.replace(/\.[^.]+$/, ''),
       kind: kinds[Math.min(tracks.length + i, kinds.length - 1)],
-      url: URL.createObjectURL(file), file, volume: 80, muted: false, solo: false, duration: 0
+      url: URL.createObjectURL(file), file, volume: 80, muted: false, solo: false, duration: 0, bass: 0, mid: 0, treble: 0, pan: 0
     }));
     setTracks(prev => [...prev, ...additions]);
-    setNotice(additions.length + ' traccia/e aggiunta/e. Regola i livelli e premi Riproduci.');
+    setNotice(additions.length + ' traccia/e aggiunta/e. Regola volume, bassi, medi, alti e panorama stereo e premi Riproduci.');
     event.target.value = '';
   }
   function patchTrack(id, patch) { setTracks(prev => prev.map(t => t.id === id ? { ...t, ...patch } : t)); }
@@ -33,10 +35,41 @@ export default function RiverSpendSoundStudioLive() {
       if (el) el.volume = (t.muted || (soloActive && !t.solo) ? 0 : t.volume / 100) * nextMaster / 100;
     });
   }
+  function ensureAudioGraph(id, el) {
+    if (audioGraphs.current[id]) return audioGraphs.current[id];
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextClass) { setNotice('Il browser non supporta gli effetti audio avanzati. Prova con Chrome aggiornato.'); return null; }
+    const ctx = audioContextRef.current || (audioContextRef.current = new AudioContextClass());
+    const source = ctx.createMediaElementSource(el);
+    const bass = ctx.createBiquadFilter(); bass.type = 'lowshelf'; bass.frequency.value = 180;
+    const mid = ctx.createBiquadFilter(); mid.type = 'peaking'; mid.frequency.value = 1000; mid.Q.value = 0.8;
+    const treble = ctx.createBiquadFilter(); treble.type = 'highshelf'; treble.frequency.value = 5000;
+    const panner = ctx.createStereoPanner();
+    source.connect(bass); bass.connect(mid); mid.connect(treble); treble.connect(panner); panner.connect(ctx.destination);
+    const graph = { ctx, bass, mid, treble, panner };
+    audioGraphs.current[id] = graph;
+    return graph;
+  }
+  function applyEffects(track) {
+    const el = audioRefs.current[track.id];
+    if (!el) return;
+    const graph = ensureAudioGraph(track.id, el);
+    if (!graph) return;
+    graph.bass.gain.value = track.bass || 0;
+    graph.mid.gain.value = track.mid || 0;
+    graph.treble.gain.value = track.treble || 0;
+    graph.panner.pan.value = (track.pan || 0) / 100;
+  }
+  function changeEffect(track, key, value) {
+    const updated = { ...track, [key]: Number(value) };
+    patchTrack(track.id, { [key]: Number(value) });
+    applyEffects(updated);
+    setNotice('Effetto aggiornato su "' + track.name + '". Premi Riproduci per ascoltare il mix.');
+  }
   function togglePlayback() {
     if (!tracks.length) { setNotice('Prima carica almeno una traccia audio.'); return; }
     if (!playing) {
-      tracks.forEach(t => { const el = audioRefs.current[t.id]; if (el) { el.volume = (t.muted || (soloActive && !t.solo) ? 0 : t.volume / 100) * master / 100; el.play().catch(() => setNotice('Tocca di nuovo Riproduci per autorizzare la riproduzione audio.')); } });
+      tracks.forEach(t => { const el = audioRefs.current[t.id]; if (el) { el.volume = (t.muted || (soloActive && !t.solo) ? 0 : t.volume / 100) * master / 100; applyEffects(t); const ctx = audioContextRef.current; if (ctx && ctx.state === 'suspended') ctx.resume(); el.play().catch(() => setNotice('Tocca di nuovo Riproduci per autorizzare la riproduzione audio.')); } });
       setPlaying(true); setNotice('Riproduzione delle tracce caricate. Il mix è un’anteprima locale del browser.');
     } else {
       tracks.forEach(t => { const el = audioRefs.current[t.id]; if (el) el.pause(); });
@@ -47,6 +80,7 @@ export default function RiverSpendSoundStudioLive() {
     const track = tracks.find(t => t.id === id);
     if (track) URL.revokeObjectURL(track.url);
     delete audioRefs.current[id];
+    delete audioGraphs.current[id];
     setTracks(prev => prev.filter(t => t.id !== id));
   }
   return <>
@@ -80,6 +114,9 @@ export default function RiverSpendSoundStudioLive() {
             <div style={{display:'grid',gridTemplateColumns:'minmax(0,1fr) 55px',gap:12,alignItems:'center',marginTop:12}}>
               <input aria-label={'Volume '+t.name} type="range" min="0" max="100" value={t.volume} onChange={e=>{const v=Number(e.target.value);patchTrack(t.id,{volume:v});const el=audioRefs.current[t.id];if(el)el.volume=(t.muted||(soloActive&&!t.solo)?0:v/100)*master/100;}} style={{width:'100%',accentColor:'#0891b2'}} />
               <strong style={{textAlign:'right'}}>{t.volume}%</strong>
+            </div>
+            <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(min(100%,190px),1fr))',gap:10,marginTop:14,padding:12,background:'#f0fdfa',borderRadius:12}}>
+              {[[ 'Bassi', 'bass', -12, 12, ' dB'],['Medi', 'mid', -12, 12, ' dB'],['Alti', 'treble', -12, 12, ' dB'],['Panorama L/R', 'pan', -100, 100, '']].map(([label,key,min,max,unit])=><label key={key} style={{fontSize:12,fontWeight:800,color:'#164e63'}}>{label}: {t[key] || 0}{unit}<input aria-label={label+' '+t.name} type="range" min={min} max={max} step="1" value={t[key] || 0} onChange={e=>changeEffect(t,key,e.target.value)} style={{display:'block',width:'100%',accentColor:'#0e7490'}} /></label>)}
             </div>
             <audio ref={el=>{audioRefs.current[t.id]=el; if(el && el.duration && !t.duration) patchTrack(t.id,{duration:el.duration});}} src={t.url} preload="metadata" onLoadedMetadata={e=>patchTrack(t.id,{duration:e.currentTarget.duration})} onEnded={()=>{if(tracks.every(x=>{const el=audioRefs.current[x.id];return !el||el.ended||el.paused;}))setPlaying(false);}} controls style={{width:'100%',height:38,marginTop:8}} />
           </article>)}</div>}
