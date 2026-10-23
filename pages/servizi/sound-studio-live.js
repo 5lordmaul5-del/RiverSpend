@@ -60,6 +60,19 @@ export default function RiverSpendSoundStudioLive() {
     graph.treble.gain.value = track.treble || 0;
     graph.panner.pan.value = (track.pan || 0) / 100;
   }
+  function changeFx(track, key, value) {
+    const nextValue = Number(value);
+    patchTrack(track.id, { fx: { ...(track.fx || {}), [key]: nextValue } });
+    if (key === 'bass' || key === 'mid' || key === 'treble') {
+      changeEffect(track, key, nextValue);
+      return;
+    }
+    if (key === 'reverb') {
+      setNotice('Il controllo River Reverb è visibile, ma l’effetto riverbero dedicato non è ancora collegato al motore audio.');
+      return;
+    }
+    setNotice('Effetto aggiornato su "' + track.name + '".');
+  }
   function changeEffect(track, key, value) {
     const updated = { ...track, [key]: Number(value) };
     patchTrack(track.id, { [key]: Number(value) });
