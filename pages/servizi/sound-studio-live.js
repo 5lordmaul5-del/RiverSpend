@@ -387,10 +387,10 @@ export default function RiverSpendSoundStudioLive() {
           <label htmlFor="project" style={{display:'block',fontWeight:800,marginBottom:7}}>Nome del progetto</label>
           <input id="project" value={project} onChange={e=>setProject(e.target.value)} style={{boxSizing:'border-box',width:'100%',padding:12,border:'1px solid #cbd5e1',borderRadius:12,fontSize:16}} />
           <div style={{display:'flex',flexWrap:'wrap',gap:10,marginTop:14}}>
-            <label style={{display:'inline-flex',alignItems:'center',justifyContent:'center',gap:8,padding:'12px 16px',borderRadius:13,background:'#0891b2',color:'white',fontWeight:900,cursor:'pointer'}}>
+            <button type="button" onClick={()=>uploadRef.current?.click()} style={{display:'inline-flex',alignItems:'center',justifyContent:'center',gap:8,padding:'12px 16px',border:0,borderRadius:13,background:'#0891b2',color:'white',fontWeight:900,cursor:'pointer'}}>
               ＋ Carica tracce audio
-              <input ref={uploadRef} type="file" accept="audio/*,.wav,.mp3,.aiff,.flac,.m4a,.ogg" multiple onChange={addFiles} style={{position:'absolute',width:1,height:1,opacity:0,pointerEvents:'none'}} />
-            </label>
+            </button>
+            <input ref={uploadRef} type="file" accept="audio/*,.wav,.mp3,.aiff,.flac,.m4a,.ogg" multiple onChange={addFiles} style={{display:'none'}} />
             <button onClick={togglePlayback} style={{padding:'12px 18px',border:0,borderRadius:13,background:playing?'#0f766e':'#0f172a',color:'white',fontWeight:900,fontSize:15}}>{playing?'Ⅱ Pausa mix':'▶ Riproduci mix'}</button>
             <button onClick={()=>{tracks.forEach(t=>{const el=audioRefs.current[t.id];if(el){el.pause();el.currentTime=0;}});setPlaying(false);setNotice('Riproduzione riportata all’inizio.')}} style={{padding:'12px 16px',border:'1px solid #cbd5e1',borderRadius:13,background:'white',fontWeight:800}}>↺ Riavvolgi</button>
           </div>
