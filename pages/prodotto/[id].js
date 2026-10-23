@@ -262,18 +262,6 @@ export default function Prodotto() {
     }
   }
 
-  if (caricamento) return (
-    <main className="rs-product-page flex min-h-screen items-center justify-center bg-[#f7f3e9] px-5 py-10 text-slate-900" role="status" aria-live="polite">
-      <section className="w-full max-w-md rounded-3xl border border-teal-100 bg-white p-7 text-center shadow-lg shadow-teal-900/5">
-        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-teal-50 text-3xl" aria-hidden="true">🌊</div>
-        <h1 className="mt-4 text-xl font-extrabold text-slate-900">Stiamo aprendo la vetrina</h1>
-        <p className="mt-2 text-sm leading-6 text-slate-600">Il fiume sta preparando la scheda del prodotto. Attendi qualche istante.</p>
-        <div className="mx-auto mt-5 h-1.5 w-full overflow-hidden rounded-full bg-teal-50">
-          <div className="h-full w-1/3 animate-pulse rounded-full bg-teal-500" />
-        </div>
-      </section>
-    </main>
-  );
   if (errore || !prodotto) return (
     <main className="rs-product-page flex min-h-screen items-center justify-center bg-[#f7f3e9] px-5 py-10 text-slate-900">
       <section className="w-full max-w-md rounded-3xl border border-amber-100 bg-white p-7 shadow-lg shadow-teal-900/5">
