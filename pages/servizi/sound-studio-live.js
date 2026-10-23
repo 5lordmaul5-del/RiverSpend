@@ -204,24 +204,17 @@ export default function RiverSpendSoundStudioLive() {
           </div>
         </header>
 
-        <section id="ingresso-live" style={{marginTop:16,padding:18,borderRadius:22,background:'#082f49',color:'white',border:'1px solid #155e75'}}>
-          <div style={{fontSize:12,letterSpacing:2,fontWeight:900,color:'#67e8f9'}}>INGRESSO LIVE • MICROFONO / CHITARRA</div>
-          <h2 style={{fontSize:24,margin:'6px 0 8px'}}>Collega, ascolta in cuffia e registra</h2>
-          <p style={{color:'#cffafe',lineHeight:1.6,marginTop:0}}>Collega il microfono integrato/USB oppure una chitarra tramite un’interfaccia audio USB compatibile. Premi il pulsante per autorizzare il browser. La registrazione verrà aggiunta al mixer come traccia separata.</p>
-          <div style={{display:'flex',gap:9,flexWrap:'wrap'}}>
-            <button type="button" onClick={connectLiveInput} style={{padding:'12px 15px',border:0,borderRadius:11,background:'#fbbf24',color:'#082f49',fontWeight:900,cursor:'pointer'}}>🎙️ Collega microfono / strumento</button>
-            <button type="button" onClick={startLiveRecording} disabled={!audioInput||recording} style={{padding:'12px 15px',border:0,borderRadius:11,background:'#dc2626',color:'white',fontWeight:900,cursor:'pointer',opacity:(!audioInput || recording) ? 0.55 : 1}}>⏺ Avvia registrazione</button>
-            <button type="button" onClick={stopLiveRecording} disabled={!recording} style={{padding:'12px 15px',border:0,borderRadius:11,background:'#f8fafc',color:'#0f172a',fontWeight:900,cursor:'pointer',opacity:recording?1:.55}}>■ Ferma e aggiungi al mixer</button>
-            <button type="button" onClick={toggleLiveMonitor} disabled={!audioInput} style={{padding:'12px 15px',border:'1px solid #67e8f9',borderRadius:11,background:monitoring?'#0e7490':'#164e63',color:'white',fontWeight:900,cursor:'pointer',opacity:audioInput?1:.55}}>{monitoring?'🎧 Disattiva ascolto':'🎧 Ascolta in cuffia'}</button>
-            <button type="button" onClick={disconnectLiveInput} disabled={!audioInput} style={{padding:'12px 15px',border:'1px solid #67e8f9',borderRadius:11,background:'transparent',color:'white',fontWeight:800,cursor:'pointer',opacity:audioInput?1:.55}}>Scollega</button>
-          </div>
-          <div role="status" style={{marginTop:12,padding:11,borderRadius:10,background:'#164e63',color:'#cffafe',fontSize:13}}>{audioInput?'● COLLEGATO: '+inputName:'● Ingresso non collegato'}{recording?' — REGISTRAZIONE IN CORSO':''}</div>
-          <p style={{fontSize:12,color:'#cffafe',lineHeight:1.55,marginBottom:0}}>Importante: per una chitarra elettrica serve normalmente una scheda/interfaccia audio. Il monitoraggio via browser può avere ritardo; per suonare senza latenza usa il monitoraggio diretto della scheda audio. Attiva l’ascolto solo con cuffie, per evitare feedback dagli altoparlanti.</p>
-        </section>
-
         <section id="mixer-multitraccia" style={{marginTop:16,scrollMarginTop:18}}>
           <h2 style={{fontSize:23,margin:'0 0 10px'}}>🎚️ Mixer multitraccia — apri e usa</h2>
-          {!tracks.length ? <div style={{padding:26,textAlign:'center',border:'2px dashed #7dd3fc',borderRadius:20,background:'white'}}><div style={{fontSize:36}}>🎚️</div><strong style={{display:"block",fontSize:20,marginTop:6}}>Mixer multitraccia RiverSpend</strong><p style={{color:'#64748b',marginBottom:14}}>Il mixer è qui. Per creare i canali, scegli uno o più file audio MP3, WAV, M4A o altri formati supportati dal browser.</p><button type="button" onClick={()=>uploadRef.current?.click()} style={{padding:"12px 16px",border:0,borderRadius:12,background:"#0891b2",color:"white",fontWeight:900,fontSize:15,cursor:"pointer"}}>＋ SCEGLI FILE AUDIO</button></div> : <div style={{display:'grid',gap:10}}>{tracks.map((t,i)=><article key={t.id} style={{background:'white',border:'1px solid #cbd5e1',borderRadius:18,padding:14,boxShadow:'0 4px 14px rgba(15,23,42,.04)'}}>
+          {!tracks.length ? <div style={{padding:16,border:'1px solid #7dd3fc',borderRadius:20,background:'#082f49',color:'white'}}>
+            <div style={{display:'flex',justifyContent:'space-between',gap:12,flexWrap:'wrap',alignItems:'center'}}><div><strong style={{fontSize:20}}>Console pronta • 8 canali</strong><p style={{color:'#cffafe',fontSize:13,margin:'5px 0 0'}}>Il mixer è già visibile. Carica le tracce per attivare i canali con il tuo audio.</p></div><button type="button" onClick={()=>uploadRef.current?.click()} style={{padding:'12px 15px',border:0,borderRadius:11,background:'#fbbf24',color:'#082f49',fontWeight:900,cursor:'pointer'}}>＋ CARICA AUDIO</button></div>
+            <div style={{display:'grid',gridTemplateColumns:'repeat(4,minmax(0,1fr))',gap:8,marginTop:14}}>
+              {['VOCE','BATTERIA','BASSO','CHITARRA','TASTIERE','BASE','FX 1','FX 2'].map((name,i)=><div key={name} style={{minWidth:0,padding:'12px 7px',borderRadius:12,background:'#164e63',border:'1px solid #0e7490',textAlign:'center'}}>
+                <div style={{fontSize:11,fontWeight:900,color:'#a5f3fc',overflowWrap:'anywhere'}}>{String(i+1).padStart(2,'0')} • {name}</div><div style={{height:54,display:'flex',alignItems:'end',justifyContent:'center',gap:3,margin:'10px 0'}}>{Array.from({length:7},(_,j)=><span key={j} style={{width:5,height:(8+((i*13+j*11)%38))+'px',background:j%3===0?'#fbbf24':'#22d3ee',borderRadius:3,opacity:.85}} />)}</div>
+                <input aria-label={'Volume canale '+name} type="range" min="0" max="100" defaultValue="80" disabled style={{width:'100%',accentColor:'#22d3ee',opacity:.65}}/><div style={{display:'flex',justifyContent:'center',gap:5,marginTop:8}}><span style={{fontSize:10,border:'1px solid #67e8f9',borderRadius:5,padding:'3px 6px'}}>M</span><span style={{fontSize:10,border:'1px solid #67e8f9',borderRadius:5,padding:'3px 6px'}}>S</span></div>
+              </div>)}
+            </div><p style={{fontSize:12,color:'#bae6fd',marginBottom:0}}>I controlli dei canali si attivano quando importi file audio. Questa è una console di mix nel browser, non Cubase, Logic Pro o Pro Tools.</p>
+          </div> : <div style={{display:'grid',gap:10}}>{tracks.map((t,i)=><article key={t.id} style={{background:'white',border:'1px solid #cbd5e1',borderRadius:18,padding:14,boxShadow:'0 4px 14px rgba(15,23,42,.04)'}}>
             <div style={{display:'flex',alignItems:'center',gap:10,flexWrap:'wrap'}}>
               <div style={{width:36,height:36,display:'grid',placeItems:'center',borderRadius:11,background:'#cffafe',color:'#155e75',fontWeight:900}}>{i+1}</div>
               <div style={{flex:'1 1 150px',minWidth:0}}><strong style={{display:'block',overflowWrap:'anywhere'}}>{t.name}</strong><div style={{fontSize:12,color:'#64748b'}}>{t.file.name} · {(t.file.size/1024/1024).toFixed(1)} MB</div></div>
@@ -239,6 +232,23 @@ export default function RiverSpendSoundStudioLive() {
             </div>
             <div style={{marginTop:12,padding:12,borderRadius:12,background:'#f0fdfa',border:'1px solid #99f6e4'}}><strong style={{display:'block',marginBottom:8,color:'#115e59'}}>🎛️ Effetti traccia</strong><div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(125px,1fr))',gap:10}}>{[['bass','Bassi',-12,12,' dB'],['mid','Medi',-12,12,' dB'],['treble','Alti',-12,12,' dB'],['reverb','River Reverb',0,100,'%']].map(([key,label,min,max,unit])=><label key={key} style={{fontSize:12,fontWeight:800,color:'#134e4a'}}>{label} <span style={{float:'right'}}>{t.fx?.[key] ?? 0}{unit}</span><input aria-label={label+' '+t.name} type="range" min={min} max={max} value={t.fx?.[key] ?? 0} onChange={e=>changeFx(t,key,e.target.value)} style={{display:'block',width:'100%',accentColor:'#0d9488',marginTop:7}} /></label>)}</div><p style={{fontSize:11,color:'#475569',margin:'8px 0 0'}}>EQ e riverbero si applicano alla riproduzione nel browser; il file originale non viene modificato né esportato.</p></div><audio ref={el=>{audioRefs.current[t.id]=el; if(el && el.duration && !t.duration) patchTrack(t.id,{duration:el.duration});}} src={t.url} preload="metadata" onLoadedMetadata={e=>patchTrack(t.id,{duration:e.currentTarget.duration})} onEnded={()=>{if(tracks.every(x=>{const el=audioRefs.current[x.id];return !el||el.ended||el.paused;}))setPlaying(false);}} controls style={{width:'100%',height:38,marginTop:8}} />
           </article>)}</div>}
+        </section>
+
+
+
+        <section id="ingresso-live" style={{marginTop:16,padding:18,borderRadius:22,background:'#082f49',color:'white',border:'1px solid #155e75'}}>
+          <div style={{fontSize:12,letterSpacing:2,fontWeight:900,color:'#67e8f9'}}>INGRESSO LIVE • MICROFONO / CHITARRA</div>
+          <h2 style={{fontSize:24,margin:'6px 0 8px'}}>Collega, ascolta in cuffia e registra</h2>
+          <p style={{color:'#cffafe',lineHeight:1.6,marginTop:0}}>Collega il microfono integrato/USB oppure una chitarra tramite un’interfaccia audio USB compatibile. Premi il pulsante per autorizzare il browser. La registrazione verrà aggiunta al mixer come traccia separata.</p>
+          <div style={{display:'flex',gap:9,flexWrap:'wrap'}}>
+            <button type="button" onClick={connectLiveInput} style={{padding:'12px 15px',border:0,borderRadius:11,background:'#fbbf24',color:'#082f49',fontWeight:900,cursor:'pointer'}}>🎙️ Collega microfono / strumento</button>
+            <button type="button" onClick={startLiveRecording} disabled={!audioInput||recording} style={{padding:'12px 15px',border:0,borderRadius:11,background:'#dc2626',color:'white',fontWeight:900,cursor:'pointer',opacity:(!audioInput || recording) ? 0.55 : 1}}>⏺ Avvia registrazione</button>
+            <button type="button" onClick={stopLiveRecording} disabled={!recording} style={{padding:'12px 15px',border:0,borderRadius:11,background:'#f8fafc',color:'#0f172a',fontWeight:900,cursor:'pointer',opacity:recording?1:.55}}>■ Ferma e aggiungi al mixer</button>
+            <button type="button" onClick={toggleLiveMonitor} disabled={!audioInput} style={{padding:'12px 15px',border:'1px solid #67e8f9',borderRadius:11,background:monitoring?'#0e7490':'#164e63',color:'white',fontWeight:900,cursor:'pointer',opacity:audioInput?1:.55}}>{monitoring?'🎧 Disattiva ascolto':'🎧 Ascolta in cuffia'}</button>
+            <button type="button" onClick={disconnectLiveInput} disabled={!audioInput} style={{padding:'12px 15px',border:'1px solid #67e8f9',borderRadius:11,background:'transparent',color:'white',fontWeight:800,cursor:'pointer',opacity:audioInput?1:.55}}>Scollega</button>
+          </div>
+          <div role="status" style={{marginTop:12,padding:11,borderRadius:10,background:'#164e63',color:'#cffafe',fontSize:13}}>{audioInput?'● COLLEGATO: '+inputName:'● Ingresso non collegato'}{recording?' — REGISTRAZIONE IN CORSO':''}</div>
+          <p style={{fontSize:12,color:'#cffafe',lineHeight:1.55,marginBottom:0}}>Importante: per una chitarra elettrica serve normalmente una scheda/interfaccia audio. Il monitoraggio via browser può avere ritardo; per suonare senza latenza usa il monitoraggio diretto della scheda audio. Attiva l’ascolto solo con cuffie, per evitare feedback dagli altoparlanti.</p>
         </section>
 
         <section style={{marginTop:16,padding:18,borderRadius:22,background:'#082f49',color:'white',border:'1px solid #155e75',boxShadow:'0 8px 24px rgba(15,23,42,.12)'}}>
