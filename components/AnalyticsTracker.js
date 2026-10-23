@@ -108,8 +108,9 @@ export default function AnalyticsTracker() {
     const flushPage = (eventType = 'page_exit') => {
       const current = pageRef.current;
       const elapsed = Math.floor((Date.now() - current.lastMark) / 1000);
-      if (document.visibilityState === 'visible' && elapsed > 0) {
+      if (elapsed > 0 && elapsed <= 86400) {
         recordSite(eventType, current.path, elapsed, {});
+        current.lastMark = Date.now();
       }
     };
 
