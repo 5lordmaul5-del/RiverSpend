@@ -60,19 +60,44 @@ export default function RiverSpendSoundStudioLive() {
           <div style={{display:'flex',flexWrap:'wrap',gap:8,marginTop:18}}>{['MULTITRACCIA','AUDIO LAB','VIDEO EDIT','SURROUND READY'].map(x=><span key={x} style={{border:'1px solid #67e8f9',borderRadius:999,padding:'6px 10px',fontSize:11,fontWeight:800,color:'#cffafe'}}>{x}</span>)}</div>
         </header>
 
+        <section style={{marginTop:16,padding:18,borderRadius:22,background:'#082f49',color:'white',border:'1px solid #155e75',boxShadow:'0 8px 24px rgba(15,23,42,.12)'}}>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(min(100%,280px),1fr))',gap:18,alignItems:'center'}}>
+            <div>
+              <div style={{fontSize:12,letterSpacing:2,fontWeight:900,color:'#67e8f9'}}>ISSA • IMMERSIVE SURROUND SYSTEM AMBIENT</div>
+              <h2 style={{fontSize:'clamp(24px,4vw,34px)',lineHeight:1.15,margin:'8px 0'}}>Il mixer deve essere qui, in primo piano.</h2>
+              <p style={{color:'#cffafe',lineHeight:1.6}}>Carica più tracce, ascoltale e regola il volume di ogni canale nel mixer qui sotto. ISSA è il percorso dedicato a spazialità e audio immersivo: i controlli surround avanzati saranno attivati solo quando il motore audio sarà integrato e testato.</p>
+              <a href="#mixer-multitraccia" style={{display:'inline-block',padding:'11px 15px',borderRadius:11,background:'#22d3ee',color:'#083344',fontWeight:900,textDecoration:'none'}}>↓ Vai al mixer multitraccia</a>
+            </div>
+            <div style={{borderRadius:16,overflow:'hidden',minHeight:180,background:'#164e63'}}>
+              <img src="https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=1000&q=85" alt="Studio audio con console e apparecchiature di registrazione" style={{display:'block',width:'100%',height:220,objectFit:'cover'}} />
+            </div>
+          </div>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(min(100%,150px),1fr))',gap:9,marginTop:14}}>
+            {[
+              ['🎚️','MIXER','Volume, mute e solo per traccia'],
+              ['🎙️','REGISTRAZIONE','Microfono e tracce live: modulo da sviluppare'],
+              ['🌌','ISSA SURROUND','Audio immersivo e spazialità: modulo da integrare'],
+              ['🤖','RIVER AI AUDIO','Assistenza intelligente: modulo futuro']
+            ].map(([icon,title,desc])=><div key={title} style={{padding:12,border:'1px solid #155e75',borderRadius:12,background:'#164e63'}}>
+              <div style={{fontSize:23}}>{icon}</div><strong style={{fontSize:13}}>{title}</strong><div style={{fontSize:12,color:'#cffafe',lineHeight:1.45,marginTop:4}}>{desc}</div>
+            </div>)}
+          </div>
+        </section>
+
         <section style={{marginTop:16,padding:18,borderRadius:22,background:'white',border:'1px solid #bae6fd',boxShadow:'0 8px 24px rgba(15,23,42,.06)'}}>
           <div style={{fontSize:12,letterSpacing:2,fontWeight:900,color:'#0e7490'}}>COLLEGAMENTO AUDIO</div>
           <h2 style={{fontSize:23,margin:'6px 0 8px'}}>Scegli il tuo livello</h2>
           <p style={{color:'#475569',lineHeight:1.6,marginTop:0}}>RiverSpend è pensato per chi inizia e per chi lavora in studio. Seleziona la configurazione più vicina alla tua: questa guida ti aiuta a preparare l'attrezzatura, non attiva da sola una diretta.</p>
           <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(min(100%,220px),1fr))',gap:10}}>
             {[
-              ['🌱','Principiante','PC o portatile, microfono integrato o USB e cuffie. Non serve una scheda audio dedicata.'],
-              ['🎙️','Intermedio','Microfono USB o XLR con interfaccia audio USB, cuffie e ambiente il più possibile silenzioso.'],
-              ['🎚️','Esperto / semi-professionale','Scheda audio USB, microfono XLR, monitoraggio in cuffia e strumenti collegati agli ingressi compatibili.'],
-              ['🎛️','Professionale','Interfaccia multicanale o mixer, più ingressi separati, monitor da studio e gestione dedicata della latenza.'],
-              ['🌐','Collaborazione da remoto','Per suonare insieme da luoghi diversi servirà una funzione live dedicata a bassa latenza: non è ancora attiva.'],
-              ['📱','Tablet o telefono','Possibile per ascoltare e gestire file compatibili; collegamento di microfoni e schede esterne dipende dal dispositivo e dagli adattatori.']
-            ].map(([icon,title,desc])=><article key={title} style={{padding:14,borderRadius:15,border:'1px solid #bae6fd',background:'#f8fdff'}}>
+              ['🌱','Principiante','PC o portatile, microfono integrato o USB e cuffie. Non serve una scheda audio dedicata.','https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=600&q=80'],
+              ['🎙️','Intermedio','Microfono USB o XLR con interfaccia audio USB, cuffie e ambiente il più possibile silenzioso.','https://images.unsplash.com/photo-1593078166035-9d5a4e1c5a2f?auto=format&fit=crop&w=600&q=80'],
+              ['🎚️','Esperto / semi-professionale','Scheda audio USB, microfono XLR, monitoraggio in cuffia e strumenti collegati agli ingressi compatibili.','https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=600&q=80'],
+              ['🎛️','Professionale','Interfaccia multicanale o mixer, più ingressi separati, monitor da studio e gestione dedicata della latenza.','https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=600&q=80'],
+              ['🌐','Collaborazione da remoto','Per suonare insieme da luoghi diversi servirà una funzione live dedicata a bassa latenza: non è ancora attiva.','https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b?auto=format&fit=crop&w=600&q=80'],
+              ['📱','Tablet o telefono','Possibile per ascoltare e gestire file compatibili; collegamento di microfoni e schede esterne dipende dal dispositivo e dagli adattatori.','https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=600&q=80']
+            ].map(([icon,title,desc,photo])=><article key={title} style={{padding:12,borderRadius:15,border:'1px solid #bae6fd',background:'#f8fdff',overflow:'hidden'}}>
+              <img src={photo} alt={title+' - attrezzatura e ambiente audio'} loading="lazy" style={{display:'block',width:'100%',height:115,objectFit:'cover',borderRadius:10,marginBottom:10}} />
               <div style={{fontSize:25}}>{icon}</div><strong>{title}</strong><p style={{fontSize:13,color:'#475569',lineHeight:1.55,marginBottom:0}}>{desc}</p>
             </article>)}
           </div>
@@ -103,8 +128,8 @@ export default function RiverSpendSoundStudioLive() {
           <div style={{height:22,display:'flex',gap:3,alignItems:'end',marginTop:18,overflow:'hidden'}}>{Array.from({length:72},(_,i)=><span key={i} style={{flex:'1 0 3px',height:(8+((i*17+i*i*3)%14))+'px',borderRadius:3,background:i%4===0?'#fbbf24':'#22d3ee',opacity:.85}} />)}</div>
         </section>
 
-        <section style={{marginTop:16}}>
-          <h2 style={{fontSize:23,margin:'0 0 10px'}}>🎚️ Mixer multitraccia</h2>
+        <section id="mixer-multitraccia" style={{marginTop:16,scrollMarginTop:18}}>
+          <h2 style={{fontSize:23,margin:'0 0 10px'}}>🎚️ Mixer multitraccia — apri e usa</h2>
           {!tracks.length ? <div style={{padding:26,textAlign:'center',border:'2px dashed #7dd3fc',borderRadius:20,background:'white'}}><div style={{fontSize:36}}>🎙️</div><strong>Il tuo mixer è pronto</strong><p style={{color:'#64748b',marginBottom:0}}>Carica più file audio per gestire le tracce separatamente.</p></div> : <div style={{display:'grid',gap:10}}>{tracks.map((t,i)=><article key={t.id} style={{background:'white',border:'1px solid #cbd5e1',borderRadius:18,padding:14,boxShadow:'0 4px 14px rgba(15,23,42,.04)'}}>
             <div style={{display:'flex',alignItems:'center',gap:10,flexWrap:'wrap'}}>
               <div style={{width:36,height:36,display:'grid',placeItems:'center',borderRadius:11,background:'#cffafe',color:'#155e75',fontWeight:900}}>{i+1}</div>
