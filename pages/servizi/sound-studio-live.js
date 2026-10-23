@@ -9,6 +9,7 @@ export default function RiverSpendSoundStudioLive() {
   const [playing, setPlaying] = useState(false);
   const [notice, setNotice] = useState('Carica le tue tracce audio per iniziare il mix.');
   const audioRefs = useRef({});
+  const uploadRef = useRef(null);
   const soloActive = tracks.some(t => t.solo);
   const totalDuration = useMemo(() => tracks.reduce((max, t) => Math.max(max, t.duration || 0), 0), [tracks]);
 
@@ -57,7 +58,11 @@ export default function RiverSpendSoundStudioLive() {
           <div style={{fontSize:12,letterSpacing:3,fontWeight:900,color:'#a5f3fc'}}>RIVERSPEND SOUND STUDIO LIVE</div>
           <h1 style={{fontSize:'clamp(30px,6vw,48px)',lineHeight:1.08,margin:'12px 0'}}>Il tuo studio. Il tuo suono.</h1>
           <p style={{maxWidth:680,fontSize:16,lineHeight:1.65,color:'#cffafe',marginBottom:0}}>Carica le tracce, regola ogni livello e prepara il tuo progetto musicale. River AI, mastering assistito, video editing e distribuzione saranno moduli progressivi dello studio.</p>
-          <div style={{display:'flex',flexWrap:'wrap',gap:8,marginTop:18}}>{['MULTITRACCIA','AUDIO LAB','VIDEO EDIT','SURROUND READY'].map(x=><span key={x} style={{border:'1px solid #67e8f9',borderRadius:999,padding:'6px 10px',fontSize:11,fontWeight:800,color:'#cffafe'}}>{x}</span>)}</div>
+          <div style={{display:'flex',flexWrap:'wrap',gap:8,marginTop:18}}>{['MULTITRACCIA','AUDIO LAB','VIDEO EDIT','ISSA • ESCLUSIVA RIVERSPEND'].map(x=><span key={x} style={{border:'1px solid #67e8f9',borderRadius:999,padding:'6px 10px',fontSize:11,fontWeight:800,color:'#cffafe',background:'rgba(8,47,73,.72)'}}>{x}</span>)}</div>
+          <div style={{display:'flex',flexWrap:'wrap',gap:10,marginTop:22,position:'relative',zIndex:2}}>
+            <button type="button" onClick={()=>uploadRef.current?.click()} style={{padding:'13px 17px',border:0,borderRadius:12,background:'#fbbf24',color:'#082f49',fontWeight:900,fontSize:15,cursor:'pointer'}}>＋ CARICA TRACCE</button>
+            <button type="button" onClick={()=>document.getElementById('mixer-multitraccia')?.scrollIntoView({behavior:'smooth',block:'start'})} style={{padding:'13px 17px',border:'1px solid #67e8f9',borderRadius:12,background:'#083344',color:'white',fontWeight:900,fontSize:15,cursor:'pointer'}}>🎚️ APRI IL MIXER</button>
+          </div>
         </header>
 
         <section style={{marginTop:16,padding:18,borderRadius:22,background:'#082f49',color:'white',border:'1px solid #155e75',boxShadow:'0 8px 24px rgba(15,23,42,.12)'}}>
@@ -118,7 +123,7 @@ export default function RiverSpendSoundStudioLive() {
           <div style={{display:'flex',flexWrap:'wrap',gap:10,marginTop:14}}>
             <label style={{display:'inline-flex',alignItems:'center',justifyContent:'center',gap:8,padding:'12px 16px',borderRadius:13,background:'#0891b2',color:'white',fontWeight:900,cursor:'pointer'}}>
               ＋ Carica tracce audio
-              <input type="file" accept="audio/*,.wav,.mp3,.aiff,.flac,.m4a,.ogg" multiple onChange={addFiles} style={{display:'none'}} />
+              <input ref={uploadRef} type="file" accept="audio/*,.wav,.mp3,.aiff,.flac,.m4a,.ogg" multiple onChange={addFiles} style={{position:'absolute',width:1,height:1,opacity:0,pointerEvents:'none'}} />
             </label>
             <button onClick={togglePlayback} style={{padding:'12px 18px',border:0,borderRadius:13,background:playing?'#0f766e':'#0f172a',color:'white',fontWeight:900,fontSize:15}}>{playing?'Ⅱ Pausa mix':'▶ Riproduci mix'}</button>
             <button onClick={()=>{tracks.forEach(t=>{const el=audioRefs.current[t.id];if(el){el.pause();el.currentTime=0;}});setPlaying(false);setNotice('Riproduzione riportata all’inizio.')}} style={{padding:'12px 16px',border:'1px solid #cbd5e1',borderRadius:13,background:'white',fontWeight:800}}>↺ Riavvolgi</button>
