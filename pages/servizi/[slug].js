@@ -180,7 +180,7 @@ const servizi = {
   box: {
     titolo: 'RS Box Shipping & Delivery',
     icona: '📦',
-    descrizione: 'La logistica di RiverSpendShop: spedizioni tra venditori privati, tracking delle consegne e gestione dei resi, con un corriere da collegare.',
+    descrizione: 'La logistica di RiverSpendShop per spedizioni nazionali e internazionali: scelta del vettore, tracking, etichette, gestione dei resi e protezione dei dati. Le funzioni operative si attivano dopo gli accordi e le integrazioni con i corrieri.',
     stato: 'Area informativa preparata; integrazione del corriere in attesa di conferma tecnica e credenziali'
   },
   fidelity: {
@@ -330,6 +330,18 @@ export default function Servizio({ slug }) {
                   <li className="rounded-xl border border-slate-200 bg-slate-50 p-4"><span className="text-2xl">📍</span><p className="mt-2 text-sm leading-6 text-slate-700">4. Tracking e ricezione</p><p className="mt-1 text-sm leading-6 text-slate-700">L’acquirente segue la spedizione e, dove previsto, ritira presso un punto abilitato.</p></li>
                 </ol>
               </section>
+              <section className="rounded-2xl border border-teal-800/80 bg-slate-950/50 p-5">
+                <h2 className="text-xl font-bold text-teal-200">🌍 Spedizioni internazionali</h2>
+                <p className="mt-3 leading-7 text-slate-300">RiverSpend Box è progettato per spedizioni in Italia, nell’Unione Europea e verso destinazioni extra-UE. Ogni ordine dovrà verificare copertura del vettore, costi, peso e dimensioni, tracking e documenti richiesti. Le spedizioni extra-UE possono richiedere dichiarazioni doganali e dazi; la disponibilità dipende dalla tratta e dal prodotto.</p>
+              </section>
+              <section className="rounded-2xl border border-teal-800/80 bg-slate-950/50 p-5">
+                <h2 className="text-xl font-bold text-teal-200">🔐 Privacy del destinatario</h2>
+                <p className="mt-3 leading-7 text-slate-300">I dati di consegna non devono comparire negli annunci pubblici o nella chat ordinaria. L’accesso va limitato alle persone autorizzate e alle informazioni necessarie per evadere l’ordine. Il QR non deve contenere dati personali in chiaro. Nascondere l’indirizzo al venditore richiede un servizio logistico intermediato compatibile e non viene promesso finché non è verificato.</p>
+              </section>
+              <section className="rounded-2xl border border-teal-800/80 bg-slate-950/50 p-5">
+                <h2 className="text-xl font-bold text-teal-200">💳 Contactless e contrassegno</h2>
+                <p className="mt-3 leading-7 text-slate-300">Il pagamento contactless con carta o dispositivo compatibile è diverso dal contrassegno, in cui il vettore riscuote l’importo alla consegna. Entrambi saranno valutati solo con fornitori e servizi autorizzati, dopo aver verificato costi, requisiti per venditori privati, rimborsi e modalità di accredito. Nessuno dei due è considerato attivo senza un’integrazione reale.</p>
+              </section>
               <section className={slug === 'local' ? "rounded-2xl border border-slate-200 bg-white p-5" : "rounded-2xl border border-teal-800/80 bg-slate-950/50 p-5"}>
                 <h2 className={slug === 'local' ? "text-xl font-bold text-teal-800" : "text-xl font-bold text-teal-200"}>Partiamo con operatori già esistenti</h2>
                 <p className={slug === 'local' ? "mt-3 leading-7 text-slate-700" : "mt-3 leading-7 text-slate-300"}>
@@ -350,7 +362,7 @@ export default function Servizio({ slug }) {
               </section>
               <section className="rounded-2xl border border-amber-700/70 bg-amber-950/30 p-5">
                 <h2 className="text-lg font-bold text-amber-200">⏳ Attivazione tecnica in attesa</h2>
-                <p className="mt-2 text-sm leading-6 text-slate-200">La pagina e il flusso sono in preparazione. Non vengono ancora emesse etichette o QR reali e non si prenotano ritiri: attendiamo la conferma di SpeedItalia su API, condizioni per marketplace con venditori privati e credenziali. Non inserire dati di pagamento o indirizzi in questa sezione finché il collegamento non è pronto.</p>
+                <p className="mt-2 text-sm leading-6 text-slate-200">Questa è la progettazione del flusso, non un servizio già attivo: non vengono ancora emesse etichette o QR reali e non si prenotano ritiri da RiverSpend. Prima dell’attivazione dobbiamo concordare con Poste Italiane, BRT/Bartolini e altri vettori copertura nazionale/internazionale, API, contrassegno e condizioni per venditori privati. I pagamenti contactless richiedono inoltre un fornitore compatibile. Non inserire qui dati di pagamento o indirizzi.</p>
               </section>
             </div>
           )}
