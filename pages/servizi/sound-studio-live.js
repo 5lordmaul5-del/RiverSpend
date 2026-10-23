@@ -63,7 +63,13 @@ export default function RiverSpendSoundStudioLive() {
         <section style={{marginTop:16,padding:18,borderRadius:22,background:'#082f49',color:'white',border:'1px solid #155e75',boxShadow:'0 8px 24px rgba(15,23,42,.12)'}}>
           <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(min(100%,280px),1fr))',gap:18,alignItems:'center'}}>
             <div>
-              <div style={{fontSize:12,letterSpacing:2,fontWeight:900,color:'#67e8f9'}}>ESCLUSIVA RIVERSPEND SOUND STUDIO</div>
+              <div style={{display:'flex',alignItems:'center',gap:12,flexWrap:'wrap',marginBottom:10}}>
+                <img src="/riverspend-river-market.svg" alt="Marchio RiverSpend" style={{width:76,height:76,objectFit:'contain',background:'#ffffff',borderRadius:14,padding:5,boxSizing:'border-box'}} />
+                <div>
+                  <div style={{fontSize:12,letterSpacing:2,fontWeight:900,color:'#67e8f9'}}>MARCHIO RIVERSPEND</div>
+                  <div style={{fontSize:13,fontWeight:800,color:'#ffffff'}}>SOUND STUDIO • ESCLUSIVA RIVERSPEND</div>
+                </div>
+              </div>
               <h2 style={{fontSize:'clamp(24px,4vw,34px)',lineHeight:1.15,margin:'8px 0'}}>ISSA: il sistema audio esclusivo RiverSpend</h2>
               <p style={{color:'#cffafe',lineHeight:1.6}}>Carica più tracce, ascoltale e regola il volume di ogni canale nel mixer qui sotto. ISSA è il concept proprietario di RiverSpend Sound Studio, dedicato a mix, spazialità e audio immersivo. Il nome e l'esperienza sono riservati al progetto RiverSpend; le funzioni surround avanzate saranno attivate dopo l'integrazione e i test del motore audio.</p>
               <a href="#mixer-multitraccia" style={{display:'inline-block',padding:'11px 15px',borderRadius:11,background:'#22d3ee',color:'#083344',fontWeight:900,textDecoration:'none'}}>↓ Vai al mixer multitraccia</a>
