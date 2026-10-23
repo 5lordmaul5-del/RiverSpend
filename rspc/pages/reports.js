@@ -5,7 +5,8 @@ import { supabase } from "../lib/supabase";
 
 const DAY = 24 * 60 * 60 * 1000;
 const money = value => "€ " + Number(value || 0).toLocaleString("it-IT", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-const fmtTime = value => new Date(value).toLocaleString("it-IT", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
+const localHourKey = value => { const d = new Date(value); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")+"-"+String(d.getHours()).padStart(2,"0"); };
+const localDayKey = value => { const d = new Date(value); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); };
 
 export default function Reports() {
   const [session, setSession] = useState(null);
@@ -81,8 +82,8 @@ export default function Reports() {
   const hourly = Array.from({ length: 168 }, (_, i) => {
     const start = new Date(now - (167 - i) * 60 * 60 * 1000);
     start.setMinutes(0, 0, 0);
-    const key = start.toISOString().slice(0, 13);
-    const count = siteEvents.filter(e => e.event_type === "page_view" && String(e.created_at).slice(0, 13) === key).length;
+    const key = localHourKey(start);
+    const count = siteEvents.filter(e => e.event_type === "page_view" && localHourKey(e.created_at) === key).length;
     return { key, label: start.toLocaleDateString("it-IT", { weekday: "short", day: "2-digit" }) + " " + String(start.getHours()).padStart(2, "0") + ":00", count, hour: start.getHours() };
   });
   const maxHourly = Math.max(1, ...hourly.map(x => x.count));
@@ -95,8 +96,8 @@ export default function Reports() {
   const topPages = Object.entries(site24.filter(e => e.event_type === "page_view").reduce((acc, e) => { acc[e.page_path] = (acc[e.page_path] || 0) + 1; return acc; }, {})).sort((a, b) => b[1] - a[1]).slice(0, 8);
   const daily = Array.from({ length: 7 }, (_, i) => {
     const date = new Date(now - (6 - i) * DAY);
-    const key = date.toISOString().slice(0, 10);
-    const rows = paid.filter(o => String(o.created_at).slice(0, 10) === key);
+    const key = localDayKey(date);
+    const rows = paid.filter(o => localDayKey(o.created_at) === key);
     return { key, label: date.toLocaleDateString("it-IT", { weekday: "short" }), amount: rows.reduce((s, o) => s + Number(o.total || 0), 0) };
   });
   const maxDaily = Math.max(1, ...daily.map(d => d.amount));
@@ -135,12 +136,12 @@ export default function Reports() {
       <Metric title="Tempo riprodotto registrato" value={duration(watchSeconds)} note="somma dei segmenti heartbeat"/>
       <Metric title="Eventi player ricevuti" value={media24.length}/>
     </section>
-    <section style={card}><h2>Player per servizio</h2>{["stream", "broadcast", "radio"].map(module => {
+    <section style={card}><h2>Player per servizio</h2>{["stream", "broadcast", "radio", "site_video", "site_audio"].map(module => {
       const rows = media24.filter(e => e.module === module);
       const starts = rows.filter(e => e.event_type === "play_start").length;
       const seconds = rows.filter(e => e.event_type === "play_heartbeat").reduce((sum, e) => sum + Number(e.duration_seconds || 0), 0);
       const completes = rows.filter(e => e.event_type === "play_complete").length;
-      return <div key={module} style={row}><span><b>{{ stream: "RSStream", broadcast: "RSBroadcast", radio: "RSRadio" }[module]}</b><small style={{ display: "block", color: "#617b80" }}>{starts} avvii · {completes} completamenti</small></span><b>{duration(seconds)}</b></div>;
+      return <div key={module} style={row}><span><b>{{ stream: "RSStream", broadcast: "RSBroadcast", radio: "RSRadio", site_video: "Video del sito", site_audio: "Audio del sito" }[module]}</b><small style={{ display: "block", color: "#617b80" }}>{starts} avvii · {completes} completamenti</small></span><b>{duration(seconds)}</b></div>;
     })}<p style={{ fontSize: 12 }}>I player HTML video/audio sono rilevati automaticamente. I player esterni in iframe o app proprietarie richiedono un'integrazione specifica.</p></section>
     <h2>Andamento economico · ultimi 7 giorni</h2>
     <section style={card}><div style={chartRow}>{daily.map(d => <div key={d.key} title={d.key + ": " + money(d.amount)} style={barCol}><small>{Math.round(d.amount)}€</small><div style={{ ...bar, height: Math.max(3, d.amount / maxDaily * 125) }}/><small>{d.label}</small></div>)}</div><p>Ordini con stato pagamento confermato come pagato. Questo valore non è un saldo bancario né un utile netto.</p></section>
