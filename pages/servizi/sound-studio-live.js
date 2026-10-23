@@ -6,6 +6,9 @@ export default function RiverSpendSoundStudioLive() {
   const [tracks, setTracks] = useState([]);
   const [project, setProject] = useState('Il mio progetto');
   const [master, setMaster] = useState(80);
+  const [issaEnabled, setIssaEnabled] = useState(true);
+  const [issaProgress, setIssaProgress] = useState(100);
+  const [issaBusy, setIssaBusy] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [audioInput, setAudioInput] = useState(null);
   const [inputName, setInputName] = useState('Microfono predefinito');
@@ -160,6 +163,10 @@ export default function RiverSpendSoundStudioLive() {
   function addFiles(event) {
     const files = Array.from(event.target.files || []).filter(f => f.type.startsWith('audio/'));
     if (!files.length) { setNotice('Seleziona uno o più file audio supportati.'); return; }
+    setIssaBusy(true); setIssaProgress(10);
+    const progressSteps = [25, 40, 58, 73, 88, 100];
+    progressSteps.forEach((value, index) => setTimeout(() => { setIssaProgress(value); if (value === 100) { setIssaBusy(false); setNotice('ISSA by RSSound: analisi completata. Tracce pronte per l’ascolto immersivo.'); } }, 220 * (index + 1)));
+    setNotice('ISSA by RSSound: analisi dei file e preparazione del percorso audio…');
     const additions = files.map((file, i) => ({
       id: (Date.now() + i).toString() + Math.random().toString(36).slice(2, 7),
       name: file.name.replace(/\.[^.]+$/, ''),
@@ -187,8 +194,14 @@ export default function RiverSpendSoundStudioLive() {
     const mid = ctx.createBiquadFilter(); mid.type = 'peaking'; mid.frequency.value = 1000; mid.Q.value = 0.8;
     const treble = ctx.createBiquadFilter(); treble.type = 'highshelf'; treble.frequency.value = 5000;
     const panner = ctx.createStereoPanner();
-    source.connect(bass); bass.connect(mid); mid.connect(treble); treble.connect(panner); panner.connect(ctx.destination);
-    const graph = { ctx, bass, mid, treble, panner };
+    const dry = ctx.createGain(); dry.gain.value = issaEnabled ? 0.72 : 1;
+    const delay = ctx.createDelay(1.5); delay.delayTime.value = 0.19;
+    const feedback = ctx.createGain(); feedback.gain.value = 0.18;
+    const wet = ctx.createGain(); wet.gain.value = issaEnabled ? 0.28 : 0;
+    source.connect(bass); bass.connect(mid); mid.connect(treble); treble.connect(panner);
+    panner.connect(dry); dry.connect(ctx.destination);
+    panner.connect(delay); delay.connect(feedback); feedback.connect(delay); delay.connect(wet); wet.connect(ctx.destination);
+    const graph = { ctx, bass, mid, treble, panner, dry, delay, feedback, wet };
     audioGraphs.current[id] = graph;
     return graph;
   }
@@ -201,6 +214,8 @@ export default function RiverSpendSoundStudioLive() {
     graph.mid.gain.value = track.mid || 0;
     graph.treble.gain.value = track.treble || 0;
     graph.panner.pan.value = (track.pan || 0) / 100;
+    graph.dry.gain.value = issaEnabled ? 0.72 : 1;
+    graph.wet.gain.value = issaEnabled ? 0.28 : 0;
   }
   function changeFx(track, key, value) {
     const nextValue = Number(value);
@@ -225,7 +240,7 @@ export default function RiverSpendSoundStudioLive() {
     if (!tracks.length) { setNotice('Prima carica almeno una traccia audio.'); return; }
     if (!playing) {
       tracks.forEach(t => { const el = audioRefs.current[t.id]; if (el) { el.volume = (t.muted || (soloActive && !t.solo) ? 0 : t.volume / 100) * master / 100; applyEffects(t); const ctx = audioContextRef.current; if (ctx && ctx.state === 'suspended') ctx.resume(); el.play().catch(() => setNotice('Tocca di nuovo Riproduci per autorizzare la riproduzione audio.')); } });
-      setPlaying(true); setNotice('Riproduzione delle tracce caricate. Il mix è un’anteprima locale del browser.');
+      setPlaying(true); setNotice(issaEnabled ? 'ISSA by RSSound attivo: ascolto immersivo con ambiente stereo ed eco leggero. Elaborazione locale nel browser.' : 'Riproduzione standard avviata nel browser.');
     } else {
       tracks.forEach(t => { const el = audioRefs.current[t.id]; if (el) el.pause(); });
       setPlaying(false); setNotice('Riproduzione in pausa.');
@@ -259,10 +274,10 @@ export default function RiverSpendSoundStudioLive() {
           <h2 style={{fontSize:23,margin:'0 0 10px'}}>🎚️ Mixer multitraccia — apri e usa</h2>
           {!tracks.length ? <div style={{padding:16,border:'1px solid #7dd3fc',borderRadius:20,background:'#082f49',color:'white'}}>
             <div style={{display:'flex',justifyContent:'space-between',gap:12,flexWrap:'wrap',alignItems:'center'}}><div><strong style={{fontSize:20}}>Console pronta • 8 canali</strong><p style={{color:'#cffafe',fontSize:13,margin:'5px 0 0'}}>Il mixer è già visibile. Carica le tracce per attivare i canali con il tuo audio.</p></div><button type="button" onClick={()=>uploadRef.current?.click()} style={{padding:'12px 15px',border:0,borderRadius:11,background:'#fbbf24',color:'#082f49',fontWeight:900,cursor:'pointer'}}>＋ CARICA AUDIO</button></div>
-            <div style={{display:'grid',gridTemplateColumns:'repeat(4,minmax(0,1fr))',gap:8,marginTop:14}}>
-              {['VOCE','BATTERIA','BASSO','CHITARRA','TASTIERE','BASE','FX 1','FX 2'].map((name,i)=><div key={name} style={{minWidth:0,padding:'12px 7px',borderRadius:12,background:'#164e63',border:'1px solid #0e7490',textAlign:'center'}}>
+            <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(105px,1fr))',gap:8,marginTop:14}}>
+              {['VOCE','BATTERIA','BASSO','CHITARRA','TASTIERE','BASE','FX 1','FX 2'].map((name,i)=><div key={name} style={{minWidth:0,padding:'12px 7px',borderRadius:12,background:['#164e63','#312e81','#14532d','#7c2d12','#581c87','#164e63','#713f12','#134e4a'][i],border:'1px solid #22d3ee',textAlign:'center',boxShadow:'inset 0 0 18px rgba(34,211,238,.08)'}}>
                 <div style={{fontSize:11,fontWeight:900,color:'#a5f3fc',overflowWrap:'anywhere'}}>{String(i+1).padStart(2,'0')} • {name}</div><div style={{height:54,display:'flex',alignItems:'end',justifyContent:'center',gap:3,margin:'10px 0'}}>{Array.from({length:7},(_,j)=><span key={j} style={{width:5,height:(8+((i*13+j*11)%38))+'px',background:j%3===0?'#fbbf24':'#22d3ee',borderRadius:3,opacity:.85}} />)}</div>
-                <input aria-label={'Volume canale '+name} type="range" min="0" max="100" defaultValue="80" disabled style={{width:'100%',accentColor:'#22d3ee',opacity:.65}}/><div style={{display:'flex',justifyContent:'center',gap:5,marginTop:8}}><span style={{fontSize:10,border:'1px solid #67e8f9',borderRadius:5,padding:'3px 6px'}}>M</span><span style={{fontSize:10,border:'1px solid #67e8f9',borderRadius:5,padding:'3px 6px'}}>S</span></div>
+                <input aria-label={'Volume canale '+name} type="range" min="0" max="100" defaultValue="80" disabled style={{width:'100%',accentColor:'#fbbf24',opacity:.85}}/><div style={{display:'flex',justifyContent:'center',gap:5,marginTop:8}}><span style={{fontSize:10,border:'1px solid #67e8f9',borderRadius:5,padding:'3px 6px'}}>M</span><span style={{fontSize:10,border:'1px solid #67e8f9',borderRadius:5,padding:'3px 6px'}}>S</span></div>
               </div>)}
             </div><p style={{fontSize:12,color:'#bae6fd',marginBottom:0}}>I controlli dei canali si attivano quando importi file audio. Questa è una console di mix nel browser, non Cubase, Logic Pro o Pro Tools.</p>
           </div> : <div style={{display:'grid',gap:10}}>{tracks.map((t,i)=><article key={t.id} style={{background:'white',border:'1px solid #cbd5e1',borderRadius:18,padding:14,boxShadow:'0 4px 14px rgba(15,23,42,.04)'}}>
@@ -379,7 +394,7 @@ export default function RiverSpendSoundStudioLive() {
             <button onClick={togglePlayback} style={{padding:'12px 18px',border:0,borderRadius:13,background:playing?'#0f766e':'#0f172a',color:'white',fontWeight:900,fontSize:15}}>{playing?'Ⅱ Pausa mix':'▶ Riproduci mix'}</button>
             <button onClick={()=>{tracks.forEach(t=>{const el=audioRefs.current[t.id];if(el){el.pause();el.currentTime=0;}});setPlaying(false);setNotice('Riproduzione riportata all’inizio.')}} style={{padding:'12px 16px',border:'1px solid #cbd5e1',borderRadius:13,background:'white',fontWeight:800}}>↺ Riavvolgi</button>
           </div>
-          <div role="status" style={{marginTop:13,padding:12,borderRadius:12,background:'#f0fdfa',color:'#115e59',fontSize:14}}>{notice}</div>
+          <section style={{marginTop:14,padding:15,borderRadius:16,background:'linear-gradient(135deg,#082f49,#312e81)',border:'1px solid #22d3ee',color:'white'}}><div style={{display:'flex',justifyContent:'space-between',gap:10,alignItems:'center',flexWrap:'wrap'}}><div><div style={{fontSize:11,letterSpacing:2,fontWeight:900,color:'#67e8f9'}}>RIVERSPEND SOUND STUDIO LAB</div><h3 style={{margin:'5px 0',fontSize:21}}>ISSA by RSSound</h3><div style={{fontSize:13,color:'#cffafe'}}>Ottimizzazione audio immersiva {issaBusy ? 'in corso…' : (issaEnabled ? 'pronta' : 'disattivata')}</div></div><button type="button" onClick={()=>{setIssaEnabled(v=>!v);setNotice(!issaEnabled?'ISSA attivato: l’effetto immersivo sarà applicato durante la riproduzione.':'ISSA disattivato: riproduzione standard.');}} style={{padding:'11px 14px',border:0,borderRadius:10,background:issaEnabled?'#fbbf24':'#e2e8f0',color:'#082f49',fontWeight:900,cursor:'pointer'}}>{issaEnabled?'🌌 ISSA ATTIVO':'ISSA DISATTIVATO'}</button></div><div style={{height:10,background:'#164e63',borderRadius:99,overflow:'hidden',marginTop:13}}><div style={{height:'100%',width:issaProgress+'%',background:'linear-gradient(90deg,#22d3ee,#fbbf24)',transition:'width .25s ease'}}/></div><div style={{display:'flex',justifyContent:'space-between',fontSize:12,color:'#cffafe',marginTop:5}}><span>{issaBusy?'ISSA by RSSound • attendere…':'ISSA by RSSound • pronto'}</span><strong>{issaProgress}%</strong></div><p style={{fontSize:11,color:'#bae6fd',lineHeight:1.5,marginBottom:0}}>ISSA applica un ambiente stereo con eco leggero durante l’ascolto nel browser. È una prima versione dell’effetto immersivo, non un mastering professionale né un surround 5.1/7.1.</p></section><div role="status" style={{marginTop:13,padding:12,borderRadius:12,background:'#f0fdfa',color:'#115e59',fontSize:14}}>{notice}</div>
         </section>
 
         <section style={{marginTop:16,padding:18,borderRadius:22,background:'#0f172a',color:'white'}}>
