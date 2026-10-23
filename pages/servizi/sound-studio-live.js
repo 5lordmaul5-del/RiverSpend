@@ -7,6 +7,15 @@ export default function RiverSpendSoundStudioLive() {
   const [project, setProject] = useState('Il mio progetto');
   const [master, setMaster] = useState(80);
   const [playing, setPlaying] = useState(false);
+  const [audioInput, setAudioInput] = useState(null);
+  const [inputName, setInputName] = useState('Microfono predefinito');
+  const [recording, setRecording] = useState(false);
+  const [monitoring, setMonitoring] = useState(false);
+  const mediaRecorderRef = useRef(null);
+  const chunksRef = useRef([]);
+  const streamRef = useRef(null);
+  const monitorContextRef = useRef(null);
+  const monitorNodesRef = useRef(null);
   const [notice, setNotice] = useState('Carica le tue tracce audio per iniziare il mix.');
   const audioRefs = useRef({});
   const audioGraphs = useRef({});
@@ -14,6 +23,88 @@ export default function RiverSpendSoundStudioLive() {
   const uploadRef = useRef(null);
   const soloActive = tracks.some(t => t.solo);
   const totalDuration = useMemo(() => tracks.reduce((max, t) => Math.max(max, t.duration || 0), 0), [tracks]);
+
+  async function connectLiveInput() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      setNotice('Il browser non permette l’accesso al microfono. Apri questa pagina con Chrome aggiornato e HTTPS.');
+      return;
+    }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false }, video: false });
+      streamRef.current = stream;
+      setAudioInput(stream);
+      setInputName(stream.getAudioTracks()[0]?.label || 'Ingresso audio collegato');
+      setNotice('Ingresso audio collegato. Puoi registrare voce o uno strumento collegato tramite interfaccia audio.');
+    } catch (e) {
+      setNotice(e?.name === 'NotAllowedError' ? 'Permesso microfono negato: consenti l’accesso nelle impostazioni del browser e riprova.' : 'Non riesco a collegare l’ingresso. Controlla microfono, adattatore e permessi.');
+    }
+  }
+
+  async function toggleLiveMonitor() {
+    if (!streamRef.current) { setNotice('Prima collega l’ingresso audio.'); return; }
+    if (monitoring) {
+      try { monitorNodesRef.current?.source.disconnect(); monitorNodesRef.current?.gain.disconnect(); } catch (_) {}
+      monitorNodesRef.current = null;
+      setMonitoring(false);
+      setNotice('Monitoraggio in cuffia disattivato.');
+      return;
+    }
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) { setNotice('Questo browser non supporta il monitoraggio audio.'); return; }
+      const ctx = monitorContextRef.current || (monitorContextRef.current = new AudioCtx());
+      if (ctx.state === 'suspended') await ctx.resume();
+      const source = ctx.createMediaStreamSource(streamRef.current);
+      const gain = ctx.createGain();
+      gain.gain.value = 0.7;
+      source.connect(gain); gain.connect(ctx.destination);
+      monitorNodesRef.current = { source, gain };
+      setMonitoring(true);
+      setNotice('Monitoraggio live attivo. Usa cuffie per evitare eco e fischi.');
+    } catch (_) { setNotice('Impossibile attivare il monitoraggio su questo dispositivo.'); }
+  }
+
+  function startLiveRecording() {
+    const stream = streamRef.current;
+    if (!stream) { setNotice('Prima premi “Collega microfono / strumento”.'); return; }
+    if (!window.MediaRecorder) { setNotice('Registrazione non supportata: prova Chrome aggiornato.'); return; }
+    try {
+      const mime = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4'].find(t => MediaRecorder.isTypeSupported?.(t));
+      const recorder = mime ? new MediaRecorder(stream, { mimeType: mime }) : new MediaRecorder(stream);
+      chunksRef.current = [];
+      recorder.ondataavailable = e => { if (e.data?.size) chunksRef.current.push(e.data); };
+      recorder.onerror = () => { setRecording(false); setNotice('Errore durante la registrazione.'); };
+      recorder.onstop = () => {
+        const type = recorder.mimeType || 'audio/webm';
+        const blob = new Blob(chunksRef.current, { type });
+        if (!blob.size) { setNotice('Registrazione vuota: controlla l’ingresso e riprova.'); return; }
+        const ext = type.includes('mp4') ? 'm4a' : 'webm';
+        const file = new File([blob], 'RiverSpend-registrazione-' + Date.now() + '.' + ext, { type });
+        const url = URL.createObjectURL(blob);
+        const track = { id: Date.now().toString() + Math.random().toString(36).slice(2,7), name: 'Registrazione live', kind: 'Voce', url, file, volume: 80, muted: false, solo: false, duration: 0, fx: { bass: 0, mid: 0, treble: 0, reverb: 0 }, bass: 0, mid: 0, treble: 0, pan: 0 };
+        setTracks(prev => [...prev, track]);
+        setNotice('Registrazione aggiunta come nuova traccia nel mixer. Premi “Riproduci mix” per ascoltarla.');
+      };
+      mediaRecorderRef.current = recorder;
+      recorder.start(250);
+      setRecording(true);
+      setNotice('Registrazione in corso: parla o suona, poi premi “Ferma e aggiungi al mixer”.');
+    } catch (_) { setNotice('Non è stato possibile avviare la registrazione. Ricollega l’ingresso e riprova.'); }
+  }
+
+  function stopLiveRecording() {
+    if (mediaRecorderRef.current?.state === 'recording') mediaRecorderRef.current.stop();
+    setRecording(false);
+  }
+
+  function disconnectLiveInput() {
+    if (recording) stopLiveRecording();
+    try { monitorNodesRef.current?.source.disconnect(); monitorNodesRef.current?.gain.disconnect(); } catch (_) {}
+    monitorNodesRef.current = null;
+    streamRef.current?.getTracks().forEach(t => t.stop());
+    streamRef.current = null; setAudioInput(null); setMonitoring(false);
+    setNotice('Ingresso audio scollegato.');
+  }
 
   function addFiles(event) {
     const files = Array.from(event.target.files || []).filter(f => f.type.startsWith('audio/'));
@@ -112,6 +203,21 @@ export default function RiverSpendSoundStudioLive() {
             <button type="button" onClick={()=>document.getElementById('mixer-multitraccia')?.scrollIntoView({behavior:'smooth',block:'start'})} style={{padding:'13px 17px',border:'1px solid #67e8f9',borderRadius:12,background:'#083344',color:'white',fontWeight:900,fontSize:15,cursor:'pointer'}}>🎚️ APRI IL MIXER</button>
           </div>
         </header>
+
+        <section id="ingresso-live" style={{marginTop:16,padding:18,borderRadius:22,background:'#082f49',color:'white',border:'1px solid #155e75'}}>
+          <div style={{fontSize:12,letterSpacing:2,fontWeight:900,color:'#67e8f9'}}>INGRESSO LIVE • MICROFONO / CHITARRA</div>
+          <h2 style={{fontSize:24,margin:'6px 0 8px'}}>Collega, ascolta in cuffia e registra</h2>
+          <p style={{color:'#cffafe',lineHeight:1.6,marginTop:0}}>Collega il microfono integrato/USB oppure una chitarra tramite un’interfaccia audio USB compatibile. Premi il pulsante per autorizzare il browser. La registrazione verrà aggiunta al mixer come traccia separata.</p>
+          <div style={{display:'flex',gap:9,flexWrap:'wrap'}}>
+            <button type="button" onClick={connectLiveInput} style={{padding:'12px 15px',border:0,borderRadius:11,background:'#fbbf24',color:'#082f49',fontWeight:900,cursor:'pointer'}}>🎙️ Collega microfono / strumento</button>
+            <button type="button" onClick={startLiveRecording} disabled={!audioInput||recording} style={{padding:'12px 15px',border:0,borderRadius:11,background:'#dc2626',color:'white',fontWeight:900,cursor:'pointer',opacity:!audioInput||recording?.55:1}}>⏺ Avvia registrazione</button>
+            <button type="button" onClick={stopLiveRecording} disabled={!recording} style={{padding:'12px 15px',border:0,borderRadius:11,background:'#f8fafc',color:'#0f172a',fontWeight:900,cursor:'pointer',opacity:recording?1:.55}}>■ Ferma e aggiungi al mixer</button>
+            <button type="button" onClick={toggleLiveMonitor} disabled={!audioInput} style={{padding:'12px 15px',border:'1px solid #67e8f9',borderRadius:11,background:monitoring?'#0e7490':'#164e63',color:'white',fontWeight:900,cursor:'pointer',opacity:audioInput?1:.55}}>{monitoring?'🎧 Disattiva ascolto':'🎧 Ascolta in cuffia'}</button>
+            <button type="button" onClick={disconnectLiveInput} disabled={!audioInput} style={{padding:'12px 15px',border:'1px solid #67e8f9',borderRadius:11,background:'transparent',color:'white',fontWeight:800,cursor:'pointer',opacity:audioInput?1:.55}}>Scollega</button>
+          </div>
+          <div role="status" style={{marginTop:12,padding:11,borderRadius:10,background:'#164e63',color:'#cffafe',fontSize:13}}>{audioInput?'● COLLEGATO: '+inputName:'● Ingresso non collegato'}{recording?' — REGISTRAZIONE IN CORSO':''}</div>
+          <p style={{fontSize:12,color:'#cffafe',lineHeight:1.55,marginBottom:0}}>Importante: per una chitarra elettrica serve normalmente una scheda/interfaccia audio. Il monitoraggio via browser può avere ritardo; per suonare senza latenza usa il monitoraggio diretto della scheda audio. Attiva l’ascolto solo con cuffie, per evitare feedback dagli altoparlanti.</p>
+        </section>
 
         <section id="mixer-multitraccia" style={{marginTop:16,scrollMarginTop:18}}>
           <h2 style={{fontSize:23,margin:'0 0 10px'}}>🎚️ Mixer multitraccia — apri e usa</h2>
