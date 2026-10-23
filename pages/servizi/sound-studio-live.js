@@ -11,6 +11,10 @@ export default function RiverSpendSoundStudioLive() {
   const [inputName, setInputName] = useState('Microfono predefinito');
   const [recording, setRecording] = useState(false);
   const [monitoring, setMonitoring] = useState(false);
+  const [midiDevices, setMidiDevices] = useState([]);
+  const [midiStatus, setMidiStatus] = useState('USB/MIDI non collegato');
+  const [midiLastMessage, setMidiLastMessage] = useState('Nessun segnale MIDI ricevuto');
+  const midiAccessRef = useRef(null);
   const mediaRecorderRef = useRef(null);
   const chunksRef = useRef([]);
   const streamRef = useRef(null);
@@ -23,6 +27,53 @@ export default function RiverSpendSoundStudioLive() {
   const uploadRef = useRef(null);
   const soloActive = tracks.some(t => t.solo);
   const totalDuration = useMemo(() => tracks.reduce((max, t) => Math.max(max, t.duration || 0), 0), [tracks]);
+
+  async function connectMidi() {
+    if (!navigator.requestMIDIAccess) {
+      setMidiStatus('Web MIDI non supportato da questo browser. Prova Chrome aggiornato su HTTPS.');
+      setNotice('Il browser non supporta Web MIDI. Su Android il supporto USB/MIDI può variare in base al dispositivo e all’adattatore OTG.');
+      return;
+    }
+    try {
+      const access = await navigator.requestMIDIAccess();
+      midiAccessRef.current = access;
+      const refreshInputs = () => {
+        const inputs = Array.from(access.inputs.values());
+        setMidiDevices(inputs.map((input, index) => ({ id: input.id || String(index), name: input.name || input.manufacturer || ('Ingresso MIDI ' + (index + 1)), manufacturer: input.manufacturer || '' })));
+        setMidiStatus(inputs.length ? inputs.length + ' ingresso/i MIDI rilevato/i' : 'Accesso MIDI attivo, ma nessun dispositivo collegato');
+        inputs.forEach(input => {
+          input.onmidimessage = event => {
+            const data = Array.from(event.data || []);
+            if (!data.length) return;
+            const status = data[0] & 0xf0;
+            const note = data.length > 1 ? data[1] : null;
+            const velocity = data.length > 2 ? data[2] : null;
+            const type = status === 0x90 && velocity > 0 ? 'Nota premuta' : (status === 0x80 || (status === 0x90 && velocity === 0) ? 'Nota rilasciata' : (status === 0xb0 ? 'Controller' : 'Messaggio MIDI'));
+            setMidiLastMessage(type + ' · dati: ' + data.join(', '));
+          };
+        });
+      };
+      access.onstatechange = refreshInputs;
+      refreshInputs();
+      setNotice('USB/MIDI abilitato. Suona un tasto o muovi un controllo per verificare che arrivino messaggi MIDI.');
+    } catch (e) {
+      setMidiStatus(e?.name === 'NotAllowedError' ? 'Permesso MIDI negato' : 'Impossibile accedere al MIDI');
+      setNotice('Accesso MIDI non riuscito. Controlla i permessi del browser, il cavo USB e l’adattatore OTG.');
+    }
+  }
+
+  function disconnectMidi() {
+    const access = midiAccessRef.current;
+    if (access) {
+      access.inputs.forEach(input => { input.onmidimessage = null; });
+      access.onstatechange = null;
+    }
+    midiAccessRef.current = null;
+    setMidiDevices([]);
+    setMidiStatus('USB/MIDI scollegato');
+    setMidiLastMessage('Nessun segnale MIDI ricevuto');
+    setNotice('Connessione USB/MIDI chiusa.');
+  }
 
   async function connectLiveInput() {
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
@@ -235,6 +286,20 @@ export default function RiverSpendSoundStudioLive() {
         </section>
 
 
+
+        <section id="usb-midi" style={{marginTop:16,padding:18,borderRadius:22,background:'#f0fdfa',color:'#0f172a',border:'1px solid #5eead4'}}>
+          <div style={{fontSize:12,letterSpacing:2,fontWeight:900,color:'#0e7490'}}>USB / MIDI • TASTIERE E CONTROLLER</div>
+          <h2 style={{fontSize:24,margin:'6px 0 8px'}}>Collega la tua tastiera o controller MIDI</h2>
+          <p style={{color:'#334155',lineHeight:1.6,marginTop:0}}>Collega il dispositivo USB/MIDI, concedi il permesso quando richiesto e suona un tasto. Se il browser lo supporta, qui vedrai il dispositivo e i messaggi in ingresso. MIDI trasporta comandi, non audio: per sentire il suono serve uno strumento virtuale/sintetizzatore, da integrare separatamente.</p>
+          <div style={{display:'flex',gap:9,flexWrap:'wrap'}}>
+            <button type="button" onClick={connectMidi} style={{padding:'12px 15px',border:0,borderRadius:11,background:'#0e7490',color:'white',fontWeight:900,cursor:'pointer'}}>🎹 Collega USB / MIDI</button>
+            <button type="button" onClick={disconnectMidi} style={{padding:'12px 15px',border:'1px solid #0e7490',borderRadius:11,background:'white',color:'#0e7490',fontWeight:900,cursor:'pointer'}}>Scollega MIDI</button>
+          </div>
+          <div role="status" style={{marginTop:12,padding:11,borderRadius:10,background:'white',border:'1px solid #99f6e4',fontSize:13}}><strong>Stato:</strong> {midiStatus}</div>
+          <div style={{marginTop:8,padding:11,borderRadius:10,background:'#ccfbf1',fontSize:13}}><strong>Dispositivi:</strong> {midiDevices.length ? midiDevices.map(d => d.name + (d.manufacturer ? ' (' + d.manufacturer + ')' : '')).join(', ') : 'nessun dispositivo rilevato'}</div>
+          <div role="status" style={{marginTop:8,padding:11,borderRadius:10,background:'#082f49',color:'#cffafe',fontSize:13}}><strong>Ultimo segnale:</strong> {midiLastMessage}</div>
+          <p style={{fontSize:12,color:'#475569',lineHeight:1.55,marginBottom:0}}>Nota: serve un browser compatibile con Web MIDI e, in genere, una pagina HTTPS. Su telefoni e tablet Android il riconoscimento dipende anche da supporto USB host/OTG e dal dispositivo collegato.</p>
+        </section>
 
         <section id="ingresso-live" style={{marginTop:16,padding:18,borderRadius:22,background:'#082f49',color:'white',border:'1px solid #155e75'}}>
           <div style={{fontSize:12,letterSpacing:2,fontWeight:900,color:'#67e8f9'}}>INGRESSO LIVE • MICROFONO / CHITARRA</div>
