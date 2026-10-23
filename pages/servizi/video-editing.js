@@ -49,7 +49,7 @@ export default function RiverSpendVideoEditing() {
     <Head><title>RiverSpend Video Editing</title><meta name="description" content="RiverSpend Video Editing: chroma key, titoli ed effetti visivi in anteprima." /></Head>
     <main style={{minHeight:'100vh',padding:'18px 14px 48px',background:'linear-gradient(180deg,#ecfeff,#f8fafc 45%,#fff)',color:'#0f172a',fontFamily:'system-ui'}}>
       <div style={{maxWidth:1080,margin:'0 auto'}}>
-        <a href="/servizi/sound-studio-live" style={{color:'#0f766e',fontWeight:800,textDecoration:'none'}}>← RiverSpend Sound Studio Live</a>
+        <a href="/servizi/sound-studio-live" style={{color:'#0f766e',fontWeight:800,textDecoration:'none'}}>← RiverSpend Sound Studio Live</a>\n        <a href="/servizi/pacchetti-studio" style={{display:"inline-block",marginLeft:12,color:"#0e7490",fontWeight:800,textDecoration:"none"}}>💳 Pacchetti e prezzi</a>
         <header style={{marginTop:18,padding:'28px 22px',borderRadius:26,color:'white',background:'radial-gradient(circle at 85% 10%,#0e7490,#082f49 70%)'}}>
           <div style={{fontSize:12,letterSpacing:3,color:'#a5f3fc',fontWeight:900}}>RIVERSPEND VIDEO LAB</div>
           <h1 style={{fontSize:'clamp(30px,6vw,46px)',lineHeight:1.1,margin:'10px 0'}}>Il video, senza limiti creativi.</h1>
