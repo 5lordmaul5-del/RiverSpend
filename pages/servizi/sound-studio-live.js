@@ -268,7 +268,7 @@ export default function RiverSpendSoundStudioLive() {
           <div style={{display:'flex',flexWrap:'wrap',gap:8,marginTop:18}}>{['MULTITRACCIA','AUDIO LAB','VIDEO EDIT','ISSA • ESCLUSIVA RIVERSPEND'].map(x=><span key={x} style={{border:'1px solid #67e8f9',borderRadius:999,padding:'6px 10px',fontSize:11,fontWeight:800,color:'#cffafe',background:'rgba(8,47,73,.72)'}}>{x}</span>)}</div>
           <div style={{display:'flex',flexWrap:'wrap',gap:10,marginTop:22,position:'relative',zIndex:2}}>
             <button type="button" onClick={()=>uploadRef.current?.click()} style={{padding:'13px 17px',border:0,borderRadius:12,background:'#fbbf24',color:'#082f49',fontWeight:900,fontSize:15,cursor:'pointer'}}>＋ CARICA TRACCE</button>
-            <button type="button" onClick={()=>document.getElementById('mixer-multitraccia')?.scrollIntoView({behavior:'smooth',block:'start'})} style={{padding:'13px 17px',border:'1px solid #67e8f9',borderRadius:12,background:'#083344',color:'white',fontWeight:900,fontSize:15,cursor:'pointer'}}>🎚️ APRI IL MIXER</button>
+            <a href="#mixer-multitraccia" style={{display:'inline-flex',alignItems:'center',justifyContent:'center',padding:'13px 17px',border:'1px solid #67e8f9',borderRadius:12,background:'#083344',color:'white',fontWeight:900,fontSize:15,textDecoration:'none'}}>🎚️ APRI IL MIXER</a>
           </div>
         </header>
 
@@ -282,7 +282,7 @@ export default function RiverSpendSoundStudioLive() {
             <button type="button" onClick={()=>{setNotice("River AI: per usare una tastiera, collegala tramite USB/OTG se il dispositivo lo supporta, poi apri la sezione USB/MIDI e premi Collega USB / MIDI. Il MIDI da solo non genera suono.");document.getElementById("usb-midi")?.scrollIntoView({behavior:"smooth",block:"start"});}} style={{padding:"11px 13px",border:"1px solid #67e8f9",borderRadius:10,background:"#164e63",color:"white",fontWeight:900,cursor:"pointer"}}>🎹 Collegare una tastiera</button>
           </div>
           <div id="guida-river-ai" role="status" style={{marginTop:12,padding:12,borderRadius:12,background:"#164e63",color:"#cffafe",lineHeight:1.55}}>{notice}</div>
-          <button type="button" onClick={()=>document.getElementById("mixer-multitraccia")?.scrollIntoView({behavior:"smooth",block:"start"})} style={{marginTop:10,padding:"11px 14px",border:0,borderRadius:10,background:"#22d3ee",color:"#083344",fontWeight:900,cursor:"pointer"}}>↓ Apri il mixer</button>
+          <a href="#mixer-multitraccia" style={{display:"inline-flex",alignItems:"center",marginTop:10,padding:"11px 14px",borderRadius:10,background:"#22d3ee",color:"#083344",fontWeight:900,textDecoration:"none"}}>↓ Apri il mixer</a>
         </section>
 
         <section id="mixer-multitraccia" style={{marginTop:16,scrollMarginTop:18}}>
@@ -422,7 +422,7 @@ export default function RiverSpendSoundStudioLive() {
             <button type="button" onClick={()=>uploadRef.current?.click()} style={{display:'inline-flex',alignItems:'center',justifyContent:'center',gap:8,padding:'12px 16px',border:0,borderRadius:13,background:'#0891b2',color:'white',fontWeight:900,cursor:'pointer'}}>
               ＋ Carica tracce audio
             </button>
-            <input ref={uploadRef} type="file" accept="audio/*,.wav,.mp3,.aiff,.flac,.m4a,.ogg" multiple onChange={addFiles} style={{display:'none'}} />
+            <label style={{display:'block',marginTop:12,padding:12,border:'2px dashed #0891b2',borderRadius:12,background:'#ecfeff',color:'#164e63',fontWeight:800}}>Seleziona file audio (MP3, WAV, M4A e altri formati supportati)<input ref={uploadRef} type="file" accept="audio/*,.wav,.mp3,.aiff,.flac,.m4a,.ogg" multiple onChange={addFiles} style={{display:'block',width:'100%',marginTop:9,fontSize:14,color:'#0f172a'}} /></label>
             <button onClick={togglePlayback} style={{padding:'12px 18px',border:0,borderRadius:13,background:playing?'#0f766e':'#0f172a',color:'white',fontWeight:900,fontSize:15}}>{playing?'Ⅱ Pausa mix':'▶ Riproduci mix'}</button>
             <button onClick={()=>{tracks.forEach(t=>{const el=audioRefs.current[t.id];if(el){el.pause();el.currentTime=0;}});setPlaying(false);setNotice('Riproduzione riportata all’inizio.')}} style={{padding:'12px 16px',border:'1px solid #cbd5e1',borderRadius:13,background:'white',fontWeight:800}}>↺ Riavvolgi</button>
           </div>
