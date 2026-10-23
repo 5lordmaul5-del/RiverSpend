@@ -22,7 +22,7 @@ export default function RiverSpendSoundStudioLive() {
       id: (Date.now() + i).toString() + Math.random().toString(36).slice(2, 7),
       name: file.name.replace(/\.[^.]+$/, ''),
       kind: kinds[Math.min(tracks.length + i, kinds.length - 1)],
-      url: URL.createObjectURL(file), file, volume: 80, muted: false, solo: false, duration: 0, bass: 0, mid: 0, treble: 0, pan: 0
+      url: URL.createObjectURL(file), file, volume: 80, muted: false, solo: false, duration: 0, fx: { bass: 0, mid: 0, treble: 0, reverb: 0 }, bass: 0, mid: 0, treble: 0, pan: 0
     }));
     setTracks(prev => [...prev, ...additions]);
     setNotice(additions.length + ' traccia/e aggiunta/e. Regola volume, bassi, medi, alti e panorama stereo e premi Riproduci.');
@@ -118,7 +118,7 @@ export default function RiverSpendSoundStudioLive() {
             <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(min(100%,190px),1fr))',gap:10,marginTop:14,padding:12,background:'#f0fdfa',borderRadius:12}}>
               {[[ 'Bassi', 'bass', -12, 12, ' dB'],['Medi', 'mid', -12, 12, ' dB'],['Alti', 'treble', -12, 12, ' dB'],['Panorama L/R', 'pan', -100, 100, '']].map(([label,key,min,max,unit])=><label key={key} style={{fontSize:12,fontWeight:800,color:'#164e63'}}>{label}: {t[key] || 0}{unit}<input aria-label={label+' '+t.name} type="range" min={min} max={max} step="1" value={t[key] || 0} onChange={e=>changeEffect(t,key,e.target.value)} style={{display:'block',width:'100%',accentColor:'#0e7490'}} /></label>)}
             </div>
-            <audio ref={el=>{audioRefs.current[t.id]=el; if(el && el.duration && !t.duration) patchTrack(t.id,{duration:el.duration});}} src={t.url} preload="metadata" onLoadedMetadata={e=>patchTrack(t.id,{duration:e.currentTarget.duration})} onEnded={()=>{if(tracks.every(x=>{const el=audioRefs.current[x.id];return !el||el.ended||el.paused;}))setPlaying(false);}} controls style={{width:'100%',height:38,marginTop:8}} />
+            <div style={{marginTop:12,padding:12,borderRadius:12,background:'#f0fdfa',border:'1px solid #99f6e4'}}><strong style={{display:'block',marginBottom:8,color:'#115e59'}}>🎛️ Effetti traccia</strong><div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(125px,1fr))',gap:10}}>{[['bass','Bassi',-12,12,' dB'],['mid','Medi',-12,12,' dB'],['treble','Alti',-12,12,' dB'],['reverb','River Reverb',0,100,'%']].map(([key,label,min,max,unit])=><label key={key} style={{fontSize:12,fontWeight:800,color:'#134e4a'}}>{label} <span style={{float:'right'}}>{t.fx?.[key] ?? 0}{unit}</span><input aria-label={label+' '+t.name} type="range" min={min} max={max} value={t.fx?.[key] ?? 0} onChange={e=>changeFx(t,key,e.target.value)} style={{display:'block',width:'100%',accentColor:'#0d9488',marginTop:7}} /></label>)}</div><p style={{fontSize:11,color:'#475569',margin:'8px 0 0'}}>EQ e riverbero si applicano alla riproduzione nel browser; il file originale non viene modificato né esportato.</p></div><audio ref={el=>{audioRefs.current[t.id]=el; if(el && el.duration && !t.duration) patchTrack(t.id,{duration:el.duration});}} src={t.url} preload="metadata" onLoadedMetadata={e=>patchTrack(t.id,{duration:e.currentTarget.duration})} onEnded={()=>{if(tracks.every(x=>{const el=audioRefs.current[x.id];return !el||el.ended||el.paused;}))setPlaying(false);}} controls style={{width:'100%',height:38,marginTop:8}} />
           </article>)}</div>}
         </section>
 
