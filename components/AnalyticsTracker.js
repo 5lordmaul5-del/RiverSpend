@@ -123,8 +123,12 @@ export default function AnalyticsTracker() {
       mediaRef.current.set(element, state);
       const getModule = () => {
         const explicit = element.dataset.rsModule || element.closest('[data-rs-module]')?.dataset.rsModule;
-        if (['broadcast', 'radio', 'stream'].includes(explicit)) return explicit;
-        return isAudio ? 'radio' : 'stream';
+        if (['broadcast', 'radio', 'stream', 'site_video', 'site_audio'].includes(explicit)) return explicit;
+        const path = cleanPath(pathRef.current).toLowerCase();
+        if (path.includes('broadcast')) return 'broadcast';
+        if (path.includes('stream')) return 'stream';
+        if (path.includes('radio') || path.includes('music')) return 'radio';
+        return isAudio ? 'site_audio' : 'site_video';
       };
       const getContentId = () => element.dataset.rsContentId || element.dataset.contentId || element.getAttribute('aria-label') || cleanPath(pathRef.current);
       const onPlay = () => {
@@ -195,7 +199,7 @@ export default function AnalyticsTracker() {
             const elapsed = Math.floor((Date.now() - state.lastMark) / 1000);
             if (elapsed > 0 && elapsed <= 60) {
               state.total += elapsed;
-              recordMedia(el.tagName === 'AUDIO' ? 'radio' : 'stream', 'play_heartbeat', pathRef.current, elapsed, el.dataset.rsContentId || cleanPath(pathRef.current));
+              recordMedia(el.tagName === 'AUDIO' ? 'site_audio' : 'site_video', 'play_heartbeat', pathRef.current, elapsed, el.dataset.rsContentId || cleanPath(pathRef.current));
               recordSite(el.tagName === 'AUDIO' ? 'audio_heartbeat' : 'video_heartbeat', pathRef.current, elapsed, {});
               state.lastMark = Date.now();
             }
@@ -203,6 +207,10 @@ export default function AnalyticsTracker() {
         });
       } else {
         pageRef.current.lastMark = Date.now();
+        document.querySelectorAll('video,audio').forEach(el => {
+          const state = mediaRef.current.get(el);
+          if (state && !el.paused) state.lastMark = Date.now();
+        });
       }
     };
     const onPageHide = () => flushPage('page_exit');
