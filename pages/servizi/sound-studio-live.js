@@ -53,7 +53,8 @@ export default function RiverSpendSoundStudioLive() {
     <Head><title>RiverSpend Sound Studio Live</title><meta name="description" content="Studio digitale RiverSpend per tracce audio, mix e preparazione audio-video." /></Head>
     <main style={{minHeight:'100vh',background:'linear-gradient(180deg,#ecfeff 0%,#f8fafc 45%,#fff 100%)',color:'#0f172a',fontFamily:'system-ui',padding:'18px 14px 48px'}}>
       <div style={{maxWidth:1080,margin:'0 auto'}}>
-        <a href="/" style={{color:'#0f766e',fontWeight:800,textDecoration:'none'}}>← RiverSpendShop</a>\n        <a href="/servizi/pacchetti-studio" style={{display:"inline-block",marginLeft:12,color:"#0e7490",fontWeight:800,textDecoration:"none"}}>💳 Pacchetti e prezzi</a>
+        <a href="/" style={{color:'#0f766e',fontWeight:800,textDecoration:'none'}}>← RiverSpendShop</a>
+        <a href="/servizi/pacchetti-studio" style={{display:"inline-block",marginLeft:12,color:"#0e7490",fontWeight:800,textDecoration:"none"}}>💳 Pacchetti e prezzi</a>
         <header style={{marginTop:18,overflow:'hidden',position:'relative',borderRadius:26,padding:'28px 22px',color:'white',background:'radial-gradient(circle at 80% 10%,#0e7490 0,#164e63 34%,#082f49 75%)',boxShadow:'0 18px 40px rgba(8,47,73,.18)'}}>
           <div style={{fontSize:12,letterSpacing:3,fontWeight:900,color:'#a5f3fc'}}>RIVERSPEND SOUND STUDIO LIVE</div>
           <h1 style={{fontSize:'clamp(30px,6vw,48px)',lineHeight:1.08,margin:'12px 0'}}>Il tuo studio. Il tuo suono.</h1>
@@ -64,6 +65,25 @@ export default function RiverSpendSoundStudioLive() {
             <button type="button" onClick={()=>document.getElementById('mixer-multitraccia')?.scrollIntoView({behavior:'smooth',block:'start'})} style={{padding:'13px 17px',border:'1px solid #67e8f9',borderRadius:12,background:'#083344',color:'white',fontWeight:900,fontSize:15,cursor:'pointer'}}>🎚️ APRI IL MIXER</button>
           </div>
         </header>
+
+        <section id="mixer-multitraccia" style={{marginTop:16,scrollMarginTop:18}}>
+          <h2 style={{fontSize:23,margin:'0 0 10px'}}>🎚️ Mixer multitraccia — apri e usa</h2>
+          {!tracks.length ? <div style={{padding:26,textAlign:'center',border:'2px dashed #7dd3fc',borderRadius:20,background:'white'}}><div style={{fontSize:36}}>🎚️</div><strong style={{display:"block",fontSize:20,marginTop:6}}>Mixer multitraccia RiverSpend</strong><p style={{color:'#64748b',marginBottom:14}}>Il mixer è qui. Per creare i canali, scegli uno o più file audio MP3, WAV, M4A o altri formati supportati dal browser.</p><button type="button" onClick={()=>uploadRef.current?.click()} style={{padding:"12px 16px",border:0,borderRadius:12,background:"#0891b2",color:"white",fontWeight:900,fontSize:15,cursor:"pointer"}}>＋ SCEGLI FILE AUDIO</button></div> : <div style={{display:'grid',gap:10}}>{tracks.map((t,i)=><article key={t.id} style={{background:'white',border:'1px solid #cbd5e1',borderRadius:18,padding:14,boxShadow:'0 4px 14px rgba(15,23,42,.04)'}}>
+            <div style={{display:'flex',alignItems:'center',gap:10,flexWrap:'wrap'}}>
+              <div style={{width:36,height:36,display:'grid',placeItems:'center',borderRadius:11,background:'#cffafe',color:'#155e75',fontWeight:900}}>{i+1}</div>
+              <div style={{flex:'1 1 150px',minWidth:0}}><strong style={{display:'block',overflowWrap:'anywhere'}}>{t.name}</strong><div style={{fontSize:12,color:'#64748b'}}>{t.file.name} · {(t.file.size/1024/1024).toFixed(1)} MB</div></div>
+              <select aria-label={'Tipo traccia '+t.name} value={t.kind} onChange={e=>patchTrack(t.id,{kind:e.target.value})} style={{padding:8,border:'1px solid #cbd5e1',borderRadius:9,maxWidth:'100%'}}>{kinds.map(k=><option key={k}>{k}</option>)}</select>
+              <button onClick={()=>patchTrack(t.id,{muted:!t.muted})} aria-pressed={t.muted} style={{padding:'8px 11px',borderRadius:9,border:'1px solid #cbd5e1',background:t.muted?'#fee2e2':'white',fontWeight:900}}>M</button>
+              <button onClick={()=>patchTrack(t.id,{solo:!t.solo})} aria-pressed={t.solo} style={{padding:'8px 11px',borderRadius:9,border:'1px solid #cbd5e1',background:t.solo?'#fef3c7':'white',fontWeight:900}}>S</button>
+              <button onClick={()=>removeTrack(t.id)} aria-label={'Rimuovi '+t.name} style={{padding:'8px 10px',borderRadius:9,border:'1px solid #fecaca',background:'white',color:'#b91c1c'}}>✕</button>
+            </div>
+            <div style={{display:'grid',gridTemplateColumns:'minmax(0,1fr) 55px',gap:12,alignItems:'center',marginTop:12}}>
+              <input aria-label={'Volume '+t.name} type="range" min="0" max="100" value={t.volume} onChange={e=>{const v=Number(e.target.value);patchTrack(t.id,{volume:v});const el=audioRefs.current[t.id];if(el)el.volume=(t.muted||(soloActive&&!t.solo)?0:v/100)*master/100;}} style={{width:'100%',accentColor:'#0891b2'}} />
+              <strong style={{textAlign:'right'}}>{t.volume}%</strong>
+            </div>
+            <audio ref={el=>{audioRefs.current[t.id]=el; if(el && el.duration && !t.duration) patchTrack(t.id,{duration:el.duration});}} src={t.url} preload="metadata" onLoadedMetadata={e=>patchTrack(t.id,{duration:e.currentTarget.duration})} onEnded={()=>{if(tracks.every(x=>{const el=audioRefs.current[x.id];return !el||el.ended||el.paused;}))setPlaying(false);}} controls style={{width:'100%',height:38,marginTop:8}} />
+          </article>)}</div>}
+        </section>
 
         <section style={{marginTop:16,padding:18,borderRadius:22,background:'#082f49',color:'white',border:'1px solid #155e75',boxShadow:'0 8px 24px rgba(15,23,42,.12)'}}>
           <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(min(100%,280px),1fr))',gap:18,alignItems:'center'}}>
@@ -139,24 +159,7 @@ export default function RiverSpendSoundStudioLive() {
           <div style={{height:22,display:'flex',gap:3,alignItems:'end',marginTop:18,overflow:'hidden'}}>{Array.from({length:72},(_,i)=><span key={i} style={{flex:'1 0 3px',height:(8+((i*17+i*i*3)%14))+'px',borderRadius:3,background:i%4===0?'#fbbf24':'#22d3ee',opacity:.85}} />)}</div>
         </section>
 
-        <section id="mixer-multitraccia" style={{marginTop:16,scrollMarginTop:18}}>
-          <h2 style={{fontSize:23,margin:'0 0 10px'}}>🎚️ Mixer multitraccia — apri e usa</h2>
-          {!tracks.length ? <div style={{padding:26,textAlign:'center',border:'2px dashed #7dd3fc',borderRadius:20,background:'white'}}><div style={{fontSize:36}}>🎙️</div><strong>Il tuo mixer è pronto</strong><p style={{color:'#64748b',marginBottom:0}}>Carica più file audio per gestire le tracce separatamente.</p></div> : <div style={{display:'grid',gap:10}}>{tracks.map((t,i)=><article key={t.id} style={{background:'white',border:'1px solid #cbd5e1',borderRadius:18,padding:14,boxShadow:'0 4px 14px rgba(15,23,42,.04)'}}>
-            <div style={{display:'flex',alignItems:'center',gap:10,flexWrap:'wrap'}}>
-              <div style={{width:36,height:36,display:'grid',placeItems:'center',borderRadius:11,background:'#cffafe',color:'#155e75',fontWeight:900}}>{i+1}</div>
-              <div style={{flex:'1 1 150px',minWidth:0}}><strong style={{display:'block',overflowWrap:'anywhere'}}>{t.name}</strong><div style={{fontSize:12,color:'#64748b'}}>{t.file.name} · {(t.file.size/1024/1024).toFixed(1)} MB</div></div>
-              <select aria-label={'Tipo traccia '+t.name} value={t.kind} onChange={e=>patchTrack(t.id,{kind:e.target.value})} style={{padding:8,border:'1px solid #cbd5e1',borderRadius:9,maxWidth:'100%'}}>{kinds.map(k=><option key={k}>{k}</option>)}</select>
-              <button onClick={()=>patchTrack(t.id,{muted:!t.muted})} aria-pressed={t.muted} style={{padding:'8px 11px',borderRadius:9,border:'1px solid #cbd5e1',background:t.muted?'#fee2e2':'white',fontWeight:900}}>M</button>
-              <button onClick={()=>patchTrack(t.id,{solo:!t.solo})} aria-pressed={t.solo} style={{padding:'8px 11px',borderRadius:9,border:'1px solid #cbd5e1',background:t.solo?'#fef3c7':'white',fontWeight:900}}>S</button>
-              <button onClick={()=>removeTrack(t.id)} aria-label={'Rimuovi '+t.name} style={{padding:'8px 10px',borderRadius:9,border:'1px solid #fecaca',background:'white',color:'#b91c1c'}}>✕</button>
-            </div>
-            <div style={{display:'grid',gridTemplateColumns:'minmax(0,1fr) 55px',gap:12,alignItems:'center',marginTop:12}}>
-              <input aria-label={'Volume '+t.name} type="range" min="0" max="100" value={t.volume} onChange={e=>{const v=Number(e.target.value);patchTrack(t.id,{volume:v});const el=audioRefs.current[t.id];if(el)el.volume=(t.muted||(soloActive&&!t.solo)?0:v/100)*master/100;}} style={{width:'100%',accentColor:'#0891b2'}} />
-              <strong style={{textAlign:'right'}}>{t.volume}%</strong>
-            </div>
-            <audio ref={el=>{audioRefs.current[t.id]=el; if(el && el.duration && !t.duration) patchTrack(t.id,{duration:el.duration});}} src={t.url} preload="metadata" onLoadedMetadata={e=>patchTrack(t.id,{duration:e.currentTarget.duration})} onEnded={()=>{if(tracks.every(x=>{const el=audioRefs.current[x.id];return !el||el.ended||el.paused;}))setPlaying(false);}} controls style={{width:'100%',height:38,marginTop:8}} />
-          </article>)}</div>}
-        </section>
+
 
         <section style={{marginTop:18,display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(min(100%,230px),1fr))',gap:12}}>
           {[['🎛️','Preamplificatore & FX','Moduli previsti: gain, EQ, compressore, riverbero e delay.'],['🌌','Surround 5.1 / 7.1','Progettazione multicanale; rendering ed export richiedono un motore audio compatibile.'],['🎬','Video Edit','Modulo successivo per importare video, sincronizzare l’audio e montare le scene.'],['🤖','River AI Audio Lab','Pulizia, mix assistito e mastering tramite un servizio audio dedicato da integrare.']].map(([icon,title,desc])=><div key={title} style={{padding:16,borderRadius:18,background:'white',border:'1px solid #bae6fd'}}><div style={{fontSize:26}}>{icon}</div><strong>{title}</strong><p style={{fontSize:14,color:'#475569',lineHeight:1.5,marginBottom:0}}>{desc}</p></div>)}
