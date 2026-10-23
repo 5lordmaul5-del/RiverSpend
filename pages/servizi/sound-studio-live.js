@@ -261,15 +261,29 @@ export default function RiverSpendSoundStudioLive() {
         <a href="/" style={{color:'#0f766e',fontWeight:800,textDecoration:'none'}}>← RiverSpendShop</a>
         <a href="/servizi/pacchetti-studio" style={{display:"inline-block",marginLeft:12,color:"#0e7490",fontWeight:800,textDecoration:"none"}}>💳 Pacchetti e prezzi</a>
         <header style={{marginTop:18,overflow:'hidden',position:'relative',borderRadius:26,padding:'28px 22px',color:'white',background:'radial-gradient(circle at 80% 10%,#0e7490 0,#164e63 34%,#082f49 75%)',boxShadow:'0 18px 40px rgba(8,47,73,.18)'}}>
-          <div style={{fontSize:12,letterSpacing:3,fontWeight:900,color:'#a5f3fc'}}>RIVERSPEND SOUND STUDIO LIVE</div>
-          <h1 style={{fontSize:'clamp(30px,6vw,48px)',lineHeight:1.08,margin:'12px 0'}}>Il tuo studio. Il tuo suono.</h1>
-          <p style={{maxWidth:680,fontSize:16,lineHeight:1.65,color:'#cffafe',marginBottom:0}}>Carica le tracce, regola ogni livello e prepara il tuo progetto musicale. River AI, mastering assistito, video editing e distribuzione saranno moduli progressivi dello studio.</p>
+          <div style={{fontSize:12,letterSpacing:2,fontWeight:900,color:"#a5f3fc",overflowWrap:"anywhere"}}>RiverSpendSoundStudioLive</div>
+          <h1 style={{fontSize:"clamp(30px,6vw,48px)",lineHeight:1.08,margin:"12px 0"}}>Il tuo studio. Il tuo suono.</h1>
+          <div style={{borderRadius:16,overflow:"hidden",margin:"14px 0",border:"1px solid #67e8f9",boxShadow:"0 10px 28px rgba(0,0,0,.25)"}}><img src="https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=1200&q=85" alt="Studio musicale professionale con mixer e monitor audio" style={{display:"block",width:"100%",height:"clamp(190px,48vw,340px)",objectFit:"cover"}} /></div>
+          <p style={{maxWidth:680,fontSize:16,lineHeight:1.65,color:"#cffafe",marginBottom:0}}>Uno studio virtuale guidato da River AI e basato sul concept ISSA, esclusiva RiverSpend. Carica le tracce e segui la guida passo dopo passo per preparare il tuo progetto musicale. Le funzioni AI avanzate si attiveranno quando sarà collegato il servizio dedicato.</p>
           <div style={{display:'flex',flexWrap:'wrap',gap:8,marginTop:18}}>{['MULTITRACCIA','AUDIO LAB','VIDEO EDIT','ISSA • ESCLUSIVA RIVERSPEND'].map(x=><span key={x} style={{border:'1px solid #67e8f9',borderRadius:999,padding:'6px 10px',fontSize:11,fontWeight:800,color:'#cffafe',background:'rgba(8,47,73,.72)'}}>{x}</span>)}</div>
           <div style={{display:'flex',flexWrap:'wrap',gap:10,marginTop:22,position:'relative',zIndex:2}}>
             <button type="button" onClick={()=>uploadRef.current?.click()} style={{padding:'13px 17px',border:0,borderRadius:12,background:'#fbbf24',color:'#082f49',fontWeight:900,fontSize:15,cursor:'pointer'}}>＋ CARICA TRACCE</button>
             <button type="button" onClick={()=>document.getElementById('mixer-multitraccia')?.scrollIntoView({behavior:'smooth',block:'start'})} style={{padding:'13px 17px',border:'1px solid #67e8f9',borderRadius:12,background:'#083344',color:'white',fontWeight:900,fontSize:15,cursor:'pointer'}}>🎚️ APRI IL MIXER</button>
           </div>
         </header>
+
+        <section id="river-ai-assistente" style={{marginTop:16,padding:18,borderRadius:20,background:"#082f49",color:"white",border:"1px solid #22d3ee"}}>
+          <div style={{fontSize:12,letterSpacing:2,fontWeight:900,color:"#67e8f9"}}>🤖 RIVER AI • ASSISTENTE DEL MUSICISTA</div>
+          <h2 style={{fontSize:23,margin:"7px 0"}}>Ti guido nel tuo studio</h2>
+          <p style={{color:"#cffafe",lineHeight:1.55,marginTop:0}}>Scegli cosa vuoi fare: River AI ti mostra il prossimo passo. Questa guida è interattiva; le risposte AI libere richiederanno il collegamento del servizio AI.</p>
+          <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+            <button type="button" onClick={()=>{setNotice("River AI: 1) premi Carica tracce; 2) seleziona i file audio; 3) regola il volume di ogni traccia; 4) premi PLAY per ascoltare. Usa cuffie per lavorare meglio.");document.getElementById("guida-river-ai")?.scrollIntoView({behavior:"smooth",block:"nearest"});}} style={{padding:"11px 13px",border:0,borderRadius:10,background:"#fbbf24",color:"#082f49",fontWeight:900,cursor:"pointer"}}>🎚️ Aiutami a fare un mix</button>
+            <button type="button" onClick={()=>{setNotice("River AI: per registrare, vai a Ingresso live, premi Collega microfono / strumento e autorizza il microfono. Poi avvia la registrazione e premi Ferma e aggiungi al mixer.");document.getElementById("ingresso-live")?.scrollIntoView({behavior:"smooth",block:"start"});}} style={{padding:"11px 13px",border:"1px solid #67e8f9",borderRadius:10,background:"#164e63",color:"white",fontWeight:900,cursor:"pointer"}}>🎙️ Voglio registrare</button>
+            <button type="button" onClick={()=>{setNotice("River AI: per usare una tastiera, collegala tramite USB/OTG se il dispositivo lo supporta, poi apri la sezione USB/MIDI e premi Collega USB / MIDI. Il MIDI da solo non genera suono.");document.getElementById("usb-midi")?.scrollIntoView({behavior:"smooth",block:"start"});}} style={{padding:"11px 13px",border:"1px solid #67e8f9",borderRadius:10,background:"#164e63",color:"white",fontWeight:900,cursor:"pointer"}}>🎹 Collegare una tastiera</button>
+          </div>
+          <div id="guida-river-ai" role="status" style={{marginTop:12,padding:12,borderRadius:12,background:"#164e63",color:"#cffafe",lineHeight:1.55}}>{notice}</div>
+          <button type="button" onClick={()=>document.getElementById("mixer-multitraccia")?.scrollIntoView({behavior:"smooth",block:"start"})} style={{marginTop:10,padding:"11px 14px",border:0,borderRadius:10,background:"#22d3ee",color:"#083344",fontWeight:900,cursor:"pointer"}}>↓ Apri il mixer</button>
+        </section>
 
         <section id="mixer-multitraccia" style={{marginTop:16,scrollMarginTop:18}}>
           <h2 style={{fontSize:23,margin:'0 0 10px'}}>🎚️ Mixer multitraccia — apri e usa</h2>
