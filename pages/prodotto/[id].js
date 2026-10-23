@@ -297,44 +297,14 @@ export default function Prodotto() {
                   <div className="relative flex min-h-[330px] items-center justify-center overflow-hidden rounded-2xl border border-slate-200 bg-white sm:min-h-[510px]">
                     {contenuti[fotoAttiva]?.type === 'video' ? (
                       <div className="relative h-[330px] w-full overflow-hidden rounded-2xl bg-black sm:h-[510px]">
-                        <video controls playsInline preload="metadata" onPlay={() => setMostraBadgeSpons(false)} className="h-[330px] w-full object-contain sm:h-[510px]">
-                          <source src={contenuti[fotoAttiva].url} />
-                        </video>
-                        {mostraBadgeSpons && (
+                        {sponsorizzato && mostraBadgeSpons && (
                           <div className="pointer-events-none absolute left-3 top-3 z-10 rounded-full bg-black/75 px-3 py-1 text-xs font-bold text-white shadow">
                             📢 RS Spons · Pubblicità
                           </div>
                         )}
-                      </div>
-                            <h3 className="mt-5 text-2xl font-black sm:text-3xl">Spot pubblicitario</h3>
-                            <p className="mt-2 max-w-md text-sm text-slate-300">
-                              In questa demo lo sponsor viene mostrato prima del video dell'utente.
-                            </p>
-                            {spotInCorso ? (
-                              <div className="mt-6 rounded-xl bg-white/10 px-6 py-4 font-bold">
-                                Spot demo in riproduzione · {spotSecondi}s
-                              </div>
-                            ) : (
-                              <button
-                                type="button"
-                                onClick={() => { setSpotSecondi(5); setSpotInCorso(true); }}
-                                className="mt-6 rounded-xl bg-cyan-500 px-6 py-3 font-extrabold text-white shadow-lg"
-                              >
-                                ▶ Avvia spot demo
-                              </button>
-                            )}
-                            <p className="mt-4 text-xs text-slate-400">Pubblicità dimostrativa · nessun pagamento</p>
-                          </div>
-                        ) : (
-                          <>
-                            <div className="absolute left-3 top-3 z-10 rounded-full bg-black/70 px-3 py-1 text-xs font-bold text-white">
-                              RS Spons · DEMO
-                            </div>
-                            <video controls playsInline preload="metadata" className="h-[330px] w-full object-contain sm:h-[510px]">
-                              <source src={contenuti[fotoAttiva].url} />
-                            </video>
-                          </>
-                        )}
+                        <video controls playsInline preload="metadata" onPlay={() => setMostraBadgeSpons(false)} className="h-[330px] w-full object-contain sm:h-[510px]">
+                          <source src={contenuti[fotoAttiva].url} />
+                        </video>
                       </div>
                     ) : (
                       <img src={contenuti[fotoAttiva]?.url || immagini[0]} alt={prodotto.titolo || 'Foto prodotto'} className="h-[330px] w-full object-contain sm:h-[510px]" />
