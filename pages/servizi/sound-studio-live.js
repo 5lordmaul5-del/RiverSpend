@@ -61,6 +61,27 @@ export default function RiverSpendSoundStudioLive() {
         </header>
 
         <section style={{marginTop:16,padding:18,borderRadius:22,background:'white',border:'1px solid #bae6fd',boxShadow:'0 8px 24px rgba(15,23,42,.06)'}}>
+          <div style={{fontSize:12,letterSpacing:2,fontWeight:900,color:'#0e7490'}}>COLLEGAMENTO AUDIO</div>
+          <h2 style={{fontSize:23,margin:'6px 0 8px'}}>Scegli il tuo livello</h2>
+          <p style={{color:'#475569',lineHeight:1.6,marginTop:0}}>RiverSpend è pensato per chi inizia e per chi lavora in studio. Seleziona la configurazione più vicina alla tua: questa guida ti aiuta a preparare l'attrezzatura, non attiva da sola una diretta.</p>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(min(100%,220px),1fr))',gap:10}}>
+            {[
+              ['🌱','Principiante','PC o portatile, microfono integrato o USB e cuffie. Non serve una scheda audio dedicata.'],
+              ['🎙️','Intermedio','Microfono USB o XLR con interfaccia audio USB, cuffie e ambiente il più possibile silenzioso.'],
+              ['🎚️','Esperto / semi-professionale','Scheda audio USB, microfono XLR, monitoraggio in cuffia e strumenti collegati agli ingressi compatibili.'],
+              ['🎛️','Professionale','Interfaccia multicanale o mixer, più ingressi separati, monitor da studio e gestione dedicata della latenza.'],
+              ['🌐','Collaborazione da remoto','Per suonare insieme da luoghi diversi servirà una funzione live dedicata a bassa latenza: non è ancora attiva.'],
+              ['📱','Tablet o telefono','Possibile per ascoltare e gestire file compatibili; collegamento di microfoni e schede esterne dipende dal dispositivo e dagli adattatori.']
+            ].map(([icon,title,desc])=><article key={title} style={{padding:14,borderRadius:15,border:'1px solid #bae6fd',background:'#f8fdff'}}>
+              <div style={{fontSize:25}}>{icon}</div><strong>{title}</strong><p style={{fontSize:13,color:'#475569',lineHeight:1.55,marginBottom:0}}>{desc}</p>
+            </article>)}
+          </div>
+          <div style={{marginTop:12,padding:12,borderRadius:12,background:'#fff7ed',color:'#9a3412',fontSize:13,lineHeight:1.55}}>
+            <strong>Importante:</strong> la versione attuale permette di caricare e mixare in anteprima file audio nel browser. La cattura microfono, la registrazione live multitraccia, la diretta con altri utenti e il monitoraggio a bassa latenza richiedono ancora sviluppo e test. Per cantare senza sentire ritardo, una scheda audio con monitoraggio diretto è spesso la scelta migliore.
+          </div>
+        </section>
+
+        <section style={{marginTop:16,padding:18,borderRadius:22,background:'white',border:'1px solid #bae6fd',boxShadow:'0 8px 24px rgba(15,23,42,.06)'}}>
           <label htmlFor="project" style={{display:'block',fontWeight:800,marginBottom:7}}>Nome del progetto</label>
           <input id="project" value={project} onChange={e=>setProject(e.target.value)} style={{boxSizing:'border-box',width:'100%',padding:12,border:'1px solid #cbd5e1',borderRadius:12,fontSize:16}} />
           <div style={{display:'flex',flexWrap:'wrap',gap:10,marginTop:14}}>
