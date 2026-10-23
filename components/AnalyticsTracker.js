@@ -80,6 +80,8 @@ export default function AnalyticsTracker() {
   const router = useRouter();
   const pageRef = useRef({ path: '/', lastMark: 0, startedAt: 0 });
   const mediaRef = useRef(new WeakMap());
+  const pathRef = useRef(router.asPath);
+  useEffect(() => { pathRef.current = router.asPath; }, [router.asPath]);
 
   useEffect(() => {
     let pageTimer;
@@ -123,13 +125,13 @@ export default function AnalyticsTracker() {
         if (['broadcast', 'radio', 'stream'].includes(explicit)) return explicit;
         return isAudio ? 'radio' : 'stream';
       };
-      const getContentId = () => element.dataset.rsContentId || element.dataset.contentId || element.getAttribute('aria-label') || cleanPath(router.asPath);
+      const getContentId = () => element.dataset.rsContentId || element.dataset.contentId || element.getAttribute('aria-label') || cleanPath(pathRef.current);
       const onPlay = () => {
         if (!analyticsAllowed()) return;
         const now = Date.now();
         state.lastMark = now;
         if (!state.started) {
-          recordMedia(getModule(), 'play_start', router.asPath, 0, getContentId());
+          recordMedia(getModule(), 'play_start', pathRef.current, 0, getContentId());
           state.started = true;
         }
         clearInterval(state.timer);
@@ -138,8 +140,8 @@ export default function AnalyticsTracker() {
           const elapsed = Math.floor((Date.now() - state.lastMark) / 1000);
           if (elapsed >= 5) {
             state.total += elapsed;
-            recordMedia(getModule(), 'play_heartbeat', router.asPath, elapsed, getContentId());
-            recordSite(isVideo ? 'video_heartbeat' : 'audio_heartbeat', router.asPath, elapsed, { content_id: getContentId() });
+            recordMedia(getModule(), 'play_heartbeat', pathRef.current, elapsed, getContentId());
+            recordSite(isVideo ? 'video_heartbeat' : 'audio_heartbeat', pathRef.current, elapsed, { content_id: getContentId() });
             state.lastMark = Date.now();
           }
         }, HEARTBEAT_MS);
@@ -149,8 +151,8 @@ export default function AnalyticsTracker() {
           const elapsed = Math.floor((Date.now() - state.lastMark) / 1000);
           if (elapsed > 0 && elapsed <= 60 && !element.ended) {
             state.total += elapsed;
-            recordMedia(getModule(), 'play_heartbeat', router.asPath, elapsed, getContentId());
-            recordSite(isVideo ? 'video_heartbeat' : 'audio_heartbeat', router.asPath, elapsed, { content_id: getContentId() });
+            recordMedia(getModule(), 'play_heartbeat', pathRef.current, elapsed, getContentId());
+            recordSite(isVideo ? 'video_heartbeat' : 'audio_heartbeat', pathRef.current, elapsed, { content_id: getContentId() });
           }
         }
         state.lastMark = 0;
@@ -159,8 +161,8 @@ export default function AnalyticsTracker() {
       const onEnded = () => {
         onPause();
         if (!state.completed && analyticsAllowed()) {
-          recordMedia(getModule(), 'play_complete', router.asPath, state.total, getContentId());
-          recordSite(isVideo ? 'video_complete' : 'audio_complete', router.asPath, state.total, { content_id: getContentId() });
+          recordMedia(getModule(), 'play_complete', pathRef.current, state.total, getContentId());
+          recordSite(isVideo ? 'video_complete' : 'audio_complete', pathRef.current, state.total, { content_id: getContentId() });
           state.completed = true;
         }
         state.started = false;
@@ -192,8 +194,8 @@ export default function AnalyticsTracker() {
             const elapsed = Math.floor((Date.now() - state.lastMark) / 1000);
             if (elapsed > 0 && elapsed <= 60) {
               state.total += elapsed;
-              recordMedia(el.tagName === 'AUDIO' ? 'radio' : 'stream', 'play_heartbeat', router.asPath, elapsed, el.dataset.rsContentId || cleanPath(router.asPath));
-              recordSite(el.tagName === 'AUDIO' ? 'audio_heartbeat' : 'video_heartbeat', router.asPath, elapsed, {});
+              recordMedia(el.tagName === 'AUDIO' ? 'radio' : 'stream', 'play_heartbeat', pathRef.current, elapsed, el.dataset.rsContentId || cleanPath(pathRef.current));
+              recordSite(el.tagName === 'AUDIO' ? 'audio_heartbeat' : 'video_heartbeat', pathRef.current, elapsed, {});
               state.lastMark = Date.now();
             }
           }
@@ -204,7 +206,9 @@ export default function AnalyticsTracker() {
     };
     const onPageHide = () => flushPage('page_exit');
 
-    startPage(router.asPath);
+    startPage(pathRef.current);
+    const onRouteChange = (nextPath) => { flushPage('page_exit'); startPage(nextPath); scanMedia(); };
+    router.events.on('routeChangeComplete', onRouteChange);
     scanMedia();
     observer = new MutationObserver(scanMedia);
     observer.observe(document.documentElement, { childList: true, subtree: true });
@@ -220,6 +224,7 @@ export default function AnalyticsTracker() {
 
     return () => {
       flushPage('page_exit');
+      router.events.off('routeChangeComplete', onRouteChange);
       clearInterval(pageTimer);
       observer?.disconnect();
       document.removeEventListener('visibilitychange', onVisibility);
@@ -227,7 +232,7 @@ export default function AnalyticsTracker() {
       window.removeEventListener('riverspend:cookie-preferences-change', consentListener);
       document.querySelectorAll('video,audio').forEach(el => mediaRef.current.get(el)?.cleanup?.());
     };
-  }, [router.asPath]);
+  }, []);
 
   return null;
 }
