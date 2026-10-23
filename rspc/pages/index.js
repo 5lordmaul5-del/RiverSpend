@@ -11,7 +11,8 @@ const modules=[
  ["broadcast","📡","RSBroadcast","Video pubblicati e pubblico","analytics"],
  ["ads","📢","RS Ads","Campagne, inserzioni e pagamenti","analytics"],
  ["security","🛡️","Sicurezza","Ruoli e attività","security"],
- ["treasury","🏦","Treasury","Incassi, accantonamenti e pagamenti","finance"]
+ ["treasury","🏦","Treasury","Incassi, accantonamenti e pagamenti","finance"],
+ ["fiscal","🧾","Archivio fiscale","Documenti e contabilità per il commercialista","fiscal"]
 ];
 
 function Metric({title,value,note}){return <div className="metric"><span>{title}</span><strong>{value==null?"—":value}</strong>{note&&<small>{note}</small>}</div>}
@@ -39,7 +40,7 @@ export default function RSPC(){
  async function authorize(){
   const email=(session.user.email||"").toLowerCase();
   const {data:a}=await supabase.from("rs_admin_roles").select("role").eq("user_id",session.user.id).maybeSingle();
-  if(a?.role==="admin"){setRole("admin");setPermissions({marketplace:true,stream:true,park:true,finance:true,logistics:true,security:true,analytics:true});load();return}
+  if(a?.role==="admin"){setRole("admin");setPermissions({marketplace:true,stream:true,park:true,finance:true,logistics:true,security:true,analytics:true,fiscal:true});load();return}
   const {data:c}=await supabase.from("rs_collaborators").select("status,permissions").eq("email",email).maybeSingle();
   if(c?.status==="active"){setRole("collaborator");setPermissions(c.permissions||{});load();return}
   setRole("denied");setError("Account non autorizzato a RSPC.");
@@ -120,5 +121,5 @@ export default function RSPC(){
  </form></div>
  <div className="panel wide"><h3>🗂️ Campagne registrate ({(d.adCampaigns||[]).length})</h3>{d.adCampaignsError?<p>Errore lettura campagne: {d.adCampaignsError}</p>:(d.adCampaigns||[]).length?(d.adCampaigns||[]).map(a=><div className="row" key={a.id}><span><b>{a.title}</b><small>{a.advertiser_name} · {a.advertiser_type} · {a.targeting_mode==="interest"?"Interessi":a.targeting_mode==="local"?"Locale":"Business"}</small><small>{(a.categories||[]).join(", ")||[a.city,a.region,a.country_code].filter(Boolean).join(" · ")} · Budget previsto € {Number(a.budget_eur||0).toLocaleString("it-IT",{minimumFractionDigits:2})}</small><small>Stato: {a.status} · {new Date(a.created_at).toLocaleString("it-IT")}</small></span><span>{a.status==="review"&&<button onClick={()=>setAdCampaignStatus(a.id,"active")}>Approva</button>}{a.status==="active"&&<button onClick={()=>setAdCampaignStatus(a.id,"paused")}>Pausa</button>}{a.status==="paused"&&<button onClick={()=>setAdCampaignStatus(a.id,"active")}>Riattiva</button>}</span></div>):<p>Nessuna campagna ancora registrata.</p>}</div>
  <MediaDashboard title="RS Ads · risultati registrati" moduleKey="rs_ads" stats={d.mediaStats?.rs_ads} events={d.mediaEvents||[]} payments={d.mediaPayments||[]}/>
- </div>}{tab==="security"&&<div className="panel"><h2>🛡️ Sicurezza</h2><p>Ruoli, collaboratori, accessi e attività amministrative.</p></div>}<div className="panel roadmap"><h2>🧩 Estensione futura</h2><p>Nuovo programma? Si aggiunge come modulo RSPC con proprie metriche ed eventi.</p><div className="chips"><span>Shop</span><span>Stream</span><span>Park</span><span>Pay</span><span>Box</span><span>Music</span><span>Broadcast</span><span>+ NUOVO</span></div></div></section></div></main>
+ </div>}{tab==="security"&&<div className="panel"><h2>🛡️ Sicurezza</h2><p>Ruoli, collaboratori, accessi e attività amministrative.</p></div>}{tab==="fiscal"&&<div className="panel"><h2>🧾 Archivio fiscale e contabilità</h2><p>Area protetta in consultazione, collegata alle tabelle fiscali Supabase. Non emette ancora fatture né crea pacchetti PDF/ZIP: queste funzioni saranno aggiunte dopo verifica e test.</p><a href="/fiscal">Apri archivio fiscale RSPC →</a></div>}<div className="panel roadmap"><h2>🧩 Estensione futura</h2><p>Nuovo programma? Si aggiunge come modulo RSPC con proprie metriche ed eventi.</p><div className="chips"><span>Shop</span><span>Stream</span><span>Park</span><span>Pay</span><span>Box</span><span>Music</span><span>Broadcast</span><span>+ NUOVO</span></div></div></section></div></main>
 }
