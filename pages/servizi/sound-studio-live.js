@@ -276,6 +276,76 @@ export default function RiverSpendSoundStudioLive() {
           </div>
         </header>
 
+        <section id="river-studio-console" style={{marginTop:12,background:'#020817',color:'#e0f2fe',border:'1px solid #155e75',borderRadius:18,overflow:'hidden',boxShadow:'0 18px 50px rgba(2,8,23,.45)'}}>
+          <style>{`
+            .rs-console-nav{display:flex;gap:7px;align-items:center;flex-wrap:wrap;padding:12px;background:#030b18;border-bottom:1px solid #164e63}
+            .rs-console-nav span{font-size:10px;letter-spacing:.7px;font-weight:900;padding:9px 10px;border:1px solid #164e63;border-radius:8px;color:#bae6fd}
+            .rs-console-nav .active{background:#082f49;border-color:#22d3ee;color:#fff;box-shadow:0 0 16px #0891b244}
+            .rs-console-grid{display:grid;grid-template-columns:minmax(150px, .72fr) minmax(0,2.1fr) minmax(150px,.72fr);gap:9px;padding:9px}
+            .rs-console-panel{min-width:0;background:linear-gradient(180deg,#071a2b,#020817);border:1px solid #164e63;border-radius:11px;padding:10px}
+            .rs-console-title{font-size:11px;font-weight:900;letter-spacing:1px;color:#67e8f9;margin-bottom:9px}
+            .rs-console-btn{border:1px solid #155e75;background:#082f49;color:#e0f2fe;border-radius:8px;padding:10px 12px;font-weight:900;cursor:pointer}
+            .rs-console-btn:focus-visible{outline:2px solid #fbbf24;outline-offset:2px}
+            .rs-console-studio-art{min-height:190px;display:flex;align-items:center;justify-content:center;text-align:center;padding:18px;border:1px solid #075985;border-radius:10px;background:radial-gradient(ellipse at 50% 25%,#075985 0,#082f49 26%,#061426 65%,#020817 100%);position:relative;overflow:hidden}
+            .rs-console-studio-art:before,.rs-console-studio-art:after{content:'';position:absolute;width:75%;height:90px;border:2px solid #22d3ee;border-radius:50%;transform:perspective(140px) rotateX(60deg);opacity:.45;box-shadow:0 0 20px #0ea5e9}
+            .rs-console-studio-art:after{width:55%;height:65px;opacity:.25}
+            .rs-console-logo{position:relative;z-index:1;text-shadow:0 0 18px #22d3ee}
+            .rs-console-logo strong{display:block;font-size:clamp(19px,3vw,30px);letter-spacing:1px}
+            .rs-console-logo small{font-size:10px;letter-spacing:3px;color:#fbbf24}
+            .rs-console-transport{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:9px;padding:9px;background:#061426;border:1px solid #164e63;border-radius:10px}
+            .rs-console-wave{height:30px;flex:1;min-width:70px;display:flex;gap:2px;align-items:center;overflow:hidden}
+            .rs-console-wave i{display:block;flex:1;min-width:2px;border-radius:3px;background:#22d3ee;box-shadow:0 0 5px #0891b2}
+            .rs-console-track{display:grid;grid-template-columns:76px minmax(40px,1fr);gap:7px;align-items:center;margin:7px 0;font-size:11px}
+            .rs-console-track span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+            .rs-console-track div{height:15px;border-radius:4px;background:repeating-linear-gradient(90deg,#0891b2 0 3px,#0e7490 3px 5px,#164e63 5px 9px);border:1px solid #22d3ee}
+            .rs-console-faders{display:grid;grid-template-columns:repeat(6,minmax(58px,1fr));gap:6px;padding:9px;background:#030b18;border-top:1px solid #164e63}
+            .rs-console-strip{padding:8px 5px;border:1px solid #164e63;border-radius:8px;text-align:center;background:linear-gradient(180deg,#102b40,#061426)}
+            .rs-console-strip label{display:block;font-size:10px;font-weight:900;color:#bae6fd;margin-bottom:8px}
+            .rs-console-strip input{width:100%;accent-color:#22d3ee}
+            .rs-console-strip small{font-size:10px;color:#67e8f9}
+            @media(max-width:760px){.rs-console-grid{grid-template-columns:1fr}.rs-console-studio-art{min-height:155px}.rs-console-faders{grid-template-columns:repeat(3,minmax(0,1fr))}.rs-console-nav span{flex:1;text-align:center}.rs-console-track{grid-template-columns:68px minmax(30px,1fr)}}
+          `}</style>
+          <div className="rs-console-nav"><span className="active">⌁ STUDIO LIVE</span><span>▣ VIDEO STUDIO</span><span>♫ BEAT LAB</span><span>◫ MASTERING</span><span>✳ EFFETTI</span><span>▤ PROGETTI</span><span>◎ COMMUNITY</span><span style={{marginLeft:'auto',borderColor:'#fbbf24',color:'#fbbf24'}}>✦ RIVER AI</span></div>
+          <div className="rs-console-grid">
+            <aside className="rs-console-panel">
+              <div className="rs-console-title">SALA VIRTUALE · STATO</div>
+              <div style={{display:'flex',alignItems:'center',gap:8,padding:'9px 0',borderBottom:'1px solid #164e63'}}><span style={{width:9,height:9,borderRadius:'50%',background:recording?'#ef4444':'#22c55e',boxShadow:'0 0 10px currentColor'}}/><div><strong style={{fontSize:12}}>{recording?'REC IN CORSO':audioInput?'INGRESSO COLLEGATO':'STUDIO PRONTO'}</strong><div style={{fontSize:10,color:'#94a3b8',marginTop:3}}>{inputName}</div></div></div>
+              <div style={{fontSize:11,color:'#bae6fd',lineHeight:1.8,marginTop:8}}>🎙️ Microfono / strumento<br/>🎚️ Mixer multitraccia<br/>🌌 ISSA audio immersivo</div>
+              <button className="rs-console-btn" type="button" onClick={connectLiveInput} style={{width:'100%',marginTop:10}}>＋ Collega microfono</button>
+              <button className="rs-console-btn" type="button" onClick={disconnectLiveInput} style={{width:'100%',marginTop:7}}>Scollega ingresso</button>
+              <div className="rs-console-title" style={{marginTop:17}}>ISSA CONTROLLER 10.0</div>
+              <label style={{fontSize:10,display:'flex',justifyContent:'space-between'}}>Intensità ambiente <strong>{issaAmbience}%</strong></label>
+              <input aria-label="Intensità ambiente ISSA" type="range" min="0" max="60" value={issaAmbience} onChange={e=>{const v=Number(e.target.value);setIssaAmbience(v);Object.values(audioGraphs.current).forEach(g=>{g.wet.gain.value=issaEnabled?v/100:0;g.dry.gain.value=issaEnabled?1-v/100*.35:1;});}} style={{width:'100%',accentColor:'#22d3ee'}}/>
+              <button className="rs-console-btn" type="button" onClick={()=>{setIssaEnabled(v=>!v);setNotice(!issaEnabled?'ISSA attivato.':'ISSA disattivato.')}} style={{width:'100%',marginTop:8}}>{issaEnabled?'● ISSA ATTIVO':'○ ISSA SPENTO'}</button>
+            </aside>
+            <div className="rs-console-panel">
+              <div className="rs-console-title">RIVERSPEND SOUND STUDIO · CONTROL ROOM</div>
+              <div className="rs-console-studio-art"><div className="rs-console-logo"><div style={{fontSize:28}}>🌊</div><strong>RiverSpend®</strong><small>SOUND STUDIO</small><div style={{fontSize:11,color:'#bae6fd',marginTop:12}}>REGISTRAZIONE · MIX · PRODUZIONE</div></div></div>
+              <div className="rs-console-transport">
+                <button className="rs-console-btn" type="button" onClick={recording?stopLiveRecording:startLiveRecording} style={{background:recording?'#7f1d1d':'#991b1b',borderColor:'#ef4444'}}>● {recording?'STOP REC':'REC'}</button>
+                <button className="rs-console-btn" type="button" onClick={()=>{tracks.forEach(t=>{const el=audioRefs.current[t.id];if(el)el.pause();});setPlaying(false);if(recording)stopLiveRecording();}} >■ STOP</button>
+                <button className="rs-console-btn" type="button" onClick={togglePlayback} style={{background:'#064e3b',borderColor:'#10b981'}}>▶ {playing?'PAUSA':'PLAY MIX'}</button>
+                <button className="rs-console-btn" type="button" onClick={()=>uploadRef.current?.click()}>＋ IMPORTA</button>
+                <div className="rs-console-wave" aria-label="Decorazione visuale audio">{Array.from({length:48},(_,i)=><i key={i} style={{height:(5+((i*13+i*i*7)%24))+'px'}}/>)}</div>
+                <strong style={{fontSize:12,color:'#67e8f9'}}>{tracks.length} TRACCE</strong>
+              </div>
+              <div style={{marginTop:13,display:'flex',justifyContent:'space-between',gap:8,alignItems:'center'}}><div className="rs-console-title" style={{margin:0}}>TRACCE MULTIPLE</div><button className="rs-console-btn" type="button" onClick={()=>uploadRef.current?.click()}>＋ NUOVA TRACCIA</button></div>
+              {tracks.length?tracks.slice(0,8).map((t,i)=><div className="rs-console-track" key={t.id}><span>{['🎤','🎙️','🎸','🎸','🥁','🎹','🎻','♫'][i%8]} {t.name}</span><div style={{opacity:t.muted?.3:1,background:t.muted?'#334155':undefined}}/></div>):<div style={{padding:18,textAlign:'center',border:'1px dashed #155e75',borderRadius:9,color:'#94a3b8',fontSize:12,marginTop:10}}>Nessuna traccia caricata. Premi “Importa” per iniziare il mix.</div>}
+            </div>
+            <aside className="rs-console-panel">
+              <div className="rs-console-title">ISSA SURROUND 10.0</div>
+              <div style={{padding:13,borderRadius:9,border:'1px solid #075985',background:'radial-gradient(ellipse,#0c4a6e,#020817)',textAlign:'center'}}><div style={{fontSize:27}}>◉</div><strong style={{fontSize:13}}>AUDIO IMMERSIVO</strong><div style={{fontSize:10,color:'#67e8f9',marginTop:5}}>Ambiente stereo / eco nel browser</div></div>
+              <label style={{display:'block',fontSize:11,marginTop:12,color:'#bae6fd'}}>Preset ambiente</label>
+              <select value={roomChoice} onChange={e=>setRoomChoice(e.target.value)} style={{width:'100%',padding:9,marginTop:5,borderRadius:7,background:'#082f49',color:'white',border:'1px solid #155e75'}}><option>Stereo Studio</option><option>ISSA Surround 10.0 — visualizzazione</option><option>Live Concert — visualizzazione</option><option>Cinema Mix — visualizzazione</option></select>
+              <div style={{fontSize:11,color:'#94a3b8',lineHeight:1.6,marginTop:10}}>Preset selezionato: <strong style={{color:'#fbbf24'}}>{roomChoice}</strong><br/>Surround multicanale reale non ancora attivo.</div>
+              <button className="rs-console-btn" type="button" onClick={()=>document.getElementById('mixer-multitraccia')?.scrollIntoView({behavior:'smooth',block:'start'})} style={{width:'100%',marginTop:12}}>APRI MIXER COMPLETO ↓</button>
+            </aside>
+          </div>
+          <div className="rs-console-title" style={{padding:'0 12px'}}>MIXER STUDIO · CANALI AUDIO</div>
+          <div className="rs-console-faders">{(tracks.length?tracks.slice(0,6):[{id:'demo1',name:'Voce'},{id:'demo2',name:'Voce 2'},{id:'demo3',name:'Chitarra'},{id:'demo4',name:'Basso'},{id:'demo5',name:'Batteria'},{id:'demo6',name:'Piano'}]).map((t,i)=>{const live=tracks.find(x=>x.id===t.id);return <div className="rs-console-strip" key={t.id}><label>{t.name||['Voce','Voce 2','Chitarra','Basso','Batteria','Piano'][i]}</label>{live?<><input aria-label={'Volume '+live.name} type="range" min="0" max="100" value={live.volume} onChange={e=>{const v=Number(e.target.value);patchTrack(live.id,{volume:v});const el=audioRefs.current[live.id];if(el)el.volume=(live.muted||(soloActive&&!live.solo)?0:v/100)*master/100;}}/><small>{live.volume}%</small></>:<><div style={{height:55,display:'flex',alignItems:'center',justifyContent:'center',color:'#64748b'}}>···</div><small>In attesa</small></>}</div>})}</div>
+          <div style={{padding:10,fontSize:11,color:'#94a3b8',borderTop:'1px solid #164e63'}}>Nota: il pannello riproduce il layout della console di riferimento; i canali diventano controlli audio reali quando importi le tracce. La collaborazione live e il surround 10.0 richiedono ancora integrazioni dedicate.</div>
+        </section>
+
         <section id="tariffe-musica" style={{marginTop:16,padding:18,borderRadius:22,background:"#f0fdfa",color:"#0f172a",border:"1px solid #99f6e4"}}>
           <div style={{fontSize:12,letterSpacing:2,fontWeight:900,color:"#0e7490"}}>RIVERSPEND MUSIC • TARIFFE</div>
           <h2 style={{fontSize:24,lineHeight:1.15,margin:"8px 0"}}>Prepara il tuo singolo, EP o album</h2>
