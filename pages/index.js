@@ -1095,8 +1095,8 @@ export default function Home() {
             <div className="flex min-h-0 flex-1 flex-col items-start p-3 text-left">
               <p className="text-[10px] font-extrabold uppercase tracking-[.18em] text-violet-200">Video • Streaming</p>
               <h2 className="mt-1 text-base font-black leading-tight">RiverSpend Streaming</h2>
-              <p className="mt-1 text-xs leading-4 text-slate-100">Esplora il progetto video RiverSpend.</p>
-              <span className="mt-auto inline-flex rounded-full bg-violet-300 px-3 py-1.5 text-[11px] font-extrabold text-slate-950">SCOPRI RIVERSPEND STREAMING →</span>
+              <p className="mt-1 text-xs leading-4 text-slate-100">Sei un videomaker, regista o creator? Realizzi film, corti o contenuti video? Scopri il progetto RiverSpend per video e streaming.</p>
+              <span className="mt-auto inline-flex rounded-full bg-violet-300 px-3 py-1.5 text-[11px] font-extrabold text-slate-950">ENTRA NELLO STREAMING →</span>
             </div>
           </a>
 
@@ -1108,7 +1108,7 @@ export default function Home() {
             <div className="flex min-h-0 flex-1 flex-col items-start p-3 text-left">
               <p className="text-[10px] font-extrabold uppercase tracking-[.18em] text-cyan-200">Video • Intrattenimento</p>
               <h2 className="mt-1 text-base font-black leading-tight">RiverSpend TV</h2>
-              <p className="mt-1 text-xs leading-4 text-slate-100">Scopri la visione televisiva RiverSpend.</p>
+              <p className="mt-1 text-xs leading-4 text-slate-100">Sei un artista, attore, regista o creator? Proponi film, cortometraggi e video per il futuro spazio RiverSpend TV.</p>
               <span className="mt-auto inline-flex rounded-full bg-cyan-300 px-3 py-1.5 text-[11px] font-extrabold text-slate-950">ENTRA IN RiverSpend TV →</span>
             </div>
           </a>
@@ -1131,7 +1131,7 @@ export default function Home() {
               <span className="text-3xl" aria-hidden="true">🎬</span>
               <p className="mt-2 text-[10px] font-extrabold uppercase tracking-[.18em] text-cyan-200">Video • Creatività • Community</p>
               <h2 className="mt-1 text-xl font-black leading-tight">RiverSpend TV</h2>
-              <p className="mt-2 text-xs leading-4 text-slate-100">Fai conoscere i tuoi video e i tuoi progetti. La piattaforma si prepara a dare spazio ai creator.</p>
+              <p className="mt-2 text-xs leading-4 text-slate-100">Sei un videomaker o realizzi film? Fai conoscere i tuoi video e progetti: RiverSpend TV vuole dare spazio ai creator. Le funzioni di invio e streaming sono in sviluppo.</p>
               <span className="mt-auto inline-flex self-start rounded-full bg-cyan-300 px-3 py-2 text-[11px] font-extrabold text-slate-950">SCOPRI IL SOCIAL →</span>
             </div>
           </a>
