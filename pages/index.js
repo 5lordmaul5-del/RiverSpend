@@ -925,7 +925,7 @@ export default function Home() {
               <p className="relative z-10 mt-1 text-[11px] font-semibold leading-3 text-white">Carica i tuoi prodotti, apri la tua vetrina e inizia a vendere.</p>
               <span className="rs-feature-action relative z-10 mt-2 inline-flex rounded-full border-2 border-white bg-emerald-300 px-2 py-1 text-[9px] font-black leading-tight text-slate-950 shadow-md">CARICA I TUOI PRODOTTI →</span>
               <p className="relative z-10 mt-1 text-[8px] leading-3 text-emerald-100">Commissione del 10% secondo le condizioni applicabili.</p>
-            </a>        </a>
+            </a>
 
             <section className="rs-feature-card shrink-0 w-[220px] snap-start rs-fortune-card rounded-2xl border border-amber-400/40 bg-gradient-to-br from-slate-950 via-amber-950/30 to-slate-900 p-2 text-center shadow-lg shadow-amber-950/20">
               <div className="flex h-full w-full flex-col items-center overflow-hidden text-center">
@@ -1355,6 +1355,52 @@ export default function Home() {
         }
         @media (min-width:768px) {
           .rs-apps-grid { max-width:1152px; }
+        }
+        /* Banner RiverSpend: dimensioni uniformi, immagine a tutta scheda e contenuti contenuti nei bordi. */
+        .rs-apps-grid > .rs-feature-card,
+        .rs-apps-grid > #rs-seller-card {
+          position:relative;
+          isolation:isolate;
+          box-sizing:border-box;
+          flex:0 0 240px !important;
+          width:240px !important;
+          min-width:240px !important;
+          max-width:240px !important;
+          height:228px !important;
+          min-height:228px !important;
+          max-height:228px !important;
+          overflow:hidden !important;
+        }
+        .rs-apps-grid > .rs-feature-card > a,
+        .rs-apps-grid > .rs-feature-card > button {
+          box-sizing:border-box;
+          width:100%;
+          max-width:100%;
+          min-width:0;
+          overflow:hidden;
+        }
+        .rs-apps-grid .rs-feature-action {
+          max-width:100%;
+          white-space:normal;
+          text-align:center;
+          overflow-wrap:anywhere;
+        }
+        #rs-seller-card > img {
+          position:absolute;
+          inset:0;
+          width:100%;
+          height:100% !important;
+          object-fit:cover;
+          object-position:center;
+        }
+        @media (max-width:640px) {
+          .rs-apps-grid > .rs-feature-card,
+          .rs-apps-grid > #rs-seller-card {
+            flex-basis:220px !important;
+            width:220px !important;
+            min-width:220px !important;
+            max-width:220px !important;
+          }
         }
         @keyframes rs-palantir-pulse {
           0%, 100% { transform: scale(1); filter: brightness(1); }
