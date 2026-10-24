@@ -333,7 +333,7 @@ export default function Checkout() {
         <Link href="/" className="text-teal-600 underline">← Torna al RiverSpendShop</Link>
 
         <section className="mt-6 rounded-3xl border border-teal-200 bg-white p-6 shadow-xl sm:p-8">
-          <p className="text-sm font-black uppercase tracking-[0.25em] text-teal-600">RiverSpend Pay</p>
+          <p className="text-sm font-black uppercase tracking-[0.25em] text-teal-600">RiverSpendPay</p>
           <h1 className="mt-2 text-3xl font-black sm:text-4xl">💳 Checkout RiverSpend</h1>
           <p className="mt-3 leading-7 text-slate-600">
 Invia una richiesta d’ordine. RiverSpendShop è appena partito: il venditore confermerà il costo e la modalità di spedizione prima della conferma definitiva. In questa fase non viene addebitato alcun pagamento online.
@@ -375,13 +375,15 @@ Invia una richiesta d’ordine. RiverSpendShop è appena partito: il venditore c
 
           <section className="mt-6 rounded-2xl border border-teal-100 bg-white p-4">
             <p className="text-sm font-black uppercase tracking-[0.18em] text-teal-600">RiverSpend Pay</p>
-            <h2 className="mt-2 text-xl font-black text-slate-900">Scegli come pagare</h2>
+            <h2 className="mt-2 text-xl font-black text-slate-900">RiverSpendPay · Scegli come pagare</h2>
             <p className="mt-1 text-sm text-slate-500">Per questa fase sono disponibili contrassegno in contanti, PostePay e bonifico istantaneo. I pagamenti PostePay e bonifico restano in attesa di verifica dell’accredito.</p>
+            <p className="mt-2 text-sm text-slate-600">Vuoi sostenere un progetto? Le donazioni sono facoltative e separate dall’acquisto.</p>
+            <Link href="/donation" className="mt-2 inline-flex rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 font-bold text-amber-900 hover:bg-amber-100">🎁 Scopri RiverSpend Donation</Link>
             <div className="mt-4 grid gap-3">
               {[
-                ['cod','🚚','Pagamento alla consegna in contanti'],
-                ['postepay','💳','PostePay (pagamento da verificare)'],
-                ['transfer','🏦','Bonifico istantaneo']
+                ['cod','🚚','RiverSpendPay · Contrassegno (contanti alla consegna)'],
+                ['postepay','💳','RiverSpendPay · PostePay (accredito da verificare)'],
+                ['transfer','🏦','RiverSpendPay · Bonifico istantaneo']
               ].map(([id, icon, title]) => (
                 <button key={id} type="button" onClick={() => setSelectedPayment(id)} className={`flex items-center justify-between rounded-xl border px-4 py-3 text-left ${selectedPayment === id ? 'border-teal-500 bg-teal-50' : 'border-slate-200 bg-white'}`}>
                   <span className="flex items-center gap-3"><span className="text-xl">{icon}</span><strong className="text-slate-900">{title}</strong></span>
