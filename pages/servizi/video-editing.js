@@ -143,6 +143,25 @@ export default function RiverSpendVideoEditing() {
             <p style={{fontSize:12,lineHeight:1.55,margin:'10px 0 0',color:'#c7d2fe'}}>I nomi di produttori e sistemi sono profili di riferimento, non dichiarazioni di partnership o certificazione. La timeline completa, il rendering finale e i codec professionali richiedono ulteriori implementazioni e test.</p>
           </div>
         </section>
+
+        <section id="river-video-plugins" style={{marginTop:20,padding:18,borderRadius:18,background:'#11112e',color:'#eef2ff',border:'1px solid #6366f1'}}>
+          <div style={{fontSize:12,fontWeight:900,letterSpacing:1.4,color:'#c4b5fd'}}>RIVERSPEND VIDEO PLUGIN STORE</div>
+          <h2 style={{fontSize:'clamp(22px,4vw,30px)',margin:'6px 0 8px'}}>🎬 Plugin video per piano</h2>
+          <p style={{fontSize:14,lineHeight:1.6,color:'#c7d2fe'}}>I piani organizzano l'accesso alle funzioni video. Gli strumenti contrassegnati “in sviluppo” sono proposti nel catalogo ma non vengono presentati come effetti o esportazioni già funzionanti.</p>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))',gap:12}}>
+            {[
+              {name:'FREE • Starter',price:'€0',items:'Anteprima, titoli base e filtri semplici',status:'Anteprima disponibile; export completo da implementare',color:'#334155'},
+              {name:'BRONZE • Creator',price:'Piano Bronze',items:'Transizioni, titoli animati e formati social',status:'In sviluppo',color:'#92400e'},
+              {name:'SILVER • Editor',price:'Piano Silver',items:'Correzione colore, chroma key e livelli multipli',status:'In sviluppo',color:'#475569'},
+              {name:'GOLD • Professional',price:'Piano Gold',items:'Timeline multilivello, maschere e strumenti avanzati',status:'Richiede motore di montaggio',color:'#854d0e'},
+              {name:'PLATINUM • Cinema',price:'Piano Platinum',items:'Color grading avanzato, proxy e gestione progetto',status:'In sviluppo',color:'#3730a3'},
+              {name:'SUPREME • Studio',price:'Piano Supreme',items:'Rendering ad alta qualità, audio/video avanzato e preset cinema',status:'Richiede rendering ed export dedicati',color:'#701a75'}
+            ].map((p)=> <div key={p.name} style={{padding:14,borderRadius:14,background:'#202047',border:'1px solid #4338ca',display:'flex',flexDirection:'column',gap:9}}>
+              <div style={{fontSize:12,fontWeight:900,color:'#c4b5fd'}}>{p.name}</div><div style={{fontSize:20,fontWeight:900}}>{p.price}</div><div style={{fontSize:13,lineHeight:1.55,flex:1}}>{p.items}</div><div style={{fontSize:11,fontWeight:800,padding:'7px 9px',borderRadius:8,background:p.color}}>{p.status}</div>
+            </div>)}
+          </div>
+          <p style={{fontSize:12,lineHeight:1.55,color:'#c7d2fe',marginBottom:0}}>Questa scheda non attiva abbonamenti né blocca ancora le funzioni per utente. Il controllo dei piani dovrà essere collegato ad account, pagamenti e autorizzazioni lato server.</p>
+        </section>
         <footer style={{marginTop:14,padding:14,borderRadius:14,background:'#fff7ed',color:'#9a3412',fontSize:13,lineHeight:1.6}}>Stato: interfaccia iniziale con import video/immagine, controlli chroma key, titoli e anteprima di alcuni effetti. Non esporta ancora un video compositato e non rimuove realmente il green/blue screen: per questo servirà integrare un motore video (per esempio FFmpeg/WebAssembly o rendering server), una timeline e una libreria di effetti autorizzati. Lavoreremo su file caricati dall’utente o su asset con licenza adeguata.</footer>
       </div>
     </main>
