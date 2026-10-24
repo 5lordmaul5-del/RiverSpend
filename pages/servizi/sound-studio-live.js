@@ -361,6 +361,17 @@ export default function RiverSpendSoundStudioLive() {
           <p style={{fontSize:12,color:"#64748b",lineHeight:1.5,marginBottom:0}}>Nota: i prezzi sono proposte iniziali. Il checkout non è attivo e non vengono effettuati addebiti. Servizi di distribuzione musicale e royalties vanno definiti separatamente prima dell’attivazione.</p>
         </section>
 
+        <section id="river-music-in-issa" style={{marginTop:16,padding:18,borderRadius:22,background:'linear-gradient(135deg,#071525,#172554 58%,#164e63)',color:'#f8fafc',border:'1px solid #fbbf24',boxShadow:'0 14px 32px rgba(2,8,23,.28)'}}>
+          <div style={{fontSize:11,fontWeight:900,letterSpacing:2,color:'#fbbf24'}}>ARTISTI • MUSICA • EVENTI</div>
+          <h2 style={{fontSize:'clamp(23px,4vw,32px)',lineHeight:1.15,margin:'8px 0'}}>RiverSpend Music · dentro ISSA Sound Studio</h2>
+          <p style={{fontSize:15,lineHeight:1.7,color:'#e0f2fe',margin:'0 0 12px'}}>Sei un artista o un musicista? Prepara le tue tracce nel mixer RiverSpend, lavora al tuo progetto musicale e organizza la presentazione di CD, musica ed eventi dal vivo. RiverSpend Music fa parte dell'esperienza Sound Studio: le funzioni di pubblicazione e promozione saranno disponibili quando i relativi strumenti saranno attivati.</p>
+          <div style={{display:'flex',gap:9,flexWrap:'wrap'}}>
+            <button type="button" onClick={()=>uploadRef.current?.click()} style={{padding:'11px 14px',border:0,borderRadius:10,background:'#fbbf24',color:'#082f49',fontWeight:900,cursor:'pointer'}}>＋ CARICA LE TUE TRACCE</button>
+            <a href="#mixer-multitraccia" style={{display:'inline-flex',alignItems:'center',padding:'11px 14px',border:'1px solid #67e8f9',borderRadius:10,color:'#cffafe',fontWeight:900,textDecoration:'none'}}>APRI IL MIXER ↓</a>
+            <a href="/vendi" style={{display:'inline-flex',alignItems:'center',padding:'11px 14px',border:'1px solid #fbbf24',borderRadius:10,color:'#fde68a',fontWeight:900,textDecoration:'none'}}>SCOPRI LE OPZIONI PER ARTISTI →</a>
+          </div>
+        </section>
+
         <section id="issa-surround-10" style={{marginTop:16,padding:18,borderRadius:22,background:'radial-gradient(circle at 50% 0%,#164e63 0%,#071525 65%)',color:'#e0f2fe',border:'1px solid #0891b2',boxShadow:'0 16px 36px rgba(8,47,73,.2)'}}>
           <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',gap:12,flexWrap:'wrap'}}>
             <div><div style={{fontSize:11,letterSpacing:2,fontWeight:900,color:'#67e8f9'}}>RIVERSPEND SOUND STUDIO • MODULO IMMERSIVO</div><h2 style={{fontSize:'clamp(24px,5vw,34px)',margin:'6px 0',color:'#fbbf24'}}>🌌 ISSA SURROUND 10.0</h2><p style={{margin:'0',color:'#bae6fd',lineHeight:1.5}}>Pannello di controllo spaziale collegato al mixer ISSA.</p></div>
