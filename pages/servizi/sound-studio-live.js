@@ -459,6 +459,12 @@ export default function RiverSpendSoundStudioLive() {
         <section style={{marginTop:18,display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(min(100%,230px),1fr))',gap:12}}>
           {[['🎛️','Preamplificatore & FX','Moduli previsti: gain, EQ, compressore, riverbero e delay.'],['🌌','Surround 5.1 / 7.1','Progettazione multicanale; rendering ed export richiedono un motore audio compatibile.'],['🎬','Video Edit','Modulo successivo per importare video, sincronizzare l’audio e montare le scene.'],['🤖','River AI Audio Lab','Pulizia, mix assistito e mastering tramite un servizio audio dedicato da integrare.']].map(([icon,title,desc])=><div key={title} style={{padding:16,borderRadius:18,background:'white',border:'1px solid #bae6fd'}}><div style={{fontSize:26}}>{icon}</div><strong>{title}</strong><p style={{fontSize:14,color:'#475569',lineHeight:1.5,marginBottom:0}}>{desc}</p></div>)}
         </section>
+        <section style={{marginTop:18,padding:18,borderRadius:20,background:'#ecfeff',border:'1px solid #67e8f9',color:'#164e63'}}>
+          <div style={{fontSize:12,fontWeight:900,letterSpacing:2,color:'#0e7490'}}>RSSPONS MUSIC PROMOTION</div>
+          <h2 style={{fontSize:22,fontWeight:900,margin:'6px 0'}}>Promuovi il tuo singolo, album o videoclip</h2>
+          <p style={{fontSize:14,lineHeight:1.6,margin:'0 0 12px'}}>Scegli durata, budget e area geografica per preparare una campagna musicale. Il configuratore mostra una stima; pagamento e pubblicazione reali saranno attivati dopo il collegamento dei servizi necessari.</p>
+          <a href="/rs-spons/campagna" style={{display:'inline-block',padding:'12px 16px',borderRadius:12,background:'#0e7490',color:'white',fontWeight:900,textDecoration:'none'}}>🎵 Crea campagna musicale RSSpons</a>
+        </section>
         <footer style={{marginTop:20,padding:14,borderRadius:14,background:'#fff7ed',color:'#9a3412',fontSize:13,lineHeight:1.55}}>Versione iniziale dello studio: il mixer consente di caricare, ascoltare, regolare e silenziare tracce nel browser. Non salva ancora i progetti sul server e non esegue ancora mastering AI, registrazione live multitraccia, export del mix o depositi SIAE/Soundreef. Questi moduli richiedono integrazioni dedicate prima di essere offerti come servizi operativi.</footer>
       </div>
     </main>
