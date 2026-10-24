@@ -918,16 +918,7 @@ export default function Home() {
             </section>
 
             <a id="rs-seller-card" href="/vendi" aria-label="Hai prodotti da vendere? Caricali qui e apri la tua vetrina su RiverSpendShop" className="rs-feature-card flex shrink-0 w-[220px] snap-start flex-col items-center justify-start overflow-hidden rounded-2xl border-2 border-emerald-300 bg-gradient-to-br from-emerald-950 via-teal-900 to-slate-950 p-1.5 text-center shadow-lg shadow-emerald-950/30 focus:outline-none focus:ring-4 focus:ring-emerald-300/70">
-              <svg viewBox="0 0 320 112" role="img" aria-label="Articoli e accessori da mettere in vendita" className="mb-0.5 block h-[48px] w-full shrink-0 rounded-lg" preserveAspectRatio="xMidYMid slice">
-                <defs><linearGradient id="sellerWater" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#052e2b"/><stop offset=".55" stopColor="#0f766e"/><stop offset="1" stopColor="#164e63"/></linearGradient><linearGradient id="sellerGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#fef3c7"/><stop offset="1" stopColor="#d97706"/></linearGradient></defs>
-                <rect width="320" height="112" rx="12" fill="url(#sellerWater)"/><path d="M-10 87 Q65 45 130 83 T260 74 T340 64" fill="none" stroke="#67e8f9" strokeWidth="2" opacity=".65"/><path d="M-5 98 Q75 62 145 95 T330 82" fill="none" stroke="#fbbf24" strokeWidth="1.5" opacity=".8"/>
-                <ellipse cx="160" cy="93" rx="116" ry="12" fill="#022c22" opacity=".6"/><ellipse cx="160" cy="84" rx="112" ry="16" fill="url(#sellerGold)"/><ellipse cx="160" cy="80" rx="108" ry="14" fill="#f8fafc"/>
-                <path d="M67 28 Q91 13 113 28 L106 66 Q91 76 76 66Z" fill="#d6a56d" stroke="#fef3c7" strokeWidth="2"/><path d="M74 28 Q90 8 106 28" fill="none" stroke="#fef3c7" strokeWidth="4"/><path d="M78 39 L102 39 M78 46 L102 46" stroke="#a16207" strokeWidth="2" opacity=".7"/>
-                <path d="M123 24 L158 24 L164 66 L117 66Z" fill="#e2e8f0" stroke="#fff" strokeWidth="2"/><path d="M130 24 Q140 7 151 24" fill="none" stroke="#67e8f9" strokeWidth="4"/><path d="M124 39 L159 39" stroke="#0f766e" strokeWidth="4"/>
-                <path d="M175 41 L202 20 L228 41 L220 68 L183 68Z" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="2"/><path d="M184 46 L219 46 M188 53 L215 53" stroke="#0f766e" strokeWidth="3"/><path d="M184 62 L218 62" stroke="#d97706" strokeWidth="3"/>
-                <rect x="238" y="36" width="30" height="31" rx="5" fill="#b45309" stroke="#fde68a" strokeWidth="2"/><path d="M244 36 Q253 20 262 36" fill="none" stroke="#fde68a" strokeWidth="3"/><path d="M246 48 L260 48 M246 55 L260 55" stroke="#fef3c7" strokeWidth="2"/>
-                <circle cx="43" cy="24" r="3" fill="#fde68a"/><circle cx="276" cy="17" r="2.5" fill="#a5f3fc"/><path d="M33 54 l4 -7 l4 7 l-4 7Z M282 51 l3 -5 l3 5 l-3 5Z" fill="#fde68a"/>
-              </svg>
+              <img src="/rs-vendi-prodotti-banner.svg" alt="Borsa, cuffie, smartphone e smartwatch in vendita su RiverSpend" className="mb-0.5 block h-[72px] w-full shrink-0 rounded-lg object-cover" />
               <p className="mt-0.5 text-[9px] font-extrabold uppercase tracking-wide text-emerald-200">VENDI SU RIVERSPEND</p>
               <h2 className="mt-0.5 text-xs font-black leading-tight text-white">HAI PRODOTTI DA VENDERE?</h2>
               <p className="mt-0.5 text-[11px] font-semibold leading-3 text-white">Carica i tuoi prodotti, apri la tua vetrina e inizia a vendere.</p>
