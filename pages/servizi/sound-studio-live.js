@@ -288,6 +288,36 @@ export default function RiverSpendSoundStudioLive() {
           <p style={{fontSize:12,color:"#64748b",lineHeight:1.5,marginBottom:0}}>Nota: i prezzi sono proposte iniziali. Il checkout non è attivo e non vengono effettuati addebiti. Servizi di distribuzione musicale e royalties vanno definiti separatamente prima dell’attivazione.</p>
         </section>
 
+        <section id="issa-surround-10" style={{marginTop:16,padding:18,borderRadius:22,background:'radial-gradient(circle at 50% 0%,#164e63 0%,#071525 65%)',color:'#e0f2fe',border:'1px solid #0891b2',boxShadow:'0 16px 36px rgba(8,47,73,.2)'}}>
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',gap:12,flexWrap:'wrap'}}>
+            <div><div style={{fontSize:11,letterSpacing:2,fontWeight:900,color:'#67e8f9'}}>RIVERSPEND SOUND STUDIO • MODULO IMMERSIVO</div><h2 style={{fontSize:'clamp(24px,5vw,34px)',margin:'6px 0',color:'#fbbf24'}}>🌌 ISSA SURROUND 10.0</h2><p style={{margin:'0',color:'#bae6fd',lineHeight:1.5}}>Pannello di controllo spaziale collegato al mixer ISSA.</p></div>
+            <button type="button" onClick={()=>{setIssaEnabled(v=>{const next=!v;Object.values(audioGraphs.current).forEach(g=>{g.wet.gain.value=next?issaAmbience/100:0;g.dry.gain.value=next?1-(issaAmbience/100)*0.35:1;});setNotice(next?'ISSA Surround: ambiente stereo attivo sul mix.':'ISSA Surround disattivato: percorso audio asciutto.');return next;});}} style={{minHeight:44,padding:'11px 15px',border:0,borderRadius:11,background:issaEnabled?'#10b981':'#475569',color:'white',fontWeight:900,cursor:'pointer'}}>{issaEnabled?'● ISSA ATTIVO':'○ ISSA SPENTO'}</button>
+          </div>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(min(100%,260px),1fr))',gap:14,marginTop:16,alignItems:'stretch'}}>
+            <div style={{padding:14,borderRadius:16,background:'rgba(2,6,23,.7)',border:'1px solid #155e75'}}>
+              <div style={{fontSize:12,fontWeight:900,letterSpacing:1,color:'#67e8f9'}}>SALA VIRTUALE • 10 POSIZIONI</div>
+              <div style={{marginTop:12,display:'grid',gridTemplateColumns:'repeat(3,minmax(0,1fr))',gap:8}}>
+                {['L · Frontale SX','C · Centro','R · Frontale DX','LS · Surround SX','LFE · Bassi','RS · Surround DX','LRS · Retro SX','W · Ampiezza','RRS · Retro DX','LW · Wide SX','RW · Wide DX','M · Master'].map((sp,i)=><div key={sp} style={{minHeight:56,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',textAlign:'center',padding:5,borderRadius:10,border:'1px solid '+(issaEnabled?'#0891b2':'#334155'),background:issaEnabled?'linear-gradient(180deg,#0c4a6e,#082f49)':'#1e293b',fontSize:11,fontWeight:800,color:issaEnabled?'#e0f2fe':'#94a3b8'}}><span style={{fontSize:18,color:i===4?'#fbbf24':'#67e8f9'}}>◉</span>{sp}</div>)}
+              </div>
+              <p style={{fontSize:11,lineHeight:1.5,color:'#94a3b8',marginBottom:0}}>Le posizioni sono una mappa di riferimento dell’interfaccia: non indicano uscite fisiche indipendenti.</p>
+            </div>
+            <div style={{padding:14,borderRadius:16,background:'rgba(2,6,23,.7)',border:'1px solid #155e75'}}>
+              <div style={{fontSize:12,fontWeight:900,letterSpacing:1,color:'#67e8f9'}}>CONTROLLI ISSA COLLEGATI</div>
+              <label htmlFor="issa-surround-intensity" style={{display:'flex',justifyContent:'space-between',gap:8,marginTop:18,fontSize:13,fontWeight:800}}>Intensità ambiente <span>{issaAmbience}%</span></label>
+              <input id="issa-surround-intensity" type="range" min="0" max="60" value={issaAmbience} onChange={e=>{const v=Number(e.target.value);setIssaAmbience(v);Object.values(audioGraphs.current).forEach(g=>{g.wet.gain.value=issaEnabled?v/100:0;g.dry.gain.value=issaEnabled?1-(v/100)*0.35:1;});setNotice('ISSA Surround: intensità ambiente impostata a '+v+'%.');}} style={{width:'100%',accentColor:'#fbbf24',marginTop:8}}/>
+              <label htmlFor="issa-surround-preset" style={{display:'block',fontSize:13,fontWeight:800,marginTop:16}}>Profilo ambiente</label>
+              <select id="issa-surround-preset" defaultValue="concert" onChange={e=>{const v=({studio:8,concert:28,club:38,cinema:48,outdoor:14})[e.target.value]??28;setIssaAmbience(v);Object.values(audioGraphs.current).forEach(g=>{g.wet.gain.value=issaEnabled?v/100:0;g.dry.gain.value=issaEnabled?1-(v/100)*0.35:1;});setNotice('Profilo ISSA selezionato: '+e.target.options[e.target.selectedIndex].text+'. Intensità ambiente '+v+'%.');}} style={{boxSizing:'border-box',width:'100%',padding:11,borderRadius:10,border:'1px solid #0e7490',background:'#0f172a',color:'#e0f2fe',marginTop:7}}>
+                <option value="studio">Studio — suono asciutto</option><option value="concert">Sala concerto</option><option value="club">Club</option><option value="cinema">Cinema — ambiente più ampio</option><option value="outdoor">All'aperto</option>
+              </select>
+              <div style={{display:'flex',gap:8,flexWrap:'wrap',marginTop:16}}>
+                <button type="button" onClick={()=>{document.getElementById('mixer-multitraccia')?.scrollIntoView({behavior:'smooth',block:'start'});}} style={{flex:1,minHeight:42,padding:10,borderRadius:10,border:'1px solid #22d3ee',background:'#083344',color:'#cffafe',fontWeight:900,cursor:'pointer'}}>🎚️ Apri mixer</button>
+                <button type="button" onClick={()=>{if(!tracks.length){setNotice('Carica prima una o più tracce audio per provare ISSA Surround.');return;}togglePlayback();}} style={{flex:1,minHeight:42,padding:10,border:0,borderRadius:10,background:'#0891b2',color:'white',fontWeight:900,cursor:'pointer'}}>{playing?'Ⅱ Pausa mix':'▶ Ascolta mix'}</button>
+              </div>
+              <div role="status" style={{marginTop:12,padding:10,borderRadius:10,background:'#082f49',border:'1px solid #155e75',fontSize:12,lineHeight:1.5,color:'#cffafe'}}>{issaEnabled?'ISSA attivo: il controllo ambiente modifica il percorso stereo del browser.':'ISSA spento: l’effetto ambiente è bypassato.'} Il vero rendering multicanale 10.0 richiede ancora un motore audio dedicato e hardware/uscite compatibili.</div>
+            </div>
+          </div>
+        </section>
+
         <section id="mixer-multitraccia" style={{marginTop:16,scrollMarginTop:18}}>
           <h2 style={{fontSize:23,margin:'0 0 10px'}}>🎚️ Mixer multitraccia — apri e usa</h2>
           <div style={{marginBottom:12,padding:14,borderRadius:18,background:'#061b2a',border:'1px solid #22d3ee',color:'white',boxShadow:'0 8px 22px rgba(8,47,73,.18)'}}>
