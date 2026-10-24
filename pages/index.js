@@ -1136,16 +1136,6 @@ export default function Home() {
             </div>
           </a>
 
-          <a href="/vendi" aria-label="Proponi musica, CD e serate musicali su RiverSpend" className="rs-banner-slide rs-creator-banner group shrink-0 snap-start overflow-hidden rounded-2xl border border-amber-300/70 bg-gradient-to-br from-amber-950 via-slate-950 to-fuchsia-950 text-white shadow-lg transition hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-amber-300/70">
-            <div className="flex h-full flex-col p-4 text-left">
-              <span className="text-3xl" aria-hidden="true">🎵</span>
-              <p className="mt-2 text-[10px] font-extrabold uppercase tracking-[.18em] text-amber-200">Artisti • Musica • Eventi</p>
-              <h2 className="mt-1 text-xl font-black leading-tight">RiverSpend Music</h2>
-              <p className="mt-2 text-xs leading-4 text-slate-100">Sei un artista o un musicista? Proponi CD, musica e serate dal vivo. RiverSpend Music è una visione in sviluppo.</p>
-              <span className="mt-auto inline-flex self-start rounded-full bg-amber-300 px-3 py-2 text-[11px] font-extrabold text-slate-950">PROVA A PUBBLICARE →</span>
-            </div>
-          </a>
-
           <a href="/servizi/sound-studio-live" aria-label="Apri RiverSpend Sound Studio Live con sistema ISSA" className="rs-banner-slide rs-creator-banner group shrink-0 snap-start overflow-hidden rounded-2xl border border-cyan-300/70 bg-gradient-to-br from-cyan-950 via-slate-950 to-teal-950 text-white shadow-lg transition hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-cyan-300/70">
             <div className="rs-world-media relative flex h-[96px] shrink-0 items-center justify-center overflow-hidden bg-slate-950 p-2">
               <img src="/rssoundstudio-issa-banner.jpg" alt="RSSoundStudio I.S.S.A. — ImmersiveSoundSpaceAmbient" className="h-full w-full object-contain drop-shadow-lg" loading="lazy" />
