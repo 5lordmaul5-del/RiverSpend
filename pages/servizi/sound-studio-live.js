@@ -7,6 +7,7 @@ export default function RiverSpendSoundStudioLive() {
   const [project, setProject] = useState('Il mio progetto');
   const [master, setMaster] = useState(80);
   const [issaEnabled, setIssaEnabled] = useState(true);
+  const [issaAmbience, setIssaAmbience] = useState(28);
   const [issaProgress, setIssaProgress] = useState(100);
   const [issaBusy, setIssaBusy] = useState(false);
   const [playing, setPlaying] = useState(false);
@@ -195,10 +196,10 @@ export default function RiverSpendSoundStudioLive() {
     const mid = ctx.createBiquadFilter(); mid.type = 'peaking'; mid.frequency.value = 1000; mid.Q.value = 0.8;
     const treble = ctx.createBiquadFilter(); treble.type = 'highshelf'; treble.frequency.value = 5000;
     const panner = ctx.createStereoPanner();
-    const dry = ctx.createGain(); dry.gain.value = issaEnabled ? 0.72 : 1;
+    const dry = ctx.createGain(); dry.gain.value = issaEnabled ? 1 - (issaAmbience / 100) * 0.35 : 1;
     const delay = ctx.createDelay(1.5); delay.delayTime.value = 0.19;
     const feedback = ctx.createGain(); feedback.gain.value = 0.18;
-    const wet = ctx.createGain(); wet.gain.value = issaEnabled ? 0.28 : 0;
+    const wet = ctx.createGain(); wet.gain.value = issaEnabled ? issaAmbience / 100 : 0;
     source.connect(bass); bass.connect(mid); mid.connect(treble); treble.connect(panner);
     panner.connect(dry); dry.connect(ctx.destination);
     panner.connect(delay); delay.connect(feedback); feedback.connect(delay); delay.connect(wet); wet.connect(ctx.destination);
@@ -215,8 +216,8 @@ export default function RiverSpendSoundStudioLive() {
     graph.mid.gain.value = track.mid || 0;
     graph.treble.gain.value = track.treble || 0;
     graph.panner.pan.value = (track.pan || 0) / 100;
-    graph.dry.gain.value = issaEnabled ? 0.72 : 1;
-    graph.wet.gain.value = issaEnabled ? 0.28 : 0;
+    graph.dry.gain.value = issaEnabled ? 1 - (issaAmbience / 100) * 0.35 : 1;
+    graph.wet.gain.value = issaEnabled ? issaAmbience / 100 : 0;
   }
   function changeFx(track, key, value) {
     const nextValue = Number(value);
@@ -443,7 +444,7 @@ export default function RiverSpendSoundStudioLive() {
             <button onClick={togglePlayback} style={{padding:'12px 18px',border:0,borderRadius:13,background:playing?'#0f766e':'#0f172a',color:'white',fontWeight:900,fontSize:15}}>{playing?'Ⅱ Pausa mix':'▶ Riproduci mix'}</button>
             <button onClick={()=>{tracks.forEach(t=>{const el=audioRefs.current[t.id];if(el){el.pause();el.currentTime=0;}});setPlaying(false);setNotice('Riproduzione riportata all’inizio.')}} style={{padding:'12px 16px',border:'1px solid #cbd5e1',borderRadius:13,background:'white',fontWeight:800}}>↺ Riavvolgi</button>
           </div>
-          <section style={{marginTop:14,padding:15,borderRadius:16,background:'linear-gradient(135deg,#082f49,#312e81)',border:'1px solid #22d3ee',color:'white'}}><div style={{display:'flex',justifyContent:'space-between',gap:10,alignItems:'center',flexWrap:'wrap'}}><div><div style={{fontSize:11,letterSpacing:2,fontWeight:900,color:'#67e8f9'}}>RIVERSPEND SOUND STUDIO LAB</div><h3 style={{margin:'5px 0',fontSize:21}}>ISSA by RSSound</h3><div style={{fontSize:13,color:'#cffafe'}}>Ottimizzazione audio immersiva {issaBusy ? 'in corso…' : (issaEnabled ? 'pronta' : 'disattivata')}</div></div><button type="button" onClick={()=>{setIssaEnabled(v=>!v);setNotice(!issaEnabled?'ISSA attivato: l’effetto immersivo sarà applicato durante la riproduzione.':'ISSA disattivato: riproduzione standard.');}} style={{padding:'11px 14px',border:0,borderRadius:10,background:issaEnabled?'#fbbf24':'#e2e8f0',color:'#082f49',fontWeight:900,cursor:'pointer'}}>{issaEnabled?'🌌 ISSA ATTIVO':'ISSA DISATTIVATO'}</button></div><div style={{height:10,background:'#164e63',borderRadius:99,overflow:'hidden',marginTop:13}}><div style={{height:'100%',width:issaProgress+'%',background:'linear-gradient(90deg,#22d3ee,#fbbf24)',transition:'width .25s ease'}}/></div><div style={{display:'flex',justifyContent:'space-between',fontSize:12,color:'#cffafe',marginTop:5}}><span>{issaBusy?'ISSA by RSSound • attendere…':'ISSA by RSSound • pronto'}</span><strong>{issaProgress}%</strong></div><p style={{fontSize:11,color:'#bae6fd',lineHeight:1.5,marginBottom:0}}>ISSA applica un ambiente stereo con eco leggero durante l’ascolto nel browser. È una prima versione dell’effetto immersivo, non un mastering professionale né un surround 5.1/7.1.</p></section><div role="status" style={{marginTop:13,padding:12,borderRadius:12,background:'#f0fdfa',color:'#115e59',fontSize:14}}>{notice}</div>
+          <section style={{marginTop:14,padding:15,borderRadius:16,background:'linear-gradient(135deg,#082f49,#312e81)',border:'1px solid #22d3ee',color:'white'}}><div style={{display:'flex',justifyContent:'space-between',gap:10,alignItems:'center',flexWrap:'wrap'}}><div><div style={{fontSize:11,letterSpacing:2,fontWeight:900,color:'#67e8f9'}}>RIVERSPEND SOUND STUDIO LAB</div><h3 style={{margin:'5px 0',fontSize:21}}>ISSA by RSSound</h3><div style={{fontSize:13,color:'#cffafe'}}>Ottimizzazione audio immersiva {issaBusy ? 'in corso…' : (issaEnabled ? 'pronta' : 'disattivata')}</div></div><button type="button" onClick={()=>{setIssaEnabled(v=>!v);setNotice(!issaEnabled?'ISSA attivato: l’effetto immersivo sarà applicato durante la riproduzione.':'ISSA disattivato: riproduzione standard.');}} style={{padding:'11px 14px',border:0,borderRadius:10,background:issaEnabled?'#fbbf24':'#e2e8f0',color:'#082f49',fontWeight:900,cursor:'pointer'}}>{issaEnabled?'🌌 ISSA ATTIVO':'ISSA DISATTIVATO'}</button></div><div style={{height:10,background:'#164e63',borderRadius:99,overflow:'hidden',marginTop:13}}><div style={{height:'100%',width:issaProgress+'%',background:'linear-gradient(90deg,#22d3ee,#fbbf24)',transition:'width .25s ease'}}/></div><div style={{display:'flex',justifyContent:'space-between',fontSize:12,color:'#cffafe',marginTop:5}}><span>{issaBusy?'ISSA by RSSound • attendere…':'ISSA by RSSound • pronto'}</span><strong>{issaProgress}%</strong></div><div style={{marginTop:14,padding:12,borderRadius:12,background:'#0f3347',border:'1px solid #155e75'}}><label htmlFor="issa-ambience" style={{display:'flex',justifyContent:'space-between',gap:8,fontSize:13,fontWeight:900,color:'#cffafe'}}>🌊 Intensità ambiente / eco <span>{issaAmbience}%</span></label><input id="issa-ambience" type="range" min="0" max="60" step="1" value={issaAmbience} onChange={e=>{const value=Number(e.target.value);setIssaAmbience(value);Object.values(audioGraphs.current).forEach(graph=>{graph.wet.gain.value=issaEnabled?value/100:0;graph.dry.gain.value=issaEnabled?1-(value/100)*0.35:1;});setNotice('ISSA: intensità ambiente impostata al '+value+'%. Premi Riproduci mix per ascoltare la differenza.');}} style={{width:'100%',accentColor:'#fbbf24',marginTop:10}}/><div style={{display:'flex',justifyContent:'space-between',fontSize:11,color:'#a5f3fc'}}><span>Suono più asciutto</span><span>Più ambiente</span></div></div><p style={{fontSize:11,color:'#bae6fd',lineHeight:1.5,marginBottom:0,marginTop:10}}>Controllo attivo dell’ambiente stereo/eco durante la riproduzione nel browser. Il surround reale 5.1/7.1 e l’elaborazione AI non sono ancora disponibili: richiedono un motore audio dedicato.</p></section><div role="status" style={{marginTop:13,padding:12,borderRadius:12,background:'#f0fdfa',color:'#115e59',fontSize:14}}>{notice}</div>
         </section>
 
         <section style={{marginTop:16,padding:18,borderRadius:22,background:'#0f172a',color:'white'}}>
