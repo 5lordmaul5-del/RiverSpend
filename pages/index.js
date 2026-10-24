@@ -917,14 +917,15 @@ export default function Home() {
               </button>
             </section>
 
-            <a id="rs-seller-card" href="/vendi" aria-label="Hai prodotti da vendere? Caricali qui e apri la tua vetrina su RiverSpendShop" className="rs-feature-card flex shrink-0 w-[220px] snap-start flex-col items-center justify-start overflow-hidden rounded-2xl border-2 border-emerald-300 bg-gradient-to-br from-emerald-950 via-teal-900 to-slate-950 p-1.5 text-center shadow-lg shadow-emerald-950/30 focus:outline-none focus:ring-4 focus:ring-emerald-300/70">
-              <img src="/rs-vendi-prodotti-banner-640.jpg" alt="Borsa, cuffie, smartphone e smartwatch in vendita su RiverSpend" className="mb-1 block aspect-video w-full shrink-0 rounded-lg object-cover" />
-              <p className="mt-0.5 text-[9px] font-extrabold uppercase tracking-wide text-emerald-200">VENDI SU RIVERSPEND</p>
-              <h2 className="mt-0.5 text-xs font-black leading-tight text-white">HAI PRODOTTI DA VENDERE?</h2>
-              <p className="mt-0.5 text-[11px] font-semibold leading-3 text-white">Carica i tuoi prodotti, apri la tua vetrina e inizia a vendere.</p>
-              <span className="rs-feature-action mt-1 inline-flex rounded-full border-2 border-white bg-emerald-300 px-1.5 py-1 text-[9px] font-black leading-tight text-slate-950 shadow-md">CARICA I TUOI PRODOTTI →</span>
-              <p className="mt-0.5 text-[8px] leading-3 text-emerald-100">Commissione del 10% secondo le condizioni applicabili.</p>
-            </a>
+            <a id="rs-seller-card" href="/vendi" aria-label="Hai prodotti da vendere? Caricali qui e apri la tua vetrina su RiverSpendShop" className="rs-feature-card relative flex shrink-0 w-[220px] snap-start flex-col items-center justify-end overflow-hidden rounded-2xl border-2 border-emerald-300 bg-slate-950 p-2 text-center shadow-lg shadow-emerald-950/30 focus:outline-none focus:ring-4 focus:ring-emerald-300/70">
+              <img src="/rs-vendi-prodotti-banner-640.jpg" alt="Borsa, cuffie, smartphone e smartwatch in vendita su RiverSpend" className="absolute inset-0 h-full w-full object-cover" />
+              <span aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-slate-950/95 via-slate-950/45 to-slate-950/10" />
+              <p className="relative z-10 mt-20 text-[9px] font-extrabold uppercase tracking-wide text-emerald-200">VENDI SU RIVERSPEND</p>
+              <h2 className="relative z-10 mt-1 text-xs font-black leading-tight text-white">HAI PRODOTTI DA VENDERE?</h2>
+              <p className="relative z-10 mt-1 text-[11px] font-semibold leading-3 text-white">Carica i tuoi prodotti, apri la tua vetrina e inizia a vendere.</p>
+              <span className="rs-feature-action relative z-10 mt-2 inline-flex rounded-full border-2 border-white bg-emerald-300 px-2 py-1 text-[9px] font-black leading-tight text-slate-950 shadow-md">CARICA I TUOI PRODOTTI →</span>
+              <p className="relative z-10 mt-1 text-[8px] leading-3 text-emerald-100">Commissione del 10% secondo le condizioni applicabili.</p>
+            </a>        </a>
 
             <section className="rs-feature-card shrink-0 w-[220px] snap-start rs-fortune-card rounded-2xl border border-amber-400/40 bg-gradient-to-br from-slate-950 via-amber-950/30 to-slate-900 p-2 text-center shadow-lg shadow-amber-950/20">
               <div className="flex h-full w-full flex-col items-center overflow-hidden text-center">
