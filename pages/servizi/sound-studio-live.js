@@ -4,6 +4,9 @@ import { useMemo, useRef, useState } from 'react';
 const kinds = ['Voce', 'Batteria', 'Basso', 'Chitarra', 'Tastiere', 'Base / altro'];
 export default function RiverSpendSoundStudioLive() {
   const [tracks, setTracks] = useState([]);
+  const [monitorChoice, setMonitorChoice] = useState('Yamaha HS8');
+  const [consoleChoice, setConsoleChoice] = useState('RiverSpend Virtual Console Pro');
+  const [roomChoice, setRoomChoice] = useState('Stereo Studio');
   const [project, setProject] = useState('Il mio progetto');
   const [master, setMaster] = useState(80);
   const [issaEnabled, setIssaEnabled] = useState(true);
@@ -495,6 +498,36 @@ export default function RiverSpendSoundStudioLive() {
           <h2 style={{fontSize:22,fontWeight:900,margin:'6px 0'}}>Promuovi il tuo singolo, album o videoclip</h2>
           <p style={{fontSize:14,lineHeight:1.6,margin:'0 0 12px'}}>Scegli durata, budget e area geografica per preparare una campagna musicale. Il configuratore mostra una stima; pagamento e pubblicazione reali saranno attivati dopo il collegamento dei servizi necessari.</p>
           <a href="/rs-spons/campagna" style={{display:'inline-block',padding:'12px 16px',borderRadius:12,background:'#0e7490',color:'white',fontWeight:900,textDecoration:'none'}}>🎵 Crea campagna musicale RSSpons</a>
+        </section>
+
+        <section id="river-audio-equipment" style={{marginTop:20,padding:18,borderRadius:18,background:'linear-gradient(135deg,#082f49,#164e63)',color:'#ecfeff',border:'1px solid #0e7490'}}>
+          <div style={{fontSize:12,fontWeight:900,letterSpacing:1.5,color:'#67e8f9'}}>RIVERSPEND SOUND STUDIO LIVE</div>
+          <h2 style={{fontSize:'clamp(22px,4vw,30px)',margin:'6px 0 8px',fontWeight:900}}>🎛️ Configura la sala audio virtuale</h2>
+          <p style={{fontSize:14,lineHeight:1.6,margin:'0 0 16px',color:'#cffafe'}}>Scegli la configurazione di riferimento per la tua sessione. Queste scelte impostano il profilo visualizzato nello studio: non collegano né controllano automaticamente hardware fisico.</p>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))',gap:12}}>
+            <label style={{display:'grid',gap:7,fontSize:13,fontWeight:800}}>Monitor d'ascolto
+              <select value={monitorChoice} onChange={e=>setMonitorChoice(e.target.value)} style={{padding:12,borderRadius:10,border:'1px solid #67e8f9',background:'#f0fdfa',color:'#083344',fontWeight:700}}>
+                <option>Yamaha HS8</option><option>Yamaha HS7</option><option>Bowers & Wilkins 800 Series</option><option>Genelec The Ones</option><option>Neumann KH Series</option><option>Focal Professional</option><option>ADAM Audio A Series</option>
+              </select>
+            </label>
+            <label style={{display:'grid',gap:7,fontSize:13,fontWeight:800}}>Console virtuale
+              <select value={consoleChoice} onChange={e=>setConsoleChoice(e.target.value)} style={{padding:12,borderRadius:10,border:'1px solid #67e8f9',background:'#f0fdfa',color:'#083344',fontWeight:700}}>
+                <option>RiverSpend Virtual Console Pro</option><option>Yamaha DM7 — profilo di riferimento</option><option>Console analogica classica — profilo</option><option>Console Cinema & Master — profilo</option>
+              </select>
+            </label>
+            <label style={{display:'grid',gap:7,fontSize:13,fontWeight:800}}>Ambiente di ascolto
+              <select value={roomChoice} onChange={e=>setRoomChoice(e.target.value)} style={{padding:12,borderRadius:10,border:'1px solid #67e8f9',background:'#f0fdfa',color:'#083344',fontWeight:700}}>
+                <option>Stereo Studio</option><option>ISSA Surround 10.0 — visualizzazione</option><option>Live Concert — visualizzazione</option><option>Cinema Mix — visualizzazione</option>
+              </select>
+            </label>
+          </div>
+          <div style={{marginTop:14,padding:13,borderRadius:12,background:'rgba(8,47,73,.72)',border:'1px solid #155e75'}}>
+            <strong>Configurazione selezionata</strong>
+            <div style={{display:'flex',flexWrap:'wrap',gap:8,marginTop:9}}>
+              {[monitorChoice,consoleChoice,roomChoice].map(item=><span key={item} style={{padding:'7px 10px',borderRadius:999,background:'#cffafe',color:'#164e63',fontSize:12,fontWeight:800}}>{item}</span>)}
+            </div>
+            <p style={{fontSize:12,lineHeight:1.55,margin:'10px 0 0',color:'#a5f3fc'}}>Nota: i marchi sono riferimenti di catalogo e i profili non equivalgono a una licenza, a una simulazione acustica certificata o al controllo dell'hardware originale. Il collegamento e il test dei dispositivi saranno una fase separata.</p>
+          </div>
         </section>
         <footer style={{marginTop:20,padding:14,borderRadius:14,background:'#fff7ed',color:'#9a3412',fontSize:13,lineHeight:1.55}}>Versione iniziale dello studio: il mixer consente di caricare, ascoltare, regolare e silenziare tracce nel browser. Non salva ancora i progetti sul server e non esegue ancora mastering AI, registrazione live multitraccia, export del mix o depositi SIAE/Soundreef. Questi moduli richiedono integrazioni dedicate prima di essere offerti come servizi operativi.</footer>
       </div>
