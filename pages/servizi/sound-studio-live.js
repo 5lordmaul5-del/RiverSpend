@@ -529,6 +529,25 @@ export default function RiverSpendSoundStudioLive() {
             <p style={{fontSize:12,lineHeight:1.55,margin:'10px 0 0',color:'#a5f3fc'}}>Nota: i marchi sono riferimenti di catalogo e i profili non equivalgono a una licenza, a una simulazione acustica certificata o al controllo dell'hardware originale. Il collegamento e il test dei dispositivi saranno una fase separata.</p>
           </div>
         </section>
+
+        <section id="river-audio-plugins" style={{marginTop:20,padding:18,borderRadius:18,background:'#071c2c',color:'#ecfeff',border:'1px solid #0e7490'}}>
+          <div style={{fontSize:12,fontWeight:900,letterSpacing:1.4,color:'#67e8f9'}}>RIVERSPEND PLUGIN STORE</div>
+          <h2 style={{fontSize:'clamp(22px,4vw,30px)',margin:'6px 0 8px'}}>🎚️ Plugin audio per piano</h2>
+          <p style={{fontSize:14,lineHeight:1.6,color:'#cbd5e1'}}>I piani stabiliscono quali moduli sono disponibili. In questa prima versione il catalogo e i blocchi sono dimostrativi: i plugin indicati come “in sviluppo” non elaborano ancora l'audio e non sono venduti come funzioni già operative.</p>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))',gap:12}}>
+            {[
+              {name:'FREE • Starter',price:'€0',items:'EQ base, volume, mute/solo, importazione tracce',status:'Funzioni base disponibili in parte',color:'#334155'},
+              {name:'BRONZE • Creator',price:'Piano Bronze',items:'Compressione, gate, de-esser e preset voce',status:'Moduli avanzati da implementare',color:'#92400e'},
+              {name:'SILVER • Producer',price:'Piano Silver',items:'EQ parametrico, riverbero, delay e bus effetti',status:'Moduli avanzati da implementare',color:'#475569'},
+              {name:'GOLD • Professional',price:'Piano Gold',items:'Catene effetti, automazioni e routing avanzato',status:'In sviluppo',color:'#854d0e'},
+              {name:'PLATINUM • Studio',price:'Piano Platinum',items:'Master bus, analisi loudness e strumenti di mastering',status:'In sviluppo',color:'#3730a3'},
+              {name:'SUPREME • Cinema',price:'Piano Supreme',items:'Moduli spaziali, surround e post-produzione avanzata',status:'Richiede motore audio dedicato',color:'#701a75'}
+            ].map((p)=> <div key={p.name} style={{padding:14,borderRadius:14,background:'#102b40',border:'1px solid #164e63',display:'flex',flexDirection:'column',gap:9}}>
+              <div style={{fontSize:12,fontWeight:900,color:'#a5f3fc'}}>{p.name}</div><div style={{fontSize:20,fontWeight:900}}>{p.price}</div><div style={{fontSize:13,lineHeight:1.55,flex:1}}>{p.items}</div><div style={{fontSize:11,fontWeight:800,padding:'7px 9px',borderRadius:8,background:p.color}}>{p.status}</div>
+            </div>)}
+          </div>
+          <p style={{fontSize:12,lineHeight:1.55,color:'#a5f3fc',marginBottom:0}}>Nessun pagamento è attivato da questa scheda. Prezzi, limiti d'uso e accessi saranno collegati ai piani reali quando avremo completato autenticazione, abbonamenti e controlli lato server.</p>
+        </section>
         <footer style={{marginTop:20,padding:14,borderRadius:14,background:'#fff7ed',color:'#9a3412',fontSize:13,lineHeight:1.55}}>Versione iniziale dello studio: il mixer consente di caricare, ascoltare, regolare e silenziare tracce nel browser. Non salva ancora i progetti sul server e non esegue ancora mastering AI, registrazione live multitraccia, export del mix o depositi SIAE/Soundreef. Questi moduli richiedono integrazioni dedicate prima di essere offerti come servizi operativi.</footer>
       </div>
     </main>
