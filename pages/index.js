@@ -1402,6 +1402,53 @@ export default function Home() {
             max-width:220px !important;
           }
         }
+        /* Le immagini già presenti diventano lo sfondo completo delle schede, senza rimuovere i controlli interattivi. */
+        .rs-apps-grid > #rs-force-card {
+          background-image:linear-gradient(180deg,rgba(2,6,23,.24),rgba(2,6,23,.88)),url('/rs-force.jpg') !important;
+          background-size:cover !important;
+          background-position:center !important;
+        }
+        .rs-apps-grid > .rs-fortune-card {
+          background-image:linear-gradient(180deg,rgba(2,6,23,.28),rgba(2,6,23,.88)),url('/rs-fortune.jpg') !important;
+          background-size:cover !important;
+          background-position:center !important;
+        }
+        .rs-apps-grid > .rs-feature-card:has(img[src="/rs-lottery.jpg"]) {
+          background-image:linear-gradient(180deg,rgba(22,11,44,.35),rgba(10,4,24,.91)),url('/rs-lottery.jpg') !important;
+          background-size:cover !important;
+          background-position:center !important;
+        }
+        .rs-apps-grid > .rs-feature-card:has(img[src="/rs-folgore-pacchi.png"]) {
+          background-image:linear-gradient(180deg,rgba(23,25,15,.32),rgba(15,17,10,.9)),url('/rs-folgore-pacchi.png') !important;
+          background-size:cover !important;
+          background-position:center !important;
+        }
+        /* Anche RiverSpend Park mantiene le stesse misure delle altre schede nel carosello. */
+        .rs-apps-grid > .rs-park-banner {
+          flex:0 0 240px !important;
+          width:240px !important;
+          min-width:240px !important;
+          max-width:240px !important;
+          height:228px !important;
+          min-height:228px !important;
+          max-height:228px !important;
+        }
+        .rs-apps-grid > .rs-park-banner > div,
+        .rs-apps-grid > .rs-park-banner img {
+          height:100%;
+        }
+        .rs-apps-grid > .rs-park-banner img {
+          aspect-ratio:auto;
+          object-fit:cover;
+        }
+        @media (max-width:640px) {
+          .rs-apps-grid > .rs-park-banner {
+            flex-basis:220px !important;
+            width:220px !important;
+            min-width:220px !important;
+            max-width:220px !important;
+          }
+        }
         @keyframes rs-palantir-pulse {
           0%, 100% { transform: scale(1); filter: brightness(1); }
           50% { transform: scale(1.05); filter: brightness(1.2); }
