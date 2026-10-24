@@ -274,20 +274,3 @@ body { background: #f7f3e9; color: #17343a; }
 }
 
 
-/* Metodi di pagamento informativi sotto il prezzo nelle schede prodotto. */
-.rs-product-card p[class*="text-base"][class*="font-bold"]::after {
-  content: "PayPal  ·  🚚 Contrassegno  ·  RiverSpendPay";
-  display: block;
-  margin-top: .45rem;
-  color: #176b6b;
-  font-size: .65rem;
-  font-weight: 700;
-  line-height: 1.45;
-  letter-spacing: 0;
-  white-space: normal;
-}
-@media (max-width: 480px) {
-  .rs-product-card p[class*="text-base"][class*="font-bold"]::after {
-    font-size: .6rem;
-  }
-}
