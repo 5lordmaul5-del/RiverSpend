@@ -1378,15 +1378,21 @@ export default function Home() {
           object-fit:cover;
           object-position:center;
         }
-        .rs-apps-grid > .rs-feature-card:has(img[src="/rs-lottery.jpg"]) .rs-feature-media {
-          height:112px;
-          min-height:112px;
+        /* Le foto riempiono la propria fascia del banner; dimensioni e impaginazione delle schede restano invariate. */
+        .rs-apps-grid > .rs-feature-card:has(img[src="/rs-lottery.jpg"]) .rs-feature-media,
+        .rs-apps-grid > .rs-feature-card:has(img[src="/rs-folgore-pacchi.png"]) .rs-feature-media {
+          height:112px !important;
+          min-height:112px !important;
+          max-height:112px;
+          flex:0 0 112px;
         }
         .rs-apps-grid > .rs-feature-card img[src="/rs-lottery.jpg"],
         .rs-apps-grid > .rs-feature-card img[src="/rs-folgore-pacchi.png"] {
+          display:block;
           width:100%;
-          height:112px !important;
-          min-height:112px;
+          height:100% !important;
+          min-height:0;
+          max-height:100%;
           object-fit:cover;
           object-position:center;
         }
