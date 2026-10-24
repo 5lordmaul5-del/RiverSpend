@@ -134,6 +134,9 @@ export default function RsSponsPage() {
             <p className="mt-1 text-sm text-slate-600">Hai un cappellino, una borsa, una console o qualsiasi altro prodotto? Carica le foto e RS Spons Creator può preparare automaticamente uno spot professionale da promuovere.</p>
           </div>
           <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+            <a href="/rs-spons/campagna" className="rounded-xl bg-amber-500 px-5 py-3 text-center font-extrabold text-slate-950 shadow-lg hover:bg-amber-400">
+              📍 Crea una campagna RSSpons
+            </a>
             <a href="/rs-spons/creator" className="rounded-xl bg-cyan-600 px-5 py-3 text-center font-extrabold text-white shadow-lg hover:bg-cyan-700">
               ✨ Crea automaticamente la pubblicità
             </a>
