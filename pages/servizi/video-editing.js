@@ -11,6 +11,9 @@ const effects = [
 ];
 export default function RiverSpendVideoEditing() {
   const [videoUrl, setVideoUrl] = useState('');
+  const [videoProfile, setVideoProfile] = useState('Cinema 4K');
+  const [cameraProfile, setCameraProfile] = useState('Camera cinema — profilo');
+  const [audioPostProfile, setAudioPostProfile] = useState('Mix stereo');
   const [videoName, setVideoName] = useState('');
   const [backgroundUrl, setBackgroundUrl] = useState('');
   const [backgroundName, setBackgroundName] = useState('');
@@ -110,6 +113,36 @@ export default function RiverSpendVideoEditing() {
           <div role="status" style={{marginTop:12,padding:12,borderRadius:12,background:'#164e63',color:'#cffafe',fontSize:13}}>{notice}</div>
         </section>
 
+
+        <section id="river-video-equipment" style={{marginTop:20,padding:18,borderRadius:18,background:'linear-gradient(135deg,#111827,#312e81)',color:'#eef2ff',border:'1px solid #6366f1'}}>
+          <div style={{fontSize:12,fontWeight:900,letterSpacing:1.5,color:'#c4b5fd'}}>RIVERSPEND VIDEO STUDIO</div>
+          <h2 style={{fontSize:'clamp(22px,4vw,30px)',margin:'6px 0 8px',fontWeight:900}}>🎬 Configura la produzione video</h2>
+          <p style={{fontSize:14,lineHeight:1.6,margin:'0 0 16px',color:'#e0e7ff'}}>Seleziona il profilo di lavoro e la configurazione di riferimento per il tuo progetto. I profili organizzano la sessione; non simulano una videocamera fisica né attivano funzioni di export non ancora implementate.</p>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))',gap:12}}>
+            <label style={{display:'grid',gap:7,fontSize:13,fontWeight:800}}>Formato di produzione
+              <select value={videoProfile} onChange={e=>setVideoProfile(e.target.value)} style={{padding:12,borderRadius:10,border:'1px solid #a5b4fc',background:'#eef2ff',color:'#1e1b4b',fontWeight:700}}>
+                <option>Cinema 4K</option><option>Videoclip musicale</option><option>Film / cortometraggio</option><option>Social verticale 9:16</option><option>Documentario</option><option>Full HD leggero</option>
+              </select>
+            </label>
+            <label style={{display:'grid',gap:7,fontSize:13,fontWeight:800}}>Profilo camera
+              <select value={cameraProfile} onChange={e=>setCameraProfile(e.target.value)} style={{padding:12,borderRadius:10,border:'1px solid #a5b4fc',background:'#eef2ff',color:'#1e1b4b',fontWeight:700}}>
+                <option>Camera cinema — profilo</option><option>ARRI — profilo di riferimento</option><option>RED — profilo di riferimento</option><option>Sony Cinema Line — profilo</option><option>Blackmagic Design — profilo</option><option>Smartphone — profilo</option>
+              </select>
+            </label>
+            <label style={{display:'grid',gap:7,fontSize:13,fontWeight:800}}>Post-produzione audio
+              <select value={audioPostProfile} onChange={e=>setAudioPostProfile(e.target.value)} style={{padding:12,borderRadius:10,border:'1px solid #a5b4fc',background:'#eef2ff',color:'#1e1b4b',fontWeight:700}}>
+                <option>Mix stereo</option><option>Dialoghi e Foley</option><option>Videoclip musicale</option><option>Cinema surround — profilo</option>
+              </select>
+            </label>
+          </div>
+          <div style={{marginTop:14,padding:13,borderRadius:12,background:'rgba(17,24,39,.65)',border:'1px solid #4f46e5'}}>
+            <strong>Profilo progetto</strong>
+            <div style={{display:'flex',flexWrap:'wrap',gap:8,marginTop:9}}>
+              {[videoProfile,cameraProfile,audioPostProfile].map(item=><span key={item} style={{padding:'7px 10px',borderRadius:999,background:'#e0e7ff',color:'#312e81',fontSize:12,fontWeight:800}}>{item}</span>)}
+            </div>
+            <p style={{fontSize:12,lineHeight:1.55,margin:'10px 0 0',color:'#c7d2fe'}}>I nomi di produttori e sistemi sono profili di riferimento, non dichiarazioni di partnership o certificazione. La timeline completa, il rendering finale e i codec professionali richiedono ulteriori implementazioni e test.</p>
+          </div>
+        </section>
         <footer style={{marginTop:14,padding:14,borderRadius:14,background:'#fff7ed',color:'#9a3412',fontSize:13,lineHeight:1.6}}>Stato: interfaccia iniziale con import video/immagine, controlli chroma key, titoli e anteprima di alcuni effetti. Non esporta ancora un video compositato e non rimuove realmente il green/blue screen: per questo servirà integrare un motore video (per esempio FFmpeg/WebAssembly o rendering server), una timeline e una libreria di effetti autorizzati. Lavoreremo su file caricati dall’utente o su asset con licenza adeguata.</footer>
       </div>
     </main>
