@@ -918,7 +918,7 @@ export default function Home() {
             </section>
 
             <a id="rs-seller-card" href="/vendi" aria-label="Hai prodotti da vendere? Caricali qui e apri la tua vetrina su RiverSpendShop" className="rs-feature-card flex shrink-0 w-[220px] snap-start flex-col items-center justify-start overflow-hidden rounded-2xl border-2 border-emerald-300 bg-gradient-to-br from-emerald-950 via-teal-900 to-slate-950 p-1.5 text-center shadow-lg shadow-emerald-950/30 focus:outline-none focus:ring-4 focus:ring-emerald-300/70">
-              <img src="/rs-vendi-prodotti-banner.svg" alt="Borsa, cuffie, smartphone e smartwatch in vendita su RiverSpend" className="mb-0.5 block h-[72px] w-full shrink-0 rounded-lg object-cover" />
+              <img src="/rs-vendi-prodotti-banner-640.jpg" alt="Borsa, cuffie, smartphone e smartwatch in vendita su RiverSpend" className="mb-0.5 block h-[72px] w-full shrink-0 rounded-lg object-cover" />
               <p className="mt-0.5 text-[9px] font-extrabold uppercase tracking-wide text-emerald-200">VENDI SU RIVERSPEND</p>
               <h2 className="mt-0.5 text-xs font-black leading-tight text-white">HAI PRODOTTI DA VENDERE?</h2>
               <p className="mt-0.5 text-[11px] font-semibold leading-3 text-white">Carica i tuoi prodotti, apri la tua vetrina e inizia a vendere.</p>
