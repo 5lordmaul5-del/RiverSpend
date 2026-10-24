@@ -263,14 +263,29 @@ export default function RiverSpendSoundStudioLive() {
         <header style={{marginTop:18,overflow:'hidden',position:'relative',borderRadius:26,padding:'28px 22px',color:'white',background:'radial-gradient(circle at 80% 10%,#0e7490 0,#164e63 34%,#082f49 75%)',boxShadow:'0 18px 40px rgba(8,47,73,.18)'}}>
           <div style={{fontSize:12,letterSpacing:2,fontWeight:900,color:"#a5f3fc",overflowWrap:"anywhere"}}>RiverSpendSoundStudioLive</div>
           <h1 style={{fontSize:"clamp(30px,6vw,48px)",lineHeight:1.08,margin:"12px 0"}}>Il tuo studio. Il tuo suono.</h1>
-          <div style={{borderRadius:16,overflow:"hidden",margin:"14px 0",border:"1px solid #67e8f9",boxShadow:"0 10px 28px rgba(0,0,0,.25)"}}><img src="/rssoundstudio-issa-banner.jpg" alt="RSSoundStudio I.S.S.A. — ImmersiveSoundSpaceAmbient, studio audio virtuale RiverSpend" style={{display:"block",width:"100%",height:"clamp(190px,48vw,340px)",objectFit:"cover"}} /></div>
-          <p style={{maxWidth:680,fontSize:16,lineHeight:1.65,color:"#cffafe",marginBottom:0}}>Uno studio virtuale guidato da River AI e basato sul concept ISSA, esclusiva RiverSpend. Carica le tracce e segui la guida passo dopo passo per preparare il tuo progetto musicale. Le funzioni AI avanzate si attiveranno quando sarà collegato il servizio dedicato.</p>
+          <div style={{borderRadius:16,overflow:"hidden",margin:"12px 0",border:"1px solid #67e8f9",boxShadow:"0 10px 28px rgba(0,0,0,.25)",background:"#020b12"}}><img src="/rssoundstudio-issa-banner.jpg" alt="RSSoundStudio I.S.S.A. — ImmersiveSoundSpaceAmbient, studio audio virtuale RiverSpend" style={{display:"block",width:"100%",height:"clamp(112px,28vw,220px)",objectFit:"contain",objectPosition:"center"}} /></div>
+          <p style={{maxWidth:720,fontSize:16,lineHeight:1.65,color:"#cffafe",marginBottom:0}}>🎤 <strong>Sei un musicista o una cantante?</strong> Porta la tua musica su RiverSpend: carica le tue tracce, prepara il tuo progetto nel mixer e scopri i pacchetti per singoli, EP e album. River AI ti guida nei passaggi; il sistema I.S.S.A. è il nostro ambiente audio immersivo in evoluzione. Le funzioni AI avanzate si attiveranno quando sarà collegato il servizio dedicato.</p>
           <div style={{display:'flex',flexWrap:'wrap',gap:8,marginTop:18}}>{['MULTITRACCIA','AUDIO LAB','VIDEO EDIT','ISSA • ESCLUSIVA RIVERSPEND'].map(x=><span key={x} style={{border:'1px solid #67e8f9',borderRadius:999,padding:'6px 10px',fontSize:11,fontWeight:800,color:'#cffafe',background:'rgba(8,47,73,.72)'}}>{x}</span>)}</div>
           <div style={{display:'flex',flexWrap:'wrap',gap:10,marginTop:22,position:'relative',zIndex:2}}>
             <button type="button" onClick={()=>uploadRef.current?.click()} style={{padding:'13px 17px',border:0,borderRadius:12,background:'#fbbf24',color:'#082f49',fontWeight:900,fontSize:15,cursor:'pointer'}}>＋ CARICA TRACCE</button>
             <button type="button" onClick={()=>{document.getElementById("mixer-multitraccia")?.scrollIntoView({behavior:"smooth",block:"start"});}} style={{display:"inline-flex",alignItems:"center",justifyContent:"center",padding:"13px 17px",border:"1px solid #67e8f9",borderRadius:12,background:"#083344",color:"white",fontWeight:900,fontSize:15,cursor:"pointer"}}>🎚️ APRI IL MIXER</button>
           </div>
         </header>
+
+        <section id="tariffe-musica" style={{marginTop:16,padding:18,borderRadius:22,background:"#f0fdfa",color:"#0f172a",border:"1px solid #99f6e4"}}>
+          <div style={{fontSize:12,letterSpacing:2,fontWeight:900,color:"#0e7490"}}>RIVERSPEND MUSIC • TARIFFE</div>
+          <h2 style={{fontSize:24,lineHeight:1.15,margin:"8px 0"}}>Prepara il tuo singolo, EP o album</h2>
+          <p style={{fontSize:14,lineHeight:1.6,color:"#334155",marginTop:0}}>Carica le tracce nel mixer, organizza il progetto e scegli il pacchetto adatto. Le tariffe qui sotto sono proposte attualmente visibili sul sito; la selezione non comporta un pagamento.</p>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(min(100%,145px),1fr))",gap:9}}>
+            {[
+              ["3 canzoni","€ 19,90"],["5 canzoni","€ 29,90"],["10 canzoni","€ 49,90"],["15 canzoni","€ 69,90"],["20 canzoni","€ 89,90"],["Album intero · fino a 10 brani","€ 99,90"],["Doppio album · fino a 20 brani","€ 169,90"]
+            ].map(([name,price])=><article key={name} style={{padding:12,borderRadius:13,background:"white",border:"1px solid #99f6e4"}}>
+              <div style={{fontSize:13,fontWeight:800,color:"#334155"}}>{name}</div><div style={{fontSize:22,fontWeight:950,color:"#0e7490",marginTop:5}}>{price}</div>
+            </article>)}
+          </div>
+          <a href="/servizi/pacchetti-studio" style={{display:"inline-flex",marginTop:12,padding:"11px 15px",borderRadius:11,background:"#0e7490",color:"white",fontWeight:900,textDecoration:"none"}}>🎵 Tutte le tariffe e i pacchetti →</a>
+          <p style={{fontSize:12,color:"#64748b",lineHeight:1.5,marginBottom:0}}>Nota: i prezzi sono proposte iniziali. Il checkout non è attivo e non vengono effettuati addebiti. Servizi di distribuzione musicale e royalties vanno definiti separatamente prima dell’attivazione.</p>
+        </section>
 
         <section id="mixer-multitraccia" style={{marginTop:16,scrollMarginTop:18}}>
           <h2 style={{fontSize:23,margin:'0 0 10px'}}>🎚️ Mixer multitraccia — apri e usa</h2>
