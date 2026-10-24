@@ -1138,14 +1138,13 @@ export default function Home() {
 
           <a href="/servizi/sound-studio-live" aria-label="Apri RiverSpend Sound Studio Live con sistema ISSA" className="rs-banner-slide rs-creator-banner group shrink-0 snap-start overflow-hidden rounded-2xl border border-cyan-300/70 bg-gradient-to-br from-cyan-950 via-slate-950 to-teal-950 text-white shadow-lg transition hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-cyan-300/70">
             <div className="rs-world-media relative flex h-[96px] shrink-0 items-center justify-center overflow-hidden bg-slate-950 p-2">
-              <img src="/rssoundstudio-issa-banner.jpg" alt="RSSoundStudio I.S.S.A. — ImmersiveSoundSpaceAmbient" className="h-full w-full object-contain drop-shadow-lg" loading="lazy" />
-              <span className="absolute bottom-2 right-3 text-2xl" aria-hidden="true">🎚️</span>
+              <img src="/rssoundstudio-issa-banner.jpg" alt="RSSoundStudio ISSA — Immersive Sound Space Ambient" className="block max-h-full max-w-full w-auto h-auto object-contain drop-shadow-lg" loading="lazy" />
             </div>
             <div className="flex min-h-0 flex-1 flex-col items-start p-3 text-left">
               <p className="text-[10px] font-extrabold uppercase tracking-[.18em] text-cyan-200">Audio • Mixer • ISSA</p>
               <h2 className="mt-1 text-base font-black leading-tight">RiverSpend Sound Studio Live</h2>
-              <p className="mt-1 text-xs leading-4 text-slate-100">Scopri il mixer audio e il sistema ISSA, esclusiva RiverSpend Sound Studio.</p>
-              <span className="mt-auto inline-flex rounded-full bg-cyan-300 px-3 py-1.5 text-[11px] font-extrabold text-slate-950">APRI SOUND STUDIO →</span>
+              <p className="mt-1 text-xs leading-4 text-slate-100">Sei un artista o musicista? Canti, suoni o produci musica? Entra in RSSoundStudio ISSA, prepara le tue tracce e scopri il nostro studio audio immersivo.</p>
+              <span className="mt-auto inline-flex rounded-full bg-cyan-300 px-3 py-1.5 text-[11px] font-extrabold text-slate-950">ENTRA NELLO STUDIO →</span>
             </div>
           </a>
 
