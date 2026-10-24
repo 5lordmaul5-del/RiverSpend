@@ -269,6 +269,39 @@ export default function Vendi() {
     }
   }
 
+  async function eliminaAnnuncio(prodotto) {
+    if (!session?.user?.id || !prodotto?.id || prodotto.status !== 'published' || aggiornamentoVendita || salvataggioAnnuncio) return;
+    const conferma = window.confirm(`Vuoi rimuovere “${prodotto.name}” da RiverSpendShop? L’annuncio non sarà più visibile agli acquirenti. Le informazioni restano conservate per non compromettere eventuali ordini già registrati.`);
+    if (!conferma) return;
+    setAggiornamentoVendita(String(prodotto.id));
+    setMessaggio('Rimuovo l’annuncio dallo Shop…');
+    try {
+      const { data, error } = await supabase
+        .from('products')
+        .update({ status: 'removed' })
+        .eq('id', prodotto.id)
+        .eq('seller_id', session.user.id)
+        .eq('status', 'published')
+        .select('id, status')
+        .maybeSingle();
+      if (error) throw error;
+      if (!data) throw new Error('Annuncio non rimosso: verifica che appartenga al tuo account e sia ancora pubblicato.');
+      setMieInserzioni((current) => current.map((item) => String(item.id) === String(prodotto.id) ? { ...item, status: 'removed' } : item));
+      setProdotti((current) => current.filter((item) => String(item.id) !== String(prodotto.id)));
+      if (String(modificaAnnuncioId) === String(prodotto.id)) {
+        setModificaAnnuncioId('');
+        setModificaAnnuncio(null);
+        setFotoModifica([]);
+      }
+      setMessaggio('✅ Annuncio rimosso da RiverSpendShop. I dati sono conservati per eventuali ordini già registrati.');
+    } catch (error) {
+      console.error('Rimozione annuncio:', error);
+      setMessaggio(`❌ ${error.message || 'Non è stato possibile rimuovere l’annuncio.'}`);
+    } finally {
+      setAggiornamentoVendita('');
+    }
+  }
+
   async function segnaComeVenduto(prodotto) {
     if (!session?.user?.id || !prodotto?.id || prodotto.status !== 'published') return;
     const conferma = window.confirm(`Confermi che “${prodotto.name}” è stato venduto? L’annuncio sparirà da RiverSpendShop e RS Local, ma resterà nel tuo elenco come venduto.`);
@@ -868,7 +901,7 @@ export default function Vendi() {
                       <div className="min-w-0">
                         <p className="font-semibold">{item.name}</p>
                         <p className="text-sm text-slate-600">€ {Number(item.price || 0).toFixed(2)}{item.locality ? ` · ${item.locality}` : ''}{item.province ? ` · ${item.province}` : ''}</p>
-                        <span className={`mt-1 inline-flex rounded-full px-2 py-1 text-xs font-bold ${item.status === 'sold' ? 'bg-slate-200 text-slate-700' : 'bg-emerald-100 text-emerald-800'}`}>{item.status === 'sold' ? '✓ Venduto' : item.status === 'published' ? '● Disponibile' : item.status}</span>
+                        <span className={`mt-1 inline-flex rounded-full px-2 py-1 text-xs font-bold ${item.status === 'sold' ? 'bg-slate-200 text-slate-700' : 'bg-emerald-100 text-emerald-800'}`}>{item.status === 'sold' ? '✓ Venduto' : item.status === 'published' ? '● Disponibile' : item.status === 'removed' ? '✕ Rimosso' : item.status}</span>
                       </div>
                       {item.status === 'published' && (
                         <div className="flex flex-wrap gap-2">
@@ -877,6 +910,9 @@ export default function Vendi() {
                           </button>
                           <button type="button" onClick={() => segnaComeVenduto(item)} disabled={Boolean(aggiornamentoVendita) || salvataggioPrezzo} className="rounded-xl bg-teal-700 px-4 py-2 text-sm font-bold text-white disabled:opacity-50">
                             {aggiornamentoVendita === item.id ? 'Aggiorno…' : 'Segna come venduto'}
+                          </button>
+                          <button type="button" onClick={() => eliminaAnnuncio(item)} disabled={Boolean(aggiornamentoVendita) || salvataggioPrezzo || salvataggioAnnuncio} className="rounded-xl border border-red-600 px-4 py-2 text-sm font-bold text-red-700 disabled:opacity-50">
+                            {aggiornamentoVendita === String(item.id) ? 'Rimozione…' : '🗑️ Elimina annuncio'}
                           </button>
                         </div>
                       )}
