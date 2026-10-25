@@ -1,0 +1,21 @@
+{
+  "id": "/",
+  "name": "RiverSpend Shop",
+  "short_name": "RS Shop",
+  "description": "Il marketplace RiverSpend: il tuo shop, il tuo flow.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#052b3a",
+  "theme_color": "#06b6d4",
+  "lang": "it",
+  "icons": [
+    {
+      "src": "/icons/shop.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
