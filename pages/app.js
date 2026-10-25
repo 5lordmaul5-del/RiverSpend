@@ -134,6 +134,11 @@ export default function RiverSpendApps() {
                 </article>
               ))}
             </div>
+            <div style={{ textAlign: 'center', marginTop: 20, marginBottom: 16 }}>
+              <a href="/portafoglio-premi" style={{ display: 'inline-block', border: '1px solid #67e8f9', background: 'rgba(6,182,212,.14)', color: '#a5f3fc', fontWeight: 900, borderRadius: 999, padding: '12px 20px', textDecoration: 'none' }}>
+                🎁 Apri il mio portafoglio premi
+              </a>
+            </div>
             <div style={{ textAlign: 'center', marginTop: 20 }}>
               <button type="button" onClick={async () => {
                 const shareData = { title: 'RiverSpend Friends', text: 'Scopri RiverSpend e le future iniziative per la community!', url: window.location.origin + '/app' };
