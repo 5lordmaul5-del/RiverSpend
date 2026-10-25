@@ -70,7 +70,24 @@ export default function RiverSpendApps() {
           <header style={{ textAlign: 'center', padding: '30px 0 24px' }}>
             <div style={{ fontSize: 13, letterSpacing: 4, color: '#fbbf24', fontWeight: 800 }}>YOUR SHOP • YOUR FLOW</div>
             <h1 style={{ fontSize: 'clamp(30px,6vw,48px)', lineHeight: 1.1, margin: '12px 0', fontWeight: 900 }}>Le app RiverSpend</h1>
-            <p style={{ color: '#cbd5e1', maxWidth: 650, margin: '0 auto', lineHeight: 1.6 }}>Scegli una delle app RiverSpend. Aprila e usa il menu del browser per aggiungerla alla schermata Home o installarla, quando l’opzione è disponibile.</p>
+            <p style={{ color: '#cbd5e1', maxWidth: 650, margin: '0 auto 18px', lineHeight: 1.6 }}>Scegli una delle app RiverSpend. Aprila e usa il menu del browser per aggiungerla alla schermata Home o installarla, quando l’opzione è disponibile.</p>
+            <button type="button" onClick={async () => {
+              const shareData = { title: 'Le app RiverSpend', text: 'Scopri e apri le app RiverSpend!', url: window.location.origin + '/app' };
+              try {
+                if (navigator.share) {
+                  await navigator.share(shareData);
+                } else if (navigator.clipboard && navigator.clipboard.writeText) {
+                  await navigator.clipboard.writeText(shareData.url);
+                  window.alert('Link copiato! Ora puoi condividerlo.');
+                } else {
+                  window.prompt('Copia questo link per condividerlo:', shareData.url);
+                }
+              } catch (error) {
+                if (error && error.name !== 'AbortError') window.alert('Non è stato possibile condividere automaticamente. Puoi copiare il link dalla barra del browser: ' + shareData.url);
+              }
+            }} style={{ display: 'inline-block', border: '1px solid #fbbf24', background: '#fbbf24', color: '#062b45', fontWeight: 850, borderRadius: 999, padding: '12px 22px', cursor: 'pointer', fontSize: 15 }}>
+              ↗ Condividi le app RiverSpend
+            </button>
           </header>
           <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,230px),1fr))', gap: 16 }}>
             {apps.map((app) => (
