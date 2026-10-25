@@ -106,6 +106,20 @@ export default function RiverSpendApps() {
               <h2 id="rs-friends-title" style={{ fontSize: 'clamp(24px,5vw,34px)', margin: '8px 0', fontWeight: 900 }}>Condividi, invita, colleziona premi</h2>
               <p style={{ color: '#dbeafe', lineHeight: 1.6, margin: 0 }}>Invita amici a scoprire RiverSpend. Stiamo preparando un portafoglio personale per raccogliere codici premio, bonus e Gift Card.</p>
             </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,190px),1fr))', gap: 12, marginBottom: 18 }}>
+              {[
+                { icon: '👥', title: 'RS Friends', body: 'Invita amici e gruppi a scoprire RiverSpend. Le iniziative potranno assegnare codici premio quando il programma sarà attivo.' },
+                { icon: '🛍️', title: 'RS Shop', body: 'Partecipa alle iniziative promozionali dello shop e scopri le opportunità di ottenere codici e bonus.' },
+                { icon: '💰', title: 'RS Seller', body: 'Promozioni dedicate ai nuovi venditori privati che aprono la vetrina e pubblicano prodotti idonei.' },
+                { icon: '🎉', title: 'RS Special', body: 'Campagne speciali, ricorrenze e iniziative stagionali RiverSpend con possibili codici premio.' }
+              ].map((item) => (
+                <article key={item.title} style={{ background: 'rgba(3,15,30,.55)', border: '1px solid rgba(251,191,36,.32)', borderRadius: 16, padding: 16 }}>
+                  <div aria-hidden="true" style={{ fontSize: 28, marginBottom: 8 }}>{item.icon}</div>
+                  <h3 style={{ fontSize: 18, margin: '0 0 8px', color: '#fbbf24' }}>{item.title}</h3>
+                  <p style={{ fontSize: 13, color: '#cbd5e1', lineHeight: 1.55, margin: 0 }}>{item.body}</p>
+                </article>
+              ))}
+            </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,190px),1fr))', gap: 12 }}>
               {[
                 { icon: '🎟️', title: 'I miei codici RS Lottery', body: 'Codici univoci associati al profilo, quando la campagna sarà attiva e regolamentata.' },
