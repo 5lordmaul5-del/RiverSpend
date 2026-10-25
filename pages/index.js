@@ -1562,6 +1562,30 @@ export default function Home() {
           max-height:112px !important;
           flex:0 0 112px !important;
         }
+
+        /* RS FORCE: riempi il banner senza ingrandire eccessivamente l'immagine. */
+        #rs-force-card { position:relative !important; background:#061522 !important; }
+        #rs-force-card > button { position:relative !important; isolation:isolate; }
+        #rs-force-card .rs-force-stage {
+          position:absolute !important; inset:0 !important; z-index:0 !important;
+          width:100% !important; height:100% !important; min-height:100% !important;
+          max-height:none !important; flex:0 0 100% !important; margin:0 !important;
+          border:0 !important; border-radius:0 !important; overflow:hidden !important;
+        }
+        #rs-force-card .rs-force-stage > img {
+          position:absolute !important; inset:0 !important; display:block !important;
+          width:100% !important; height:100% !important; max-height:none !important;
+          object-fit:cover !important; object-position:center !important;
+        }
+        #rs-force-card .rs-force-stage > img:first-child { opacity:1 !important; }
+        #rs-force-card .rs-force-stage > img:nth-child(2) { opacity:.90 !important; }
+        #rs-force-card .rs-force-stage > span { position:relative !important; z-index:2 !important; }
+        #rs-force-card > button > p,
+        #rs-force-card > button > h2 { position:relative !important; z-index:3 !important; }
+        #rs-force-card > button > p:last-of-type {
+          margin-top:auto !important; margin-bottom:8px !important;
+          background:rgba(5,18,31,.88) !important;
+        }
       `}</style>
     </main>
   );
