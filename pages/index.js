@@ -892,6 +892,7 @@ export default function Home() {
               <button type="button" onClick={() => { if (rsForceAperta) setRsForceAperta(false); else apriRsForce(); }} className="flex h-full w-full flex-col items-center overflow-hidden text-center">
                 <div className="rs-force-stage rs-feature-media relative mx-auto flex h-20 w-full shrink-0 items-center justify-center overflow-hidden rounded-xl border border-cyan-300/50">
                   <img src="/rs-force.jpg" alt="RS FORCE: sfera energetica RiverSpend blu e oro" className="absolute inset-0 h-full w-full object-cover object-center opacity-100" />
+                  <img src="/rs-force-lightning.svg" alt="" aria-hidden="true" className="pointer-events-none absolute inset-0 z-10 h-full w-full object-cover opacity-90 mix-blend-screen" />
                   {rsForceAperta && prodottiVisibili.slice(0, 4).map((p, index) => {
                     const positions = [{ x: '-82px', y: '-26px' }, { x: '82px', y: '-26px' }, { x: '-82px', y: '26px' }, { x: '82px', y: '26px' }];
                     const pos = positions[index];
