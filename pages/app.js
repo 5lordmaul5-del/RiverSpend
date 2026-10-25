@@ -5,7 +5,7 @@ const apps = [
     name: 'RiverSpendShop',
     subtitle: 'Il marketplace',
     description: 'Scopri prodotti, crea la tua rete e metti in vendita i tuoi articoli.',
-    icon: '🛍️',
+    logo: '/riverspend-river-market.svg',
     href: '/',
     color: '#0891b2',
     action: 'Apri RiverSpendShop'
@@ -14,7 +14,7 @@ const apps = [
     name: 'RiverSpend Streaming',
     subtitle: 'Video e contenuti',
     description: 'Accedi all’area dedicata ai contenuti RiverSpend.',
-    icon: '🎬',
+    logo: '/Screenshot_2026-10-20-20-11-58-215_com.openai.chatgpt-edit.jpg',
     href: '/servizi/broadcast',
     color: '#7c3aed',
     action: 'Apri Streaming'
@@ -23,7 +23,7 @@ const apps = [
     name: 'RS SoundStudio',
     subtitle: 'Studio audio in sviluppo',
     description: 'Il progetto RiverSpend dedicato a mixer, tracce ed effetti audio. Le funzioni devono essere completate e verificate prima del lancio.',
-    icon: '🎚️',
+    logo: '/rssoundstudio-issa-banner.jpg',
     href: '/rs-sound-studio',
     color: '#0e7490',
     action: 'Apri SoundStudio'
@@ -32,7 +32,7 @@ const apps = [
     name: 'RiverSpend Music',
     subtitle: 'Musica',
     description: 'Apri l’area musicale RiverSpend.',
-    icon: '🎵',
+    logo: '/riverspend-home-river-market.svg',
     href: '/servizi/music',
     color: '#a21caf',
     action: 'Apri RiverSpend Music'
@@ -41,7 +41,7 @@ const apps = [
     name: 'RS PanelControl',
     subtitle: 'Area privata del CEO',
     description: 'Pannello riservato agli account autorizzati. L’accesso richiede autenticazione.',
-    icon: '🔐',
+    logo: '/1000186325.png',
     href: '/rs-control-center',
     color: '#0f172a',
     action: 'Apri PanelControl'
@@ -50,7 +50,7 @@ const apps = [
     name: 'RiverSpend Special Park',
     subtitle: 'Il mondo delle attrazioni',
     description: 'Scopri il parco e le sue attrazioni.',
-    icon: '🎢',
+    logo: '/1000187343.png',
     href: '/park',
     color: '#0891b2',
     action: 'Apri Special Park'
@@ -75,7 +75,7 @@ export default function RiverSpendApps() {
           <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,230px),1fr))', gap: 16 }}>
             {apps.map((app) => (
               <article key={app.name} style={{ background: 'rgba(255,255,255,.07)', border: '1px solid rgba(103,232,249,.28)', borderRadius: 22, padding: 22, display: 'flex', flexDirection: 'column', minHeight: 270, boxShadow: '0 12px 32px rgba(0,0,0,.18)' }}>
-                <div aria-hidden="true" style={{ width: 68, height: 68, display: 'grid', placeItems: 'center', borderRadius: 18, background: app.color, fontSize: 34, marginBottom: 16, boxShadow: '0 0 22px rgba(34,211,238,.18)' }}>{app.icon}</div>
+                <div aria-hidden="true" style={{ width: 88, height: 88, display: 'grid', placeItems: 'center', overflow: 'hidden', borderRadius: 18, background: '#fff', padding: 5, marginBottom: 16, boxShadow: '0 0 22px rgba(34,211,238,.18)' }}><img src={app.logo} alt={'Logo ' + app.name} style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: 14 }} /></div>
                 <h2 style={{ fontSize: 21, fontWeight: 850, margin: '0 0 5px' }}>{app.name}</h2>
                 <div style={{ color: '#fbbf24', fontWeight: 700, fontSize: 13, marginBottom: 10 }}>{app.subtitle}</div>
                 <p style={{ color: '#cbd5e1', lineHeight: 1.55, fontSize: 14, flexGrow: 1 }}>{app.description}</p>
