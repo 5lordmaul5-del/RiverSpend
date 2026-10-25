@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 240" preserveAspectRatio="xMidYMid slice">
+<defs><filter id="glow" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+<g fill="none" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)">
+<path d="M150 -10 L190 45 160 70 220 105 190 140 250 180 230 250" stroke="#38bdf8" stroke-width="3" opacity=".95"><animate attributeName="opacity" values=".08;1;.2;.9;.05" dur="2.7s" repeatCount="indefinite"/><animate attributeName="stroke-width" values="2;4;2;3;2" dur="2.7s" repeatCount="indefinite"/></path>
+<path d="M190 45 L235 35 250 5 M220 105 L275 85 295 48 M190 140 L145 155 125 190" stroke="#dffaff" stroke-width="1.7"><animate attributeName="opacity" values="0;1;0;.7;0" dur="2.7s" repeatCount="indefinite"/></path>
+<path d="M430 -12 L400 40 430 72 380 110 405 145 350 182 370 250" stroke="#38bdf8" stroke-width="3"><animate attributeName="opacity" values=".1;.9;.05;1;.1" dur="3.4s" repeatCount="indefinite"/><animate attributeName="stroke-width" values="2;3.5;2;4;2" dur="3.4s" repeatCount="indefinite"/></path>
+<path d="M400 40 L355 25 340 0 M380 110 L330 95 310 60 M405 145 L455 165 470 200" stroke="#efffff" stroke-width="1.7"><animate attributeName="opacity" values="0;.8;0;1;0" dur="3.4s" repeatCount="indefinite"/></path>
+<path d="M300 -15 L285 35 310 60 280 95 305 130 280 170" stroke="#ffffff" stroke-width="2.5"><animate attributeName="opacity" values="0;0;.95;.1;0" dur="4.1s" repeatCount="indefinite"/></path>
+</g><rect width="600" height="240" fill="#22d3ee" opacity="0"><animate attributeName="opacity" values="0;0;.16;0;0" dur="4.1s" repeatCount="indefinite"/></rect></svg>
