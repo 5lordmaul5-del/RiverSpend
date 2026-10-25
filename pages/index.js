@@ -1518,16 +1518,32 @@ export default function Home() {
           background:#111827; color:#fcd34d; font-size:9px; font-weight:900;
           box-shadow:0 0 20px rgba(251,191,36,.45);
         }
-        /* Uniforma l'altezza di TUTTI i banner del carosello, incluso venditore e Park. */
+        /* Carosello homepage: mantieni tutti i banner presenti e uniforma misura e scorrimento. */
+        .rs-apps-grid {
+          display:flex !important;
+          flex-wrap:nowrap !important;
+          align-items:stretch !important;
+          overflow-x:auto !important;
+          overflow-y:hidden !important;
+          scroll-snap-type:x mandatory !important;
+          -webkit-overflow-scrolling:touch;
+        }
         .rs-apps-grid > .rs-feature-card,
         .rs-apps-grid > #rs-seller-card,
         .rs-apps-grid > .rs-park-banner,
+        .rs-apps-grid > .rs-banner-slide,
         .rs-apps-grid > #rs-force-card {
           box-sizing:border-box !important;
+          width:220px !important;
+          min-width:220px !important;
+          max-width:220px !important;
           height:390px !important;
           min-height:390px !important;
           max-height:390px !important;
+          flex:0 0 220px !important;
           align-self:stretch !important;
+          scroll-snap-align:start !important;
+          overflow:hidden !important;
         }
         .rs-apps-grid > .rs-feature-card > button,
         .rs-apps-grid > .rs-feature-card > a,
