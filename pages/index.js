@@ -1466,6 +1466,51 @@ export default function Home() {
         .rs-fortune-labels span:nth-child(6){transform:rotate(247.5deg) translateY(-53px);}
         .rs-fortune-labels span:nth-child(7){transform:rotate(292.5deg) translateY(-53px);}
         .rs-fortune-labels span:nth-child(8){transform:rotate(337.5deg) translateY(-53px);}
+        /* RS FORCE mobile: card compatta, niente area bianca e contenuti leggibili. */
+        #rs-force-card {
+          height: 390px !important;
+          min-height: 390px !important;
+          max-height: 390px !important;
+          box-sizing: border-box;
+          background: linear-gradient(180deg,#071c2d 0%,#082f49 55%,#111827 100%) !important;
+        }
+        #rs-force-card > button {
+          display:flex !important;
+          flex:1 1 auto !important;
+          width:100% !important;
+          height:100% !important;
+          min-height:0 !important;
+          background:transparent !important;
+          color:#fff !important;
+          justify-content:flex-start !important;
+          gap:0 !important;
+        }
+        #rs-force-card .rs-force-stage {
+          height:132px !important;
+          min-height:132px !important;
+          max-height:132px !important;
+          flex:0 0 132px !important;
+          order:2 !important;
+          margin-top:8px !important;
+        }
+        #rs-force-card > button > p:first-of-type { order:0 !important; }
+        #rs-force-card > button > h2 { order:1 !important; }
+        #rs-force-card > button > p:last-of-type {
+          order:3 !important;
+          flex:0 0 auto !important;
+          margin-top:12px !important;
+          min-height:42px !important;
+          width:100%;
+          box-sizing:border-box;
+          background:#0b1724 !important;
+          border-radius:10px;
+          padding:9px 8px !important;
+          color:#fff !important;
+          font-size:12px !important;
+          line-height:1.35 !important;
+        }
+        #rs-force-card .rs-force-stage > img { position:absolute; inset:0; }
+        #rs-force-card .rs-force-stage > span { flex-shrink:0 !important; }
         .rs-fortune-center {
           position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
           display:flex; align-items:center; justify-content:center; text-align:center;
