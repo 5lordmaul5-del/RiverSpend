@@ -1517,7 +1517,36 @@ export default function Home() {
           width:58px; height:58px; border-radius:9999px; border:4px solid #fef3c7;
           background:#111827; color:#fcd34d; font-size:9px; font-weight:900;
           box-shadow:0 0 20px rgba(251,191,36,.45);
-        }      `}</style>
+        }
+        /* Uniforma l'altezza di TUTTI i banner del carosello, incluso venditore e Park. */
+        .rs-apps-grid > .rs-feature-card,
+        .rs-apps-grid > #rs-seller-card,
+        .rs-apps-grid > .rs-park-banner,
+        .rs-apps-grid > #rs-force-card {
+          box-sizing:border-box !important;
+          height:390px !important;
+          min-height:390px !important;
+          max-height:390px !important;
+          align-self:stretch !important;
+        }
+        .rs-apps-grid > .rs-feature-card > button,
+        .rs-apps-grid > .rs-feature-card > a,
+        .rs-apps-grid > #rs-seller-card > a,
+        .rs-apps-grid > #rs-seller-card > button,
+        .rs-apps-grid > .rs-park-banner > a,
+        .rs-apps-grid > .rs-park-banner > button {
+          box-sizing:border-box !important;
+          height:100% !important;
+          min-height:0 !important;
+        }
+        .rs-apps-grid > .rs-feature-card .rs-feature-media,
+        .rs-apps-grid > #rs-force-card .rs-force-stage {
+          height:112px !important;
+          min-height:112px !important;
+          max-height:112px !important;
+          flex:0 0 112px !important;
+        }
+      `}</style>
     </main>
   );
 }
