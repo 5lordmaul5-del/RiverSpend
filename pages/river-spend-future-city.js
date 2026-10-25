@@ -2,6 +2,8 @@ import Head from 'next/head';
 
 const concepts = [
   { icon: '📱', name: 'FuturPhone RiveЯ1one', area: 'Tecnologia', status: 'IDEA CONCEPT', text: 'Smartphone RiverSpend con possibile integrazione di Hey River e dei servizi dell’ecosistema. Da valutare in futuro.' },
+  { icon: '🛸', name: 'UNITÀ-RS2-UFO-BOX', area: 'Logistica futuristica', status: 'CONCEPT FUTURO', text: 'Disco volante per consegne con sei rotori interni protetti, contenitore centrale sganciabile e stabilizzatori estraibili per l’atterraggio. Concept illustrativo: portanza, autonomia, carico e sicurezza richiedono progettazione e test specialistici.' },
+
   { icon: '🤖', name: 'RiveR A1A1', area: 'Assistenza alla persona', status: 'CONCEPT FUTURO', text: 'Droide di assistenza pensato per affiancare le persone nelle attività quotidiane, sostenendo autonomia e dignità.' },
   { icon: '🏡', name: 'RiveR Home', area: 'Casa', status: 'IDEA DA STUDIARE', text: 'Soluzioni per una casa più accessibile, efficiente e sostenibile.' },
   { icon: '⚡', name: 'RiveR Energy', area: 'Energia', status: 'IDEA DA STUDIARE', text: 'Idee per ridurre i consumi e valorizzare le energie rinnovabili.' },
@@ -46,6 +48,17 @@ export default function RiverSpendFutureVision() {
               </div>
             </div>
           </div>
+        </section>
+        <section className="mx-auto max-w-7xl px-4 pt-12 sm:px-8">
+          <article className="overflow-hidden rounded-3xl border border-cyan-400/40 bg-gradient-to-br from-[#081e2b] via-[#0a2937] to-[#171f2b] shadow-2xl shadow-cyan-950/30">
+            <img src="/rs2-ufo-box-concept.svg" alt="Concept dell’Unità RS2 UFO BOX con sei rotori interni e stabilizzatori per l’atterraggio" className="block h-auto w-full" />
+            <div className="p-5 sm:p-7">
+              <p className="text-xs font-extrabold tracking-[.22em] text-cyan-300">RS FUTURE CITY · LOGISTICA DEL FUTURO</p>
+              <h2 className="mt-2 text-2xl font-black sm:text-3xl">UNITÀ-RS2-UFO-BOX</h2>
+              <p className="mt-3 max-w-4xl leading-relaxed text-slate-300">Disco volante RiverSpend con sei rotori interni protetti, vano centrale per il pacco e stabilizzatori estraibili per appoggiarsi in modo controllato durante l’atterraggio. Paracadute e verricello restano due sistemi di consegna da valutare separatamente con prove tecniche e di sicurezza.</p>
+              <span className="mt-4 inline-flex rounded-full border border-amber-300/40 bg-amber-300/10 px-3 py-2 text-xs font-extrabold text-amber-200">CONCEPT ILLUSTRATIVO · NON È UN DRONE OPERATIVO</span>
+            </div>
+          </article>
         </section>
         <section className="mx-auto max-w-7xl px-4 py-12 sm:px-8">
           <div className="mb-8">
