@@ -894,13 +894,13 @@ export default function Home() {
                   <img src="/rs-force.jpg" alt="RS FORCE: sfera energetica RiverSpend blu e oro" className="absolute inset-0 h-full w-full object-cover object-center opacity-100" />
                   <img src="/rs-force-lightning.svg?v=2" alt="" aria-hidden="true" className="pointer-events-none absolute inset-0 z-10 h-full w-full object-cover opacity-90 mix-blend-screen" />
                   {rsForceAperta && prodottiVisibili.slice(0, 4).map((p, index) => {
-                    const positions = [{ x: '-82px', y: '-26px' }, { x: '82px', y: '-26px' }, { x: '-82px', y: '26px' }, { x: '82px', y: '26px' }];
-                    const pos = positions[index];
                     const image = p.immagini?.[0];
                     return image ? (
-                      <a key={'force-orbit-' + p.id} href={'/prodotto/' + encodeURIComponent(p.id)} onClick={(e) => e.stopPropagation()} aria-label={'RS Force: ' + (p.titolo || 'prodotto')} className="absolute z-10 flex h-11 w-11 items-center justify-center overflow-hidden rounded-xl border border-cyan-200/70 bg-white p-0.5 shadow-lg" style={{left:'50%', top:'50%', transform:`translate(calc(-50% + ${pos.x}), calc(-50% + ${pos.y}))`}}>
-                        <img src={image} alt="" className="h-full w-full object-contain" />
-                      </a>
+                      <div key={'force-orbit-' + p.id} className="rs-force-orbit z-10" style={{'--orbit-radius': index % 2 === 0 ? '78px' : '48px', '--orbit-duration': (index % 2 === 0 ? 7 : 5) + 's', animationDelay: (-index * 1.1) + 's'}}>
+                        <a href={'/prodotto/' + encodeURIComponent(p.id)} onClick={(e) => e.stopPropagation()} aria-label={'RS Force: ' + (p.titolo || 'prodotto')} className="rs-force-product absolute flex h-11 w-11 items-center justify-center overflow-hidden rounded-xl border border-cyan-200/80 bg-white p-0.5 shadow-lg" style={{left:0, top:0}}>
+                          <img src={image} alt="" className="h-full w-full object-contain" />
+                        </a>
+                      </div>
                     ) : null;
                   })}
                   <span className="relative z-20 flex h-20 w-20 shrink-0 items-center justify-center rounded-full border border-cyan-200/70 bg-[radial-gradient(circle_at_35%_30%,rgba(255,255,255,.95),rgba(103,232,249,.45)_18%,rgba(8,47,73,.95)_58%,rgba(2,6,23,1)_100%)] text-3xl shadow-[0_0_25px_rgba(34,211,238,.55)]" style={{animation:'rs-palantir-pulse 3s ease-in-out infinite'}}>🔮</span>
