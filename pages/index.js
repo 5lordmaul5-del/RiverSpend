@@ -907,12 +907,18 @@ export default function Home() {
                 </div>
                 <p className="mt-3 min-h-4 shrink-0 text-[11px] font-extrabold uppercase tracking-[0.25em] text-cyan-200">⚡ RS FORCE ⚡</p>
                 <h2 className="mt-1 min-h-[44px] shrink-0 px-2 text-lg font-black leading-tight text-white [text-shadow:0_2px_5px_rgba(0,0,0,0.9)]">Potenzia la tua ricerca</h2>
-                {!rsForceAperta ? <p className="mt-2 min-h-[42px] shrink-0 rounded-lg bg-slate-900/95 px-2 py-2 text-xs font-semibold leading-4 text-white">Tocca la sfera per collegare la ricerca ai prodotti più pertinenti.</p> : (
+                {!rsForceAperta ? (
+                  <div className="mt-2 w-full rounded-lg bg-slate-900/95 px-2 py-2 text-xs font-semibold leading-4 text-white">
+                    <p>La tua scorciatoia per il catalogo: scegli una ricerca e lascia che i prodotti orbitino intorno alla sfera.</p>
+                    <p className="mt-1 text-[10px] font-medium text-cyan-200">RS FORCE cerca nel catalogo; Nova AI resta l'assistente intelligente.</p>
+                  </div>
+                ) : (
                   <div className="mt-2 grid w-full grid-cols-2 gap-1.5">
-                    <a onClick={(e) => e.stopPropagation()} href={categoriaAttiva ? `/?category=${encodeURIComponent(categoriaAttiva)}&future=offers` : '/?future=offers'} className="rounded-xl border border-amber-300/50 bg-amber-950/50 p-2 text-[10px] font-bold text-white">🏷️ Promozioni</a>
-                    <a onClick={(e) => e.stopPropagation()} href={categoriaAttiva ? `/?category=${encodeURIComponent(categoriaAttiva)}&future=new` : '/?future=new'} className="rounded-xl border border-cyan-300/50 bg-cyan-950/50 p-2 text-[10px] font-bold text-white">🆕 Novità</a>
-                    <a onClick={(e) => e.stopPropagation()} href={categoriaAttiva ? `/?category=${encodeURIComponent(categoriaAttiva)}&future=concepts` : '/?future=concepts'} className="rounded-xl border border-violet-300/50 bg-violet-950/50 p-2 text-[10px] font-bold text-white">💡 Concept</a>
-                    <a onClick={(e) => e.stopPropagation()} href={categoriaAttiva ? `/?category=${encodeURIComponent(categoriaAttiva)}&future=arrivals` : '/?future=arrivals'} className="rounded-xl border border-emerald-300/50 bg-emerald-950/50 p-2 text-[10px] font-bold text-white">🔭 In arrivo</a>
+                    <a onClick={(e) => e.stopPropagation()} href="/?q=offerta" className="rounded-xl border border-amber-300/50 bg-amber-950/70 p-2 text-[10px] font-bold text-white">🏷️ Cerca offerte</a>
+                    <a onClick={(e) => e.stopPropagation()} href="/?q=smartphone" className="rounded-xl border border-cyan-300/50 bg-cyan-950/50 p-2 text-[10px] font-bold text-white">🔎 Smartphone</a>
+                    <a onClick={(e) => e.stopPropagation()} href="/?q=cuffie" className="rounded-xl border border-violet-300/50 bg-violet-950/50 p-2 text-[10px] font-bold text-white">🎧 Audio e cuffie</a>
+                    <a onClick={(e) => e.stopPropagation()} href="/?showProducts=1" className="rounded-xl border border-emerald-300/50 bg-emerald-950/50 p-2 text-[10px] font-bold text-white">🛍️ Tutto il catalogo</a>
+                    <p className="col-span-2 px-1 text-[10px] leading-4 text-cyan-100">Per cercare un articolo diverso, usa la ricerca del marketplace. Le offerte vengono individuate in base alle informazioni presenti negli annunci.</p>
                   </div>
                 )}
               </button>
