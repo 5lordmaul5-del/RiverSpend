@@ -1,7 +1,7 @@
 {
   "id": "/",
-  "name": "RiverSpend Shop",
-  "short_name": "RS Shop",
+  "name": "RiverSpendShop",
+  "short_name": "RiverSpendShop",
   "description": "Il marketplace RiverSpend: il tuo shop, il tuo flow.",
   "start_url": "/",
   "scope": "/",
