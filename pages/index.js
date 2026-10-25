@@ -888,9 +888,9 @@ export default function Home() {
         </header>
 
           <div className="rs-apps-grid mb-5 flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain px-1 pb-3" aria-label="Scopri le iniziative RiverSpend: scorri orizzontalmente">
-            <section id="rs-force-card" className="rs-feature-card shrink-0 w-[220px] snap-start rs-force-card rounded-2xl border border-cyan-400/40 bg-gradient-to-br from-slate-950 via-cyan-950/50 to-indigo-950/60 p-2 text-center shadow-lg shadow-cyan-950/20">
-              <button type="button" onClick={() => { if (rsForceAperta) setRsForceAperta(false); else apriRsForce(); }} className="flex h-full w-full flex-col items-center overflow-hidden text-center">
-                <div className="rs-force-stage rs-feature-media relative mx-auto flex h-20 w-full shrink-0 items-center justify-center overflow-hidden rounded-xl border border-cyan-300/50">
+            <section id="rs-force-card" className="rs-feature-card min-h-[400px] shrink-0 w-[220px] snap-start rs-force-card rounded-2xl border-2 border-cyan-300 bg-gradient-to-b from-slate-950 via-cyan-950 to-indigo-950 p-2 text-center shadow-lg shadow-cyan-950/40">
+              <button type="button" onClick={() => { if (rsForceAperta) setRsForceAperta(false); else apriRsForce(); }} className="flex h-full w-full flex-col items-center overflow-hidden rounded-xl bg-slate-950 text-center">
+                <div className="rs-force-stage rs-feature-media relative mx-auto flex h-36 w-full shrink-0 items-center justify-center overflow-hidden rounded-xl border border-cyan-300/50">
                   <img src="/rs-force.jpg" alt="RS FORCE: sfera energetica RiverSpend blu e oro" className="absolute inset-0 h-full w-full object-cover object-center opacity-100" />
                   <img src="/rs-force-lightning.svg?v=2" alt="" aria-hidden="true" className="pointer-events-none absolute inset-0 z-10 h-full w-full object-cover opacity-90 mix-blend-screen" />
                   {rsForceAperta && prodottiVisibili.slice(0, 4).map((p, index) => {
@@ -905,9 +905,9 @@ export default function Home() {
                   })}
                   <span className="relative z-20 flex h-20 w-20 items-center justify-center rounded-full border border-cyan-200/70 bg-[radial-gradient(circle_at_35%_30%,rgba(255,255,255,.95),rgba(103,232,249,.45)_18%,rgba(8,47,73,.95)_58%,rgba(2,6,23,1)_100%)] text-3xl shadow-[0_0_25px_rgba(34,211,238,.55)]" style={{animation:'rs-palantir-pulse 3s ease-in-out infinite'}}>🔮</span>
                 </div>
-                <p className="mt-1 min-h-4 text-[10px] font-bold uppercase tracking-[0.25em] text-cyan-200">RS FORCE</p>
-                <h2 className="mt-1 min-h-[44px] text-base font-extrabold leading-tight text-white">RS FORCE · Potenzia la tua ricerca</h2>
-                {!rsForceAperta ? <p className="mt-2 min-h-[32px] px-1 text-[11px] leading-4 text-slate-100">Tocca la sfera per collegare la ricerca ai prodotti più pertinenti.</p> : (
+                <p className="mt-3 min-h-4 text-[11px] font-extrabold uppercase tracking-[0.25em] text-cyan-200">⚡ RS FORCE ⚡</p>
+                <h2 className="mt-1 min-h-[44px] px-2 text-lg font-black leading-tight text-white [text-shadow:0_2px_5px_rgba(0,0,0,0.9)]">Potenzia la tua ricerca</h2>
+                {!rsForceAperta ? <p className="mt-2 min-h-[42px] rounded-lg bg-slate-900/95 px-2 py-2 text-xs font-semibold leading-4 text-white">Tocca la sfera per collegare la ricerca ai prodotti più pertinenti.</p> : (
                   <div className="mt-2 grid w-full grid-cols-2 gap-1.5">
                     <a onClick={(e) => e.stopPropagation()} href={categoriaAttiva ? `/?category=${encodeURIComponent(categoriaAttiva)}&future=offers` : '/?future=offers'} className="rounded-xl border border-amber-300/50 bg-amber-950/50 p-2 text-[10px] font-bold text-white">🏷️ Promozioni</a>
                     <a onClick={(e) => e.stopPropagation()} href={categoriaAttiva ? `/?category=${encodeURIComponent(categoriaAttiva)}&future=new` : '/?future=new'} className="rounded-xl border border-cyan-300/50 bg-cyan-950/50 p-2 text-[10px] font-bold text-white">🆕 Novità</a>
