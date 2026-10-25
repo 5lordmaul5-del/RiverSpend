@@ -1,0 +1,21 @@
+{
+  "id": "/river-spend-stream",
+  "name": "RiverSpend Streaming",
+  "short_name": "RS Stream",
+  "description": "Video, musica e contenuti RiverSpend.",
+  "start_url": "/river-spend-stream",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#170b32",
+  "theme_color": "#7c3aed",
+  "lang": "it",
+  "icons": [
+    {
+      "src": "/icons/streaming.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
