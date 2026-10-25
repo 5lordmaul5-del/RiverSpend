@@ -12,12 +12,30 @@ const apps = [
   },
   {
     name: 'RiverSpend Streaming',
-    subtitle: 'Video e musica',
+    subtitle: 'Video e contenuti',
     description: 'Accedi all’area dedicata ai contenuti RiverSpend.',
     icon: '🎬',
     href: '/servizi/broadcast',
     color: '#7c3aed',
     action: 'Apri Streaming'
+  },
+  {
+    name: 'RS SoundStudio',
+    subtitle: 'Studio audio in sviluppo',
+    description: 'Il progetto RiverSpend dedicato a mixer, tracce ed effetti audio. Le funzioni devono essere completate e verificate prima del lancio.',
+    icon: '🎚️',
+    href: '/rs-sound-studio',
+    color: '#0e7490',
+    action: 'Apri SoundStudio'
+  },
+  {
+    name: 'RiverSpend Music',
+    subtitle: 'Musica',
+    description: 'Apri l’area musicale RiverSpend.',
+    icon: '🎵',
+    href: '/servizi/music',
+    color: '#a21caf',
+    action: 'Apri RiverSpend Music'
   },
   {
     name: 'RS PanelControl',
@@ -44,7 +62,7 @@ export default function RiverSpendApps() {
     <>
       <Head>
         <title>Scarica le app | RiverSpend</title>
-        <meta name="description" content="Apri e installa le quattro app RiverSpend sul tuo telefono." />
+        <meta name="description" content="Apri le app RiverSpend e aggiungile alla schermata Home quando l’installazione è disponibile." />
       </Head>
       <main style={{ minHeight: '100vh', background: 'linear-gradient(180deg,#062b45,#071426)', color: '#fff', padding: '28px 16px 48px' }}>
         <div style={{ maxWidth: 980, margin: '0 auto' }}>
@@ -52,7 +70,7 @@ export default function RiverSpendApps() {
           <header style={{ textAlign: 'center', padding: '30px 0 24px' }}>
             <div style={{ fontSize: 13, letterSpacing: 4, color: '#fbbf24', fontWeight: 800 }}>YOUR SHOP • YOUR FLOW</div>
             <h1 style={{ fontSize: 'clamp(30px,6vw,48px)', lineHeight: 1.1, margin: '12px 0', fontWeight: 900 }}>Le app RiverSpend</h1>
-            <p style={{ color: '#cbd5e1', maxWidth: 650, margin: '0 auto', lineHeight: 1.6 }}>Scegli l’app che ti interessa. Aprila e usa il menu del browser per aggiungerla alla schermata Home o installarla, quando l’opzione è disponibile.</p>
+            <p style={{ color: '#cbd5e1', maxWidth: 650, margin: '0 auto', lineHeight: 1.6 }}>Scegli una delle app RiverSpend. Aprila e usa il menu del browser per aggiungerla alla schermata Home o installarla, quando l’opzione è disponibile.</p>
           </header>
           <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,230px),1fr))', gap: 16 }}>
             {apps.map((app) => (
