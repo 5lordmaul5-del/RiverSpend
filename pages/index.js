@@ -1650,6 +1650,72 @@ export default function Home() {
         .rs-apps-grid > .rs-futurecity-banner h2 { font-size:19px !important; line-height:1.1 !important; }
         .rs-apps-grid > .rs-futurecity-banner p { font-size:11px !important; line-height:1.25 !important; }
       `}</style>
+
+      <section id="rs-download-apps" className="rs-download-apps" aria-labelledby="rs-download-title">
+        <div className="rs-download-head">
+          <p className="rs-download-kicker">RIVERSPEND · APP UFFICIALI</p>
+          <h2 id="rs-download-title">Le app RiverSpend</h2>
+          <p>Per il momento le app non sono pubblicate su Google Play Store. Puoi aprire RiverSpend con Google Chrome e seguire le istruzioni qui sotto.</p>
+        </div>
+        <div className="rs-download-grid">
+          <article className="rs-download-card">
+            <div className="rs-download-icon rs-icon-shop" aria-hidden="true"><span>RS</span><b>SHOP</b></div>
+            <h3>RiverSpendShop</h3><p>Il marketplace RiverSpend.</p>
+            <a className="rs-download-button" href="#rs-install-guide">Come installarla</a>
+          </article>
+          <article className="rs-download-card">
+            <div className="rs-download-icon rs-icon-park" aria-hidden="true"><span>🎢</span><b>PARK</b></div>
+            <h3>RiverSpendPark</h3><p>Il mondo delle attrazioni RiverSpend.</p>
+            <a className="rs-download-button" href="#rs-install-guide">Come installarla</a>
+          </article>
+          <article className="rs-download-card">
+            <div className="rs-download-icon rs-icon-stream" aria-hidden="true"><span>▶</span><b>STREAM</b></div>
+            <h3>RiverSpend Streaming</h3><p>Accesso non ancora attivo.</p>
+            <span className="rs-download-locked">🔒 Bloccata fino all’attivazione</span>
+          </article>
+          <article className="rs-download-card">
+            <div className="rs-download-icon rs-icon-music" aria-hidden="true"><span>♫</span><b>SOUND</b></div>
+            <h3>RiverSpend SoundStudio</h3><p>Servizi musicali in preparazione.</p>
+            <span className="rs-download-locked">🔒 Bloccata fino all’attivazione</span>
+          </article>
+          <article className="rs-download-card">
+            <div className="rs-download-icon rs-icon-panel" aria-hidden="true"><span>⚙</span><b>RSPC</b></div>
+            <h3>RSPanelControl</h3><p>Pannello di controllo riservato.</p>
+            <span className="rs-download-locked">🔒 Accesso riservato · non scaricabile</span>
+          </article>
+        </div>
+        <div id="rs-install-guide" className="rs-install-guide">
+          <h3>Come aggiungere un’app al telefono Android</h3>
+          <ol>
+            <li>Apri <strong>Google Chrome</strong> sul telefono.</li>
+            <li>Digita <strong>www.riverspend.com</strong> nella barra degli indirizzi.</li>
+            <li>Apri il menu di Chrome con i <strong>tre puntini ⋮</strong>.</li>
+            <li>Se disponibile, tocca <strong>“Installa app”</strong> oppure <strong>“Aggiungi a schermata Home”</strong>.</li>
+            <li>Conferma e troverai l’icona sul telefono. Se l’opzione non compare, quella funzione non è ancora disponibile sul dispositivo.</li>
+          </ol>
+          <p className="rs-install-note"><strong>Importante:</strong> non serve scaricare file APK da siti sconosciuti. Streaming, SoundStudio e RSPanelControl resteranno bloccate finché non saranno predisposti accessi e autorizzazioni. L’eventuale accesso a pagamento dovrà essere configurato e verificato prima di abilitarle.</p>
+        </div>
+      </section>
+      <style jsx>{`
+        .rs-download-apps{margin:36px auto 28px;padding:24px 16px;max-width:1200px;color:#073543}
+        .rs-download-head{text-align:center;max-width:760px;margin:0 auto 22px}
+        .rs-download-kicker{font-size:12px;letter-spacing:.18em;font-weight:800;color:#078a91}
+        .rs-download-head h2{font-size:clamp(25px,4vw,38px);margin:7px 0;color:#062c3b}
+        .rs-download-head>p:last-child{font-size:15px;line-height:1.55}
+        .rs-download-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}
+        .rs-download-card{min-width:0;padding:14px;border:1px solid #b8e6e8;border-radius:20px;background:linear-gradient(160deg,#fff,#eefbfb);box-shadow:0 8px 22px #06374712}
+        .rs-download-icon{height:112px;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#fff;font-weight:900;letter-spacing:.08em;background:linear-gradient(145deg,#062c3b,#087e8b);box-shadow:inset 0 0 0 1px #ffffff45}
+        .rs-download-icon span{font-size:36px;line-height:1}.rs-download-icon b{font-size:13px}
+        .rs-icon-shop{background:linear-gradient(145deg,#062c3b,#0d7f85)}.rs-icon-shop span{font-size:31px;color:#fff}.rs-icon-shop b{color:#f1c75b}
+        .rs-icon-park{background:linear-gradient(145deg,#063e35,#12a77c)}.rs-icon-stream{background:linear-gradient(145deg,#071b3c,#2676d2)}.rs-icon-music{background:linear-gradient(145deg,#2b174c,#9b4dd0)}.rs-icon-panel{background:linear-gradient(145deg,#242d3c,#6a7a8a)}
+        .rs-download-card h3{font-size:16px;line-height:1.25;margin:13px 0 7px}.rs-download-card p{font-size:13px;line-height:1.4;min-height:36px;margin:0 0 12px}
+        .rs-download-button,.rs-download-locked{display:flex;align-items:center;justify-content:center;text-align:center;min-height:40px;padding:8px;border-radius:12px;font-size:12px;font-weight:800;line-height:1.3}
+        .rs-download-button{background:#48e1ef;color:#062c3b;text-decoration:none}.rs-download-locked{background:#e6e9ed;color:#4c5661}
+        .rs-install-guide{margin:22px auto 0;max-width:850px;border-radius:20px;padding:20px;background:#fff;border:1px solid #c6e9e9;line-height:1.6}
+        .rs-install-guide h3{margin-top:0}.rs-install-guide ol{padding-left:22px}.rs-install-note{padding:12px;border-radius:12px;background:#fff8df;font-size:13px}
+        @media(max-width:900px){.rs-download-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.rs-download-card:last-child{grid-column:1/-1;max-width:calc(50% - 7px);width:100%;justify-self:center}}
+        @media(max-width:420px){.rs-download-apps{padding:20px 10px}.rs-download-grid{gap:9px}.rs-download-card{padding:10px}.rs-download-icon{height:92px}.rs-download-card h3{font-size:14px}}
+      `}</style>
     </main>
   );
 }
