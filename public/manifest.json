@@ -10,10 +10,10 @@
   "lang": "it",
   "icons": [
     {
-      "src": "/icons/shop.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "src": "/icons/riverspendshop-app.jpg",
+      "sizes": "1024x1024",
+      "type": "image/jpeg",
+      "purpose": "any"
     }
   ]
 }
