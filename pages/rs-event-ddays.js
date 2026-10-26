@@ -36,7 +36,7 @@ export default function RSEventDDays() {
     <>
       <Head>
         <title>RS EVENT D-DAYS — SAVE THE HEART | RiverSpend</title>
-        <meta name="description" content="24 giornate per la Terra. Un solo cuore per il futuro. Scopri RS EVENT D-DAYS di RiverSpend." />
+        <meta name="description" content="24 giornate per la Terra, più RiverSpend Day: il fiume tra le forze della natura." />
         <meta name="theme-color" content="#062b36" />
       </Head>
       <main className="min-h-screen bg-slate-950 text-white">
@@ -48,7 +48,7 @@ export default function RSEventDDays() {
             <p className="text-xs font-black uppercase tracking-[.28em] text-emerald-200 sm:text-sm">RiverSpend presenta</p>
             <h1 className="mt-2 max-w-4xl text-4xl font-black leading-[.98] sm:text-6xl md:text-7xl">RS EVENT D-DAYS<br/><span className="text-emerald-300">SAVE THE HEART</span></h1>
             <p className="mt-5 max-w-2xl text-lg font-semibold text-white sm:text-2xl">24 giornate per la Terra. Un solo cuore per il futuro.</p>
-            <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-200 sm:text-base">Un calendario annuale che unisce natura, consapevolezza, iniziative RiverSpend e offerte speciali. Ogni giornata racconta una forza della natura e un modo concreto per prenderci cura del pianeta.</p>
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-200 sm:text-base">Un calendario annuale che unisce natura, consapevolezza, iniziative RiverSpend e offerte speciali. Ogni giornata racconta una forza della natura e un modo concreto per prenderci cura del pianeta. In più, RiverSpend Day celebra ogni anno l’anniversario ufficiale del progetto.</p>
             <a href="#calendario" className="mt-6 inline-flex w-fit rounded-full bg-emerald-300 px-6 py-3 font-black text-slate-950 shadow-lg shadow-emerald-950/50">SCOPRI LE 24 GIORNATE ↓</a>
           </div>
         </section>
@@ -58,6 +58,27 @@ export default function RSEventDDays() {
             <div className="rounded-2xl border border-emerald-300/25 bg-emerald-950/50 p-5"><div className="text-3xl">🌍</div><h2 className="mt-2 text-lg font-black">24 D-Days</h2><p className="mt-1 text-sm text-slate-300">Due giornate al mese, distribuite per evitare le principali festività nazionali del 2027.</p></div>
             <div className="rounded-2xl border border-cyan-300/25 bg-cyan-950/40 p-5"><div className="text-3xl">🏷️</div><h2 className="mt-2 text-lg font-black">Offerte D-Days</h2><p className="mt-1 text-sm text-slate-300">Spazio dedicato a Offerta del Giorno, Offertona D-Days e iniziative RS Spons quando saranno collegate a offerte reali.</p></div>
             <div className="rounded-2xl border border-rose-300/25 bg-rose-950/30 p-5"><div className="text-3xl">💚</div><h2 className="mt-2 text-lg font-black">Save the Heart</h2><p className="mt-1 text-sm text-slate-300">Sensibilizzazione ambientale e sostegno a progetti verificati, con destinazione e rendicontazione trasparenti.</p></div>
+          </div>
+        </section>
+
+        <section id="river-spend-day" className="mx-auto max-w-6xl px-4 pb-10 pt-2 sm:px-8 sm:pb-14">
+          <div className="relative overflow-hidden rounded-3xl border border-cyan-200/50 bg-gradient-to-br from-cyan-950 via-teal-950 to-emerald-950 shadow-2xl shadow-cyan-950/40">
+            <img src="/rs-event-ddays.svg" alt="" aria-hidden="true" className="absolute inset-0 h-full w-full object-cover opacity-35" />
+            <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-950/75 to-teal-950/45" />
+            <div className="relative grid gap-5 p-6 sm:p-9 md:grid-cols-[1fr_auto] md:items-center">
+              <div>
+                <p className="text-xs font-black uppercase tracking-[.28em] text-cyan-200">L’evento speciale RiverSpend</p>
+                <h2 className="mt-2 text-3xl font-black leading-tight sm:text-5xl">🌊 RiverSpend Day</h2>
+                <p className="mt-2 text-lg font-extrabold text-emerald-200 sm:text-2xl">Il fiume tra le forze della natura.</p>
+                <p className="mt-4 max-w-2xl text-sm leading-6 text-slate-100 sm:text-base">La festa annuale del Fiume RiverSpend e l’anniversario del progetto: celebriamo l’acqua che dà vita, la forza che scorre e la natura che ci unisce. Questa ricorrenza speciale si aggiunge alle 24 giornate D-Days.</p>
+                <p className="mt-3 inline-flex rounded-full border border-amber-200/40 bg-amber-950/50 px-3 py-2 text-xs font-bold text-amber-100">📅 Data ufficiale: sarà annunciata quando RiverSpend diventerà operativo.</p>
+              </div>
+              <div className="grid grid-cols-2 gap-2 md:w-56 md:grid-cols-1">
+                <div className="rounded-xl border border-white/15 bg-slate-950/50 p-3 text-center"><span className="text-2xl">🌊</span><p className="mt-1 text-xs font-black">FESTA DEL FIUME</p></div>
+                <div className="rounded-xl border border-white/15 bg-slate-950/50 p-3 text-center"><span className="text-2xl">💚</span><p className="mt-1 text-xs font-black">SAVE THE HEART</p></div>
+                <div className="col-span-2 rounded-xl border border-white/15 bg-slate-950/50 p-3 text-center md:col-span-1"><span className="text-2xl">🎁</span><p className="mt-1 text-xs font-black">ANNIVERSARIO E SUPER OFFERTE</p></div>
+              </div>
+            </div>
           </div>
         </section>
 
