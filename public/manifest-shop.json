@@ -12,13 +12,13 @@
   "lang": "it",
   "icons": [
     {
-      "src": "/icons/riverspendshop-app.svg",
+      "src": "/icons/riverspendshop-app.svg?v=3",
       "sizes": "any",
       "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "/icons/riverspendshop-app.jpg",
+      "src": "/icons/riverspendshop-app.jpg?v=3",
       "sizes": "1024x1024",
       "type": "image/jpeg",
       "purpose": "any"
