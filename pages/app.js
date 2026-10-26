@@ -5,7 +5,7 @@ const apps = [
     name: 'RiverSpendShop',
     subtitle: 'Il marketplace',
     description: 'Scopri prodotti, crea la tua rete e metti in vendita i tuoi articoli.',
-    logo: '/riverspend-river-market.svg',
+    logo: '/icons/riverspendshop-app.jpg',
     href: '/',
     color: '#0891b2',
     action: 'Apri RiverSpendShop'
