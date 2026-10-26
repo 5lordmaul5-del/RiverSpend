@@ -105,6 +105,7 @@ export default function Home() {
   const [accesso18, setAccesso18] = useState(false);
   const [mostraGate18, setMostraGate18] = useState(false);
   const [rsForceAperta, setRsForceAperta] = useState(false);
+  const [rsForceProdottiRandom, setRsForceProdottiRandom] = useState([]);
   const [rsFortuneAperta, setRsFortuneAperta] = useState(false);
   const [rsFortuneSpinning, setRsFortuneSpinning] = useState(false);
   const [rsFortunePrize, setRsFortunePrize] = useState('');
@@ -764,6 +765,19 @@ export default function Home() {
       .map(({ p }) => p);
   }, [prodotti, ricerca, categoriaAttiva]);
 
+  // RS FORCE: seleziona prodotti casuali con immagini e li rinnova mentre il banner è aperto.
+  useEffect(() => {
+    if (!rsForceAperta) { setRsForceProdottiRandom([]); return; }
+    const scegliProdotti = () => {
+      const disponibili = prodottiVisibili.filter((p) => Array.isArray(p.immagini) && p.immagini[0]);
+      const mescolati = [...disponibili].sort(() => Math.random() - 0.5).slice(0, 4);
+      setRsForceProdottiRandom(mescolati);
+    };
+    scegliProdotti();
+    const timer = window.setInterval(scegliProdotti, 2800);
+    return () => window.clearInterval(timer);
+  }, [rsForceAperta, prodottiVisibili]);
+
   return (
     <main className="rs-site min-h-screen bg-slate-950 text-white">
       <section role="status" aria-label="Avviso versione di test" className="border-b border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-950">
@@ -920,12 +934,12 @@ export default function Home() {
           </section>
 
           <div className="rs-apps-grid mb-5 flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain px-1 pb-3" aria-label="Scopri le iniziative RiverSpend: scorri orizzontalmente">
-            <section id="rs-force-card" className="rs-feature-card h-[400px] shrink-0 w-[220px] snap-start rs-force-card rounded-2xl border-2 border-cyan-300 bg-gradient-to-b from-slate-950 via-cyan-950 to-indigo-950 p-2 text-center shadow-lg shadow-cyan-950/40">
-              <button type="button" onClick={() => { if (rsForceAperta) setRsForceAperta(false); else apriRsForce(); }} className="flex h-full w-full flex-col items-center overflow-hidden rounded-xl bg-slate-950 text-center">
-                <div className="rs-force-stage rs-feature-media relative mx-auto flex h-36 min-h-36 w-full shrink-0 items-center justify-center overflow-hidden rounded-xl border border-cyan-300/50">
+            <section id="rs-force-card" className="rs-feature-card relative h-[400px] shrink-0 w-[280px] snap-start rs-force-card rounded-2xl border-2 border-cyan-300 bg-slate-950 p-0 text-center shadow-lg shadow-cyan-950/40">
+              <button type="button" onClick={() => { if (rsForceAperta) setRsForceAperta(false); else apriRsForce(); }} className="relative flex h-full w-full flex-col items-center justify-end overflow-hidden rounded-xl bg-slate-950 text-center">
+                <div className="rs-force-stage rs-feature-media absolute inset-0 z-0 mx-auto flex !h-full !min-h-0 w-full items-center justify-center overflow-hidden">
                   <img src="/rs-force.jpg" alt="RS FORCE: sfera energetica RiverSpend blu e oro" className="absolute inset-0 h-full w-full object-cover object-center opacity-100" />
                   <img src="/rs-force-lightning.svg?v=2" alt="" aria-hidden="true" className="pointer-events-none absolute inset-0 z-10 h-full w-full object-cover opacity-90 mix-blend-screen" />
-                  {rsForceAperta && prodottiVisibili.slice(0, 4).map((p, index) => {
+                  {rsForceAperta && rsForceProdottiRandom.map((p, index) => {
                     const image = p.immagini?.[0];
                     return image ? (
                       <div key={'force-orbit-' + p.id} className="rs-force-orbit z-10" style={{'--orbit-radius': index % 2 === 0 ? '78px' : '48px', '--orbit-duration': (index % 2 === 0 ? 7 : 5) + 's', animationDelay: (-index * 1.1) + 's'}}>
@@ -937,15 +951,15 @@ export default function Home() {
                   })}
                   <span className="relative z-20 flex h-20 w-20 shrink-0 items-center justify-center rounded-full border border-cyan-200/70 bg-[radial-gradient(circle_at_35%_30%,rgba(255,255,255,.95),rgba(103,232,249,.45)_18%,rgba(8,47,73,.95)_58%,rgba(2,6,23,1)_100%)] text-3xl shadow-[0_0_25px_rgba(34,211,238,.55)]" style={{animation:'rs-palantir-pulse 3s ease-in-out infinite'}}>🔮</span>
                 </div>
-                <p className="mt-3 min-h-4 shrink-0 text-[11px] font-extrabold uppercase tracking-[0.25em] text-cyan-200">⚡ RS FORCE ⚡</p>
-                <h2 className="mt-1 min-h-[44px] shrink-0 px-2 text-lg font-black leading-tight text-white [text-shadow:0_2px_5px_rgba(0,0,0,0.9)]">Potenzia la tua ricerca</h2>
+                <p className="relative z-20 mt-auto min-h-4 shrink-0 bg-slate-950/85 px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.25em] text-cyan-200">⚡ RS FORCE ⚡</p>
+                <h2 className="relative z-20 mt-0 min-h-[44px] w-full shrink-0 bg-slate-950/85 px-3 py-2 text-lg font-black leading-tight text-white [text-shadow:0_2px_5px_rgba(0,0,0,0.9)]">Potenzia la tua ricerca</h2>
                 {!rsForceAperta ? (
-                  <div className="mt-2 w-full rounded-lg bg-slate-900/95 px-2 py-2 text-xs font-semibold leading-4 text-white">
+                  <div className="relative z-20 mt-0 w-full bg-slate-950/90 px-3 py-2 text-xs font-semibold leading-4 text-white">
                     <p>La tua scorciatoia per il catalogo: scegli una ricerca e lascia che i prodotti orbitino intorno alla sfera.</p>
                     <p className="mt-1 text-[10px] font-medium text-cyan-200">RS FORCE cerca nel catalogo; Nova AI resta l'assistente intelligente.</p>
                   </div>
                 ) : (
-                  <div className="mt-2 grid w-full grid-cols-2 gap-1.5">
+                  <div className="relative z-20 mt-0 grid w-full grid-cols-2 gap-1.5 bg-slate-950/90 p-2">
                     <a onClick={(e) => e.stopPropagation()} href="/?q=offerta" className="rounded-xl border border-amber-300/50 bg-amber-950/70 p-2 text-[10px] font-bold text-white">🏷️ Cerca offerte</a>
                     <a onClick={(e) => e.stopPropagation()} href="/?q=smartphone" className="rounded-xl border border-cyan-300/50 bg-cyan-950/50 p-2 text-[10px] font-bold text-white">🔎 Smartphone</a>
                     <a onClick={(e) => e.stopPropagation()} href="/?q=cuffie" className="rounded-xl border border-violet-300/50 bg-violet-950/50 p-2 text-[10px] font-bold text-white">🎧 Audio e cuffie</a>
