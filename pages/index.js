@@ -1126,6 +1126,19 @@ export default function Home() {
             </div>
           </a>
 
+          <a href="/river-space" aria-label="Scopri RiverSpace" className="rs-banner-slide rs-creator-banner group shrink-0 snap-start overflow-hidden rounded-2xl border border-sky-300/70 bg-gradient-to-br from-slate-950 via-blue-950 to-cyan-950 text-white shadow-lg transition hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-sky-300/70">
+            <div className="rs-world-media relative flex h-[112px] shrink-0 items-center justify-center overflow-hidden bg-gradient-to-br from-slate-950 via-blue-900 to-cyan-900">
+              <span className="text-6xl drop-shadow-lg" role="img" aria-label="Pianeta e spazio">🪐</span>
+              <span className="absolute bottom-2 right-3 text-2xl" aria-hidden="true">🚀</span>
+            </div>
+            <div className="flex min-h-0 flex-1 flex-col items-start p-3 text-left">
+              <p className="text-[10px] font-extrabold uppercase tracking-[.18em] text-sky-200">Spazio • Ricerca • Futuro</p>
+              <h2 className="mt-1 text-base font-black leading-tight">RiverSpace</h2>
+              <p className="mt-1 text-xs leading-4 text-slate-100">Beyond Earth. Beyond Limits. Una visione per habitat spaziali e missioni umane di lunga durata.</p>
+              <span className="mt-auto inline-flex rounded-full bg-sky-300 px-3 py-1.5 text-[11px] font-extrabold text-slate-950">SCOPRI RIVERSPACE →</span>
+            </div>
+          </a>
+
           <a href="/social-network" aria-label="Scopri RiverSpend TV e condividi i tuoi video" className="rs-banner-slide rs-creator-banner group shrink-0 snap-start overflow-hidden rounded-2xl border border-violet-300/70 bg-gradient-to-br from-violet-950 via-slate-950 to-cyan-950 text-white shadow-lg transition hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-violet-300/70">
             <div className="flex h-full flex-col p-4 text-left">
               <span className="text-3xl" aria-hidden="true">🎬</span>
