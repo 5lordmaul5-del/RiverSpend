@@ -1159,6 +1159,18 @@ export default function Home() {
                 <span className="rs-feature-action mt-2 inline-flex items-center justify-center rounded-full border border-emerald-200/60 bg-gradient-to-b from-emerald-300 to-green-500 px-4 py-2 text-[11px] font-extrabold text-slate-950">SCOPRI GLI SCONTI →</span>
               </a>
             </section>
+          <a href="/rs-event-ddays" aria-label="Apri RS EVENT D-DAYS Save the Heart e il calendario delle 24 giornate" className="rs-banner-slide group shrink-0 snap-start overflow-hidden rounded-3xl border border-emerald-300/60 bg-slate-950 text-white shadow-xl shadow-emerald-950/30 transition hover:-translate-y-0.5 hover:border-rose-200 focus:outline-none focus:ring-4 focus:ring-emerald-300/70">
+            <div className="relative">
+              <img src="/rs-event-ddays.svg" alt="RS EVENT D-DAYS Save the Heart: la Terra protetta da un cuore luminoso" className="block aspect-[16/8] w-full object-cover transition duration-500 group-hover:scale-[1.02]" loading="lazy" decoding="async" />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
+              <div className="absolute inset-x-0 bottom-0 p-4 sm:p-7">
+                <p className="text-xs font-extrabold uppercase tracking-[.24em] text-emerald-200 sm:text-sm">24 GIORNATE • NATURA • SOLIDARIETÀ</p>
+                <h2 className="mt-1 text-2xl font-black text-white drop-shadow sm:text-4xl">RS EVENT D-DAYS</h2>
+                <p className="mt-1 max-w-2xl text-sm font-semibold text-rose-100 sm:text-lg">SAVE THE HEART — 24 giornate per la Terra. Un solo cuore per il futuro.</p>
+                <span className="mt-3 inline-flex items-center gap-2 rounded-full bg-emerald-300 px-4 py-2 text-[11px] font-extrabold text-slate-950 sm:text-xs">SCOPRI IL CALENDARIO →</span>
+              </div>
+            </div>
+          </a>
           <a href="/park" aria-label="Scopri RiverSpend Park: apri il catalogo del parco" className="rs-banner-slide rs-park-banner group shrink-0 snap-start overflow-hidden rounded-3xl border border-cyan-300/60 bg-slate-950 shadow-xl shadow-cyan-950/20 transition hover:-translate-y-0.5 hover:border-cyan-200 focus:outline-none focus:ring-4 focus:ring-cyan-300/70">
             <div className="relative">
               <img src="https://raw.githubusercontent.com/5lordmaul5-del/RiverSpend/main/file_00000000070081f4be8d351d407b4017.png" alt="RiverSpend Park: concept del parco con area Terra, area Acqua e attrazioni" className="block aspect-[16/8] w-full object-cover transition duration-500 group-hover:scale-[1.02]" loading="lazy" decoding="async" />
