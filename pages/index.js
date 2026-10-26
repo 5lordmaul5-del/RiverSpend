@@ -1743,6 +1743,23 @@ export default function Home() {
         .rs-apps-grid > .rs-futurecity-banner { flex:0 0 240px !important; width:240px !important; min-width:240px !important; max-width:240px !important; }
         .rs-apps-grid > .rs-futurecity-banner h2 { font-size:19px !important; line-height:1.1 !important; }
         .rs-apps-grid > .rs-futurecity-banner p { font-size:11px !important; line-height:1.25 !important; }
+
+        /* RS FORCE: sfera centrata, più grande e titolo luminoso per riempire il vuoto. */
+        #rs-force-card .rs-palantir {
+          left:0 !important; margin-left:auto !important; margin-right:auto !important;
+          transform:translateY(30px) !important; width:144px !important; height:144px !important;
+          flex:0 0 144px !important; font-size:60px !important;
+          box-shadow:0 0 34px 13px rgba(34,211,238,.78), inset 0 0 28px rgba(255,255,255,.75) !important;
+        }
+        #rs-force-card .rs-force-title {
+          width:100% !important; margin-top:auto !important; padding-top:8px !important;
+          font-size:24px !important; line-height:1.1 !important; letter-spacing:.12em !important;
+          color:#e0fcff !important;
+          text-shadow:0 0 8px #22d3ee,0 0 18px #0891b2,0 2px 5px #000 !important;
+        }
+        #rs-force-card .rs-force-stage {
+          background:radial-gradient(ellipse at 50% 45%,#075985 0%,#062c46 42%,#020817 100%) !important;
+        }
       `}</style>
 
       <section id="rs-download-apps" className="rs-download-apps" aria-labelledby="rs-download-title">
