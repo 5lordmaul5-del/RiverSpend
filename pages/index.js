@@ -908,7 +908,7 @@ export default function Home() {
                 <span className="w-full break-words text-[8px] font-bold leading-tight text-slate-800">RSPark</span>
               </a>
               <a href="/servizi/music" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RSMusic">
-                <img src="/riverspend-home-river-market.svg" alt="RSMusic" className="h-10 w-10 rounded-lg object-contain shadow-sm ring-1 ring-cyan-200" loading="lazy" />
+                <img src="/icons/music.svg" alt="RSMusic" className="h-10 w-10 rounded-lg object-contain shadow-sm ring-1 ring-cyan-200" loading="lazy" />
                 <span className="w-full break-words text-[8px] font-bold leading-tight text-slate-800">RSMusic</span>
               </a>
               <a href="/rs-control-center" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RSPC">
