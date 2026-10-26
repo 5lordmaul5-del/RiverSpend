@@ -12,6 +12,12 @@
   "lang": "it",
   "icons": [
     {
+      "src": "/icons/riverspendshop-app.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
       "src": "/icons/riverspendshop-app.jpg",
       "sizes": "1024x1024",
       "type": "image/jpeg",
