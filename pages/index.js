@@ -1043,12 +1043,12 @@ export default function Home() {
               </div>
             </div>
           </a>
-          <a href="/rsfv#concept" aria-label="Scopri RS Unità Sicura" className="rs-banner-slide rs-unita-sicura-banner group relative shrink-0 snap-start overflow-hidden rounded-3xl border border-cyan-300/60 bg-slate-950 text-white shadow-xl shadow-cyan-950/20 transition hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-cyan-300/70">
-            <img src="/Screenshot_2026-10-26-16-10-16-325_com.openai.chatgpt.jpg" alt="Scudo dorato e blu RS Unità Sicura con folgore e sigla U.S." className="h-full w-full object-cover" loading="lazy" decoding="async" />
-            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/95 via-slate-950/55 to-transparent p-4 pt-12 sm:p-7 sm:pt-16">
-              <p className="text-xs font-extrabold uppercase tracking-[.24em] text-cyan-200 sm:text-sm">PROTEZIONE • TECNOLOGIA • PERSONE</p>
-              <h2 className="mt-1 text-2xl font-black text-white drop-shadow sm:text-4xl">RS UNITÀ SICURA</h2>
-              <span className="mt-3 inline-flex items-center gap-2 rounded-full bg-cyan-300 px-5 py-2.5 text-sm font-extrabold text-slate-950 shadow-lg">SCOPRI RS UNITÀ SICURA <span aria-hidden="true">↗</span></span>
+          <a href="/rsfv#concept" aria-label="Scopri RS Unità Sicura" className="rs-banner-slide rs-unita-sicura-banner group relative h-[300px] shrink-0 snap-start overflow-hidden rounded-3xl border border-cyan-300/60 bg-slate-950 text-white shadow-xl shadow-cyan-950/20 transition hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-cyan-300/70 sm:h-[390px]">
+            <img src="/Screenshot_2026-10-26-16-10-16-325_com.openai.chatgpt.jpg" alt="Scudo dorato e blu RS Unità Sicura con folgore e sigla U.S." className="absolute inset-0 h-full w-full object-cover object-[center_72%] sm:object-[center_70%]" loading="lazy" decoding="async" />
+            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/95 via-slate-950/45 to-transparent p-3 pt-10 sm:p-5 sm:pt-14">
+              <p className="text-[9px] font-extrabold uppercase tracking-[.16em] text-cyan-200 sm:text-xs sm:tracking-[.22em]">PROTEZIONE • TECNOLOGIA • PERSONE</p>
+              <h2 className="mt-1 text-lg font-black text-white drop-shadow sm:text-3xl">RS UNITÀ SICURA</h2>
+              <span className="mt-2 inline-flex items-center gap-2 rounded-full bg-cyan-300 px-4 py-2 text-xs font-extrabold text-slate-950 shadow-lg sm:mt-3 sm:px-5 sm:py-2.5 sm:text-sm">SCOPRI RS UNITÀ SICURA <span aria-hidden="true">↗</span></span>
             </div>
           </a>
                     <a href="/rsfv#concept" aria-label="Esplora RS FutureCity e tutti i concept del futuro RiverSpend" className="rs-banner-slide rs-futurecity-banner group shrink-0 snap-start overflow-hidden rounded-3xl border border-cyan-300/60 bg-slate-950 text-white shadow-xl shadow-cyan-950/20 transition hover:-translate-y-0.5 hover:border-amber-200 focus:outline-none focus:ring-4 focus:ring-cyan-300/70">
