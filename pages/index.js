@@ -246,7 +246,7 @@ export default function Home() {
       // Scariche elettriche del Palantir: crepitii brevi, brillanti e non troppo forti.
       const zapBus = ctx.createGain();
       const zapFilter = ctx.createBiquadFilter();
-      zapBus.gain.value = 0.22;
+      zapBus.gain.value = 0.32;
       zapFilter.type = 'bandpass';
       zapFilter.frequency.value = 2400;
       zapFilter.Q.value = 0.8;
@@ -259,7 +259,7 @@ export default function Home() {
       for (let n = 0; n < noiseData.length; n++) {
         noiseData[n] = (Math.random() * 2 - 1) * (1 - n / noiseData.length);
       }
-      [0.18, 0.72, 1.46, 2.35, 3.1, 4.25, 5.05].forEach((offset, index) => {
+      [0.08, 0.15, 0.24, 0.52, 0.91, 1.03, 1.17, 1.84, 2.02, 2.16, 2.95, 3.09, 3.24, 4.12, 4.28, 4.41, 5.14, 5.3].forEach((offset, index) => {
         const start = now + offset;
         const crackle = ctx.createBufferSource();
         const crackleGain = ctx.createGain();
@@ -268,7 +268,7 @@ export default function Home() {
         crackleFilter.type = 'highpass';
         crackleFilter.frequency.value = 900 + Math.random() * 1800;
         crackleGain.gain.setValueAtTime(0.0001, start);
-        crackleGain.gain.exponentialRampToValueAtTime(index % 3 === 0 ? 0.5 : 0.28, start + 0.012);
+        crackleGain.gain.exponentialRampToValueAtTime(index < 3 ? 0.62 : (index % 3 === 0 ? 0.46 : 0.32), start + 0.012);
         crackleGain.gain.exponentialRampToValueAtTime(0.0001, start + 0.19);
         crackle.connect(crackleFilter);
         crackleFilter.connect(crackleGain);
