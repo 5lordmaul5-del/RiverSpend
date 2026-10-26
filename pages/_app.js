@@ -14,7 +14,7 @@ const APP_MANIFESTS = [
 export default function App({ Component, pageProps }) {
   const router = useRouter();
   const selectedApp = APP_MANIFESTS.find((app) => router.pathname === app.match || router.pathname.startsWith(app.match + '/'));
-  const manifestHref = selectedApp ? selectedApp.href : '/manifest-shop.json';
+  const manifestHref = selectedApp ? selectedApp.href : '/manifest-shop.json?v=3';
   const themeColor = selectedApp ? selectedApp.color : '#06b6d4';
 
   useEffect(() => {
