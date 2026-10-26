@@ -1846,7 +1846,7 @@ export default function Home() {
           margin-bottom:8px !important;
         }
 
-        /* RS FORCE — immagine a pieno banner: elimina il vuoto nero e mantiene la sfera in primo piano. */
+        /* RS FORCE WOW — arte a piena card, Palantir e prodotti fluttuanti ben visibili. */
         #rs-force-card > button {
           position:relative !important;
           isolation:isolate !important;
@@ -1862,7 +1862,7 @@ export default function Home() {
           margin:0 !important;
           border:0 !important;
           border-radius:0 !important;
-          background:radial-gradient(ellipse at 50% 35%,#0e7490 0%,#075985 38%,#082f49 72%,#020617 100%) !important;
+          background:radial-gradient(ellipse at 50% 38%,#67e8f9 0%,#0891b2 24%,#075985 54%,#07152d 100%) !important;
         }
         #rs-force-card .rs-force-stage::after {
           content:"";
@@ -1870,30 +1870,41 @@ export default function Home() {
           inset:0;
           z-index:15;
           pointer-events:none;
-          background:linear-gradient(180deg,rgba(2,6,23,.02) 0%,rgba(2,6,23,.04) 42%,rgba(2,6,23,.58) 72%,rgba(2,6,23,.94) 100%);
+          background:linear-gradient(180deg,rgba(2,6,23,.02) 0%,rgba(2,6,23,.02) 55%,rgba(2,6,23,.18) 76%,rgba(2,6,23,.46) 100%) !important;
         }
         #rs-force-card .rs-force-stage > img:first-child {
-          transform:scale(1.12) !important;
-          transform-origin:50% 38% !important;
+          transform:scale(1.08) !important;
+          transform-origin:50% 40% !important;
           object-fit:cover !important;
-          object-position:50% 38% !important;
+          object-position:50% 40% !important;
           opacity:1 !important;
-          filter:brightness(1.16) saturate(1.2) contrast(1.06) !important;
+          filter:brightness(1.38) saturate(1.32) contrast(1.04) !important;
         }
         #rs-force-card .rs-force-stage > img:nth-child(2) {
-          transform:scale(1.04) !important;
+          transform:scale(1.08) !important;
           object-fit:cover !important;
           object-position:center !important;
-          opacity:.92 !important;
+          opacity:1 !important;
           mix-blend-mode:screen !important;
         }
         #rs-force-card .rs-palantir {
-          width:148px !important;
-          height:148px !important;
-          flex:0 0 148px !important;
-          transform:translateY(-8px) !important;
-          font-size:64px !important;
-          box-shadow:0 0 42px 16px rgba(34,211,238,.88), inset 0 0 30px rgba(255,255,255,.82) !important;
+          width:150px !important;
+          height:150px !important;
+          flex:0 0 150px !important;
+          transform:translateY(-4px) !important;
+          font-size:66px !important;
+          background:radial-gradient(circle at 30% 24%,#fff 0%,#a5f3fc 9%,#22d3ee 23%,#075985 47%,#07152d 72%,#020617 100%) !important;
+          box-shadow:0 0 48px 20px rgba(34,211,238,.95),0 0 85px 28px rgba(8,145,178,.6),inset 0 0 30px rgba(255,255,255,.9) !important;
+          animation:rs-palantir-pulse 2.2s ease-in-out infinite, rs-force-float 4s ease-in-out infinite !important;
+        }
+        #rs-force-card .rs-force-orbit {
+          z-index:22 !important;
+          filter:drop-shadow(0 0 10px rgba(34,211,238,.95));
+        }
+        #rs-force-card .rs-force-product {
+          animation:rs-force-product-glow 2s ease-in-out infinite alternate;
+          border-width:2px !important;
+          box-shadow:0 0 18px rgba(34,211,238,.95) !important;
         }
         #rs-force-card .rs-force-title,
         #rs-force-card h2,
@@ -1906,8 +1917,14 @@ export default function Home() {
           padding-top:12px !important;
           text-shadow:0 0 10px #22d3ee,0 0 22px #0891b2,0 2px 6px #000 !important;
         }
-        #rs-force-card h2 {
-          margin-bottom:12px !important;
+        #rs-force-card h2 { margin-bottom:12px !important; }
+        @keyframes rs-force-float {
+          0%,100% { translate:0 0; }
+          50% { translate:0 -10px; }
+        }
+        @keyframes rs-force-product-glow {
+          from { transform:scale(.96); }
+          to { transform:scale(1.06); }
         }
 
       `}</style>
