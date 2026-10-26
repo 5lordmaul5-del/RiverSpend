@@ -1629,6 +1629,26 @@ export default function Home() {
           margin-top:auto !important; margin-bottom:8px !important;
           background:rgba(5,18,31,.88) !important;
         }
+
+        /* RiverSpend · uniforma i banner del carosello: immagine a pieno riquadro e testi compatti */
+        .rs-apps-grid > .rs-banner-slide:not(.rs-hero) {
+          position:relative !important; height:228px !important; min-height:228px !important;
+          max-height:228px !important; box-sizing:border-box !important; overflow:hidden !important;
+          border-radius:24px !important;
+        }
+        .rs-apps-grid > .rs-banner-slide:not(.rs-hero) img {
+          display:block !important; width:100% !important; height:100% !important;
+          max-height:none !important; object-fit:cover !important; object-position:center !important;
+        }
+        .rs-apps-grid > .rs-unita-sicura-banner { flex:0 0 240px !important; width:240px !important; min-width:240px !important; max-width:240px !important; }
+        .rs-apps-grid > .rs-unita-sicura-banner > img { transform:scale(1.35); }
+        .rs-apps-grid > .rs-unita-sicura-banner > div { position:absolute !important; inset:auto 0 0 !important; z-index:2 !important; height:auto !important; padding:10px !important; background:linear-gradient(transparent,rgba(2,8,20,.92)) !important; }
+        .rs-apps-grid > .rs-unita-sicura-banner > div p { font-size:9px !important; line-height:1.15 !important; letter-spacing:.1em !important; margin:0 !important; }
+        .rs-apps-grid > .rs-unita-sicura-banner > div h2 { margin-top:4px !important; font-size:18px !important; line-height:1.08 !important; }
+        .rs-apps-grid > .rs-unita-sicura-banner > div span { margin-top:7px !important; padding:7px 10px !important; font-size:11px !important; line-height:1.15 !important; }
+        .rs-apps-grid > .rs-futurecity-banner { flex:0 0 240px !important; width:240px !important; min-width:240px !important; max-width:240px !important; }
+        .rs-apps-grid > .rs-futurecity-banner h2 { font-size:19px !important; line-height:1.1 !important; }
+        .rs-apps-grid > .rs-futurecity-banner p { font-size:11px !important; line-height:1.25 !important; }
       `}</style>
     </main>
   );
