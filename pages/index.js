@@ -1044,7 +1044,7 @@ export default function Home() {
             </div>
           </a>
           <a href="/rsfv#concept" aria-label="Scopri RS Unità Sicura" className="rs-banner-slide rs-unita-sicura-banner group relative h-[300px] shrink-0 snap-start overflow-hidden rounded-3xl border border-cyan-300/60 bg-slate-950 text-white shadow-xl shadow-cyan-950/20 transition hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-cyan-300/70 sm:h-[390px]">
-            <img src="/Screenshot_2026-10-26-16-10-16-325_com.openai.chatgpt.jpg" alt="Scudo dorato e blu RS Unità Sicura con folgore e sigla U.S." className="absolute inset-0 h-full w-full object-cover object-[center_72%] sm:object-[center_70%]" loading="lazy" decoding="async" />
+            <img src="/Screenshot_2026-10-26-16-45-53-016_com.miui.gallery.jpg" alt="Scudo dorato e blu RS Unità Sicura con folgore e sigla U.S." className="absolute inset-0 h-full w-full object-cover object-[center_66%] sm:object-[center_64%]" loading="eager" decoding="async" />
             <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/95 via-slate-950/45 to-transparent p-3 pt-10 sm:p-5 sm:pt-14">
               <p className="text-[9px] font-extrabold uppercase tracking-[.16em] text-cyan-200 sm:text-xs sm:tracking-[.22em]">PROTEZIONE • TECNOLOGIA • PERSONE</p>
               <h2 className="mt-1 text-lg font-black text-white drop-shadow sm:text-3xl">RS UNITÀ SICURA</h2>
