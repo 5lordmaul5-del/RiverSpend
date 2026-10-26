@@ -1794,6 +1794,22 @@ export default function Home() {
         #rs-force-card .rs-force-stage {
           background:radial-gradient(ellipse at 50% 45%,#075985 0%,#062c46 42%,#020817 100%) !important;
         }
+        /* RS FORCE: elimina la fascia nera incorporata nell'immagine e riempie il banner. */
+        #rs-force-card .rs-force-stage > img:first-child {
+          transform:scale(1.72) !important;
+          transform-origin:50% 38% !important;
+          object-position:center 38% !important;
+          opacity:.72 !important;
+        }
+        #rs-force-card .rs-force-stage > img:nth-child(2) {
+          transform:scale(1.16) !important;
+          transform-origin:center center !important;
+        }
+        #rs-force-card > button > h2 {
+          margin-top:6px !important;
+          margin-bottom:8px !important;
+        }
+
       `}</style>
 
       <section id="rs-download-apps" className="rs-download-apps" aria-labelledby="rs-download-title">
