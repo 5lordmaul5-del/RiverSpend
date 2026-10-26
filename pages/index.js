@@ -246,12 +246,46 @@ export default function Home() {
       // Scariche elettriche del Palantir: crepitii brevi, brillanti e non troppo forti.
       const zapBus = ctx.createGain();
       const zapFilter = ctx.createBiquadFilter();
-      zapBus.gain.value = 0.32;
+      zapBus.gain.value = 0.42;
       zapFilter.type = 'bandpass';
       zapFilter.frequency.value = 2400;
       zapFilter.Q.value = 0.8;
       zapBus.connect(zapFilter);
       zapFilter.connect(compressor);
+
+      // Fiammata iniziale originale: soffio elettrico crescente con movimento stereo.
+      const surge = ctx.createBufferSource();
+      const surgeGain = ctx.createGain();
+      const surgeFilter = ctx.createBiquadFilter();
+      const surgePan = ctx.createStereoPanner ? ctx.createStereoPanner() : null;
+      const surgeBuffer = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.9), ctx.sampleRate);
+      const surgeData = surgeBuffer.getChannelData(0);
+      for (let n = 0; n < surgeData.length; n++) {
+        const t = n / surgeData.length;
+        surgeData[n] = (Math.random() * 2 - 1) * Math.pow(1 - t, 1.7);
+      }
+      surge.buffer = surgeBuffer;
+      surgeFilter.type = 'bandpass';
+      surgeFilter.frequency.setValueAtTime(700, now);
+      surgeFilter.frequency.exponentialRampToValueAtTime(5200, now + 0.22);
+      surgeFilter.frequency.exponentialRampToValueAtTime(850, now + 0.82);
+      surgeFilter.Q.value = 0.75;
+      surgeGain.gain.setValueAtTime(0.0001, now);
+      surgeGain.gain.exponentialRampToValueAtTime(0.5, now + 0.09);
+      surgeGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.88);
+      surge.connect(surgeFilter);
+      surgeFilter.connect(surgeGain);
+      if (surgePan) {
+        surgeGain.connect(surgePan);
+        surgePan.pan.setValueAtTime(-0.65, now);
+        surgePan.pan.linearRampToValueAtTime(0.65, now + 0.42);
+        surgePan.pan.linearRampToValueAtTime(0, now + 0.85);
+        surgePan.connect(compressor);
+      } else {
+        surgeGain.connect(compressor);
+      }
+      surge.start(now);
+      surge.stop(now + 0.9);
 
       // Rumore filtrato a impulsi per simulare piccole scariche elettriche.
       const noiseBuffer = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.22), ctx.sampleRate);
@@ -259,16 +293,16 @@ export default function Home() {
       for (let n = 0; n < noiseData.length; n++) {
         noiseData[n] = (Math.random() * 2 - 1) * (1 - n / noiseData.length);
       }
-      [0.08, 0.15, 0.24, 0.52, 0.91, 1.03, 1.17, 1.84, 2.02, 2.16, 2.95, 3.09, 3.24, 4.12, 4.28, 4.41, 5.14, 5.3].forEach((offset, index) => {
+      [0.035, 0.075, 0.12, 0.19, 0.28, 0.43, 0.49, 0.56, 0.88, 0.96, 1.04, 1.12, 1.22, 1.78, 1.91, 2.04, 2.13, 2.22, 2.88, 3.01, 3.14, 3.28, 4.02, 4.16, 4.3, 4.43, 5.02, 5.17, 5.31].forEach((offset, index) => {
         const start = now + offset;
         const crackle = ctx.createBufferSource();
         const crackleGain = ctx.createGain();
         const crackleFilter = ctx.createBiquadFilter();
         crackle.buffer = noiseBuffer;
         crackleFilter.type = 'highpass';
-        crackleFilter.frequency.value = 900 + Math.random() * 1800;
+        crackleFilter.frequency.value = 1250 + Math.random() * 2600;
         crackleGain.gain.setValueAtTime(0.0001, start);
-        crackleGain.gain.exponentialRampToValueAtTime(index < 3 ? 0.62 : (index % 3 === 0 ? 0.46 : 0.32), start + 0.012);
+        crackleGain.gain.exponentialRampToValueAtTime(index < 5 ? 0.72 : (index % 3 === 0 ? 0.52 : 0.38), start + 0.012);
         crackleGain.gain.exponentialRampToValueAtTime(0.0001, start + 0.19);
         crackle.connect(crackleFilter);
         crackleFilter.connect(crackleGain);
@@ -280,8 +314,8 @@ export default function Home() {
         const snap = ctx.createOscillator();
         const snapGain = ctx.createGain();
         snap.type = 'sawtooth';
-        snap.frequency.setValueAtTime(1800 + Math.random() * 1700, start);
-        snap.frequency.exponentialRampToValueAtTime(260 + Math.random() * 180, start + 0.075);
+        snap.frequency.setValueAtTime(2400 + Math.random() * 2300, start);
+        snap.frequency.exponentialRampToValueAtTime(320 + Math.random() * 260, start + 0.075);
         snapGain.gain.setValueAtTime(0.0001, start);
         snapGain.gain.exponentialRampToValueAtTime(0.11, start + 0.008);
         snapGain.gain.exponentialRampToValueAtTime(0.0001, start + 0.09);
