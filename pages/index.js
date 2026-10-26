@@ -998,9 +998,9 @@ export default function Home() {
                       </div>
                     ) : null;
                   })}
-                  <span aria-label="Palantir energetico RiverSpend" className="relative z-20 flex h-28 w-28 shrink-0 translate-y-2 items-center justify-center rounded-full border-2 border-cyan-100/90 bg-[radial-gradient(circle_at_32%_25%,#ffffff_0%,#a5f3fc_8%,#22d3ee_20%,#075985_43%,#07152d_68%,#020617_100%)] text-5xl shadow-[0_0_22px_8px_rgba(34,211,238,.65),inset_0_0_22px_rgba(255,255,255,.65)]" style={{animation:'rs-palantir-pulse 3s ease-in-out infinite'}}>🔮<span className="absolute inset-[-8px] rounded-full border-2 border-cyan-200/70 animate-spin" style={{animationDuration:'7s'}} /><span className="absolute inset-[-15px] rounded-full border border-sky-300/60 animate-spin" style={{animationDuration:'11s',animationDirection:'reverse'}} /></span>
+                  <span aria-label="Palantir energetico RiverSpend" className="rs-palantir relative z-20 flex h-36 w-36 shrink-0 translate-y-7 items-center justify-center rounded-full border-2 border-cyan-100/90 bg-[radial-gradient(circle_at_32%_25%,#ffffff_0%,#a5f3fc_8%,#22d3ee_20%,#075985_43%,#07152d_68%,#020617_100%)] text-6xl shadow-[0_0_32px_12px_rgba(34,211,238,.78),inset_0_0_28px_rgba(255,255,255,.75)]" style={{animation:'rs-palantir-pulse 3s ease-in-out infinite'}}>🔮<span className="absolute inset-[-8px] rounded-full border-2 border-cyan-200/70 animate-spin" style={{animationDuration:'7s'}} /><span className="absolute inset-[-15px] rounded-full border border-sky-300/60 animate-spin" style={{animationDuration:'11s',animationDirection:'reverse'}} /></span>
                 </div>
-                <p className="mt-auto min-h-4 shrink-0 px-2 pt-2 text-[11px] font-extrabold uppercase tracking-[0.25em] text-cyan-200">⚡ RS FORCE ⚡</p>
+                <p className="rs-force-title mt-auto min-h-4 shrink-0 px-2 pt-2 text-xl font-black uppercase tracking-[0.16em] text-cyan-100">⚡ RS FORCE ⚡</p>
                 <h2 className="mt-1 min-h-[44px] shrink-0 px-2 text-lg font-black leading-tight text-white [text-shadow:0_2px_5px_rgba(0,0,0,0.9)]">Potenzia la tua ricerca</h2>
                 {!rsForceAperta ? (
                   <div className="mt-2 w-full rounded-lg bg-slate-900/95 px-2 py-2 text-xs font-semibold leading-4 text-white">
