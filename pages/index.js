@@ -1043,7 +1043,78 @@ export default function Home() {
               </div>
             </div>
           </a>
-          <a href="/rsfv#concept" aria-label="Esplora RS FutureCity e tutti i concept del futuro RiverSpend" className="rs-banner-slide rs-futurecity-banner group shrink-0 snap-start overflow-hidden rounded-3xl border border-cyan-300/60 bg-slate-950 text-white shadow-xl shadow-cyan-950/20 transition hover:-translate-y-0.5 hover:border-amber-200 focus:outline-none focus:ring-4 focus:ring-cyan-300/70">
+          <div className="rs-unita-sicura-heading basis-full w-full min-w-full px-1 py-3 text-white">
+            <p className="text-xs font-extrabold uppercase tracking-[.24em] text-cyan-200">PROTEZIONE • TECNOLOGIA • PERSONE</p>
+            <h2 className="mt-1 text-2xl font-black sm:text-3xl">RS Unità Sicura</h2>
+            <p className="mt-1 text-sm text-slate-200">Sei concept separati: terra, mare, aria e robotica.</p>
+          </div>
+          <a href="/rsfv#concept" aria-label="Scopri RS V1 Unità Sicura" className="rs-banner-slide rs-unita-sicura-card group relative shrink-0 snap-start overflow-hidden rounded-3xl border bg-slate-950 text-white shadow-xl transition hover:-translate-y-0.5 focus:outline-none focus:ring-4" style={{borderColor:"#0ea5e9"}}>
+            <img src="/rs-unita-v1.svg" alt="RS V1 — Unità Sicura, concept visivo RiverSpend" className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]" loading="lazy" decoding="async" />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/35 to-transparent"></div>
+            <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5">
+              <p className="text-xs font-extrabold uppercase tracking-[.2em]" style={{color:"#0ea5e9"}}>RS UNITÀ SICURA</p>
+              <h2 className="mt-1 text-2xl font-black text-white drop-shadow">RS V1</h2>
+              <p className="mt-1 text-sm font-bold text-white">Unità Sicura</p>
+              <p className="mt-2 text-xs leading-5 text-slate-100">Protezione globale</p>
+              <span className="mt-3 inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-extrabold text-slate-950 shadow-lg" style={{backgroundColor:"#0ea5e9"}}>SCOPRI RS V1 <span aria-hidden="true">↗</span></span>
+            </div>
+          </a>
+          <a href="/rsfv#concept" aria-label="Scopri RS A1 Unità Sicura di Assalto" className="rs-banner-slide rs-unita-sicura-card group relative shrink-0 snap-start overflow-hidden rounded-3xl border bg-slate-950 text-white shadow-xl transition hover:-translate-y-0.5 focus:outline-none focus:ring-4" style={{borderColor:"#ef4444"}}>
+            <img src="/rs-unita-a1.svg" alt="RS A1 — Unità Sicura di Assalto, concept visivo RiverSpend" className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]" loading="lazy" decoding="async" />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/35 to-transparent"></div>
+            <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5">
+              <p className="text-xs font-extrabold uppercase tracking-[.2em]" style={{color:"#ef4444"}}>RS UNITÀ SICURA</p>
+              <h2 className="mt-1 text-2xl font-black text-white drop-shadow">RS A1</h2>
+              <p className="mt-1 text-sm font-bold text-white">Unità Sicura di Assalto</p>
+              <p className="mt-2 text-xs leading-5 text-slate-100">Operazioni speciali e protezione infrastrutture</p>
+              <span className="mt-3 inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-extrabold text-slate-950 shadow-lg" style={{backgroundColor:"#ef4444"}}>SCOPRI RS A1 <span aria-hidden="true">↗</span></span>
+            </div>
+          </a>
+          <a href="/rsfv#concept" aria-label="Scopri RS FL1 Unità Sicura di Volo" className="rs-banner-slide rs-unita-sicura-card group relative shrink-0 snap-start overflow-hidden rounded-3xl border bg-slate-950 text-white shadow-xl transition hover:-translate-y-0.5 focus:outline-none focus:ring-4" style={{borderColor:"#38bdf8"}}>
+            <img src="/rs-unita-fl1.svg" alt="RS FL1 — Unità Sicura di Volo, concept visivo RiverSpend" className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]" loading="lazy" decoding="async" />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/35 to-transparent"></div>
+            <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5">
+              <p className="text-xs font-extrabold uppercase tracking-[.2em]" style={{color:"#38bdf8"}}>RS UNITÀ SICURA</p>
+              <h2 className="mt-1 text-2xl font-black text-white drop-shadow">RS FL1</h2>
+              <p className="mt-1 text-sm font-bold text-white">Unità Sicura di Volo</p>
+              <p className="mt-2 text-xs leading-5 text-slate-100">Concept jetpack per soccorso aereo</p>
+              <span className="mt-3 inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-extrabold text-slate-950 shadow-lg" style={{backgroundColor:"#38bdf8"}}>SCOPRI RS FL1 <span aria-hidden="true">↗</span></span>
+            </div>
+          </a>
+          <a href="/rsfv#concept" aria-label="Scopri RS E1 Unità Sicura di Terra" className="rs-banner-slide rs-unita-sicura-card group relative shrink-0 snap-start overflow-hidden rounded-3xl border bg-slate-950 text-white shadow-xl transition hover:-translate-y-0.5 focus:outline-none focus:ring-4" style={{borderColor:"#84cc16"}}>
+            <img src="/rs-unita-e1.svg" alt="RS E1 — Unità Sicura di Terra, concept visivo RiverSpend" className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]" loading="lazy" decoding="async" />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/35 to-transparent"></div>
+            <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5">
+              <p className="text-xs font-extrabold uppercase tracking-[.2em]" style={{color:"#84cc16"}}>RS UNITÀ SICURA</p>
+              <h2 className="mt-1 text-2xl font-black text-white drop-shadow">RS E1</h2>
+              <p className="mt-1 text-sm font-bold text-white">Unità Sicura di Terra</p>
+              <p className="mt-2 text-xs leading-5 text-slate-100">Concept esoscheletro di supporto</p>
+              <span className="mt-3 inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-extrabold text-slate-950 shadow-lg" style={{backgroundColor:"#84cc16"}}>SCOPRI RS E1 <span aria-hidden="true">↗</span></span>
+            </div>
+          </a>
+          <a href="/rsfv#concept" aria-label="Scopri RS R1S1 Unità Sicura Robotica" className="rs-banner-slide rs-unita-sicura-card group relative shrink-0 snap-start overflow-hidden rounded-3xl border bg-slate-950 text-white shadow-xl transition hover:-translate-y-0.5 focus:outline-none focus:ring-4" style={{borderColor:"#d946ef"}}>
+            <img src="/rs-unita-r1s1.svg" alt="RS R1S1 — Unità Sicura Robotica, concept visivo RiverSpend" className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]" loading="lazy" decoding="async" />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/35 to-transparent"></div>
+            <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5">
+              <p className="text-xs font-extrabold uppercase tracking-[.2em]" style={{color:"#d946ef"}}>RS UNITÀ SICURA</p>
+              <h2 className="mt-1 text-2xl font-black text-white drop-shadow">RS R1S1</h2>
+              <p className="mt-1 text-sm font-bold text-white">Unità Sicura Robotica</p>
+              <p className="mt-2 text-xs leading-5 text-slate-100">Robot e UFO a otto eliche</p>
+              <span className="mt-3 inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-extrabold text-slate-950 shadow-lg" style={{backgroundColor:"#d946ef"}}>SCOPRI RS R1S1 <span aria-hidden="true">↗</span></span>
+            </div>
+          </a>
+          <a href="/rsfv#concept" aria-label="Scopri RS MARE Unità Sicura Marina" className="rs-banner-slide rs-unita-sicura-card group relative shrink-0 snap-start overflow-hidden rounded-3xl border bg-slate-950 text-white shadow-xl transition hover:-translate-y-0.5 focus:outline-none focus:ring-4" style={{borderColor:"#22d3ee"}}>
+            <img src="/rs-unita-mare.svg" alt="RS MARE — Unità Sicura Marina, concept visivo RiverSpend" className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]" loading="lazy" decoding="async" />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/35 to-transparent"></div>
+            <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5">
+              <p className="text-xs font-extrabold uppercase tracking-[.2em]" style={{color:"#22d3ee"}}>RS UNITÀ SICURA</p>
+              <h2 className="mt-1 text-2xl font-black text-white drop-shadow">RS MARE</h2>
+              <p className="mt-1 text-sm font-bold text-white">Unità Sicura Marina</p>
+              <p className="mt-2 text-xs leading-5 text-slate-100">Concept integrato mare, terra e aria</p>
+              <span className="mt-3 inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-extrabold text-slate-950 shadow-lg" style={{backgroundColor:"#22d3ee"}}>SCOPRI RS MARE <span aria-hidden="true">↗</span></span>
+            </div>
+          </a>
+                    <a href="/rsfv#concept" aria-label="Esplora RS FutureCity e tutti i concept del futuro RiverSpend" className="rs-banner-slide rs-futurecity-banner group shrink-0 snap-start overflow-hidden rounded-3xl border border-cyan-300/60 bg-slate-950 text-white shadow-xl shadow-cyan-950/20 transition hover:-translate-y-0.5 hover:border-amber-200 focus:outline-none focus:ring-4 focus:ring-cyan-300/70">
             <div className="relative">
               <div className="grid grid-cols-2 gap-1 bg-[#061722] p-1">
                 <img src="/rs-future-city-skyline.svg" alt="RS FutureCity: skyline e architettura della città del futuro" className="h-28 w-full rounded-lg object-cover" loading="lazy" decoding="async" />
