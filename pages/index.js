@@ -888,6 +888,33 @@ export default function Home() {
           </div>
         </header>
 
+          <section aria-label="App RiverSpend" className="mb-4 rounded-2xl border border-cyan-200/70 bg-white/90 px-2 py-3 shadow-md">
+            <div className="mb-2 text-center text-[11px] font-extrabold uppercase tracking-[.16em] text-slate-700">Le app RiverSpend</div>
+            <div className="grid grid-cols-5 gap-1.5">
+              <a href="/app" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RiverSpendShop e tutte le app">
+                <img src="/icons/riverspendshop-app.jpg" alt="RiverSpendShop" className="h-12 w-12 rounded-xl object-cover shadow-sm ring-1 ring-cyan-200" loading="lazy" />
+                <span className="w-full text-[9px] font-bold leading-tight text-slate-800">Shop</span>
+              </a>
+              <a href="/park" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RiverSpend Park">
+                <img src="/1000187343.png" alt="RiverSpend Park" className="h-12 w-12 rounded-xl object-cover shadow-sm ring-1 ring-cyan-200" loading="lazy" />
+                <span className="w-full text-[9px] font-bold leading-tight text-slate-800">Park</span>
+              </a>
+              <a href="/servizi/broadcast" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RiverSpend Streaming">
+                <img src="/Screenshot_2026-10-20-20-11-58-215_com.openai.chatgpt-edit.jpg" alt="RiverSpend Streaming" className="h-12 w-12 rounded-xl object-cover shadow-sm ring-1 ring-amber-300" loading="lazy" />
+                <span className="w-full text-[9px] font-bold leading-tight text-slate-800">Streaming</span>
+              </a>
+              <a href="/rs-sound-studio" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RiverSpend SoundStudio">
+                <img src="/rssoundstudio-issa-banner.jpg" alt="RiverSpend SoundStudio ISSA" className="h-12 w-12 rounded-xl object-cover shadow-sm ring-1 ring-cyan-200" loading="lazy" />
+                <span className="w-full text-[9px] font-bold leading-tight text-slate-800">SoundStudio</span>
+              </a>
+              <a href="/rs-control-center" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RSPanelControl">
+                <img src="/1000186325.png" alt="RSPanelControl" className="h-12 w-12 rounded-xl object-cover shadow-sm ring-1 ring-cyan-200" loading="lazy" />
+                <span className="w-full text-[9px] font-bold leading-tight text-slate-800">RSPC</span>
+              </a>
+            </div>
+            <a href="/app" className="mt-2 block text-center text-[10px] font-semibold text-teal-800 underline underline-offset-2">Istruzioni per installarle da Google Chrome · App Store non ancora disponibile</a>
+          </section>
+
           <div className="rs-apps-grid mb-5 flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain px-1 pb-3" aria-label="Scopri le iniziative RiverSpend: scorri orizzontalmente">
             <section id="rs-force-card" className="rs-feature-card h-[400px] shrink-0 w-[220px] snap-start rs-force-card rounded-2xl border-2 border-cyan-300 bg-gradient-to-b from-slate-950 via-cyan-950 to-indigo-950 p-2 text-center shadow-lg shadow-cyan-950/40">
               <button type="button" onClick={() => { if (rsForceAperta) setRsForceAperta(false); else apriRsForce(); }} className="flex h-full w-full flex-col items-center overflow-hidden rounded-xl bg-slate-950 text-center">
