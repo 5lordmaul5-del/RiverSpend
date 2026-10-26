@@ -14,7 +14,7 @@ const apps = [
     name: 'RiverSpend Streaming',
     subtitle: 'Video e contenuti',
     description: 'Accedi all’area dedicata ai contenuti RiverSpend.',
-    logo: '/Screenshot_2026-10-20-20-11-58-215_com.openai.chatgpt-edit.jpg',
+    logo: '/icons/streaming.svg',
     href: '/servizi/broadcast',
     color: '#7c3aed',
     action: 'Apri Streaming'
@@ -32,7 +32,7 @@ const apps = [
     name: 'RiverSpend Music',
     subtitle: 'Musica',
     description: 'Apri l’area musicale RiverSpend.',
-    logo: '/riverspend-home-river-market.svg',
+    logo: '/icons/music.svg',
     href: '/servizi/music',
     color: '#a21caf',
     action: 'Apri RiverSpend Music'
