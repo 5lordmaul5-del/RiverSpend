@@ -243,6 +243,54 @@ export default function Home() {
       echo.connect(echoGain);
       echoGain.connect(lowpass);
 
+      // Scariche elettriche del Palantir: crepitii brevi, brillanti e non troppo forti.
+      const zapBus = ctx.createGain();
+      const zapFilter = ctx.createBiquadFilter();
+      zapBus.gain.value = 0.22;
+      zapFilter.type = 'bandpass';
+      zapFilter.frequency.value = 2400;
+      zapFilter.Q.value = 0.8;
+      zapBus.connect(zapFilter);
+      zapFilter.connect(compressor);
+
+      // Rumore filtrato a impulsi per simulare piccole scariche elettriche.
+      const noiseBuffer = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.22), ctx.sampleRate);
+      const noiseData = noiseBuffer.getChannelData(0);
+      for (let n = 0; n < noiseData.length; n++) {
+        noiseData[n] = (Math.random() * 2 - 1) * (1 - n / noiseData.length);
+      }
+      [0.18, 0.72, 1.46, 2.35, 3.1, 4.25, 5.05].forEach((offset, index) => {
+        const start = now + offset;
+        const crackle = ctx.createBufferSource();
+        const crackleGain = ctx.createGain();
+        const crackleFilter = ctx.createBiquadFilter();
+        crackle.buffer = noiseBuffer;
+        crackleFilter.type = 'highpass';
+        crackleFilter.frequency.value = 900 + Math.random() * 1800;
+        crackleGain.gain.setValueAtTime(0.0001, start);
+        crackleGain.gain.exponentialRampToValueAtTime(index % 3 === 0 ? 0.5 : 0.28, start + 0.012);
+        crackleGain.gain.exponentialRampToValueAtTime(0.0001, start + 0.19);
+        crackle.connect(crackleFilter);
+        crackleFilter.connect(crackleGain);
+        crackleGain.connect(zapBus);
+        crackle.start(start);
+        crackle.stop(start + 0.21);
+
+        // Piccolo scatto tonale per dare alla scarica un carattere energetico.
+        const snap = ctx.createOscillator();
+        const snapGain = ctx.createGain();
+        snap.type = 'sawtooth';
+        snap.frequency.setValueAtTime(1800 + Math.random() * 1700, start);
+        snap.frequency.exponentialRampToValueAtTime(260 + Math.random() * 180, start + 0.075);
+        snapGain.gain.setValueAtTime(0.0001, start);
+        snapGain.gain.exponentialRampToValueAtTime(0.11, start + 0.008);
+        snapGain.gain.exponentialRampToValueAtTime(0.0001, start + 0.09);
+        snap.connect(snapGain);
+        snapGain.connect(zapBus);
+        snap.start(start);
+        snap.stop(start + 0.1);
+      });
+
       window.setTimeout(() => ctx.close().catch(() => {}), 7400);
     } catch {}
   }
