@@ -12,6 +12,7 @@ export default function RSSoundStudio() {
   const audioRef = useRef(null);
   const tracksRef = useRef([]);
   const masterRef = useRef(null);
+  const wetRef = useRef(null);
   const [ready, setReady] = useState(false);
   const [playing, setPlaying] = useState([false, false, false, false]);
   const [levels, setLevels] = useState([45, 32, 24, 18]);
@@ -42,6 +43,7 @@ export default function RSSoundStudio() {
       feedback.connect(delay);
       delay.connect(wet);
       wet.connect(masterGain);
+      wetRef.current = wet;
       const tracks = TRACKS.map((track, i) => {
         const oscillator = ctx.createOscillator();
         const gain = ctx.createGain();
@@ -91,7 +93,7 @@ export default function RSSoundStudio() {
   function toggleIssa(value) {
     setIssa(value);
     setMessage(value ? 'Sistema ISSA ImmersiveSoundSpaceAmbient selezionato.' : 'Ambiente ISSA disattivato; il mixer base resta disponibile.');
-    // Reverb/delay mix is created when the audio context starts; the switch remains explicit for the next activation.
+    if (wetRef.current && audioRef.current) wetRef.current.gain.setTargetAtTime(value ? 0.22 : 0, audioRef.current.currentTime, 0.08);
   }
 
   useEffect(() => () => {
