@@ -934,10 +934,10 @@ export default function Home() {
           </section>
 
           <div className="rs-apps-grid mb-5 flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain px-1 pb-3" aria-label="Scopri le iniziative RiverSpend: scorri orizzontalmente">
-            <section id="rs-force-card" className="rs-feature-card relative h-[400px] shrink-0 w-[280px] snap-start rs-force-card rounded-2xl border-2 border-cyan-300 bg-slate-950 p-0 text-center shadow-lg shadow-cyan-950/40">
-              <button type="button" onClick={() => { if (rsForceAperta) setRsForceAperta(false); else apriRsForce(); }} className="relative flex h-full w-full flex-col items-center justify-end overflow-hidden rounded-xl bg-slate-950 text-center">
-                <div className="rs-force-stage rs-feature-media absolute inset-0 z-0 mx-auto flex !h-full !min-h-0 w-full items-center justify-center overflow-hidden">
-                  <img src="/rs-force.jpg" alt="RS FORCE: sfera energetica RiverSpend blu e oro" className="absolute inset-0 h-full w-full object-cover object-center opacity-100" />
+            <section id="rs-force-card" className="rs-feature-card relative h-[400px] shrink-0 w-[280px] snap-start rs-force-card overflow-hidden rounded-2xl border-2 border-cyan-300 bg-gradient-to-b from-slate-950 via-cyan-950 to-indigo-950 p-0 text-center shadow-lg shadow-cyan-950/40">
+              <button type="button" onClick={() => { if (rsForceAperta) setRsForceAperta(false); else apriRsForce(); }} className="relative flex h-full w-full flex-col items-center overflow-hidden rounded-xl bg-slate-950 text-center">
+                <div className="rs-force-stage rs-feature-media relative mx-auto flex h-[250px] min-h-[250px] w-full shrink-0 items-center justify-center overflow-hidden rounded-xl border border-cyan-300/50 bg-gradient-to-br from-slate-950 via-cyan-950 to-indigo-950">
+                  <img src="/rs-force.jpg" alt="RS FORCE: sfera energetica RiverSpend blu e oro" className="absolute inset-0 h-full w-full object-cover object-center opacity-65 mix-blend-screen" />
                   <img src="/rs-force-lightning.svg?v=2" alt="" aria-hidden="true" className="pointer-events-none absolute inset-0 z-10 h-full w-full object-cover opacity-90 mix-blend-screen" />
                   {rsForceAperta && rsForceProdottiRandom.map((p, index) => {
                     const image = p.immagini?.[0];
@@ -949,17 +949,17 @@ export default function Home() {
                       </div>
                     ) : null;
                   })}
-                  <span className="relative z-20 flex h-20 w-20 shrink-0 items-center justify-center rounded-full border border-cyan-200/70 bg-[radial-gradient(circle_at_35%_30%,rgba(255,255,255,.95),rgba(103,232,249,.45)_18%,rgba(8,47,73,.95)_58%,rgba(2,6,23,1)_100%)] text-3xl shadow-[0_0_25px_rgba(34,211,238,.55)]" style={{animation:'rs-palantir-pulse 3s ease-in-out infinite'}}>🔮</span>
+                  <span className="relative z-20 flex h-24 w-24 shrink-0 items-center justify-center rounded-full border border-cyan-200/70 bg-[radial-gradient(circle_at_35%_30%,rgba(255,255,255,.95),rgba(103,232,249,.45)_18%,rgba(8,47,73,.95)_58%,rgba(2,6,23,1)_100%)] text-4xl shadow-[0_0_35px_rgba(34,211,238,.75)]" style={{animation:'rs-palantir-pulse 3s ease-in-out infinite'}}>🔮</span>
                 </div>
-                <p className="relative z-20 mt-auto min-h-4 shrink-0 bg-slate-950/85 px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.25em] text-cyan-200">⚡ RS FORCE ⚡</p>
-                <h2 className="relative z-20 mt-0 min-h-[44px] w-full shrink-0 bg-slate-950/85 px-3 py-2 text-lg font-black leading-tight text-white [text-shadow:0_2px_5px_rgba(0,0,0,0.9)]">Potenzia la tua ricerca</h2>
+                <p className="mt-auto min-h-4 shrink-0 px-2 pt-2 text-[11px] font-extrabold uppercase tracking-[0.25em] text-cyan-200">⚡ RS FORCE ⚡</p>
+                <h2 className="mt-1 min-h-[44px] shrink-0 px-2 text-lg font-black leading-tight text-white [text-shadow:0_2px_5px_rgba(0,0,0,0.9)]">Potenzia la tua ricerca</h2>
                 {!rsForceAperta ? (
-                  <div className="relative z-20 mt-0 w-full bg-slate-950/90 px-3 py-2 text-xs font-semibold leading-4 text-white">
+                  <div className="mt-2 w-full rounded-lg bg-slate-900/95 px-2 py-2 text-xs font-semibold leading-4 text-white">
                     <p>La tua scorciatoia per il catalogo: scegli una ricerca e lascia che i prodotti orbitino intorno alla sfera.</p>
                     <p className="mt-1 text-[10px] font-medium text-cyan-200">RS FORCE cerca nel catalogo; Nova AI resta l'assistente intelligente.</p>
                   </div>
                 ) : (
-                  <div className="relative z-20 mt-0 grid w-full grid-cols-2 gap-1.5 bg-slate-950/90 p-2">
+                  <div className="mt-2 grid w-full grid-cols-2 gap-1.5">
                     <a onClick={(e) => e.stopPropagation()} href="/?q=offerta" className="rounded-xl border border-amber-300/50 bg-amber-950/70 p-2 text-[10px] font-bold text-white">🏷️ Cerca offerte</a>
                     <a onClick={(e) => e.stopPropagation()} href="/?q=smartphone" className="rounded-xl border border-cyan-300/50 bg-cyan-950/50 p-2 text-[10px] font-bold text-white">🔎 Smartphone</a>
                     <a onClick={(e) => e.stopPropagation()} href="/?q=cuffie" className="rounded-xl border border-violet-300/50 bg-violet-950/50 p-2 text-[10px] font-bold text-white">🎧 Audio e cuffie</a>
