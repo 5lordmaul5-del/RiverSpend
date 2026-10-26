@@ -7,5 +7,13 @@
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#06b6d4",
-  "lang": "it"
+  "lang": "it",
+  "icons": [
+    {
+      "src": "/icons/shop.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
 }
