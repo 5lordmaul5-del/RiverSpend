@@ -1632,8 +1632,8 @@ export default function Home() {
 
         /* RiverSpend · uniforma i banner del carosello: immagine a pieno riquadro e testi compatti */
         .rs-apps-grid > .rs-banner-slide:not(.rs-hero) {
-          position:relative !important; height:228px !important; min-height:228px !important;
-          max-height:228px !important; box-sizing:border-box !important; overflow:hidden !important;
+          position:relative !important; height:390px !important; min-height:390px !important;
+          max-height:390px !important; box-sizing:border-box !important; overflow:hidden !important;
           border-radius:24px !important;
         }
         .rs-apps-grid > .rs-banner-slide:not(.rs-hero) img {
