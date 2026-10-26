@@ -1043,6 +1043,21 @@ export default function Home() {
               </div>
             </div>
           </a>
+          <a href="/rsfv#concept" aria-label="Esplora RS FutureCity e tutti i concept del futuro RiverSpend" className="rs-banner-slide rs-futurecity-banner group shrink-0 snap-start overflow-hidden rounded-3xl border border-cyan-300/60 bg-slate-950 text-white shadow-xl shadow-cyan-950/20 transition hover:-translate-y-0.5 hover:border-amber-200 focus:outline-none focus:ring-4 focus:ring-cyan-300/70">
+            <div className="relative">
+              <div className="grid grid-cols-2 gap-1 bg-[#061722] p-1">
+                <img src="/rs-future-city-skyline.svg" alt="RS FutureCity: skyline e architettura della città del futuro" className="h-28 w-full rounded-lg object-cover" loading="lazy" decoding="async" />
+                <img src="/rs-future-city-ecology.svg" alt="RS FutureCity: ecologia e spazi verdi" className="h-28 w-full rounded-lg object-cover" loading="lazy" decoding="async" />
+                <img src="/rs-future-city-robot.svg" alt="RS FutureCity: robotica e droidi" className="col-span-2 h-24 w-full rounded-lg object-cover" loading="lazy" decoding="async" />
+              </div>
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950 via-slate-950/95 to-transparent px-4 pb-4 pt-12 sm:px-7 sm:pb-7">
+                <p className="text-xs font-extrabold uppercase tracking-[.24em] text-cyan-200 sm:text-sm">RS · CONCEPT FUTURI</p>
+                <h2 className="mt-1 text-2xl font-black text-white drop-shadow sm:text-4xl">RS FutureCity</h2>
+                <p className="mt-1 max-w-2xl text-sm font-medium text-slate-100 sm:text-base">Città del futuro, ecologia, energia e robotica: esplora le immagini e tutti i concept RiverSpend.</p>
+                <span className="mt-3 inline-flex items-center gap-2 rounded-full bg-amber-300 px-5 py-2.5 text-sm font-extrabold text-slate-950 shadow-lg">ESPLORA FUTURECITY <span aria-hidden="true">↗</span></span>
+              </div>
+            </div>
+          </a>
             <a href="/servizi/ecology#missioni" className="rs-banner-slide rs-ecology-banner rs-world-card rs-campaign-compact border-emerald-400 bg-gradient-to-br from-emerald-950 to-slate-950 text-white"><span className="text-3xl">🌱</span><h2 className="mt-2 text-xl font-extrabold text-white">RiverSpend Ecology</h2><p className="mt-2 text-sm leading-5 text-white">Alberi, terreni, mari, fiumi e biodiversità.</p><span className="mt-auto inline-flex rounded-full bg-emerald-300 px-4 py-2 text-sm font-bold text-slate-950">SCOPRI L’IDEA →</span><small className="mt-2 text-xs font-semibold text-amber-200">In preparazione · Nessuna raccolta attiva</small></a>
             <a href="/servizi/ecology#solidale" className="rs-banner-slide rs-ecology-banner rs-world-card rs-campaign-compact border-rose-400 bg-gradient-to-br from-rose-950 to-slate-950 text-white"><span className="text-3xl">💚</span><h2 className="mt-2 text-xl font-extrabold text-white">RiverSpend Solidale</h2><p className="mt-2 text-sm leading-5 text-white">Aiuto a persone fragili e comunità colpite da emergenze.</p><span className="mt-auto inline-flex rounded-full bg-rose-300 px-4 py-2 text-sm font-bold text-slate-950">SCOPRI L’IDEA →</span><small className="mt-2 text-xs font-semibold text-amber-200">In preparazione · Nessuna raccolta attiva</small></a>
             <a href="/servizi/ecology#future-life" className="rs-banner-slide rs-ecology-banner rs-world-card rs-campaign-compact border-violet-400 bg-gradient-to-br from-violet-950 to-slate-950 text-white"><span className="text-3xl">🏥</span><h2 className="mt-2 text-xl font-extrabold text-white">PiggyBank · Future Life</h2><p className="mt-2 text-sm leading-5 text-white">Ospedali, nuove cure e ricerca scientifica qualificata.</p><span className="mt-auto inline-flex rounded-full bg-violet-300 px-4 py-2 text-sm font-bold text-slate-950">SCOPRI L’IDEA →</span><small className="mt-2 text-xs font-semibold text-amber-200">In preparazione · Nessuna raccolta attiva</small></a>
