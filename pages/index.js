@@ -1171,6 +1171,18 @@ export default function Home() {
               </div>
             </div>
           </a>
+          <a href="/rs-healthy-sport" aria-label="Scopri RS Healthy Sport e RS Longevity: benessere, movimento e salute" className="rs-banner-slide group shrink-0 snap-start overflow-hidden rounded-3xl border border-lime-300/60 bg-emerald-950 text-white shadow-xl shadow-emerald-950/30 transition hover:-translate-y-0.5 hover:border-lime-200 focus:outline-none focus:ring-4 focus:ring-lime-300/70">
+            <div className="relative">
+              <img src="/rs-healthy-sport.svg" alt="RS Healthy Sport: illustrazione dedicata a benessere, movimento e alimentazione equilibrata" className="block aspect-[16/8] w-full object-cover transition duration-500 group-hover:scale-[1.02]" loading="lazy" decoding="async" />
+              <div className="absolute inset-0 bg-gradient-to-t from-emerald-950 via-emerald-950/20 to-transparent"></div>
+              <div className="absolute inset-x-0 bottom-0 p-4 sm:p-7">
+                <p className="text-xs font-extrabold uppercase tracking-[.24em] text-lime-200 sm:text-sm">BENESSERE • SPORT • PREVENZIONE</p>
+                <h2 className="mt-1 text-2xl font-black text-white drop-shadow sm:text-4xl">RS HEALTHY SPORT</h2>
+                <p className="mt-1 max-w-2xl text-sm font-semibold text-emerald-50 sm:text-lg">Prenditi cura di te. Prima di tutto. Scopri anche RS Longevity.</p>
+                <span className="mt-3 inline-flex items-center gap-2 rounded-full bg-lime-200 px-4 py-2 text-[11px] font-extrabold text-emerald-950 sm:text-xs">SCOPRI IL PROGRAMMA →</span>
+              </div>
+            </div>
+          </a>
           <a href="/rs-ocean-worlds" aria-label="Esplora RS Ocean Worlds, i mondi sommersi dell'oceano" className="rs-banner-slide group shrink-0 snap-start overflow-hidden rounded-3xl border border-cyan-300/60 bg-slate-950 text-white shadow-xl shadow-cyan-950/30 transition hover:-translate-y-0.5 hover:border-cyan-200 focus:outline-none focus:ring-4 focus:ring-cyan-300/70">
             <div className="relative">
               <img src="/rs-ocean-worlds.svg" alt="RS Ocean Worlds: viaggio illustrato dalla superficie marina agli abissi" className="block aspect-[16/8] w-full object-cover transition duration-500 group-hover:scale-[1.02]" loading="lazy" decoding="async" />
