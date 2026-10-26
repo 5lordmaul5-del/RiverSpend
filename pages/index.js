@@ -1846,35 +1846,68 @@ export default function Home() {
           margin-bottom:8px !important;
         }
 
-        /* RS FORCE — correzione mirata: immagine luminosa a pieno banner e Palantir protagonista. */
+        /* RS FORCE — immagine a pieno banner: elimina il vuoto nero e mantiene la sfera in primo piano. */
+        #rs-force-card > button {
+          position:relative !important;
+          isolation:isolate !important;
+          background:transparent !important;
+        }
         #rs-force-card .rs-force-stage {
-          background:radial-gradient(ellipse at 50% 38%,#0e7490 0%,#075985 34%,#082f49 66%,#020617 100%) !important;
+          position:absolute !important;
+          inset:0 !important;
+          z-index:0 !important;
+          width:100% !important;
+          height:100% !important;
+          min-height:100% !important;
+          margin:0 !important;
+          border:0 !important;
+          border-radius:0 !important;
+          background:radial-gradient(ellipse at 50% 35%,#0e7490 0%,#075985 38%,#082f49 72%,#020617 100%) !important;
+        }
+        #rs-force-card .rs-force-stage::after {
+          content:"";
+          position:absolute;
+          inset:0;
+          z-index:15;
+          pointer-events:none;
+          background:linear-gradient(180deg,rgba(2,6,23,.02) 0%,rgba(2,6,23,.04) 42%,rgba(2,6,23,.58) 72%,rgba(2,6,23,.94) 100%);
         }
         #rs-force-card .rs-force-stage > img:first-child {
-          transform:scale(2.15) !important;
+          transform:scale(1.12) !important;
           transform-origin:50% 38% !important;
           object-fit:cover !important;
           object-position:50% 38% !important;
           opacity:1 !important;
-          filter:brightness(1.22) saturate(1.18) contrast(1.06) !important;
+          filter:brightness(1.16) saturate(1.2) contrast(1.06) !important;
         }
         #rs-force-card .rs-force-stage > img:nth-child(2) {
-          transform:scale(1.28) !important;
+          transform:scale(1.04) !important;
           object-fit:cover !important;
           object-position:center !important;
-          opacity:.82 !important;
+          opacity:.92 !important;
           mix-blend-mode:screen !important;
         }
         #rs-force-card .rs-palantir {
-          width:160px !important;
-          height:160px !important;
-          flex:0 0 160px !important;
-          transform:translateY(0) !important;
-          font-size:66px !important;
+          width:148px !important;
+          height:148px !important;
+          flex:0 0 148px !important;
+          transform:translateY(-8px) !important;
+          font-size:64px !important;
           box-shadow:0 0 42px 16px rgba(34,211,238,.88), inset 0 0 30px rgba(255,255,255,.82) !important;
         }
+        #rs-force-card .rs-force-title,
+        #rs-force-card h2,
+        #rs-force-card > button > div:not(.rs-force-stage) {
+          position:relative !important;
+          z-index:25 !important;
+        }
         #rs-force-card .rs-force-title {
+          margin-top:auto !important;
+          padding-top:12px !important;
           text-shadow:0 0 10px #22d3ee,0 0 22px #0891b2,0 2px 6px #000 !important;
+        }
+        #rs-force-card h2 {
+          margin-bottom:12px !important;
         }
 
       `}</style>
