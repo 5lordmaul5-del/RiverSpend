@@ -890,26 +890,30 @@ export default function Home() {
 
           <section aria-label="App RiverSpend" className="mb-4 rounded-2xl border border-cyan-200/70 bg-white/90 px-2 py-3 shadow-md">
             <div className="mb-2 text-center text-[11px] font-extrabold uppercase tracking-[.16em] text-slate-700">Le app RiverSpend</div>
-            <div className="grid grid-cols-5 gap-1.5">
-              <a href="/app" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RiverSpendShop e tutte le app">
-                <img src="/icons/riverspendshop-app.jpg" alt="RiverSpendShop" className="h-12 w-12 rounded-xl object-cover shadow-sm ring-1 ring-cyan-200" loading="lazy" />
-                <span className="w-full text-[9px] font-bold leading-tight text-slate-800">Shop</span>
+            <div className="grid grid-cols-6 gap-1">
+              <a href="/app" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RSShop">
+                <img src="/icons/riverspendshop-app.jpg" alt="RSShop" className="h-10 w-10 rounded-lg object-cover shadow-sm ring-1 ring-cyan-200" loading="lazy" />
+                <span className="w-full break-words text-[8px] font-bold leading-tight text-slate-800">RSShop</span>
               </a>
-              <a href="/park" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RiverSpend Park">
-                <img src="/1000187343.png" alt="RiverSpend Park" className="h-12 w-12 rounded-xl object-cover shadow-sm ring-1 ring-cyan-200" loading="lazy" />
-                <span className="w-full text-[9px] font-bold leading-tight text-slate-800">Park</span>
+              <a href="/rs-sound-studio" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RSSoundStudio System ISSA">
+                <img src="/rssoundstudio-issa-banner.jpg" alt="RSSoundStudio System ISSA" className="h-10 w-10 rounded-lg object-cover shadow-sm ring-1 ring-cyan-200" loading="lazy" />
+                <span className="w-full break-words text-[7px] font-bold leading-tight text-slate-800">RSSoundStudio<br />System ISSA</span>
               </a>
-              <a href="/servizi/broadcast" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RiverSpend Streaming">
-                <img src="/Screenshot_2026-10-20-20-11-58-215_com.openai.chatgpt-edit.jpg" alt="RiverSpend Streaming" className="h-12 w-12 rounded-xl object-cover shadow-sm ring-1 ring-amber-300" loading="lazy" />
-                <span className="w-full text-[9px] font-bold leading-tight text-slate-800">Streaming</span>
+              <a href="/servizi/broadcast" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RSStreaming">
+                <img src="/icons/streaming.svg" alt="RSStreaming" className="h-10 w-10 rounded-lg object-contain shadow-sm ring-1 ring-cyan-200" loading="lazy" />
+                <span className="w-full break-words text-[8px] font-bold leading-tight text-slate-800">RSStreaming</span>
               </a>
-              <a href="/rs-sound-studio" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RiverSpend SoundStudio">
-                <img src="/rssoundstudio-issa-banner.jpg" alt="RiverSpend SoundStudio ISSA" className="h-12 w-12 rounded-xl object-cover shadow-sm ring-1 ring-cyan-200" loading="lazy" />
-                <span className="w-full text-[9px] font-bold leading-tight text-slate-800">SoundStudio</span>
+              <a href="/park" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RSPark">
+                <img src="/1000187343.png" alt="RSPark" className="h-10 w-10 rounded-lg object-cover shadow-sm ring-1 ring-cyan-200" loading="lazy" />
+                <span className="w-full break-words text-[8px] font-bold leading-tight text-slate-800">RSPark</span>
               </a>
-              <a href="/rs-control-center" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RSPanelControl">
-                <img src="/1000186325.png" alt="RSPanelControl" className="h-12 w-12 rounded-xl object-cover shadow-sm ring-1 ring-cyan-200" loading="lazy" />
-                <span className="w-full text-[9px] font-bold leading-tight text-slate-800">RSPC</span>
+              <a href="/servizi/music" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RSMusic">
+                <img src="/riverspend-home-river-market.svg" alt="RSMusic" className="h-10 w-10 rounded-lg object-contain shadow-sm ring-1 ring-cyan-200" loading="lazy" />
+                <span className="w-full break-words text-[8px] font-bold leading-tight text-slate-800">RSMusic</span>
+              </a>
+              <a href="/rs-control-center" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RSPC">
+                <img src="/1000186325.png" alt="RSPC" className="h-10 w-10 rounded-lg object-cover shadow-sm ring-1 ring-cyan-200" loading="lazy" />
+                <span className="w-full break-words text-[8px] font-bold leading-tight text-slate-800">RSPC</span>
               </a>
             </div>
             <a href="/app" className="mt-2 block text-center text-[10px] font-semibold text-teal-800 underline underline-offset-2">Istruzioni per installarle da Google Chrome · App Store non ancora disponibile</a>
