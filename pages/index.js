@@ -1171,6 +1171,18 @@ export default function Home() {
               </div>
             </div>
           </a>
+          <a href="/rs-ocean-worlds" aria-label="Esplora RS Ocean Worlds, i mondi sommersi dell'oceano" className="rs-banner-slide group shrink-0 snap-start overflow-hidden rounded-3xl border border-cyan-300/60 bg-slate-950 text-white shadow-xl shadow-cyan-950/30 transition hover:-translate-y-0.5 hover:border-cyan-200 focus:outline-none focus:ring-4 focus:ring-cyan-300/70">
+            <div className="relative">
+              <img src="/rs-ocean-worlds.svg" alt="RS Ocean Worlds: viaggio illustrato dalla superficie marina agli abissi" className="block aspect-[16/8] w-full object-cover transition duration-500 group-hover:scale-[1.02]" loading="lazy" decoding="async" />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
+              <div className="absolute inset-x-0 bottom-0 p-4 sm:p-7">
+                <p className="text-xs font-extrabold uppercase tracking-[.24em] text-cyan-200 sm:text-sm">OCEANI • ABISSI • BIODIVERSITÀ</p>
+                <h2 className="mt-1 text-2xl font-black text-white drop-shadow sm:text-4xl">RS OCEAN WORLDS</h2>
+                <p className="mt-1 max-w-2xl text-sm font-semibold text-cyan-100 sm:text-lg">I mondi sommersi dell’oceano. Un viaggio dalla luce agli abissi.</p>
+                <span className="mt-3 inline-flex items-center gap-2 rounded-full bg-cyan-200 px-4 py-2 text-[11px] font-extrabold text-slate-950 sm:text-xs">INIZIA L’ESPLORAZIONE →</span>
+              </div>
+            </div>
+          </a>
           <a href="/park" aria-label="Scopri RiverSpend Park: apri il catalogo del parco" className="rs-banner-slide rs-park-banner group shrink-0 snap-start overflow-hidden rounded-3xl border border-cyan-300/60 bg-slate-950 shadow-xl shadow-cyan-950/20 transition hover:-translate-y-0.5 hover:border-cyan-200 focus:outline-none focus:ring-4 focus:ring-cyan-300/70">
             <div className="relative">
               <img src="https://raw.githubusercontent.com/5lordmaul5-del/RiverSpend/main/file_00000000070081f4be8d351d407b4017.png" alt="RiverSpend Park: concept del parco con area Terra, area Acqua e attrazioni" className="block aspect-[16/8] w-full object-cover transition duration-500 group-hover:scale-[1.02]" loading="lazy" decoding="async" />
