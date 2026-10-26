@@ -92,7 +92,7 @@ export default function RiverSpendApps() {
           <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,230px),1fr))', gap: 16 }}>
             {apps.map((app) => (
               <article key={app.name} style={{ background: 'rgba(255,255,255,.07)', border: '1px solid rgba(103,232,249,.28)', borderRadius: 22, padding: 22, display: 'flex', flexDirection: 'column', minHeight: 270, boxShadow: '0 12px 32px rgba(0,0,0,.18)' }}>
-                <div aria-hidden="true" style={{ width: 88, height: 88, display: 'grid', placeItems: 'center', overflow: 'hidden', borderRadius: 18, background: '#fff', padding: 5, marginBottom: 16, boxShadow: '0 0 22px rgba(34,211,238,.18)' }}><img src={app.logo} alt={'Logo ' + app.name} style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: 14 }} /></div>
+                <div aria-hidden="true" style={{ width: 88, height: 88, display: 'grid', placeItems: 'center', overflow: 'hidden', borderRadius: 18, background: 'transparent', padding: 0, marginBottom: 16, boxShadow: 'none' }}><img src={app.logo} alt={'Logo ' + app.name} style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: 14 }} /></div>
                 <h2 style={{ fontSize: 21, fontWeight: 850, margin: '0 0 5px' }}>{app.name}</h2>
                 <div style={{ color: '#fbbf24', fontWeight: 700, fontSize: 13, marginBottom: 10 }}>{app.subtitle}</div>
                 <p style={{ color: '#cbd5e1', lineHeight: 1.55, fontSize: 14, flexGrow: 1 }}>{app.description}</p>
