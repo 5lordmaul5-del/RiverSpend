@@ -3,12 +3,18 @@
 import { useEffect, useState } from 'react';
 
 const products = [
-  { icon: '📸', title: 'Foto e ricordi', text: 'Stampe fotografiche, poster, quadri e tele.', tone: 'category-photo' },
-  { icon: '👕', title: 'Abbigliamento', text: 'Magliette, felpe e capi personalizzati.', tone: 'category-wear' },
-  { icon: '🧢', title: 'Cappellini e accessori', text: 'Accessori da personalizzare con le tue immagini.', tone: 'category-cap' },
-  { icon: '☕', title: 'Tazze e regali', text: 'Idee personalizzate per te e per chi ami.', tone: 'category-gift' },
-  { icon: '📱', title: 'Cover e oggetti', text: 'Porta la tua immagine sugli oggetti di ogni giorno.', tone: 'category-objects' },
-  { icon: '🖨️', title: 'Stampa professionale', text: 'In prospettiva: volantini, biglietti, etichette e materiali per attività.', tone: 'category-pro' },
+  { icon: '📸', title: 'Foto e ricordi', text: 'Stampe fotografiche, poster, quadri, tele e fotolibri.', tone: 'category-photo' },
+  { icon: '👕', title: 'Abbigliamento', text: 'Magliette, felpe, polo e capi personalizzati con il logo RiverSpend.', tone: 'category-wear' },
+  { icon: '🧢', title: 'Cappellini e accessori', text: 'Cappellini, occhiali, bandane e accessori personalizzati.', tone: 'category-cap' },
+  { icon: '☕', title: 'Tazze e borracce', text: 'Tazze, borracce e idee regalo per te e per chi ami.', tone: 'category-gift' },
+  { icon: '🧺', title: 'Asciugamani e casa', text: 'Asciugamani, teli mare e articoli per la casa personalizzati.', tone: 'category-home' },
+  { icon: '🎒', title: 'Zaini e borse', text: 'Zaini, shopper, borsoni e sacche personalizzate.', tone: 'category-bags' },
+  { icon: '📱', title: 'Cover e accessori tech', text: 'Cover, auricolari, mousepad e accessori tecnologici.', tone: 'category-tech' },
+  { icon: '🔑', title: 'Portachiavi e penne', text: 'Portachiavi, penne e gadget personalizzati per ogni occasione.', tone: 'category-gadgets' },
+  { icon: '🖨️', title: 'Stampa professionale', text: 'Biglietti da visita, volantini, brochure, etichette e molto altro.', tone: 'category-pro' },
+  { icon: '🎁', title: 'Prodotti personalizzati', text: 'Cuscini, puzzle, calendari, quaderni e articoli unici.', tone: 'category-custom' },
+  { icon: '💝', title: 'Regali speciali', text: 'Idee regalo personalizzate per compleanni e occasioni speciali.', tone: 'category-gifts' },
+  { icon: '🏪', title: 'Per aziende e attività', text: 'Abbigliamento, gadget e materiali promozionali con il marchio.', tone: 'category-business' },
 ];
 
 export default function RiverSpendSprint() {
@@ -41,7 +47,7 @@ export default function RiverSpendSprint() {
           <p className="sprint-eyebrow">LE TUE IDEE, PRONTE A PRENDERE FORMA</p>
           <h1><span>RiverSpend</span><span className="sprint-word"><small>s</small>Print</span></h1>
           <p className="sprint-tagline">La tua immagine. La tua idea. Il tuo prodotto.</p>
-          <p className="sprint-description">Stiamo preparando uno spazio per trasformare le tue fotografie e i tuoi disegni in stampe, abbigliamento e regali personalizzati.</p>
+          <p className="sprint-description">Dalle magliette agli asciugamani, dai cappellini a zaini, portachiavi e penne: stiamo preparando una vetrina per prodotti personalizzati con il marchio RiverSpend e con le tue immagini.</p>
           <a className="sprint-cta" href="#sprint-products">Scopri cosa potrai creare ↓</a>
         </div>
         <div className="sprint-preview">
