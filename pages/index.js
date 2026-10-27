@@ -1930,6 +1930,103 @@ export default function Home() {
         @keyframes rs-force-float { 0%,100% { translate:0 0; } 50% { translate:0 -10px; } }
         @keyframes rs-force-product-glow { from { transform:scale(.96); } to { transform:scale(1.06); } }
 
+
+        /* RS FORCE — regole finali unificate: questa sezione prevale sulle vecchie regole duplicate. */
+        #rs-force-card {
+          position:relative !important;
+          height:390px !important;
+          min-height:390px !important;
+          max-height:390px !important;
+          overflow:hidden !important;
+          background:#061522 !important;
+        }
+        #rs-force-card > button {
+          position:relative !important;
+          display:flex !important;
+          width:100% !important;
+          height:100% !important;
+          min-height:0 !important;
+          flex:1 1 auto !important;
+          flex-direction:column !important;
+          justify-content:flex-start !important;
+          overflow:hidden !important;
+          isolation:isolate !important;
+          background:#061522 !important;
+        }
+        #rs-force-card .rs-force-stage {
+          position:absolute !important;
+          inset:0 !important;
+          z-index:0 !important;
+          display:flex !important;
+          width:100% !important;
+          height:100% !important;
+          min-height:100% !important;
+          max-height:none !important;
+          flex:0 0 100% !important;
+          margin:0 !important;
+          overflow:hidden !important;
+          align-items:center !important;
+          justify-content:center !important;
+          border:0 !important;
+          border-radius:0 !important;
+        }
+        #rs-force-card .rs-force-stage > img:first-child {
+          position:absolute !important;
+          inset:0 !important;
+          width:100% !important;
+          height:100% !important;
+          object-fit:cover !important;
+          object-position:center !important;
+          opacity:.5 !important;
+          transform:none !important;
+        }
+        #rs-force-card .rs-force-stage > img:nth-of-type(2) {
+          position:absolute !important;
+          inset:0 !important;
+          width:100% !important;
+          height:100% !important;
+          object-fit:fill !important;
+          object-position:center !important;
+          opacity:1 !important;
+          mix-blend-mode:screen !important;
+          pointer-events:none !important;
+        }
+        #rs-force-card .rs-force-stage > span[aria-hidden="true"] {
+          position:absolute !important;
+          inset:0 !important;
+          z-index:3 !important;
+        }
+        #rs-force-card .rs-force-stage .rs-palantir {
+          position:relative !important;
+          z-index:30 !important;
+          width:116px !important;
+          height:116px !important;
+          flex:0 0 116px !important;
+          transform:translateY(-8px) !important;
+        }
+        #rs-force-card .rs-force-stage .rs-force-orbit { z-index:25 !important; }
+        #rs-force-card .rs-force-title,
+        #rs-force-card h2,
+        #rs-force-card > button > div:not(.rs-force-stage) {
+          position:relative !important;
+          z-index:40 !important;
+          flex-shrink:0 !important;
+        }
+        #rs-force-card .rs-force-title {
+          margin-top:auto !important;
+          padding-top:12px !important;
+          text-shadow:0 0 10px #22d3ee,0 0 22px #0891b2,0 2px 6px #000 !important;
+        }
+        #rs-force-card h2 {
+          margin-top:6px !important;
+          margin-bottom:8px !important;
+          text-shadow:0 2px 5px #000 !important;
+        }
+        #rs-force-card > button > div:not(.rs-force-stage) {
+          margin-bottom:8px !important;
+          background:rgba(2,12,24,.9) !important;
+        }
+
       `}</style>
 
       <section id="rs-download-apps" className="rs-download-apps" aria-labelledby="rs-download-title">
