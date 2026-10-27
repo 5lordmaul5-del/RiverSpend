@@ -1020,7 +1020,7 @@ export default function Home() {
                       </div>
                     ) : null;
                   })}
-                  <span aria-label="Nucleo energetico RiverSpend" className="rs-palantir relative z-10 flex h-24 w-24 shrink-0 items-center justify-center rounded-full border-2 border-cyan-100/90" style={{animation:'rs-palantir-pulse 3s ease-in-out infinite'}}><span className="absolute inset-[-8px] rounded-full border-2 border-cyan-100/80 animate-spin" style={{animationDuration:'7s'}} /><span className="absolute inset-[-15px] rounded-full border border-sky-100/80 animate-spin" style={{animationDuration:'11s',animationDirection:'reverse'}} /><span className="absolute inset-[8px] rounded-full border border-white/80" /><span className="absolute inset-0 rounded-full" style={{background:'radial-gradient(circle at 32% 25%, #ffffff 0%, #ecfeff 9%, #a5f3fc 22%, #22d3ee 42%, #0891b2 68%, #075985 100%)',boxShadow:'0 0 34px 12px rgba(103,232,249,.8), inset 0 0 22px rgba(255,255,255,.85)'}} /></span>
+
                 </div>
                 <p className="rs-force-title mt-auto min-h-4 shrink-0 px-2 pt-2 text-xl font-black uppercase tracking-[0.16em] text-cyan-100">⚡ RS FORCE ⚡</p>
                 <h2 className="mt-1 min-h-[44px] shrink-0 px-2 text-lg font-black leading-tight text-white [text-shadow:0_2px_5px_rgba(0,0,0,0.9)]">Potenzia la tua ricerca</h2>
