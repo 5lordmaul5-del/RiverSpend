@@ -1931,6 +1931,68 @@ export default function Home() {
         @keyframes rs-force-product-glow { from { transform:scale(.96); } to { transform:scale(1.06); } }
 
 
+        /* RiverSpend mobile — contenuto leggibile dentro ogni banner, senza tagliare i testi. */
+        #rs-seller-card {
+          position:relative !important;
+          display:flex !important;
+          flex-direction:column !important;
+          align-items:center !important;
+          justify-content:flex-end !important;
+          gap:0 !important;
+          padding:12px 10px !important;
+          text-align:center !important;
+        }
+        #rs-seller-card > img { position:absolute !important; inset:0 !important; width:100% !important; height:100% !important; object-fit:cover !important; object-position:center !important; }
+        #rs-seller-card > span[aria-hidden="true"] { position:absolute !important; inset:0 !important; z-index:1 !important; }
+        #rs-seller-card > p,
+        #rs-seller-card > h2,
+        #rs-seller-card > span:not([aria-hidden="true"]) {
+          position:relative !important;
+          z-index:2 !important;
+          display:block !important;
+          width:100% !important;
+          max-width:100% !important;
+          min-width:0 !important;
+          margin-left:0 !important;
+          margin-right:0 !important;
+          overflow-wrap:anywhere !important;
+          white-space:normal !important;
+          text-align:center !important;
+        }
+        #rs-seller-card > p:first-of-type { margin-top:0 !important; font-size:10px !important; line-height:1.25 !important; }
+        #rs-seller-card > h2 { font-size:13px !important; line-height:1.2 !important; margin-top:5px !important; }
+        #rs-seller-card > p:nth-of-type(2) { font-size:11px !important; line-height:1.3 !important; margin-top:5px !important; }
+        #rs-seller-card > .rs-feature-action { min-height:32px !important; padding:7px 9px !important; font-size:10px !important; line-height:1.2 !important; margin-top:9px !important; }
+        #rs-seller-card > p:last-of-type { font-size:9px !important; line-height:1.25 !important; margin-top:6px !important; }
+
+        /* RS FORCE — lascia leggibile la scena: fondo luminoso, fulmini contenuti e sfera sopra. */
+        #rs-force-card .rs-force-stage {
+          background:radial-gradient(ellipse at 50% 42%,#0e7490 0%,#06445d 45%,#041522 100%) !important;
+        }
+        #rs-force-card .rs-force-stage > img:first-child {
+          object-fit:contain !important;
+          object-position:center !important;
+          opacity:.78 !important;
+          filter:brightness(1.2) saturate(1.25) !important;
+        }
+        #rs-force-card .rs-force-stage > img:nth-of-type(2) {
+          object-fit:contain !important;
+          opacity:.92 !important;
+          mix-blend-mode:screen !important;
+        }
+        #rs-force-card .rs-force-stage .rs-palantir {
+          width:120px !important;
+          height:120px !important;
+          flex:0 0 120px !important;
+          transform:translateY(-4px) !important;
+        }
+        @media (max-width:640px) {
+          #rs-seller-card { padding:10px 9px !important; }
+          #rs-seller-card > h2 { font-size:12px !important; }
+          #rs-seller-card > .rs-feature-action { font-size:9px !important; }
+        }
+
+
         /* RS FORCE — regole finali unificate: questa sezione prevale sulle vecchie regole duplicate. */
         #rs-force-card {
           position:relative !important;
