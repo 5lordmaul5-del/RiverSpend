@@ -3,12 +3,12 @@
 import { useEffect, useState } from 'react';
 
 const products = [
-  { icon: '📸', title: 'Foto e ricordi', text: 'Stampe fotografiche, poster, quadri e tele.', tone: 'photo' },
-  { icon: '👕', title: 'Abbigliamento', text: 'Magliette, felpe e capi personalizzati.', tone: 'wear' },
-  { icon: '🧢', title: 'Cappellini e accessori', text: 'Accessori da personalizzare con le tue immagini.', tone: 'cap' },
-  { icon: '☕', title: 'Tazze e regali', text: 'Idee personalizzate per te e per chi ami.', tone: 'gift' },
-  { icon: '📱', title: 'Cover e oggetti', text: 'Porta la tua immagine sugli oggetti di ogni giorno.', tone: 'objects' },
-  { icon: '🖨️', title: 'Stampa professionale', text: 'In prospettiva: volantini, biglietti, etichette e materiali per attività.', tone: 'pro' },
+  { icon: '📸', title: 'Foto e ricordi', text: 'Stampe fotografiche, poster, quadri e tele.', tone: 'category-photo' },
+  { icon: '👕', title: 'Abbigliamento', text: 'Magliette, felpe e capi personalizzati.', tone: 'category-wear' },
+  { icon: '🧢', title: 'Cappellini e accessori', text: 'Accessori da personalizzare con le tue immagini.', tone: 'category-cap' },
+  { icon: '☕', title: 'Tazze e regali', text: 'Idee personalizzate per te e per chi ami.', tone: 'category-gift' },
+  { icon: '📱', title: 'Cover e oggetti', text: 'Porta la tua immagine sugli oggetti di ogni giorno.', tone: 'category-objects' },
+  { icon: '🖨️', title: 'Stampa professionale', text: 'In prospettiva: volantini, biglietti, etichette e materiali per attività.', tone: 'category-pro' },
 ];
 
 export default function RiverSpendSprint() {
@@ -49,7 +49,7 @@ export default function RiverSpendSprint() {
           <div className="sprint-orbit sprint-orbit-two" />
           <div className="sprint-product-card shirt"><span>👕</span><b>LA TUA FOTO</b></div>
           <div className="sprint-product-card mug"><span>☕</span></div>
-          <div className="sprint-product-card photo"><span>🖼️</span></div>
+          <div className="sprint-product-card sprint-preview-photo"><span>🖼️</span></div>
           <div className="sprint-speed">sPRINT<br/><small>CREA · STAMPA · SORPRENDI</small></div>
         </div>
       </section>
@@ -111,10 +111,10 @@ export default function RiverSpendSprint() {
         .sprint-preview{position:relative;min-height:360px;border-radius:32px;background:radial-gradient(circle at 45% 35%,#b9f6f5,#2ac5d0 50%,#076c82);overflow:hidden;box-shadow:0 24px 60px #075b6a24}
         .sprint-orbit{position:absolute;border:1px solid #ffffff80;border-radius:50%;width:320px;height:320px;left:50%;top:45%;transform:translate(-50%,-50%) rotate(-20deg)}.sprint-orbit-two{width:410px;height:220px;transform:translate(-50%,-50%) rotate(32deg)}
         .sprint-product-card{position:absolute;display:flex;align-items:center;justify-content:center;flex-direction:column;border:1px solid #ffffffc9;background:#ffffffed;box-shadow:0 12px 30px #003c4b30;border-radius:20px;color:#073443}
-        .sprint-product-card span{font-size:48px}.sprint-product-card b{font-size:10px;letter-spacing:.12em}.shirt{width:116px;height:142px;left:12%;top:19%;transform:rotate(-9deg)}.mug{width:100px;height:100px;right:11%;top:18%;transform:rotate(8deg)}.photo{width:100px;height:108px;left:22%;bottom:12%;transform:rotate(8deg)}
+        .sprint-product-card span{font-size:48px}.sprint-product-card b{font-size:10px;letter-spacing:.12em}.shirt{width:116px;height:142px;left:12%;top:19%;transform:rotate(-9deg)}.mug{width:100px;height:100px;right:11%;top:18%;transform:rotate(8deg)}.sprint-preview-photo{width:100px;height:108px;left:22%;bottom:12%;transform:rotate(8deg)}
         .sprint-speed{position:absolute;right:8%;bottom:13%;color:white;font-size:27px;line-height:1;font-weight:1000;letter-spacing:-.05em;text-align:center;text-shadow:0 3px 12px #00404a66}.sprint-speed small{font-size:8px;letter-spacing:.14em}
         .sprint-products{padding:46px 22px 54px;background:white}.sprint-section-head{max-width:1180px;margin:0 auto 24px}.sprint-section-head h2,.sprint-upload h2,.sprint-partners h2{font-size:clamp(27px,4vw,40px);letter-spacing:-.04em;margin:0 0 10px}.sprint-section-head>p:last-child{color:#5c7279}
-        .sprint-grid{max-width:1180px;margin:auto;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.sprint-card{border:1px solid #d7e9eb;border-radius:22px;padding:22px;background:linear-gradient(145deg,#fff,#f2fbfc);min-width:0}.sprint-card-icon{font-size:36px}.sprint-card h3{font-size:18px;margin:13px 0 7px}.sprint-card p{font-size:14px;line-height:1.55;color:#526d74;min-height:44px}.sprint-coming{display:inline-block;margin-top:8px;padding:7px 9px;border-radius:999px;background:#fff0c6;color:#78570b;font-size:9px;font-weight:900;letter-spacing:.12em}
+        .sprint-grid{max-width:1180px;margin:auto;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.sprint-card{box-sizing:border-box;position:relative;display:flex;flex-direction:column;align-items:flex-start;transform:none!important;rotate:none!important;writing-mode:horizontal-tb;border:1px solid #d7e9eb;border-radius:22px;padding:22px;background:linear-gradient(145deg,#fff,#f2fbfc);min-width:0;overflow:hidden}.sprint-card-icon{font-size:36px}.sprint-card h3{font-size:18px;margin:13px 0 7px}.sprint-card p{font-size:14px;line-height:1.55;color:#526d74;min-height:44px;margin:0 0 8px;width:100%;overflow-wrap:anywhere}.sprint-card h3{width:100%;line-height:1.35;overflow-wrap:anywhere}.sprint-coming{align-self:flex-start;max-width:100%;box-sizing:border-box;white-space:normal;line-height:1.35}.sprint-coming{display:inline-block;margin-top:8px;padding:7px 9px;border-radius:999px;background:#fff0c6;color:#78570b;font-size:9px;font-weight:900;letter-spacing:.12em}
         .sprint-upload{max-width:1136px;margin:42px auto;padding:28px;display:grid;grid-template-columns:1fr .8fr;gap:28px;align-items:center;border-radius:28px;background:#e2f7f7;border:1px solid #b5e6e7}.sprint-upload p:not(.sprint-eyebrow){color:#49656d;line-height:1.6;font-size:14px}.sprint-upload input{display:block;margin-top:15px;max-width:100%;font-size:13px}.sprint-upload-button{cursor:pointer;margin-top:8px}.sprint-file-name{overflow-wrap:anywhere;font-size:12px!important}.sprint-image-preview{min-height:260px;display:flex;align-items:center;justify-content:center;border:2px dashed #83cfd2;border-radius:22px;background:#ffffffa6;overflow:hidden}.sprint-image-preview img{display:block;width:100%;max-height:360px;object-fit:contain}.sprint-empty-preview{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;color:#548188}.sprint-empty-preview span{font-size:48px}.sprint-empty-preview b{font-size:13px}
         .sprint-partners{max-width:1136px;margin:0 auto;padding:20px 22px 54px}.sprint-partner-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:20px 0}.sprint-partner-row>div{padding:20px;border-radius:18px;border:1px solid #c9e5e8;background:white;display:flex;flex-direction:column;gap:5px}.sprint-partner-row strong{font-size:22px;color:#087f89}.sprint-partner-row span{font-size:13px;color:#61767b}.sprint-disclaimer{font-size:12px;line-height:1.6;color:#60767b;background:#fff8df;border-radius:14px;padding:14px}
         .sprint-footer{text-align:center;padding:24px 12px;background:#06313e;color:#bfeef0;font-size:12px;letter-spacing:.08em}.sprint-footer b{color:#f2c65d}
