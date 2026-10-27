@@ -1012,8 +1012,8 @@ export default function Home() {
                   {rsForceProdottiRandom.map((p, index) => {
                     const image = p.immagini?.[0];
                     return image ? (
-                      <div key={'force-orbit-' + p.id} className="rs-force-orbit" style={{'--orbit-radius': ['78px','48px','88px','58px','70px','42px','82px','52px'][index % 8], '--orbit-duration': (6 + (index % 4) * 1.2) + 's', animationDelay: (-index * 0.85) + 's'}}>
-                        <a href={'/prodotto/' + encodeURIComponent(p.id)} onClick={(e) => e.stopPropagation()} aria-label={'RS Force: ' + (p.titolo || 'prodotto')} className="rs-force-product absolute flex h-11 w-11 items-center justify-center overflow-hidden rounded-xl border border-cyan-200/80 bg-white p-0.5 shadow-lg" style={{left:'var(--orbit-radius)', top:'-22px'}}>
+                      <div key={'force-orbit-' + p.id} className="rs-force-orbit" style={{'--orbit-radius': ['64px','40px','72px','48px','60px','36px','68px','44px'][index % 8], '--orbit-duration': (6 + (index % 4) * 1.2) + 's', animationDelay: (-index * 0.85) + 's'}}>
+                        <a href={'/prodotto/' + encodeURIComponent(p.id)} onClick={(e) => e.stopPropagation()} aria-label={'RS Force: ' + (p.titolo || 'prodotto')} className="rs-force-product absolute flex h-14 w-14 items-center justify-center overflow-hidden rounded-xl border border-cyan-200/80 bg-white p-0.5 shadow-lg" style={{left:'var(--orbit-radius)', top:'-28px'}}>
                           <img src={image} alt="" className="h-full w-full object-contain" />
                         </a>
                       </div>
@@ -2164,13 +2164,13 @@ export default function Home() {
         #rs-force-card > button {
           position:relative !important; display:flex !important; flex-direction:column !important;
           align-items:center !important; justify-content:flex-start !important; gap:0 !important;
-          width:100% !important; height:100% !important; padding:0 0 10px !important;
+          width:100% !important; height:100% !important; padding:0 0 4px !important;
           overflow:hidden !important; isolation:isolate !important;
         }
         #rs-force-card .rs-force-stage {
           position:relative !important; inset:auto !important; z-index:1 !important;
-          display:flex !important; flex:0 0 174px !important; width:100% !important;
-          height:174px !important; min-height:174px !important; max-height:174px !important;
+          display:flex !important; flex:0 0 200px !important; width:100% !important;
+          height:200px !important; min-height:200px !important; max-height:200px !important;
           margin:0 !important; order:0 !important; align-items:center !important; justify-content:center !important;
           overflow:hidden !important; border:0 !important; border-radius:12px 12px 0 0 !important;
           perspective:900px !important; transform-style:preserve-3d !important;
@@ -2208,19 +2208,19 @@ export default function Home() {
         #rs-force-card .rs-palantir > span { pointer-events:none; }
         #rs-force-card .rs-force-title {
           position:relative !important; z-index:5 !important; order:1 !important; flex:0 0 auto !important;
-          width:100% !important; margin:8px 0 0 !important; padding:0 8px !important;
+          width:100% !important; margin:4px 0 0 !important; padding:0 8px !important;
           font-size:21px !important; line-height:1.15 !important; color:#ecfeff !important;
           text-shadow:0 0 8px #22d3ee,0 2px 5px rgba(0,50,70,.7) !important;
         }
         #rs-force-card > button > h2 {
           position:relative !important; z-index:5 !important; order:2 !important; flex:0 0 auto !important;
-          margin:5px 0 8px !important; padding:0 8px !important; font-size:17px !important;
+          margin:3px 0 4px !important; padding:0 8px !important; font-size:17px !important;
           line-height:1.2 !important; color:#fff !important; text-shadow:0 2px 5px rgba(0,50,70,.65) !important;
         }
         #rs-force-card > button > div:not(.rs-force-stage) {
           position:relative !important; z-index:5 !important; order:3 !important; display:block !important;
           flex:0 0 auto !important; width:calc(100% - 12px) !important; max-width:calc(100% - 12px) !important;
-          margin:0 6px 6px !important; padding:8px !important; border:1px solid rgba(207,250,254,.38) !important;
+          margin:0 6px 3px !important; padding:5px !important; border:1px solid rgba(207,250,254,.38) !important;
           border-radius:10px !important; background:rgba(8,145,178,.72) !important;
           color:#fff !important; box-sizing:border-box !important; white-space:normal !important;
         }
@@ -2229,8 +2229,8 @@ export default function Home() {
           color:#ecfeff !important; background:transparent !important; overflow-wrap:anywhere !important; white-space:normal !important;
         }
         @media (max-width:640px) {
-          #rs-force-card { height:390px !important; min-height:390px !important; max-height:390px !important; }
-          #rs-force-card .rs-force-stage { flex-basis:174px !important; height:174px !important; min-height:174px !important; max-height:174px !important; }
+          #rs-force-card { height:370px !important; min-height:370px !important; max-height:370px !important; }
+          #rs-force-card .rs-force-stage { flex-basis:200px !important; height:200px !important; min-height:200px !important; max-height:200px !important; }
           #rs-force-card .rs-force-title { font-size:20px !important; }
           #rs-force-card > button > h2 { font-size:16px !important; }
         }
