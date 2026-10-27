@@ -1846,71 +1846,93 @@ export default function Home() {
           margin-bottom:8px !important;
         }
 
-        /* RS FORCE WOW — arte a piena card, Palantir e prodotti fluttuanti ben visibili. */
+        /* RS FORCE — correzione livelli: foto visibile e Palantir sempre sopra l'immagine. */
         #rs-force-card > button {
           position:relative !important;
           isolation:isolate !important;
-          background:transparent !important;
+          background:#06283a !important;
         }
         #rs-force-card .rs-force-stage {
           position:absolute !important;
           inset:0 !important;
-          z-index:0 !important;
+          z-index:1 !important;
+          display:flex !important;
           width:100% !important;
           height:100% !important;
           min-height:100% !important;
           margin:0 !important;
+          align-items:center !important;
+          justify-content:center !important;
+          overflow:hidden !important;
           border:0 !important;
           border-radius:0 !important;
-          background:radial-gradient(ellipse at 50% 38%,#67e8f9 0%,#0891b2 24%,#075985 54%,#07152d 100%) !important;
+          background:radial-gradient(ellipse at 50% 40%,#67e8f9 0%,#0891b2 28%,#075985 58%,#06283a 100%) !important;
         }
         #rs-force-card .rs-force-stage::after {
           content:"";
           position:absolute;
           inset:0;
-          z-index:15;
+          z-index:5;
           pointer-events:none;
-          background:linear-gradient(180deg,rgba(2,6,23,.02) 0%,rgba(2,6,23,.02) 55%,rgba(2,6,23,.18) 76%,rgba(2,6,23,.46) 100%) !important;
+          background:linear-gradient(180deg,rgba(2,6,23,0) 0%,rgba(2,6,23,.03) 58%,rgba(2,6,23,.24) 100%) !important;
         }
         #rs-force-card .rs-force-stage > img:first-child {
-          transform:scale(1.08) !important;
-          transform-origin:50% 40% !important;
+          position:absolute !important;
+          inset:0 !important;
+          z-index:1 !important;
+          width:100% !important;
+          height:100% !important;
           object-fit:cover !important;
-          object-position:50% 40% !important;
+          object-position:center 38% !important;
           opacity:1 !important;
-          filter:brightness(1.38) saturate(1.32) contrast(1.04) !important;
+          transform:none !important;
+          filter:brightness(1.45) saturate(1.35) contrast(1.05) !important;
         }
-        #rs-force-card .rs-force-stage > img:nth-child(2) {
-          transform:scale(1.08) !important;
+        #rs-force-card .rs-force-stage > span[aria-hidden="true"] {
+          position:absolute !important;
+          inset:0 !important;
+          z-index:3 !important;
+          background:radial-gradient(circle at 50% 38%,rgba(34,211,238,.22),transparent 68%) !important;
+        }
+        #rs-force-card .rs-force-stage > img:nth-of-type(2) {
+          position:absolute !important;
+          inset:0 !important;
+          z-index:4 !important;
+          width:100% !important;
+          height:100% !important;
           object-fit:cover !important;
-          object-position:center !important;
           opacity:1 !important;
           mix-blend-mode:screen !important;
+          pointer-events:none !important;
         }
-        #rs-force-card .rs-palantir {
+        #rs-force-card .rs-force-stage .rs-palantir {
+          position:relative !important;
+          z-index:30 !important;
           width:150px !important;
           height:150px !important;
           flex:0 0 150px !important;
-          transform:translateY(-4px) !important;
+          transform:translateY(-10px) !important;
           font-size:66px !important;
+          color:white !important;
           background:radial-gradient(circle at 30% 24%,#fff 0%,#a5f3fc 9%,#22d3ee 23%,#075985 47%,#07152d 72%,#020617 100%) !important;
           box-shadow:0 0 48px 20px rgba(34,211,238,.95),0 0 85px 28px rgba(8,145,178,.6),inset 0 0 30px rgba(255,255,255,.9) !important;
-          animation:rs-palantir-pulse 2.2s ease-in-out infinite, rs-force-float 4s ease-in-out infinite !important;
+          animation:rs-palantir-pulse 2.2s ease-in-out infinite,rs-force-float 4s ease-in-out infinite !important;
         }
-        #rs-force-card .rs-force-orbit {
-          z-index:22 !important;
-          filter:drop-shadow(0 0 10px rgba(34,211,238,.95));
+        #rs-force-card .rs-force-stage .rs-force-orbit {
+          position:absolute !important;
+          z-index:25 !important;
+          filter:drop-shadow(0 0 10px rgba(34,211,238,.95)) !important;
         }
-        #rs-force-card .rs-force-product {
-          animation:rs-force-product-glow 2s ease-in-out infinite alternate;
-          border-width:2px !important;
+        #rs-force-card .rs-force-stage .rs-force-product {
+          border:2px solid #a5f3fc !important;
+          animation:rs-force-product-glow 2s ease-in-out infinite alternate !important;
           box-shadow:0 0 18px rgba(34,211,238,.95) !important;
         }
         #rs-force-card .rs-force-title,
         #rs-force-card h2,
         #rs-force-card > button > div:not(.rs-force-stage) {
           position:relative !important;
-          z-index:25 !important;
+          z-index:40 !important;
         }
         #rs-force-card .rs-force-title {
           margin-top:auto !important;
@@ -1918,14 +1940,8 @@ export default function Home() {
           text-shadow:0 0 10px #22d3ee,0 0 22px #0891b2,0 2px 6px #000 !important;
         }
         #rs-force-card h2 { margin-bottom:12px !important; }
-        @keyframes rs-force-float {
-          0%,100% { translate:0 0; }
-          50% { translate:0 -10px; }
-        }
-        @keyframes rs-force-product-glow {
-          from { transform:scale(.96); }
-          to { transform:scale(1.06); }
-        }
+        @keyframes rs-force-float { 0%,100% { translate:0 0; } 50% { translate:0 -10px; } }
+        @keyframes rs-force-product-glow { from { transform:scale(.96); } to { transform:scale(1.06); } }
 
       `}</style>
 
