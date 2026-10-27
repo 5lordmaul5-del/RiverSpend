@@ -8,4 +8,4 @@
 <path d="M229 215l43-28 43 28v55h-86z" fill="url(#gold)" stroke="#fff0a0" stroke-width="4" stroke-linejoin="round"/>
 <path d="M272 187v83m-43-55 43 27 43-27" fill="none" stroke="#8a5b00" stroke-width="5" stroke-linejoin="round"/>
 <text x="256" y="132" text-anchor="middle" font-family="Arial,sans-serif" font-size="58" font-weight="900" fill="url(#gold)" stroke="#6d4a00" stroke-width="1">RS</text>
-</svg>
+<g id="riverspend-app-label"><rect x="16" y="14" width="480" height="52" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/><text x="256" y="48" text-anchor="middle" font-family="Arial,sans-serif" font-size="25" font-weight="800" fill="#000000">RiverSpendShop</text></g></svg>
