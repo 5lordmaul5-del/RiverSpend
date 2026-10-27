@@ -1008,20 +1008,19 @@ export default function Home() {
             <section id="rs-force-card" className="rs-feature-card relative h-[400px] shrink-0 w-[280px] snap-start rs-force-card overflow-hidden rounded-2xl border-2 border-cyan-300 bg-gradient-to-b from-slate-950 via-cyan-950 to-indigo-950 p-0 text-center shadow-lg shadow-cyan-950/40">
               <button type="button" onClick={() => { if (rsForceAperta) setRsForceAperta(false); else apriRsForce(); }} className="relative flex h-full w-full flex-col items-center overflow-hidden rounded-xl bg-slate-950 text-center">
                 <div className="rs-force-stage rs-feature-media absolute inset-0 z-0 flex h-full min-h-full w-full items-center justify-center overflow-hidden rounded-xl border-0 bg-gradient-to-br from-cyan-500 via-cyan-950 to-indigo-950">
-                  <img src="/rs-force.jpg" alt="RS FORCE: sfera energetica RiverSpend blu e oro" className="absolute inset-0 h-full w-full object-cover object-center opacity-35" />
                   <span aria-hidden="true" className="pointer-events-none absolute inset-0 z-10 bg-[radial-gradient(circle_at_center,rgba(34,211,238,0.28),transparent_58%)]" />
-                  <img src="/rs-force-lightning.svg?v=2" alt="" aria-hidden="true" className="pointer-events-none absolute inset-0 z-10 h-full w-full object-cover opacity-100 mix-blend-screen" />
-                  {rsForceAperta && rsForceProdottiRandom.map((p, index) => {
+                  <img src="/rs-force-lightning.svg?v=2" alt="" aria-hidden="true" className="pointer-events-none absolute inset-0 z-30 h-full w-full object-cover opacity-100 mix-blend-screen" />
+                  {rsForceProdottiRandom.map((p, index) => {
                     const image = p.immagini?.[0];
                     return image ? (
-                      <div key={'force-orbit-' + p.id} className="rs-force-orbit z-10" style={{'--orbit-radius': index % 2 === 0 ? '78px' : '48px', '--orbit-duration': (index % 2 === 0 ? 7 : 5) + 's', animationDelay: (-index * 1.1) + 's'}}>
+                      <div key={'force-orbit-' + p.id} className="rs-force-orbit" style={{'--orbit-radius': index % 2 === 0 ? '78px' : '48px', '--orbit-duration': (index % 2 === 0 ? 7 : 5) + 's', animationDelay: (-index * 1.1) + 's'}}>
                         <a href={'/prodotto/' + encodeURIComponent(p.id)} onClick={(e) => e.stopPropagation()} aria-label={'RS Force: ' + (p.titolo || 'prodotto')} className="rs-force-product absolute flex h-11 w-11 items-center justify-center overflow-hidden rounded-xl border border-cyan-200/80 bg-white p-0.5 shadow-lg" style={{left:0, top:0}}>
                           <img src={image} alt="" className="h-full w-full object-contain" />
                         </a>
                       </div>
                     ) : null;
                   })}
-                  <span aria-label="Palantir energetico RiverSpend" className="rs-palantir relative z-20 flex h-36 w-36 shrink-0 translate-y-7 items-center justify-center rounded-full border-2 border-cyan-100/90 bg-[radial-gradient(circle_at_32%_25%,#ffffff_0%,#a5f3fc_8%,#22d3ee_20%,#075985_43%,#07152d_68%,#020617_100%)] text-6xl shadow-[0_0_32px_12px_rgba(34,211,238,.78),inset_0_0_28px_rgba(255,255,255,.75)]" style={{animation:'rs-palantir-pulse 3s ease-in-out infinite'}}>🔮<span className="absolute inset-[-8px] rounded-full border-2 border-cyan-200/70 animate-spin" style={{animationDuration:'7s'}} /><span className="absolute inset-[-15px] rounded-full border border-sky-300/60 animate-spin" style={{animationDuration:'11s',animationDirection:'reverse'}} /></span>
+                  <span aria-label="Nucleo energetico RiverSpend" className="rs-palantir relative z-10 flex h-24 w-24 shrink-0 items-center justify-center rounded-full border-2 border-cyan-100/90" style={{animation:'rs-palantir-pulse 3s ease-in-out infinite'}}><span className="absolute inset-[-8px] rounded-full border-2 border-cyan-100/80 animate-spin" style={{animationDuration:'7s'}} /><span className="absolute inset-[-15px] rounded-full border border-sky-100/80 animate-spin" style={{animationDuration:'11s',animationDirection:'reverse'}} /><span className="absolute inset-[8px] rounded-full border border-white/80" /><span className="absolute inset-0 rounded-full" style={{background:'radial-gradient(circle at 32% 25%, #ffffff 0%, #ecfeff 9%, #a5f3fc 22%, #22d3ee 42%, #0891b2 68%, #075985 100%)',boxShadow:'0 0 34px 12px rgba(103,232,249,.8), inset 0 0 22px rgba(255,255,255,.85)'}} /></span>
                 </div>
                 <p className="rs-force-title mt-auto min-h-4 shrink-0 px-2 pt-2 text-xl font-black uppercase tracking-[0.16em] text-cyan-100">⚡ RS FORCE ⚡</p>
                 <h2 className="mt-1 min-h-[44px] shrink-0 px-2 text-lg font-black leading-tight text-white [text-shadow:0_2px_5px_rgba(0,0,0,0.9)]">Potenzia la tua ricerca</h2>
@@ -2158,18 +2157,16 @@ export default function Home() {
 
 
 
-        /* RS FORCE — palette continua come la sfera e orbite con profondità davanti/dietro. */
-        #rs-force-card,
-        #rs-force-card > button {
-          background:radial-gradient(ellipse at 50% 28%,#22d3ee 0%,#0891b2 28%,#087eaa 54%,#075985 78%,#0e7490 100%) !important;
-          border-color:#67e8f9 !important;
+        /* RS FORCE: un solo nucleo CSS, nessuna vecchia immagine di sfondo. */
+        #rs-force-card, #rs-force-card > button {
+          background: radial-gradient(ellipse at 50% 25%, #67e8f9 0%, #22d3ee 28%, #0891b2 58%, #075985 100%) !important;
+          border-color: #a5f3fc !important;
         }
         #rs-force-card > button {
           position:relative !important; display:flex !important; flex-direction:column !important;
           align-items:center !important; justify-content:flex-start !important; gap:0 !important;
           width:100% !important; height:100% !important; padding:0 0 10px !important;
           overflow:hidden !important; isolation:isolate !important;
-          background:radial-gradient(ellipse at 50% 28%,#22d3ee 0%,#0891b2 28%,#087eaa 54%,#075985 78%,#0e7490 100%) !important;
         }
         #rs-force-card .rs-force-stage {
           position:relative !important; inset:auto !important; z-index:1 !important;
@@ -2178,42 +2175,34 @@ export default function Home() {
           margin:0 !important; order:0 !important; align-items:center !important; justify-content:center !important;
           overflow:hidden !important; border:0 !important; border-radius:12px 12px 0 0 !important;
           perspective:900px !important; transform-style:preserve-3d !important;
-          background:radial-gradient(ellipse at 50% 35%,#67e8f9 0%,#22d3ee 24%,#0891b2 50%,#087eaa 78%,#075985 100%) !important;
+          background:radial-gradient(ellipse at 50% 35%,#a5f3fc 0%,#22d3ee 28%,#0891b2 60%,#075985 100%) !important;
         }
-        #rs-force-card .rs-force-stage > img:first-child {
-          position:absolute !important; inset:0 !important; z-index:1 !important; display:block !important;
-          width:100% !important; height:100% !important; object-fit:cover !important;
-          object-position:center 35% !important; opacity:1 !important; transform:none !important;
-          filter:brightness(1.22) saturate(1.28) contrast(1.04) !important;
-        }
+        #rs-force-card .rs-force-stage > img { position:absolute !important; inset:0 !important; width:100% !important; height:100% !important; pointer-events:none !important; }
+        #rs-force-card .rs-force-stage > img:first-of-type { display:none !important; }
         #rs-force-card .rs-force-stage > span[aria-hidden="true"] {
           position:absolute !important; inset:0 !important; z-index:2 !important;
-          background:radial-gradient(circle at 50% 40%,rgba(103,232,249,.12),transparent 70%) !important;
+          background:radial-gradient(circle at 50% 42%,rgba(236,254,255,.28),transparent 70%) !important;
         }
-        #rs-force-card .rs-force-stage > img:nth-of-type(2) {
-          position:absolute !important; inset:0 !important; z-index:4 !important; display:block !important;
-          width:100% !important; height:100% !important; object-fit:contain !important;
-          object-position:center !important; opacity:.95 !important; mix-blend-mode:screen !important;
-          transform:none !important; pointer-events:none !important;
+        #rs-force-card .rs-force-stage > img[src*="rs-force-lightning"] {
+          z-index:30 !important; display:block !important; object-fit:contain !important;
+          opacity:1 !important; mix-blend-mode:screen !important;
         }
         #rs-force-card .rs-force-stage .rs-force-orbit {
-          position:absolute !important; left:50% !important; top:50% !important;
-          z-index:12 !important; transform-style:preserve-3d !important;
-          animation:rs-force-orbit var(--orbit-duration,6s) linear infinite !important;
-          will-change:transform !important;
+          position:absolute !important; left:50% !important; top:50% !important; z-index:auto !important;
+          transform-style:preserve-3d !important; animation:rs-force-orbit var(--orbit-duration,6s) linear infinite !important;
+          will-change:transform !important; pointer-events:none !important;
         }
         #rs-force-card .rs-force-stage .rs-force-product {
-          backface-visibility:visible !important;
-          box-shadow:0 0 12px rgba(34,211,238,.85) !important;
+          backface-visibility:visible !important; pointer-events:auto !important;
+          box-shadow:0 0 12px rgba(34,211,238,.9) !important;
+          animation:rs-force-product-glow 1.6s ease-in-out infinite alternate !important;
         }
         #rs-force-card .rs-force-stage .rs-palantir {
           position:relative !important; z-index:10 !important; transform:translateZ(0) !important;
-          width:96px !important; height:96px !important; flex:0 0 96px !important;
-          font-size:48px !important;
-          background:radial-gradient(circle at 32% 25%,#ffffff 0%,#cffafe 8%,#67e8f9 20%,#22d3ee 40%,#0891b2 62%,#075985 82%,#0e7490 100%) !important;
-          box-shadow:0 0 28px 10px rgba(103,232,249,.78),inset 0 0 24px rgba(255,255,255,.8) !important;
+          width:96px !important; height:96px !important; flex:0 0 96px !important; overflow:visible !important;
+          background:transparent !important; box-shadow:none !important;
         }
-        #rs-force-card .rs-force-stage .rs-palantir > span { pointer-events:none; }
+        #rs-force-card .rs-palantir > span { pointer-events:none; }
         #rs-force-card .rs-force-title {
           position:relative !important; z-index:5 !important; order:1 !important; flex:0 0 auto !important;
           width:100% !important; margin:8px 0 0 !important; padding:0 8px !important;
