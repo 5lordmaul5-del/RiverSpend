@@ -1025,7 +1025,7 @@ export default function Home() {
                     const image = p.immagini?.[0];
                     return image ? (
                       <div key={'force-orbit-' + p.id} className="rs-force-orbit" style={{'--orbit-radius': ['64px','40px','72px','48px','60px','36px','68px','44px'][index % 8], '--orbit-duration': (6 + (index % 4) * 1.2) + 's', animationDelay: (-index * 0.85) + 's'}}>
-                        <a href={'/prodotto/' + encodeURIComponent(p.id)} onClick={(e) => e.stopPropagation()} aria-label={'RS Force: ' + (p.titolo || 'prodotto')} className="rs-force-product absolute flex h-14 w-14 items-center justify-center overflow-hidden rounded-xl border border-cyan-200/80 bg-white p-0.5 shadow-lg" style={{left:'var(--orbit-radius)', top:'-28px'}}>
+                        <a href={'/prodotto/' + encodeURIComponent(p.id)} onClick={(e) => e.stopPropagation()} aria-label={'RS Force: ' + (p.titolo || 'prodotto')} className="rs-force-product absolute flex h-14 w-14 items-center justify-center overflow-hidden rounded-xl border border-cyan-200/80 bg-white p-0.5 shadow-lg" style={{left:'var(--orbit-radius)', top:'0px'}}>
                           <img src={image} alt="" className="h-full w-full object-contain" />
                         </a>
                       </div>
@@ -2216,7 +2216,7 @@ export default function Home() {
         #rs-force-card .rs-palantir > span { pointer-events:none; }
         #rs-force-card .rs-force-title {
           position:relative !important; z-index:5 !important; order:1 !important; flex:0 0 auto !important;
-          width:100% !important; margin:4px 0 0 !important; padding:0 8px !important;
+          width:100% !important; margin:10px 0 0 !important; padding:0 8px !important;
           font-size:21px !important; line-height:1.15 !important; color:#ecfeff !important;
           text-shadow:0 0 8px #22d3ee,0 2px 5px rgba(0,50,70,.7) !important;
         }
