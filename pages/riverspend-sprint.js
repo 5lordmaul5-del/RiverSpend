@@ -2,6 +2,40 @@
 
 import { useEffect, useState } from 'react';
 
+const translations = {
+  it: {
+    back: '← Torna a RiverSpendShop', badge: 'PROGETTO INTERNAZIONALE', eyebrow: 'LE TUE IDEE, PRONTE A PRENDERE FORMA',
+    tagline: 'La tua immagine. La tua idea. Il tuo prodotto.',
+    description: 'Dalle magliette agli asciugamani, dai cappellini a zaini, portachiavi e penne: una vetrina per prodotti personalizzati con il marchio RiverSpend e con le tue immagini.',
+    cta: 'Scopri cosa potrai creare ↓', sectionEyebrow: 'SCEGLI LA TUA IDEA', heading: 'Cosa potrai personalizzare',
+    intro: 'Un unico punto di partenza per fotografie, regali e prodotti stampati.',
+    uploadEyebrow: 'ANTEPRIMA FOTO', uploadHeading: 'La tua immagine, in anteprima',
+    uploadText: 'Puoi selezionare una foto dal telefono e vederla qui. Per ora resta in questa anteprima: non viene inviata a una tipografia e non viene effettuato alcun ordine.',
+    choosePhoto: '📷 Scegli una foto dal telefono', photoPlaceholder: 'La tua foto apparirà qui',
+    partnersEyebrow: 'PRODUZIONE E SPEDIZIONE', partnersHeading: 'Partner da collegare',
+    prodigi: 'Foto, stampe e quadri', printful: 'Abbigliamento e accessori',
+    worldHeading: 'Un progetto pensato per il mondo', worldText: 'Obiettivo: offrire prodotti in più Paesi e lingue. Destinazioni, tariffe e tempi saranno confermati dopo il collegamento dei fornitori.',
+    disclaimer: 'PREPARAZIONE — Il negozio non accetta ancora ordini reali. Le API dei fornitori, il catalogo con prezzi, i pagamenti, le spedizioni internazionali, i resi e le traduzioni complete saranno configurati e testati prima del lancio.',
+    categories: ['Foto e ricordi','Abbigliamento','Cappellini e accessori','Tazze e borracce','Asciugamani e casa','Zaini e borse','Cover e accessori tech','Portachiavi e penne','Stampa professionale','Prodotti personalizzati','Regali speciali','Per aziende e attività'],
+    texts: ['Stampe fotografiche, poster, quadri, tele e fotolibri.','Magliette, felpe, polo e capi personalizzati con il logo RiverSpend.','Cappellini, occhiali, bandane e accessori personalizzati.','Tazze, borracce e idee regalo per te e per chi ami.','Asciugamani, teli mare e articoli per la casa personalizzati.','Zaini, shopper, borsoni e sacche personalizzate.','Cover, auricolari, mousepad e accessori tecnologici.','Portachiavi, penne e gadget personalizzati per ogni occasione.','Biglietti da visita, volantini, brochure, etichette e molto altro.','Cuscini, puzzle, calendari, quaderni e articoli unici.','Idee regalo personalizzate per compleanni e occasioni speciali.','Abbigliamento, gadget e materiali promozionali con il marchio.']
+  },
+  en: {
+    back: '← Back to RiverSpendShop', badge: 'INTERNATIONAL PROJECT', eyebrow: 'YOUR IDEAS, READY TO TAKE SHAPE',
+    tagline: 'Your image. Your idea. Your product.',
+    description: 'From T-shirts and towels to caps, backpacks, keychains and pens: a showcase for custom products featuring RiverSpend branding and your own images.',
+    cta: 'Explore what you can create ↓', sectionEyebrow: 'CHOOSE YOUR IDEA', heading: 'What you can customize',
+    intro: 'One place to start for photo prints, gifts and custom-printed products.',
+    uploadEyebrow: 'PHOTO PREVIEW', uploadHeading: 'Preview your image',
+    uploadText: 'Choose a photo from your phone to preview it here. For now, it stays in this preview: it is not sent to a printer and no order is placed.',
+    choosePhoto: '📷 Choose a photo from your phone', photoPlaceholder: 'Your photo will appear here',
+    partnersEyebrow: 'PRODUCTION & SHIPPING', partnersHeading: 'Partners to connect',
+    prodigi: 'Photo prints, art prints and wall art', printful: 'Apparel and accessories',
+    worldHeading: 'Designed with the world in mind', worldText: 'Goal: offer products across multiple countries and languages. Destinations, rates and delivery times will be confirmed after supplier integration.',
+    disclaimer: 'PRE-LAUNCH — This store does not accept real orders yet. Supplier APIs, live product catalogs and pricing, payments, international shipping, returns and full translations must be configured and tested before launch.',
+    categories: ['Photos & memories','Apparel','Caps & accessories','Mugs & bottles','Towels & home','Backpacks & bags','Phone cases & tech','Keychains & pens','Professional printing','Custom products','Special gifts','For businesses'],
+    texts: ['Photo prints, posters, wall art, canvases and photo books.','T-shirts, hoodies, polos and apparel with RiverSpend branding.','Caps, eyewear, bandanas and custom accessories.','Mugs, bottles and gift ideas for you and your loved ones.','Custom towels, beach towels and home products.','Backpacks, tote bags, duffel bags and drawstring bags.','Phone cases, earbuds, mousepads and tech accessories.','Custom keychains, pens and promotional gadgets.','Business cards, flyers, brochures, labels and more.','Custom cushions, puzzles, calendars, notebooks and more.','Personalized gifts for birthdays and special occasions.','Branded apparel, promotional items and printed materials.']
+  }
+};
 const products = [
   { icon: '📸', title: 'Foto e ricordi', text: 'Stampe fotografiche, poster, quadri, tele e fotolibri.', tone: 'category-photo' },
   { icon: '👕', title: 'Abbigliamento', text: 'Magliette, felpe, polo e capi personalizzati con il logo RiverSpend.', tone: 'category-wear' },
@@ -18,6 +52,8 @@ const products = [
 ];
 
 export default function RiverSpendSprint() {
+  const [language, setLanguage] = useState('it');
+  const t = translations[language];
   const [imageUrl, setImageUrl] = useState('');
   const [fileName, setFileName] = useState('');
 
@@ -44,11 +80,11 @@ export default function RiverSpendSprint() {
 
       <section className="sprint-hero">
         <div className="sprint-hero-copy">
-          <p className="sprint-eyebrow">LE TUE IDEE, PRONTE A PRENDERE FORMA</p>
+          <p className="sprint-eyebrow">{t.eyebrow}</p>
           <h1><span className="sprint-rss-logo" aria-label="RSS">RSS</span><span className="sprint-word">RiverSpend <small>s</small>Print</span></h1>
-          <p className="sprint-tagline">La tua immagine. La tua idea. Il tuo prodotto.</p>
-          <p className="sprint-description">Dalle magliette agli asciugamani, dai cappellini a zaini, portachiavi e penne: stiamo preparando una vetrina per prodotti personalizzati con il marchio RiverSpend e con le tue immagini.</p>
-          <a className="sprint-cta" href="#sprint-products">Scopri cosa potrai creare ↓</a>
+          <p className="sprint-tagline">{t.tagline}</p>
+          <p className="sprint-description">{t.description}</p>
+          <a className="sprint-cta" href="#sprint-products">{t.cta}</a>
         </div>
         <div className="sprint-preview">
           <div className="sprint-orbit sprint-orbit-one" />
@@ -62,9 +98,9 @@ export default function RiverSpendSprint() {
 
       <section id="sprint-products" className="sprint-products">
         <div className="sprint-section-head">
-          <p className="sprint-eyebrow">SCEGLI LA TUA IDEA</p>
-          <h2>Cosa potrai personalizzare</h2>
-          <p>Un unico punto di partenza per fotografie, regali e prodotti stampati.</p>
+          <p className="sprint-eyebrow">{t.sectionEyebrow}</p>
+          <h2>{t.heading}</h2>
+          <p>{t.intro}</p>
         </div>
         <figure className="sprint-catalog-image"><img src="/images/sprint-products/catalogo-riverspend-sprint.svg" alt="Catalogo dimostrativo RSS RiverSpend sPrint: foto, abbigliamento, cappellini, tazze, asciugamani, zaini, accessori tech, portachiavi, penne e gadget" /><figcaption>Catalogo dimostrativo RSS RiverSpend sPrint</figcaption></figure>
         <div className="sprint-grid">
@@ -81,24 +117,24 @@ export default function RiverSpendSprint() {
 
       <section className="sprint-upload">
         <div>
-          <p className="sprint-eyebrow">PROVA IL CARICAMENTO</p>
-          <h2>La tua immagine, in anteprima</h2>
-          <p>Puoi selezionare una foto dal telefono e vederla qui. Per ora l’immagine resta in questa anteprima: non viene inviata a una tipografia e non viene effettuato alcun ordine.</p>
-          <label className="sprint-upload-button" htmlFor="sprint-image">📷 Scegli una foto dal telefono</label>
+          <p className="sprint-eyebrow">{t.uploadEyebrow}</p>
+          <h2>{t.uploadHeading}</h2>
+          <p>{t.uploadText}</p>
+          <label className="sprint-upload-button" htmlFor="sprint-image">{t.choosePhoto}</label>
           <input id="sprint-image" type="file" accept="image/*" onChange={handleImage} />
           {fileName && <p className="sprint-file-name">{fileName}</p>}
         </div>
         <div className="sprint-image-preview">
-          {imageUrl ? <img src={imageUrl} alt="Anteprima della foto scelta" /> : <div className="sprint-empty-preview"><span>＋</span><b>La tua foto apparirà qui</b></div>}
+          {imageUrl ? <img src={imageUrl} alt="Anteprima della foto scelta" /> : <div className="sprint-empty-preview"><span>＋</span><b>{t.photoPlaceholder}</b></div>}
         </div>
       </section>
 
       <section className="sprint-partners">
-        <p className="sprint-eyebrow">PRODUZIONE E SPEDIZIONE</p>
-        <h2>Partner in valutazione</h2>
+        <p className="sprint-eyebrow">{t.partnersEyebrow}</p>
+        <h2>{t.partnersHeading}</h2>
         <div className="sprint-partner-row">
-          <div><strong>Prodigi</strong><span>Foto, stampe e quadri</span></div>
-          <div><strong>Printful</strong><span>Abbigliamento e accessori</span></div>
+          <div><strong>Prodigi</strong><span>{t.prodigi}</span></div>
+          <div><strong>Printful</strong><span>{t.printful}</span></div>
         </div>
         <p className="sprint-disclaimer">I partner sono in valutazione. I collegamenti tecnici, il catalogo con prezzi aggiornati, il pagamento e l’invio automatico degli ordini devono ancora essere configurati e testati. Questa pagina è una prima presentazione e non vende ancora prodotti.</p>
       </section>
