@@ -2198,9 +2198,10 @@ export default function Home() {
           animation:rs-force-product-glow 1.6s ease-in-out infinite alternate !important;
         }
         #rs-force-card .rs-force-stage .rs-palantir {
-          position:relative !important; z-index:10 !important; transform:translateZ(0) !important;
+          position:relative !important; z-index:auto !important; transform:translateZ(0) !important;
           width:96px !important; height:96px !important; flex:0 0 96px !important; overflow:visible !important;
           background:transparent !important; box-shadow:none !important;
+          /* Nessun livello z-index forzato: il nucleo resta nel piano 3D e i prodotti possono passargli davanti e dietro. */
         }
         #rs-force-card .rs-palantir > span { pointer-events:none; }
         #rs-force-card .rs-force-title {
