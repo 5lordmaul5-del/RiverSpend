@@ -6,6 +6,8 @@ import CookieConsent from '../components/CookieConsent';
 import AnalyticsTracker from '../components/AnalyticsTracker';
 
 const APP_MANIFESTS = [
+  { match: '/servizi/sound-studio-live', href: '/manifest-soundstudioissa.json', color: '#7e22ce' },
+  { match: '/servizi/music', href: '/manifest-music.json', color: '#7e22ce' },
   { match: '/river-spend-stream', href: '/manifest-streaming.json', color: '#7c3aed' },
   { match: '/park', href: '/manifest-park.json', color: '#0891b2' },
   { match: '/rs-control-center', href: '/manifest-panelcontrol.json', color: '#0f172a' },
@@ -14,7 +16,7 @@ const APP_MANIFESTS = [
 export default function App({ Component, pageProps }) {
   const router = useRouter();
   const selectedApp = APP_MANIFESTS.find((app) => router.pathname === app.match || router.pathname.startsWith(app.match + '/'));
-  const manifestHref = selectedApp ? selectedApp.href : '/manifest-shop.json?v=3';
+  const manifestHref = selectedApp ? selectedApp.href : '/manifest-shop.json?v=5';
   const themeColor = selectedApp ? selectedApp.color : '#06b6d4';
 
   useEffect(() => {
