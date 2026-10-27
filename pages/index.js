@@ -96,6 +96,7 @@ export default function Home() {
   const [accesso18, setAccesso18] = useState(false);
   const [mostraGate18, setMostraGate18] = useState(false);
   const [rsForceAperta, setRsForceAperta] = useState(false);
+  const [rsForceInCorso, setRsForceInCorso] = useState(false);
   const [rsForceProdottiRandom, setRsForceProdottiRandom] = useState([]);
   const [rsFortuneAperta, setRsFortuneAperta] = useState(false);
   const [rsFortuneSpinning, setRsFortuneSpinning] = useState(false);
@@ -569,7 +570,15 @@ export default function Home() {
   }
 
   function apriRsForce() {
+    if (rsForceInCorso) return;
+    let queryForce = String(ricerca || '').trim();
+    if (!queryForce) {
+      queryForce = String(window.prompt('Che prodotto vuoi cercare con RS FORCE?') || '').trim();
+    }
+    if (!queryForce) return;
+
     setRsForceAperta(true);
+    setRsForceInCorso(true);
     let forceAudioCtx = null;
     try {
       const AudioCtx = window.AudioContext || window.webkitAudioContext;
@@ -579,8 +588,11 @@ export default function Home() {
       }
     } catch {}
 
-    // RS FORCE è puramente sonoro: nessuna voce sintetica.
+    // La Forza lavora per circa 2,5 secondi, poi apre i risultati mirati del catalogo.
     window.setTimeout(() => playRsForceSound(forceAudioCtx), 120);
+    window.setTimeout(() => {
+      window.location.assign('/?q=' + encodeURIComponent(queryForce) + '#rs-products-section');
+    }, 2600);
   }
 
   function apriRsFolgore() {
@@ -1005,7 +1017,7 @@ export default function Home() {
 
           <div className="rs-apps-grid mb-5 flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain px-1 pb-3" aria-label="Scopri le iniziative RiverSpend: scorri orizzontalmente">
             <section id="rs-force-card" className="rs-feature-card relative h-[400px] shrink-0 w-[280px] snap-start rs-force-card overflow-hidden rounded-2xl border-2 border-cyan-300 bg-gradient-to-b from-slate-950 via-cyan-950 to-indigo-950 p-0 text-center shadow-lg shadow-cyan-950/40">
-              <button type="button" onClick={() => { if (rsForceAperta) setRsForceAperta(false); else apriRsForce(); }} className="relative flex h-full w-full flex-col items-center overflow-hidden rounded-xl bg-slate-950 text-center">
+              <button type="button" onClick={() => apriRsForce()} className="relative flex h-full w-full flex-col items-center overflow-hidden rounded-xl bg-slate-950 text-center">
                 <div className="rs-force-stage rs-feature-media absolute inset-0 z-0 flex h-full min-h-full w-full items-center justify-center overflow-hidden rounded-xl border-0 bg-gradient-to-br from-cyan-500 via-cyan-950 to-indigo-950">
                   <span aria-hidden="true" className="pointer-events-none absolute inset-0 z-10 bg-[radial-gradient(circle_at_center,rgba(34,211,238,0.28),transparent_58%)]" />
                   <img src="/rs-force-lightning.svg?v=2" alt="" aria-hidden="true" className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover opacity-70 mix-blend-screen" />
@@ -1025,16 +1037,12 @@ export default function Home() {
                 <h2 className="mt-1 min-h-[44px] shrink-0 px-2 text-lg font-black leading-tight text-white [text-shadow:0_2px_5px_rgba(0,0,0,0.9)]">Potenzia la tua ricerca</h2>
                 {!rsForceAperta ? (
                   <div className="mt-2 w-full rounded-lg bg-slate-900/95 px-2 py-2 text-xs font-semibold leading-4 text-white">
-                    <p>La tua scorciatoia per il catalogo: i prodotti ruotano tra loro in un vortice di energia.</p>
-                    <p className="mt-1 text-[10px] font-medium text-cyan-200">RS FORCE cerca nel catalogo; Nova AI resta l'assistente intelligente.</p>
+                    <p>Scrivi cosa cerchi nella barra del marketplace, poi attiva RS FORCE. La Forza affina la ricerca e apre i prodotti pertinenti.</p>
+                    <p className="mt-1 text-[10px] font-medium text-cyan-200">Se non hai scritto una ricerca, ti chiederà quale prodotto vuoi trovare.</p>
                   </div>
                 ) : (
-                  <div className="mt-2 grid w-full grid-cols-2 gap-1.5">
-                    <a onClick={(e) => e.stopPropagation()} href="/?q=offerta" className="rounded-xl border border-amber-300/50 bg-amber-950/70 p-2 text-[10px] font-bold text-white">🏷️ Cerca offerte</a>
-                    <a onClick={(e) => e.stopPropagation()} href="/?q=smartphone" className="rounded-xl border border-cyan-300/50 bg-cyan-950/50 p-2 text-[10px] font-bold text-white">🔎 Smartphone</a>
-                    <a onClick={(e) => e.stopPropagation()} href="/?q=cuffie" className="rounded-xl border border-violet-300/50 bg-violet-950/50 p-2 text-[10px] font-bold text-white">🎧 Audio e cuffie</a>
-                    <a onClick={(e) => e.stopPropagation()} href="/?showProducts=1" className="rounded-xl border border-emerald-300/50 bg-emerald-950/50 p-2 text-[10px] font-bold text-white">🛍️ Tutto il catalogo</a>
-                    <p className="col-span-2 px-1 text-[10px] leading-4 text-cyan-100">Per cercare un articolo diverso, usa la ricerca del marketplace. Le offerte vengono individuate in base alle informazioni presenti negli annunci.</p>
+                  <div className="mt-2 w-full rounded-lg border border-cyan-300/60 bg-cyan-950/90 px-2 py-2 text-xs font-bold text-white">
+                    {rsForceInCorso ? '⚡ RS FORCE sta affinando la ricerca… i risultati si apriranno tra pochi secondi.' : '⚡ Pronta a trovare prodotti mirati. Inserisci prima la ricerca nella barra del marketplace, poi tocca RS FORCE.'}
                   </div>
                 )}
               </button>
