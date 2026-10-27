@@ -1014,7 +1014,7 @@ export default function Home() {
                     const image = p.immagini?.[0];
                     return image ? (
                       <div key={'force-orbit-' + p.id} className="rs-force-orbit" style={{'--orbit-radius': index % 2 === 0 ? '78px' : '48px', '--orbit-duration': (index % 2 === 0 ? 7 : 5) + 's', animationDelay: (-index * 1.1) + 's'}}>
-                        <a href={'/prodotto/' + encodeURIComponent(p.id)} onClick={(e) => e.stopPropagation()} aria-label={'RS Force: ' + (p.titolo || 'prodotto')} className="rs-force-product absolute flex h-11 w-11 items-center justify-center overflow-hidden rounded-xl border border-cyan-200/80 bg-white p-0.5 shadow-lg" style={{left:0, top:0}}>
+                        <a href={'/prodotto/' + encodeURIComponent(p.id)} onClick={(e) => e.stopPropagation()} aria-label={'RS Force: ' + (p.titolo || 'prodotto')} className="rs-force-product absolute flex h-11 w-11 items-center justify-center overflow-hidden rounded-xl border border-cyan-200/80 bg-white p-0.5 shadow-lg" style={{left:'var(--orbit-radius)', top:'-22px'}}>
                           <img src={image} alt="" className="h-full w-full object-contain" />
                         </a>
                       </div>
@@ -1615,8 +1615,8 @@ export default function Home() {
            con prospettiva per simulare la profondità senza il vecchio cerchio verticale. */
         .rs-force-stage { perspective: 900px; transform-style: preserve-3d; }
         @keyframes rs-force-orbit {
-          0% { transform: rotateY(0deg) translateX(var(--orbit-radius)); }
-          100% { transform: rotateY(360deg) translateX(var(--orbit-radius)); }
+          0% { transform: rotateY(0deg); }
+          100% { transform: rotateY(360deg); }
         }
         .rs-force-orbit {
           position: absolute; left: 50%; top: 50%; width: 0; height: 0;
@@ -2190,7 +2190,8 @@ export default function Home() {
         }
         #rs-force-card .rs-force-stage .rs-force-orbit {
           position:absolute !important; left:50% !important; top:50% !important;
-          z-index:auto !important; transform-style:preserve-3d !important;
+          width:0 !important; height:0 !important; z-index:auto !important;
+          transform-style:preserve-3d !important; transform-origin:0 0 !important;
           animation:rs-force-orbit var(--orbit-duration,6s) linear infinite !important;
           animation-delay:inherit !important; will-change:transform !important; pointer-events:none !important;
         }
