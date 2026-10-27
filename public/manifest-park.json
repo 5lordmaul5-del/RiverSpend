@@ -1,7 +1,7 @@
 {
   "id": "/park",
-  "name": "RiverSpend Park",
-  "short_name": "RS Park",
+  "name": "RiverSpendPark",
+  "short_name": "RiverSpendPark",
   "description": "Attrazioni, informazioni e novità di RiverSpend Park.",
   "start_url": "/park",
   "scope": "/",
@@ -10,12 +10,5 @@
   "background_color": "#062b36",
   "theme_color": "#0891b2",
   "lang": "it",
-  "icons": [
-    {
-      "src": "/icons/park.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
-    }
-  ]
+  "icons": [{ "src": "/icons/park.svg?v=5", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
 }
