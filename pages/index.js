@@ -2180,6 +2180,45 @@ export default function Home() {
           flex:0 0 120px !important;
           transform:translateY(-4px) !important;
         }
+
+        /* FIX basato sul controllo mobile: elimina il riquadro bianco su RS FORCE. */
+        #rs-force-card > button > div:not(.rs-force-stage) {
+          background:rgba(2,12,24,.90) !important;
+          background-color:rgba(2,12,24,.90) !important;
+          color:#ecfeff !important;
+          border-color:rgba(103,232,249,.3) !important;
+          box-shadow:0 8px 20px rgba(0,0,0,.3) !important;
+        }
+        #rs-force-card > button > div:not(.rs-force-stage) p,
+        #rs-force-card > button > div:not(.rs-force-stage) span {
+          color:#a5f3fc !important;
+          background:transparent !important;
+        }
+        #rs-force-card .rs-force-stage > img:first-child {
+          object-fit:cover !important;
+          object-position:center 38% !important;
+          opacity:1 !important;
+          filter:brightness(1.35) saturate(1.3) contrast(1.05) !important;
+        }
+        #rs-force-card .rs-force-stage > img:nth-of-type(2) {
+          object-fit:cover !important;
+          opacity:1 !important;
+          mix-blend-mode:screen !important;
+        }
+        /* Evita che testi e pulsante del banner vendita escano dai bordi sul telefono. */
+        #rs-seller-card { overflow:hidden !important; box-sizing:border-box !important; }
+        #rs-seller-card * { box-sizing:border-box !important; max-width:100% !important; }
+        #rs-seller-card > p,
+        #rs-seller-card > h2,
+        #rs-seller-card > span,
+        #rs-seller-card > button,
+        #rs-seller-card > a {
+          overflow-wrap:anywhere !important;
+          white-space:normal !important;
+          text-align:center !important;
+        }
+        #rs-seller-card > button,
+        #rs-seller-card > a { width:auto !important; min-width:0 !important; }
       `}</style>
     </main>
   );
