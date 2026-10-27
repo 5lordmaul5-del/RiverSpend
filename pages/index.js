@@ -1615,8 +1615,8 @@ export default function Home() {
            con prospettiva per simulare la profondità senza il vecchio cerchio verticale. */
         .rs-force-stage { perspective: 900px; transform-style: preserve-3d; }
         @keyframes rs-force-orbit {
-          from { transform: rotateY(0deg) translateX(var(--orbit-radius)); }
-          to { transform: rotateY(360deg) translateX(var(--orbit-radius)); }
+          0% { transform: rotateY(0deg) translateX(var(--orbit-radius)); }
+          100% { transform: rotateY(360deg) translateX(var(--orbit-radius)); }
         }
         .rs-force-orbit {
           position: absolute; left: 50%; top: 50%; width: 0; height: 0;
@@ -2179,20 +2179,23 @@ export default function Home() {
         }
         #rs-force-card .rs-force-stage > img { position:absolute !important; inset:0 !important; width:100% !important; height:100% !important; pointer-events:none !important; }
         #rs-force-card .rs-force-stage > img:first-of-type { display:none !important; }
+        /* RS FORCE: nucleo centrale in profondità, prodotti in orbita 3D sullo stesso piano prospettico. */
         #rs-force-card .rs-force-stage > span[aria-hidden="true"] {
-          position:absolute !important; inset:0 !important; z-index:2 !important;
+          position:absolute !important; inset:0 !important; z-index:0 !important;
           background:radial-gradient(circle at 50% 42%,rgba(236,254,255,.28),transparent 70%) !important;
         }
         #rs-force-card .rs-force-stage > img[src*="rs-force-lightning"] {
-          z-index:30 !important; display:block !important; object-fit:contain !important;
-          opacity:1 !important; mix-blend-mode:screen !important;
+          z-index:0 !important; display:block !important; object-fit:contain !important;
+          opacity:.72 !important; mix-blend-mode:screen !important;
         }
         #rs-force-card .rs-force-stage .rs-force-orbit {
-          position:absolute !important; left:50% !important; top:50% !important; z-index:auto !important;
-          transform-style:preserve-3d !important; animation:rs-force-orbit var(--orbit-duration,6s) linear infinite !important;
-          will-change:transform !important; pointer-events:none !important;
+          position:absolute !important; left:50% !important; top:50% !important;
+          z-index:auto !important; transform-style:preserve-3d !important;
+          animation:rs-force-orbit var(--orbit-duration,6s) linear infinite !important;
+          animation-delay:inherit !important; will-change:transform !important; pointer-events:none !important;
         }
         #rs-force-card .rs-force-stage .rs-force-product {
+          transform:translate(-50%,-50%) translateZ(0) !important;
           backface-visibility:visible !important; pointer-events:auto !important;
           box-shadow:0 0 12px rgba(34,211,238,.9) !important;
           animation:rs-force-product-glow 1.6s ease-in-out infinite alternate !important;
@@ -2201,7 +2204,6 @@ export default function Home() {
           position:relative !important; z-index:auto !important; transform:translateZ(0) !important;
           width:96px !important; height:96px !important; flex:0 0 96px !important; overflow:visible !important;
           background:transparent !important; box-shadow:none !important;
-          /* Nessun livello z-index forzato: il nucleo resta nel piano 3D e i prodotti possono passargli davanti e dietro. */
         }
         #rs-force-card .rs-palantir > span { pointer-events:none; }
         #rs-force-card .rs-force-title {
