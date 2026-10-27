@@ -2219,6 +2219,73 @@ export default function Home() {
         }
         #rs-seller-card > button,
         #rs-seller-card > a { width:auto !important; min-width:0 !important; }
+
+        /* RS FORCE emergency visual reset: reveal the energy scene instead of a black panel. */
+        #rs-force-card,
+        #rs-force-card > button {
+          background:linear-gradient(145deg,#063b55 0%,#075985 42%,#061827 100%) !important;
+        }
+        #rs-force-card > button { isolation:auto !important; }
+        #rs-force-card .rs-force-stage {
+          position:absolute !important;
+          inset:0 !important;
+          z-index:1 !important;
+          display:flex !important;
+          height:100% !important;
+          min-height:100% !important;
+          max-height:none !important;
+          flex:0 0 100% !important;
+          margin:0 !important;
+          overflow:hidden !important;
+          background:radial-gradient(ellipse at 50% 35%,#22d3ee 0%,#087eaa 22%,#06445d 55%,#061827 100%) !important;
+          opacity:1 !important;
+        }
+        #rs-force-card .rs-force-stage > img:first-child {
+          position:absolute !important;
+          inset:0 !important;
+          z-index:1 !important;
+          display:block !important;
+          width:100% !important;
+          height:100% !important;
+          object-fit:cover !important;
+          object-position:center 38% !important;
+          opacity:.78 !important;
+          filter:brightness(1.45) saturate(1.45) contrast(1.08) !important;
+          transform:none !important;
+        }
+        #rs-force-card .rs-force-stage > span[aria-hidden="true"] {
+          z-index:2 !important;
+          background:radial-gradient(circle at 50% 38%,rgba(34,211,238,.32),transparent 66%) !important;
+        }
+        #rs-force-card .rs-force-stage > img:nth-of-type(2) {
+          position:absolute !important;
+          inset:0 !important;
+          z-index:4 !important;
+          display:block !important;
+          width:100% !important;
+          height:100% !important;
+          object-fit:cover !important;
+          opacity:1 !important;
+          mix-blend-mode:screen !important;
+        }
+        #rs-force-card .rs-force-stage .rs-palantir,
+        #rs-force-card .rs-force-stage .rs-force-orbit { z-index:8 !important; }
+        #rs-force-card .rs-force-stage .rs-palantir {
+          width:132px !important;
+          height:132px !important;
+          flex:0 0 132px !important;
+          box-shadow:0 0 38px 16px rgba(34,211,238,.9),inset 0 0 28px rgba(255,255,255,.8) !important;
+        }
+        #rs-force-card .rs-force-title,
+        #rs-force-card h2,
+        #rs-force-card > button > div:not(.rs-force-stage) {
+          position:relative !important;
+          z-index:20 !important;
+        }
+        #rs-force-card > button > div:not(.rs-force-stage) {
+          background:rgba(2,12,24,.82) !important;
+          color:#ecfeff !important;
+        }
       `}</style>
     </main>
   );
