@@ -74,8 +74,8 @@ export default function RiverSpendSprint() {
   return (
     <main className="sprint-page">
       <header className="sprint-top">
-        <a className="sprint-back" href="/">← Torna a RiverSpendShop</a>
-        <span className="sprint-pill">NUOVA IDEA RIVERSPEND</span>
+        <a className="sprint-back" href="/">{t.back}</a>
+        <div className="sprint-top-right"><label className="sprint-language-label" htmlFor="sprint-language">🌐</label><select id="sprint-language" className="sprint-language" value={language} onChange={(e) => setLanguage(e.target.value)} aria-label="Language"><option value="it">Italiano</option><option value="en">English</option></select><span className="sprint-pill">{t.badge}</span></div>
       </header>
 
       <section className="sprint-hero">
@@ -107,8 +107,8 @@ export default function RiverSpendSprint() {
           {products.map((item) => (
             <article className="sprint-card sprint-category-card" style={{ transform: 'none', rotate: 'none', skew: 'none', writingMode: 'horizontal-tb' }} key={item.title}>
               <span className="sprint-card-icon" aria-hidden="true">{item.icon}</span>
-              <h3>{item.title}</h3>
-              <p>{item.text}</p>
+              <h3>{t.categories[products.indexOf(item)]}</h3>
+              <p>{t.texts[products.indexOf(item)]}</p>
               <span className="sprint-coming">IN PREPARAZIONE</span>
             </article>
           ))}
@@ -136,7 +136,7 @@ export default function RiverSpendSprint() {
           <div><strong>Prodigi</strong><span>{t.prodigi}</span></div>
           <div><strong>Printful</strong><span>{t.printful}</span></div>
         </div>
-        <p className="sprint-disclaimer">I partner sono in valutazione. I collegamenti tecnici, il catalogo con prezzi aggiornati, il pagamento e l’invio automatico degli ordini devono ancora essere configurati e testati. Questa pagina è una prima presentazione e non vende ancora prodotti.</p>
+        <h2>{t.worldHeading}</h2><p>{t.worldText}</p><p className="sprint-disclaimer">{t.disclaimer}</p>
       </section>
 
       <footer className="sprint-footer">RiverSpend <b>sPrint</b> · YOUR SHOP • YOUR FLOW</footer>
