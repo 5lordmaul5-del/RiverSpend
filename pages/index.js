@@ -2155,6 +2155,31 @@ export default function Home() {
         .rs-install-guide h3{margin-top:0}.rs-install-guide ol{padding-left:22px}.rs-install-note{padding:12px;border-radius:12px;background:#fff8df;font-size:13px}
         @media(max-width:900px){.rs-download-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.rs-download-card:last-child{grid-column:1/-1;max-width:calc(50% - 7px);width:100%;justify-self:center}}
         @media(max-width:420px){.rs-download-apps{padding:20px 10px}.rs-download-grid{gap:9px}.rs-download-card{padding:10px}.rs-download-icon{height:92px}.rs-download-card h3{font-size:14px}}
+
+        /* RS FORCE — override conclusivo dopo tutte le regole precedenti. */
+        #rs-force-card .rs-force-stage {
+          background:radial-gradient(ellipse at 50% 42%,#0e7490 0%,#06445d 45%,#041522 100%) !important;
+        }
+        #rs-force-card .rs-force-stage > img:first-child {
+          object-fit:contain !important;
+          object-position:center !important;
+          opacity:.78 !important;
+          filter:brightness(1.2) saturate(1.25) !important;
+          transform:none !important;
+        }
+        #rs-force-card .rs-force-stage > img:nth-of-type(2) {
+          object-fit:contain !important;
+          object-position:center !important;
+          opacity:.92 !important;
+          mix-blend-mode:screen !important;
+          transform:none !important;
+        }
+        #rs-force-card .rs-force-stage .rs-palantir {
+          width:120px !important;
+          height:120px !important;
+          flex:0 0 120px !important;
+          transform:translateY(-4px) !important;
+        }
       `}</style>
     </main>
   );
