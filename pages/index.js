@@ -838,18 +838,17 @@ export default function Home() {
       .map(({ p }) => p);
   }, [prodotti, ricerca, categoriaAttiva]);
 
-  // RS FORCE: seleziona prodotti casuali con immagini e li rinnova mentre il banner è aperto.
+  // RS FORCE: mostra sempre fino a 8 prodotti con foto e li rinnova periodicamente.
   useEffect(() => {
-    if (!rsForceAperta) { setRsForceProdottiRandom([]); return; }
     const scegliProdotti = () => {
       const disponibili = prodottiVisibili.filter((p) => Array.isArray(p.immagini) && p.immagini[0]);
-      const mescolati = [...disponibili].sort(() => Math.random() - 0.5).slice(0, 4);
+      const mescolati = [...disponibili].sort(() => Math.random() - 0.5).slice(0, 8);
       setRsForceProdottiRandom(mescolati);
     };
     scegliProdotti();
-    const timer = window.setInterval(scegliProdotti, 2800);
+    const timer = window.setInterval(scegliProdotti, 5000);
     return () => window.clearInterval(timer);
-  }, [rsForceAperta, prodottiVisibili]);
+  }, [prodottiVisibili]);
 
   return (
     <main className="rs-site min-h-screen bg-slate-950 text-white">
@@ -1009,11 +1008,11 @@ export default function Home() {
               <button type="button" onClick={() => { if (rsForceAperta) setRsForceAperta(false); else apriRsForce(); }} className="relative flex h-full w-full flex-col items-center overflow-hidden rounded-xl bg-slate-950 text-center">
                 <div className="rs-force-stage rs-feature-media absolute inset-0 z-0 flex h-full min-h-full w-full items-center justify-center overflow-hidden rounded-xl border-0 bg-gradient-to-br from-cyan-500 via-cyan-950 to-indigo-950">
                   <span aria-hidden="true" className="pointer-events-none absolute inset-0 z-10 bg-[radial-gradient(circle_at_center,rgba(34,211,238,0.28),transparent_58%)]" />
-                  <img src="/rs-force-lightning.svg?v=2" alt="" aria-hidden="true" className="pointer-events-none absolute inset-0 z-30 h-full w-full object-cover opacity-100 mix-blend-screen" />
+                  <img src="/rs-force-lightning.svg?v=2" alt="" aria-hidden="true" className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover opacity-70 mix-blend-screen" />
                   {rsForceProdottiRandom.map((p, index) => {
                     const image = p.immagini?.[0];
                     return image ? (
-                      <div key={'force-orbit-' + p.id} className="rs-force-orbit" style={{'--orbit-radius': index % 2 === 0 ? '78px' : '48px', '--orbit-duration': (index % 2 === 0 ? 7 : 5) + 's', animationDelay: (-index * 1.1) + 's'}}>
+                      <div key={'force-orbit-' + p.id} className="rs-force-orbit" style={{'--orbit-radius': ['78px','48px','88px','58px','70px','42px','82px','52px'][index % 8], '--orbit-duration': (6 + (index % 4) * 1.2) + 's', animationDelay: (-index * 0.85) + 's'}}>
                         <a href={'/prodotto/' + encodeURIComponent(p.id)} onClick={(e) => e.stopPropagation()} aria-label={'RS Force: ' + (p.titolo || 'prodotto')} className="rs-force-product absolute flex h-11 w-11 items-center justify-center overflow-hidden rounded-xl border border-cyan-200/80 bg-white p-0.5 shadow-lg" style={{left:'var(--orbit-radius)', top:'-22px'}}>
                           <img src={image} alt="" className="h-full w-full object-contain" />
                         </a>
@@ -1026,7 +1025,7 @@ export default function Home() {
                 <h2 className="mt-1 min-h-[44px] shrink-0 px-2 text-lg font-black leading-tight text-white [text-shadow:0_2px_5px_rgba(0,0,0,0.9)]">Potenzia la tua ricerca</h2>
                 {!rsForceAperta ? (
                   <div className="mt-2 w-full rounded-lg bg-slate-900/95 px-2 py-2 text-xs font-semibold leading-4 text-white">
-                    <p>La tua scorciatoia per il catalogo: scegli una ricerca e lascia che i prodotti orbitino intorno alla sfera.</p>
+                    <p>La tua scorciatoia per il catalogo: i prodotti ruotano tra loro in un vortice di energia.</p>
                     <p className="mt-1 text-[10px] font-medium text-cyan-200">RS FORCE cerca nel catalogo; Nova AI resta l'assistente intelligente.</p>
                   </div>
                 ) : (
