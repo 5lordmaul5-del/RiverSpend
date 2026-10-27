@@ -2157,142 +2157,84 @@ export default function Home() {
         @media(max-width:420px){.rs-download-apps{padding:20px 10px}.rs-download-grid{gap:9px}.rs-download-card{padding:10px}.rs-download-icon{height:92px}.rs-download-card h3{font-size:14px}}
 
 
-        /* RS FORCE — reset pulito: grafica in alto, testi leggibili, niente pannello nero sovrapposto. */
-        #rs-force-card {
-          position:relative !important;
-          height:390px !important;
-          min-height:390px !important;
-          max-height:390px !important;
-          overflow:hidden !important;
-          background:#041827 !important;
+
+        /* RS FORCE — palette continua come la sfera e orbite con profondità davanti/dietro. */
+        #rs-force-card,
+        #rs-force-card > button {
+          background:radial-gradient(ellipse at 50% 28%,#22d3ee 0%,#0891b2 28%,#087eaa 54%,#075985 78%,#0e7490 100%) !important;
+          border-color:#67e8f9 !important;
         }
         #rs-force-card > button {
-          position:relative !important;
-          display:flex !important;
-          flex-direction:column !important;
-          align-items:center !important;
-          justify-content:flex-start !important;
-          gap:0 !important;
-          width:100% !important;
-          height:100% !important;
-          min-height:0 !important;
-          padding:0 0 10px !important;
-          overflow:hidden !important;
-          isolation:isolate !important;
-          background:linear-gradient(180deg,#063b55 0%,#041827 55%,#041827 100%) !important;
+          position:relative !important; display:flex !important; flex-direction:column !important;
+          align-items:center !important; justify-content:flex-start !important; gap:0 !important;
+          width:100% !important; height:100% !important; padding:0 0 10px !important;
+          overflow:hidden !important; isolation:isolate !important;
+          background:radial-gradient(ellipse at 50% 28%,#22d3ee 0%,#0891b2 28%,#087eaa 54%,#075985 78%,#0e7490 100%) !important;
         }
         #rs-force-card .rs-force-stage {
-          position:relative !important;
-          inset:auto !important;
-          z-index:1 !important;
-          display:flex !important;
-          flex:0 0 174px !important;
-          width:100% !important;
-          height:174px !important;
-          min-height:174px !important;
-          max-height:174px !important;
-          margin:0 !important;
-          order:0 !important;
-          align-items:center !important;
-          justify-content:center !important;
-          overflow:hidden !important;
-          border:0 !important;
-          border-radius:12px 12px 0 0 !important;
-          background:radial-gradient(ellipse at 50% 42%,#22d3ee 0%,#087eaa 26%,#06445d 58%,#041827 100%) !important;
-          opacity:1 !important;
+          position:relative !important; inset:auto !important; z-index:1 !important;
+          display:flex !important; flex:0 0 174px !important; width:100% !important;
+          height:174px !important; min-height:174px !important; max-height:174px !important;
+          margin:0 !important; order:0 !important; align-items:center !important; justify-content:center !important;
+          overflow:hidden !important; border:0 !important; border-radius:12px 12px 0 0 !important;
+          perspective:900px !important; transform-style:preserve-3d !important;
+          background:radial-gradient(ellipse at 50% 35%,#67e8f9 0%,#22d3ee 24%,#0891b2 50%,#087eaa 78%,#075985 100%) !important;
         }
         #rs-force-card .rs-force-stage > img:first-child {
-          position:absolute !important;
-          inset:0 !important;
-          z-index:1 !important;
-          display:block !important;
-          width:100% !important;
-          height:100% !important;
-          object-fit:cover !important;
-          object-position:center 35% !important;
-          opacity:1 !important;
-          transform:none !important;
-          filter:brightness(1.15) saturate(1.2) contrast(1.05) !important;
+          position:absolute !important; inset:0 !important; z-index:1 !important; display:block !important;
+          width:100% !important; height:100% !important; object-fit:cover !important;
+          object-position:center 35% !important; opacity:1 !important; transform:none !important;
+          filter:brightness(1.22) saturate(1.28) contrast(1.04) !important;
         }
         #rs-force-card .rs-force-stage > span[aria-hidden="true"] {
-          position:absolute !important;
-          inset:0 !important;
-          z-index:2 !important;
-          background:radial-gradient(circle at 50% 40%,rgba(34,211,238,.18),transparent 68%) !important;
+          position:absolute !important; inset:0 !important; z-index:2 !important;
+          background:radial-gradient(circle at 50% 40%,rgba(103,232,249,.12),transparent 70%) !important;
         }
         #rs-force-card .rs-force-stage > img:nth-of-type(2) {
-          position:absolute !important;
-          inset:0 !important;
-          z-index:4 !important;
-          display:block !important;
-          width:100% !important;
-          height:100% !important;
-          object-fit:contain !important;
-          object-position:center !important;
-          opacity:1 !important;
-          mix-blend-mode:screen !important;
-          transform:none !important;
-          pointer-events:none !important;
+          position:absolute !important; inset:0 !important; z-index:4 !important; display:block !important;
+          width:100% !important; height:100% !important; object-fit:contain !important;
+          object-position:center !important; opacity:.95 !important; mix-blend-mode:screen !important;
+          transform:none !important; pointer-events:none !important;
+        }
+        #rs-force-card .rs-force-stage .rs-force-orbit {
+          position:absolute !important; left:50% !important; top:50% !important;
+          z-index:12 !important; transform-style:preserve-3d !important;
+          animation:rs-force-orbit var(--orbit-duration,6s) linear infinite !important;
+          will-change:transform !important;
+        }
+        #rs-force-card .rs-force-stage .rs-force-product {
+          backface-visibility:visible !important;
+          box-shadow:0 0 12px rgba(34,211,238,.85) !important;
         }
         #rs-force-card .rs-force-stage .rs-palantir {
-          position:relative !important;
-          z-index:8 !important;
-          width:96px !important;
-          height:96px !important;
-          flex:0 0 96px !important;
-          transform:none !important;
+          position:relative !important; z-index:10 !important; transform:translateZ(0) !important;
+          width:96px !important; height:96px !important; flex:0 0 96px !important;
           font-size:48px !important;
-          box-shadow:0 0 28px 10px rgba(34,211,238,.85),inset 0 0 24px rgba(255,255,255,.8) !important;
+          background:radial-gradient(circle at 32% 25%,#ffffff 0%,#cffafe 8%,#67e8f9 20%,#22d3ee 40%,#0891b2 62%,#075985 82%,#0e7490 100%) !important;
+          box-shadow:0 0 28px 10px rgba(103,232,249,.78),inset 0 0 24px rgba(255,255,255,.8) !important;
         }
-        #rs-force-card .rs-force-stage .rs-force-orbit { z-index:7 !important; }
+        #rs-force-card .rs-force-stage .rs-palantir > span { pointer-events:none; }
         #rs-force-card .rs-force-title {
-          position:relative !important;
-          z-index:5 !important;
-          order:1 !important;
-          flex:0 0 auto !important;
-          width:100% !important;
-          margin:8px 0 0 !important;
-          padding:0 8px !important;
-          font-size:21px !important;
-          line-height:1.15 !important;
-          color:#e0fcff !important;
-          text-shadow:0 0 8px #22d3ee,0 2px 5px #000 !important;
+          position:relative !important; z-index:5 !important; order:1 !important; flex:0 0 auto !important;
+          width:100% !important; margin:8px 0 0 !important; padding:0 8px !important;
+          font-size:21px !important; line-height:1.15 !important; color:#ecfeff !important;
+          text-shadow:0 0 8px #22d3ee,0 2px 5px rgba(0,50,70,.7) !important;
         }
         #rs-force-card > button > h2 {
-          position:relative !important;
-          z-index:5 !important;
-          order:2 !important;
-          flex:0 0 auto !important;
-          margin:5px 0 8px !important;
-          padding:0 8px !important;
-          font-size:17px !important;
-          line-height:1.2 !important;
-          color:#fff !important;
-          text-shadow:0 2px 5px #000 !important;
+          position:relative !important; z-index:5 !important; order:2 !important; flex:0 0 auto !important;
+          margin:5px 0 8px !important; padding:0 8px !important; font-size:17px !important;
+          line-height:1.2 !important; color:#fff !important; text-shadow:0 2px 5px rgba(0,50,70,.65) !important;
         }
         #rs-force-card > button > div:not(.rs-force-stage) {
-          position:relative !important;
-          z-index:5 !important;
-          order:3 !important;
-          display:block !important;
-          flex:0 0 auto !important;
-          width:calc(100% - 12px) !important;
-          max-width:calc(100% - 12px) !important;
-          margin:0 6px 6px !important;
-          padding:8px !important;
-          border:1px solid rgba(103,232,249,.25) !important;
-          border-radius:10px !important;
-          background:rgba(2,12,24,.88) !important;
-          color:#ecfeff !important;
-          box-sizing:border-box !important;
-          white-space:normal !important;
+          position:relative !important; z-index:5 !important; order:3 !important; display:block !important;
+          flex:0 0 auto !important; width:calc(100% - 12px) !important; max-width:calc(100% - 12px) !important;
+          margin:0 6px 6px !important; padding:8px !important; border:1px solid rgba(207,250,254,.38) !important;
+          border-radius:10px !important; background:rgba(8,145,178,.72) !important;
+          color:#fff !important; box-sizing:border-box !important; white-space:normal !important;
         }
         #rs-force-card > button > div:not(.rs-force-stage) p,
         #rs-force-card > button > div:not(.rs-force-stage) span {
-          color:#a5f3fc !important;
-          background:transparent !important;
-          overflow-wrap:anywhere !important;
-          white-space:normal !important;
+          color:#ecfeff !important; background:transparent !important; overflow-wrap:anywhere !important; white-space:normal !important;
         }
         @media (max-width:640px) {
           #rs-force-card { height:390px !important; min-height:390px !important; max-height:390px !important; }
