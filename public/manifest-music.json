@@ -1,0 +1,14 @@
+{
+  "id": "/servizi/music",
+  "name": "RiverSpendMusic",
+  "short_name": "RiverSpendMusic",
+  "description": "Musica e servizi musicali RiverSpend.",
+  "start_url": "/servizi/music",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#261047",
+  "theme_color": "#7e22ce",
+  "lang": "it",
+  "icons": [{ "src": "/icons/music.svg?v=5", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}
