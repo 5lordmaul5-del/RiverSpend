@@ -2156,88 +2156,49 @@ export default function Home() {
         @media(max-width:900px){.rs-download-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.rs-download-card:last-child{grid-column:1/-1;max-width:calc(50% - 7px);width:100%;justify-self:center}}
         @media(max-width:420px){.rs-download-apps{padding:20px 10px}.rs-download-grid{gap:9px}.rs-download-card{padding:10px}.rs-download-icon{height:92px}.rs-download-card h3{font-size:14px}}
 
-        /* RS FORCE — override conclusivo dopo tutte le regole precedenti. */
-        #rs-force-card .rs-force-stage {
-          background:radial-gradient(ellipse at 50% 42%,#0e7490 0%,#06445d 45%,#041522 100%) !important;
-        }
-        #rs-force-card .rs-force-stage > img:first-child {
-          object-fit:contain !important;
-          object-position:center !important;
-          opacity:.78 !important;
-          filter:brightness(1.2) saturate(1.25) !important;
-          transform:none !important;
-        }
-        #rs-force-card .rs-force-stage > img:nth-of-type(2) {
-          object-fit:contain !important;
-          object-position:center !important;
-          opacity:.92 !important;
-          mix-blend-mode:screen !important;
-          transform:none !important;
-        }
-        #rs-force-card .rs-force-stage .rs-palantir {
-          width:120px !important;
-          height:120px !important;
-          flex:0 0 120px !important;
-          transform:translateY(-4px) !important;
-        }
 
-        /* FIX basato sul controllo mobile: elimina il riquadro bianco su RS FORCE. */
-        #rs-force-card > button > div:not(.rs-force-stage) {
-          background:rgba(2,12,24,.90) !important;
-          background-color:rgba(2,12,24,.90) !important;
-          color:#ecfeff !important;
-          border-color:rgba(103,232,249,.3) !important;
-          box-shadow:0 8px 20px rgba(0,0,0,.3) !important;
+        /* RS FORCE — reset pulito: grafica in alto, testi leggibili, niente pannello nero sovrapposto. */
+        #rs-force-card {
+          position:relative !important;
+          height:390px !important;
+          min-height:390px !important;
+          max-height:390px !important;
+          overflow:hidden !important;
+          background:#041827 !important;
         }
-        #rs-force-card > button > div:not(.rs-force-stage) p,
-        #rs-force-card > button > div:not(.rs-force-stage) span {
-          color:#a5f3fc !important;
-          background:transparent !important;
-        }
-        #rs-force-card .rs-force-stage > img:first-child {
-          object-fit:cover !important;
-          object-position:center 38% !important;
-          opacity:1 !important;
-          filter:brightness(1.35) saturate(1.3) contrast(1.05) !important;
-        }
-        #rs-force-card .rs-force-stage > img:nth-of-type(2) {
-          object-fit:cover !important;
-          opacity:1 !important;
-          mix-blend-mode:screen !important;
-        }
-        /* Evita che testi e pulsante del banner vendita escano dai bordi sul telefono. */
-        #rs-seller-card { overflow:hidden !important; box-sizing:border-box !important; }
-        #rs-seller-card * { box-sizing:border-box !important; max-width:100% !important; }
-        #rs-seller-card > p,
-        #rs-seller-card > h2,
-        #rs-seller-card > span,
-        #rs-seller-card > button,
-        #rs-seller-card > a {
-          overflow-wrap:anywhere !important;
-          white-space:normal !important;
-          text-align:center !important;
-        }
-        #rs-seller-card > button,
-        #rs-seller-card > a { width:auto !important; min-width:0 !important; }
-
-        /* RS FORCE emergency visual reset: reveal the energy scene instead of a black panel. */
-        #rs-force-card,
         #rs-force-card > button {
-          background:linear-gradient(145deg,#063b55 0%,#075985 42%,#061827 100%) !important;
+          position:relative !important;
+          display:flex !important;
+          flex-direction:column !important;
+          align-items:center !important;
+          justify-content:flex-start !important;
+          gap:0 !important;
+          width:100% !important;
+          height:100% !important;
+          min-height:0 !important;
+          padding:0 0 10px !important;
+          overflow:hidden !important;
+          isolation:isolate !important;
+          background:linear-gradient(180deg,#063b55 0%,#041827 55%,#041827 100%) !important;
         }
-        #rs-force-card > button { isolation:auto !important; }
         #rs-force-card .rs-force-stage {
-          position:absolute !important;
-          inset:0 !important;
+          position:relative !important;
+          inset:auto !important;
           z-index:1 !important;
           display:flex !important;
-          height:100% !important;
-          min-height:100% !important;
-          max-height:none !important;
-          flex:0 0 100% !important;
+          flex:0 0 174px !important;
+          width:100% !important;
+          height:174px !important;
+          min-height:174px !important;
+          max-height:174px !important;
           margin:0 !important;
+          order:0 !important;
+          align-items:center !important;
+          justify-content:center !important;
           overflow:hidden !important;
-          background:radial-gradient(ellipse at 50% 35%,#22d3ee 0%,#087eaa 22%,#06445d 55%,#061827 100%) !important;
+          border:0 !important;
+          border-radius:12px 12px 0 0 !important;
+          background:radial-gradient(ellipse at 50% 42%,#22d3ee 0%,#087eaa 26%,#06445d 58%,#041827 100%) !important;
           opacity:1 !important;
         }
         #rs-force-card .rs-force-stage > img:first-child {
@@ -2248,14 +2209,16 @@ export default function Home() {
           width:100% !important;
           height:100% !important;
           object-fit:cover !important;
-          object-position:center 38% !important;
-          opacity:.78 !important;
-          filter:brightness(1.45) saturate(1.45) contrast(1.08) !important;
+          object-position:center 35% !important;
+          opacity:1 !important;
           transform:none !important;
+          filter:brightness(1.15) saturate(1.2) contrast(1.05) !important;
         }
         #rs-force-card .rs-force-stage > span[aria-hidden="true"] {
+          position:absolute !important;
+          inset:0 !important;
           z-index:2 !important;
-          background:radial-gradient(circle at 50% 38%,rgba(34,211,238,.32),transparent 66%) !important;
+          background:radial-gradient(circle at 50% 40%,rgba(34,211,238,.18),transparent 68%) !important;
         }
         #rs-force-card .rs-force-stage > img:nth-of-type(2) {
           position:absolute !important;
@@ -2264,28 +2227,80 @@ export default function Home() {
           display:block !important;
           width:100% !important;
           height:100% !important;
-          object-fit:cover !important;
+          object-fit:contain !important;
+          object-position:center !important;
           opacity:1 !important;
           mix-blend-mode:screen !important;
+          transform:none !important;
+          pointer-events:none !important;
         }
-        #rs-force-card .rs-force-stage .rs-palantir,
-        #rs-force-card .rs-force-stage .rs-force-orbit { z-index:8 !important; }
         #rs-force-card .rs-force-stage .rs-palantir {
-          width:132px !important;
-          height:132px !important;
-          flex:0 0 132px !important;
-          box-shadow:0 0 38px 16px rgba(34,211,238,.9),inset 0 0 28px rgba(255,255,255,.8) !important;
+          position:relative !important;
+          z-index:8 !important;
+          width:96px !important;
+          height:96px !important;
+          flex:0 0 96px !important;
+          transform:none !important;
+          font-size:48px !important;
+          box-shadow:0 0 28px 10px rgba(34,211,238,.85),inset 0 0 24px rgba(255,255,255,.8) !important;
         }
-        #rs-force-card .rs-force-title,
-        #rs-force-card h2,
+        #rs-force-card .rs-force-stage .rs-force-orbit { z-index:7 !important; }
+        #rs-force-card .rs-force-title {
+          position:relative !important;
+          z-index:5 !important;
+          order:1 !important;
+          flex:0 0 auto !important;
+          width:100% !important;
+          margin:8px 0 0 !important;
+          padding:0 8px !important;
+          font-size:21px !important;
+          line-height:1.15 !important;
+          color:#e0fcff !important;
+          text-shadow:0 0 8px #22d3ee,0 2px 5px #000 !important;
+        }
+        #rs-force-card > button > h2 {
+          position:relative !important;
+          z-index:5 !important;
+          order:2 !important;
+          flex:0 0 auto !important;
+          margin:5px 0 8px !important;
+          padding:0 8px !important;
+          font-size:17px !important;
+          line-height:1.2 !important;
+          color:#fff !important;
+          text-shadow:0 2px 5px #000 !important;
+        }
         #rs-force-card > button > div:not(.rs-force-stage) {
           position:relative !important;
-          z-index:20 !important;
-        }
-        #rs-force-card > button > div:not(.rs-force-stage) {
-          background:rgba(2,12,24,.82) !important;
+          z-index:5 !important;
+          order:3 !important;
+          display:block !important;
+          flex:0 0 auto !important;
+          width:calc(100% - 12px) !important;
+          max-width:calc(100% - 12px) !important;
+          margin:0 6px 6px !important;
+          padding:8px !important;
+          border:1px solid rgba(103,232,249,.25) !important;
+          border-radius:10px !important;
+          background:rgba(2,12,24,.88) !important;
           color:#ecfeff !important;
+          box-sizing:border-box !important;
+          white-space:normal !important;
         }
+        #rs-force-card > button > div:not(.rs-force-stage) p,
+        #rs-force-card > button > div:not(.rs-force-stage) span {
+          color:#a5f3fc !important;
+          background:transparent !important;
+          overflow-wrap:anywhere !important;
+          white-space:normal !important;
+        }
+        @media (max-width:640px) {
+          #rs-force-card { height:390px !important; min-height:390px !important; max-height:390px !important; }
+          #rs-force-card .rs-force-stage { flex-basis:174px !important; height:174px !important; min-height:174px !important; max-height:174px !important; }
+          #rs-force-card .rs-force-title { font-size:20px !important; }
+          #rs-force-card > button > h2 { font-size:16px !important; }
+        }
+
       `}</style>
     </main>
   );
