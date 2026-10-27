@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import SplashScreen from './SplashScreen';
 import { supabase } from '../lib/supabase';
 import { riverSpendCategorySections as categorieSezioni, riverSpendCategories as categorie } from '../lib/riverSpendCategories';
 
@@ -80,14 +79,6 @@ export default function Home() {
     setLanguage(document.documentElement.lang || 'it');
     window.addEventListener('riverspend:language-change', sync);
     return () => window.removeEventListener('riverspend:language-change', sync);
-  }, []);
-  // Mostra la schermata iniziale solo finché l'utente non è entrato nello Shop in questa sessione.
-  // Lo stato iniziale resta coperto dalla splash per evitare il lampo della homepage.
-  const [showSplash, setShowSplash] = useState(true);
-  useEffect(() => {
-    try {
-      if (sessionStorage.getItem('rs-opening-seen') === '1') setShowSplash(false);
-    } catch {}
   }, []);
   const [prodotti, setProdotti] = useState([]);
   const [errore, setErrore] = useState('');
@@ -883,9 +874,7 @@ export default function Home() {
         </div>
       )}
 
-      {showSplash && <SplashScreen onEnter={() => { try { sessionStorage.setItem('rs-opening-seen', '1'); } catch {} setShowSplash(false); }} />}
-
-      <div className={`transition-opacity duration-700 ${showSplash ? 'opacity-0' : 'opacity-100'}`}>
+      <div>
         <header className="rs-header sticky top-0 z-30 border-b border-amber-200 bg-white/95 px-3 py-2 shadow-sm backdrop-blur">
           <div className="mx-auto max-w-6xl">
             <div className="relative grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2">
@@ -1428,8 +1417,7 @@ export default function Home() {
           </div>
         </footer>
       </div>
-      {!showSplash && (
-        <aside className="fixed bottom-4 right-3 z-40 w-[min(360px,calc(100vw-24px))]" aria-label="Assistente Nova · River AI">
+      <aside className="fixed bottom-4 right-3 z-40 w-[min(360px,calc(100vw-24px))]" aria-label="Assistente Nova · River AI">
           {novaOpen ? (
             <section className="overflow-hidden rounded-3xl border border-cyan-300/70 bg-slate-950/95 text-white shadow-2xl shadow-cyan-950/50 backdrop-blur">
               <div className="flex items-center justify-between border-b border-cyan-400/30 bg-gradient-to-r from-slate-900 to-teal-950 px-4 py-3">
@@ -1492,7 +1480,6 @@ export default function Home() {
             </button>
           )}
         </aside>
-      )}
       <style jsx>{`
         /* Nova · River AI: animazioni leggere, senza librerie aggiuntive. */
         .nova-animated-head { transform-box: fill-box; transform-origin: 50% 85%; animation: nova-head-idle 4.8s ease-in-out infinite; }
