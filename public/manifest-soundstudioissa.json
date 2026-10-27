@@ -1,0 +1,14 @@
+{
+  "id": "/servizi/sound-studio-live",
+  "name": "RiverSpendSoundStudioLiveISSA",
+  "short_name": "SoundStudio ISSA",
+  "description": "RiverSpend Sound Studio Live ISSA — Immersive Sound Space Ambient.",
+  "start_url": "/servizi/sound-studio-live",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#261047",
+  "theme_color": "#7e22ce",
+  "lang": "it",
+  "icons": [{ "src": "/icons/soundstudioissa.svg?v=1", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}
