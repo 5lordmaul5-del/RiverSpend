@@ -45,7 +45,7 @@ export default function RiverSpendSprint() {
       <section className="sprint-hero">
         <div className="sprint-hero-copy">
           <p className="sprint-eyebrow">LE TUE IDEE, PRONTE A PRENDERE FORMA</p>
-          <h1><span>RiverSpend</span><span className="sprint-word"><small>s</small>Print</span></h1>
+          <h1><span className="sprint-rss-logo" aria-label="RSS">RSS</span><span className="sprint-word">RiverSpend <small>s</small>Print</span></h1>
           <p className="sprint-tagline">La tua immagine. La tua idea. Il tuo prodotto.</p>
           <p className="sprint-description">Dalle magliette agli asciugamani, dai cappellini a zaini, portachiavi e penne: stiamo preparando una vetrina per prodotti personalizzati con il marchio RiverSpend e con le tue immagini.</p>
           <a className="sprint-cta" href="#sprint-products">Scopri cosa potrai creare ↓</a>
@@ -110,7 +110,7 @@ export default function RiverSpendSprint() {
         .sprint-back{color:#075c68;text-decoration:none;font-weight:800;font-size:14px}.sprint-pill{font-size:10px;letter-spacing:.15em;font-weight:900;background:#d9f8f7;color:#087c84;border-radius:999px;padding:9px 12px}
         .sprint-hero{max-width:1180px;margin:0 auto;padding:40px 22px 54px;display:grid;grid-template-columns:1.1fr .9fr;align-items:center;gap:36px;overflow:hidden}
         .sprint-eyebrow{font-size:11px;letter-spacing:.18em;font-weight:900;color:#078b91;margin:0 0 12px}
-        .sprint-hero h1{font-size:clamp(42px,6vw,76px);letter-spacing:-.065em;line-height:.98;margin:0;color:#073443;display:flex;flex-wrap:wrap;gap:12px}
+        .sprint-rss-logo{display:block;font-size:1.25em;line-height:.95;font-weight:950;letter-spacing:-.07em;background:linear-gradient(110deg,#087bb5 15%,#11c2d2 52%,#d8a62e 85%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 2px 0 rgba(5,54,87,.08)}.sprint-hero h1{font-size:clamp(42px,6vw,76px);letter-spacing:-.065em;line-height:.98;margin:0;color:#073443;display:flex;flex-wrap:wrap;gap:12px}
         .sprint-hero h1>span:first-child{color:#073443}.sprint-word{color:#078d99;white-space:nowrap}.sprint-word small{font-size:.53em;vertical-align:top;display:inline-block;margin:0 1px 0 2px;letter-spacing:-.08em;color:#d7a52a}
         .sprint-tagline{font-size:clamp(19px,2.2vw,25px);font-weight:800;margin:22px 0 10px}.sprint-description{font-size:16px;line-height:1.65;color:#49646c;max-width:520px}
         .sprint-cta,.sprint-upload-button{display:inline-flex;align-items:center;justify-content:center;margin-top:16px;padding:14px 20px;border-radius:14px;background:#087f89;color:#fff;text-decoration:none;font-weight:900;box-shadow:0 8px 22px #087f8929}
