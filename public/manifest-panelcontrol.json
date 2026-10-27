@@ -1,7 +1,7 @@
 {
   "id": "/rs-control-center",
-  "name": "RiverSpend PanelControl",
-  "short_name": "RS Control",
+  "name": "RiverSpendPanelControl",
+  "short_name": "RiverSpendPanelControl",
   "description": "Area riservata RiverSpend PanelControl.",
   "start_url": "/rs-control-center",
   "scope": "/",
@@ -10,12 +10,5 @@
   "background_color": "#020617",
   "theme_color": "#0f172a",
   "lang": "it",
-  "icons": [
-    {
-      "src": "/icons/panelcontrol.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
-    }
-  ]
+  "icons": [{ "src": "/icons/panelcontrol.svg?v=5", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
 }
