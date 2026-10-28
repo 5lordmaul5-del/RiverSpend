@@ -111,6 +111,7 @@ export default function Home() {
     ['Profilo','/profilo'],
     ['RiverSpendShop','/'],
     ['📲 Scarica le app RiverSpend','/app'],
+    ['📷 Codice QR · Apri RiverSpend','#rs-site-qr'],
     ['🎁 RiverSpend Gift Card','/gift-card'],
     ['RS Shield','/nova-shield'],
     ['RS Fidelity','/servizi/fidelity'],
@@ -977,6 +978,14 @@ export default function Home() {
                     <span className="text-[10px] text-teal-300">{t('open')}</span>
                   </a>
                 ))}
+              </div>
+              <div id="rs-site-qr" className="mt-3 flex items-center gap-3 rounded-xl border border-teal-700 bg-slate-800 p-3">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&margin=6&data=https%3A%2F%2Fwww.riverspend.com%2F" alt="Codice QR per aprire RiverSpend" width="88" height="88" loading="lazy" className="h-[88px] w-[88px] rounded-lg bg-white p-1" />
+                <div className="min-w-0">
+                  <strong className="block text-sm text-white">📷 Codice QR RiverSpend</strong>
+                  <p className="mt-1 text-xs leading-5 text-slate-300">Scansiona il codice per aprire il sito ufficiale.</p>
+                  <a href="https://www.riverspend.com/" className="mt-2 inline-block text-xs font-bold text-teal-300 underline">Apri il sito →</a>
+                </div>
               </div>
               <a href="/ecosistema" onClick={() => setMenuRiverSpend(false)} className="mt-3 block rounded-lg bg-teal-900 px-3 py-2 text-sm font-semibold text-teal-100">{t('ecosystem')}</a>
               <a href="/tutela" onClick={() => setMenuRiverSpend(false)} className="mt-2 block rounded-lg border border-teal-800 px-3 py-2 text-sm font-semibold text-teal-100">{t('support')}</a>
@@ -2098,16 +2107,7 @@ export default function Home() {
 
       `}</style>
 
-      <section id="rs-site-qr" aria-labelledby="rs-site-qr-title" className="mx-auto my-10 max-w-3xl rounded-3xl border border-cyan-200 bg-white p-6 text-center shadow-lg sm:p-8">
-        <p className="mb-2 text-xs font-bold uppercase tracking-[0.25em] text-teal-700">RIVERSPEND · YOUR SHOP • YOUR FLOW</p>
-        <h2 id="rs-site-qr-title" className="text-2xl font-black text-slate-900 sm:text-3xl">Porta RiverSpend sempre con te</h2>
-        <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-slate-600">Scansiona il codice QR con la fotocamera del telefono per aprire il sito ufficiale RiverSpend.</p>
-        <a className="mx-auto mt-5 inline-flex rounded-2xl border border-slate-200 bg-white p-3 shadow-sm" href="https://www.riverspend.com/" aria-label="Apri il sito ufficiale RiverSpend">
-          <img src="https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=8&data=https%3A%2F%2Fwww.riverspend.com%2F" alt="Codice QR per aprire www.riverspend.com" width="240" height="240" loading="lazy" className="h-48 w-48 sm:h-60 sm:w-60" />
-        </a>
-        <p className="mt-4 break-all text-sm font-semibold text-teal-800">www.riverspend.com</p>
-        <a href="https://www.riverspend.com/" className="mt-4 inline-flex items-center justify-center rounded-full bg-teal-700 px-6 py-3 text-sm font-bold text-white hover:bg-teal-800">Apri RiverSpend →</a>
-      </section>
+
       <style jsx>{`
         .rs-download-apps{margin:36px auto 28px;padding:24px 16px;max-width:1200px;color:#073543}
         .rs-download-head{text-align:center;max-width:760px;margin:0 auto 22px}
