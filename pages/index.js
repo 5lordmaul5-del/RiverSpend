@@ -1018,6 +1018,10 @@ export default function Home() {
                 <img src="/icons/riverspendshop-app.jpg" alt="RSShop" className="h-10 w-10 rounded-lg object-cover shadow-sm ring-1 ring-cyan-200" loading="lazy" />
                 <span className="w-full break-words text-[8px] font-bold leading-tight text-slate-800">RSShop</span>
               </a>
+              <a href="https://riversignals.vercel.app/?source=riverspendshop" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RiverSignals — By RiverSpendShop">
+                <img src="/icons/riversignals.svg" alt="RiverSignals" className="h-10 w-10 rounded-lg object-cover shadow-sm ring-1 ring-cyan-200" loading="lazy" />
+                <span className="w-full break-words text-[7px] font-bold leading-tight text-slate-800">RiverSignals</span>
+              </a>
               <a href="/rs-sound-studio" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RSSoundStudio System ISSA">
                 <img src="/rssoundstudio-issa-banner.jpg" alt="RSSoundStudio System ISSA" className="h-10 w-10 rounded-lg object-cover shadow-sm ring-1 ring-cyan-200" loading="lazy" />
                 <span className="w-full break-words text-[7px] font-bold leading-tight text-slate-800">RSSoundStudio<br />System ISSA</span>
