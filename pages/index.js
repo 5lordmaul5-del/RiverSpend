@@ -2098,50 +2098,15 @@ export default function Home() {
 
       `}</style>
 
-      <section id="rs-download-apps" className="rs-download-apps" aria-labelledby="rs-download-title">
-        <div className="rs-download-head">
-          <p className="rs-download-kicker">RIVERSPEND · APP UFFICIALI</p>
-          <h2 id="rs-download-title">Le app RiverSpend</h2>
-          <p>Per il momento le app non sono pubblicate su Google Play Store. Puoi aprire RiverSpend con Google Chrome e seguire le istruzioni qui sotto.</p>
-        </div>
-        <div className="rs-download-grid">
-          <article className="rs-download-card">
-            <div className="rs-download-icon rs-icon-shop" aria-hidden="true"><span>RS</span><b>SHOP</b></div>
-            <h3>RiverSpendShop</h3><p>Il marketplace RiverSpend.</p>
-            <a className="rs-download-button" href="#rs-install-guide">Come installarla</a>
-          </article>
-          <article className="rs-download-card">
-            <div className="rs-download-icon rs-icon-park" aria-hidden="true"><span>🎢</span><b>PARK</b></div>
-            <h3>RiverSpendPark</h3><p>Il mondo delle attrazioni RiverSpend.</p>
-            <a className="rs-download-button" href="#rs-install-guide">Come installarla</a>
-          </article>
-          <article className="rs-download-card">
-            <div className="rs-download-icon rs-icon-stream" aria-hidden="true"><span>▶</span><b>STREAM</b></div>
-            <h3>RiverSpend Streaming</h3><p>Accesso non ancora attivo.</p>
-            <span className="rs-download-locked">🔒 Bloccata fino all’attivazione</span>
-          </article>
-          <article className="rs-download-card">
-            <div className="rs-download-icon rs-icon-music" aria-hidden="true"><span>♫</span><b>SOUND</b></div>
-            <h3>RiverSpend SoundStudio</h3><p>Servizi musicali in preparazione.</p>
-            <span className="rs-download-locked">🔒 Bloccata fino all’attivazione</span>
-          </article>
-          <article className="rs-download-card">
-            <div className="rs-download-icon rs-icon-panel" aria-hidden="true"><span>⚙</span><b>RSPC</b></div>
-            <h3>RSPanelControl</h3><p>Pannello di controllo riservato.</p>
-            <span className="rs-download-locked">🔒 Accesso riservato · non scaricabile</span>
-          </article>
-        </div>
-        <div id="rs-install-guide" className="rs-install-guide">
-          <h3>Come aggiungere un’app al telefono Android</h3>
-          <ol>
-            <li>Apri <strong>Google Chrome</strong> sul telefono.</li>
-            <li>Digita <strong>www.riverspend.com</strong> nella barra degli indirizzi.</li>
-            <li>Apri il menu di Chrome con i <strong>tre puntini ⋮</strong>.</li>
-            <li>Se disponibile, tocca <strong>“Installa app”</strong> oppure <strong>“Aggiungi a schermata Home”</strong>.</li>
-            <li>Conferma e troverai l’icona sul telefono. Se l’opzione non compare, quella funzione non è ancora disponibile sul dispositivo.</li>
-          </ol>
-          <p className="rs-install-note"><strong>Importante:</strong> non serve scaricare file APK da siti sconosciuti. Streaming, SoundStudio e RSPanelControl resteranno bloccate finché non saranno predisposti accessi e autorizzazioni. L’eventuale accesso a pagamento dovrà essere configurato e verificato prima di abilitarle.</p>
-        </div>
+      <section id="rs-site-qr" aria-labelledby="rs-site-qr-title" className="mx-auto my-10 max-w-3xl rounded-3xl border border-cyan-200 bg-white p-6 text-center shadow-lg sm:p-8">
+        <p className="mb-2 text-xs font-bold uppercase tracking-[0.25em] text-teal-700">RIVERSPEND · YOUR SHOP • YOUR FLOW</p>
+        <h2 id="rs-site-qr-title" className="text-2xl font-black text-slate-900 sm:text-3xl">Porta RiverSpend sempre con te</h2>
+        <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-slate-600">Scansiona il codice QR con la fotocamera del telefono per aprire il sito ufficiale RiverSpend.</p>
+        <a className="mx-auto mt-5 inline-flex rounded-2xl border border-slate-200 bg-white p-3 shadow-sm" href="https://www.riverspend.com/" aria-label="Apri il sito ufficiale RiverSpend">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=8&data=https%3A%2F%2Fwww.riverspend.com%2F" alt="Codice QR per aprire www.riverspend.com" width="240" height="240" loading="lazy" className="h-48 w-48 sm:h-60 sm:w-60" />
+        </a>
+        <p className="mt-4 break-all text-sm font-semibold text-teal-800">www.riverspend.com</p>
+        <a href="https://www.riverspend.com/" className="mt-4 inline-flex items-center justify-center rounded-full bg-teal-700 px-6 py-3 text-sm font-bold text-white hover:bg-teal-800">Apri RiverSpend →</a>
       </section>
       <style jsx>{`
         .rs-download-apps{margin:36px auto 28px;padding:24px 16px;max-width:1200px;color:#073543}
