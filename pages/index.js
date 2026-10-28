@@ -1013,35 +1013,32 @@ export default function Home() {
 
           <section aria-label="App RiverSpend" className="mb-4 rounded-2xl border border-cyan-200/70 bg-white/90 px-2 py-3 shadow-md">
             <div className="mb-2 text-center text-[11px] font-extrabold uppercase tracking-[.16em] text-slate-700">Le app RiverSpend</div>
-            <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6">
+            <div className="grid grid-cols-3 gap-x-2 gap-y-4 sm:grid-cols-3">
               <a href="/app" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RSShop">
-                <img src="/icons/riverspendshop-app.jpg" alt="RSShop" className="h-16 w-16 rounded-2xl object-cover shadow-md ring-2 ring-cyan-200 sm:h-[72px] sm:w-[72px]" loading="lazy" />
-                <span className="w-full break-words text-[11px] font-extrabold leading-tight text-slate-900">RSShop</span>
+                <img src="/icons/riverspendshop-app.jpg" alt="RSShop" className="h-20 w-20 rounded-2xl object-cover shadow-md ring-2 ring-cyan-200 sm:h-24 sm:w-24" loading="lazy" />
+                <span className="w-full break-words text-xs font-extrabold leading-tight text-slate-900">RSShop</span>
               </a>
               <a href="https://riversignals.vercel.app/?source=riverspendshop" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RiverSignals — By RiverSpendShop">
-                <img src="/icons/riversignals.svg" alt="RiverSignals" className="h-10 w-10 rounded-lg object-cover shadow-sm ring-1 ring-cyan-200" loading="lazy" />
-                <span className="w-full break-words text-[10px] font-extrabold leading-tight text-slate-900">RiverSignals</span>
+                <img src="/icons/riversignals.svg" alt="RiverSignals" className="h-20 w-20 rounded-2xl object-cover shadow-md ring-2 ring-cyan-200 sm:h-24 sm:w-24" loading="lazy" />
+                <span className="w-full break-words text-xs font-extrabold leading-tight text-slate-900">RiverSignals</span>
               </a>
               <a href="/rs-sound-studio" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RSSoundStudio System ISSA">
-                <img src="/rssoundstudio-issa-banner.jpg" alt="RSSoundStudio System ISSA" className="h-10 w-10 rounded-lg object-cover shadow-sm ring-1 ring-cyan-200" loading="lazy" />
-                <span className="w-full break-words text-[10px] font-extrabold leading-tight text-slate-900">RSSoundStudio<br />System ISSA</span>
+                <img src="/rssoundstudio-issa-banner.jpg" alt="RSSoundStudio System ISSA" className="h-20 w-20 rounded-2xl object-cover shadow-md ring-2 ring-cyan-200 sm:h-24 sm:w-24" loading="lazy" />
+                <span className="w-full break-words text-xs font-extrabold leading-tight text-slate-900">RSSoundStudio<br />System ISSA</span>
               </a>
               <a href="/servizi/broadcast" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RSStreaming">
-                <img src="/icons/streaming.svg" alt="RSStreaming" className="h-10 w-10 rounded-lg object-contain shadow-sm ring-1 ring-cyan-200" loading="lazy" />
-                <span className="w-full break-words text-[11px] font-extrabold leading-tight text-slate-900">RSStreaming</span>
+                <img src="/icons/streaming.svg" alt="RSStreaming" className="h-20 w-20 rounded-2xl object-contain shadow-md ring-2 ring-cyan-200 sm:h-24 sm:w-24" loading="lazy" />
+                <span className="w-full break-words text-xs font-extrabold leading-tight text-slate-900">RSStreaming</span>
               </a>
               <a href="/park" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RSPark">
-                <img src="/1000187343.png" alt="RSPark" className="h-10 w-10 rounded-lg object-cover shadow-sm ring-1 ring-cyan-200" loading="lazy" />
-                <span className="w-full break-words text-[11px] font-extrabold leading-tight text-slate-900">RSPark</span>
+                <img src="/1000187343.png" alt="RSPark" className="h-20 w-20 rounded-2xl object-cover shadow-md ring-2 ring-cyan-200 sm:h-24 sm:w-24" loading="lazy" />
+                <span className="w-full break-words text-xs font-extrabold leading-tight text-slate-900">RSPark</span>
               </a>
               <a href="/servizi/music" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RSMusic">
-                <img src="/icons/music.svg" alt="RSMusic" className="h-10 w-10 rounded-lg object-contain shadow-sm ring-1 ring-cyan-200" loading="lazy" />
-                <span className="w-full break-words text-[11px] font-extrabold leading-tight text-slate-900">RSMusic</span>
+                <img src="/icons/music.svg" alt="RSMusic" className="h-20 w-20 rounded-2xl object-contain shadow-md ring-2 ring-cyan-200 sm:h-24 sm:w-24" loading="lazy" />
+                <span className="w-full break-words text-xs font-extrabold leading-tight text-slate-900">RSMusic</span>
               </a>
-              <a href="/rs-control-center" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RSPC">
-                <img src="/1000186325.png" alt="RSPC" className="h-10 w-10 rounded-lg object-cover shadow-sm ring-1 ring-cyan-200" loading="lazy" />
-                <span className="w-full break-words text-[11px] font-extrabold leading-tight text-slate-900">RSPC</span>
-              </a>
+
             </div>
             <a href="/app" className="mt-2 block text-center text-[10px] font-semibold text-teal-800 underline underline-offset-2">Istruzioni per installarle da Google Chrome · App Store non ancora disponibile</a>
           </section>
