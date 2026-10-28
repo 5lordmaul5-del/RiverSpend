@@ -19,6 +19,8 @@ export default function RSControlCenter() {
   const [error, setError] = useState("");
   const [insights, setInsights] = useState(null);
   const [insightsError, setInsightsError] = useState("");
+  const [globalIntel, setGlobalIntel] = useState(null);
+  const [globalIntelError, setGlobalIntelError] = useState("");
   const [collaborators, setCollaborators] = useState([]);
   const [newName, setNewName] = useState("");
   const [newEmail, setNewEmail] = useState("");
@@ -39,6 +41,13 @@ export default function RSControlCenter() {
   const [secretSubject, setSecretSubject] = useState("");
   const [secretBody, setSecretBody] = useState("");
   const [secretRecipients, setSecretRecipients] = useState([]);
+
+  async function loadGlobalIntel() {
+    setGlobalIntelError("");
+    const { data, error } = await supabase.rpc("rs_admin_global_intelligence");
+    if (error) { setGlobalIntelError(error.message || "Dati Global Intelligence non disponibili."); return; }
+    setGlobalIntel(data || null);
+  }
 
   async function loadInsights() {
     setInsightsError("");
@@ -109,6 +118,7 @@ export default function RSControlCenter() {
         orders: results[1].error ? null : results[1].count,
       });
       await loadInsights();
+      await loadGlobalIntel();
       await loadCollaborators();
     }
 
@@ -338,6 +348,39 @@ export default function RSControlCenter() {
                   ) : <div style={{ color: "#8aa0a6" }}>Nessuna ricerca registrata ancora.</div>}
                 </article>
               </section>
+            </>
+          )}
+
+          <h2 style={{ marginTop: 30 }}>🌍 RiverSpend Global Intelligence</h2>
+          <p style={{ color: "#63818a", marginTop: 0 }}>Mercati, vendite e interessi registrati negli ultimi 30 giorni. I dati geografici appaiono solo quando disponibili e non vengono inventati.</p>
+          {globalIntelError ? (
+            <section style={{ ...panel, borderLeft: "5px solid #d99a00", marginBottom: 16 }}>
+              <b>Global Intelligence in attesa di collegamento</b><div style={{ color: "#718a91", marginTop: 6 }}>{globalIntelError}</div>
+            </section>
+          ) : (
+            <>
+              <section style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(145px,1fr))", gap: 12, marginBottom: 16 }}>
+                {[
+                  ["🧾", "Ordini completati/in corso", globalIntel?.sales_summary?.orders ?? "—"],
+                  ["💶", "Vendite lorde EUR", globalIntel?.sales_summary?.gross_eur == null ? "—" : Number(globalIntel.sales_summary.gross_eur).toLocaleString("it-IT",{style:"currency",currency:"EUR"})],
+                  ["🏅", "Commissioni EUR", globalIntel?.sales_summary?.commission_eur == null ? "—" : Number(globalIntel.sales_summary.commission_eur).toLocaleString("it-IT",{style:"currency",currency:"EUR"})],
+                  ["✅", "Ordini pagati", globalIntel?.sales_summary?.paid_orders ?? "—"],
+                ].map(([icon,title,metric]) => <article key={title} style={panel}><div style={{fontSize:22}}>{icon}</div><b style={{display:"block",marginTop:6}}>{title}</b><div style={{fontSize:23,fontWeight:700,color:"#087f9e",marginTop:7}}>{metric}</div></article>)}
+              </section>
+              <section style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))", gap: 12 }}>
+                {[
+                  ["🌎 Paesi", globalIntel?.countries || [], row => row.name, row => `${row.purchases} acquisti · ${row.events} interazioni`],
+                  ["🗺️ Regioni", globalIntel?.regions || [], row => `${row.name} · ${row.country}`, row => `${row.purchases} acquisti · ${row.events} interazioni`],
+                  ["📍 Città", globalIntel?.cities || [], row => `${row.name} · ${row.region}`, row => `${row.purchases} acquisti · ${row.events} interazioni`],
+                  ["🛍️ Categorie", globalIntel?.top_categories || [], row => row.name, row => `${row.purchases} acquisti · ${row.events} interazioni`],
+                  ["🎵 Musica e contenuti", globalIntel?.content_interests || [], row => row.type, row => `${row.events} eventi registrati`],
+                ].map(([title,rows,label,detail]) => (
+                  <article key={title} style={panel}><b>{title}</b><div style={{fontSize:12,color:"#718a91",marginTop:5,marginBottom:8}}>Classifica basata sui dati disponibili</div>
+                    {rows.length ? rows.map((row,i) => <div key={i} style={{display:"flex",justifyContent:"space-between",gap:12,padding:"9px 0",borderBottom:"1px solid #edf3f5"}}><span><b>{i+1}.</b> {label(row)}</span><small style={{textAlign:"right",color:"#63818a"}}>{detail(row)}</small></div>) : <div style={{color:"#8aa0a6"}}>Nessun dato geografico o di contenuto registrato per il periodo.</div>}
+                  </article>
+                ))}
+              </section>
+              <section style={{...panel,marginTop:12,borderLeft:"5px solid #08a7cf"}}><b>💡 Come leggere le opportunità</b><p style={{color:"#63818a",marginBottom:6}}>Useremo queste classifiche per decidere quali categorie promuovere per Paese, preparare campagne stagionali e capire dove testare nuovi contenuti. Una visita non equivale a una vendita e i risultati non rappresentano automaticamente le preferenze di tutta una nazione.</p><small style={{color:"#718a91"}}>{globalIntel?.geography_note || ""} {globalIntel?.trend_note || ""}</small></section>
             </>
           )}
 
