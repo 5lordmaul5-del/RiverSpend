@@ -111,7 +111,7 @@ export default function Home() {
     ['Profilo','/profilo'],
     ['RiverSpendShop','/'],
     ['📲 Scarica le app RiverSpend','/app'],
-    ['📷 Codice QR · Apri RiverSpend','#rs-site-qr'],
+    ['📲 QR · Scarica le app RiverSpend','/app'],
     ['🎁 RiverSpend Gift Card','/gift-card'],
     ['RS Shield','/nova-shield'],
     ['RS Fidelity','/servizi/fidelity'],
@@ -979,12 +979,14 @@ export default function Home() {
                   </a>
                 ))}
               </div>
-              <div id="rs-site-qr" className="mt-3 flex items-center gap-3 rounded-xl border border-teal-700 bg-slate-800 p-3">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&margin=6&data=https%3A%2F%2Fwww.riverspend.com%2F" alt="Codice QR per aprire RiverSpend" width="88" height="88" loading="lazy" className="h-[88px] w-[88px] rounded-lg bg-white p-1" />
+              <div id="rs-site-qr" className="mt-3 flex items-center gap-3 rounded-xl border border-cyan-300 bg-slate-900 p-3">
+                <a href="/app" aria-label="Apri la pagina delle app RiverSpend" className="shrink-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-300">
+                  <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=6&data=https%3A%2F%2Fwww.riverspend.com%2Fapp" alt="Codice QR per aprire le app RiverSpend" width="88" height="88" loading="lazy" className="h-[88px] w-[88px] rounded-lg bg-white p-1" />
+                </a>
                 <div className="min-w-0">
-                  <strong className="block text-sm text-white">📷 Codice QR RiverSpend</strong>
-                  <p className="mt-1 text-xs leading-5 text-slate-300">Scansiona il codice per aprire il sito ufficiale.</p>
-                  <a href="https://www.riverspend.com/" className="mt-2 inline-block text-xs font-bold text-teal-300 underline">Apri il sito →</a>
+                  <strong className="block text-sm font-extrabold text-white">📲 Scarica le app RiverSpend</strong>
+                  <p className="mt-1 text-xs leading-5 text-slate-200">Scansiona il QR per aprire la pagina delle app e scegliere quella che ti interessa.</p>
+                  <a href="/app" className="mt-2 inline-block text-xs font-extrabold text-cyan-300 underline underline-offset-2">Apri le app RiverSpend →</a>
                 </div>
               </div>
               <a href="/ecosistema" onClick={() => setMenuRiverSpend(false)} className="mt-3 block rounded-lg bg-teal-900 px-3 py-2 text-sm font-semibold text-teal-100">{t('ecosystem')}</a>
@@ -1023,6 +1025,17 @@ export default function Home() {
               </a>
             </div>
             <a href="/app" className="mt-2 block text-center text-[10px] font-semibold text-teal-800 underline underline-offset-2">Istruzioni per installarle da Google Chrome · App Store non ancora disponibile</a>
+          </section>
+
+          <section aria-label="Scarica le app RiverSpend con QR code" className="mb-4 flex items-center gap-3 rounded-2xl border-2 border-cyan-300 bg-slate-900 p-3 shadow-lg shadow-cyan-950/20">
+            <a href="/app" aria-label="Apri la pagina per scegliere le app RiverSpend" className="shrink-0 rounded-xl bg-white p-1 focus:outline-none focus:ring-2 focus:ring-amber-300">
+              <img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=6&data=https%3A%2F%2Fwww.riverspend.com%2Fapp" alt="QR code per la pagina delle app RiverSpend" width="88" height="88" className="h-[88px] w-[88px] rounded-lg" loading="lazy" />
+            </a>
+            <div className="min-w-0 flex-1">
+              <h2 className="text-sm font-extrabold text-white">📲 Le app RiverSpend, tutte qui</h2>
+              <p className="mt-1 text-xs leading-5 text-slate-200">Scansiona il QR per scegliere un'app. Da telefono puoi anche premere il pulsante qui sotto.</p>
+              <a href="/app" className="mt-2 inline-flex rounded-lg bg-cyan-300 px-3 py-2 text-xs font-extrabold text-slate-950">Scegli e installa un'app →</a>
+            </div>
           </section>
 
           <div className="rs-apps-grid mb-5 flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain px-1 pb-3" aria-label="Scopri le iniziative RiverSpend: scorri orizzontalmente">
