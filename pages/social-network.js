@@ -107,6 +107,7 @@ export default function RiverSpendSocialMarketplace() {
       <header className="sticky top-0 z-30 border-b border-teal-900/10 bg-[#f5f2e8]/95 px-4 py-3 backdrop-blur">
         <div className="mx-auto flex max-w-none items-center justify-between gap-3">
           <Link href="/" className="text-sm font-bold text-teal-800 underline underline-offset-4">← RiverSpendShop</Link>
+          <Link href="/riverspend-social-network" className="rounded-full border border-cyan-700 bg-cyan-50 px-3 py-2 text-sm font-bold text-cyan-900">🌐 Social Network</Link>
           <Link href="/rete" className="rounded-full border border-teal-700 px-3 py-2 text-sm font-bold text-teal-800">🕸️ La mia Rete</Link>
         </div>
       </header>
