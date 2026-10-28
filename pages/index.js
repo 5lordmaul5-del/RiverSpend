@@ -1034,6 +1034,10 @@ export default function Home() {
                 <img src="/1000187343.png" alt="RSPark" className="h-20 w-20 rounded-2xl object-cover shadow-md ring-2 ring-cyan-200 sm:h-24 sm:w-24" loading="lazy" />
                 <span className="w-full break-words text-xs font-extrabold leading-tight text-slate-900">RSPark</span>
               </a>
+              <a href="/river-social" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RiverSpendSocialNetwork">
+                <img src="/icons/riverspend-social.svg" alt="RiverSpendSocialNetwork" className="h-20 w-20 rounded-2xl object-cover shadow-md ring-2 ring-cyan-200 sm:h-24 sm:w-24" loading="lazy" />
+                <span className="w-full break-words text-xs font-extrabold leading-tight text-slate-900">RiverSpendSocialNetwork</span>
+              </a>
               <a href="/servizi/music" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RSMusic">
                 <img src="/icons/music.svg" alt="RSMusic" className="h-20 w-20 rounded-2xl object-contain shadow-md ring-2 ring-cyan-200 sm:h-24 sm:w-24" loading="lazy" />
                 <span className="w-full break-words text-xs font-extrabold leading-tight text-slate-900">RSMusic</span>
