@@ -1027,14 +1027,14 @@ export default function Home() {
             <a href="/app" className="mt-2 block text-center text-[10px] font-semibold text-teal-800 underline underline-offset-2">Istruzioni per installarle da Google Chrome · App Store non ancora disponibile</a>
           </section>
 
-          <section aria-label="Scarica le app RiverSpend con QR code" className="mb-4 flex items-center gap-3 rounded-2xl border-2 border-cyan-300 bg-slate-900 p-3 shadow-lg shadow-cyan-950/20">
+          <section aria-label="Scarica le app RiverSpend con QR code" style={{backgroundColor:"#10243a",color:"#ffffff",borderColor:"#22d3ee"}} className="mb-4 flex items-center gap-3 rounded-2xl border-2 p-3 shadow-lg shadow-cyan-950/20">
             <a href="/app" aria-label="Apri la pagina per scegliere le app RiverSpend" className="shrink-0 rounded-xl bg-white p-1 focus:outline-none focus:ring-2 focus:ring-amber-300">
               <img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=6&data=https%3A%2F%2Fwww.riverspend.com%2Fapp" alt="QR code per la pagina delle app RiverSpend" width="88" height="88" className="h-[88px] w-[88px] rounded-lg" loading="lazy" />
             </a>
             <div className="min-w-0 flex-1">
-              <h2 className="text-sm font-extrabold text-white">📲 Le app RiverSpend, tutte qui</h2>
-              <p className="mt-1 text-xs leading-5 text-slate-200">Scansiona il QR per scegliere un'app. Da telefono puoi anche premere il pulsante qui sotto.</p>
-              <a href="/app" className="mt-2 inline-flex rounded-lg bg-cyan-300 px-3 py-2 text-xs font-extrabold text-slate-950">Scegli e installa un'app →</a>
+              <h2 style={{color:"#ffffff",fontWeight:900}} className="text-base font-black leading-snug">📲 LE APP RIVERSPEND — SCARICA QUI</h2>
+              <p style={{color:"#ffffff",fontWeight:700}} className="mt-2 text-sm leading-6">Scansiona il QR per scegliere la tua app. Se stai usando il telefono, premi direttamente il pulsante qui sotto.</p>
+              <a href="/app" style={{backgroundColor:"#67e8f9",color:"#082f49",fontWeight:900}} className="mt-3 inline-flex rounded-lg px-3 py-3 text-sm">SCEGLI E INSTALLA UN'APP →</a>
             </div>
           </section>
 
