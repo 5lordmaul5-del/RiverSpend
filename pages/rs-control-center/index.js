@@ -375,9 +375,7 @@ export default function RSControlCenter() {
                       <div style={{position:"absolute",inset:"0 38%",borderLeft:"1px solid rgba(80,209,255,.28)",borderRight:"1px solid rgba(80,209,255,.28)",borderRadius:"50%"}}/>
                       <div style={{position:"absolute",left:0,right:0,top:"25%",height:"50%",borderTop:"1px solid rgba(80,209,255,.3)",borderBottom:"1px solid rgba(80,209,255,.3)",borderRadius:"50%"}}/>
                       <div style={{position:"absolute",left:0,right:0,top:"42%",borderTop:"1px solid rgba(80,209,255,.24)"}}/>
-                      <div style={{position:"absolute",left:"14%",top:"23%",width:"29%",height:"28%",background:"#26b4d1",opacity:.62,borderRadius:"70% 30% 60% 25%",transform:"rotate(-24deg)"}}/>
-                      <div style={{position:"absolute",left:"39%",top:"48%",width:"17%",height:"29%",background:"#26b4d1",opacity:.62,borderRadius:"40% 55% 65% 30%",transform:"rotate(20deg)"}}/>
-                      <div style={{position:"absolute",left:"55%",top:"25%",width:"34%",height:"24%",background:"#26b4d1",opacity:.62,borderRadius:"30% 65% 30% 60%",transform:"rotate(12deg)"}}/>
+                      <img src="/images/global-world-map.svg" alt="Mappa dettagliata del mondo con confini dei Paesi" style={{position:"absolute",inset:"15% 0",width:"100%",height:"70%",objectFit:"contain",opacity:.9,filter:"invert(1) sepia(1) saturate(3) hue-rotate(155deg) brightness(1.25)",mixBlendMode:"screen"}}/>
                       {(globalIntel?.cities || []).slice(0,8).map((city,i)=>{const points=[["23%","32%"],["37%","39%"],["49%","30%"],["60%","42%"],["70%","34%"],["58%","58%"],["34%","62%"],["78%","57%"]];const p=points[i%points.length];return <span key={city.name+ i} title={city.name} style={{position:"absolute",left:p[0],top:p[1],width:9,height:9,borderRadius:"50%",background:"#ffd36a",border:"2px solid #fff3bd",boxShadow:"0 0 12px 4px rgba(255,174,53,.65)"}}/>;})}
                     </div>
                     <div style={{position:"absolute",bottom:8,left:0,right:0,textAlign:"center",fontSize:11,color:"#8db9d8"}}>I punti rappresentano località registrate, non una copertura mondiale completa.</div>
