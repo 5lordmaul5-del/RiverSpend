@@ -351,38 +351,60 @@ export default function RSControlCenter() {
             </>
           )}
 
-          <h2 style={{ marginTop: 30 }}>🌍 RiverSpend Global Intelligence</h2>
-          <p style={{ color: "#63818a", marginTop: 0 }}>Mercati, vendite e interessi registrati negli ultimi 30 giorni. I dati geografici appaiono solo quando disponibili e non vengono inventati.</p>
-          {globalIntelError ? (
-            <section style={{ ...panel, borderLeft: "5px solid #d99a00", marginBottom: 16 }}>
-              <b>Global Intelligence in attesa di collegamento</b><div style={{ color: "#718a91", marginTop: 6 }}>{globalIntelError}</div>
-            </section>
-          ) : (
-            <>
-              <section style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(145px,1fr))", gap: 12, marginBottom: 16 }}>
+          <section style={{marginTop:30,padding:16,borderRadius:22,background:"radial-gradient(circle at 50% 30%,#123d68 0%,#07182c 48%,#030914 100%)",color:"#f4fbff",border:"1px solid #164a75",boxShadow:"0 14px 40px rgba(0,30,60,.22)",overflow:"hidden"}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:12,flexWrap:"wrap"}}>
+              <div><div style={{fontSize:12,letterSpacing:2,color:"#42d9ff",fontWeight:800}}>RIVERSPEND GLOBAL INTELLIGENCE</div><h2 style={{margin:"6px 0",fontSize:25}}>🌍 Il mondo di RiverSpend</h2><div style={{color:"#a8c6df",fontSize:13}}>Mappa e indicatori alimentati dai dati disponibili nel database.</div></div>
+              <button onClick={()=>{loadGlobalIntel();loadInsights();}} style={{padding:"10px 14px",borderRadius:10,border:"1px solid #237ab1",background:"#0c3152",color:"#e8faff",fontWeight:700,cursor:"pointer"}}>↻ Aggiorna dati</button>
+            </div>
+            {globalIntelError ? <div style={{marginTop:14,padding:14,borderRadius:12,background:"#321c25",color:"#ffd8dc"}}><b>Dati globali non disponibili</b><div style={{marginTop:5}}>{globalIntelError}</div></div> : <>
+              <section style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(145px,1fr))",gap:10,marginTop:18}}>
                 {[
-                  ["🧾", "Ordini completati/in corso", globalIntel?.sales_summary?.orders ?? "—"],
-                  ["💶", "Vendite lorde EUR", globalIntel?.sales_summary?.gross_eur == null ? "—" : Number(globalIntel.sales_summary.gross_eur).toLocaleString("it-IT",{style:"currency",currency:"EUR"})],
-                  ["🏅", "Commissioni EUR", globalIntel?.sales_summary?.commission_eur == null ? "—" : Number(globalIntel.sales_summary.commission_eur).toLocaleString("it-IT",{style:"currency",currency:"EUR"})],
-                  ["✅", "Ordini pagati", globalIntel?.sales_summary?.paid_orders ?? "—"],
-                ].map(([icon,title,metric]) => <article key={title} style={panel}><div style={{fontSize:22}}>{icon}</div><b style={{display:"block",marginTop:6}}>{title}</b><div style={{fontSize:23,fontWeight:700,color:"#087f9e",marginTop:7}}>{metric}</div></article>)}
+                  ["🧾","Ordini",globalIntel?.sales_summary?.orders ?? "—"],
+                  ["💶","Vendite lorde",globalIntel?.sales_summary?.gross_eur == null ? "—" : Number(globalIntel.sales_summary.gross_eur).toLocaleString("it-IT",{style:"currency",currency:"EUR"})],
+                  ["🏅","Commissioni",globalIntel?.sales_summary?.commission_eur == null ? "—" : Number(globalIntel.sales_summary.commission_eur).toLocaleString("it-IT",{style:"currency",currency:"EUR"})],
+                  ["🌐","Paesi registrati",(globalIntel?.countries || []).length || "—"],
+                  ["📍","Città registrate",(globalIntel?.cities || []).length || "—"]
+                ].map(([icon,title,metric])=><article key={title} style={{padding:13,borderRadius:14,background:"rgba(8,35,61,.9)",border:"1px solid #174c74"}}><div style={{fontSize:21}}>{icon}</div><div style={{fontSize:12,color:"#a9c9e2",marginTop:5}}>{title}</div><div style={{fontSize:22,fontWeight:800,marginTop:4,color:"#fff"}}>{metric}</div></article>)}
               </section>
-              <section style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))", gap: 12 }}>
-                {[
-                  ["🌎 Paesi", globalIntel?.countries || [], row => row.name, row => `${row.purchases} acquisti · ${row.events} interazioni`],
-                  ["🗺️ Regioni", globalIntel?.regions || [], row => `${row.name} · ${row.country}`, row => `${row.purchases} acquisti · ${row.events} interazioni`],
-                  ["📍 Città", globalIntel?.cities || [], row => `${row.name} · ${row.region}`, row => `${row.purchases} acquisti · ${row.events} interazioni`],
-                  ["🛍️ Categorie", globalIntel?.top_categories || [], row => row.name, row => `${row.purchases} acquisti · ${row.events} interazioni`],
-                  ["🎵 Musica e contenuti", globalIntel?.content_interests || [], row => row.type, row => `${row.events} eventi registrati`],
-                ].map(([title,rows,label,detail]) => (
-                  <article key={title} style={panel}><b>{title}</b><div style={{fontSize:12,color:"#718a91",marginTop:5,marginBottom:8}}>Classifica basata sui dati disponibili</div>
-                    {rows.length ? rows.map((row,i) => <div key={i} style={{display:"flex",justifyContent:"space-between",gap:12,padding:"9px 0",borderBottom:"1px solid #edf3f5"}}><span><b>{i+1}.</b> {label(row)}</span><small style={{textAlign:"right",color:"#63818a"}}>{detail(row)}</small></div>) : <div style={{color:"#8aa0a6"}}>Nessun dato geografico o di contenuto registrato per il periodo.</div>}
+              <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(min(100%,290px),1fr))",gap:14,marginTop:14,alignItems:"stretch"}}>
+                <article style={{borderRadius:18,padding:12,background:"rgba(4,20,38,.72)",border:"1px solid #174c74",minWidth:0}}>
+                  <b style={{fontSize:15}}>🌐 Mappa globale</b><div style={{fontSize:12,color:"#9abbd5",marginTop:4}}>Punti di attività delle località registrate</div>
+                  <div style={{height:300,position:"relative",display:"flex",alignItems:"center",justifyContent:"center",overflow:"hidden"}}>
+                    <div style={{position:"absolute",width:250,height:250,borderRadius:"50%",border:"1px solid #1685c8",boxShadow:"0 0 32px rgba(0,174,255,.2),inset 0 0 34px rgba(0,174,255,.2)",background:"radial-gradient(circle at 35% 30%,#1d78a9 0%,#0a3766 44%,#031326 75%)",animation:"rsGlobePulse 5s ease-in-out infinite"}}>
+                      <div style={{position:"absolute",inset:"0 22%",borderLeft:"1px solid rgba(80,209,255,.35)",borderRight:"1px solid rgba(80,209,255,.35)",borderRadius:"50%"}}/>
+                      <div style={{position:"absolute",inset:"0 38%",borderLeft:"1px solid rgba(80,209,255,.28)",borderRight:"1px solid rgba(80,209,255,.28)",borderRadius:"50%"}}/>
+                      <div style={{position:"absolute",left:0,right:0,top:"25%",height:"50%",borderTop:"1px solid rgba(80,209,255,.3)",borderBottom:"1px solid rgba(80,209,255,.3)",borderRadius:"50%"}}/>
+                      <div style={{position:"absolute",left:0,right:0,top:"42%",borderTop:"1px solid rgba(80,209,255,.24)"}}/>
+                      <div style={{position:"absolute",left:"14%",top:"23%",width:"29%",height:"28%",background:"#26b4d1",opacity:.62,borderRadius:"70% 30% 60% 25%",transform:"rotate(-24deg)"}}/>
+                      <div style={{position:"absolute",left:"39%",top:"48%",width:"17%",height:"29%",background:"#26b4d1",opacity:.62,borderRadius:"40% 55% 65% 30%",transform:"rotate(20deg)"}}/>
+                      <div style={{position:"absolute",left:"55%",top:"25%",width:"34%",height:"24%",background:"#26b4d1",opacity:.62,borderRadius:"30% 65% 30% 60%",transform:"rotate(12deg)"}}/>
+                      {(globalIntel?.cities || []).slice(0,8).map((city,i)=>{const points=[["23%","32%"],["37%","39%"],["49%","30%"],["60%","42%"],["70%","34%"],["58%","58%"],["34%","62%"],["78%","57%"]];const p=points[i%points.length];return <span key={city.name+ i} title={city.name} style={{position:"absolute",left:p[0],top:p[1],width:9,height:9,borderRadius:"50%",background:"#ffd36a",border:"2px solid #fff3bd",boxShadow:"0 0 12px 4px rgba(255,174,53,.65)"}}/>;})}
+                    </div>
+                    <div style={{position:"absolute",bottom:8,left:0,right:0,textAlign:"center",fontSize:11,color:"#8db9d8"}}>I punti rappresentano località registrate, non una copertura mondiale completa.</div>
+                  </div>
+                  <div style={{display:"flex",gap:7,flexWrap:"wrap",marginTop:4}}>{(globalIntel?.cities || []).slice(0,5).map((row,i)=><span key={row.name+i} style={{fontSize:11,padding:"5px 8px",borderRadius:20,background:"#0b2b49",border:"1px solid #1b5d88",color:"#bdeeff"}}>● {row.name}</span>)}</div>
+                </article>
+                <div style={{display:"grid",gap:14,alignContent:"start"}}>
+                  <article style={{borderRadius:18,padding:15,background:"rgba(4,20,38,.72)",border:"1px solid #174c74"}}>
+                    <b>🥯 Vendite per Paese</b><p style={{fontSize:12,color:"#9abbd5",margin:"5px 0 12px"}}>Distribuzione delle interazioni registrate per Paese.</p>
+                    {(()=>{const rows=(globalIntel?.countries||[]).slice(0,5);const total=rows.reduce((a,r)=>a+(Number(r.events)||0),0);const colors=["#21c8f6","#ffb547","#a78bfa","#4ade80","#fb7185"];let acc=0;const gradient=rows.length?rows.map((r,i)=>{const n=total?Number(r.events||0)/total*100:0;const part=`${colors[i%colors.length]} ${acc}% ${acc+n}%`;acc+=n;return part}).join(", "):"#183b57 0% 100%";return <div style={{display:"flex",gap:16,alignItems:"center",flexWrap:"wrap"}}><div style={{width:112,height:112,borderRadius:"50%",background:`conic-gradient(${gradient})`,display:"grid",placeItems:"center",flexShrink:0}}><div style={{width:68,height:68,borderRadius:"50%",background:"#07182c",display:"grid",placeItems:"center",textAlign:"center",fontSize:11,color:"#bdeeff"}}>{total||0}<br/>eventi</div></div><div style={{flex:1,minWidth:110}}>{rows.length?rows.map((r,i)=><div key={r.name+i} style={{display:"flex",justifyContent:"space-between",gap:8,fontSize:12,padding:"4px 0"}}><span><i style={{display:"inline-block",width:8,height:8,borderRadius:8,background:colors[i%colors.length],marginRight:6}}/>{r.name}</span><b>{r.events}</b></div>):<span style={{fontSize:12,color:"#9abbd5"}}>Nessun dato geografico ancora registrato.</span>}</div></div>})()}
                   </article>
-                ))}
-              </section>
-              <section style={{...panel,marginTop:12,borderLeft:"5px solid #08a7cf"}}><b>💡 Come leggere le opportunità</b><p style={{color:"#63818a",marginBottom:6}}>Useremo queste classifiche per decidere quali categorie promuovere per Paese, preparare campagne stagionali e capire dove testare nuovi contenuti. Una visita non equivale a una vendita e i risultati non rappresentano automaticamente le preferenze di tutta una nazione.</p><small style={{color:"#718a91"}}>{globalIntel?.geography_note || ""} {globalIntel?.trend_note || ""}</small></section>
-            </>
-          )}
+                  <article style={{borderRadius:18,padding:15,background:"rgba(4,20,38,.72)",border:"1px solid #174c74"}}>
+                    <b>🛍️ Categorie più attive</b><div style={{marginTop:10}}>{(globalIntel?.top_categories||[]).slice(0,5).length?(globalIntel.top_categories||[]).slice(0,5).map((r,i)=>{const rows=(globalIntel?.top_categories||[]).slice(0,5);const max=Math.max(...rows.map(x=>Number(x.events)||0),1);return <div key={r.name+i} style={{marginBottom:10}}><div style={{display:"flex",justifyContent:"space-between",gap:8,fontSize:12,marginBottom:4}}><span>{r.name}</span><b>{r.events}</b></div><div style={{height:6,background:"#16334c",borderRadius:8,overflow:"hidden"}}><div style={{width:`${Math.max(3,(Number(r.events)||0)/max*100)}%`,height:"100%",background:"linear-gradient(90deg,#11bde8,#5de5d2)",borderRadius:8}}/></div></div>}):<div style={{fontSize:12,color:"#9abbd5"}}>Nessun evento di categoria registrato.</div>}</div>
+                  </article>
+                </div>
+              </div>
+              <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(min(100%,250px),1fr))",gap:14,marginTop:14}}>
+                {[
+                  ["📍 Top città",globalIntel?.cities||[],row=>row.name,row=>`${row.purchases} acquisti · ${row.events} eventi`],
+                  ["🗺️ Regioni",globalIntel?.regions||[],row=>`${row.name} · ${row.country}`,row=>`${row.purchases} acquisti · ${row.events} eventi`],
+                  ["🎵 Musica e contenuti",globalIntel?.content_interests||[],row=>row.type,row=>`${row.events} eventi`]
+                ].map(([title,rows,label,detail])=><article key={title} style={{borderRadius:16,padding:14,background:"rgba(4,20,38,.72)",border:"1px solid #174c74",minWidth:0}}><b>{title}</b>{rows.length?rows.slice(0,5).map((row,i)=><div key={i} style={{display:"flex",justifyContent:"space-between",gap:10,padding:"9px 0",borderBottom:"1px solid #16334c",fontSize:12}}><span>{i+1}. {label(row)}</span><span style={{textAlign:"right",color:"#9adcf4"}}>{detail(row)}</span></div>):<p style={{fontSize:12,color:"#9abbd5"}}>Nessun dato registrato per il periodo.</p>}</article>)}
+              </div>
+              <div style={{marginTop:14,padding:13,borderRadius:12,background:"rgba(8,40,62,.8)",borderLeft:"4px solid #24c8f4",fontSize:12,color:"#b5d5e8"}}><b>Nota sui dati:</b> il globo e i grafici mostrano solo località e attività presenti nei dati registrati. I punti sono indicatori visivi, non coordinate GPS precise; una visita non equivale a una vendita e non dimostra le preferenze di un intero Paese.</div>
+            </>}
+            <style jsx>{`@keyframes rsGlobePulse {0%,100%{transform:scale(1);filter:brightness(1)}50%{transform:scale(1.025);filter:brightness(1.15)}}`}</style>
+          </section>
 
           <h2 style={{ marginTop: 26 }}>👷 Collaboratori · Ruoli e permessi</h2>
           <section style={{ ...panel, marginBottom: 16 }}>
