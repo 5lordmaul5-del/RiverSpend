@@ -14,7 +14,7 @@ const apps = [
     name: 'RiverSignals',
     subtitle: 'Messaggia oltre i confini dello spazio!!',
     description: 'La nuova esperienza di messaggistica By RiverSpendShop. Apri la versione installabile dal browser; il pacchetto APK Android e l’attivazione telefonica sono in preparazione.',
-    logo: 'https://riversignals.vercel.app/icon.svg',
+    logo: '/icons/riversignals.svg',
     href: 'https://riversignals.vercel.app/?source=riverspendshop',
     color: '#168bd2',
     action: 'Apri RiverSignals'
