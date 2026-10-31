@@ -187,9 +187,8 @@ export default function RiverSpendSocialNetwork() {
     <Head>
       <title>RiverSpaceSignals · RiverSpend</title>
       <meta name="theme-color" content="#082f45" />
-      <link rel="manifest" href="/riverspace-signals.webmanifest" />
-      <link rel="icon" href="/icons/riverspace-signals-app.jpg" type="image/jpeg" />
-      <link rel="apple-touch-icon" href="/icons/riverspace-signals-app.jpg" />
+      <link rel="icon" href="/icons/riverspend-social.svg" type="image/svg+xml" />
+      <link rel="apple-touch-icon" href="/icons/riverspend-social.svg" />
     </Head>
     <main className="min-h-screen bg-[#eef7f7] text-slate-900">
       <header className="sticky top-0 z-30 border-b border-teal-900/10 bg-white/95 px-4 py-3 backdrop-blur">
