@@ -14,7 +14,7 @@ const apps = [
     name: 'Karma Zen Relax',
     subtitle: 'RiverSpaceSignals · ISSA',
     description: 'Uno spazio sonoro immersivo per rilassarti con sei tracce originali e ritrovare equilibrio.',
-    logo: 'https://www.riverspend.com/icons/riverspacesignals.png',
+    logo: '/icons/karma-zen-relax.svg',
     href: '/karma-zen-relax.html',
     color: '#b88a35',
     action: 'Apri Karma Zen Relax'
