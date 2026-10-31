@@ -11,13 +11,13 @@ const apps = [
     action: 'Apri RiverSpendShop'
   },
   {
-    name: 'RiverSignals',
-    subtitle: 'Messaggia oltre i confini dello spazio!!',
-    description: 'La nuova esperienza di messaggistica By RiverSpendShop. Apri la versione installabile dal browser; il pacchetto APK Android e l’attivazione telefonica sono in preparazione.',
-    logo: '/icons/riversignals.svg',
-    href: 'https://riversignals.vercel.app/?source=riverspendshop',
-    color: '#168bd2',
-    action: 'Apri RiverSignals'
+    name: 'Karma Zen Relax',
+    subtitle: 'RiverSpaceSignals · ISSA',
+    description: 'Uno spazio sonoro immersivo per rilassarti con sei tracce originali e ritrovare equilibrio.',
+    logo: 'https://www.riverspend.com/icons/riverspacesignals.png',
+    href: 'https://riversignals.vercel.app/',
+    color: '#b88a35',
+    action: 'Apri Karma Zen Relax'
   },
   {
     name: 'RiverSpend Streaming',
