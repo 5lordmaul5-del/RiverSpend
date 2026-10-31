@@ -9,6 +9,6 @@
   "background_color": "#082f45",
   "theme_color": "#082f45",
   "icons": [
-    {"src": "/icons/karma-zen-relax.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any"}
+    {"src": "/icons/riverspace-signals-app.jpg", "sizes": "any", "type": "image/jpeg", "purpose": "any"}
   ]
 }
