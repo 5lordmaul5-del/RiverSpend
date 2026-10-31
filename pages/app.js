@@ -11,13 +11,13 @@ const apps = [
     action: 'Apri RiverSpendShop'
   },
   {
-    name: 'Karma Zen Relax',
-    subtitle: 'RiverSpaceSignals · ISSA',
-    description: 'Uno spazio sonoro immersivo per rilassarti con sei tracce originali e ritrovare equilibrio.',
-    logo: '/icons/karma-zen-relax.svg',
-    href: '/karma-zen-relax.html',
-    color: '#b88a35',
-    action: 'Apri Karma Zen Relax'
+    name: 'RiverSpaceSignals',
+    subtitle: 'Messaggistica RiverSpend · ISSA',
+    description: 'La community di messaggistica RiverSpend per condividere idee, contenuti e conversazioni. Karma Zen Relax è una modalità interna per ritrovare calma durante le discussioni animate.',
+    logo: '/icons/riverspend-social.svg',
+    href: '/riverspend-social-network',
+    color: '#0891b2',
+    action: 'Apri RiverSpaceSignals'
   },
   {
     name: 'RiverSpend Streaming',
