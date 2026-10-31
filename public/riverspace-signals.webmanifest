@@ -1,0 +1,14 @@
+{
+  "id": "/riverspend-social-network",
+  "name": "RiverSpaceSignals",
+  "short_name": "Signals",
+  "description": "Messaggistica e community RiverSpend · ISSA",
+  "start_url": "/riverspend-social-network",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#082f45",
+  "theme_color": "#082f45",
+  "icons": [
+    {"src": "/icons/riversignals.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any"}
+  ]
+}
