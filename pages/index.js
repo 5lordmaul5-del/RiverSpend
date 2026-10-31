@@ -1018,7 +1018,7 @@ export default function Home() {
                 <img src="/icons/riverspendshop-app.jpg" alt="RSShop" className="h-20 w-20 rounded-2xl object-cover shadow-md ring-2 ring-cyan-200 sm:h-24 sm:w-24" loading="lazy" />
                 <span className="w-full break-words text-xs font-extrabold leading-tight text-slate-900">RSShop</span>
               </a>
-              <a href="/riverspend-social-network" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RiverSpaceSignals">
+              <a href="https://riversignals.vercel.app/?source=riverspendshop" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RiverSpaceSignals">
                 <img src="/icons/riverspace-signals-app.jpg" alt="RiverSpaceSignals" className="h-20 w-20 rounded-2xl object-contain shadow-md ring-2 ring-cyan-200 sm:h-24 sm:w-24" loading="lazy" />
                 <span className="w-full break-words text-xs font-extrabold leading-tight text-slate-900">RiverSpaceSignals</span>
               </a>
@@ -1034,7 +1034,7 @@ export default function Home() {
                 <img src="/1000187343.png" alt="RSPark" className="h-20 w-20 rounded-2xl object-cover shadow-md ring-2 ring-cyan-200 sm:h-24 sm:w-24" loading="lazy" />
                 <span className="w-full break-words text-xs font-extrabold leading-tight text-slate-900">RSPark</span>
               </a>
-              <a href="/river-social" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RiverSpendSocialNetwork">
+              <a href="/riverspend-social-network" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RiverSpendSocialNetwork">
                 <img src="/icons/riverspend-social.svg" alt="RiverSpendSocialNetwork" className="h-20 w-20 rounded-2xl object-cover shadow-md ring-2 ring-cyan-200 sm:h-24 sm:w-24" loading="lazy" />
                 <span className="w-full break-words text-xs font-extrabold leading-tight text-slate-900">RiverSpendSocialNetwork</span>
               </a>
@@ -1272,7 +1272,7 @@ export default function Home() {
             <a href="/servizi/ecology#solidale" className="rs-banner-slide rs-ecology-banner rs-world-card rs-campaign-compact border-rose-400 bg-gradient-to-br from-rose-950 to-slate-950 text-white"><span className="text-3xl">💚</span><h2 className="mt-2 text-xl font-extrabold text-white">RiverSpend Solidale</h2><p className="mt-2 text-sm leading-5 text-white">Aiuto a persone fragili e comunità colpite da emergenze.</p><span className="mt-auto inline-flex rounded-full bg-rose-300 px-4 py-2 text-sm font-bold text-slate-950">SCOPRI L’IDEA →</span><small className="mt-2 text-xs font-semibold text-amber-200">In preparazione · Nessuna raccolta attiva</small></a>
             <a href="/servizi/ecology#future-life" className="rs-banner-slide rs-ecology-banner rs-world-card rs-campaign-compact border-violet-400 bg-gradient-to-br from-violet-950 to-slate-950 text-white"><span className="text-3xl">🏥</span><h2 className="mt-2 text-xl font-extrabold text-white">PiggyBank · Future Life</h2><p className="mt-2 text-sm leading-5 text-white">Ospedali, nuove cure e ricerca scientifica qualificata.</p><span className="mt-auto inline-flex rounded-full bg-violet-300 px-4 py-2 text-sm font-bold text-slate-950">SCOPRI L’IDEA →</span><small className="mt-2 text-xs font-semibold text-amber-200">In preparazione · Nessuna raccolta attiva</small></a>
             <a href="/gift-card" aria-label="Scopri RiverSpendShop Gift Card" className="rs-banner-slide rs-world-card rs-campaign-compact border-amber-300 bg-gradient-to-br from-slate-950 via-blue-950 to-cyan-950 text-white"><span className="text-3xl text-amber-300">🎁</span><h2 className="mt-2 text-xl font-extrabold text-white">RiverSpendShop Gift Card</h2><p className="mt-2 text-sm leading-5 text-cyan-50">Regala credito da utilizzare sul RiverSpendShop, anche con saldo residuo.</p><span className="mt-auto inline-flex rounded-full bg-gradient-to-r from-amber-200 to-yellow-500 px-4 py-2 text-sm font-bold text-slate-950">SCOPRI LE GIFT CARD →</span><small className="mt-2 text-xs font-semibold text-amber-200">In preparazione · Acquisto e riscatto non ancora attivi</small></a>
-          <a href="/social-network" aria-label="Apri RiverSpend Social: foto, video e community" className="rs-banner-slide rs-social-banner group shrink-0 snap-start overflow-hidden rounded-2xl border border-teal-300/70 bg-gradient-to-br from-teal-950 via-slate-900 to-cyan-950 text-white shadow-lg shadow-teal-950/20 transition hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-teal-300/70">
+          <a href="/riverspend-social-network" aria-label="Apri RiverSpend Social: foto, video e community" className="rs-banner-slide rs-social-banner group shrink-0 snap-start overflow-hidden rounded-2xl border border-teal-300/70 bg-gradient-to-br from-teal-950 via-slate-900 to-cyan-950 text-white shadow-lg shadow-teal-950/20 transition hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-teal-300/70">
             <div className="rs-social-banner-media relative w-full shrink-0 overflow-hidden bg-slate-950">
               <img src="/riverspend-social-banner.svg" alt="RiverSpend Social: uno spazio per condividere foto, video e scoprire la community" className="block h-full w-full object-cover object-center" loading="eager" />
               <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-slate-950/80 to-transparent" aria-hidden="true"></div>
@@ -1364,7 +1364,7 @@ export default function Home() {
             </div>
           </a>
 
-          <a href="/social-network" aria-label="Scopri RiverSpend TV e condividi i tuoi video" className="rs-banner-slide rs-creator-banner group shrink-0 snap-start overflow-hidden rounded-2xl border border-violet-300/70 bg-gradient-to-br from-violet-950 via-slate-950 to-cyan-950 text-white shadow-lg transition hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-violet-300/70">
+          <a href="/riverspend-social-network" aria-label="Scopri RiverSpend TV e condividi i tuoi video" className="rs-banner-slide rs-creator-banner group shrink-0 snap-start overflow-hidden rounded-2xl border border-violet-300/70 bg-gradient-to-br from-violet-950 via-slate-950 to-cyan-950 text-white shadow-lg transition hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-violet-300/70">
             <div className="flex h-full flex-col p-4 text-left">
               <span className="text-3xl" aria-hidden="true">🎬</span>
               <p className="mt-2 text-[10px] font-extrabold uppercase tracking-[.18em] text-cyan-200">Video • Creatività • Community</p>
