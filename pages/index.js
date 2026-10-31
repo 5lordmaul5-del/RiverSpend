@@ -1019,7 +1019,7 @@ export default function Home() {
                 <span className="w-full break-words text-xs font-extrabold leading-tight text-slate-900">RSShop</span>
               </a>
               <a href="/riverspend-social-network" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RiverSpaceSignals">
-                <img src="/icons/karma-zen-relax.svg" alt="RiverSpaceSignals" className="h-20 w-20 rounded-2xl object-contain shadow-md ring-2 ring-cyan-200 sm:h-24 sm:w-24" loading="lazy" />
+                <img src="/icons/riverspace-signals-app.jpg" alt="RiverSpaceSignals" className="h-20 w-20 rounded-2xl object-contain shadow-md ring-2 ring-cyan-200 sm:h-24 sm:w-24" loading="lazy" />
                 <span className="w-full break-words text-xs font-extrabold leading-tight text-slate-900">RiverSpaceSignals</span>
               </a>
               <a href="/rs-sound-studio" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RSSoundStudio System ISSA">
