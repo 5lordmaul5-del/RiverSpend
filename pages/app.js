@@ -15,9 +15,18 @@ const apps = [
     subtitle: 'Messaggistica RiverSpend · ISSA',
     description: 'La community di messaggistica RiverSpend per condividere idee, contenuti e conversazioni. Karma Zen Relax è una modalità interna per ritrovare calma durante le discussioni animate.',
     logo: '/icons/riverspace-signals-app.jpg',
-    href: '/riverspend-social-network',
+    href: 'https://riversignals.vercel.app/?source=riverspendshop',
     color: '#0891b2',
     action: 'Apri RiverSpaceSignals'
+  },
+  {
+    name: 'RiverSpendSocialNetwork',
+    subtitle: 'Il social network RiverSpend',
+    description: 'Condividi post, notizie, video e link; partecipa alla community e alle conversazioni. Le funzioni social di Signals confluiscono qui.',
+    logo: '/icons/riverspend-social.svg',
+    href: '/riverspend-social-network',
+    color: '#0f766e',
+    action: 'Apri RiverSpend Social'
   },
   {
     name: 'RiverSpend Streaming',
