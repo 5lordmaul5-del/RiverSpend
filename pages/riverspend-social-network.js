@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import Head from 'next/head';
 import { supabase } from '../lib/supabase';
 
 const TYPES = [
@@ -182,6 +183,14 @@ export default function RiverSpendSocialNetwork() {
   }
 
   return (
+    <>
+    <Head>
+      <title>RiverSpaceSignals · RiverSpend</title>
+      <meta name="theme-color" content="#082f45" />
+      <link rel="manifest" href="/riverspace-signals.webmanifest" />
+      <link rel="icon" href="/icons/riversignals.svg" type="image/svg+xml" />
+      <link rel="apple-touch-icon" href="/icons/riversignals.svg" />
+    </Head>
     <main className="min-h-screen bg-[#eef7f7] text-slate-900">
       <header className="sticky top-0 z-30 border-b border-teal-900/10 bg-white/95 px-4 py-3 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3">
@@ -199,6 +208,14 @@ export default function RiverSpendSocialNetwork() {
             <h1 className="mt-2 text-3xl font-black sm:text-5xl">RiverSpend Social Network</h1>
             <p className="mt-3 max-w-2xl text-sm leading-6 text-cyan-50 sm:text-base">Una community per condividere idee, notizie, video e link dal web. Scopri contenuti interessanti e porta le conversazioni dentro l’ecosistema RiverSpend.</p>
             <div className="mt-5 flex flex-wrap gap-2 text-xs font-bold"><span className="rounded-full bg-white/10 px-3 py-2">🌍 Community aperta</span><span className="rounded-full bg-white/10 px-3 py-2">📰 Notizie e link</span><span className="rounded-full bg-white/10 px-3 py-2">▶️ Video esterni</span><span className="rounded-full bg-white/10 px-3 py-2">💬 Commenti e Mi piace</span></div>
+            <div className="mt-5 rounded-2xl border border-amber-200/40 bg-[#061d31]/70 p-4 sm:flex sm:items-center sm:justify-between sm:gap-4">
+              <div>
+                <p className="text-xs font-extrabold uppercase tracking-[.2em] text-amber-200">ISSA · Modalità benessere</p>
+                <h2 className="mt-1 text-xl font-black text-white">Karma Zen Relax</h2>
+                <p className="mt-1 text-sm leading-5 text-cyan-50">Attiva una pausa sonora con campane tibetane e atmosfere rilassanti durante le conversazioni animate.</p>
+              </div>
+              <Link href="/karma-zen-relax.html" className="mt-3 inline-flex shrink-0 items-center justify-center rounded-full border border-amber-200 bg-amber-300 px-5 py-3 text-sm font-black text-[#082b3b] sm:mt-0">〰 Attiva Karma Zen Relax</Link>
+            </div>
           </div>
 
           {notice && <div role="status" className="mb-4 rounded-2xl border border-teal-200 bg-teal-50 p-4 text-sm font-semibold text-teal-900">{notice}</div>}
@@ -253,5 +270,6 @@ export default function RiverSpendSocialNetwork() {
       </div>
       <footer className="border-t border-teal-900/10 bg-white px-4 py-6 text-center text-xs text-slate-500">RiverSpend Social Network · YOUR SHOP • YOUR FLOW</footer>
     </main>
+    </>
   );
 }
