@@ -11,6 +11,7 @@ const aree = [
   ['🪙','RiverSpendToken','Progetto token blockchain su testnet','/river-finance#token'],
   ['📦','RS Box Shipping & Delivery','Spedizioni, tracking e resi tra privati','/servizi/box'],
   ['🎢','RiverSpend Park','Parco, attrazioni e sicurezza Power Shield','/park'],
+  ['🌌','Orione • Giza • Maya','Esplorazione cosmica tra stelle, faraoni, calendari Maya e misteri extraterrestri','/orion-giza-maya'],
   ['🤝','RiverSpend Investor','Ricerca investitori e partner per RiverSpend Park','/investor'],
   ['📡','RiverSpend Broadcast','Comunicazione e aggiornamenti','/servizi/broadcast'],
   ['📺','RiverSpend TV','Video e contenuti RiverSpend','/servizi/tv'],
