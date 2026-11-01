@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import { useState } from 'react';
-import { supabase } from '../lib/supabase';
 
 const sections = [
   { id: 'crop', code: '01', title: 'CROPCIRCLES', subtitle: 'Cerchi nel Grano', icon: '◎', intro: 'Geometrie comparse nei campi, simboli, fotografie e racconti. Un atlante per osservare forme, luoghi e date senza confondere documentazione, ipotesi e folklore.', items: ['Atlante dei cerchi e delle geometrie', 'Cronologia delle apparizioni segnalate', 'Analisi di forme, proporzioni e fotografie'] },
@@ -40,7 +39,13 @@ function SightingSubmissionForm() {
       consent_public: data.get('consent_public') === 'on',
       status: 'pending'
     };
-    const { error } = await supabase.from('rs_sightings').insert(payload);
+    let error = null;
+    try {
+      const { supabase } = await import('../lib/supabase');
+      ({ error } = await supabase.from('rs_sightings').insert(payload));
+    } catch (submissionError) {
+      error = submissionError;
+    }
     setSending(false);
     if (error) {
       setFeedback('Non siamo riusciti a inviare la testimonianza. Riprova più tardi.');
