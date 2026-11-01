@@ -37,14 +37,14 @@ export default function App() {
           <Text style={styles.paymentsTitle}>💳 Pagamenti & Portafoglio</Text>
           <Text style={styles.paymentsText}>Un unico spazio condiviso in tutte le app RiverSpend.</Text>
           {[
-            ['🌊','RiverMoney','Portafoglio e saldo'],
-            ['💳','RiverSpend Pay','Pagamenti e checkout'],
-            ['🎁','Gift Card','Carte regalo'],
-            ['🤝','Fai una donazione','Sostieni un progetto'],
-            ['📜','Movimenti','Storico e ricevute'],
-            ['🛡️','RiverSpend Shield','Protezione acquisti'],
-          ].map(([icon,title,subtitle]) => (
-            <Pressable key={title} style={styles.paymentItem} onPress={() => Linking.openURL('https://www.riverspend.com/servizi/pay')}>
+            ['🌊','RiverMoney','Portafoglio e saldo','https://www.riverspend.com/river-money'],
+            ['💳','RiverSpend Pay','Pagamenti e checkout','https://www.riverspend.com/servizi/pay'],
+            ['🎁','Gift Card','Carte regalo','https://www.riverspend.com/gift-card'],
+            ['🤝','Fai una donazione','Sostieni un progetto','https://www.riverspend.com/donation'],
+            ['📜','Movimenti','Storico e ricevute','https://www.riverspend.com/river-money'],
+            ['🛡️','RiverSpend Shield','Protezione acquisti','https://www.riverspend.com/nova-shield'],
+          ].map(([icon,title,subtitle,url]) => (
+            <Pressable key={title} style={styles.paymentItem} onPress={() => Linking.openURL(url)}>
               <Text style={styles.paymentIcon}>{icon}</Text>
               <View style={{ flex: 1 }}>
                 <Text style={styles.paymentItemTitle}>{title}</Text>
