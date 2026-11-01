@@ -25,7 +25,7 @@ Verifica in sola lettura del progetto Supabase `Riverspend` (1 novembre 2026):
 - [x] Sorgente client condiviso inserito nel branch di lavoro RiverSpendShop.
 - [x] Contratto API documentato.
 - [x] Schema Supabase esistente ispezionato in sola lettura.
-- [ ] Endpoint backend RiverMoney implementati.
+- [x] Endpoint backend autenticati in sola lettura: wallet e storico movimenti.
 - [ ] Procedure server-side per saldo, accredito, addebito e idempotenza revisionate e testate.
 - [ ] Autenticazione e autorizzazione testate end-to-end.
 - [ ] App RiverSpaceSignals collegata al backend condiviso.
