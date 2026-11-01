@@ -1,5 +1,5 @@
 import React from 'react';
-import { SafeAreaView, StyleSheet, Text, View, ScrollView } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, View, ScrollView, Pressable, Linking } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 
 const sections = [
@@ -32,6 +32,29 @@ export default function App() {
             </View>
           ))}
         </View>
+        <View style={styles.payments}>
+          <Text style={styles.paymentsEyebrow}>RIVERSPEND ECOSYSTEM</Text>
+          <Text style={styles.paymentsTitle}>💳 Pagamenti & Portafoglio</Text>
+          <Text style={styles.paymentsText}>Un unico spazio condiviso in tutte le app RiverSpend.</Text>
+          {[
+            ['🌊','RiverMoney','Portafoglio e saldo'],
+            ['💳','RiverSpend Pay','Pagamenti e checkout'],
+            ['🎁','Gift Card','Carte regalo'],
+            ['🤝','Fai una donazione','Sostieni un progetto'],
+            ['📜','Movimenti','Storico e ricevute'],
+            ['🛡️','RiverSpend Shield','Protezione acquisti'],
+          ].map(([icon,title,subtitle]) => (
+            <Pressable key={title} style={styles.paymentItem} onPress={() => Linking.openURL('https://www.riverspend.com/servizi/pay')}>
+              <Text style={styles.paymentIcon}>{icon}</Text>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.paymentItemTitle}>{title}</Text>
+                <Text style={styles.paymentItemText}>{subtitle}</Text>
+              </View>
+              <Text style={styles.paymentArrow}>›</Text>
+            </Pressable>
+          ))}
+          <Text style={styles.paymentStatus}>IN PREPARAZIONE · Pagamenti reali non ancora attivi.</Text>
+        </View>
         <View style={styles.notice}>
           <Text style={styles.noticeTitle}>🛡️ Rights Check</Text>
           <Text style={styles.noticeText}>I contenuti vengono pubblicati e monetizzati solo con diritti e autorizzazioni verificati.</Text>
@@ -55,6 +78,13 @@ const styles = StyleSheet.create({
   icon: { fontSize: 28 },
   cardTitle: { marginTop: 8, fontSize: 18, fontWeight: '800', color: '#fff' },
   cardText: { marginTop: 5, fontSize: 14, lineHeight: 20, color: '#94a3b8' },
+  payments: { marginTop: 18, padding: 18, borderRadius: 22, backgroundColor: '#064e4b', borderWidth: 1, borderColor: '#2dd4bf' },
+  paymentsEyebrow: { fontSize: 10, fontWeight: '900', letterSpacing: 2, color: '#99f6e4' },
+  paymentsTitle: { marginTop: 7, fontSize: 22, fontWeight: '900', color: '#fff' },
+  paymentsText: { marginTop: 6, marginBottom: 12, color: '#ccfbf1', fontSize: 13, lineHeight: 19 },
+  paymentItem: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 7, padding: 12, borderRadius: 13, backgroundColor: '#ffffff' },
+  paymentIcon: { fontSize: 22 }, paymentItemTitle: { fontSize: 13, fontWeight: '900', color: '#0f172a' }, paymentItemText: { marginTop: 2, fontSize: 11, color: '#475569' }, paymentArrow: { fontSize: 24, color: '#0f766e' },
+  paymentStatus: { marginTop: 12, fontSize: 10, fontWeight: '900', color: '#fde68a' },
   notice: { marginTop: 18, padding: 18, borderRadius: 20, backgroundColor: '#172554', borderWidth: 1, borderColor: '#1d4ed8' },
   noticeTitle: { fontSize: 17, fontWeight: '800', color: '#fff' },
   noticeText: { marginTop: 7, lineHeight: 21, color: '#dbeafe' }
