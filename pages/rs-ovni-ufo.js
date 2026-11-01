@@ -70,6 +70,14 @@ export default function RsOvniUfo() {
           </ul>
         </section>
 
+
+        <section className="my-8 rounded-3xl border border-violet-300/30 bg-gradient-to-r from-violet-950/70 via-slate-900 to-cyan-950/70 p-6 shadow-xl sm:p-8">
+          <p className="text-xs font-black tracking-[.35em] text-violet-200">IL PONTE VERSO LE CIVILTÀ ANTICHE</p>
+          <h2 className="mt-3 text-3xl font-black sm:text-4xl">THE ALIEN BRIDGE</h2>
+          <p className="mt-3 max-w-3xl leading-7 text-slate-300">Dai CropCircles e dagli avvistamenti torniamo alle stelle che hanno ispirato miti e osservazioni del passato. Esplora il percorso Orione • Giza • Maya: archeologia, astronomia e racconto extraterrestre, senza confondere le ipotesi con i fatti.</p>
+          <Link href="/orion-giza-maya" className="mt-6 inline-flex rounded-full border border-cyan-200/50 bg-cyan-300/10 px-6 py-3 font-bold text-cyan-100 hover:bg-cyan-300/20">Attraversa THE ALIEN BRIDGE → ORIONE • GIZA • MAYA</Link>
+        </section>
+
         <section className="my-8 rounded-3xl border border-slate-700 bg-black/30 p-6">
           <h2 className="text-xl font-black">CLASSIFICAZIONE DELLE INFORMAZIONI</h2>
           <p className="mt-2 text-sm text-slate-400">Ogni scheda futura mostrerà chiaramente a quale livello appartiene il materiale.</p>
