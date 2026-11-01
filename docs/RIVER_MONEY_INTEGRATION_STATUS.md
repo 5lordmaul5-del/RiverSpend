@@ -46,5 +46,10 @@ Il file `RSSignals-sorgente.zip` contiene la pagina statica `index.html`, manife
 
 La distribuzione Vercel ispezionata contiene già la pagina statica, le icone e i sei file audio. La versione pubblica e la preview sono state tenute distinte; nessuna promozione in produzione è stata effettuata in questa verifica.
 
-## Pubblicazione
-Questo lavoro è su un branch separato di sviluppo e non modifica il sito live. Non unire né distribuire in produzione prima di aver completato gli endpoint, i test e la revisione.
+## Build di anteprima
+- Branch: `feature/rivermoney-shared-foundation`.
+- Preview Vercel: `https://river-spend-8xgzcbpuy-mauryle75-8055s-projects.vercel.app`.
+- Build Vercel: `READY` per il commit `73f9b3a8a35f8e4694ddbfeeb7f025e870b677d3`.
+- Pull request draft: `https://github.com/5lordmaul5-del/RiverSpend/pull/28`.
+
+La build riuscita verifica compilazione e packaging, non ancora le chiamate API autenticate end-to-end. La preview non è stata promossa in produzione; il dominio live non è stato modificato.
