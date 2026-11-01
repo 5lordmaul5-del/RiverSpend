@@ -6,7 +6,7 @@ Il client condiviso è disponibile in `lib/river-money/client.js` ed è riutiliz
 Espone chiamate autenticate:
 - `getWallet()` → `GET /api/river/wallet`
 - `getTransactions()` → `GET /api/river/transactions`
-- `createPaymentIntent()` → `POST /api/river/payment-intents`
+- Non esiste ancora un endpoint di creazione Payment Intent: i pagamenti sono disattivati.
 
 Il client non calcola né modifica saldi e non conferma pagamenti.
 
@@ -26,11 +26,15 @@ Verifica in sola lettura del progetto Supabase `Riverspend` (1 novembre 2026):
 - [x] Contratto API documentato.
 - [x] Schema Supabase esistente ispezionato in sola lettura.
 - [x] Endpoint backend autenticati in sola lettura: wallet e storico movimenti.
+- [x] CORS limitato agli origin HTTPS ufficiali/preview di RiverSignals per la lettura cross-app.
 - [ ] Procedure server-side per saldo, accredito, addebito e idempotenza revisionate e testate.
 - [ ] Autenticazione e autorizzazione testate end-to-end.
-- [ ] App RiverSpaceSignals collegata al backend condiviso.
+- [ ] App RiverSignals collegata al backend condiviso: manca ancora un login Supabase nell'app statica per ottenere un access token.
 - [ ] Altre app RiverSpend collegate al backend condiviso.
 - [ ] Test sandbox del provider e webhook completati.
+
+## Collegamento RiverSignals
+Gli endpoint `GET /api/river/wallet` e `GET /api/river/transactions` accettano richieste HTTPS dagli origin RiverSignals esplicitamente consentiti tramite CORS. Il browser deve inviare un access token Supabase valido nell'header `Authorization: Bearer ...`. La schermata statica RiverSignals attuale non include ancora Supabase Auth/login: non deve quindi mostrare saldi inventati né tentare richieste anonime. Il collegamento UI verrà completato dopo l'integrazione e il test dell'autenticazione.
 
 ## Regole di sicurezza
 1. Il saldo autorevole è calcolato esclusivamente dal server.
