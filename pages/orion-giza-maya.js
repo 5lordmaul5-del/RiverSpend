@@ -76,6 +76,14 @@ export default function OrionGizaMaya() {
             <article className="rounded-2xl border border-cyan-100/15 bg-slate-900/70 p-5"><p className="text-2xl">🛸</p><h3 className="mt-3 text-lg font-bold">Il mistero extraterrestre</h3><p className="mt-2 text-sm leading-6 text-slate-400">Una storia interattiva di fantasia che collega antichi simboli e visitatori cosmici, chiaramente distinta dalle evidenze storiche.</p></article>
           </section>
 
+
+          <section className="my-8 rounded-3xl border border-violet-300/30 bg-gradient-to-r from-violet-950/70 via-slate-900 to-cyan-950/70 p-6 shadow-xl sm:p-8">
+            <p className="text-xs font-black tracking-[.35em] text-violet-200">IL COLLEGAMENTO TRA I DUE MONDI</p>
+            <h2 className="mt-3 text-3xl font-black sm:text-4xl">THE ALIEN BRIDGE</h2>
+            <p className="mt-3 max-w-3xl leading-7 text-slate-300">Dal cielo antico ai misteri moderni: attraversa il ponte narrativo che collega Orione, Giza e il mondo Maya ai CropCircles e ai fenomeni OVNI. Un percorso tra storia, documenti, ipotesi e fantascienza, con le fonti sempre distinte dalle interpretazioni.</p>
+            <Link href="/rs-ovni-ufo" className="mt-6 inline-flex rounded-full border border-cyan-200/50 bg-cyan-300/10 px-6 py-3 font-bold text-cyan-100 hover:bg-cyan-300/20">Attraversa THE ALIEN BRIDGE → RS OVNI UFO</Link>
+          </section>
+
           <div className="mb-10 rounded-2xl border border-amber-300/30 bg-amber-200/5 p-5 text-sm leading-6 text-amber-100"><strong>Una distinzione importante:</strong> le piramidi egizie e Maya sono opere delle rispettive civiltà umane. I collegamenti con gli alieni appartengono al mito moderno e alla fantascienza: l’app li propone come racconto immersivo, senza presentarli come fatti provati.</div>
           <footer className="pb-8"><Link href="/park" className="text-cyan-200 underline">← Torna a RiverSpend Park</Link></footer>
         </div>
