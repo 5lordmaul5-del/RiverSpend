@@ -3,6 +3,9 @@
 ## Stato
 Idea approvata e registrata nella roadmap. Non ancora pubblicata né operativa.
 
+## Slogan ufficiale
+**La conoscenza è un fiume che scorre senza fine. La via del sapere apre porte a noi sconosciute!**
+
 ## Visione
 Un'enciclopedia digitale consultabile, multilingue e organizzata per argomenti, ispirata ai principi della conoscenza aperta ma con identità e struttura RiverSpend. Non copiare testi o contenuti protetti da Wikipedia o altre enciclopedie: usare contenuti originali, fonti con licenza compatibile e riferimenti bibliografici.
 
