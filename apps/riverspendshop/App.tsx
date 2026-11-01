@@ -9,7 +9,7 @@ import {
   TextInput,
   Image,
   ActivityIndicator,
-  Alert,
+  Alert,\n  Linking,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import * as ImagePicker from 'expo-image-picker';
@@ -462,6 +462,23 @@ export default function App() {
           })}
         </View>
 
+        <View style={styles.financeCard}>
+          <Text style={styles.financeTitle}>🌊 Il mondo RiverSpend</Text>
+          <Text style={styles.financeIntro}>Servizi in preparazione: potrai consultarli qui quando saranno disponibili.</Text>
+          {[
+            ['💚','Fai una donazione','/donation'],
+            ['💳','RiverSpend Pay','/servizi/pay'],
+            ['🪙','RiverMoney','/piggybank'],
+            ['🎁','Gift Card','/gift-card'],
+            ['👛','Portafoglio e movimenti','/portafoglio-premi'],
+          ].map(([icon,label,path]) => (
+            <Pressable key={path} style={styles.financeLink} onPress={() => Linking.openURL('https://www.riverspend.com' + path)}>
+              <Text style={styles.financeLinkText}>{icon}  {label}</Text>
+              <Text style={styles.financeStatus}>In preparazione · Apri info ↗</Text>
+            </Pressable>
+          ))}
+        </View>
+
         <View style={styles.appsRow}>
           <View style={styles.miniCard}><Text style={styles.miniIcon}>🔮</Text><Text style={styles.miniTitle}>RS FORCE</Text></View>
           <View style={styles.miniCard}><Text style={styles.miniIcon}>🎡</Text><Text style={styles.miniTitle}>RS FORTUNE</Text></View>
@@ -484,5 +501,5 @@ const styles = StyleSheet.create({
   sectionHead:{marginTop:25,flexDirection:'row',justifyContent:'space-between',alignItems:'center'},sectionTitle:{fontSize:19,fontWeight:'900',color:'#111827'},sectionLink:{fontSize:11,fontWeight:'800',color:'#0f766e'},
   stateCard:{marginTop:12,alignItems:'center',padding:25,borderRadius:20,backgroundColor:'#fff',borderWidth:1,borderColor:'#dbe4e7'},emptyIcon:{fontSize:30},emptyTitle:{marginTop:7,fontSize:17,fontWeight:'800',color:'#111827'},stateText:{marginTop:7,textAlign:'center',fontSize:13,lineHeight:19,color:'#64748b'},
   grid:{flexDirection:'row',flexWrap:'wrap',justifyContent:'space-between',marginTop:12},productCard:{width:'48.5%',marginBottom:12,padding:10,borderRadius:18,backgroundColor:'#fff',borderWidth:1,borderColor:'#dbe4e7'},productImage:{width:'100%',height:145,backgroundColor:'#fff',borderRadius:12},noImage:{height:145,alignItems:'center',justifyContent:'center',backgroundColor:'#eef9fa',borderRadius:12},noImageText:{fontSize:30},productTitle:{marginTop:8,fontSize:13,fontWeight:'800',color:'#111827'},productPrice:{marginTop:5,fontSize:16,fontWeight:'900',color:'#0f766e'},productMeta:{marginTop:4,fontSize:10,color:'#64748b'},
-  appsRow:{flexDirection:'row',gap:8,marginTop:8},miniCard:{flex:1,alignItems:'center',paddingVertical:13,borderRadius:16,backgroundColor:'#fff',borderWidth:1,borderColor:'#dbe4e7'},miniIcon:{fontSize:20},miniTitle:{marginTop:5,fontSize:8,fontWeight:'900',color:'#334155'}
+  financeCard:{marginTop:20,padding:16,borderRadius:20,backgroundColor:'#eafafa',borderWidth:1,borderColor:'#b8e9eb'},financeTitle:{fontSize:18,fontWeight:'900',color:'#10252a'},financeIntro:{marginTop:5,marginBottom:10,fontSize:11,lineHeight:16,color:'#45636a'},financeLink:{marginTop:8,padding:12,borderRadius:13,backgroundColor:'#fff',borderWidth:1,borderColor:'#dbe4e7'},financeLinkText:{fontSize:13,fontWeight:'900',color:'#10252a'},financeStatus:{marginTop:3,fontSize:10,color:'#0f766e'},\n  appsRow:{flexDirection:'row',gap:8,marginTop:8},miniCard:{flex:1,alignItems:'center',paddingVertical:13,borderRadius:16,backgroundColor:'#fff',borderWidth:1,borderColor:'#dbe4e7'},miniIcon:{fontSize:20},miniTitle:{marginTop:5,fontSize:8,fontWeight:'900',color:'#334155'}
 });
