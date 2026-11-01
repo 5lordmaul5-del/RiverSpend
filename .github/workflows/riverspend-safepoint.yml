@@ -1,0 +1,42 @@
+name: RiverSpend SafePoint Backup
+
+on:
+  push:
+    branches:
+      - main
+      - "safepoint/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: riverspend-safepoint-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  archive:
+    name: Create recoverable source snapshot
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out exact commit
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create source archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p backup
+          git archive --format=zip --output="backup/RiverSpend-${GITHUB_SHA}.zip" HEAD
+          test -s "backup/RiverSpend-${GITHUB_SHA}.zip"
+          unzip -t "backup/RiverSpend-${GITHUB_SHA}.zip"
+
+      - name: Store immutable workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: RiverSpend-source-${{ github.sha }}
+          path: backup/RiverSpend-${{ github.sha }}.zip
+          if-no-files-found: error
+          retention-days: 90
