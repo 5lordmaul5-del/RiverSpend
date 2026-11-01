@@ -20,7 +20,7 @@ export default function RiverFinance() {
           {cards.map((item) => (
             <article id={item.id} key={item.id} className="overflow-hidden rounded-3xl border border-white/10 bg-white text-slate-900 shadow-xl">
               <div className={`flex min-h-44 items-center justify-center bg-gradient-to-br ${item.color} p-6`}>
-                {item.id === 'token' ? <img src="/icons/river-spend-token.jpg" alt="Logo RiverSpendToken" className="h-32 w-32 rounded-full object-cover shadow-2xl" /> : <div className="flex h-28 w-28 items-center justify-center rounded-3xl border-2 border-amber-300 bg-white/10 text-5xl font-black text-amber-200 shadow-2xl">{item.mark}</div>}
+                {item.id === 'token' ? <img src="/icons/river-spend-token.svg" alt="Logo RiverSpendToken" className="h-32 w-32 rounded-full object-cover shadow-2xl" /> : <div className="flex h-28 w-28 items-center justify-center rounded-3xl border-2 border-amber-300 bg-white/10 text-5xl font-black text-amber-200 shadow-2xl">{item.mark}</div>}
               </div>
               <div className="p-6">
                 <h2 className="text-2xl font-black">{item.name}</h2>
