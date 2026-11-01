@@ -10,6 +10,7 @@ import {
   Image,
   ActivityIndicator,
   Alert,
+  Linking,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import * as ImagePicker from 'expo-image-picker';
@@ -296,6 +297,33 @@ export default function App() {
           </Pressable>
         </View>
 
+        <View style={styles.payHub}>
+          <View style={styles.payHubHead}>
+            <Text style={styles.payHubEyebrow}>RIVERSPEND ECOSYSTEM</Text>
+            <Text style={styles.payHubTitle}>🌊 Pagamenti & Portafoglio</Text>
+            <Text style={styles.payHubText}>Un unico spazio per RiverSpend Pay, RiverMoney e i servizi collegati.</Text>
+          </View>
+          <View style={styles.payHubGrid}>
+            {[
+              ['💳','RiverSpend Pay','Checkout e metodi di pagamento'],
+              ['🌊','RiverMoney','Portafoglio e saldo personale'],
+              ['🎁','Gift Card','Carte regalo RiverSpend'],
+              ['🤝','Fai una donazione','Sostieni un progetto'],
+              ['📜','Movimenti','Storico e ricevute'],
+            ].map(([icon,title,subtitle]) => (
+              <Pressable key={title} style={styles.payHubItem} onPress={() => Linking.openURL('https://www.riverspend.com/servizi/pay')}>
+                <Text style={styles.payHubIcon}>{icon}</Text>
+                <View style={{flex:1}}>
+                  <Text style={styles.payHubItemTitle}>{title}</Text>
+                  <Text style={styles.payHubItemText}>{subtitle}</Text>
+                </View>
+                <Text style={styles.payHubArrow}>›</Text>
+              </Pressable>
+            ))}
+          </View>
+          <Text style={styles.payHubStatus}>IN PREPARAZIONE · Pagamenti reali disattivati fino al collegamento dei provider e alle verifiche.</Text>
+        </View>
+
         <View style={styles.searchBox}>
           <Text style={styles.searchIcon}>⌕</Text>
           <TextInput
@@ -476,6 +504,7 @@ const styles = StyleSheet.create({
   safe:{flex:1,backgroundColor:'#f7fbfb'},container:{padding:18,paddingBottom:40},header:{flexDirection:'row',alignItems:'center',justifyContent:'space-between',marginTop:8},
   logo:{fontSize:30,fontWeight:'900',color:'#111827'},shop:{marginTop:-5,fontSize:25,fontStyle:'italic',fontWeight:'900',color:'#b08a3c',marginLeft:7},tagline:{marginTop:3,fontSize:9,letterSpacing:1.7,color:'#64748b'},
   netButton:{alignItems:'center',paddingVertical:8,paddingHorizontal:10,borderRadius:14,backgroundColor:'#e5f8f7'},netIcon:{fontSize:20},netText:{marginTop:2,fontSize:9,fontWeight:'800',color:'#0f766e'},
+  payHub:{marginTop:14,padding:15,borderRadius:20,backgroundColor:'#073b43',borderWidth:1,borderColor:'#2bb9b1'},payHubHead:{paddingBottom:10},payHubEyebrow:{fontSize:9,fontWeight:'900',letterSpacing:2,color:'#a7f3e9'},payHubTitle:{marginTop:5,fontSize:20,fontWeight:'900',color:'#fff'},payHubText:{marginTop:5,fontSize:11,lineHeight:16,color:'#d4f7f2'},payHubGrid:{gap:7},payHubItem:{flexDirection:'row',alignItems:'center',gap:10,padding:10,borderRadius:13,backgroundColor:'#ffffff'},payHubIcon:{fontSize:21},payHubItemTitle:{fontSize:12,fontWeight:'900',color:'#10252a'},payHubItemText:{marginTop:2,fontSize:10,color:'#526b70'},payHubArrow:{fontSize:23,fontWeight:'900',color:'#0f766e'},payHubStatus:{marginTop:10,fontSize:9,fontWeight:'800',letterSpacing:.4,color:'#fcd98b'},
   searchBox:{marginTop:18,flexDirection:'row',alignItems:'center',backgroundColor:'#fff',borderWidth:1,borderColor:'#dbe4e7',borderRadius:16,paddingHorizontal:13},searchIcon:{fontSize:25,color:'#0f766e'},search:{flex:1,paddingVertical:13,paddingHorizontal:8,fontSize:14,color:'#111827'},
   categories:{paddingVertical:14,gap:8},category:{backgroundColor:'#fff',borderWidth:1,borderColor:'#dbe4e7',borderRadius:18,paddingHorizontal:12,paddingVertical:9},categoryText:{fontSize:11,fontWeight:'700',color:'#334155'},
   hero:{marginTop:5,borderRadius:24,padding:22,backgroundColor:'#dffcff',borderWidth:1,borderColor:'#b8e9eb'},heroEyebrow:{fontSize:10,fontWeight:'900',letterSpacing:2,color:'#0f766e'},heroTitle:{marginTop:2,fontSize:30,lineHeight:32,fontWeight:'900',color:'#10252a'},heroText:{marginTop:10,maxWidth:300,fontSize:14,lineHeight:20,color:'#31555b'},heroButton:{alignSelf:'flex-start',marginTop:17,paddingHorizontal:16,paddingVertical:11,borderRadius:14,backgroundColor:'#0f766e'},heroButtonText:{color:'#fff',fontSize:12,fontWeight:'900'},
