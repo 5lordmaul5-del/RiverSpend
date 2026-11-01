@@ -123,6 +123,22 @@ export default function RiverSpendSocialMarketplace() {
           </div>
         </section>
 
+        <section className="mx-auto mb-5 grid w-full max-w-5xl gap-3 px-4 sm:grid-cols-2 lg:grid-cols-5" aria-label="Servizi RiverSpend">
+          {[
+            ['💚','Fai una donazione','/donation'],
+            ['💳','RiverSpend Pay','/servizi/pay'],
+            ['🪙','RiverMoney','/piggybank'],
+            ['🎁','Gift Card','/gift-card'],
+            ['👛','Portafoglio','/portafoglio-premi'],
+          ].map(([icon,label,href]) => (
+            <Link key={href} href={href} className="rounded-2xl border border-teal-800/15 bg-white p-4 shadow-sm transition hover:border-teal-600">
+              <span className="block text-2xl" aria-hidden="true">{icon}</span>
+              <span className="mt-2 block text-sm font-black text-slate-900">{label}</span>
+              <span className="mt-1 block text-xs font-semibold text-teal-700">In preparazione · Scopri ↗</span>
+            </Link>
+          ))}
+        </section>
+
         {notice && <p role="status" className="mb-4 rounded-xl border border-teal-700/20 bg-white px-4 py-3 text-sm text-teal-900">{notice}</p>}
         {loading ? (
           <div className="rounded-2xl bg-white p-8 text-center text-slate-600">Il Fiume sta caricando i prodotti…</div>
