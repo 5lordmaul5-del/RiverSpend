@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { applyRiverCors } from '../../../lib/river-money/cors';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -25,6 +26,8 @@ function encodeCursor(createdAt) {
 }
 
 export default async function handler(req, res) {
+  if (applyRiverCors(req, res, ['GET'])) return;
+
   if (req.method !== 'GET') {
     res.setHeader('Allow', 'GET');
     return res.status(405).json({ error: 'Metodo non consentito.' });
