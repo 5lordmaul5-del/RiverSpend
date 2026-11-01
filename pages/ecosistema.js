@@ -14,6 +14,7 @@ const aree = [
   ['🌌','Orione • Giza • Maya','Esplorazione cosmica tra stelle, faraoni, calendari Maya e misteri extraterrestri','/orion-giza-maya'],
   ['🛸','RS OVNI UFO','CropCircles, avvistamenti, dossier TOP SECRET e Danger Zone','/rs-ovni-ufo'],
   ['📚','RSDizionario','Enciclopedia RiverSpend: scienza, storia, natura, tecnologia e culture','/rs-dizionario'],
+  ['🧸','RSJunior','Giochi educativi, letture, cartoni e attività creative per i più piccoli','/rs-junior'],
   ['🛟','RSEducational','Educazione, prevenzione e preparazione alle emergenze','/rs-educational'],
   ['🪐','RSPlaneX','Nibiru, Planet X e i misteri del Sistema Solare','/rs-planex'],
   ['🤝','RiverSpend Investor','Ricerca investitori e partner per RiverSpend Park','/investor'],
