@@ -39,6 +39,7 @@ const attrazioni = [
   ['The Minator','Avventura nella miniera','Scendi nel mondo di una miniera leggendaria tra gallerie, cristalli, rocce e riflessi dorati. The Minator propone un percorso a tema estrattivo con scenografie che raccontano la ricerca di minerali e tesori nascosti. Strutture, veicoli, illuminazione e percorsi di evacuazione dovranno essere progettati e collaudati prima dell’eventuale esercizio.'],
   ['Viking Norway Rune','Leggende nordiche','Entra in un paesaggio ispirato alla mitologia nordica, tra rune, villaggi vichinghi, montagne e simboli leggendari. Viking Norway Rune è un’avventura narrativa che celebra esplorazione e immaginazione, con scenografie pensate per trasportare il visitatore in un altro mondo. Gli eventuali elementi dinamici saranno specificati solo dopo le verifiche tecniche.'],
   ['Future City','La città del futuro','Scopri una città futuristica animata da architetture luminose, nuvole in movimento e droni scenografici. Future City racconta un possibile domani attraverso ambienti digitali e installazioni visive, invitando a esplorare il rapporto tra tecnologia, città e immaginazione. Animazioni e dispositivi reali saranno selezionati e verificati nella fase di realizzazione.'],
+  ['MEGANET EXA 10¹⁸ ORION','Centro tecnologico e supercalcolo','Entra nel cuore digitale di Future City: una cittadella futuristica dedicata a reti, cloud, sicurezza informatica, intelligenza artificiale e ricerca sul supercalcolo. La torre ORION è il simbolo del progetto e collega idealmente i diversi quartieri della città. Le capacità di calcolo e i servizi sono un concept da sviluppare, non prestazioni già disponibili.'],
   ['WW2 Battle Experience','Storia immersiva e memoria','Un percorso narrativo in nove tappe dedicato alla memoria della Seconda guerra mondiale: sbarco scenografico su Omaha Beach, villaggio, ponte, tunnel U-Boot, hangar Zeppelin, portaerei, battaglia aerea simulata e arrivo finale. L’esperienza dovrà raccontare il contesto storico con rispetto e attenzione alle vittime, evitando di glorificare la guerra. Ogni suono, luce, movimento o simulazione dovrà essere progettato e validato da professionisti qualificati, con procedure di emergenza e accessibilità.'],
   ['Megalodonte','Lo scivolo che ti ingoia nel divertimento','Un enorme squalo preistorico domina una montagna acquatica. Il concept accompagna i visitatori dalla partenza alla discesa, passando per curve, sezioni trasparenti e tunnel scenografici, fino a un ingresso a forma di bocca e a un finale pieno di spruzzi. La sequenza narrativa comprende La Partenza, La Discesa, L’Incontro, Nella Bocca, Il Tunnel e Il Gran Finale. Tracciato, portata, capienza e sistemi di protezione saranno definiti da specialisti e verificati prima dell’apertura.'],
   ['Valkiria','La corsa verso il Valhalla','Un’avventura ispirata alle leggende nordiche, tra montagne, cascate, statue vichinghe e curve mozzafiato. Valkiria è un concept adrenalinico che trasforma il viaggio in una saga fantastica. Eventuali dati come altezza, velocità e requisiti minimi non sono da considerare certificati e dovranno essere confermati dal progetto tecnico e dal fornitore.'],
@@ -211,8 +212,19 @@ export default function RiverSpendPark() {
                 <span className="text-xs text-slate-400">{tema}</span>
               </div>
               <h3 className="mt-4 text-xl font-bold">{nome}</h3>
-              <div className="mt-4 flex aspect-[4/3] w-full items-center justify-center rounded-xl border-2 border-dashed border-cyan-300 bg-cyan-50 p-4 text-center text-sm font-semibold text-teal-800" role="img" aria-label={`Foto da associare correttamente: ${nome}`}>Foto dedicata da inserire per<br />{nome}</div>
+              {nome === "MEGANET EXA 10¹⁸ ORION" ? (
+                <img src="/rs-meganet-exa-orion.svg" alt="Centro tecnologico MEGANET EXA 10¹⁸ ORION nella Future City" className="mt-4 aspect-[4/3] w-full rounded-xl border border-cyan-300 object-cover" loading="lazy" />
+              ) : (
+                <div className="mt-4 flex aspect-[4/3] w-full items-center justify-center rounded-xl border-2 border-dashed border-cyan-300 bg-cyan-50 p-4 text-center text-sm font-semibold text-teal-800" role="img" aria-label={`Foto da associare correttamente: ${nome}`}>Foto dedicata da inserire per<br />{nome}</div>
+              )}
               <p className="mt-2 text-sm leading-6 text-slate-600">{descrizione}</p>
+              {nome === "MEGANET EXA 10¹⁸ ORION" && (
+                <div className="mt-4 rounded-xl border border-cyan-200 bg-slate-950 p-4 text-sm leading-6 text-cyan-50">
+                  <p className="font-bold text-amber-200">ORION • Il cuore digitale della città</p>
+                  <ul className="mt-2 list-disc space-y-1 pl-5"><li>UltraNet e connessioni tra i mondi RiverSpend.</li><li>Cloud, archivi e infrastruttura server.</li><li>River AI e sistemi intelligenti.</li><li>RiverSpend Shield per protezione e monitoraggio.</li><li>Ricerca futura su GPU, HPC e calcolo quantistico.</li></ul>
+                  <p className="mt-3 text-xs text-cyan-200">Installazione concettuale Future City: infrastrutture, capacità e servizi reali saranno sviluppati per fasi e verificati.</p>
+                </div>
+              )}
               {nome === 'RiverSpeed' && (
                 <div className="mt-4 space-y-3 border-t border-cyan-100 pt-4 text-sm leading-6 text-slate-700">
                   <h4 className="font-bold text-slate-800">Cosa ti aspetta</h4>
