@@ -217,6 +217,15 @@ export default function RiverSpendSocialNetwork() {
             </div>
           </div>
 
+          <section className="mb-5 overflow-hidden rounded-2xl border border-violet-200 bg-gradient-to-r from-[#20113f] via-[#142b49] to-[#064e5b] p-5 text-white shadow-md sm:flex sm:items-center sm:justify-between sm:gap-5 sm:p-6">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[.25em] text-violet-200">RS EYEWITNESS · RS OVNI UFO</p>
+              <h2 className="mt-2 text-2xl font-black sm:text-3xl">Hai visto qualcosa di inspiegabile?</h2>
+              <p className="mt-2 max-w-2xl text-sm leading-6 text-cyan-50">UFO, luci nel cielo, CropCircles, comete, mandala o altri fenomeni: raccontaci cosa hai visto, con le tue parole. La testimonianza non viene scritta né interpretata dall’IA.</p>
+            </div>
+            <Link href="/rs-ovni-ufo#rs-eyewitness" className="mt-4 inline-flex shrink-0 items-center justify-center rounded-full border border-white/50 bg-white px-6 py-3 text-sm font-black text-[#10253d] shadow hover:bg-cyan-50 sm:mt-0">👁️ Raccontaci cosa hai visto</Link>
+          </section>
+
           {notice && <div role="status" className="mb-4 rounded-2xl border border-teal-200 bg-teal-50 p-4 text-sm font-semibold text-teal-900">{notice}</div>}
           {error && <div role="alert" className="mb-4 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-900"><b>Attenzione</b><p className="mt-1 break-words">{error}</p></div>}
 
