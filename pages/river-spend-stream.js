@@ -89,6 +89,23 @@ export default function RiverSpendStream() {
           </p>
         </section>
       </div>
-    </main>
+    
+        <section className="mt-8 rounded-3xl border border-teal-200 bg-gradient-to-br from-[#073b43] to-[#0f766e] p-6 text-white shadow-lg">
+          <p className="text-xs font-black uppercase tracking-[0.25em] text-teal-100">RiverSpend · Servizi condivisi</p>
+          <h2 className="mt-2 text-2xl font-black">💳 Pagamenti & Portafoglio</h2>
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-teal-50">Un unico accesso a RiverSpend Pay, RiverMoney, Gift Card, donazioni e movimenti, disponibile in tutto l’ecosistema.</p>
+          <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {[
+              ['🌊','RiverMoney','Portafoglio e saldo','/river-money'],
+              ['💳','RiverSpend Pay','Pagamenti e checkout','/servizi/pay'],
+              ['🎁','Gift Card','Carte regalo','/gift-card'],
+              ['🤝','Fai una donazione','Sostieni un progetto','/donation'],
+              ['📜','Movimenti','Storico e ricevute','/river-money'],
+              ['🛡️','RiverSpend Shield','Protezione acquisti','/nova-shield'],
+            ].map(([icon,title,desc,href]) => <Link key={title} href={href} className="rounded-xl border border-white/20 bg-white/10 p-4 transition hover:bg-white/20"><span className="text-2xl">{icon}</span><strong className="mt-2 block">{title}</strong><span className="mt-1 block text-xs text-teal-50">{desc}</span></Link>)}
+          </div>
+          <p className="mt-4 text-xs font-bold text-amber-200">IN PREPARAZIONE · Nessun pagamento reale è attivo finché provider e verifiche non sono completati.</p>
+        </section>
+</main>
   );
 }
