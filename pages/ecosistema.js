@@ -13,6 +13,8 @@ const aree = [
   ['🎢','RiverSpend Park','Parco, attrazioni e sicurezza Power Shield','/park'],
   ['🌌','Orione • Giza • Maya','Esplorazione cosmica tra stelle, faraoni, calendari Maya e misteri extraterrestri','/orion-giza-maya'],
   ['🛸','RS OVNI UFO','CropCircles, avvistamenti, dossier TOP SECRET e Danger Zone','/rs-ovni-ufo'],
+  ['📚','RSDizionario','Enciclopedia RiverSpend: scienza, storia, natura, tecnologia e culture','/rs-dizionario'],
+  ['🛟','RSEducational','Educazione, prevenzione e preparazione alle emergenze','/rs-educational'],
   ['🪐','RSPlaneX','Nibiru, Planet X e i misteri del Sistema Solare','/rs-planex'],
   ['🤝','RiverSpend Investor','Ricerca investitori e partner per RiverSpend Park','/investor'],
   ['📡','RiverSpend Broadcast','Comunicazione e aggiornamenti','/servizi/broadcast'],
