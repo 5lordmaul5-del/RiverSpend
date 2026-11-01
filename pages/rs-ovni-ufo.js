@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { useState } from 'react';
+import { supabase } from '../lib/supabase';
 
 const sections = [
   { id: 'crop', code: '01', title: 'CROPCIRCLES', subtitle: 'Cerchi nel Grano', icon: '◎', intro: 'Geometrie comparse nei campi, simboli, fotografie e racconti. Un atlante per osservare forme, luoghi e date senza confondere documentazione, ipotesi e folklore.', items: ['Atlante dei cerchi e delle geometrie', 'Cronologia delle apparizioni segnalate', 'Analisi di forme, proporzioni e fotografie'] },
@@ -13,6 +14,92 @@ const levels = [
   ['DA VERIFICARE', 'Testimonianza o materiale incompleto', 'border-amber-300/40 text-amber-200'],
   ['IPOTESI / LEGGENDA', 'Interpretazione, folklore o racconto', 'border-fuchsia-300/40 text-fuchsia-200']
 ];
+
+
+function SightingSubmissionForm() {
+  const [sending, setSending] = useState(false);
+  const [feedback, setFeedback] = useState('');
+  const [success, setSuccess] = useState(false);
+
+  async function submitSighting(event) {
+    event.preventDefault();
+    setSending(true);
+    setFeedback('');
+    setSuccess(false);
+    const form = event.currentTarget;
+    const data = new FormData(form);
+    const observed = data.get('observed_at');
+    const payload = {
+      category: data.get('category'),
+      title: String(data.get('title') || '').trim(),
+      description: String(data.get('description') || '').trim(),
+      observed_at: observed ? new Date(String(observed) + 'T12:00:00').toISOString() : null,
+      location_label: String(data.get('location_label') || '').trim() || null,
+      display_name: String(data.get('display_name') || '').trim() || null,
+      media_url: String(data.get('media_url') || '').trim() || null,
+      consent_public: data.get('consent_public') === 'on',
+      status: 'pending'
+    };
+    const { error } = await supabase.from('rs_sightings').insert(payload);
+    setSending(false);
+    if (error) {
+      setFeedback('Non siamo riusciti a inviare la testimonianza. Riprova più tardi.');
+      return;
+    }
+    setSuccess(true);
+    setFeedback('Testimonianza ricevuta. Sarà controllata da una persona prima di essere eventualmente pubblicata.');
+    form.reset();
+  }
+
+  return (
+    <form onSubmit={submitSighting} className="mt-7 grid gap-4">
+      <div className="grid gap-4 md:grid-cols-2">
+        <label className="grid gap-2 text-sm font-semibold text-slate-200">Categoria
+          <select name="category" required className="rounded-xl border border-slate-600 bg-slate-900 px-4 py-3 text-white">
+            <option value="ufo_ovni">UFO / OVNI / luci insolite</option>
+            <option value="crop_circle">CropCircles / cerchi nel grano</option>
+            <option value="mandala_geometry">Mandala / figure geometriche / simboli</option>
+            <option value="comet_meteor">Comete / meteoriti / stelle cadenti</option>
+            <option value="stars_sky">Stelle / volta celeste / fenomeni atmosferici</option>
+            <option value="religious_apparition">Apparizioni religiose / santi / fenomeni spirituali</option>
+            <option value="ancient_civilization">Tradizioni e testimonianze di Egizi, Maya e popoli indigeni</option>
+            <option value="other">Altro fenomeno</option>
+          </select>
+        </label>
+        <label className="grid gap-2 text-sm font-semibold text-slate-200">Quando è accaduto?
+          <input name="observed_at" type="date" className="rounded-xl border border-slate-600 bg-slate-900 px-4 py-3 text-white" />
+        </label>
+      </div>
+      <label className="grid gap-2 text-sm font-semibold text-slate-200">Titolo della testimonianza
+        <input name="title" required minLength="5" maxLength="160" placeholder="Es. Tre luci ferme sopra le montagne" className="rounded-xl border border-slate-600 bg-slate-900 px-4 py-3 text-white placeholder:text-slate-500" />
+      </label>
+      <label className="grid gap-2 text-sm font-semibold text-slate-200">Racconta cosa hai visto
+        <textarea name="description" required minLength="20" maxLength="5000" rows="5" placeholder="Descrivi quello che hai osservato, senza bisogno di interpretarlo..." className="rounded-xl border border-slate-600 bg-slate-900 px-4 py-3 text-white placeholder:text-slate-500" />
+      </label>
+      <div className="grid gap-4 md:grid-cols-2">
+        <label className="grid gap-2 text-sm font-semibold text-slate-200">Luogo approssimativo (facoltativo)
+          <input name="location_label" maxLength="160" placeholder="Es. provincia di Torino, Italia" className="rounded-xl border border-slate-600 bg-slate-900 px-4 py-3 text-white placeholder:text-slate-500" />
+        </label>
+        <label className="grid gap-2 text-sm font-semibold text-slate-200">Nome o pseudonimo (facoltativo)
+          <input name="display_name" maxLength="80" placeholder="Come vuoi apparire nell’archivio" className="rounded-xl border border-slate-600 bg-slate-900 px-4 py-3 text-white placeholder:text-slate-500" />
+        </label>
+      </div>
+      <label className="grid gap-2 text-sm font-semibold text-slate-200">Link a foto o video (facoltativo)
+        <input name="media_url" type="url" maxLength="1000" placeholder="https://..." className="rounded-xl border border-slate-600 bg-slate-900 px-4 py-3 text-white placeholder:text-slate-500" />
+        <span className="text-xs font-normal text-slate-400">Per ora è possibile allegare un collegamento esterno; il caricamento diretto di file sarà aggiunto in una fase successiva.</span>
+      </label>
+      <label className="flex items-start gap-3 text-sm leading-6 text-slate-300">
+        <input name="consent_public" type="checkbox" required className="mt-1 h-4 w-4 accent-emerald-400" />
+        <span>Acconsento che la testimonianza, dopo la revisione umana, possa essere pubblicata nell’archivio. Non inserisco indirizzi privati, dati personali di altre persone o informazioni riservate.</span>
+      </label>
+      <div className="flex flex-wrap items-center gap-4">
+        <button type="submit" disabled={sending} className="rounded-full border border-emerald-200/50 bg-emerald-300/15 px-7 py-3 font-bold text-emerald-100 hover:bg-emerald-300/25 disabled:opacity-50">{sending ? 'Invio in corso…' : 'Invia la testimonianza'}</button>
+        {feedback && <p role="status" className={success ? 'text-sm text-emerald-200' : 'text-sm text-rose-200'}>{feedback}</p>}
+      </div>
+      <p className="text-xs leading-5 text-slate-500">Non inserire coordinate precise di abitazioni o luoghi sensibili. La segnalazione viene archiviata come “in attesa di revisione” e non appare pubblicamente finché non viene approvata da un responsabile.</p>
+    </form>
+  );
+}
 
 export default function RsOvniUfo() {
   const [active, setActive] = useState('crop');
@@ -47,6 +134,14 @@ export default function RsOvniUfo() {
               <div className="flex h-36 w-36 items-center justify-center rounded-full border border-cyan-100/30 text-7xl text-cyan-100">🛸</div>
             </div>
           </div>
+        </section>
+
+
+        <section id="rs-eyewitness" className="my-8 rounded-3xl border border-emerald-300/30 bg-gradient-to-br from-emerald-950/50 to-slate-950/80 p-6 shadow-xl sm:p-8">
+          <p className="text-xs font-black tracking-[.35em] text-emerald-200">RS EYEWITNESS • ARCHIVIO DELLE TESTIMONIANZE</p>
+          <h2 className="mt-3 text-3xl font-black sm:text-4xl">Hai visto qualcosa di inspiegabile?</h2>
+          <p className="mt-3 max-w-3xl leading-7 text-slate-300">Raccontalo con le tue parole. Nessuna IA scrive, modifica o interpreta la tua testimonianza: sarà conservata come l’hai inviata e sottoposta a verifica umana prima di un’eventuale pubblicazione.</p>
+          <SightingSubmissionForm />
         </section>
 
         <section className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4" aria-label="Sezioni RS OVNI UFO">
