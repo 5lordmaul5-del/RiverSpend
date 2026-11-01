@@ -305,13 +305,13 @@ export default function App() {
           </View>
           <View style={styles.payHubGrid}>
             {[
-              ['💳','RiverSpend Pay','Checkout e metodi di pagamento'],
-              ['🌊','RiverMoney','Portafoglio e saldo personale'],
-              ['🎁','Gift Card','Carte regalo RiverSpend'],
-              ['🤝','Fai una donazione','Sostieni un progetto'],
-              ['📜','Movimenti','Storico e ricevute'],
-            ].map(([icon,title,subtitle]) => (
-              <Pressable key={title} style={styles.payHubItem} onPress={() => Linking.openURL('https://www.riverspend.com/servizi/pay')}>
+              ['💳','RiverSpend Pay','Checkout e metodi di pagamento','https://www.riverspend.com/servizi/pay'],
+              ['🌊','RiverMoney','Portafoglio e saldo personale','https://www.riverspend.com/river-money'],
+              ['🎁','Gift Card','Carte regalo RiverSpend','https://www.riverspend.com/gift-card'],
+              ['🤝','Fai una donazione','Sostieni un progetto','https://www.riverspend.com/donation'],
+              ['📜','Movimenti','Storico e ricevute','https://www.riverspend.com/river-money'],
+            ].map(([icon,title,subtitle,url]) => (
+              <Pressable key={title} style={styles.payHubItem} onPress={() => Linking.openURL(url)}>
                 <Text style={styles.payHubIcon}>{icon}</Text>
                 <View style={{flex:1}}>
                   <Text style={styles.payHubItemTitle}>{title}</Text>
