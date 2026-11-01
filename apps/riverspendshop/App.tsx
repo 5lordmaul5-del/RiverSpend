@@ -9,7 +9,8 @@ import {
   TextInput,
   Image,
   ActivityIndicator,
-  Alert,\n  Linking,
+  Alert,
+  Linking,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import * as ImagePicker from 'expo-image-picker';
