@@ -2,6 +2,7 @@ import Link from 'next/link';
 
 const aree = [
   ['🛒','RiverSpendShop','Marketplace tra privati e aziende','/'],
+  ['🖨️','RiverSpend sPrint','Stampa e personalizzazione: foto, abbigliamento, gadget e materiali aziendali','/riverspend-sprint'],
   ['💎','RS Fidelity','Programma fedeltà e vantaggi','/servizi/fidelity'],
   ['🛡️','RS Nova Shield','Protezione e controlli di sicurezza','/nova-shield'],
   ['📍','RS Local','Scopri attività, offerte e servizi locali','/servizi/local'],
