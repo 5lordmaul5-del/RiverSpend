@@ -21,7 +21,7 @@ export default function RiverAI() {
   const endRef = useRef(null);
 
   useEffect(() => {
-    if ("serviceWorker" in navigator) navigator.serviceWorker.register("/river-ai-sw.js", { scope: "/" }).catch(() => {});
+    if ("serviceWorker" in navigator) navigator.serviceWorker.register("/river-ai-sw.js", { scope: "/river-ai" }).catch(() => {});
     const onInstall = (event) => { event.preventDefault(); setInstallPrompt(event); };
     const onInstalled = () => { setInstallPrompt(null); setInstallMessage("River SSAI 1.0 è stata installata sul dispositivo."); };
     window.addEventListener("beforeinstallprompt", onInstall);
@@ -121,7 +121,7 @@ export default function RiverAI() {
 
   return (
     <>
-    <Head><title>River SSAI 1.0 · CEO Edition</title><meta name="theme-color" content="#073b4c"/><meta name="apple-mobile-web-app-capable" content="yes"/><meta name="apple-mobile-web-app-title" content="River SSAI"/><link rel="manifest" href="/river-ai.webmanifest"/><link rel="icon" href="/icons/river-ssai.svg" type="image/svg+xml"/><link rel="apple-touch-icon" href="/icons/river-ssai.svg"/></Head>
+    <Head><title>River SSAI 1.0 · CEO Edition</title><meta name="theme-color" content="#073b4c"/><meta name="apple-mobile-web-app-capable" content="yes"/><meta name="apple-mobile-web-app-title" content="River SSAI"/><link rel="icon" href="/icons/river-ssai.svg" type="image/svg+xml"/><link rel="apple-touch-icon" href="/icons/river-ssai.svg"/></Head>
     <main style={{ minHeight:"100vh", background:"linear-gradient(180deg,#e9fbfc,#f7fcfd)", color:"#12343b", padding:"18px 12px 28px", fontFamily:"Arial,sans-serif" }}>
       <section style={{ maxWidth:850, minHeight:"calc(100vh - 46px)", margin:"0 auto", display:"flex", flexDirection:"column", background:"#fff", border:"1px solid #c8e8e9", borderRadius:22, overflow:"hidden", boxShadow:"0 12px 36px rgba(5,65,78,.10)" }}>
         <header style={{ padding:"18px 20px", background:"linear-gradient(120deg,#073b4c,#087f89)", color:"#fff", display:"flex", alignItems:"center", gap:12 }}>
