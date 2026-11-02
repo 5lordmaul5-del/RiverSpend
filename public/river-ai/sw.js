@@ -1,6 +1,9 @@
-const CACHE = "river-ssai-shell-v3";
+const CACHE = "river-ssai-shell-v4";
 self.addEventListener("install", event => {
-  event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(["/river-ai", "/river-ai.webmanifest", "/icons/river-ssai.svg"])));
+  event.waitUntil(caches.open(CACHE).then(cache => cache.addAll([
+    "/river-ai", "/river-ai.webmanifest", "/icons/river-ssai.svg",
+    "/icons/river-ssai-180.png", "/icons/river-ssai-192.png", "/icons/river-ssai-512.png"
+  ])));
   self.skipWaiting();
 });
 self.addEventListener("activate", event => {
