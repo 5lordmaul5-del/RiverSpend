@@ -20,6 +20,15 @@ const apps = [
     action: 'Apri RiverSpaceSignals'
   },
   {
+    name: 'River SSAI 1.0',
+    subtitle: 'Assistente AI privata · CEO Edition',
+    description: 'L’assistente RiverSpend con Nova e gli agenti specializzati. Accesso riservato all’account amministratore; aprila e installala come app separata sul telefono.',
+    logo: '/icons/river-ssai.svg',
+    href: '/river-ai',
+    color: '#087f89',
+    action: 'Apri e installa River SSAI'
+  },
+  {
     name: 'RiverSpendSocialNetwork',
     subtitle: 'Il social network RiverSpend',
     description: 'Condividi post, notizie, video e link; partecipa alla community e alle conversazioni. Le funzioni social di Signals confluiscono qui.',
