@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import Head from "next/head";
 import { supabase } from "../lib/supabase";
 
 const STORAGE_KEY = "riverspend-river-ai-chat-v1";
@@ -13,7 +14,29 @@ export default function RiverAI() {
   const [loginEmail, setLoginEmail] = useState("");
   const [loginBusy, setLoginBusy] = useState(false);
   const [loginSent, setLoginSent] = useState(false);
+  const [installPrompt, setInstallPrompt] = useState(null);
+  const [installMessage, setInstallMessage] = useState("");
   const endRef = useRef(null);
+
+  useEffect(() => {
+    if ("serviceWorker" in navigator) navigator.serviceWorker.register("/river-ai-sw.js", { scope: "/" }).catch(() => {});
+    const onInstall = (event) => { event.preventDefault(); setInstallPrompt(event); };
+    const onInstalled = () => { setInstallPrompt(null); setInstallMessage("River SSAI 1.0 è stata installata sul dispositivo."); };
+    window.addEventListener("beforeinstallprompt", onInstall);
+    window.addEventListener("appinstalled", onInstalled);
+    return () => { window.removeEventListener("beforeinstallprompt", onInstall); window.removeEventListener("appinstalled", onInstalled); };
+  }, []);
+
+  async function installApp() {
+    if (!installPrompt) {
+      setInstallMessage("Apri il menu ⋮ di Chrome e scegli “Installa app” oppure “Aggiungi a schermata Home”.");
+      return;
+    }
+    installPrompt.prompt();
+    const choice = await installPrompt.userChoice;
+    setInstallMessage(choice?.outcome === "accepted" ? "Installazione avviata." : "Installazione non completata. Puoi riprovare.");
+    setInstallPrompt(null);
+  }
 
   useEffect(() => {
     try {
@@ -95,17 +118,21 @@ export default function RiverAI() {
   }
 
   return (
+    <>
+    <Head><title>River SSAI 1.0 · CEO Edition</title><meta name="theme-color" content="#073b4c"/><meta name="apple-mobile-web-app-capable" content="yes"/><meta name="apple-mobile-web-app-title" content="River SSAI"/><link rel="manifest" href="/river-ai.webmanifest"/><link rel="icon" href="/icons/river-ssai.svg" type="image/svg+xml"/><link rel="apple-touch-icon" href="/icons/river-ssai.svg"/></Head>
     <main style={{ minHeight:"100vh", background:"linear-gradient(180deg,#e9fbfc,#f7fcfd)", color:"#12343b", padding:"18px 12px 28px", fontFamily:"Arial,sans-serif" }}>
       <section style={{ maxWidth:850, minHeight:"calc(100vh - 46px)", margin:"0 auto", display:"flex", flexDirection:"column", background:"#fff", border:"1px solid #c8e8e9", borderRadius:22, overflow:"hidden", boxShadow:"0 12px 36px rgba(5,65,78,.10)" }}>
         <header style={{ padding:"18px 20px", background:"linear-gradient(120deg,#073b4c,#087f89)", color:"#fff", display:"flex", alignItems:"center", gap:12 }}>
           <div style={{ width:46,height:46,borderRadius:16,display:"grid",placeItems:"center",background:"rgba(255,255,255,.16)",fontSize:25 }}>🌊</div>
           <div style={{ flex:1 }}>
-            <div style={{ fontSize:21,fontWeight:800 }}>River AI</div>
+            <div style={{ fontSize:21,fontWeight:800 }}>River SSAI 1.0</div>
             <div style={{ fontSize:12,opacity:.85 }}>CEO Edition · Area privata RiverSpend</div>
           </div>
+          <button onClick={installApp} style={{ border:"1px solid #f5d77a",borderRadius:11,padding:"9px 11px",background:"#f5d77a",color:"#12343b",fontWeight:800 }}>Installa app</button>
           <button onClick={newChat} disabled={access!=="ready" || busy} style={{ border:"1px solid #ffffff66",borderRadius:11,padding:"9px 11px",background:"transparent",color:"#fff",fontWeight:700 }}>Nuova chat</button>
         </header>
 
+        {installMessage && <div role="status" style={{padding:"10px 18px",background:"#fff8df",color:"#72510a",fontSize:13}}>{installMessage}</div>}
         {access === "checking" ? <div style={{padding:24}}>Verifica accesso amministratore…</div> :
          access === "login" ? <div style={{padding:24}}>
           <h2 style={{marginTop:0,color:"#075766"}}>Accesso amministratore</h2>
@@ -142,5 +169,6 @@ export default function RiverAI() {
          </>}
       </section>
     </main>
+    </>
   );
 }
