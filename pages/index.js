@@ -1512,6 +1512,7 @@ export default function Home() {
                 </button>
                 {riverVoiceStatus && <p role="status" className="mt-2 rounded-lg bg-white/5 p-2 text-xs leading-5 text-cyan-100">{riverVoiceStatus}</p>}
                 <p className="mt-2 text-[11px] leading-4 text-slate-400">La voce parte solo quando premi il pulsante. Le richieste vocali supportate aprono sezioni o avviano la ricerca; l’assistente AI conversazionale completo sarà un’integrazione successiva.</p>
+                <a href="/river-ai" className="mt-3 flex w-full items-center justify-center rounded-xl border border-amber-300/70 bg-amber-300/10 px-4 py-3 text-sm font-black text-amber-200 hover:bg-amber-300/20">Apri River SSAI 1.0 · CEO Edition ↗</a>
               </div>
             </section>
           ) : (
