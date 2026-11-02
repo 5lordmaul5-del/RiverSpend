@@ -4,7 +4,7 @@
   "short_name": "River SSAI",
   "description": "Assistente privata RiverSpend",
   "start_url": "/river-ai",
-  "scope": "/",
+  "scope": "/river-ai",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#e9fbfc",
