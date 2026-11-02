@@ -16,6 +16,7 @@ export default function RiverAI() {
   const [loginSent, setLoginSent] = useState(false);
   const [installPrompt, setInstallPrompt] = useState(null);
   const [installMessage, setInstallMessage] = useState("");
+  const [selectedAgent, setSelectedAgent] = useState("nova");
   const endRef = useRef(null);
 
   useEffect(() => {
@@ -99,7 +100,7 @@ export default function RiverAI() {
       const response = await fetch("/api/river-ai/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ messages: next })
+        body: JSON.stringify({ messages: next, agent: selectedAgent })
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "River AI non disponibile.");
@@ -147,7 +148,19 @@ export default function RiverAI() {
          access === "denied" ? <div style={{padding:24}}><h2>Accesso non autorizzato</h2><p>Questa assistente è riservata all'amministratore RiverSpend.</p></div> :
          <>
           <div style={{padding:"12px 18px",background:"#f0fbfa",borderBottom:"1px solid #dceeee",fontSize:12,lineHeight:1.5,color:"#42636a"}}>
-            Questa prima versione può conversare e aiutarti a pianificare. Non ha ancora i permessi per modificare direttamente GitHub, Vercel o Supabase.
+            Scegli il collaboratore specializzato. Gli agenti condividono la regia di Nova e la memoria privata. In questa fase elaborano e preparano il lavoro: non modificano ancora autonomamente siti o account esterni.
+          </div>
+          <div style={{padding:"12px 18px",borderBottom:"1px solid #e3eeee",display:"flex",alignItems:"center",gap:10,flexWrap:"wrap"}}>
+            <label htmlFor="river-agent" style={{fontWeight:800,color:"#075766"}}>Agente operativo</label>
+            <select id="river-agent" value={selectedAgent} onChange={e=>setSelectedAgent(e.target.value)} style={{flex:1,minWidth:190,border:"1px solid #c7dfe1",borderRadius:11,padding:10,background:"#fff",color:"#173b42",fontSize:14}}>
+              <option value="nova">🌊 Nova · Coordinatrice</option>
+              <option value="tech">💻 River Tech · Programmazione</option>
+              <option value="design">🎨 River Design · Immagini e video</option>
+              <option value="robotics">🤖 River Robotics · Droidi e 3D</option>
+              <option value="science">🧪 River Science · Calcoli e ricerca</option>
+              <option value="memory">🧠 River Memory · Archivio e conoscenza</option>
+              <option value="control">🛡️ River Control · Verifiche e sicurezza</option>
+            </select>
           </div>
           <div style={{flex:1,padding:18,overflowY:"auto",minHeight:300}}>
             {messages.length === 0 && <div style={{maxWidth:560,margin:"32px auto",textAlign:"center"}}>
