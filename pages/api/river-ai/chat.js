@@ -54,12 +54,29 @@ export default async function handler(req, res) {
       return json(res, 413, { error: "Conversazione troppo lunga. Apri una nuova chat." });
     }
 
+    // Recupera una piccola finestra della memoria permanente privata.
+    const { data: memories, error: memoryReadError } = await adminClient
+      .from("river_ai_memories")
+      .select("content, category, created_at")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false })
+      .limit(12);
+    if (memoryReadError) console.error("River AI memory read failed:", memoryReadError.message);
+    const memoryContext = (memories || []).reverse()
+      .map((item) => `[${item.category}] ${item.content}`)
+      .join("\\n")
+      .slice(0, 10000);
+
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
         model: "openai/gpt-oss-20b",
-        messages: [{ role: "system", content: SYSTEM_PROMPT }, ...messages],
+        messages: [
+          { role: "system", content: SYSTEM_PROMPT },
+          ...(memoryContext ? [{ role: "system", content: "MEMORIA PERMANENTE RIVER AI (informazioni precedenti, da usare se pertinenti):\\n" + memoryContext }] : []),
+          ...messages
+        ],
         max_completion_tokens: 1200
       })
     });
@@ -71,7 +88,15 @@ export default async function handler(req, res) {
     }
     const answer = payload?.choices?.[0]?.message?.content;
     if (!answer) return json(res, 502, { error: "River AI ha restituito una risposta vuota. Riprova." });
-    return json(res, 200, { answer, model: payload.model || "openai/gpt-oss-20b" });
+
+    // Archivia lo scambio nella memoria privata dell'amministratore.
+    const memoryRows = [
+      { user_id: user.id, title: "Messaggio utente", content: messages[messages.length - 1].content, category: "conversation", source: "river-ai-chat", importance: 3 },
+      { user_id: user.id, title: "Risposta River AI", content: answer.slice(0, 6000), category: "conversation", source: "river-ai-chat", importance: 2 }
+    ];
+    const { error: memoryWriteError } = await adminClient.from("river_ai_memories").insert(memoryRows);
+    if (memoryWriteError) console.error("River AI memory write failed:", memoryWriteError.message);
+    return json(res, 200, { answer, model: payload.model || "openai/gpt-oss-20b", memorySaved: !memoryWriteError });
   } catch (error) {
     console.error("River AI request failed:", error?.message || "unknown");
     return json(res, 500, { error: "Errore temporaneo durante la richiesta a River AI." });
