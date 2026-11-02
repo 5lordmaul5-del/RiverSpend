@@ -21,85 +21,31 @@ Non chiedere mai password, chiavi API, codici segreti o credenziali. Non rivelar
 Per modifiche a pagamenti, dati personali, cancellazioni, pubblicazioni o impostazioni di sicurezza richiedi sempre conferma esplicita.
 Non inventare lo stato attuale del sito, prezzi, ordini o dati di vendita. Distingui sempre fatti, ipotesi e proposte.`;
 
-const json = (res, status, body) => res.status(status).json(body);
-
-export default async function handler(req, res) {
-  res.setHeader("Cache-Control", "no-store");
-  if (req.method !== "POST") {
-    res.setHeader("Allow", "POST");
-    return json(res, 405, { error: "Metodo non consentito." });
-  }
-
-  const apiKey = process.env.GROQ_API_KEY;
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const publicKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY;
-  if (!apiKey) return json(res, 503, { error: "River AI non è ancora configurata: chiave AI mancante sul server." });
-  if (!supabaseUrl || !publicKey || !serviceKey) return json(res, 503, { error: "Configurazione amministrativa Supabase incompleta." });
-
-  const authorization = req.headers.authorization || "";
-  const token = authorization.startsWith("Bearer ") ? authorization.slice(7) : "";
-  if (!token) return json(res, 401, { error: "Accedi con il tuo account RiverSpend." });
-
-  try {
-    const authClient = createClient(supabaseUrl, publicKey, { auth: { persistSession: false, autoRefreshToken: false } });
-    const { data: authData, error: authError } = await authClient.auth.getUser(token);
-    const user = authData?.user;
-    if (authError || !user) return json(res, 401, { error: "Sessione non valida. Accedi di nuovo." });
-
-    const adminClient = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
-    const { data: role, error: roleError } = await adminClient
-      .from("rs_admin_roles").select("role").eq("user_id", user.id).maybeSingle();
-    if (roleError || role?.role !== "admin") return json(res, 403, { error: "River AI è riservata all'amministratore RiverSpend." });
-
-    const requestedAgent = String(req.body?.agent || "nova");
-    const agent = Object.prototype.hasOwnProperty.call(AGENTS, requestedAgent) ? requestedAgent : "nova";
-    const incoming = Array.isArray(req.body?.messages) ? req.body.messages : [];
-    const messages = incoming.slice(-16).map((item) => ({
-      role: item?.role === "assistant" ? "assistant" : "user",
-      content: String(item?.content || "").trim().slice(0, 6000)
-    })).filter((item) => item.content);
-    if (!messages.length || messages[messages.length - 1].role !== "user") {
-      return json(res, 400, { error: "Scrivi un messaggio per River AI." });
-    }
-    if (messages.reduce((sum, item) => sum + item.content.length, 0) > 24000) {
-      return json(res, 413, { error: "Conversazione troppo lunga. Apri una nuova chat." });
-    }
-
-    // Recupera una piccola finestra della memoria permanente privata.
-    const { data: memories, error: memoryReadError } = await adminClient
-      .from("river_ai_memories")
-      .select("content, category, created_at")
-      .eq("user_id", user.id)
-      .order("created_at", { ascending: false })
-      .limit(12);
-    if (memoryReadError) console.error("River AI memory read failed:", memoryReadError.message);
-    const memoryContext = (memories || []).reverse()
-      .map((item) => `[${item.category}] ${item.content}`)
-      .join("\\n")
-      .slice(0, 10000);
-
-    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-      method: "POST",
-      headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "openai/gpt-oss-20b",
-        messages: [
-          { role: "system", content: SYSTEM_PROMPT + "\n\nRUOLO OPERATIVO ATTIVO: " + AGENTS[agent] },
-          ...(memoryContext ? [{ role: "system", content: "MEMORIA PERMANENTE RIVER AI (informazioni precedenti, da usare se pertinenti):\\n" + memoryContext }] : []),
-          ...messages
-        ],
-        max_completion_tokens: 1200
-      })
-    });
-    const payload = await response.json().catch(() => ({}));
-    if (!response.ok) {
-      console.error("River AI provider error:", response.status, payload?.error?.type || "provider_error");
-      if (response.status === 429) return json(res, 429, { error: "Hai raggiunto temporaneamente il limite di utilizzo del modello. Riprova più tardi." });
-      return json(res, 502, { error: "Il servizio AI non ha risposto correttamente. Riprova tra poco." });
-    }
-    const answer = payload?.choices?.[0]?.message?.content;
-    if (!answer) return json(res, 502, { error: "River AI ha restituito una risposta vuota. Riprova." });
+async function callModel(apiKey, model, messages, maxTokens = 900) {
+  let lastError;
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    try {
+      const model = process.env.RIVER_AI_MODEL || "openai/gpt-oss-20b";
+    const baseMessages = [
+      { role: "system", content: SYSTEM_PROMPT + "\n\nRUOLO OPERATIVO ATTIVO: " + AGENTS[agent] },
+      ...(memoryContext ? [{ role: "system", content: "MEMORIA PERMANENTE RIVER AI:\n" + memoryContext }] : []),
+      ...messages
+    ];
+    let answer;
+    let agentsUsed = [agent];
+    if (agent === "team") {
+      const specialists = ["tech", "science", "control"];
+      const reports = await Promise.all(specialists.map(async specialist => ({ specialist, report: await callModel(apiKey, model, [
+        { role: "system", content: SYSTEM_PROMPT + "\nRUOLO OPERATIVO: " + AGENTS[specialist] + "\nFornisci analisi concise, ipotesi, rischi e verifiche." },
+        ...(memoryContext ? [{ role: "system", content: "MEMORIA RIVERSPEND:\n" + memoryContext }] : []),
+        ...messages
+      ], 650) })));
+      agentsUsed = ["nova", ...specialists];
+      answer = await callModel(apiKey, model, [
+        { role: "system", content: SYSTEM_PROMPT + "\nSei Nova, coordina i rapporti, segnala incertezze e dai una sintesi operativa." },
+        { role: "user", content: "Richiesta: " + messages[messages.length - 1].content + "\n\nRapporti:\n" + reports.map(r => "[" + r.specialist + "]\n" + r.report).join("\n\n") }
+      ], 1400);
+    } else { answer = await callModel(apiKey, model, baseMessages, 1400); }
 
     // Archivia lo scambio nella memoria privata dell'amministratore.
     const memoryRows = [
@@ -108,7 +54,7 @@ export default async function handler(req, res) {
     ];
     const { error: memoryWriteError } = await adminClient.from("river_ai_memories").insert(memoryRows);
     if (memoryWriteError) console.error("River AI memory write failed:", memoryWriteError.message);
-    return json(res, 200, { answer, model: payload.model || "openai/gpt-oss-20b", agent, memorySaved: !memoryWriteError });
+    return json(res, 200, { answer, model, agent, agentsUsed, memorySaved: !memoryWriteError });
   } catch (error) {
     console.error("River AI request failed:", error?.message || "unknown");
     return json(res, 500, { error: "Errore temporaneo durante la richiesta a River AI." });
