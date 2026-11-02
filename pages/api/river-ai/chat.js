@@ -1,63 +1,200 @@
 import { createClient } from "@supabase/supabase-js";
 
+const MODEL_DEFAULT = "openai/gpt-oss-20b";
+const MAX_AGENTS = 8;
+const MAX_MESSAGE_CHARS = 4000;
+const MAX_HISTORY = 16;
+const MAX_PARALLEL = 4;
+
 const AGENTS = {
-  nova: "Sei NOVA, coordinatrice CEO. Comprendi l'obiettivo, suddividilo in attività, coordina gli specialisti e restituisci un piano ordinato con priorità, dipendenze e verifiche.",
-  tech: "Sei RIVER TECH, specialista di programmazione. Analizza architettura, codice, bug, API, database e deployment. Fornisci soluzioni concrete, codice verificabile e test. Non dichiarare di aver modificato sistemi senza strumenti e conferme.",
-  design: "Sei RIVER DESIGN, specialista di direzione artistica, immagini, video, UI/UX e modelli 3D. Prepara concept, prompt, storyboard, specifiche visive e asset list. Distingui ciò che puoi progettare da ciò che richiede un generatore esterno.",
-  robotics: "Sei RIVER ROBOTICS, specialista di robotica. Progetta droidi con requisiti, viste esplose, distinta componenti, elettronica, sensori, attuatori, firmware e simulazioni. Evidenzia rischi fisici e necessità di prototipi e test.",
-  science: "Sei RIVER SCIENCE, specialista di matematica, fisica, analisi dati e simulazione. Mostra formule, unità, ipotesi, passaggi e controlli di plausibilità.",
-  memory: "Sei RIVER MEMORY, archivista della conoscenza. Organizza decisioni, requisiti, versioni, documenti e riepiloghi recuperabili. Non inventare ricordi o dati mancanti.",
-  control: "Sei RIVER CONTROL, revisore qualità e sicurezza. Cerca errori, vulnerabilità, contraddizioni, casi limite e rischi. Produci checklist e segnala ciò che non è dimostrato."
+  nova: "Coordinatrice generale: scomponi il problema, assegna priorità, integra i risultati e dichiara le incertezze.",
+  tech: "Ingegneria software e sistemi: architettura, codice, API, database, test e deployment.",
+  design: "Design e creatività: UI/UX, identità visiva, immagini, video, storyboard e 3D.",
+  robotics: "Robotica: sensori, attuatori, elettronica, firmware, simulazioni e sicurezza fisica.",
+  science: "Scienza e calcolo: matematica, fisica, statistica, simulazioni e controlli dimensionali.",
+  memory: "Gestione della conoscenza: organizza requisiti, decisioni, versioni e informazioni fornite.",
+  control: "Sicurezza e qualità: threat modeling, vulnerabilità, privacy, casi limite e verifiche.",
+  business: "Strategia d'impresa: vendite, margini, costi, ricavi, clienti e scenari operativi.",
+  finance: "Analisi finanziaria: flussi di cassa, budget, rischio, diversificazione e scenari. Non impartire ordini d'investimento.",
+  markets: "Ricerca mercati e token: fondamentali, liquidità, volatilità, tokenomics e rischi. Non inventare dati live né promettere rendimenti."
 };
 
-const SYSTEM_PROMPT = `Sei River AI – CEO Edition, l'assistente AI privata dell'amministratore di RiverSpend.
-Parla in italiano salvo diversa richiesta. Tono chiaro, concreto, paziente e collaborativo.
-Il progetto si chiama RiverSpend; il marketplace è RiverSpendShop; payoff: YOUR SHOP • YOUR FLOW.
-Ecosistema: RiverSpend Market, Pay, Shield, Box, Fidelity, Oracle, Experience, Recovery, Park, TV, Ecology, Fortress e RiverSpaceSignals.
-Il proprietario non è uno sviluppatore: spiega le cose senza gergo e in piccoli passaggi.
-Aiuta a ragionare, pianificare, diagnosticare problemi e preparare modifiche. Non affermare di aver letto il sito, modificato file, pubblicato codice, controllato ordini o eseguito azioni se non hai davvero ricevuto strumenti e conferme per farlo.
-In questa prima versione puoi conversare e usare il contesto fornito, ma NON hai ancora accesso operativo a GitHub, Vercel o Supabase. Dillo chiaramente se ti viene chiesto di eseguire operazioni.
-Non chiedere mai password, chiavi API, codici segreti o credenziali. Non rivelare segreti.
-Per modifiche a pagamenti, dati personali, cancellazioni, pubblicazioni o impostazioni di sicurezza richiedi sempre conferma esplicita.
-Non inventare lo stato attuale del sito, prezzi, ordini o dati di vendita. Distingui sempre fatti, ipotesi e proposte.`;
+const BASE_PROMPT = `Sei River AI ULTRA, la rete di intelligenze coordinata da Nova per l'ecosistema RiverSpend.
+Parla in italiano, con tono chiaro, concreto e comprensibile. Il proprietario non è uno sviluppatore.
+RiverSpend comprende RiverSpendShop, Market, Pay, Shield, Box, Fidelity, Oracle, Experience, Recovery, Park, TV, Ecology, Fortress e RiverSpaceSignals.
+Gli agenti sono istanze coordinate dello stesso servizio AI, non copie autonome coscienti. Il numero di agenti è limitato dalle risorse, dai limiti del provider e dai costi.
+Distingui sempre fatti verificati, ipotesi e proposte. Non affermare di aver navigato, eseguito calcoli esterni, modificato sistemi o controllato dati live se non è avvenuto.
+Non promettere sicurezza impenetrabile, capacità illimitata o previsioni certe. Progetta difesa a livelli, monitoraggio, backup, test e risposta agli incidenti.
+Per mercati e token usa scenari probabilistici, dati con data e fonte quando disponibili, rischi e possibili perdite. Non garantire profitti e non eseguire investimenti o transazioni.
+Non chiedere password, chiavi API o codici. Non esporre segreti o dati di altri utenti.
+Nessuna azione irreversibile, modifica a pagamenti, trasferimento di fondi, investimento, pubblicazione o cancellazione senza approvazione esplicita dell'amministratore.
+Quando i dati non bastano, dillo e indica cosa occorre verificare.`;
 
-async function callModel(apiKey, model, messages, maxTokens = 900) {
-  let lastError;
-  for (let attempt = 0; attempt < 2; attempt += 1) {
-    try {
-      const model = process.env.RIVER_AI_MODEL || "openai/gpt-oss-20b";
-    const baseMessages = [
-      { role: "system", content: SYSTEM_PROMPT + "\n\nRUOLO OPERATIVO ATTIVO: " + AGENTS[agent] },
-      ...(memoryContext ? [{ role: "system", content: "MEMORIA PERMANENTE RIVER AI:\n" + memoryContext }] : []),
-      ...messages
-    ];
+function json(res, status, body) {
+  return res.status(status).json(body);
+}
+
+function normalizeAgent(value) {
+  return Object.prototype.hasOwnProperty.call(AGENTS, value) ? value : "nova";
+}
+
+function chooseTeam(agent, requestedSize) {
+  if (agent !== "team") return [normalizeAgent(agent)];
+  const size = [2, 4, 8].includes(Number(requestedSize)) ? Number(requestedSize) : 4;
+  const roster = ["tech", "science", "control", "business", "finance", "markets", "design", "memory"];
+  return roster.slice(0, Math.min(size, MAX_AGENTS));
+}
+
+async function callModel(apiKey, model, messages, maxTokens = 850) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 45000);
+  try {
+    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + apiKey,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model,
+        messages,
+        temperature: 0.25,
+        max_tokens: maxTokens
+      }),
+      signal: controller.signal
+    });
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      const error = new Error(payload?.error?.message || "Provider AI non disponibile.");
+      error.status = response.status;
+      throw error;
+    }
+    const answer = payload?.choices?.[0]?.message?.content;
+    if (typeof answer !== "string" || !answer.trim()) throw new Error("Il modello ha restituito una risposta vuota.");
+    return answer.trim();
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+async function runWithLimit(items, limit, worker) {
+  const results = new Array(items.length);
+  let next = 0;
+  async function runner() {
+    while (true) {
+      const index = next++;
+      if (index >= items.length) return;
+      results[index] = await worker(items[index], index);
+    }
+  }
+  await Promise.all(Array.from({ length: Math.min(limit, items.length) }, runner));
+  return results;
+}
+
+export default async function handler(req, res) {
+  if (req.method !== "POST") {
+    res.setHeader("Allow", "POST");
+    return json(res, 405, { error: "Metodo non consentito." });
+  }
+
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const groqKey = process.env.GROQ_API_KEY;
+  if (!supabaseUrl || !serviceKey || !groqKey) {
+    return json(res, 503, { error: "Configurazione River AI incompleta. Controllare le variabili server." });
+  }
+
+  const authHeader = req.headers.authorization || "";
+  const accessToken = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : "";
+  if (!accessToken) return json(res, 401, { error: "Accesso richiesto." });
+
+  const adminClient = createClient(supabaseUrl, serviceKey, {
+    auth: { autoRefreshToken: false, persistSession: false }
+  });
+  const { data: authData, error: authError } = await adminClient.auth.getUser(accessToken);
+  const user = authData?.user;
+  if (authError || !user) return json(res, 401, { error: "Sessione non valida. Accedi di nuovo." });
+
+  const { data: role, error: roleError } = await adminClient
+    .from("rs_admin_roles")
+    .select("role")
+    .eq("user_id", user.id)
+    .maybeSingle();
+  if (roleError || role?.role !== "admin") return json(res, 403, { error: "Area riservata all'amministratore." });
+
+  const body = req.body || {};
+  const messages = Array.isArray(body.messages) ? body.messages.slice(-MAX_HISTORY) : [];
+  const safeMessages = messages
+    .filter((item) => item && ["user", "assistant"].includes(item.role) && typeof item.content === "string")
+    .map((item) => ({ role: item.role, content: item.content.slice(0, MAX_MESSAGE_CHARS) }));
+  if (!safeMessages.length || safeMessages[safeMessages.length - 1].role !== "user") {
+    return json(res, 400, { error: "Scrivi prima una richiesta." });
+  }
+
+  const agent = body.agent === "team" ? "team" : normalizeAgent(body.agent);
+  const team = chooseTeam(agent, body.teamSize);
+  const model = process.env.RIVER_AI_MODEL || MODEL_DEFAULT;
+
+  try {
+    const { data: memories, error: memoryReadError } = await adminClient
+      .from("river_ai_memories")
+      .select("title,content,category,created_at")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false })
+      .limit(12);
+    if (memoryReadError) console.error("River AI memory read failed:", memoryReadError.message);
+    const memoryContext = (memories || [])
+      .map((item) => "[" + (item.category || "nota") + "] " + (item.title || "") + ": " + (item.content || "").slice(0, 900))
+      .join("\n")
+      .slice(0, 9000);
+
+    const latestPrompt = safeMessages[safeMessages.length - 1].content;
     let answer;
-    let agentsUsed = [agent];
-    if (agent === "team") {
-      const specialists = ["tech", "science", "control"];
-      const reports = await Promise.all(specialists.map(async specialist => ({ specialist, report: await callModel(apiKey, model, [
-        { role: "system", content: SYSTEM_PROMPT + "\nRUOLO OPERATIVO: " + AGENTS[specialist] + "\nFornisci analisi concise, ipotesi, rischi e verifiche." },
-        ...(memoryContext ? [{ role: "system", content: "MEMORIA RIVERSPEND:\n" + memoryContext }] : []),
-        ...messages
-      ], 650) })));
-      agentsUsed = ["nova", ...specialists];
-      answer = await callModel(apiKey, model, [
-        { role: "system", content: SYSTEM_PROMPT + "\nSei Nova, coordina i rapporti, segnala incertezze e dai una sintesi operativa." },
-        { role: "user", content: "Richiesta: " + messages[messages.length - 1].content + "\n\nRapporti:\n" + reports.map(r => "[" + r.specialist + "]\n" + r.report).join("\n\n") }
-      ], 1400);
-    } else { answer = await callModel(apiKey, model, baseMessages, 1400); }
+    let agentsUsed = team;
 
-    // Archivia lo scambio nella memoria privata dell'amministratore.
+    if (agent === "team") {
+      const reports = await runWithLimit(team, MAX_PARALLEL, async (specialist) => {
+        const report = await callModel(groqKey, model, [
+          { role: "system", content: BASE_PROMPT + "\nRUOLO SPECIALISTA: " + AGENTS[specialist] + "\nFornisci analisi indipendente, ipotesi, rischi e verifiche. Se mancano dati, dichiaralo." },
+          ...(memoryContext ? [{ role: "system", content: "CONTESTO PRIVATO RIVERSPEND:\n" + memoryContext }] : []),
+          ...safeMessages
+        ], 650);
+        return { specialist, report };
+      });
+      const synthesis = await callModel(groqKey, model, [
+        { role: "system", content: BASE_PROMPT + "\nSei NOVA, coordinatrice. Confronta i rapporti, risolvi le contraddizioni senza nasconderle e restituisci decisione, piano, rischi e verifiche." },
+        { role: "user", content: "RICHIESTA:\n" + latestPrompt + "\n\nRAPPORTI SPECIALISTI:\n" + reports.map((item) => "AGENTE " + item.specialist.toUpperCase() + ":\n" + item.report).join("\n\n") }
+      ], 1500);
+      answer = synthesis;
+      agentsUsed = ["nova", ...team];
+    } else {
+      answer = await callModel(groqKey, model, [
+        { role: "system", content: BASE_PROMPT + "\nRUOLO ATTIVO: " + AGENTS[agent] },
+        ...(memoryContext ? [{ role: "system", content: "MEMORIA PRIVATA RIVER AI:\n" + memoryContext }] : []),
+        ...safeMessages
+      ], 1500);
+    }
+
     const memoryRows = [
-      { user_id: user.id, title: "Messaggio utente", content: messages[messages.length - 1].content, category: "conversation", source: "river-ai-chat", importance: 3 },
+      { user_id: user.id, title: "Messaggio utente", content: latestPrompt, category: "conversation", source: "river-ai-chat", importance: 3 },
       { user_id: user.id, title: "Risposta River AI", content: answer.slice(0, 6000), category: "conversation", source: "river-ai-chat", importance: 2 }
     ];
     const { error: memoryWriteError } = await adminClient.from("river_ai_memories").insert(memoryRows);
     if (memoryWriteError) console.error("River AI memory write failed:", memoryWriteError.message);
-    return json(res, 200, { answer, model, agent, agentsUsed, memorySaved: !memoryWriteError });
+
+    return json(res, 200, {
+      answer,
+      model,
+      agent,
+      agentsUsed,
+      teamSize: agent === "team" ? team.length : 1,
+      memorySaved: !memoryWriteError,
+      limits: { maxAgents: MAX_AGENTS, maxParallel: MAX_PARALLEL }
+    });
   } catch (error) {
     console.error("River AI request failed:", error?.message || "unknown");
     if (error?.status === 429) return json(res, 429, { error: "Limite temporaneo del servizio AI raggiunto. Riprova più tardi." });
+    if (error?.name === "AbortError") return json(res, 504, { error: "La richiesta ha superato il tempo massimo. Riprova con una richiesta più breve." });
     return json(res, 502, { error: "Servizio AI temporaneamente non disponibile. La richiesta può essere ripetuta." });
   }
 }
