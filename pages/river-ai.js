@@ -10,6 +10,9 @@ export default function RiverAI() {
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginBusy, setLoginBusy] = useState(false);
+  const [loginSent, setLoginSent] = useState(false);
   const endRef = useRef(null);
 
   useEffect(() => {
@@ -38,6 +41,27 @@ export default function RiverAI() {
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(messages.slice(-40))); } catch {}
     endRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, busy]);
+
+  async function requestLogin(event) {
+    event?.preventDefault();
+    const cleanEmail = loginEmail.trim();
+    if (!cleanEmail || loginBusy) return;
+    setLoginBusy(true);
+    setError("");
+    setLoginSent(false);
+    try {
+      const { error: authError } = await supabase.auth.signInWithOtp({
+        email: cleanEmail,
+        options: { emailRedirectTo: window.location.origin + "/river-ai" }
+      });
+      if (authError) throw authError;
+      setLoginSent(true);
+    } catch (err) {
+      setError(err.message || "Non riesco a inviare il link di accesso.");
+    } finally {
+      setLoginBusy(false);
+    }
+  }
 
   async function send(event) {
     event?.preventDefault();
@@ -83,7 +107,16 @@ export default function RiverAI() {
         </header>
 
         {access === "checking" ? <div style={{padding:24}}>Verifica accesso amministratore…</div> :
-         access === "login" ? <div style={{padding:24}}><h2>Accesso richiesto</h2><p>Accedi a RiverSpend con il tuo account amministratore, poi riapri questa pagina.</p></div> :
+         access === "login" ? <div style={{padding:24}}>
+          <h2 style={{marginTop:0,color:"#075766"}}>Accesso amministratore</h2>
+          <p>Inserisci l'indirizzo email del tuo account RiverSpend. Ti invieremo un link sicuro per entrare. Solo gli account con ruolo amministratore potranno usare River AI.</p>
+          <form onSubmit={requestLogin} style={{display:"grid",gap:10,maxWidth:460}}>
+            <input type="email" required autoComplete="email" value={loginEmail} onChange={e=>setLoginEmail(e.target.value)} placeholder="La tua email RiverSpend" style={{width:"100%",boxSizing:"border-box",border:"1px solid #c7dfe1",borderRadius:12,padding:13,fontSize:16,color:"#173b42"}} />
+            <button type="submit" disabled={loginBusy || !loginEmail.trim()} style={{border:0,borderRadius:12,padding:13,background:loginBusy?"#a9c8ca":"#087f89",color:"#fff",fontWeight:800}}>{loginBusy?"Invio in corso…":"Invia link di accesso"}</button>
+          </form>
+          {loginSent && <p role="status" style={{marginTop:14,padding:12,borderRadius:12,background:"#effaf5",color:"#166534"}}>Link inviato. Apri l'email sullo stesso dispositivo e completa l'accesso; poi River AI si aprirà automaticamente.</p>}
+          <p style={{fontSize:12,color:"#63818a",marginTop:16}}>L'accesso è gestito da Supabase. Non inserire qui password o chiavi API.</p>
+         </div> :
          access === "denied" ? <div style={{padding:24}}><h2>Accesso non autorizzato</h2><p>Questa assistente è riservata all'amministratore RiverSpend.</p></div> :
          <>
           <div style={{padding:"12px 18px",background:"#f0fbfa",borderBottom:"1px solid #dceeee",fontSize:12,lineHeight:1.5,color:"#42636a"}}>
