@@ -1,5 +1,15 @@
 import { createClient } from "@supabase/supabase-js";
 
+const AGENTS = {
+  nova: "Sei NOVA, coordinatrice CEO. Comprendi l'obiettivo, suddividilo in attività, coordina gli specialisti e restituisci un piano ordinato con priorità, dipendenze e verifiche.",
+  tech: "Sei RIVER TECH, specialista di programmazione. Analizza architettura, codice, bug, API, database e deployment. Fornisci soluzioni concrete, codice verificabile e test. Non dichiarare di aver modificato sistemi senza strumenti e conferme.",
+  design: "Sei RIVER DESIGN, specialista di direzione artistica, immagini, video, UI/UX e modelli 3D. Prepara concept, prompt, storyboard, specifiche visive e asset list. Distingui ciò che puoi progettare da ciò che richiede un generatore esterno.",
+  robotics: "Sei RIVER ROBOTICS, specialista di robotica. Progetta droidi con requisiti, viste esplose, distinta componenti, elettronica, sensori, attuatori, firmware e simulazioni. Evidenzia rischi fisici e necessità di prototipi e test.",
+  science: "Sei RIVER SCIENCE, specialista di matematica, fisica, analisi dati e simulazione. Mostra formule, unità, ipotesi, passaggi e controlli di plausibilità.",
+  memory: "Sei RIVER MEMORY, archivista della conoscenza. Organizza decisioni, requisiti, versioni, documenti e riepiloghi recuperabili. Non inventare ricordi o dati mancanti.",
+  control: "Sei RIVER CONTROL, revisore qualità e sicurezza. Cerca errori, vulnerabilità, contraddizioni, casi limite e rischi. Produci checklist e segnala ciò che non è dimostrato."
+};
+
 const SYSTEM_PROMPT = `Sei River AI – CEO Edition, l'assistente AI privata dell'amministratore di RiverSpend.
 Parla in italiano salvo diversa richiesta. Tono chiaro, concreto, paziente e collaborativo.
 Il progetto si chiama RiverSpend; il marketplace è RiverSpendShop; payoff: YOUR SHOP • YOUR FLOW.
@@ -42,6 +52,8 @@ export default async function handler(req, res) {
       .from("rs_admin_roles").select("role").eq("user_id", user.id).maybeSingle();
     if (roleError || role?.role !== "admin") return json(res, 403, { error: "River AI è riservata all'amministratore RiverSpend." });
 
+    const requestedAgent = String(req.body?.agent || "nova");
+    const agent = Object.prototype.hasOwnProperty.call(AGENTS, requestedAgent) ? requestedAgent : "nova";
     const incoming = Array.isArray(req.body?.messages) ? req.body.messages : [];
     const messages = incoming.slice(-16).map((item) => ({
       role: item?.role === "assistant" ? "assistant" : "user",
@@ -73,7 +85,7 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         model: "openai/gpt-oss-20b",
         messages: [
-          { role: "system", content: SYSTEM_PROMPT },
+          { role: "system", content: SYSTEM_PROMPT + "\n\nRUOLO OPERATIVO ATTIVO: " + AGENTS[agent] },
           ...(memoryContext ? [{ role: "system", content: "MEMORIA PERMANENTE RIVER AI (informazioni precedenti, da usare se pertinenti):\\n" + memoryContext }] : []),
           ...messages
         ],
@@ -96,7 +108,7 @@ export default async function handler(req, res) {
     ];
     const { error: memoryWriteError } = await adminClient.from("river_ai_memories").insert(memoryRows);
     if (memoryWriteError) console.error("River AI memory write failed:", memoryWriteError.message);
-    return json(res, 200, { answer, model: payload.model || "openai/gpt-oss-20b", memorySaved: !memoryWriteError });
+    return json(res, 200, { answer, model: payload.model || "openai/gpt-oss-20b", agent, memorySaved: !memoryWriteError });
   } catch (error) {
     console.error("River AI request failed:", error?.message || "unknown");
     return json(res, 500, { error: "Errore temporaneo durante la richiesta a River AI." });
