@@ -1,0 +1,21 @@
+{
+  "id": "/river-ai",
+  "name": "River SSAI 1.0 · CEO Edition",
+  "short_name": "River SSAI",
+  "description": "Assistente privata RiverSpend",
+  "start_url": "/river-ai",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#e9fbfc",
+  "theme_color": "#073b4c",
+  "lang": "it",
+  "icons": [
+    {
+      "src": "/icons/river-ssai.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
