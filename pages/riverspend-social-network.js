@@ -186,6 +186,9 @@ export default function RiverSpendSocialNetwork() {
     <>
     <Head>
       <title>RiverSpaceSignals · RiverSpend</title>
+      <link rel="manifest" href="/riverspace-signals.webmanifest" />
+      <meta name="apple-mobile-web-app-capable" content="yes" />
+      <meta name="apple-mobile-web-app-title" content="RiverSpaceSignals" />
       <meta name="theme-color" content="#082f45" />
       <link rel="icon" href="/icons/riverspend-social.svg" type="image/svg+xml" />
       <link rel="apple-touch-icon" href="/icons/riverspend-social.svg" />
