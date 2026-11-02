@@ -57,6 +57,7 @@ async function callModel(apiKey, model, messages, maxTokens = 900) {
     return json(res, 200, { answer, model, agent, agentsUsed, memorySaved: !memoryWriteError });
   } catch (error) {
     console.error("River AI request failed:", error?.message || "unknown");
-    return json(res, 500, { error: "Errore temporaneo durante la richiesta a River AI." });
+    if (error?.status === 429) return json(res, 429, { error: "Limite temporaneo del servizio AI raggiunto. Riprova più tardi." });
+    return json(res, 502, { error: "Servizio AI temporaneamente non disponibile. La richiesta può essere ripetuta." });
   }
 }
