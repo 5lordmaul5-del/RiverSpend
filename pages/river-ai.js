@@ -17,6 +17,7 @@ export default function RiverAI() {
   const [installPrompt, setInstallPrompt] = useState(null);
   const [installMessage, setInstallMessage] = useState("");
   const [selectedAgent, setSelectedAgent] = useState("nova");
+  const [teamSize, setTeamSize] = useState(4);
   const endRef = useRef(null);
 
   useEffect(() => {
@@ -100,7 +101,7 @@ export default function RiverAI() {
       const response = await fetch("/api/river-ai/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ messages: next, agent: selectedAgent })
+        body: JSON.stringify({ messages: next, agent: selectedAgent, teamSize })
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "River AI non disponibile.");
@@ -154,7 +155,7 @@ export default function RiverAI() {
             <label htmlFor="river-agent" style={{fontWeight:800,color:"#075766"}}>Agente operativo</label>
             <select id="river-agent" value={selectedAgent} onChange={e=>setSelectedAgent(e.target.value)} style={{flex:1,minWidth:190,border:"1px solid #c7dfe1",borderRadius:11,padding:10,background:"#fff",color:"#173b42",fontSize:14}}>
               <option value="nova">🌊 Nova · Coordinatrice</option>
-              <option value="team">⚡ Squadra Ultra · 3 agenti in parallelo + Nova</option>
+              <option value="team">⚡ Squadra Ultra · gruppo coordinato</option>
               <option value="tech">💻 River Tech · Programmazione</option>
               <option value="design">🎨 River Design · Immagini e video</option>
               <option value="robotics">🤖 River Robotics · Droidi e 3D</option>
@@ -162,6 +163,11 @@ export default function RiverAI() {
               <option value="memory">🧠 River Memory · Archivio e conoscenza</option>
               <option value="control">🛡️ River Control · Verifiche e sicurezza</option>
             </select>
+            {selectedAgent === "team" && <select aria-label="Numero di agenti" value={teamSize} onChange={e=>setTeamSize(Number(e.target.value))} style={{border:"1px solid #c7dfe1",borderRadius:11,padding:10,background:"#fff",color:"#173b42",fontSize:14}}>
+              <option value={2}>2 agenti + Nova</option>
+              <option value={4}>4 agenti + Nova</option>
+              <option value={8}>8 agenti + Nova</option>
+            </select>}
           </div>
           <div style={{flex:1,padding:18,overflowY:"auto",minHeight:300}}>
             {messages.length === 0 && <div style={{maxWidth:560,margin:"32px auto",textAlign:"center"}}>
