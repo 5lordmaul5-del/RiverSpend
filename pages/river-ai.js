@@ -21,7 +21,7 @@ export default function RiverAI() {
   const endRef = useRef(null);
 
   useEffect(() => {
-    if ("serviceWorker" in navigator) navigator.serviceWorker.register("/river-ai-sw.js", { scope: "/river-ai" }).catch(() => {});
+    if ("serviceWorker" in navigator) navigator.serviceWorker.register("/river-ai/sw.js", { scope: "/river-ai" }).catch(() => {});
     const onInstall = (event) => { event.preventDefault(); setInstallPrompt(event); };
     const onInstalled = () => { setInstallPrompt(null); setInstallMessage("River SSAI 1.0 è stata installata sul dispositivo."); };
     window.addEventListener("beforeinstallprompt", onInstall);
