@@ -224,12 +224,12 @@ export default function RiverSpaceSignals() {
       <link rel="apple-touch-icon" href="/icons/riverspace-signals-app.jpg" />
     </Head>
     <main className="min-h-screen bg-[#eaf7f7] text-slate-800">
-      <header className="flex items-center justify-between bg-[#073b4c] px-4 py-3 text-white shadow">
+      <header className="flex items-center justify-between bg-[#073b4c] px-3 py-2 text-white shadow md:px-4 md:py-3">
         <div className="flex items-center gap-3">
-          <img src="/icons/riversignals.svg" alt="RiverSpaceSignals" className="h-10 w-10 rounded-full bg-white p-1" />
-          <div><div className="text-lg font-bold tracking-wide">RiverSpaceSignals</div><div className="text-xs text-teal-100">YOUR SPACE · YOUR SIGNAL</div></div>
+          <img src="/icons/riversignals.svg" alt="RiverSpaceSignals" className="h-8 w-8 rounded-full bg-white p-1 md:h-10 md:w-10" />
+          <div><div className="text-base font-bold tracking-wide md:text-lg">RiverSpaceSignals</div><div className="text-xs text-teal-100">YOUR SPACE · YOUR SIGNAL</div></div>
         </div>
-        <nav className="flex flex-wrap items-center justify-end gap-2"><button type="button" onClick={installApp} className="rounded-full bg-amber-300 px-3 py-2 text-sm font-bold text-slate-900 hover:bg-amber-200">📲 Installa Signals</button><Link href="/" className="rounded-full border border-white/40 px-3 py-2 text-sm hover:bg-white/10">RiverSpendShop</Link><Link href="/riverspend-social-network" className="rounded-full border border-white/40 px-3 py-2 text-sm hover:bg-white/10">Community</Link></nav>
+        <nav className="flex flex-wrap items-center justify-end gap-1 md:gap-2"><button type="button" onClick={installApp} className="rounded-full bg-amber-300 px-2 py-1.5 text-xs font-bold md:px-3 md:py-2 md:text-sm text-slate-900 hover:bg-amber-200">📲 Installa Signals</button><Link href="/" className="rounded-full border border-white/40 px-2 py-1.5 text-xs md:px-3 md:py-2 md:text-sm hover:bg-white/10">RiverSpendShop</Link><Link href="/riverspend-social-network" className="rounded-full border border-white/40 px-3 py-2 text-sm hover:bg-white/10">Community</Link></nav>
       </header>
 
       {installMessage && <div role="status" className="mx-auto mt-3 max-w-6xl rounded-xl bg-amber-100 px-4 py-3 text-sm text-amber-900">{installMessage}</div>}
@@ -246,7 +246,7 @@ export default function RiverSpaceSignals() {
           <button disabled={busy} className="w-full rounded-xl bg-[#087e8b] px-4 py-3 font-semibold text-white disabled:opacity-50">{busy ? 'Invio…' : 'Ricevi il link di accesso'}</button>
         </form>
         <p className="mt-4 text-center text-xs text-slate-500">L'accesso avviene tramite link email sicuro.</p>
-      </section> : <section className="mx-auto grid min-h-[calc(100vh-72px)] max-w-6xl grid-cols-1 overflow-hidden bg-white shadow-xl md:my-6 md:min-h-[75vh] md:grid-cols-[320px_1fr] md:rounded-3xl">
+      </section> : <section className="mx-auto grid min-h-[calc(100dvh-56px)] max-w-6xl grid-cols-1 overflow-hidden bg-white shadow-xl md:my-6 md:min-h-[75vh] md:grid-cols-[320px_1fr] md:rounded-3xl">
         <aside className={`border-r border-slate-200 ${active ? 'hidden md:block' : 'block'}`}>
           <div className="border-b border-slate-200 p-4">
             <div className="flex items-center justify-between"><h1 className="text-xl font-bold text-[#073b4c]">Messaggi</h1><button onClick={() => supabase.auth.signOut()} className="text-xs text-slate-500 underline">Esci</button></div>
@@ -272,7 +272,7 @@ export default function RiverSpaceSignals() {
           </div>
         </aside>
 
-        <div className={`flex min-h-[70vh] flex-col ${active ? 'flex' : 'hidden md:flex'}`}>
+        <div className={`flex min-h-[calc(100dvh-56px)] flex-col md:min-h-[70vh] ${active ? 'flex' : 'hidden md:flex'}`}>
           {active ? <>
             <div className="flex items-center gap-3 border-b border-slate-200 px-4 py-3">
               <button onClick={() => setActive('')} className="rounded-lg px-2 py-1 text-xl md:hidden" aria-label="Torna ai contatti">‹</button>
@@ -291,14 +291,14 @@ export default function RiverSpaceSignals() {
                 </div>
               </div>)}
             </div>
-            <form onSubmit={sendMessage} className="relative flex items-end gap-2 border-t border-slate-200 bg-white p-3">
-              <label className="cursor-pointer rounded-xl bg-slate-100 px-3 py-3 text-xl" title="Allega immagini o documenti">📎<input type="file" className="hidden" accept="image/*,.pdf,.txt,.doc,.docx,.xls,.xlsx" onChange={e => setAttachment(e.target.files?.[0] || null)} /></label>
-              <button type="button" onClick={sendLocation} className="rounded-xl bg-slate-100 px-3 py-3 text-xl" title="Invia la posizione GPS">📍</button>
-              <button type="button" onClick={() => setEmojiOpen(v => !v)} className="rounded-xl bg-amber-50 px-3 py-3 text-xl" aria-label="Apri emoji e sticker">😊</button>
+            <form onSubmit={sendMessage} className="relative flex items-end gap-1.5 border-t border-slate-200 bg-white p-2 md:gap-2 md:p-3">
+              <label className="cursor-pointer rounded-xl bg-slate-100 px-2 py-2 text-lg md:px-3 md:py-3 md:text-xl" title="Allega immagini o documenti">📎<input type="file" className="hidden" accept="image/*,.pdf,.txt,.doc,.docx,.xls,.xlsx" onChange={e => setAttachment(e.target.files?.[0] || null)} /></label>
+              <button type="button" onClick={sendLocation} className="rounded-xl bg-slate-100 px-2 py-2 text-lg md:px-3 md:py-3 md:text-xl" title="Invia la posizione GPS">📍</button>
+              <button type="button" onClick={() => setEmojiOpen(v => !v)} className="rounded-xl bg-amber-50 px-2 py-2 text-lg md:px-3 md:py-3 md:text-xl" aria-label="Apri emoji e sticker">😊</button>
               {emojiOpen && <div className="absolute bottom-16 left-3 z-10 grid grid-cols-6 gap-1 rounded-2xl border bg-white p-3 shadow-xl">{['😀','😂','🥰','😍','😉','😊','❤️','🔥','👍','🙏','🎉','🌈','🌊','🪷','✨','💚','💬','🚀','👋','🤝','💎','🎁','🌟','😎','🤗','🥳','💌','🌺','🐠','🚀'].map(x => <button key={x} type="button" onClick={() => addEmoji(x)} className="rounded-lg p-1 text-xl hover:bg-slate-100">{x}</button>)}</div>}
               {attachment && <span className="max-w-28 truncate rounded-lg bg-teal-50 px-2 py-2 text-xs text-teal-900">{attachment.name} <button type="button" onClick={() => setAttachment(null)} aria-label="Rimuovi allegato">×</button></span>}
-              <textarea value={draft} onChange={e => setDraft(e.target.value)} rows={1} placeholder="Scrivi un messaggio…" className="max-h-32 min-h-12 flex-1 resize-y rounded-xl bg-slate-100 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-teal-500" />
-              <button disabled={busy || (!draft.trim() && !attachment)} className="rounded-xl bg-[#087e8b] px-5 py-3 font-semibold text-white disabled:opacity-40">{uploading ? 'Carico…' : busy ? '…' : 'Invia'}</button>
+              <textarea value={draft} onChange={e => setDraft(e.target.value)} rows={1} placeholder="Scrivi un messaggio…" className="max-h-24 min-h-10 flex-1 resize-y rounded-xl bg-slate-100 px-3 py-2 text-sm md:max-h-32 md:min-h-12 md:px-4 md:py-3 outline-none focus:ring-2 focus:ring-teal-500" />
+              <button disabled={busy || (!draft.trim() && !attachment)} className="rounded-xl bg-[#087e8b] px-3 py-2.5 text-sm font-semibold text-white disabled:opacity-40 md:px-5 md:py-3 md:text-base">{uploading ? 'Carico…' : busy ? '…' : 'Invia'}</button>
             </form>
           </> : <div className="grid flex-1 place-items-center p-8 text-center">
             <div><div className="text-6xl">🌊</div><h2 className="mt-4 text-2xl font-bold text-[#073b4c]">Il tuo spazio, i tuoi segnali</h2><p className="mt-2 max-w-sm text-sm text-slate-500">Scegli una conversazione oppure trova un membro RiverSpend per iniziare a scrivere.</p><Link href="/karma-zen-relax.html" className="mt-5 inline-block rounded-full border border-teal-700 px-4 py-2 text-sm font-semibold text-teal-800">🪷 Apri Karma Zen Relax</Link></div>
