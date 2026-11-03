@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { supabase } from '../lib/supabase';
+import { ensureEnigmaDevice, encryptEnigmaText, decryptEnigmaText, encryptEnigmaFile, decryptEnigmaFile, isEnigmaCiphertext } from '../lib/signals-enigma';
 
 export default function RiverSpaceSignals() {
   const [user, setUser] = useState(null);
@@ -32,6 +33,9 @@ export default function RiverSpaceSignals() {
   const [moneyAction, setMoneyAction] = useState('');
   const [moneyAmount, setMoneyAmount] = useState('');
   const [moneyReason, setMoneyReason] = useState('');
+  const [deviceInfo, setDeviceInfo] = useState(null);
+  const [enigmaConsents, setEnigmaConsents] = useState([]);
+  const [enigmaBusy, setEnigmaBusy] = useState(false);
   const recorderRef = useRef(null);
 
   const activeConversation = conversations.find(c => c.id === active);
@@ -39,6 +43,8 @@ export default function RiverSpaceSignals() {
     ? (activeConversation.participant_one === user?.id ? activeConversation.participant_two : activeConversation.participant_one)
     : '';
   const otherProfile = profiles.find(p => p.id === otherId);
+  const enigmaActive = Boolean(user && active && enigmaConsents.some(x => x.user_id === user.id && !x.revoked_at) && enigmaConsents.some(x => x.user_id === otherId && !x.revoked_at));
+  const myEnigmaConsent = enigmaConsents.some(x => x.user_id === user?.id && !x.revoked_at);
 
   const loadStatuses = useCallback(async () => {
     const { data, error: e } = await supabase.from('rs_chat_statuses')
@@ -103,14 +109,35 @@ export default function RiverSpaceSignals() {
       .order('created_at', { ascending: true })
       .limit(300);
     if (e) throw e;
-    setMessages(data || []);
     const media = {};
-    await Promise.all((data || []).filter(m => m.attachment_path).map(async m => {
-      const { data: signed } = await supabase.storage.from('signals-private-media').createSignedUrl(m.attachment_path, 3600);
-      if (signed?.signedUrl) media[m.id] = signed.signedUrl;
+    const decoded = await Promise.all((data || []).map(async message => {
+      const row = { ...message, displayBody: message.body };
+      if (isEnigmaCiphertext(message.body)) {
+        try {
+          const peerId = message.sender_id === user?.id ? otherId : message.sender_id;
+          row.displayBody = await decryptEnigmaText(supabase, user.id, conversationId, peerId, message.metadata?.enigma_peer_device_id, message.body);
+        } catch { row.displayBody = '🔒 Messaggio ENIGMA: impossibile decifrare su questo dispositivo.'; }
+      }
+      if (message.attachment_path) {
+        const { data: signed, error: signedError } = await supabase.storage.from('signals-private-media').createSignedUrl(message.attachment_path, 3600);
+        if (!signedError && signed?.signedUrl) {
+          if (message.metadata?.enigma && message.metadata?.enigma_file) {
+            try {
+              const response = await fetch(signed.signedUrl);
+              if (!response.ok) throw new Error('Download cifrato non riuscito');
+              const encryptedBlob = await response.blob();
+              const peerId = message.sender_id === user?.id ? otherId : message.sender_id;
+              const result = await decryptEnigmaFile(supabase, user.id, conversationId, peerId, message.metadata.enigma_peer_device_id, encryptedBlob, message.metadata.enigma_file);
+              media[message.id] = URL.createObjectURL(result.blob);
+              row.attachment_name = result.meta.name; row.attachment_mime = result.meta.mime;
+            } catch { row.displayBody = '🔒 Allegato ENIGMA: impossibile decifrare su questo dispositivo.'; }
+          } else media[message.id] = signed.signedUrl;
+        }
+      }
+      return row;
     }));
-    setMediaUrls(media);
-  }, []);
+    setMessages(decoded); setMediaUrls(media);
+  }, [user, otherId]);
 
   useEffect(() => {
     function beforeInstall(event) {
@@ -148,7 +175,8 @@ export default function RiverSpaceSignals() {
   }, []);
 
   useEffect(() => {
-    if (!user) { setProfiles([]); setConversations([]); setMessages([]); setActive(''); return; }
+    if (!user) { setProfiles([]); setConversations([]); setMessages([]); setActive(''); setDeviceInfo(null); return; }
+    ensureEnigmaDevice(supabase, user.id).then(setDeviceInfo).catch(e => setError('ENIGMA non inizializzato: ' + (e.message || 'errore dispositivo')));
     let alive = true;
     (async () => {
       try {
@@ -160,7 +188,9 @@ export default function RiverSpaceSignals() {
   }, [user, loadPeople, loadConversations, loadStatuses]);
 
   useEffect(() => {
-    if (!active) { setMessages([]); return; }
+    if (!active) { setMessages([]); setEnigmaConsents([]); return; }
+    supabase.from('rs_chat_enigma_consents').select('conversation_id,user_id,accepted_at,revoked_at').eq('conversation_id', active)
+      .then(({ data, error: consentError }) => { if (consentError) setError(consentError.message); else setEnigmaConsents(data || []); });
     loadMessages(active).catch(e => setError(e.message || 'Non riesco a caricare i messaggi.'));
     const channel = supabase.channel('signals-messages-' + active)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'rs_chat_messages', filter: 'conversation_id=eq.' + active }, () => {
@@ -224,6 +254,34 @@ export default function RiverSpaceSignals() {
     setBusy(false);
   }
 
+  async function enableEnigma() {
+    if (!user || !active || enigmaBusy) return;
+    setEnigmaBusy(true); setError('');
+    try {
+      const device = deviceInfo || await ensureEnigmaDevice(supabase, user.id);
+      setDeviceInfo(device);
+      const { error: consentError } = await supabase.from('rs_chat_enigma_consents').upsert({
+        conversation_id: active, user_id: user.id, accepted_at: new Date().toISOString(), revoked_at: null
+      }, { onConflict: 'conversation_id,user_id' });
+      if (consentError) throw consentError;
+      const { data, error: reloadError } = await supabase.from('rs_chat_enigma_consents')
+        .select('conversation_id,user_id,accepted_at,revoked_at').eq('conversation_id', active);
+      if (reloadError) throw reloadError;
+      setEnigmaConsents(data || []);
+    } catch (e) { setError('Non riesco ad attivare ENIGMA: ' + (e.message || 'errore')); }
+    setEnigmaBusy(false);
+  }
+
+  async function disableEnigma() {
+    if (!user || !active || enigmaBusy) return;
+    setEnigmaBusy(true); setError('');
+    const { error: revokeError } = await supabase.from('rs_chat_enigma_consents').update({ revoked_at: new Date().toISOString() })
+      .eq('conversation_id', active).eq('user_id', user.id);
+    if (revokeError) setError(revokeError.message);
+    else setEnigmaConsents(rows => rows.map(x => x.user_id === user.id ? { ...x, revoked_at: new Date().toISOString() } : x));
+    setEnigmaBusy(false);
+  }
+
   async function sendMessage(e) {
     e.preventDefault();
     const body = draft.trim();
@@ -234,12 +292,30 @@ export default function RiverSpaceSignals() {
     const safeName = file ? file.name.replace(/[^a-zA-Z0-9._-]/g, '_').slice(-100) : null;
     const attachmentPath = file ? active + '/' + user.id + '/' + Date.now() + '-' + safeName : null;
     const fallbackBody = messageType === 'image' ? 'Immagine' : messageType === 'audio' ? 'Messaggio vocale' : messageType === 'video' ? 'Video messaggio' : 'Documento';
+    let storedBody = body || fallbackBody, uploadFile = file;
+    let messageMetadata = file ? { upload_status: 'uploading' } : {};
+    let storedName = file?.name || null, storedMime = file?.type || null, storedSize = file?.size || null;
+    if (enigmaActive) {
+      try {
+        const { data: peerKeys, error: peerKeyError } = await supabase.from('rs_chat_device_keys').select('device_id').eq('user_id', otherId);
+        if (peerKeyError) throw peerKeyError;
+        const peerDeviceId = peerKeys?.[0]?.device_id;
+        if (!peerDeviceId) throw new Error('Il destinatario deve aprire Signals su un dispositivo per configurare ENIGMA.');
+        storedBody = await encryptEnigmaText(supabase, user.id, active, otherId, peerDeviceId, storedBody);
+        messageMetadata = { enigma: true, enigma_peer_device_id: deviceInfo?.deviceId, upload_status: file ? 'uploading' : 'sent' };
+        if (file) {
+          const encrypted = await encryptEnigmaFile(supabase, user.id, active, otherId, peerDeviceId, file);
+          uploadFile = new File([encrypted.blob], 'enigma.bin', { type: 'application/octet-stream' });
+          messageMetadata.enigma_file = encrypted.envelope;
+          storedName = 'enigma.bin'; storedMime = 'application/octet-stream'; storedSize = uploadFile.size;
+        }
+      } catch (e) { setBusy(false); setError('ENIGMA non pronto: ' + (e.message || 'errore di cifratura')); return; }
+    }
     const { data: inserted, error: insertError } = await supabase.from('rs_chat_messages').insert({
-      conversation_id: active, sender_id: user.id, body: body || fallbackBody,
+      conversation_id: active, sender_id: user.id, body: storedBody,
       message_type: messageType, attachment_path: null,
-      attachment_name: file?.name || null, attachment_mime: file?.type || null,
-      attachment_size: file?.size || null,
-      metadata: file ? { upload_status: 'uploading' } : {}
+      attachment_name: storedName, attachment_mime: storedMime,
+      attachment_size: storedSize, metadata: messageMetadata
     }).select('id').single();
     if (insertError) { setBusy(false); setError(insertError.message); return; }
     setDraft(''); setAttachment(null);
@@ -247,7 +323,7 @@ export default function RiverSpaceSignals() {
     if (file) {
       setUploading(true);
       const { error: uploadError } = await supabase.storage.from('signals-private-media')
-        .upload(attachmentPath, file, { contentType: file.type || 'application/octet-stream', upsert: false });
+        .upload(attachmentPath, uploadFile, { contentType: uploadFile.type || 'application/octet-stream', upsert: false });
       if (uploadError) {
         await supabase.from('rs_chat_messages').update({ metadata: { upload_status: 'failed', upload_error: uploadError.message } }).eq('id', inserted.id);
         setError('Il messaggio è visibile ma il file non è stato caricato: ' + uploadError.message);
@@ -423,6 +499,12 @@ export default function RiverSpaceSignals() {
               <div><div className="font-bold">{otherProfile?.display_name || 'Membro RiverSpend'}</div><div className="text-xs text-emerald-600">Conversazione privata</div></div>
               <Link href="/karma-zen-relax.html" className="ml-auto rounded-full bg-[#073b4c] px-3 py-2 text-xs font-semibold text-white">🪷 Karma Zen</Link>
             </div>
+            <div className="flex shrink-0 flex-wrap items-center justify-between gap-2 border-b border-amber-200 bg-amber-50 px-3 py-2">
+              <div className="text-xs text-amber-950">{enigmaActive ? '🔐 ENIGMA attivo · CHRISTOPHER protegge questa conversazione su questo dispositivo' : myEnigmaConsent ? '🔐 Hai chiesto ENIGMA: in attesa del consenso dell’altra persona' : '🛡️ Chat normale · ENIGMA è facoltativo e richiede il consenso di entrambi'}</div>
+              {enigmaActive
+                ? <button type="button" disabled={enigmaBusy} onClick={disableEnigma} className="rounded-full border border-amber-700 px-3 py-1.5 text-xs font-semibold text-amber-900">Disattiva ENIGMA</button>
+                : <button type="button" disabled={enigmaBusy || !deviceInfo} onClick={enableEnigma} className="rounded-full bg-[#073b4c] px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-50">{enigmaBusy ? 'Attendo…' : myEnigmaConsent ? 'Consenso inviato' : 'Attiva ENIGMA'}</button>}
+            </div>
             <div className="grid shrink-0 grid-cols-2 gap-2 border-b border-teal-100 bg-teal-50 px-3 py-2 md:grid-cols-4">
               <button type="button" onClick={() => setMoneyAction("send")} className="min-w-0 rounded-xl bg-white px-2 py-2 text-center text-xs font-semibold leading-tight text-teal-900 shadow-sm">💸 Invia denaro</button>
               <button type="button" onClick={() => setMoneyAction("request")} className="min-w-0 rounded-xl bg-white px-2 py-2 text-center text-xs font-semibold leading-tight text-teal-900 shadow-sm">💰 Ricevi denaro</button>
@@ -449,7 +531,7 @@ export default function RiverSpaceSignals() {
                   {m.message_type === 'audio' && mediaUrls[m.id] && <audio controls preload="metadata" src={mediaUrls[m.id]} className="mb-2 max-w-full" />}
                   {m.message_type === 'video' && mediaUrls[m.id] && <video controls playsInline preload="metadata" src={mediaUrls[m.id]} className="mb-2 max-h-64 max-w-full rounded-xl" />}
                   {m.message_type === 'file' && mediaUrls[m.id] && <a href={mediaUrls[m.id]} target="_blank" rel="noreferrer" className="mb-2 block rounded-lg bg-black/10 px-3 py-2 text-sm underline">📎 {m.attachment_name || 'Apri documento'}</a>}
-                  <p className="whitespace-pre-wrap break-words text-sm">{m.body}</p>
+                  <p className="whitespace-pre-wrap break-words text-sm">{m.displayBody || m.body}</p>
                   <div className={`mt-1 text-right text-[10px] ${m.sender_id === user.id ? 'text-teal-100' : 'text-slate-400'}`}>{new Date(m.created_at).toLocaleString('it-IT', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' })}</div>
                 </div>
               </div>)}
