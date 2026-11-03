@@ -919,7 +919,7 @@ export default function Home() {
               </a>
               <div className="flex items-center justify-end gap-2 text-slate-900 sm:gap-4">
                 <a href="/riverspace-signals" aria-label="Torna a RiverSpaceSignals" title="Torna a RiverSpaceSignals" className="flex h-9 items-center rounded-full border border-teal-300 bg-teal-50 px-2 text-[10px] font-extrabold text-teal-900 hover:bg-teal-100 sm:px-3 sm:text-xs">↩ Signals</a>
-                <a href="/riversport-live" aria-label="Apri RiverSport Live" title="RiverSport Live" className="flex h-9 items-center rounded-full border border-emerald-300 bg-emerald-50 px-2 text-[10px] font-extrabold text-emerald-900 hover:bg-emerald-100 sm:px-3 sm:text-xs">🏆 Sport</a>
+                <a href="/riverworld-live" aria-label="Apri RiverWorld Live" title="RiverWorld Live" className="flex h-9 items-center rounded-full border border-emerald-300 bg-emerald-50 px-2 text-[10px] font-extrabold text-emerald-900 hover:bg-emerald-100 sm:px-3 sm:text-xs">🌍 World Live</a>
                 <a href="/rete" aria-label="Apri la Rete e gli articoli salvati" className="relative flex h-10 w-10 items-center justify-center text-2xl hover:text-teal-700">
                   🛒
                   {reteIds.length > 0 && <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-teal-700 px-1 text-[10px] font-bold text-white">{reteIds.length}</span>}
