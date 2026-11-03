@@ -168,6 +168,15 @@ export default function RiverSpaceSignals() {
 
   useEffect(() => {
     if (!user) return;
+    const channel = supabase.channel('signals-statuses-' + user.id)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'rs_chat_statuses' }, () => {
+        loadStatuses().catch(e => setError(e.message));
+      }).subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [user, loadStatuses]);
+
+  useEffect(() => {
+    if (!user) return;
     const channel = supabase.channel('signals-conversations-' + user.id)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'rs_chat_conversations' }, () => {
         loadConversations(user.id).catch(e => setError(e.message));
