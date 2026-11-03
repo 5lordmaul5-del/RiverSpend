@@ -7,6 +7,11 @@ export default function RiverSpaceSignals() {
   const [user, setUser] = useState(null);
   const [email, setEmail] = useState('');
   const [profiles, setProfiles] = useState([]);
+  const [statuses, setStatuses] = useState([]);
+  const [viewStatus, setViewStatus] = useState(null);
+  const [statusCaption, setStatusCaption] = useState('');
+  const [statusFile, setStatusFile] = useState(null);
+  const [statusBusy, setStatusBusy] = useState(false);
   const [conversations, setConversations] = useState([]);
   const [messages, setMessages] = useState([]);
   const [active, setActive] = useState('');
@@ -31,6 +36,45 @@ export default function RiverSpaceSignals() {
     ? (activeConversation.participant_one === user?.id ? activeConversation.participant_two : activeConversation.participant_one)
     : '';
   const otherProfile = profiles.find(p => p.id === otherId);
+
+  const loadStatuses = useCallback(async () => {
+    const { data, error: e } = await supabase.from('rs_chat_statuses')
+      .select('id,user_id,caption,media_path,media_type,created_at,expires_at')
+      .gt('expires_at', new Date().toISOString()).order('created_at', { ascending: false });
+    if (e) throw e;
+    const rows = data || [];
+    const media = await Promise.all(rows.map(async row => {
+      if (!row.media_path) return { ...row, mediaUrl: '' };
+      const { data: signed } = await supabase.storage.from('signals-status-media').createSignedUrl(row.media_path, 3600);
+      return { ...row, mediaUrl: signed?.signedUrl || '' };
+    }));
+    setStatuses(media);
+  }, []);
+
+  async function publishStatus() {
+    if (!user || (!statusCaption.trim() && !statusFile) || statusBusy) return;
+    setStatusBusy(true); setError('');
+    let path = null;
+    let type = 'text';
+    if (statusFile) {
+      type = statusFile.type.startsWith('video/') ? 'video' : 'image';
+      path = user.id + '/' + Date.now() + '-' + statusFile.name.replace(/[^a-zA-Z0-9._-]/g, '_').slice(-90);
+      const { error: uploadError } = await supabase.storage.from('signals-status-media')
+        .upload(path, statusFile, { contentType: statusFile.type, upsert: false });
+      if (uploadError) { setError('Caricamento dello stato non riuscito: ' + uploadError.message); setStatusBusy(false); return; }
+    }
+    const { error: insertError } = await supabase.from('rs_chat_statuses').insert({
+      user_id: user.id, caption: statusCaption.trim(), media_path: path, media_type: type
+    });
+    if (insertError) {
+      if (path) await supabase.storage.from('signals-status-media').remove([path]);
+      setError('Pubblicazione dello stato non riuscita: ' + insertError.message);
+    } else {
+      setStatusCaption(''); setStatusFile(null);
+      await loadStatuses();
+    }
+    setStatusBusy(false);
+  }
 
   const loadPeople = useCallback(async (uid) => {
     const { data, error: e } = await supabase.from('profiles').select('id,display_name').neq('id', uid).order('display_name');
@@ -106,11 +150,11 @@ export default function RiverSpaceSignals() {
     (async () => {
       try {
         setError('');
-        await Promise.all([loadPeople(user.id), loadConversations(user.id)]);
+        await Promise.all([loadPeople(user.id), loadConversations(user.id), loadStatuses()]);
       } catch (e) { if (alive) setError(e.message || 'Errore nel caricamento di Signals.'); }
     })();
     return () => { alive = false; };
-  }, [user, loadPeople, loadConversations]);
+  }, [user, loadPeople, loadConversations, loadStatuses]);
 
   useEffect(() => {
     if (!active) { setMessages([]); return; }
@@ -291,6 +335,28 @@ export default function RiverSpaceSignals() {
       </section> : <section className="mx-auto grid min-h-[calc(100dvh-56px)] max-w-6xl grid-cols-1 overflow-hidden bg-white shadow-xl md:my-6 md:min-h-[75vh] md:grid-cols-[320px_1fr] md:rounded-3xl">
         <aside className={`border-r border-slate-200 ${active ? 'hidden md:block' : 'block'}`}>
           <div className="border-b border-slate-200 p-4">
+            <div className="mb-3">
+              <div className="mb-2 flex items-center justify-between"><h2 className="text-sm font-bold text-[#073b4c]">Stati · 24 ore</h2><span className="text-[10px] text-slate-400">RiverSpace</span></div>
+              <div className="flex gap-3 overflow-x-auto pb-2">
+                <div className="w-16 shrink-0 text-center">
+                  <label className="mx-auto grid h-14 w-14 cursor-pointer place-items-center rounded-full border-2 border-dashed border-teal-500 bg-teal-50 text-2xl">＋
+                    <input type="file" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime" className="hidden" onChange={e => setStatusFile(e.target.files?.[0] || null)} />
+                  </label><span className="mt-1 block truncate text-[11px] font-medium">Il mio stato</span>
+                </div>
+                {statuses.map(s => {
+                  const p = profiles.find(x => x.id === s.user_id);
+                  return <button key={s.id} type="button" onClick={() => setViewStatus(s)} className="w-16 shrink-0 text-center">
+                    <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-gradient-to-tr from-amber-400 via-pink-500 to-violet-600 p-[3px]"><span className="grid h-full w-full place-items-center overflow-hidden rounded-full border-2 border-white bg-teal-50 text-xl">{s.mediaUrl && s.media_type === 'image' ? <img src={s.mediaUrl} alt="" className="h-full w-full object-cover" /> : s.media_type === 'video' ? '🎥' : '🌊'}</span></span>
+                    <span className="mt-1 block truncate text-[11px]">{p?.display_name || 'Membro'}</span>
+                  </button>;
+                })}
+              </div>
+              {(statusFile || statusCaption) && <div className="mt-2 rounded-xl bg-teal-50 p-2">
+                {statusFile && <div className="mb-1 truncate text-xs">{statusFile.name}</div>}
+                <input value={statusCaption} onChange={e => setStatusCaption(e.target.value)} placeholder="Aggiungi un testo allo stato…" className="w-full rounded-lg border border-teal-100 bg-white px-2 py-2 text-xs" />
+                <div className="mt-2 flex justify-end gap-2"><button type="button" onClick={() => { setStatusFile(null); setStatusCaption(''); }} className="text-xs text-slate-500">Annulla</button><button type="button" disabled={statusBusy || (!statusFile && !statusCaption.trim())} onClick={publishStatus} className="rounded-lg bg-teal-700 px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-50">{statusBusy ? 'Pubblico…' : 'Condividi'}</button></div>
+              </div>}
+            </div>
             <div className="flex items-center justify-between"><h1 className="text-xl font-bold text-[#073b4c]">Messaggi</h1><button onClick={() => supabase.auth.signOut()} className="text-xs text-slate-500 underline">Esci</button></div>
             <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Cerca persone…" className="mt-3 w-full rounded-xl bg-slate-100 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-teal-500" />
           </div>
@@ -361,6 +427,16 @@ export default function RiverSpaceSignals() {
           </div>}
         </div>
       </section>}
+      {viewStatus && <div className="fixed inset-0 z-50 grid place-items-center bg-black/90 p-4" onClick={() => setViewStatus(null)}>
+        <div className="relative flex max-h-[90dvh] w-full max-w-md flex-col items-center justify-center overflow-hidden rounded-2xl bg-slate-900 text-white" onClick={e => e.stopPropagation()}>
+          <button type="button" onClick={() => setViewStatus(null)} className="absolute right-3 top-3 z-10 rounded-full bg-black/50 px-3 py-1 text-xl">×</button>
+          <div className="absolute left-3 right-12 top-3 h-1 overflow-hidden rounded bg-white/30"><div className="h-full w-full bg-white" /></div>
+          {viewStatus.media_type === 'image' && viewStatus.mediaUrl && <img src={viewStatus.mediaUrl} alt="Stato" className="max-h-[75dvh] w-full object-contain" />}
+          {viewStatus.media_type === 'video' && viewStatus.mediaUrl && <video src={viewStatus.mediaUrl} controls autoPlay playsInline className="max-h-[75dvh] w-full" />}
+          {viewStatus.caption && <p className="w-full p-4 text-center text-base">{viewStatus.caption}</p>}
+          <p className="pb-3 text-xs text-white/60">{new Date(viewStatus.created_at).toLocaleString('it-IT')}</p>
+        </div>
+      </div>}
       <footer className="flex flex-wrap items-center justify-center gap-4 py-5 text-xs text-slate-500"><span>RiverSpaceSignals · RiverSpend · Comunicazioni private</span><button type="button" onClick={() => window.dispatchEvent(new Event("riverspend:open-cookie-settings"))} className="underline underline-offset-2">Privacy e cookie</button><Link href="/" className="underline underline-offset-2">Torna al sito RiverSpend</Link></footer>
     </main>
   </>;
