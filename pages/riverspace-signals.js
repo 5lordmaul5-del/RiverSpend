@@ -438,7 +438,7 @@ export default function RiverSpaceSignals() {
                 <div className="flex justify-end"><button type="submit" disabled={busy || !moneyAmount || Number(String(moneyAmount).replace(",", ".")) <= 0} className="rounded-lg bg-[#087e8b] px-4 py-2 text-xs font-bold text-white disabled:opacity-50">{busy ? "Invio…" : "Invia nella chat"}</button></div>
               </form>
             </div>}
-            <div className="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain bg-[#f4fafa] p-3 md:p-4>
+            <div className="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain bg-[#f4fafa] p-3 md:p-4">
               {messages.length === 0 && <div className="mx-auto mt-12 max-w-xs text-center text-sm text-slate-400">Questa conversazione è pronta. Invia il tuo primo messaggio 👋</div>}
               {messages.map(m => <div key={m.id} className={`flex ${m.sender_id === user.id ? 'justify-end' : 'justify-start'}`}>
                 <div className={`max-w-[85%] rounded-2xl px-4 py-2 shadow-sm md:max-w-[70%] ${m.sender_id === user.id ? 'rounded-br-sm bg-[#087e8b] text-white' : 'rounded-bl-sm bg-white text-slate-800'}`}>
