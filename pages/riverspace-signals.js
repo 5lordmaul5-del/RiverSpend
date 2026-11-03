@@ -29,6 +29,9 @@ export default function RiverSpaceSignals() {
   const [mediaUrls, setMediaUrls] = useState({});
   const [uploading, setUploading] = useState(false);
   const [recording, setRecording] = useState('');
+  const [moneyAction, setMoneyAction] = useState('');
+  const [moneyAmount, setMoneyAmount] = useState('');
+  const [moneyReason, setMoneyReason] = useState('');
   const recorderRef = useRef(null);
 
   const activeConversation = conversations.find(c => c.id === active);
@@ -305,6 +308,23 @@ export default function RiverSpaceSignals() {
 
   function addEmoji(emoji) { setDraft(v => v + emoji); setEmojiOpen(false); }
 
+  async function sendMoneyIntent(e) {
+    e.preventDefault();
+    const amount = Number(String(moneyAmount).replace(',', '.'));
+    if (!active || !user || busy || !Number.isFinite(amount) || amount <= 0 || amount > 10000) return;
+    const labels = { send: '💸 Proposta di invio denaro', request: '💰 Richiesta di denaro', donate: '🎁 Proposta di donazione', receive_donation: '🙏 Richiesta di donazione' };
+    const body = labels[moneyAction] + '\\nImporto: € ' + amount.toFixed(2) + (moneyReason.trim() ? '\\nCausale: ' + moneyReason.trim() : '') + '\\n\\nStato: da concordare. Nessun pagamento è stato eseguito.';
+    setBusy(true); setError('');
+    const { error: e1 } = await supabase.from('rs_chat_messages').insert({
+      conversation_id: active, sender_id: user.id, body, message_type: 'text',
+      metadata: { kind: 'money_intent', action: moneyAction, amount, currency: 'EUR', reason: moneyReason.trim(), status: 'awaiting_provider' }
+    });
+    setBusy(false);
+    if (e1) { setError('Non è stato possibile inviare la proposta: ' + e1.message); return; }
+    setMoneyAction(''); setMoneyAmount(''); setMoneyReason('');
+    await Promise.all([loadMessages(active), loadConversations(user.id)]);
+  }
+
   const filteredPeople = useMemo(() => profiles.filter(p =>
     (p.display_name || 'Membro RiverSpend').toLowerCase().includes(search.toLowerCase())
   ), [profiles, search]);
@@ -402,6 +422,21 @@ export default function RiverSpaceSignals() {
               <span className="grid h-10 w-10 place-items-center rounded-full bg-teal-100">👤</span>
               <div><div className="font-bold">{otherProfile?.display_name || 'Membro RiverSpend'}</div><div className="text-xs text-emerald-600">Conversazione privata</div></div>
               <Link href="/karma-zen-relax.html" className="ml-auto rounded-full bg-[#073b4c] px-3 py-2 text-xs font-semibold text-white">🪷 Karma Zen</Link>
+            </div>
+            <div className="flex shrink-0 gap-2 overflow-x-auto border-b border-teal-100 bg-teal-50 px-3 py-2">
+              <button type="button" onClick={() => setMoneyAction("send")} className="shrink-0 rounded-full bg-white px-3 py-2 text-xs font-semibold text-teal-900 shadow-sm">💸 Invia denaro</button>
+              <button type="button" onClick={() => setMoneyAction("request")} className="shrink-0 rounded-full bg-white px-3 py-2 text-xs font-semibold text-teal-900 shadow-sm">💰 Richiedi denaro</button>
+              <button type="button" onClick={() => setMoneyAction("donate")} className="shrink-0 rounded-full bg-white px-3 py-2 text-xs font-semibold text-teal-900 shadow-sm">🎁 Fai una donazione</button>
+              <button type="button" onClick={() => setMoneyAction("receive_donation")} className="shrink-0 rounded-full bg-white px-3 py-2 text-xs font-semibold text-teal-900 shadow-sm">🙏 Ricevi donazione</button>
+            </div>
+            {moneyAction && <div className="shrink-0 border-b border-amber-200 bg-amber-50 p-3">
+              <form onSubmit={sendMoneyIntent} className="mx-auto max-w-xl space-y-2">
+                <div className="flex items-center justify-between gap-2"><strong className="text-sm text-amber-950">{({send:"Invia denaro",request:"Richiedi denaro",donate:"Invia una donazione",receive_donation:"Richiedi una donazione"})[moneyAction]}</strong><button type="button" onClick={() => setMoneyAction("")} className="rounded-full px-2 text-lg text-slate-500" aria-label="Chiudi">×</button></div>
+                <div className="grid grid-cols-[110px_1fr] gap-2"><label className="text-xs font-semibold text-slate-700" htmlFor="signals-money-amount">Importo (€)</label><input id="signals-money-amount" type="number" min="0.01" max="10000" step="0.01" required value={moneyAmount} onChange={e => setMoneyAmount(e.target.value)} placeholder="10.00" className="rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm" /></div>
+                <div className="grid grid-cols-[110px_1fr] gap-2"><label className="text-xs font-semibold text-slate-700" htmlFor="signals-money-reason">Causale</label><input id="signals-money-reason" maxLength={120} value={moneyReason} onChange={e => setMoneyReason(e.target.value)} placeholder="Motivo (facoltativo)" className="rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm" /></div>
+                <p className="text-[11px] leading-snug text-amber-900">Questa funzione invia una proposta nella chat. Non trasferisce denaro: il pagamento reale sarà attivato solo dopo il collegamento sicuro del gestore.</p>
+                <div className="flex justify-end"><button type="submit" disabled={busy || !moneyAmount || Number(String(moneyAmount).replace(",", ".")) <= 0} className="rounded-lg bg-[#087e8b] px-4 py-2 text-xs font-bold text-white disabled:opacity-50">{busy ? "Invio…" : "Invia nella chat"}</button></div>
+              </form>
             </div>
             <div className="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain bg-[#f4fafa] p-3 md:p-4">
               {messages.length === 0 && <div className="mx-auto mt-12 max-w-xs text-center text-sm text-slate-400">Questa conversazione è pronta. Invia il tuo primo messaggio 👋</div>}
