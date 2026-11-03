@@ -304,7 +304,7 @@ export default function RiverSpaceSignals() {
     let storedName = file?.name || null, storedMime = file?.type || null, storedSize = file?.size || null;
     if (enigmaActive) {
       try {
-        const { data: peerKeys, error: peerKeyError } = await supabase.from('rs_chat_device_keys').select('device_id').eq('user_id', otherId);
+        const { data: peerKeys, error: peerKeyError } = await supabase.from('rs_chat_device_keys').select('device_id').eq('user_id', otherId).order('updated_at', { ascending: false });
         if (peerKeyError) throw peerKeyError;
         const peerDeviceId = peerKeys?.[0]?.device_id;
         if (!peerDeviceId) throw new Error('Il destinatario deve aprire Signals su un dispositivo per configurare ENIGMA.');
@@ -374,7 +374,7 @@ export default function RiverSpaceSignals() {
       let metadata = { latitude, longitude, accuracy_m: Math.round(position.coords.accuracy) };
       if (enigmaActive) {
         try {
-          const { data: peerKeys, error: keyError } = await supabase.from('rs_chat_device_keys').select('device_id').eq('user_id', otherId);
+          const { data: peerKeys, error: keyError } = await supabase.from('rs_chat_device_keys').select('device_id').eq('user_id', otherId).order('updated_at', { ascending: false });
           if (keyError) throw keyError;
           const peerDeviceId = peerKeys?.[0]?.device_id;
           if (!peerDeviceId) throw new Error('Chiave ENIGMA del destinatario non disponibile.');
@@ -398,7 +398,7 @@ export default function RiverSpaceSignals() {
     let metadata = { sticker };
     if (enigmaActive) {
       try {
-        const { data: peerKeys, error: keyError } = await supabase.from('rs_chat_device_keys').select('device_id').eq('user_id', otherId);
+        const { data: peerKeys, error: keyError } = await supabase.from('rs_chat_device_keys').select('device_id').eq('user_id', otherId).order('updated_at', { ascending: false });
         if (keyError) throw keyError;
         const peerDeviceId = peerKeys?.[0]?.device_id;
         if (!peerDeviceId) throw new Error('Chiave ENIGMA del destinatario non disponibile.');
@@ -422,7 +422,7 @@ export default function RiverSpaceSignals() {
     let metadata = { kind: 'money_intent', action: moneyAction, amount, currency: 'EUR', reason: moneyReason.trim(), status: 'awaiting_provider' };
     if (enigmaActive) {
       try {
-        const { data: peerKeys, error: keyError } = await supabase.from('rs_chat_device_keys').select('device_id').eq('user_id', otherId);
+        const { data: peerKeys, error: keyError } = await supabase.from('rs_chat_device_keys').select('device_id').eq('user_id', otherId).order('updated_at', { ascending: false });
         if (keyError) throw keyError;
         const peerDeviceId = peerKeys?.[0]?.device_id;
         if (!peerDeviceId) throw new Error('Chiave ENIGMA del destinatario non disponibile.');
