@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { supabase } from '../lib/supabase';
@@ -22,6 +22,8 @@ export default function RiverSpaceSignals() {
   const [attachment, setAttachment] = useState(null);
   const [mediaUrls, setMediaUrls] = useState({});
   const [uploading, setUploading] = useState(false);
+  const [recording, setRecording] = useState('');
+  const recorderRef = useRef(null);
 
   const activeConversation = conversations.find(c => c.id === active);
   const otherId = activeConversation
@@ -180,10 +182,10 @@ export default function RiverSpaceSignals() {
       if (uploadError) {
         setBusy(false); setUploading(false); setError('Caricamento allegato non riuscito: ' + uploadError.message); return;
       }
-      messageType = attachment.type.startsWith('image/') ? 'image' : 'file';
+      messageType = attachment.type.startsWith('image/') ? 'image' : attachment.type.startsWith('audio/') ? 'audio' : attachment.type.startsWith('video/') ? 'video' : 'file';
     }
     const { error: sendError } = await supabase.from('rs_chat_messages').insert({
-      conversation_id: active, sender_id: user.id, body: body || (messageType === 'image' ? 'Immagine' : 'Documento'),
+      conversation_id: active, sender_id: user.id, body: body || (messageType === 'image' ? 'Immagine' : messageType === 'audio' ? 'Messaggio vocale' : messageType === 'video' ? 'Video messaggio' : 'Documento'),
       message_type: messageType, attachment_path: attachmentPath,
       attachment_name: attachment?.name || null, attachment_mime: attachment?.type || null,
       attachment_size: attachment?.size || null
@@ -194,6 +196,26 @@ export default function RiverSpaceSignals() {
     await Promise.all([loadMessages(active), loadConversations(user.id)]);
   }
 
+  async function startMediaRecording(kind) {
+    if (!navigator.mediaDevices?.getUserMedia || typeof MediaRecorder === 'undefined') { setError('Registrazione non supportata da questo browser.'); return; }
+    try {
+      setError('');
+      const stream = await navigator.mediaDevices.getUserMedia(kind === 'video' ? { audio: true, video: { facingMode: 'user' } } : { audio: true });
+      const options = kind === 'video' ? { mimeType: 'video/webm' } : { mimeType: 'audio/webm' };
+      const recorder = new MediaRecorder(stream, MediaRecorder.isTypeSupported(options.mimeType) ? options : undefined);
+      const chunks = []; recorderRef.current = recorder;
+      recorder.ondataavailable = event => { if (event.data?.size) chunks.push(event.data); };
+      recorder.onerror = () => setError('Errore durante la registrazione.');
+      recorder.onstop = () => {
+        const type = recorder.mimeType || (kind === 'video' ? 'video/webm' : 'audio/webm');
+        const blob = new Blob(chunks, { type });
+        if (blob.size) setAttachment(new File([blob], (kind === 'video' ? 'video-messaggio-' : 'messaggio-vocale-') + Date.now() + '.webm', { type }));
+        stream.getTracks().forEach(track => track.stop()); recorderRef.current = null; setRecording('');
+      };
+      recorder.start(500); setRecording(kind); setAttachMenuOpen(false);
+    } catch (e) { setError(e.message || 'Accesso a microfono o fotocamera non riuscito.'); }
+  }
+  function stopMediaRecording() { if (recorderRef.current?.state === 'recording') recorderRef.current.stop(); }
   async function sendLocation() {
     if (!navigator.geolocation || !active || !user || busy) return;
     setBusy(true); setError('');
@@ -286,6 +308,8 @@ export default function RiverSpaceSignals() {
               {messages.map(m => <div key={m.id} className={`flex ${m.sender_id === user.id ? 'justify-end' : 'justify-start'}`}>
                 <div className={`max-w-[85%] rounded-2xl px-4 py-2 shadow-sm md:max-w-[70%] ${m.sender_id === user.id ? 'rounded-br-sm bg-[#087e8b] text-white' : 'rounded-bl-sm bg-white text-slate-800'}`}>
                   {m.message_type === 'image' && mediaUrls[m.id] && <a href={mediaUrls[m.id]} target="_blank" rel="noreferrer"><img src={mediaUrls[m.id]} alt={m.attachment_name || 'Immagine condivisa'} className="mb-2 max-h-64 max-w-full rounded-xl object-contain" /></a>}
+                  {m.message_type === 'audio' && mediaUrls[m.id] && <audio controls preload="metadata" src={mediaUrls[m.id]} className="mb-2 max-w-full" />}
+                  {m.message_type === 'video' && mediaUrls[m.id] && <video controls playsInline preload="metadata" src={mediaUrls[m.id]} className="mb-2 max-h-64 max-w-full rounded-xl" />}
                   {m.message_type === 'file' && mediaUrls[m.id] && <a href={mediaUrls[m.id]} target="_blank" rel="noreferrer" className="mb-2 block rounded-lg bg-black/10 px-3 py-2 text-sm underline">📎 {m.attachment_name || 'Apri documento'}</a>}
                   <p className="whitespace-pre-wrap break-words text-sm">{m.body}</p>
                   <div className={`mt-1 text-right text-[10px] ${m.sender_id === user.id ? 'text-teal-100' : 'text-slate-400'}`}>{new Date(m.created_at).toLocaleString('it-IT', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' })}</div>
@@ -299,12 +323,14 @@ export default function RiverSpaceSignals() {
                 <label className="flex cursor-pointer items-center gap-2 rounded-xl p-3 text-left text-sm hover:bg-teal-50">📄 <span>Documenti<input type="file" accept=".pdf,.txt,.doc,.docx,.xls,.xlsx" className="hidden" onChange={e => { setAttachment(e.target.files?.[0] || null); setAttachMenuOpen(false); }} /></span></label>
                 <button type="button" onClick={() => { setAttachMenuOpen(false); setEmojiOpen(true); }} className="rounded-xl p-3 text-left text-sm hover:bg-teal-50">🎨 Sticker ed emoji</button>
                 <button type="button" onClick={() => { setAttachMenuOpen(false); sendLocation(); }} className="rounded-xl p-3 text-left text-sm hover:bg-teal-50">📍 Posizione GPS</button>
-                <div className="col-span-2 border-t border-slate-100 pt-2 text-xs text-slate-400">Video messaggi, vocali e chiamate: in sviluppo.</div>
+                <button type="button" onClick={() => startMediaRecording("audio")} className="rounded-xl p-3 text-left text-sm hover:bg-teal-50">🎙️ Registra vocale</button>
+                <button type="button" onClick={() => startMediaRecording("video")} className="rounded-xl p-3 text-left text-sm hover:bg-teal-50">🎥 Registra video</button>
               </div>}
               {emojiOpen && <div className="absolute bottom-16 left-3 z-10 grid grid-cols-6 gap-1 rounded-2xl border bg-white p-3 shadow-xl">{['😀','😂','🥰','😍','😉','😊','❤️','🔥','👍','🙏','🎉','🌈','🌊','🪷','✨','💚','💬','🚀','👋','🤝','💎','🎁','🌟','😎','🤗','🥳','💌','🌺','🐠','🚀'].map(x => <button key={x} type="button" onClick={() => addEmoji(x)} className="rounded-lg p-1 text-xl hover:bg-slate-100">{x}</button>)}</div>}
+              {recording && <button type="button" onClick={stopMediaRecording} className="rounded-lg bg-red-100 px-2 py-2 text-xs font-semibold text-red-800">⏹ Ferma {recording === 'video' ? 'video' : 'vocale'}</button>}
               {attachment && <span className="max-w-28 truncate rounded-lg bg-teal-50 px-2 py-2 text-xs text-teal-900">{attachment.name} <button type="button" onClick={() => setAttachment(null)} aria-label="Rimuovi allegato">×</button></span>}
               <textarea value={draft} onChange={e => setDraft(e.target.value)} rows={1} placeholder="Scrivi un messaggio…" className="max-h-24 min-h-10 flex-1 resize-y rounded-xl bg-slate-100 px-3 py-2 text-sm md:max-h-32 md:min-h-12 md:px-4 md:py-3 outline-none focus:ring-2 focus:ring-teal-500" />
-              <button disabled={busy || (!draft.trim() && !attachment)} className="rounded-xl bg-[#087e8b] px-3 py-2.5 text-sm font-semibold text-white disabled:opacity-40 md:px-5 md:py-3 md:text-base">{uploading ? 'Carico…' : busy ? '…' : 'Invia'}</button>
+              <button disabled={busy || Boolean(recording) || (!draft.trim() && !attachment)} className="rounded-xl bg-[#087e8b] px-3 py-2.5 text-sm font-semibold text-white disabled:opacity-40 md:px-5 md:py-3 md:text-base">{uploading ? 'Carico…' : busy ? '…' : 'Invia'}</button>
             </form>
           </> : <div className="grid flex-1 place-items-center p-8 text-center">
             <div><div className="text-6xl">🌊</div><h2 className="mt-4 text-2xl font-bold text-[#073b4c]">Il tuo spazio, i tuoi segnali</h2><p className="mt-2 max-w-sm text-sm text-slate-500">Scegli una conversazione oppure trova un membro RiverSpend per iniziare a scrivere.</p><Link href="/karma-zen-relax.html" className="mt-5 inline-block rounded-full border border-teal-700 px-4 py-2 text-sm font-semibold text-teal-800">🪷 Apri Karma Zen Relax</Link></div>
