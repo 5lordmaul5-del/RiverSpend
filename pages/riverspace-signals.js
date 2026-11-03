@@ -318,8 +318,8 @@ export default function RiverSpaceSignals() {
       <link rel="icon" href="/icons/riversignals.svg" type="image/svg+xml" />
       <link rel="apple-touch-icon" href="/icons/riverspace-signals-app.jpg" />
     </Head>
-    <main className="min-h-screen bg-[#eaf7f7] text-slate-800">
-      <header className="flex items-center justify-between bg-[#073b4c] px-3 py-2 text-white shadow md:px-4 md:py-3">
+    <main className="flex h-[100dvh] flex-col overflow-hidden bg-[#eaf7f7] text-slate-800">
+      <header className="flex shrink-0 items-center justify-between bg-[#073b4c] px-3 py-2 text-white shadow md:px-4 md:py-3">
         <div className="flex items-center gap-3">
           <img src="/icons/riversignals.svg" alt="RiverSpaceSignals" className="h-8 w-8 rounded-full bg-white p-1 md:h-10 md:w-10" />
           <div><div className="text-base font-bold tracking-wide md:text-lg">RiverSpaceSignals</div><div className="text-xs text-teal-100">YOUR SPACE · YOUR SIGNAL</div></div>
@@ -341,8 +341,8 @@ export default function RiverSpaceSignals() {
           <button disabled={busy} className="w-full rounded-xl bg-[#087e8b] px-4 py-3 font-semibold text-white disabled:opacity-50">{busy ? 'Invio…' : 'Ricevi il link di accesso'}</button>
         </form>
         <p className="mt-4 text-center text-xs text-slate-500">L'accesso avviene tramite link email sicuro.</p>
-      </section> : <section className="mx-auto grid min-h-[calc(100dvh-56px)] max-w-6xl grid-cols-1 overflow-hidden bg-white shadow-xl md:my-6 md:min-h-[75vh] md:grid-cols-[320px_1fr] md:rounded-3xl">
-        <aside className={`border-r border-slate-200 ${active ? 'hidden md:block' : 'block'}`}>
+      </section> : <section className="mx-auto grid min-h-0 w-full max-w-6xl flex-1 grid-cols-1 overflow-hidden bg-white shadow-xl md:grid-cols-[320px_1fr] md:rounded-3xl">
+        <aside className={`min-h-0 overflow-y-auto border-r border-slate-200 ${active ? 'hidden md:block' : 'block'}`}>
           <div className="border-b border-slate-200 p-4">
             <div className="mb-3">
               <div className="mb-2 flex items-center justify-between"><h2 className="text-sm font-bold text-[#073b4c]">Stati · 24 ore</h2><span className="text-[10px] text-slate-400">RiverSpace</span></div>
@@ -395,7 +395,7 @@ export default function RiverSpaceSignals() {
           </div>
         </aside>
 
-        <div className={`flex min-h-[calc(100dvh-56px)] flex-col md:min-h-[70vh] ${active ? 'flex' : 'hidden md:flex'}`}>
+        <div className={`flex min-h-0 flex-col overflow-hidden ${active ? 'flex' : 'hidden md:flex'}`}>
           {active ? <>
             <div className="flex items-center gap-3 border-b border-slate-200 px-4 py-3">
               <button onClick={() => setActive('')} className="rounded-lg px-2 py-1 text-xl md:hidden" aria-label="Torna ai contatti">‹</button>
@@ -403,7 +403,7 @@ export default function RiverSpaceSignals() {
               <div><div className="font-bold">{otherProfile?.display_name || 'Membro RiverSpend'}</div><div className="text-xs text-emerald-600">Conversazione privata</div></div>
               <Link href="/karma-zen-relax.html" className="ml-auto rounded-full bg-[#073b4c] px-3 py-2 text-xs font-semibold text-white">🪷 Karma Zen</Link>
             </div>
-            <div className="flex-1 space-y-3 overflow-y-auto bg-[#f4fafa] p-4">
+            <div className="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain bg-[#f4fafa] p-3 md:p-4">
               {messages.length === 0 && <div className="mx-auto mt-12 max-w-xs text-center text-sm text-slate-400">Questa conversazione è pronta. Invia il tuo primo messaggio 👋</div>}
               {messages.map(m => <div key={m.id} className={`flex ${m.sender_id === user.id ? 'justify-end' : 'justify-start'}`}>
                 <div className={`max-w-[85%] rounded-2xl px-4 py-2 shadow-sm md:max-w-[70%] ${m.sender_id === user.id ? 'rounded-br-sm bg-[#087e8b] text-white' : 'rounded-bl-sm bg-white text-slate-800'}`}>
@@ -452,7 +452,7 @@ export default function RiverSpaceSignals() {
           <p className="pb-3 text-xs text-white/60">{new Date(viewStatus.created_at).toLocaleString('it-IT')}</p>
         </div>
       </div>}
-      <footer className="flex flex-wrap items-center justify-center gap-4 py-5 text-xs text-slate-500"><span>RiverSpaceSignals · RiverSpend · Comunicazioni private</span><button type="button" onClick={() => window.dispatchEvent(new Event("riverspend:open-cookie-settings"))} className="underline underline-offset-2">Privacy e cookie</button><Link href="/" className="underline underline-offset-2">Torna al sito RiverSpend</Link></footer>
+      <footer className="hidden shrink-0 flex-wrap items-center justify-center gap-4 py-2 text-xs text-slate-500 md:flex"><span>RiverSpaceSignals · RiverSpend · Comunicazioni private</span><button type="button" onClick={() => window.dispatchEvent(new Event("riverspend:open-cookie-settings"))} className="underline underline-offset-2">Privacy e cookie</button><Link href="/" className="underline underline-offset-2">Torna al sito RiverSpend</Link></footer>
     </main>
   </>;
 }
