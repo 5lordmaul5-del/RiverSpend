@@ -423,11 +423,11 @@ export default function RiverSpaceSignals() {
               <div><div className="font-bold">{otherProfile?.display_name || 'Membro RiverSpend'}</div><div className="text-xs text-emerald-600">Conversazione privata</div></div>
               <Link href="/karma-zen-relax.html" className="ml-auto rounded-full bg-[#073b4c] px-3 py-2 text-xs font-semibold text-white">🪷 Karma Zen</Link>
             </div>
-            <div className="flex shrink-0 gap-2 overflow-x-auto border-b border-teal-100 bg-teal-50 px-3 py-2">
-              <button type="button" onClick={() => setMoneyAction("send")} className="shrink-0 rounded-full bg-white px-3 py-2 text-xs font-semibold text-teal-900 shadow-sm">💸 Invia denaro</button>
-              <button type="button" onClick={() => setMoneyAction("request")} className="shrink-0 rounded-full bg-white px-3 py-2 text-xs font-semibold text-teal-900 shadow-sm">💰 Richiedi denaro</button>
-              <button type="button" onClick={() => setMoneyAction("donate")} className="shrink-0 rounded-full bg-white px-3 py-2 text-xs font-semibold text-teal-900 shadow-sm">🎁 Fai una donazione</button>
-              <button type="button" onClick={() => setMoneyAction("receive_donation")} className="shrink-0 rounded-full bg-white px-3 py-2 text-xs font-semibold text-teal-900 shadow-sm">🙏 Ricevi donazione</button>
+            <div className="grid shrink-0 grid-cols-2 gap-2 border-b border-teal-100 bg-teal-50 px-3 py-2 md:grid-cols-4">
+              <button type="button" onClick={() => setMoneyAction("send")} className="min-w-0 rounded-xl bg-white px-2 py-2 text-center text-xs font-semibold leading-tight text-teal-900 shadow-sm">💸 Invia denaro</button>
+              <button type="button" onClick={() => setMoneyAction("request")} className="min-w-0 rounded-xl bg-white px-2 py-2 text-center text-xs font-semibold leading-tight text-teal-900 shadow-sm">💰 Ricevi denaro</button>
+              <button type="button" onClick={() => setMoneyAction("donate")} className="min-w-0 rounded-xl bg-white px-2 py-2 text-center text-xs font-semibold leading-tight text-teal-900 shadow-sm">🎁 Fai una donazione</button>
+              <button type="button" onClick={() => setMoneyAction("receive_donation")} className="min-w-0 rounded-xl bg-white px-2 py-2 text-center text-xs font-semibold leading-tight text-teal-900 shadow-sm">🙏 Ricevi donazione</button>
             </div>
             {moneyAction && <div className="shrink-0 border-b border-amber-200 bg-amber-50 p-3">
               <form onSubmit={sendMoneyIntent} className="mx-auto max-w-xl space-y-2">
