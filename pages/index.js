@@ -125,6 +125,7 @@ export default function Home() {
   const areeRiverSpend = [
     ['Profilo','/profilo'],
     ['RiverSpendShop','/'],
+    ['🌍 RiverWorld Live · Meteo, notizie e sport','/riverworld-live'],
     ['📲 Scarica le app RiverSpend','/app'],
     ['📲 QR · Scarica le app RiverSpend','/app'],
     ['🎁 RiverSpend Gift Card','/gift-card'],
