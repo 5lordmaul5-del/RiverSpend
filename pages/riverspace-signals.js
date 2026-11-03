@@ -18,6 +18,9 @@ export default function RiverSpaceSignals() {
   const [emojiOpen, setEmojiOpen] = useState(false);
   const [installPrompt, setInstallPrompt] = useState(null);
   const [installMessage, setInstallMessage] = useState('');
+  const [attachment, setAttachment] = useState(null);
+  const [mediaUrls, setMediaUrls] = useState({});
+  const [uploading, setUploading] = useState(false);
 
   const activeConversation = conversations.find(c => c.id === active);
   const otherId = activeConversation
@@ -50,6 +53,12 @@ export default function RiverSpaceSignals() {
       .limit(300);
     if (e) throw e;
     setMessages(data || []);
+    const media = {};
+    await Promise.all((data || []).filter(m => m.attachment_path).map(async m => {
+      const { data: signed } = await supabase.storage.from('signals-private-media').createSignedUrl(m.attachment_path, 3600);
+      if (signed?.signedUrl) media[m.id] = signed.signedUrl;
+    }));
+    setMediaUrls(media);
   }, []);
 
   useEffect(() => {
@@ -158,17 +167,46 @@ export default function RiverSpaceSignals() {
   async function sendMessage(e) {
     e.preventDefault();
     const body = draft.trim();
-    if (!body || !active || !user || busy) return;
-    setBusy(true); setError('');
-    const { error: sendError } = await supabase.from('rs_chat_messages')
-      .insert({ conversation_id: active, sender_id: user.id, body });
-    setBusy(false);
+    if ((!body && !attachment) || !active || !user || busy) return;
+    setBusy(true); setError(''); setUploading(Boolean(attachment));
+    let attachmentPath = null;
+    let messageType = 'text';
+    if (attachment) {
+      const safeName = attachment.name.replace(/[^a-zA-Z0-9._-]/g, '_').slice(-100);
+      attachmentPath = active + '/' + user.id + '/' + Date.now() + '-' + safeName;
+      const { error: uploadError } = await supabase.storage.from('signals-private-media')
+        .upload(attachmentPath, attachment, { contentType: attachment.type || 'application/octet-stream', upsert: false });
+      if (uploadError) {
+        setBusy(false); setUploading(false); setError('Caricamento allegato non riuscito: ' + uploadError.message); return;
+      }
+      messageType = attachment.type.startsWith('image/') ? 'image' : 'file';
+    }
+    const { error: sendError } = await supabase.from('rs_chat_messages').insert({
+      conversation_id: active, sender_id: user.id, body: body || (messageType === 'image' ? 'Immagine' : 'Documento'),
+      message_type: messageType, attachment_path: attachmentPath,
+      attachment_name: attachment?.name || null, attachment_mime: attachment?.type || null,
+      attachment_size: attachment?.size || null
+    });
+    setBusy(false); setUploading(false);
     if (sendError) { setError(sendError.message); return; }
-    setDraft('');
-    await Promise.all([
-      loadMessages(active),
-      loadConversations(user.id)
-    ]);
+    setDraft(''); setAttachment(null);
+    await Promise.all([loadMessages(active), loadConversations(user.id)]);
+  }
+
+  async function sendLocation() {
+    if (!navigator.geolocation || !active || !user || busy) return;
+    setBusy(true); setError('');
+    navigator.geolocation.getCurrentPosition(async position => {
+      const { latitude, longitude } = position.coords;
+      const body = '📍 La mia posizione: https://www.google.com/maps?q=' + latitude + ',' + longitude;
+      const { error: sendError } = await supabase.from('rs_chat_messages').insert({
+        conversation_id: active, sender_id: user.id, body, message_type: 'location',
+        metadata: { latitude, longitude, accuracy_m: Math.round(position.coords.accuracy) }
+      });
+      setBusy(false);
+      if (sendError) setError(sendError.message);
+      else await loadMessages(active);
+    }, err => { setBusy(false); setError(err.message || 'Posizione non disponibile.'); }, { enableHighAccuracy: true, timeout: 12000 });
   }
 
   function addEmoji(emoji) { setDraft(v => v + emoji); setEmojiOpen(false); }
@@ -246,16 +284,21 @@ export default function RiverSpaceSignals() {
               {messages.length === 0 && <div className="mx-auto mt-12 max-w-xs text-center text-sm text-slate-400">Questa conversazione è pronta. Invia il tuo primo messaggio 👋</div>}
               {messages.map(m => <div key={m.id} className={`flex ${m.sender_id === user.id ? 'justify-end' : 'justify-start'}`}>
                 <div className={`max-w-[85%] rounded-2xl px-4 py-2 shadow-sm md:max-w-[70%] ${m.sender_id === user.id ? 'rounded-br-sm bg-[#087e8b] text-white' : 'rounded-bl-sm bg-white text-slate-800'}`}>
+                  {m.message_type === 'image' && mediaUrls[m.id] && <a href={mediaUrls[m.id]} target="_blank" rel="noreferrer"><img src={mediaUrls[m.id]} alt={m.attachment_name || 'Immagine condivisa'} className="mb-2 max-h-64 max-w-full rounded-xl object-contain" /></a>}
+                  {m.message_type === 'file' && mediaUrls[m.id] && <a href={mediaUrls[m.id]} target="_blank" rel="noreferrer" className="mb-2 block rounded-lg bg-black/10 px-3 py-2 text-sm underline">📎 {m.attachment_name || 'Apri documento'}</a>}
                   <p className="whitespace-pre-wrap break-words text-sm">{m.body}</p>
                   <div className={`mt-1 text-right text-[10px] ${m.sender_id === user.id ? 'text-teal-100' : 'text-slate-400'}`}>{new Date(m.created_at).toLocaleString('it-IT', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' })}</div>
                 </div>
               </div>)}
             </div>
             <form onSubmit={sendMessage} className="relative flex items-end gap-2 border-t border-slate-200 bg-white p-3">
-              <button type="button" onClick={() => setEmojiOpen(v => !v)} className="rounded-xl bg-amber-50 px-3 py-3 text-xl" aria-label="Apri emoji">😊</button>
-              {emojiOpen && <div className="absolute bottom-16 left-3 z-10 grid grid-cols-6 gap-1 rounded-2xl border bg-white p-3 shadow-xl">{['😀','😂','🥰','😍','😉','😊','❤️','🔥','👍','🙏','🎉','🌈','🌊','🪷','✨','💚','💬','🚀'].map(x => <button key={x} type="button" onClick={() => addEmoji(x)} className="rounded-lg p-1 text-xl hover:bg-slate-100">{x}</button>)}</div>}
+              <label className="cursor-pointer rounded-xl bg-slate-100 px-3 py-3 text-xl" title="Allega immagini o documenti">📎<input type="file" className="hidden" accept="image/*,.pdf,.txt,.doc,.docx,.xls,.xlsx" onChange={e => setAttachment(e.target.files?.[0] || null)} /></label>
+              <button type="button" onClick={sendLocation} className="rounded-xl bg-slate-100 px-3 py-3 text-xl" title="Invia la posizione GPS">📍</button>
+              <button type="button" onClick={() => setEmojiOpen(v => !v)} className="rounded-xl bg-amber-50 px-3 py-3 text-xl" aria-label="Apri emoji e sticker">😊</button>
+              {emojiOpen && <div className="absolute bottom-16 left-3 z-10 grid grid-cols-6 gap-1 rounded-2xl border bg-white p-3 shadow-xl">{['😀','😂','🥰','😍','😉','😊','❤️','🔥','👍','🙏','🎉','🌈','🌊','🪷','✨','💚','💬','🚀','👋','🤝','💎','🎁','🌟','😎','🤗','🥳','💌','🌺','🐠','🚀'].map(x => <button key={x} type="button" onClick={() => addEmoji(x)} className="rounded-lg p-1 text-xl hover:bg-slate-100">{x}</button>)}</div>}
+              {attachment && <span className="max-w-28 truncate rounded-lg bg-teal-50 px-2 py-2 text-xs text-teal-900">{attachment.name} <button type="button" onClick={() => setAttachment(null)} aria-label="Rimuovi allegato">×</button></span>}
               <textarea value={draft} onChange={e => setDraft(e.target.value)} rows={1} placeholder="Scrivi un messaggio…" className="max-h-32 min-h-12 flex-1 resize-y rounded-xl bg-slate-100 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-teal-500" />
-              <button disabled={busy || !draft.trim()} className="rounded-xl bg-[#087e8b] px-5 py-3 font-semibold text-white disabled:opacity-40">{busy ? '…' : 'Invia'}</button>
+              <button disabled={busy || (!draft.trim() && !attachment)} className="rounded-xl bg-[#087e8b] px-5 py-3 font-semibold text-white disabled:opacity-40">{uploading ? 'Carico…' : busy ? '…' : 'Invia'}</button>
             </form>
           </> : <div className="grid flex-1 place-items-center p-8 text-center">
             <div><div className="text-6xl">🌊</div><h2 className="mt-4 text-2xl font-bold text-[#073b4c]">Il tuo spazio, i tuoi segnali</h2><p className="mt-2 max-w-sm text-sm text-slate-500">Scegli una conversazione oppure trova un membro RiverSpend per iniziare a scrivere.</p><Link href="/karma-zen-relax.html" className="mt-5 inline-block rounded-full border border-teal-700 px-4 py-2 text-sm font-semibold text-teal-800">🪷 Apri Karma Zen Relax</Link></div>
