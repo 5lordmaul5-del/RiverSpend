@@ -161,7 +161,7 @@ export default function RiverSpaceSignals() {
           <img src="/icons/riversignals.svg" alt="RiverSpaceSignals" className="h-10 w-10 rounded-full bg-white p-1" />
           <div><div className="text-lg font-bold tracking-wide">RiverSpaceSignals</div><div className="text-xs text-teal-100">YOUR SPACE · YOUR SIGNAL</div></div>
         </div>
-        <Link href="/riverspend-social-network" className="rounded-full border border-white/40 px-3 py-2 text-sm hover:bg-white/10">Community</Link>
+        <nav className="flex items-center gap-2"><Link href="/" className="rounded-full border border-white/40 px-3 py-2 text-sm hover:bg-white/10">RiverSpendShop</Link><Link href="/riverspend-social-network" className="rounded-full border border-white/40 px-3 py-2 text-sm hover:bg-white/10">Community</Link></nav>
       </header>
 
       {error && <div role="alert" className="mx-auto mt-3 max-w-6xl rounded-xl bg-red-100 px-4 py-3 text-sm text-red-800">{error}</div>}
@@ -231,7 +231,7 @@ export default function RiverSpaceSignals() {
           </div>}
         </div>
       </section>}
-      <footer className="py-5 text-center text-xs text-slate-400">RiverSpaceSignals · RiverSpend · Comunicazioni private</footer>
+      <footer className="flex flex-wrap items-center justify-center gap-4 py-5 text-xs text-slate-500"><span>RiverSpaceSignals · RiverSpend · Comunicazioni private</span><button type="button" onClick={() => window.dispatchEvent(new Event("riverspend:open-cookie-settings"))} className="underline underline-offset-2">Privacy e cookie</button><Link href="/" className="underline underline-offset-2">Torna al sito RiverSpend</Link></footer>
     </main>
   </>;
 }
