@@ -377,6 +377,20 @@ Invia una richiesta d’ordine. RiverSpendShop è appena partito: il venditore c
             <p className="text-sm font-black uppercase tracking-[0.18em] text-teal-600">RiverSpend Pay</p>
             <h2 className="mt-2 text-xl font-black text-slate-900">RiverSpendPay · Scegli come pagare</h2>
             <p className="mt-1 text-sm text-slate-500">Per questa fase sono disponibili contrassegno in contanti, PostePay e bonifico istantaneo. I pagamenti PostePay e bonifico restano in attesa di verifica dell’accredito.</p>
+            <div className="mt-4 rounded-xl border border-sky-100 bg-sky-50 p-3">
+              <h3 className="text-sm font-bold text-slate-800">🌐 Circuiti carta previsti per RiverSpend Pay</h3>
+              <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
+                {[
+                  ['VISA','Visa'],['mastercard','Mastercard'],['maestro','Maestro'],
+                  ['AMEX','American Express'],['APPLE PAY','Apple Pay'],['G Pay','Google Pay']
+                ].map(([mark,label]) => (
+                  <div key={label} className="flex min-h-11 items-center justify-center rounded-lg border border-slate-200 bg-white px-2 py-2 text-center">
+                    <span className="text-sm font-black tracking-wide text-slate-700">{mark}</span>
+                  </div>
+                ))}
+              </div>
+              <p className="mt-2 text-xs leading-5 text-slate-600">Circuiti programmati: non sono ancora selezionabili né abilitati all’incasso. Saranno attivati dopo la convenzione con un gestore pagamenti e i relativi controlli.</p>
+            </div>
             <p className="mt-2 text-sm text-slate-600">Vuoi sostenere un progetto? Le donazioni sono facoltative e separate dall’acquisto.</p>
             <Link href="/donation" className="mt-2 inline-flex rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 font-bold text-amber-900 hover:bg-amber-100">🎁 Scopri RiverSpend Donation</Link>
             <div className="mt-4 grid gap-3">
