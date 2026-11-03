@@ -346,17 +346,23 @@ export default function RiverSpaceSignals() {
           <div className="border-b border-slate-200 p-4">
             <div className="mb-3">
               <div className="mb-2 flex items-center justify-between"><h2 className="text-sm font-bold text-[#073b4c]">Stati · 24 ore</h2><span className="text-[10px] text-slate-400">RiverSpace</span></div>
-              <div className="flex gap-3 overflow-x-auto pb-2">
-                <div className="w-16 shrink-0 text-center">
-                  <label className="mx-auto grid h-14 w-14 cursor-pointer place-items-center rounded-full border-2 border-dashed border-teal-500 bg-teal-50 text-2xl">＋
-                    <input type="file" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime" className="hidden" onChange={e => setStatusFile(e.target.files?.[0] || null)} />
-                  </label><span className="mt-1 block truncate text-[11px] font-medium">Il mio stato</span>
+              <div className="flex gap-4 overflow-x-auto pb-2">
+                <div className="w-20 shrink-0 text-center">
+                  <div className="relative mx-auto h-20 w-20">
+                    <label className="grid h-20 w-20 cursor-pointer place-items-center rounded-full border-[3px] border-dashed border-teal-500 bg-teal-50 text-3xl text-teal-800" title="Scatta una foto o registra un video">📷
+                      <input type="file" accept="image/*,video/*" capture="environment" className="hidden" onChange={e => setStatusFile(e.target.files?.[0] || null)} />
+                    </label>
+                    <label className="absolute -bottom-1 -right-1 grid h-8 w-8 cursor-pointer place-items-center rounded-full border-2 border-white bg-[#087e8b] text-lg text-white shadow" title="Scegli dalla galleria">＋
+                      <input type="file" accept="image/*,video/*" className="hidden" onChange={e => setStatusFile(e.target.files?.[0] || null)} />
+                    </label>
+                  </div>
+                  <span className="mt-2 block text-xs font-semibold">Il mio stato</span>
                 </div>
                 {statuses.map(s => {
                   const p = profiles.find(x => x.id === s.user_id);
                   return <button key={s.id} type="button" onClick={() => setViewStatus(s)} className="w-16 shrink-0 text-center">
-                    <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-gradient-to-tr from-amber-400 via-pink-500 to-violet-600 p-[3px]"><span className="grid h-full w-full place-items-center overflow-hidden rounded-full border-2 border-white bg-teal-50 text-xl">{s.mediaUrl && s.media_type === 'image' ? <img src={s.mediaUrl} alt="" className="h-full w-full object-cover" /> : s.media_type === 'video' ? '🎥' : '🌊'}</span></span>
-                    <span className="mt-1 block truncate text-[11px]">{p?.display_name || 'Membro'}</span>
+                    <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-gradient-to-tr from-amber-400 via-pink-500 to-violet-600 p-[3px]"><span className="grid h-full w-full place-items-center overflow-hidden rounded-full border-2 border-white bg-teal-50 text-2xl">{s.mediaUrl && s.media_type === 'image' ? <img src={s.mediaUrl} alt="" className="h-full w-full object-cover" /> : s.media_type === 'video' ? '🎥' : '🌊'}</span></span>
+                    <span className="mt-2 block truncate text-xs font-semibold">{p?.display_name || 'Membro'}</span>
                   </button>;
                 })}
               </div>
