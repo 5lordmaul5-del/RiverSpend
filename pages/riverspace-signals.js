@@ -16,6 +16,7 @@ export default function RiverSpaceSignals() {
   const [notice, setNotice] = useState('');
   const [busy, setBusy] = useState(false);
   const [emojiOpen, setEmojiOpen] = useState(false);
+  const [stickerOpen, setStickerOpen] = useState(false);
   const [attachMenuOpen, setAttachMenuOpen] = useState(false);
   const [installPrompt, setInstallPrompt] = useState(null);
   const [installMessage, setInstallMessage] = useState('');
@@ -232,6 +233,14 @@ export default function RiverSpaceSignals() {
     }, err => { setBusy(false); setError(err.message || 'Posizione non disponibile.'); }, { enableHighAccuracy: true, timeout: 12000 });
   }
 
+  async function sendSticker(sticker) {
+    if (!active || !user || busy) return;
+    setBusy(true); setError('');
+    const { error: e } = await supabase.from('rs_chat_messages').insert({ conversation_id: active, sender_id: user.id, body: sticker, message_type: 'sticker', metadata: { sticker } });
+    setBusy(false); setStickerOpen(false);
+    if (e) setError(e.message); else await Promise.all([loadMessages(active), loadConversations(user.id)]);
+  }
+
   function addEmoji(emoji) { setDraft(v => v + emoji); setEmojiOpen(false); }
 
   const filteredPeople = useMemo(() => profiles.filter(p =>
@@ -307,6 +316,7 @@ export default function RiverSpaceSignals() {
               {messages.length === 0 && <div className="mx-auto mt-12 max-w-xs text-center text-sm text-slate-400">Questa conversazione è pronta. Invia il tuo primo messaggio 👋</div>}
               {messages.map(m => <div key={m.id} className={`flex ${m.sender_id === user.id ? 'justify-end' : 'justify-start'}`}>
                 <div className={`max-w-[85%] rounded-2xl px-4 py-2 shadow-sm md:max-w-[70%] ${m.sender_id === user.id ? 'rounded-br-sm bg-[#087e8b] text-white' : 'rounded-bl-sm bg-white text-slate-800'}`}>
+                  {m.message_type === 'sticker' && <div className="py-1 text-center text-6xl">{m.metadata?.sticker || m.body}</div>}
                   {m.message_type === 'image' && mediaUrls[m.id] && <a href={mediaUrls[m.id]} target="_blank" rel="noreferrer"><img src={mediaUrls[m.id]} alt={m.attachment_name || 'Immagine condivisa'} className="mb-2 max-h-64 max-w-full rounded-xl object-contain" /></a>}
                   {m.message_type === 'audio' && mediaUrls[m.id] && <audio controls preload="metadata" src={mediaUrls[m.id]} className="mb-2 max-w-full" />}
                   {m.message_type === 'video' && mediaUrls[m.id] && <video controls playsInline preload="metadata" src={mediaUrls[m.id]} className="mb-2 max-h-64 max-w-full rounded-xl" />}
@@ -321,11 +331,12 @@ export default function RiverSpaceSignals() {
               {attachMenuOpen && <div className="absolute bottom-16 left-2 z-20 grid w-[min(310px,calc(100vw-24px))] grid-cols-2 gap-2 rounded-2xl border border-slate-200 bg-white p-3 shadow-2xl">
                 <label className="flex cursor-pointer items-center gap-2 rounded-xl p-3 text-left text-sm hover:bg-teal-50">🖼️ <span>Foto e immagini<input type="file" accept="image/jpeg,image/png,image/webp,image/gif" className="hidden" onChange={e => { setAttachment(e.target.files?.[0] || null); setAttachMenuOpen(false); }} /></span></label>
                 <label className="flex cursor-pointer items-center gap-2 rounded-xl p-3 text-left text-sm hover:bg-teal-50">📄 <span>Documenti<input type="file" accept=".pdf,.txt,.doc,.docx,.xls,.xlsx" className="hidden" onChange={e => { setAttachment(e.target.files?.[0] || null); setAttachMenuOpen(false); }} /></span></label>
-                <button type="button" onClick={() => { setAttachMenuOpen(false); setEmojiOpen(true); }} className="rounded-xl p-3 text-left text-sm hover:bg-teal-50">🎨 Sticker ed emoji</button>
+                <button type="button" onClick={() => { setAttachMenuOpen(false); setEmojiOpen(true); }} className="rounded-xl p-3 text-left text-sm hover:bg-teal-50" onClick={() => { setAttachMenuOpen(false); setStickerOpen(true); }} className="rounded-xl p-3 text-left text-sm hover:bg-teal-50">🎨 Sticker</button>
                 <button type="button" onClick={() => { setAttachMenuOpen(false); sendLocation(); }} className="rounded-xl p-3 text-left text-sm hover:bg-teal-50">📍 Posizione GPS</button>
                 <button type="button" onClick={() => startMediaRecording("audio")} className="rounded-xl p-3 text-left text-sm hover:bg-teal-50">🎙️ Registra vocale</button>
                 <button type="button" onClick={() => startMediaRecording("video")} className="rounded-xl p-3 text-left text-sm hover:bg-teal-50">🎥 Registra video</button>
               </div>}
+              {stickerOpen && <div className="absolute bottom-16 left-2 z-20 grid w-[min(320px,calc(100vw-24px))] grid-cols-3 gap-2 rounded-2xl border bg-white p-3 shadow-xl"><div className="col-span-3 flex items-center justify-between text-sm font-semibold"><span>Sticker RiverSpace</span><button type="button" onClick={() => setStickerOpen(false)}>✕</button></div>{['🌊','🐠','🪷','💎','🚀','💚','🌟','🎁','🤗','❤️','🔥','👏','🥳','🦋','🐬'].map((x,i) => <button key={i} type="button" onClick={() => sendSticker(x)} className="grid aspect-square place-items-center rounded-xl bg-teal-50 text-4xl">{x}</button>)}</div>}
               {emojiOpen && <div className="absolute bottom-16 left-3 z-10 grid grid-cols-6 gap-1 rounded-2xl border bg-white p-3 shadow-xl">{['😀','😂','🥰','😍','😉','😊','❤️','🔥','👍','🙏','🎉','🌈','🌊','🪷','✨','💚','💬','🚀','👋','🤝','💎','🎁','🌟','😎','🤗','🥳','💌','🌺','🐠','🚀'].map(x => <button key={x} type="button" onClick={() => addEmoji(x)} className="rounded-lg p-1 text-xl hover:bg-slate-100">{x}</button>)}</div>}
               {recording && <button type="button" onClick={stopMediaRecording} className="rounded-lg bg-red-100 px-2 py-2 text-xs font-semibold text-red-800">⏹ Ferma {recording === 'video' ? 'video' : 'vocale'}</button>}
               {attachment && <span className="max-w-28 truncate rounded-lg bg-teal-50 px-2 py-2 text-xs text-teal-900">{attachment.name} <button type="button" onClick={() => setAttachment(null)} aria-label="Rimuovi allegato">×</button></span>}
