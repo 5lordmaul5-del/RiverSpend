@@ -193,12 +193,17 @@ export default function RiverSpaceSignals() {
     if (!active) { setMessages([]); setEnigmaConsents([]); return; }
     supabase.from('rs_chat_enigma_consents').select('conversation_id,user_id,accepted_at,revoked_at').eq('conversation_id', active)
       .then(({ data, error: consentError }) => { if (consentError) setError(consentError.message); else setEnigmaConsents(data || []); });
+    const consentChannel = supabase.channel('signals-enigma-consent-' + active)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'rs_chat_enigma_consents', filter: 'conversation_id=eq.' + active }, () => {
+        supabase.from('rs_chat_enigma_consents').select('conversation_id,user_id,accepted_at,revoked_at').eq('conversation_id', active)
+          .then(({ data, error: consentError }) => { if (consentError) setError(consentError.message); else setEnigmaConsents(data || []); });
+      }).subscribe();
     loadMessages(active).catch(e => setError(e.message || 'Non riesco a caricare i messaggi.'));
     const channel = supabase.channel('signals-messages-' + active)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'rs_chat_messages', filter: 'conversation_id=eq.' + active }, () => {
         loadMessages(active).catch(e => setError(e.message));
       }).subscribe();
-    return () => { supabase.removeChannel(channel); };
+    return () => { supabase.removeChannel(channel); supabase.removeChannel(consentChannel); };
   }, [active, loadMessages]);
 
   useEffect(() => {
@@ -534,7 +539,7 @@ export default function RiverSpaceSignals() {
               <Link href="/karma-zen-relax.html" className="ml-auto rounded-full bg-[#073b4c] px-3 py-2 text-xs font-semibold text-white">🪷 Karma Zen</Link>
             </div>
             <div className="flex shrink-0 flex-wrap items-center justify-between gap-2 border-b border-amber-200 bg-amber-50 px-3 py-2">
-              <div className="text-xs text-amber-950">{enigmaActive ? '🔐 ENIGMA attivo · CHRISTOPHER protegge questa conversazione su questo dispositivo' : myEnigmaConsent ? '🔐 Hai chiesto ENIGMA: in attesa del consenso dell’altra persona' : '🛡️ Chat normale · ENIGMA è facoltativo e richiede il consenso di entrambi'}</div>
+              <div className="text-xs text-amber-950">{enigmaActive ? '🔐 ENIGMA attivo · cifratura end-to-end in versione beta' : myEnigmaConsent ? '🔐 Hai chiesto ENIGMA: in attesa del consenso dell’altra persona' : '🛡️ Chat normale · ENIGMA è facoltativo e richiede il consenso di entrambi'}</div>
               {enigmaActive
                 ? <button type="button" disabled={enigmaBusy} onClick={disableEnigma} className="rounded-full border border-amber-700 px-3 py-1.5 text-xs font-semibold text-amber-900">Disattiva ENIGMA</button>
                 : <button type="button" disabled={enigmaBusy || !deviceInfo} onClick={enableEnigma} className="rounded-full bg-[#073b4c] px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-50">{enigmaBusy ? 'Attendo…' : myEnigmaConsent ? 'Consenso inviato' : 'Attiva ENIGMA'}</button>}
