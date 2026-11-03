@@ -16,6 +16,8 @@ export default function RiverSpaceSignals() {
   const [notice, setNotice] = useState('');
   const [busy, setBusy] = useState(false);
   const [emojiOpen, setEmojiOpen] = useState(false);
+  const [installPrompt, setInstallPrompt] = useState(null);
+  const [installMessage, setInstallMessage] = useState('');
 
   const activeConversation = conversations.find(c => c.id === active);
   const otherId = activeConversation
@@ -49,6 +51,34 @@ export default function RiverSpaceSignals() {
     if (e) throw e;
     setMessages(data || []);
   }, []);
+
+  useEffect(() => {
+    function beforeInstall(event) {
+      event.preventDefault();
+      setInstallPrompt(event);
+    }
+    function installed() {
+      setInstallPrompt(null);
+      setInstallMessage('RiverSpaceSignals è stata installata sul dispositivo.');
+    }
+    window.addEventListener('beforeinstallprompt', beforeInstall);
+    window.addEventListener('appinstalled', installed);
+    return () => {
+      window.removeEventListener('beforeinstallprompt', beforeInstall);
+      window.removeEventListener('appinstalled', installed);
+    };
+  }, []);
+
+  async function installApp() {
+    if (!installPrompt) {
+      setInstallMessage('Per installarla, apri il menu ⋮ di Chrome e scegli “Installa app” oppure “Aggiungi a schermata Home”.');
+      return;
+    }
+    installPrompt.prompt();
+    const choice = await installPrompt.userChoice;
+    setInstallMessage(choice?.outcome === 'accepted' ? 'Installazione avviata.' : 'Installazione non completata. Puoi riprovare.');
+    setInstallPrompt(null);
+  }
 
   useEffect(() => {
     let alive = true;
@@ -161,9 +191,10 @@ export default function RiverSpaceSignals() {
           <img src="/icons/riversignals.svg" alt="RiverSpaceSignals" className="h-10 w-10 rounded-full bg-white p-1" />
           <div><div className="text-lg font-bold tracking-wide">RiverSpaceSignals</div><div className="text-xs text-teal-100">YOUR SPACE · YOUR SIGNAL</div></div>
         </div>
-        <nav className="flex items-center gap-2"><Link href="/" className="rounded-full border border-white/40 px-3 py-2 text-sm hover:bg-white/10">RiverSpendShop</Link><Link href="/riverspend-social-network" className="rounded-full border border-white/40 px-3 py-2 text-sm hover:bg-white/10">Community</Link></nav>
+        <nav className="flex flex-wrap items-center justify-end gap-2"><button type="button" onClick={installApp} className="rounded-full bg-amber-300 px-3 py-2 text-sm font-bold text-slate-900 hover:bg-amber-200">📲 Installa Signals</button><Link href="/" className="rounded-full border border-white/40 px-3 py-2 text-sm hover:bg-white/10">RiverSpendShop</Link><Link href="/riverspend-social-network" className="rounded-full border border-white/40 px-3 py-2 text-sm hover:bg-white/10">Community</Link></nav>
       </header>
 
+      {installMessage && <div role="status" className="mx-auto mt-3 max-w-6xl rounded-xl bg-amber-100 px-4 py-3 text-sm text-amber-900">{installMessage}</div>}
       {error && <div role="alert" className="mx-auto mt-3 max-w-6xl rounded-xl bg-red-100 px-4 py-3 text-sm text-red-800">{error}</div>}
       {notice && <div role="status" className="mx-auto mt-3 max-w-6xl rounded-xl bg-emerald-100 px-4 py-3 text-sm text-emerald-800">{notice}</div>}
 
