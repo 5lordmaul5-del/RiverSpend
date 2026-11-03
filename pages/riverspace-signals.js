@@ -115,7 +115,8 @@ export default function RiverSpaceSignals() {
       if (isEnigmaCiphertext(message.body)) {
         try {
           const peerId = message.sender_id === user?.id ? otherId : message.sender_id;
-          row.displayBody = await decryptEnigmaText(supabase, user.id, conversationId, peerId, message.metadata?.enigma_peer_device_id, message.body);
+          const peerDeviceId = message.sender_id === user?.id ? message.metadata?.enigma_recipient_device_id : message.metadata?.enigma_sender_device_id;
+          row.displayBody = await decryptEnigmaText(supabase, user.id, conversationId, peerId, peerDeviceId, message.body);
         } catch { row.displayBody = '🔒 Messaggio ENIGMA: impossibile decifrare su questo dispositivo.'; }
       }
       if (message.attachment_path) {
@@ -127,7 +128,8 @@ export default function RiverSpaceSignals() {
               if (!response.ok) throw new Error('Download cifrato non riuscito');
               const encryptedBlob = await response.blob();
               const peerId = message.sender_id === user?.id ? otherId : message.sender_id;
-              const result = await decryptEnigmaFile(supabase, user.id, conversationId, peerId, message.metadata.enigma_peer_device_id, encryptedBlob, message.metadata.enigma_file);
+              const peerDeviceId = message.sender_id === user?.id ? message.metadata.enigma_recipient_device_id : message.metadata.enigma_sender_device_id;
+              const result = await decryptEnigmaFile(supabase, user.id, conversationId, peerId, peerDeviceId, encryptedBlob, message.metadata.enigma_file);
               media[message.id] = URL.createObjectURL(result.blob);
               row.attachment_name = result.meta.name; row.attachment_mime = result.meta.mime;
             } catch { row.displayBody = '🔒 Allegato ENIGMA: impossibile decifrare su questo dispositivo.'; }
@@ -290,7 +292,7 @@ export default function RiverSpaceSignals() {
     setBusy(true); setError('');
     const messageType = !file ? 'text' : file.type.startsWith('image/') ? 'image' : file.type.startsWith('audio/') ? 'audio' : file.type.startsWith('video/') ? 'video' : 'file';
     const safeName = file ? file.name.replace(/[^a-zA-Z0-9._-]/g, '_').slice(-100) : null;
-    const attachmentPath = file ? active + '/' + user.id + '/' + Date.now() + '-' + safeName : null;
+    const attachmentPath = file ? active + '/' + user.id + '/' + Date.now() + '-' + (enigmaActive ? 'enigma.bin' : safeName) : null;
     const fallbackBody = messageType === 'image' ? 'Immagine' : messageType === 'audio' ? 'Messaggio vocale' : messageType === 'video' ? 'Video messaggio' : 'Documento';
     let storedBody = body || fallbackBody, uploadFile = file;
     let messageMetadata = file ? { upload_status: 'uploading' } : {};
@@ -302,7 +304,7 @@ export default function RiverSpaceSignals() {
         const peerDeviceId = peerKeys?.[0]?.device_id;
         if (!peerDeviceId) throw new Error('Il destinatario deve aprire Signals su un dispositivo per configurare ENIGMA.');
         storedBody = await encryptEnigmaText(supabase, user.id, active, otherId, peerDeviceId, storedBody);
-        messageMetadata = { enigma: true, enigma_peer_device_id: deviceInfo?.deviceId, upload_status: file ? 'uploading' : 'sent' };
+        messageMetadata = { enigma: true, enigma_sender_device_id: deviceInfo?.deviceId, enigma_recipient_device_id: peerDeviceId, upload_status: file ? 'uploading' : 'sent' };
         if (file) {
           const encrypted = await encryptEnigmaFile(supabase, user.id, active, otherId, peerDeviceId, file);
           uploadFile = new File([encrypted.blob], 'enigma.bin', { type: 'application/octet-stream' });
@@ -363,10 +365,20 @@ export default function RiverSpaceSignals() {
     setBusy(true); setError('');
     navigator.geolocation.getCurrentPosition(async position => {
       const { latitude, longitude } = position.coords;
-      const body = '📍 La mia posizione: https://www.google.com/maps?q=' + latitude + ',' + longitude;
+      let body = '📍 La mia posizione: https://www.google.com/maps?q=' + latitude + ',' + longitude;
+      let metadata = { latitude, longitude, accuracy_m: Math.round(position.coords.accuracy) };
+      if (enigmaActive) {
+        try {
+          const { data: peerKeys, error: keyError } = await supabase.from('rs_chat_device_keys').select('device_id').eq('user_id', otherId);
+          if (keyError) throw keyError;
+          const peerDeviceId = peerKeys?.[0]?.device_id;
+          if (!peerDeviceId) throw new Error('Chiave ENIGMA del destinatario non disponibile.');
+          body = await encryptEnigmaText(supabase, user.id, active, otherId, peerDeviceId, body);
+          metadata = { enigma: true, enigma_sender_device_id: deviceInfo?.deviceId, enigma_recipient_device_id: peerDeviceId };
+        } catch (e) { setBusy(false); setError('Posizione non inviata: ' + e.message); return; }
+      }
       const { error: sendError } = await supabase.from('rs_chat_messages').insert({
-        conversation_id: active, sender_id: user.id, body, message_type: 'location',
-        metadata: { latitude, longitude, accuracy_m: Math.round(position.coords.accuracy) }
+        conversation_id: active, sender_id: user.id, body, message_type: 'location', metadata
       });
       setBusy(false);
       if (sendError) setError(sendError.message);
@@ -377,7 +389,19 @@ export default function RiverSpaceSignals() {
   async function sendSticker(sticker) {
     if (!active || !user || busy) return;
     setBusy(true); setError('');
-    const { error: e } = await supabase.from('rs_chat_messages').insert({ conversation_id: active, sender_id: user.id, body: sticker, message_type: 'sticker', metadata: { sticker } });
+    let body = sticker;
+    let metadata = { sticker };
+    if (enigmaActive) {
+      try {
+        const { data: peerKeys, error: keyError } = await supabase.from('rs_chat_device_keys').select('device_id').eq('user_id', otherId);
+        if (keyError) throw keyError;
+        const peerDeviceId = peerKeys?.[0]?.device_id;
+        if (!peerDeviceId) throw new Error('Chiave ENIGMA del destinatario non disponibile.');
+        body = await encryptEnigmaText(supabase, user.id, active, otherId, peerDeviceId, sticker);
+        metadata = { enigma: true, enigma_sender_device_id: deviceInfo?.deviceId, enigma_recipient_device_id: peerDeviceId };
+      } catch (e) { setBusy(false); setStickerOpen(false); setError('Sticker non inviato: ' + e.message); return; }
+    }
+    const { error: e } = await supabase.from('rs_chat_messages').insert({ conversation_id: active, sender_id: user.id, body, message_type: 'sticker', metadata });
     setBusy(false); setStickerOpen(false);
     if (e) setError(e.message); else await Promise.all([loadMessages(active), loadConversations(user.id)]);
   }
@@ -389,11 +413,21 @@ export default function RiverSpaceSignals() {
     const amount = Number(String(moneyAmount).replace(',', '.'));
     if (!active || !user || busy || !Number.isFinite(amount) || amount <= 0 || amount > 10000) return;
     const labels = { send: '💸 Proposta di invio denaro', request: '💰 Richiesta di denaro', donate: '🎁 Proposta di donazione', receive_donation: '🙏 Richiesta di donazione' };
-    const body = labels[moneyAction] + '\\nImporto: € ' + amount.toFixed(2) + (moneyReason.trim() ? '\\nCausale: ' + moneyReason.trim() : '') + '\\n\\nStato: da concordare. Nessun pagamento è stato eseguito.';
+    let body = labels[moneyAction] + '\\nImporto: € ' + amount.toFixed(2) + (moneyReason.trim() ? '\\nCausale: ' + moneyReason.trim() : '') + '\\n\\nStato: da concordare. Nessun pagamento è stato eseguito.';
+    let metadata = { kind: 'money_intent', action: moneyAction, amount, currency: 'EUR', reason: moneyReason.trim(), status: 'awaiting_provider' };
+    if (enigmaActive) {
+      try {
+        const { data: peerKeys, error: keyError } = await supabase.from('rs_chat_device_keys').select('device_id').eq('user_id', otherId);
+        if (keyError) throw keyError;
+        const peerDeviceId = peerKeys?.[0]?.device_id;
+        if (!peerDeviceId) throw new Error('Chiave ENIGMA del destinatario non disponibile.');
+        body = await encryptEnigmaText(supabase, user.id, active, otherId, peerDeviceId, body);
+        metadata = { enigma: true, enigma_sender_device_id: deviceInfo?.deviceId, enigma_recipient_device_id: peerDeviceId };
+      } catch (e) { setBusy(false); setError('Proposta non inviata: ' + e.message); return; }
+    }
     setBusy(true); setError('');
     const { error: e1 } = await supabase.from('rs_chat_messages').insert({
-      conversation_id: active, sender_id: user.id, body, message_type: 'text',
-      metadata: { kind: 'money_intent', action: moneyAction, amount, currency: 'EUR', reason: moneyReason.trim(), status: 'awaiting_provider' }
+      conversation_id: active, sender_id: user.id, body, message_type: 'text', metadata
     });
     setBusy(false);
     if (e1) { setError('Non è stato possibile inviare la proposta: ' + e1.message); return; }
@@ -526,7 +560,7 @@ export default function RiverSpaceSignals() {
                 <div className={`max-w-[85%] rounded-2xl px-4 py-2 shadow-sm md:max-w-[70%] ${m.sender_id === user.id ? 'rounded-br-sm bg-[#087e8b] text-white' : 'rounded-bl-sm bg-white text-slate-800'}`}>
                   {m.metadata?.upload_status === 'uploading' && <div className="mb-2 text-xs opacity-80">⏳ Invio del file in corso…</div>}
                   {m.metadata?.upload_status === 'failed' && <div className="mb-2 text-xs text-red-600">⚠️ Invio del file non riuscito</div>}
-                  {m.message_type === 'sticker' && <div className="py-1 text-center text-6xl">{m.metadata?.sticker || m.body}</div>}
+                  {m.message_type === 'sticker' && <div className="py-1 text-center text-6xl">{m.displayBody || m.body}</div>}
                   {m.message_type === 'image' && mediaUrls[m.id] && <a href={mediaUrls[m.id]} target="_blank" rel="noreferrer"><img src={mediaUrls[m.id]} alt={m.attachment_name || 'Immagine condivisa'} className="mb-2 max-h-64 max-w-full rounded-xl object-contain" /></a>}
                   {m.message_type === 'audio' && mediaUrls[m.id] && <audio controls preload="metadata" src={mediaUrls[m.id]} className="mb-2 max-w-full" />}
                   {m.message_type === 'video' && mediaUrls[m.id] && <video controls playsInline preload="metadata" src={mediaUrls[m.id]} className="mb-2 max-h-64 max-w-full rounded-xl" />}
