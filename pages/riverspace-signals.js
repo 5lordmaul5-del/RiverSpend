@@ -260,6 +260,7 @@ export default function RiverSpaceSignals() {
     <Head>
       <title>RiverSpaceSignals · RiverSpend</title>
       <meta name="description" content="Messaggi privati RiverSpaceSignals" />
+      <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
       <meta name="theme-color" content="#063b4b" />
       <link rel="icon" href="/icons/riversignals.svg" type="image/svg+xml" />
       <link rel="apple-touch-icon" href="/icons/riverspace-signals-app.jpg" />
