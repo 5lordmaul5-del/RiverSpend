@@ -11,6 +11,7 @@ const modules=[
  ["broadcast","📡","RSBroadcast","Video pubblicati e pubblico","analytics"],
  ["ads","📢","RS Ads","Campagne, inserzioni e pagamenti","analytics"],
  ["security","🛡️","Sicurezza","Ruoli e attività","security"],
+ ["core","🧠","RiverSpend Core","API centrali e integrazioni · solo CEO","core"],
  ["treasury","🏦","Treasury","Incassi, accantonamenti e pagamenti","finance"],
  ["fiscal","🧾","Archivio fiscale","Documenti e contabilità per il commercialista","fiscal"],
  ["hr","👥","Personale e buste paga","Organico, turni e paghe da verificare","hr"],
@@ -152,5 +153,34 @@ export default function RSPC(){
  <div className="panel wide"><h3>Ultimi movimenti</h3>{(d.warehouseMovements||[]).length?(d.warehouseMovements||[]).slice(0,30).map(m=><div className="row" key={m.id}><span><b>{m.movement_type} · {m.quantity_delta>0?"+":""}{m.quantity_delta}</b><small>{m.reason||m.reference_type||"Movimento registrato"} · {new Date(m.created_at).toLocaleString("it-IT")}</small></span></div>):<p>Nessun movimento registrato.</p>}</div>
  <div className="panel wide"><small>Le quantità mostrate sono solo quelle del nuovo registro. Non usarle per evadere ordini finché il collegamento automatico e la gestione delle riserve non sono stati verificati.</small></div>
  </div>}
- {tab==="fiscal"&&<div className="panel"><h2>🧾 Archivio fiscale e contabilità</h2><p>Area protetta in consultazione, collegata alle tabelle fiscali Supabase. Non emette ancora fatture né crea pacchetti PDF/ZIP: queste funzioni saranno aggiunte dopo verifica e test.</p><a href="/fiscal">Apri archivio fiscale RSPC →</a></div>}<div className="panel roadmap"><h2>🧩 Estensione futura</h2><p>Nuovo programma? Si aggiunge come modulo RSPC con proprie metriche ed eventi.</p><div className="chips"><span>Shop</span><span>Stream</span><span>Park</span><span>Pay</span><span>Box</span><span>Music</span><span>Broadcast</span><span>+ NUOVO</span></div></div></section></div></main>
+ {tab==="core"&&<div className="grid wide">
+ <div className="panel wide" style={{borderLeft:"5px solid #0b8fa8"}}>
+  <div style={{fontSize:12,letterSpacing:2,color:"#0b8fa8",fontWeight:800}}>CENTRALE TECNICA · ACCESSO CEO</div>
+  <h2>🧠 RiverSpend Core</h2>
+  <p>Il motore centrale delle integrazioni RiverSpend. Le credenziali restano sul server principale e non vengono mai mostrate in RSPC né inserite nell'app.</p>
+  <div className="row"><b>Stato del modulo Core</b><span style={{color:"#168454",fontWeight:800}}>STRUTTURA CREATA</span></div>
+  <div className="row"><b>Posizione</b><span>Backend RiverSpend · server</span></div>
+  <div className="row"><b>Controllo</b><span>RSPC · CEO</span></div>
+  <small>Questa schermata è il pannello di controllo e consultazione. Non visualizza né modifica chiavi segrete.</small>
+ </div>
+ <div className="panel wide"><h3>🔌 Registro integrazioni</h3><p>Servizi predisposti nel registro centrale. La presenza nel registro non significa che il servizio sia già configurato, approvato o operativo.</p>
+  {[
+   ["🗄️","Supabase","Database e autenticazione","Shop · Signals · Pay · Box · RSPC"],
+   ["🅿️","PayPal","Pagamenti e checkout","Pay · Shop · Signals"],
+   ["💳","SumUp","Pagamenti con carta","Pay · Shop"],
+   ["🔔","Web Push","Notifiche","Signals · Shop · Park"],
+   ["🤖","River AI","Servizi AI","River AI · Signals · Shop"]
+  ].map(([icon,name,description,services])=><div className="row" key={name}><span><b>{icon} {name}</b><small>{description}</small><small>Settori: {services}</small></span><span style={{fontSize:12,color:"#718a91"}}>Nel registro</span></div>)}
+ </div>
+ <div className="panel wide"><h3>🔐 Regole di sicurezza</h3>
+  <ul><li>Le chiavi private restano esclusivamente nelle variabili server Vercel.</li><li>Nessuna chiave service-role o segreto viene inviata al browser o salvata nell'app RSPC.</li><li>Ogni provider mantiene autorizzazioni, webhook e verifiche indipendenti.</li><li>I pagamenti si considerano conclusi solo dopo conferma verificata del provider.</li></ul>
+ </div>
+ <div className="panel wide"><h3>🧭 Prossimi collegamenti</h3>
+  <div className="row"><b>1. PayPal e SumUp</b><span>Da migrare agli adattatori Core e testare</span></div>
+  <div className="row"><b>2. RiverSpaceSignals</b><span>Collegamento servizi autorizzati</span></div>
+  <div className="row"><b>3. RiverSpendShop</b><span>Checkout e servizi condivisi</span></div>
+  <div className="row"><b>4. RiverSpend Box e altre app</b><span>Integrazione progressiva</span></div>
+  <p><small>Le integrazioni saranno abilitate una alla volta, dopo test e verifica delle credenziali. Nessun pagamento reale viene attivato da questa schermata.</small></p>
+ </div>
+</div>}{tab==="fiscal"&&<div className="panel"><h2>🧾 Archivio fiscale e contabilità</h2><p>Area protetta in consultazione, collegata alle tabelle fiscali Supabase. Non emette ancora fatture né crea pacchetti PDF/ZIP: queste funzioni saranno aggiunte dopo verifica e test.</p><a href="/fiscal">Apri archivio fiscale RSPC →</a></div>}<div className="panel roadmap"><h2>🧩 Estensione futura</h2><p>Nuovo programma? Si aggiunge come modulo RSPC con proprie metriche ed eventi.</p><div className="chips"><span>Shop</span><span>Stream</span><span>Park</span><span>Pay</span><span>Box</span><span>Music</span><span>Broadcast</span><span>+ NUOVO</span></div></div></section></div></main>
 }
