@@ -332,11 +332,11 @@ export default function RiverSpaceSignals() {
       const { error: uploadError } = await supabase.storage.from('signals-private-media')
         .upload(attachmentPath, uploadFile, { contentType: uploadFile.type || 'application/octet-stream', upsert: false });
       if (uploadError) {
-        await supabase.from('rs_chat_messages').update({ metadata: { upload_status: 'failed', upload_error: uploadError.message } }).eq('id', inserted.id);
+        await supabase.from('rs_chat_messages').update({ metadata: { ...messageMetadata, upload_status: 'failed', upload_error: uploadError.message } }).eq('id', inserted.id);
         setError('Il messaggio è visibile ma il file non è stato caricato: ' + uploadError.message);
       } else {
         const { error: finishError } = await supabase.from('rs_chat_messages').update({
-          attachment_path: attachmentPath, metadata: { upload_status: 'sent' }
+          attachment_path: attachmentPath, metadata: { ...messageMetadata, upload_status: 'sent' }
         }).eq('id', inserted.id);
         if (finishError) setError('File caricato, ma non è stato possibile completare il messaggio: ' + finishError.message);
       }
