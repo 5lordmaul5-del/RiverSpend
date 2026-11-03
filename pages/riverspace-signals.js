@@ -47,7 +47,7 @@ export default function RiverSpaceSignals() {
   const loadMessages = useCallback(async (conversationId) => {
     if (!conversationId) return setMessages([]);
     const { data, error: e } = await supabase.from('rs_chat_messages')
-      .select('id,conversation_id,sender_id,body,created_at,read_at')
+      .select('id,conversation_id,sender_id,body,created_at,read_at,message_type,attachment_path,attachment_name,attachment_mime,attachment_size,metadata')
       .eq('conversation_id', conversationId)
       .order('created_at', { ascending: true })
       .limit(300);
