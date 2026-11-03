@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 
 const STORAGE_KEY = 'riverspend-cookie-preferences-v1';
 
@@ -220,6 +221,8 @@ function savePreferences(preferences) {
 }
 
 export default function CookieConsent() {
+  const router = useRouter();
+  const isSignals = router.pathname === '/riverspace-signals';
   const [language, setLanguage] = useState('it');
   const [preferences, setPreferences] = useState(null);
   const [visible, setVisible] = useState(false);
@@ -240,7 +243,12 @@ export default function CookieConsent() {
     }
     const onLanguageChange = () => updateLanguage();
     window.addEventListener('riverspend:language-change', onLanguageChange);
-    return () => window.removeEventListener('riverspend:language-change', onLanguageChange);
+    const onOpenSettings = () => openSettings();
+    window.addEventListener('riverspend:open-cookie-settings', onOpenSettings);
+    return () => {
+      window.removeEventListener('riverspend:language-change', onLanguageChange);
+      window.removeEventListener('riverspend:open-cookie-settings', onOpenSettings);
+    };
   }, []);
 
   const t = COPY[language] || COPY.en;
@@ -279,14 +287,14 @@ export default function CookieConsent() {
 
   return (
     <>
-      <button
+      {!isSignals && <button
         type="button"
         onClick={openSettings}
         aria-label={t.settings}
         style={{ position: 'fixed', zIndex: 9997, left: 12, bottom: 'calc(76px + env(safe-area-inset-bottom, 0px))', border: '1px solid #b7dcd7', borderRadius: 999, padding: '9px 13px', background: '#fffdf8', color: '#155c60', fontSize: 12, fontWeight: 700, boxShadow: '0 3px 14px #12343a18', cursor: 'pointer' }}
       >
         {t.settings}
-      </button>
+      </button>}
 
       {visible && (
         <div role="presentation" style={{ position: 'fixed', inset: 0, zIndex: 9998, display: 'flex', alignItems: 'flex-end', justifyContent: 'center', padding: 12, background: 'rgba(10,28,32,.45)' }}>
