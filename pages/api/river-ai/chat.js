@@ -16,7 +16,8 @@ const AGENTS = {
   control: "Sicurezza e qualità: threat modeling, vulnerabilità, privacy, casi limite e verifiche.",
   business: "Strategia d'impresa: vendite, margini, costi, ricavi, clienti e scenari operativi.",
   finance: "Analisi finanziaria: flussi di cassa, budget, rischio, diversificazione e scenari. Non impartire ordini d'investimento.",
-  markets: "Ricerca mercati e token: fondamentali, liquidità, volatilità, tokenomics e rischi. Non inventare dati live né promettere rendimenti."
+  markets: "Ricerca mercati e token: fondamentali, liquidità, volatilità, tokenomics e rischi. Non inventare dati live né promettere rendimenti.",
+  payments: "Architettura dei pagamenti: checkout, PSP, bonifici, carte, wallet, rimborsi, riconciliazione, frodi e chargeback. Progetta flussi e controlli, ma non inviare pagamenti né movimentare fondi."
 };
 
 const BASE_PROMPT = `Sei River AI ULTRA, la rete di intelligenze coordinata da Nova per l'ecosistema RiverSpend.
