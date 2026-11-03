@@ -325,6 +325,8 @@ export default function RiverSpaceSignals() {
               {messages.length === 0 && <div className="mx-auto mt-12 max-w-xs text-center text-sm text-slate-400">Questa conversazione è pronta. Invia il tuo primo messaggio 👋</div>}
               {messages.map(m => <div key={m.id} className={`flex ${m.sender_id === user.id ? 'justify-end' : 'justify-start'}`}>
                 <div className={`max-w-[85%] rounded-2xl px-4 py-2 shadow-sm md:max-w-[70%] ${m.sender_id === user.id ? 'rounded-br-sm bg-[#087e8b] text-white' : 'rounded-bl-sm bg-white text-slate-800'}`}>
+                  {m.metadata?.upload_status === 'uploading' && <div className="mb-2 text-xs opacity-80">⏳ Invio del file in corso…</div>}
+                  {m.metadata?.upload_status === 'failed' && <div className="mb-2 text-xs text-red-600">⚠️ Invio del file non riuscito</div>}
                   {m.message_type === 'sticker' && <div className="py-1 text-center text-6xl">{m.metadata?.sticker || m.body}</div>}
                   {m.message_type === 'image' && mediaUrls[m.id] && <a href={mediaUrls[m.id]} target="_blank" rel="noreferrer"><img src={mediaUrls[m.id]} alt={m.attachment_name || 'Immagine condivisa'} className="mb-2 max-h-64 max-w-full rounded-xl object-contain" /></a>}
                   {m.message_type === 'audio' && mediaUrls[m.id] && <audio controls preload="metadata" src={mediaUrls[m.id]} className="mb-2 max-w-full" />}
