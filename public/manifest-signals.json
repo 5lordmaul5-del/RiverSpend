@@ -1,0 +1,27 @@
+{
+  "id": "/riverspace-signals",
+  "name": "RiverSpaceSignals",
+  "short_name": "Signals",
+  "description": "Messaggi privati RiverSpaceSignals",
+  "start_url": "/riverspace-signals",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#eaf7f7",
+  "theme_color": "#073b4c",
+  "lang": "it",
+  "icons": [
+    {
+      "src": "/icons/riverspace-signals-app.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/riversignals.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
