@@ -16,6 +16,7 @@ export default function RiverSpaceSignals() {
   const [notice, setNotice] = useState('');
   const [busy, setBusy] = useState(false);
   const [emojiOpen, setEmojiOpen] = useState(false);
+  const [attachMenuOpen, setAttachMenuOpen] = useState(false);
   const [installPrompt, setInstallPrompt] = useState(null);
   const [installMessage, setInstallMessage] = useState('');
   const [attachment, setAttachment] = useState(null);
@@ -292,9 +293,14 @@ export default function RiverSpaceSignals() {
               </div>)}
             </div>
             <form onSubmit={sendMessage} className="relative flex items-end gap-1.5 border-t border-slate-200 bg-white p-2 md:gap-2 md:p-3">
-              <label className="cursor-pointer rounded-xl bg-slate-100 px-2 py-2 text-lg md:px-3 md:py-3 md:text-xl" title="Allega immagini o documenti">📎<input type="file" className="hidden" accept="image/*,.pdf,.txt,.doc,.docx,.xls,.xlsx" onChange={e => setAttachment(e.target.files?.[0] || null)} /></label>
-              <button type="button" onClick={sendLocation} className="rounded-xl bg-slate-100 px-2 py-2 text-lg md:px-3 md:py-3 md:text-xl" title="Invia la posizione GPS">📍</button>
-              <button type="button" onClick={() => setEmojiOpen(v => !v)} className="rounded-xl bg-amber-50 px-2 py-2 text-lg md:px-3 md:py-3 md:text-xl" aria-label="Apri emoji e sticker">😊</button>
+              <button type="button" onClick={() => { setAttachMenuOpen(v => !v); setEmojiOpen(false); }} className="rounded-xl bg-slate-100 px-2 py-2 text-lg md:px-3 md:py-3 md:text-xl" title="Apri allegati e condivisione" aria-label="Apri menu allegati">📎</button>
+              {attachMenuOpen && <div className="absolute bottom-16 left-2 z-20 grid w-[min(310px,calc(100vw-24px))] grid-cols-2 gap-2 rounded-2xl border border-slate-200 bg-white p-3 shadow-2xl">
+                <label className="flex cursor-pointer items-center gap-2 rounded-xl p-3 text-left text-sm hover:bg-teal-50">🖼️ <span>Foto e immagini<input type="file" accept="image/jpeg,image/png,image/webp,image/gif" className="hidden" onChange={e => { setAttachment(e.target.files?.[0] || null); setAttachMenuOpen(false); }} /></span></label>
+                <label className="flex cursor-pointer items-center gap-2 rounded-xl p-3 text-left text-sm hover:bg-teal-50">📄 <span>Documenti<input type="file" accept=".pdf,.txt,.doc,.docx,.xls,.xlsx" className="hidden" onChange={e => { setAttachment(e.target.files?.[0] || null); setAttachMenuOpen(false); }} /></span></label>
+                <button type="button" onClick={() => { setAttachMenuOpen(false); setEmojiOpen(true); }} className="rounded-xl p-3 text-left text-sm hover:bg-teal-50">🎨 Sticker ed emoji</button>
+                <button type="button" onClick={() => { setAttachMenuOpen(false); sendLocation(); }} className="rounded-xl p-3 text-left text-sm hover:bg-teal-50">📍 Posizione GPS</button>
+                <div className="col-span-2 border-t border-slate-100 pt-2 text-xs text-slate-400">Video messaggi, vocali e chiamate: in sviluppo.</div>
+              </div>}
               {emojiOpen && <div className="absolute bottom-16 left-3 z-10 grid grid-cols-6 gap-1 rounded-2xl border bg-white p-3 shadow-xl">{['😀','😂','🥰','😍','😉','😊','❤️','🔥','👍','🙏','🎉','🌈','🌊','🪷','✨','💚','💬','🚀','👋','🤝','💎','🎁','🌟','😎','🤗','🥳','💌','🌺','🐠','🚀'].map(x => <button key={x} type="button" onClick={() => addEmoji(x)} className="rounded-lg p-1 text-xl hover:bg-slate-100">{x}</button>)}</div>}
               {attachment && <span className="max-w-28 truncate rounded-lg bg-teal-50 px-2 py-2 text-xs text-teal-900">{attachment.name} <button type="button" onClick={() => setAttachment(null)} aria-label="Rimuovi allegato">×</button></span>}
               <textarea value={draft} onChange={e => setDraft(e.target.value)} rows={1} placeholder="Scrivi un messaggio…" className="max-h-24 min-h-10 flex-1 resize-y rounded-xl bg-slate-100 px-3 py-2 text-sm md:max-h-32 md:min-h-12 md:px-4 md:py-3 outline-none focus:ring-2 focus:ring-teal-500" />
