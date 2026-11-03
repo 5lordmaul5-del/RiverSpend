@@ -171,29 +171,38 @@ export default function RiverSpaceSignals() {
   async function sendMessage(e) {
     e.preventDefault();
     const body = draft.trim();
-    if ((!body && !attachment) || !active || !user || busy) return;
-    setBusy(true); setError(''); setUploading(Boolean(attachment));
-    let attachmentPath = null;
-    let messageType = 'text';
-    if (attachment) {
-      const safeName = attachment.name.replace(/[^a-zA-Z0-9._-]/g, '_').slice(-100);
-      attachmentPath = active + '/' + user.id + '/' + Date.now() + '-' + safeName;
-      const { error: uploadError } = await supabase.storage.from('signals-private-media')
-        .upload(attachmentPath, attachment, { contentType: attachment.type || 'application/octet-stream', upsert: false });
-      if (uploadError) {
-        setBusy(false); setUploading(false); setError('Caricamento allegato non riuscito: ' + uploadError.message); return;
-      }
-      messageType = attachment.type.startsWith('image/') ? 'image' : attachment.type.startsWith('audio/') ? 'audio' : attachment.type.startsWith('video/') ? 'video' : 'file';
-    }
-    const { error: sendError } = await supabase.from('rs_chat_messages').insert({
-      conversation_id: active, sender_id: user.id, body: body || (messageType === 'image' ? 'Immagine' : messageType === 'audio' ? 'Messaggio vocale' : messageType === 'video' ? 'Video messaggio' : 'Documento'),
-      message_type: messageType, attachment_path: attachmentPath,
-      attachment_name: attachment?.name || null, attachment_mime: attachment?.type || null,
-      attachment_size: attachment?.size || null
-    });
-    setBusy(false); setUploading(false);
-    if (sendError) { setError(sendError.message); return; }
+    const file = attachment;
+    if ((!body && !file) || !active || !user || busy) return;
+    setBusy(true); setError('');
+    const messageType = !file ? 'text' : file.type.startsWith('image/') ? 'image' : file.type.startsWith('audio/') ? 'audio' : file.type.startsWith('video/') ? 'video' : 'file';
+    const safeName = file ? file.name.replace(/[^a-zA-Z0-9._-]/g, '_').slice(-100) : null;
+    const attachmentPath = file ? active + '/' + user.id + '/' + Date.now() + '-' + safeName : null;
+    const fallbackBody = messageType === 'image' ? 'Immagine' : messageType === 'audio' ? 'Messaggio vocale' : messageType === 'video' ? 'Video messaggio' : 'Documento';
+    const { data: inserted, error: insertError } = await supabase.from('rs_chat_messages').insert({
+      conversation_id: active, sender_id: user.id, body: body || fallbackBody,
+      message_type: messageType, attachment_path: null,
+      attachment_name: file?.name || null, attachment_mime: file?.type || null,
+      attachment_size: file?.size || null,
+      metadata: file ? { upload_status: 'uploading' } : {}
+    }).select('id').single();
+    if (insertError) { setBusy(false); setError(insertError.message); return; }
     setDraft(''); setAttachment(null);
+    await Promise.all([loadMessages(active), loadConversations(user.id)]);
+    if (file) {
+      setUploading(true);
+      const { error: uploadError } = await supabase.storage.from('signals-private-media')
+        .upload(attachmentPath, file, { contentType: file.type || 'application/octet-stream', upsert: false });
+      if (uploadError) {
+        await supabase.from('rs_chat_messages').update({ metadata: { upload_status: 'failed', upload_error: uploadError.message } }).eq('id', inserted.id);
+        setError('Il messaggio è visibile ma il file non è stato caricato: ' + uploadError.message);
+      } else {
+        const { error: finishError } = await supabase.from('rs_chat_messages').update({
+          attachment_path: attachmentPath, metadata: { upload_status: 'sent' }
+        }).eq('id', inserted.id);
+        if (finishError) setError('File caricato, ma non è stato possibile completare il messaggio: ' + finishError.message);
+      }
+    }
+    setBusy(false); setUploading(false);
     await Promise.all([loadMessages(active), loadConversations(user.id)]);
   }
 
