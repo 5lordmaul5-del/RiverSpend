@@ -12,6 +12,7 @@ const APP_MANIFESTS = [
   { match: '/river-spend-stream', href: '/manifest-streaming.json', color: '#7c3aed' },
   { match: '/park', href: '/manifest-park.json', color: '#0891b2' },
   { match: '/rs-control-center', href: '/manifest-panelcontrol.json', color: '#0f172a' },
+  { match: '/riverspace-signals', href: '/manifest-signals.json', color: '#073b4c' },
 ];
 
 export default function App({ Component, pageProps }) {
