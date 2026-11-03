@@ -222,7 +222,7 @@ function savePreferences(preferences) {
 
 export default function CookieConsent() {
   const router = useRouter();
-  const isSignals = router.pathname === '/riverspace-signals';
+  const isCommunicationApp = router.pathname === '/riverspace-signals' || router.pathname === '/river-ai';
   const [language, setLanguage] = useState('it');
   const [preferences, setPreferences] = useState(null);
   const [visible, setVisible] = useState(false);
@@ -287,7 +287,7 @@ export default function CookieConsent() {
 
   return (
     <>
-      {!isSignals && <button
+      {!isCommunicationApp && <button
         type="button"
         onClick={openSettings}
         aria-label={t.settings}
