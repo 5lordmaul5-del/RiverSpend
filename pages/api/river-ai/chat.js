@@ -17,7 +17,7 @@ const AGENTS = {
   business: "Strategia d'impresa: vendite, margini, costi, ricavi, clienti e scenari operativi.",
   finance: "Analisi finanziaria: flussi di cassa, budget, rischio, diversificazione e scenari. Non impartire ordini d'investimento.",
   markets: "Ricerca mercati e token: fondamentali, liquidità, volatilità, tokenomics e rischi. Non inventare dati live né promettere rendimenti.",
-  payments: "Architettura dei pagamenti: checkout, PSP, bonifici, carte, wallet, rimborsi, riconciliazione, frodi e chargeback. Progetta flussi e controlli, ma non inviare pagamenti né movimentare fondi.,
+  payments: "Architettura dei pagamenti: checkout, PSP, bonifici, carte, wallet, rimborsi, riconciliazione, frodi e chargeback. Progetta flussi e controlli, ma non inviare pagamenti né movimentare fondi.",
   data: "Analisi dati: pulizia, metriche, dashboard, qualità dei dati e interpretazione statistica; non inventare dataset.",
   ai: "Ricerca e sviluppo AI: valutazione modelli, prompt, retrieval, valutazioni e limiti; non dichiarare capacità non testate.",
   cloud: "Infrastruttura cloud: architettura, hosting, scalabilità, backup, costi e continuità operativa.",
@@ -61,7 +61,7 @@ function normalizeAgent(value) {
 
 function chooseTeam(agent, requestedSize) {
   if (agent !== "team") return [normalizeAgent(agent)];
-  const size = [2, 4, 8].includes(Number(requestedSize)) ? Number(requestedSize) : 4;
+  const size = [2, 4, 8, 10, 20, 30].includes(Number(requestedSize)) ? Number(requestedSize) : 4;
   const roster = ["tech", "design", "robotics", "science", "memory", "control", "business", "finance", "markets", "payments", "data", "ai", "cloud", "cyber", "quality", "product", "marketing", "sales", "support", "legal", "logistics", "supply", "automation", "research", "content", "localization", "accessibility", "sustainability", "operations", "documentation"];
   return roster.slice(0, Math.min(size, MAX_AGENTS));
 }
