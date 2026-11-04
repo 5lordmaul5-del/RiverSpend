@@ -218,8 +218,6 @@ export default async function handler(req, res) {
 
     if (agent === "team") {
       // La Squadra usa un contesto compatto per rispettare il limite TPM del provider.
-      const teamHistory = safeMessages.slice(-6);
-      const teamMemory = memoryContext.slice(0, 1200);
       const teamHistory = safeMessages.slice(-4);
       const teamMemory = memoryContext.slice(0, 900);
       const reports = await runWithLimit(team, MAX_PARALLEL, async (specialist) => {
