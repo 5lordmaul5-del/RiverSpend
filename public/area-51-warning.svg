@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 650" role="img" aria-labelledby="t d">
+<title id="t">Area 51 Warning Restricted Area</title><desc id="d">Industrial warning sign with AREA 51, WARNING, RESTRICTED AREA and NO TRESPASSING lettering, distressed yellow and black hazard stripes.</desc>
+<defs>
+ <linearGradient id="yellow" x2="0" y2="1"><stop stop-color="#ffe34a"/><stop offset="1" stop-color="#c79b20"/></linearGradient>
+ <linearGradient id="rust" x2="0" y2="1"><stop stop-color="#543321"/><stop offset="1" stop-color="#1b1512"/></linearGradient>
+ <pattern id="hazard" width="72" height="72" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="36" height="72" fill="#f5c900"/><rect x="36" width="36" height="72" fill="#111"/></pattern>
+ <filter id="rough"><feTurbulence type="fractalNoise" baseFrequency=".65" numOctaves="2" seed="9"/><feColorMatrix values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 .16 0"/></filter>
+</defs>
+<rect width="1200" height="650" rx="16" fill="url(#rust)"/>
+<rect x="8" y="8" width="1184" height="634" rx="12" fill="none" stroke="#9a7652" stroke-width="12"/>
+<rect x="22" y="22" width="1156" height="525" fill="#171310"/>
+<rect x="470" y="22" width="708" height="525" fill="url(#yellow)"/>
+<text x="245" y="180" fill="#f5f0df" font-family="Impact,Arial Black,sans-serif" font-size="112" font-weight="900" text-anchor="middle" letter-spacing="-3">AREA</text>
+<text x="245" y="450" fill="#f5f0df" font-family="Impact,Arial Black,sans-serif" font-size="340" font-weight="900" text-anchor="middle">51</text>
+<text x="825" y="170" fill="#171310" font-family="Impact,Arial Black,sans-serif" font-size="116" font-weight="900" text-anchor="middle">WARNING</text>
+<path d="M530 205H1120 M530 355H1120" stroke="#d32620" stroke-width="12"/>
+<text x="825" y="310" fill="#c51f19" font-family="Impact,Arial Black,sans-serif" font-size="62" font-weight="900" text-anchor="middle">RESTRICTED AREA</text>
+<text x="825" y="425" fill="#171310" font-family="Arial,sans-serif" font-size="46" font-weight="900" text-anchor="middle">AUTHORIZED PERSONNEL ONLY</text>
+<rect x="22" y="485" width="1156" height="62" fill="#d91f18"/>
+<text x="600" y="535" fill="#fff4e6" font-family="Impact,Arial Black,sans-serif" font-size="56" font-weight="900" text-anchor="middle" letter-spacing="5">NO TRESPASSING</text>
+<rect x="22" y="547" width="1156" height="90" fill="url(#hazard)"/>
+<rect width="1200" height="650" rx="16" filter="url(#rough)" opacity=".45"/>
+</svg>
