@@ -4,7 +4,7 @@ const MODEL_DEFAULT = "openai/gpt-oss-20b";
 const MAX_AGENTS = 30;
 const MAX_MESSAGE_CHARS = 4000;
 const MAX_HISTORY = 16;
-const MAX_PARALLEL = 4;
+const MAX_PARALLEL = 2; // limita i picchi di richieste al provider
 
 const AGENTS = {
   nova: "Coordinatrice generale: scomponi il problema, assegna priorità, integra i risultati e dichiara le incertezze.",
@@ -208,15 +208,18 @@ export default async function handler(req, res) {
       .limit(12);
     if (memoryReadError) console.error("River AI memory read failed:", memoryReadError.message);
     const memoryContext = (memories || [])
-      .map((item) => "[" + (item.category || "nota") + "] " + (item.title || "") + ": " + (item.content || "").slice(0, 900))
+      .map((item) => "[" + (item.category || "nota") + "] " + (item.title || "") + ": " + (item.content || "").slice(0, 350))
       .join("\n")
-      .slice(0, 9000);
+      .slice(0, 2600);
 
     const latestPrompt = safeMessages[safeMessages.length - 1].content;
     let answer;
     let agentsUsed = team;
 
     if (agent === "team") {
+      // La Squadra usa un contesto compatto per rispettare il limite TPM del provider.
+      const teamHistory = safeMessages.slice(-6);
+      const teamMemory = memoryContext.slice(0, 1200);
       const reports = await runWithLimit(team, MAX_PARALLEL, async (specialist) => {
         const report = await callModel(groqKey, model, [
           { role: "system", content: BASE_PROMPT + "\nRUOLO SPECIALISTA: " + AGENTS[specialist] + "\nFornisci analisi indipendente, ipotesi, rischi e verifiche. Se mancano dati, dichiaralo." },
@@ -228,7 +231,7 @@ export default async function handler(req, res) {
       const synthesis = await callModel(groqKey, model, [
         { role: "system", content: BASE_PROMPT + "\nSei NOVA, coordinatrice. Confronta i rapporti, risolvi le contraddizioni senza nasconderle e restituisci decisione, piano, rischi e verifiche." },
         { role: "user", content: "RICHIESTA:\n" + latestPrompt + "\n\nRAPPORTI SPECIALISTI:\n" + reports.map((item) => "AGENTE " + item.specialist.toUpperCase() + ":\n" + item.report).join("\n\n") }
-      ], 1500);
+      ], 900);
       answer = synthesis;
       agentsUsed = ["nova", ...team];
     } else {
@@ -257,7 +260,12 @@ export default async function handler(req, res) {
     });
   } catch (error) {
     console.error("River AI request failed:", error?.message || "unknown");
-    if (error?.status === 429) return json(res, 429, { error: "Limite temporaneo del servizio AI raggiunto. Riprova più tardi." });
+    if (error?.status === 429) {
+      const waitMatch = String(error?.message || "").match(/try again in ([0-9.]+)s/i);
+      const waitSeconds = waitMatch ? Math.ceil(Number(waitMatch[1])) : 20;
+      res.setHeader("Retry-After", String(waitSeconds));
+      return json(res, 429, { error: "Il servizio AI sta raggiungendo il limite di richieste. Attendi circa " + waitSeconds + " secondi e riprova. La Squadra non ha completato l'analisi." });
+    }
     if (error?.name === "AbortError") return json(res, 504, { error: "La richiesta ha superato il tempo massimo. Riprova con una richiesta più breve." });
     return json(res, 502, { error: "Servizio AI temporaneamente non disponibile. La richiesta può essere ripetuta." });
   }
