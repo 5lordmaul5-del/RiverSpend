@@ -1,7 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 
 const MODEL_DEFAULT = "openai/gpt-oss-20b";
-const MAX_AGENTS = 8;
+const MAX_AGENTS = 10;
 const MAX_MESSAGE_CHARS = 4000;
 const MAX_HISTORY = 16;
 const MAX_PARALLEL = 4;
@@ -42,7 +42,7 @@ function normalizeAgent(value) {
 function chooseTeam(agent, requestedSize) {
   if (agent !== "team") return [normalizeAgent(agent)];
   const size = [2, 4, 8].includes(Number(requestedSize)) ? Number(requestedSize) : 4;
-  const roster = ["tech", "science", "control", "business", "finance", "markets", "design", "memory"];
+  const roster = ["tech", "design", "robotics", "science", "memory", "control", "business", "finance", "markets", "payments"];
   return roster.slice(0, Math.min(size, MAX_AGENTS));
 }
 
