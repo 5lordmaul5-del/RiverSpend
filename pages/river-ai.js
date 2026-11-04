@@ -8,6 +8,7 @@ export default function RiverAI() {
   const [access, setAccess] = useState("checking");
   const [token, setToken] = useState("");
   const [messages, setMessages] = useState([]);
+  const [storageKey, setStorageKey] = useState("");
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -41,21 +42,44 @@ export default function RiverAI() {
   }
 
   useEffect(() => {
-    try {
-      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-      if (Array.isArray(saved)) setMessages(saved.slice(-40));
-    } catch {}
     let alive = true;
     async function check() {
       const { data: { session } } = await supabase.auth.getSession();
       if (!alive) return;
-      if (!session?.access_token) { setAccess("login"); return; }
-      const { data: role, error: roleError } = await supabase
-        .from("rs_admin_roles").select("role").eq("user_id", session.user.id).maybeSingle();
-      if (!alive) return;
-      if (roleError || role?.role !== "admin") { setAccess("denied"); return; }
-      setToken(session.access_token);
-      setAccess("ready");
+      if (!session?.access_token) {
+        setToken("");
+        setStorageKey("");
+        setMessages([]);
+        setAccess("login");
+        return;
+      }
+      try {
+        const response = await fetch("/api/area-51/access", {
+          method: "GET",
+          headers: { Authorization: `Bearer ${session.access_token}` }
+        });
+        if (!alive) return;
+        if (response.status === 403 || response.status === 401) {
+          setToken("");
+          setStorageKey("");
+          setMessages([]);
+          setAccess("denied");
+          return;
+        }
+        if (!response.ok) throw new Error("Verifica dei permessi non disponibile.");
+        const key = `${STORAGE_KEY}:${session.user.id}`;
+        let saved = [];
+        try {
+          const parsed = JSON.parse(localStorage.getItem(key) || "[]");
+          if (Array.isArray(parsed)) saved = parsed.slice(-40);
+        } catch {}
+        setMessages(saved);
+        setStorageKey(key);
+        setToken(session.access_token);
+        setAccess("ready");
+      } catch {
+        if (alive) setAccess("error");
+      }
     }
     check();
     const { data: { subscription } } = supabase.auth.onAuthStateChange(() => check());
@@ -63,9 +87,11 @@ export default function RiverAI() {
   }, []);
 
   useEffect(() => {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(messages.slice(-40))); } catch {}
+    if (storageKey) {
+      try { localStorage.setItem(storageKey, JSON.stringify(messages.slice(-40))); } catch {}
+    }
     endRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, busy]);
+  }, [messages, busy, storageKey]);
 
   async function requestLogin(event) {
     event?.preventDefault();
@@ -139,7 +165,7 @@ export default function RiverAI() {
         {access === "checking" ? <div style={{padding:24}}>Verifica accesso amministratore…</div> :
          access === "login" ? <div style={{padding:24}}>
           <h2 style={{marginTop:0,color:"#075766"}}>Accesso amministratore</h2>
-          <p>Inserisci l'indirizzo email del tuo account RiverSpend. Ti invieremo un link sicuro per entrare. Solo gli account con ruolo amministratore potranno usare River AI.</p>
+          <p>Inserisci l'indirizzo email del tuo account RiverSpend. Ti invieremo un link sicuro per entrare. Solo il proprietario autorizzato potrà usare RiverSSAI NUPM.</p>
           <form onSubmit={requestLogin} style={{display:"grid",gap:10,maxWidth:460}}>
             <input type="email" required autoComplete="email" value={loginEmail} onChange={e=>setLoginEmail(e.target.value)} placeholder="La tua email RiverSpend" style={{width:"100%",boxSizing:"border-box",border:"1px solid #c7dfe1",borderRadius:12,padding:13,fontSize:16,color:"#173b42"}} />
             <button type="submit" disabled={loginBusy || !loginEmail.trim()} style={{border:0,borderRadius:12,padding:13,background:loginBusy?"#a9c8ca":"#087f89",color:"#fff",fontWeight:800}}>{loginBusy?"Invio in corso…":"Invia link di accesso"}</button>
@@ -147,7 +173,8 @@ export default function RiverAI() {
           {loginSent && <p role="status" style={{marginTop:14,padding:12,borderRadius:12,background:"#effaf5",color:"#166534"}}>Link inviato. Apri l'email sullo stesso dispositivo e completa l'accesso; poi River AI si aprirà automaticamente.</p>}
           <p style={{fontSize:12,color:"#63818a",marginTop:16}}>L'accesso è gestito da Supabase. Non inserire qui password o chiavi API.</p>
          </div> :
-         access === "denied" ? <div style={{padding:24}}><h2>Accesso non autorizzato</h2><p>Questa assistente è riservata all'amministratore RiverSpend.</p></div> :
+         access === "denied" ? <div style={{padding:24}}><h2>Accesso non autorizzato</h2><p>Questa assistente è riservata esclusivamente al proprietario RiverSpend.</p></div> :
+         access === "error" ? <div role="alert" style={{padding:24}}><h2>Verifica temporaneamente non disponibile</h2><p>Non posso confermare i permessi in questo momento. Riprova tra poco.</p></div> :
          <>
           <div style={{padding:"12px 18px",background:"#f0fbfa",borderBottom:"1px solid #dceeee",fontSize:12,lineHeight:1.5,color:"#42636a"}}>
             Scegli il collaboratore specializzato. Gli agenti condividono la regia di Nova e la memoria privata. La rete dispone di 30 specialisti. Quando scegli la Squadra Ultra, Nova seleziona prima le competenze più pertinenti alla tua richiesta e coordina gruppi da 2, 4, 8, 10, 20 o 30 specialisti; il sistema li elabora a piccoli gruppi e Nova integra i risultati. La capacità effettiva dipende dai limiti del servizio e dalle risorse disponibili. Le azioni esterne restano protette da approvazione.
