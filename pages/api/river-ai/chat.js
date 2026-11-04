@@ -220,12 +220,14 @@ export default async function handler(req, res) {
       // La Squadra usa un contesto compatto per rispettare il limite TPM del provider.
       const teamHistory = safeMessages.slice(-6);
       const teamMemory = memoryContext.slice(0, 1200);
+      const teamHistory = safeMessages.slice(-4);
+      const teamMemory = memoryContext.slice(0, 900);
       const reports = await runWithLimit(team, MAX_PARALLEL, async (specialist) => {
         const report = await callModel(groqKey, model, [
-          { role: "system", content: BASE_PROMPT + "\nRUOLO SPECIALISTA: " + AGENTS[specialist] + "\nFornisci analisi indipendente, ipotesi, rischi e verifiche. Se mancano dati, dichiaralo." },
-          ...(memoryContext ? [{ role: "system", content: "CONTESTO PRIVATO RIVERSPEND:\n" + memoryContext }] : []),
-          ...safeMessages
-        ], 650);
+          { role: "system", content: BASE_PROMPT + "\nRUOLO SPECIALISTA: " + AGENTS[specialist] + "\nFornisci un rapporto sintetico: priorità, un rischio e verifica essenziale." },
+          ...(teamMemory ? [{ role: "system", content: "CONTESTO PRIVATO RIVERSPEND (sintesi):\n" + teamMemory }] : []),
+          ...teamHistory
+        ], 300);
         return { specialist, report };
       });
       const synthesis = await callModel(groqKey, model, [
