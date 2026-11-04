@@ -42,7 +42,7 @@ export default async function handler(req, res) {
   if (itemsError || !items?.length) return res.status(400).json({ error: 'Nessun articolo nell’ordine.' });
 
   const cents = (value) => Math.round(Number(value || 0) * 100);
-  const itemSubtotalCents = items.reduce((sum, item) => sum + cents(item.subtotal ?? (Number(item.unit_price || 0) * Number(item.quantity || 1))), 0);
+  const itemSubtotalCents = items.reduce((sum, item) => sum + cents(item.unit_price) * Math.max(1, Math.floor(Number(item.quantity || 1))), 0);
   const subtotalCents = cents(order.subtotal);
   const shippingCents = cents(order.shipping_total);
   const donationCents = cents(order.donation_total);
@@ -56,7 +56,7 @@ export default async function handler(req, res) {
     price_data: {
       currency: String(order.currency || 'EUR').toLowerCase(),
       product_data: { name: item.product_name || 'Prodotto RiverSpend' },
-      unit_amount: cents(item.subtotal ?? (Number(item.unit_price || 0) * Number(item.quantity || 1))) / Math.max(1, Math.floor(Number(item.quantity || 1)))
+      unit_amount: cents(item.unit_price)
     },
     quantity: Math.max(1, Math.floor(Number(item.quantity || 1)))
   }));
