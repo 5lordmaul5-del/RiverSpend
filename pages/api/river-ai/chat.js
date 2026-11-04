@@ -176,12 +176,15 @@ export default async function handler(req, res) {
   const user = authData?.user;
   if (authError || !user) return json(res, 401, { error: "Sessione non valida. Accedi di nuovo." });
 
-  const { data: role, error: roleError } = await adminClient
-    .from("rs_admin_roles")
-    .select("role")
+  const { data: ownerAccess, error: ownerError } = await adminClient
+    .from("river_ai_owner_access")
+    .select("tier")
+    .eq("singleton", true)
     .eq("user_id", user.id)
     .maybeSingle();
-  if (roleError || role?.role !== "admin") return json(res, 403, { error: "Area riservata all'amministratore." });
+  if (ownerError || ownerAccess?.tier !== "nova_ultra_power_mega") {
+    return json(res, 403, { error: "Nova Ultra Power Mega è riservata esclusivamente al proprietario RiverSpend." });
+  }
 
   const body = req.body || {};
   const messages = Array.isArray(body.messages) ? body.messages.slice(-MAX_HISTORY) : [];
