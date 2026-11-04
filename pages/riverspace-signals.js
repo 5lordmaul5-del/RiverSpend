@@ -454,12 +454,12 @@ export default function RiverSpaceSignals() {
       <link rel="apple-touch-icon" href="/icons/riverspace-signals-app.jpg" />
     </Head>
     <main className="flex h-[100dvh] flex-col overflow-hidden bg-[#eaf7f7] text-slate-800">
-      <header className="flex shrink-0 items-center justify-between bg-[#073b4c] px-3 py-2 text-white shadow md:px-4 md:py-3">
-        <div className="flex items-center gap-3">
-          <img src="/icons/riversignals.svg" alt="RiverSpaceSignals" className="h-8 w-8 rounded-full bg-white p-1 md:h-10 md:w-10" />
-          <div><div className="text-base font-bold tracking-wide md:text-lg">RiverSpaceSignals</div><div className="text-xs text-teal-100">YOUR SPACE · YOUR SIGNAL</div></div>
+      <header className="shrink-0 bg-[#073b4c] px-3 py-2 text-white shadow md:px-4 md:py-3">
+        <div className="flex min-w-0 items-center gap-2">
+          <img src="/icons/riversignals.svg" alt="RiverSpaceSignals" className="h-8 w-8 shrink-0 rounded-full bg-white p-1 md:h-10 md:w-10" />
+          <div className="min-w-0"><div className="truncate text-base font-bold tracking-wide md:text-lg">RiverSpaceSignals</div><div className="truncate text-[10px] text-teal-100 md:text-xs">YOUR SPACE · YOUR SIGNAL</div></div>
         </div>
-        <nav className="flex flex-wrap items-center justify-end gap-1 md:gap-2"><Link href="/riverworld-live" className="rounded-full bg-emerald-300 px-2 py-1.5 text-xs font-bold text-slate-900 hover:bg-emerald-200 md:px-3 md:py-2 md:text-sm">🌍 World Live</Link><button type="button" onClick={installApp} className="rounded-full bg-amber-300 px-2 py-1.5 text-xs font-bold md:px-3 md:py-2 md:text-sm text-slate-900 hover:bg-amber-200">📲 Installa Signals</button><Link href="/" className="rounded-full border border-white/40 px-2 py-1.5 text-xs md:px-3 md:py-2 md:text-sm hover:bg-white/10">RiverSpendShop</Link><Link href="/riverspend-social-network" className="rounded-full border border-white/40 px-3 py-2 text-sm hover:bg-white/10">Community</Link></nav>
+        <nav className="mt-2 flex items-center gap-2 overflow-x-auto whitespace-nowrap pb-0.5 md:justify-end"><Link href="/riverworld-live" className="shrink-0 rounded-full bg-emerald-300 px-3 py-1.5 text-xs font-bold text-slate-900 hover:bg-emerald-200">🌍 Mondo in diretta</Link><button type="button" onClick={installApp} className="shrink-0 rounded-full bg-amber-300 px-3 py-1.5 text-xs font-bold text-slate-900 hover:bg-amber-200">📲 Installa Signals</button><Link href="/" className="shrink-0 rounded-full border border-white/40 px-3 py-1.5 text-xs hover:bg-white/10">RiverSpendShop</Link><Link href="/riverspend-social-network" className="shrink-0 rounded-full border border-white/40 px-3 py-1.5 text-xs hover:bg-white/10">Comunità</Link></nav>
       </header>
 
       {installMessage && <div role="status" className="mx-auto mt-3 max-w-6xl rounded-xl bg-amber-100 px-4 py-3 text-sm text-amber-900">{installMessage}</div>}
@@ -538,14 +538,14 @@ export default function RiverSpaceSignals() {
               <div><div className="font-bold">{otherProfile?.display_name || 'Membro RiverSpend'}</div><div className="text-xs text-emerald-600">Conversazione privata</div></div>
               <Link href="/karma-zen-relax.html" className="ml-auto rounded-full bg-[#073b4c] px-3 py-2 text-xs font-semibold text-white">🪷 Karma Zen</Link>
             </div>
-            <div className="flex shrink-0 flex-wrap items-center justify-between gap-2 border-b border-amber-200 bg-amber-50 px-3 py-2">
-              <div className="text-xs text-amber-950">{enigmaActive ? '🔐 ENIGMA attivo · cifratura end-to-end in versione beta' : myEnigmaConsent ? '🔐 Hai chiesto ENIGMA: in attesa del consenso dell’altra persona' : '🛡️ Chat normale · ENIGMA è facoltativo e richiede il consenso di entrambi'}</div>
+            <div className="flex shrink-0 items-center gap-2 overflow-x-auto whitespace-nowrap border-b border-amber-200 bg-amber-50 px-2 py-1.5">
+              <div className="min-w-0 flex-1 truncate text-[11px] text-amber-950">{enigmaActive ? '🔐 ENIGMA attivo · cifratura end-to-end in versione beta' : myEnigmaConsent ? '🔐 Hai chiesto ENIGMA: in attesa del consenso dell’altra persona' : '🛡️ Chat normale · ENIGMA è facoltativo e richiede il consenso di entrambi'}</div>
               {enigmaActive
-                ? <button type="button" disabled={enigmaBusy} onClick={disableEnigma} className="rounded-full border border-amber-700 px-3 py-1.5 text-xs font-semibold text-amber-900">Disattiva ENIGMA</button>
-                : <button type="button" disabled={enigmaBusy || !deviceInfo} onClick={enableEnigma} className="rounded-full bg-[#073b4c] px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-50">{enigmaBusy ? 'Attendo…' : myEnigmaConsent ? 'Consenso inviato' : 'Attiva ENIGMA'}</button>}
+                ? <button type="button" disabled={enigmaBusy} onClick={disableEnigma} className="shrink-0 rounded-full border border-amber-700 px-2.5 py-1 text-[11px] font-semibold text-amber-900">Disattiva ENIGMA</button>
+                : <button type="button" disabled={enigmaBusy || !deviceInfo} onClick={enableEnigma} className="shrink-0 rounded-full bg-[#073b4c] px-2.5 py-1 text-[11px] font-semibold text-white disabled:opacity-50">{enigmaBusy ? 'Attendo…' : myEnigmaConsent ? 'Consenso inviato' : 'Attiva ENIGMA'}</button>}
             </div>
-            <div className="grid shrink-0 grid-cols-2 gap-2 border-b border-teal-100 bg-teal-50 px-3 py-2 md:grid-cols-4">
-              <button type="button" onClick={() => setMoneyAction("send")} className="min-w-0 rounded-xl bg-white px-2 py-2 text-center text-xs font-semibold leading-tight text-teal-900 shadow-sm">💸 Invia denaro</button>
+            <div className="flex shrink-0 items-center gap-2 overflow-x-auto whitespace-nowrap border-b border-teal-100 bg-teal-50 px-2 py-1.5">
+              <button type="button" onClick={() => setMoneyAction("send")} className="shrink-0 rounded-full bg-white px-3 py-1.5 text-[11px] font-semibold leading-tight text-teal-900 shadow-sm">💸 Invia denaro</button>
               <button type="button" onClick={() => setMoneyAction("request")} className="min-w-0 rounded-xl bg-white px-2 py-2 text-center text-xs font-semibold leading-tight text-teal-900 shadow-sm">💰 Ricevi denaro</button>
               <button type="button" onClick={() => setMoneyAction("donate")} className="min-w-0 rounded-xl bg-white px-2 py-2 text-center text-xs font-semibold leading-tight text-teal-900 shadow-sm">🎁 Fai una donazione</button>
               <button type="button" onClick={() => setMoneyAction("receive_donation")} className="min-w-0 rounded-xl bg-white px-2 py-2 text-center text-xs font-semibold leading-tight text-teal-900 shadow-sm">🙏 Ricevi donazione</button>
