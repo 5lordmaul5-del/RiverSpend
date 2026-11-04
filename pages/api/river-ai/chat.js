@@ -1,7 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 
 const MODEL_DEFAULT = "openai/gpt-oss-20b";
-const MAX_AGENTS = 10;
+const MAX_AGENTS = 30;
 const MAX_MESSAGE_CHARS = 4000;
 const MAX_HISTORY = 16;
 const MAX_PARALLEL = 4;
@@ -17,7 +17,27 @@ const AGENTS = {
   business: "Strategia d'impresa: vendite, margini, costi, ricavi, clienti e scenari operativi.",
   finance: "Analisi finanziaria: flussi di cassa, budget, rischio, diversificazione e scenari. Non impartire ordini d'investimento.",
   markets: "Ricerca mercati e token: fondamentali, liquidità, volatilità, tokenomics e rischi. Non inventare dati live né promettere rendimenti.",
-  payments: "Architettura dei pagamenti: checkout, PSP, bonifici, carte, wallet, rimborsi, riconciliazione, frodi e chargeback. Progetta flussi e controlli, ma non inviare pagamenti né movimentare fondi."
+  payments: "Architettura dei pagamenti: checkout, PSP, bonifici, carte, wallet, rimborsi, riconciliazione, frodi e chargeback. Progetta flussi e controlli, ma non inviare pagamenti né movimentare fondi.,
+  data: "Analisi dati: pulizia, metriche, dashboard, qualità dei dati e interpretazione statistica; non inventare dataset.",
+  ai: "Ricerca e sviluppo AI: valutazione modelli, prompt, retrieval, valutazioni e limiti; non dichiarare capacità non testate.",
+  cloud: "Infrastruttura cloud: architettura, hosting, scalabilità, backup, costi e continuità operativa.",
+  cyber: "Cybersecurity difensiva: modellazione minacce, hardening, gestione vulnerabilità e risposta agli incidenti; solo attività autorizzate.",
+  quality: "Quality assurance: piani di test, test funzionali, regressione, casi limite e criteri di accettazione.",
+  product: "Gestione prodotto: requisiti, priorità, roadmap, dipendenze e criteri di rilascio.",
+  marketing: "Marketing: posizionamento, campagne, segmentazione, comunicazione e misurazione; niente promesse ingannevoli.",
+  sales: "Vendite e partnership: processi commerciali, offerte, canali, negoziazione e relazioni.",
+  support: "Assistenza clienti: procedure, FAQ, gestione reclami, tono empatico e risoluzione problemi.",
+  legal: "Analisi normativa e conformità: individua questioni da verificare con professionisti abilitati; non sostituisce consulenza legale.",
+  logistics: "Logistica: spedizioni, corrieri, tracking, resi, tempi e costi di consegna.",
+  supply: "Fornitori e inventario: approvvigionamento, scorte, disponibilità, riordino e rischio fornitori.",
+  automation: "Automazione dei processi: flussi, integrazioni, trigger, controlli e approvazioni umane.",
+  research: "Ricerca documentale: formula quesiti, valuta fonti, separa evidenze, ipotesi e informazioni mancanti.",
+  content: "Contenuti editoriali: testi, guide, descrizioni prodotto, tono di voce e revisione.",
+  localization: "Localizzazione internazionale: traduzioni contestuali, valute, formati, usi locali e adattamento mercati.",
+  accessibility: "Accessibilità digitale: WCAG, navigazione da tastiera, contrasto, screen reader e inclusività.",
+  sustainability: "Sostenibilità: impatti ambientali, efficienza risorse, pratiche circolari e indicatori verificabili.",
+  operations: "Operations: procedure, flussi di lavoro, ruoli, capacità, rischi e miglioramento continuo.",
+  documentation: "Documentazione tecnica e operativa: manuali, changelog, procedure, tracciabilità e passaggio consegne.",
 };
 
 const BASE_PROMPT = `Sei River AI ULTRA, la rete di intelligenze coordinata da Nova per l'ecosistema RiverSpend.
@@ -42,7 +62,7 @@ function normalizeAgent(value) {
 function chooseTeam(agent, requestedSize) {
   if (agent !== "team") return [normalizeAgent(agent)];
   const size = [2, 4, 8].includes(Number(requestedSize)) ? Number(requestedSize) : 4;
-  const roster = ["tech", "design", "robotics", "science", "memory", "control", "business", "finance", "markets", "payments"];
+  const roster = ["tech", "design", "robotics", "science", "memory", "control", "business", "finance", "markets", "payments", "data", "ai", "cloud", "cyber", "quality", "product", "marketing", "sales", "support", "legal", "logistics", "supply", "automation", "research", "content", "localization", "accessibility", "sustainability", "operations", "documentation"];
   return roster.slice(0, Math.min(size, MAX_AGENTS));
 }
 
