@@ -93,6 +93,26 @@ export default function Area51() {
         </section>}
         {status === "allowed" && <>
           <div style={{display:"flex",justifyContent:"center",marginBottom:22}}><span style={{border:"1px solid #477d6c",background:"#102d2a",color:"#9ee6bc",borderRadius:30,padding:"8px 16px",fontSize:12,letterSpacing:1}}>✓ PROPRIETARIO AUTORIZZATO</span></div>
+          <section style={{...panel,marginBottom:22,borderColor:"#695a34"}}>
+            <div style={{textAlign:"center",marginBottom:20}}>
+              <div style={{fontSize:11,letterSpacing:3,color:"#d9b65c",fontWeight:800}}>RESEARCH FRONTIERS</div>
+              <h2 style={{fontSize:25,letterSpacing:1,color:"#f1d58a",margin:"9px 0"}}>LE FRONTIERE DEL FUTURO</h2>
+              <p style={{fontSize:14,lineHeight:1.6,color:"#b5c7d2",margin:0}}>Cinque aree strategiche che guideranno la ricerca di RiverSpend Area 51.</p>
+            </div>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(210px,1fr))",gap:12}}>
+              {[
+                {icon:"🤖",title:"ROBOTICA & DROIDi",desc:"Robot intelligenti, droidi, sensori, movimento e interazione uomo-macchina."},
+                {icon:"🛸",title:"UFO & AEROSPACE",desc:"Studio scientifico dei fenomeni aerei non identificati e tecnologie aerospaziali."},
+                {icon:"⚛️",title:"QUANTUM LAB",desc:"Fisica, calcolo quantistico, algoritmi e nuove frontiere della matematica."},
+                {icon:"🧠",title:"ARTIFICIAL INTELLIGENCE",desc:"AI, sistemi autonomi, assistenti intelligenti e collaborazione uomo-macchina."},
+                {icon:"⚙️",title:"PROTOTIPI & INVENTION",desc:"Ideazione, progettazione, modellazione, test e sviluppo di nuove invenzioni."}
+              ].map(item=><article key={item.title} style={{background:"linear-gradient(145deg,#102638,#091722)",border:"1px solid #29485a",borderRadius:15,padding:17,minHeight:135}}>
+                <div style={{fontSize:27,marginBottom:9}}>{item.icon}</div>
+                <h3 style={{fontSize:14,letterSpacing:1,color:"#f1d58a",margin:"0 0 8px"}}>{item.title}</h3>
+                <p style={{fontSize:13,lineHeight:1.55,color:"#b5c7d2",margin:0}}>{item.desc}</p>
+              </article>)}
+            </div>
+          </section>
           <section style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(260px,1fr))",gap:14}}>
             {divisions.map(item=><button key={item.code} type="button" onClick={()=>setSelectedDivision(selectedDivision===item.code?null:item.code)} aria-expanded={selectedDivision===item.code} style={{textAlign:"left",background:selectedDivision===item.code?"linear-gradient(145deg,#183b50,#102638)":"linear-gradient(145deg,#102638,#0a1723)",border:selectedDivision===item.code?"1px solid #d9b65c":"1px solid #24465a",borderRadius:18,padding:22,minHeight:190,cursor:"pointer",color:"inherit"}}>
               <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}><span style={{fontSize:28,color:"#e4c36d"}}>{item.icon}</span><span style={{fontSize:9,letterSpacing:1.5,color:"#80a6b8"}}>MODULO DI RICERCA</span></div>
