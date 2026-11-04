@@ -150,9 +150,9 @@ export default function RiverAI() {
     <Head><title>RiverSSAI 10.0 · CEO Edition</title><meta name="theme-color" content="#073b4c"/><meta name="apple-mobile-web-app-capable" content="yes"/><meta name="apple-mobile-web-app-title" content="River SSAI"/><link rel="icon" href="/icons/river-ssai.svg" type="image/svg+xml"/><link rel="apple-touch-icon" href="/icons/river-ssai-180.png"/></Head>
     <main style={{ minHeight:"100vh", background:"linear-gradient(180deg,#e9fbfc,#f7fcfd)", color:"#12343b", padding:"18px 12px 28px", fontFamily:"Arial,sans-serif" }}>
       <section style={{ maxWidth:850, minHeight:"calc(100vh - 46px)", margin:"0 auto", display:"flex", flexDirection:"column", background:"#fff", border:"1px solid #c8e8e9", borderRadius:22, overflow:"hidden", boxShadow:"0 12px 36px rgba(5,65,78,.10)" }}>
-        <header style={{ padding:"18px 20px", background:"linear-gradient(120deg,#073b4c,#087f89)", color:"#fff", display:"flex", alignItems:"center", gap:12 }}>
+        <header className="river-ai-header" style={{ padding:"18px 20px", background:"linear-gradient(120deg,#073b4c,#087f89)", color:"#fff", display:"flex", alignItems:"center", gap:12 }}>
           <div style={{ width:46,height:46,borderRadius:16,display:"grid",placeItems:"center",background:"rgba(255,255,255,.16)",fontSize:25 }}>🌊</div>
-          <div style={{ flex:1 }}>
+          <div className="river-ai-brand" style={{ flex:1, minWidth:0 }}>
             <div style={{ fontSize:21,fontWeight:800 }}>RiverSSAI 10.0</div>
             <div style={{ fontSize:12,opacity:.85 }}>CEO Edition · Area privata RiverSpend</div>
           </div>
@@ -244,6 +244,33 @@ export default function RiverAI() {
          </>}
       </section>
     </main>
+
+    <style jsx global>{`
+      @media (max-width: 600px) {
+        .river-ai-header {
+          flex-wrap: wrap;
+          align-items: center;
+          gap: 8px !important;
+          padding: 14px !important;
+        }
+        .river-ai-header .river-ai-brand {
+          flex: 1 1 calc(100% - 58px) !important;
+          min-width: 0;
+        }
+        .river-ai-header > button,
+        .river-ai-header > a {
+          flex: 1 1 0;
+          min-width: 0;
+          max-width: 100%;
+          box-sizing: border-box;
+          padding: 8px 6px !important;
+          font-size: 12px !important;
+          line-height: 1.25;
+          text-align: center;
+          overflow-wrap: anywhere;
+        }
+      }
+    `}</style>
     </>
   );
 }
