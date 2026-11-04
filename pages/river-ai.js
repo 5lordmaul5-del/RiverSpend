@@ -23,7 +23,7 @@ export default function RiverAI() {
   useEffect(() => {
     if ("serviceWorker" in navigator) navigator.serviceWorker.register("/river-ai/sw.js", { scope: "/river-ai" }).catch(() => {});
     const onInstall = (event) => { event.preventDefault(); setInstallPrompt(event); };
-    const onInstalled = () => { setInstallPrompt(null); setInstallMessage("River SSAI 1.0 è stata installata sul dispositivo."); };
+    const onInstalled = () => { setInstallPrompt(null); setInstallMessage("RiverSSAI 10.0 è stata installata sul dispositivo."); };
     window.addEventListener("beforeinstallprompt", onInstall);
     window.addEventListener("appinstalled", onInstalled);
     return () => { window.removeEventListener("beforeinstallprompt", onInstall); window.removeEventListener("appinstalled", onInstalled); };
@@ -121,13 +121,13 @@ export default function RiverAI() {
 
   return (
     <>
-    <Head><title>River SSAI 1.0 · CEO Edition</title><meta name="theme-color" content="#073b4c"/><meta name="apple-mobile-web-app-capable" content="yes"/><meta name="apple-mobile-web-app-title" content="River SSAI"/><link rel="icon" href="/icons/river-ssai.svg" type="image/svg+xml"/><link rel="apple-touch-icon" href="/icons/river-ssai-180.png"/></Head>
+    <Head><title>RiverSSAI 10.0 · CEO Edition</title><meta name="theme-color" content="#073b4c"/><meta name="apple-mobile-web-app-capable" content="yes"/><meta name="apple-mobile-web-app-title" content="River SSAI"/><link rel="icon" href="/icons/river-ssai.svg" type="image/svg+xml"/><link rel="apple-touch-icon" href="/icons/river-ssai-180.png"/></Head>
     <main style={{ minHeight:"100vh", background:"linear-gradient(180deg,#e9fbfc,#f7fcfd)", color:"#12343b", padding:"18px 12px 28px", fontFamily:"Arial,sans-serif" }}>
       <section style={{ maxWidth:850, minHeight:"calc(100vh - 46px)", margin:"0 auto", display:"flex", flexDirection:"column", background:"#fff", border:"1px solid #c8e8e9", borderRadius:22, overflow:"hidden", boxShadow:"0 12px 36px rgba(5,65,78,.10)" }}>
         <header style={{ padding:"18px 20px", background:"linear-gradient(120deg,#073b4c,#087f89)", color:"#fff", display:"flex", alignItems:"center", gap:12 }}>
           <div style={{ width:46,height:46,borderRadius:16,display:"grid",placeItems:"center",background:"rgba(255,255,255,.16)",fontSize:25 }}>🌊</div>
           <div style={{ flex:1 }}>
-            <div style={{ fontSize:21,fontWeight:800 }}>River SSAI 1.0</div>
+            <div style={{ fontSize:21,fontWeight:800 }}>RiverSSAI 10.0</div>
             <div style={{ fontSize:12,opacity:.85 }}>CEO Edition · Area privata RiverSpend</div>
           </div>
           <button onClick={installApp} style={{ border:"1px solid #f5d77a",borderRadius:11,padding:"9px 11px",background:"#f5d77a",color:"#12343b",fontWeight:800 }}>Installa app</button>
@@ -149,7 +149,7 @@ export default function RiverAI() {
          access === "denied" ? <div style={{padding:24}}><h2>Accesso non autorizzato</h2><p>Questa assistente è riservata all'amministratore RiverSpend.</p></div> :
          <>
           <div style={{padding:"12px 18px",background:"#f0fbfa",borderBottom:"1px solid #dceeee",fontSize:12,lineHeight:1.5,color:"#42636a"}}>
-            Scegli il collaboratore specializzato. Gli agenti condividono la regia di Nova e la memoria privata. La rete dispone di 30 specialisti selezionabili. La Squadra Ultra coordina gruppi da 2, 4, 8, 10, 20 o 30 specialisti; il sistema li elabora a piccoli gruppi per rispettare i limiti del servizio e Nova integra i risultati. La capacità effettiva dipende dai limiti del servizio e dalle risorse disponibili. Le azioni esterne restano protette da approvazione.
+            Scegli il collaboratore specializzato. Gli agenti condividono la regia di Nova e la memoria privata. La rete dispone di 30 specialisti. Quando scegli la Squadra Ultra, Nova seleziona prima le competenze più pertinenti alla tua richiesta e coordina gruppi da 2, 4, 8, 10, 20 o 30 specialisti; il sistema li elabora a piccoli gruppi e Nova integra i risultati. La capacità effettiva dipende dai limiti del servizio e dalle risorse disponibili. Le azioni esterne restano protette da approvazione.
           </div>
           <div style={{padding:"12px 18px",borderBottom:"1px solid #e3eeee",display:"flex",alignItems:"center",gap:10,flexWrap:"wrap"}}>
             <label htmlFor="river-agent" style={{fontWeight:800,color:"#075766"}}>Agente operativo</label>
@@ -199,7 +199,7 @@ export default function RiverAI() {
           <div style={{flex:1,padding:18,overflowY:"auto",minHeight:300}}>
             {messages.length === 0 && <div style={{maxWidth:560,margin:"32px auto",textAlign:"center"}}>
               <div style={{fontSize:42}}>🌊</div><h2 style={{margin:"10px 0 6px",color:"#075766"}}>Ciao, sono River AI.</h2>
-              <p style={{lineHeight:1.6,color:"#56737a"}}>Sono la tua assistente privata per RiverSpend. Possiamo ragionare sul progetto, organizzare il lavoro e affrontare un problema alla volta.</p>
+              <p style={{lineHeight:1.6,color:"#56737a"}}>Sono Nova, coordinatrice di RiverSSAI 10.0. Posso coinvolgere gli specialisti più adatti, organizzare il lavoro e aiutarti a verificare ogni passaggio del progetto RiverSpend.</p>
               <div style={{display:"inline-block",padding:"10px 14px",borderRadius:14,background:"#effafa",color:"#27616a",fontSize:13}}>Da dove vuoi cominciare?</div>
             </div>}
             {messages.map((message,index)=><div key={index} style={{display:"flex",justifyContent:message.role==="user"?"flex-end":"flex-start",margin:"12px 0"}}>
