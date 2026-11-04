@@ -162,11 +162,16 @@ export default function RiverAI() {
               <option value="science">🧪 River Science · Calcoli e ricerca</option>
               <option value="memory">🧠 River Memory · Archivio e conoscenza</option>
               <option value="control">🛡️ River Control · Verifiche e sicurezza</option>
+              <option value="business">🏢 River Business · Strategia e gestione</option>
+              <option value="finance">💰 River Finance · Budget e finanza</option>
+              <option value="markets">📊 River Markets · Mercati e token</option>
+              <option value="payments">💳 River Payments · Pagamenti e protezione</option>
             </select>
             {selectedAgent === "team" && <select aria-label="Numero di agenti" value={teamSize} onChange={e=>setTeamSize(Number(e.target.value))} style={{border:"1px solid #c7dfe1",borderRadius:11,padding:10,background:"#fff",color:"#173b42",fontSize:14}}>
               <option value={2}>2 agenti + Nova</option>
               <option value={4}>4 agenti + Nova</option>
               <option value={8}>8 agenti + Nova</option>
+              <option value={10}>10 specialisti + Nova</option>
             </select>}
           </div>
           <div style={{flex:1,padding:18,overflowY:"auto",minHeight:300}}>
