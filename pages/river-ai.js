@@ -149,7 +149,7 @@ export default function RiverAI() {
          access === "denied" ? <div style={{padding:24}}><h2>Accesso non autorizzato</h2><p>Questa assistente è riservata all'amministratore RiverSpend.</p></div> :
          <>
           <div style={{padding:"12px 18px",background:"#f0fbfa",borderBottom:"1px solid #dceeee",fontSize:12,lineHeight:1.5,color:"#42636a"}}>
-            Scegli il collaboratore specializzato. Gli agenti condividono la regia di Nova e la memoria privata. La Squadra Ultra coordina gruppi da 2, 4 o 8 specialisti in parallelo e Nova integra i risultati. La capacità effettiva dipende dai limiti del servizio e dalle risorse disponibili. Le azioni esterne restano protette da approvazione.
+            Scegli il collaboratore specializzato. Gli agenti condividono la regia di Nova e la memoria privata. La rete dispone di 30 specialisti selezionabili. La Squadra Ultra coordina gruppi da 2, 4, 8 o 10 specialisti in parallelo e Nova integra i risultati. La capacità effettiva dipende dai limiti del servizio e dalle risorse disponibili. Le azioni esterne restano protette da approvazione.
           </div>
           <div style={{padding:"12px 18px",borderBottom:"1px solid #e3eeee",display:"flex",alignItems:"center",gap:10,flexWrap:"wrap"}}>
             <label htmlFor="river-agent" style={{fontWeight:800,color:"#075766"}}>Agente operativo</label>
@@ -166,6 +166,26 @@ export default function RiverAI() {
               <option value="finance">💰 River Finance · Budget e finanza</option>
               <option value="markets">📊 River Markets · Mercati e token</option>
               <option value="payments">💳 River Payments · Pagamenti e protezione</option>
+              <option value="data">📈 River Data · Dati e analisi</option>
+              <option value="ai">🧠 River AI Lab · Modelli e apprendimento</option>
+              <option value="cloud">☁️ River Cloud · Infrastruttura cloud</option>
+              <option value="cyber">🔐 River Cyber · Difesa informatica</option>
+              <option value="quality">🧪 River Quality · Test e qualità</option>
+              <option value="product">📦 River Product · Prodotto e roadmap</option>
+              <option value="marketing">📣 River Marketing · Comunicazione</option>
+              <option value="sales">🤝 River Sales · Vendite e partnership</option>
+              <option value="support">💬 River Support · Assistenza clienti</option>
+              <option value="legal">⚖️ River Legal · Norme e conformità</option>
+              <option value="logistics">🚚 River Logistics · Spedizioni e consegne</option>
+              <option value="supply">🏭 River Supply · Fornitori e scorte</option>
+              <option value="automation">⚙️ River Automation · Processi automatici</option>
+              <option value="research">🔬 River Research · Ricerca e fonti</option>
+              <option value="content">✍️ River Content · Testi e contenuti</option>
+              <option value="localization">🌍 River Localization · Lingue e mercati</option>
+              <option value="accessibility">♿ River Access · Accessibilità</option>
+              <option value="sustainability">🌱 River Ecology · Sostenibilità</option>
+              <option value="operations">🧭 River Operations · Organizzazione</option>
+              <option value="documentation">📚 River Docs · Documentazione</option>
             </select>
             {selectedAgent === "team" && <select aria-label="Numero di agenti" value={teamSize} onChange={e=>setTeamSize(Number(e.target.value))} style={{border:"1px solid #c7dfe1",borderRadius:11,padding:10,background:"#fff",color:"#173b42",fontSize:14}}>
               <option value={2}>2 agenti + Nova</option>
