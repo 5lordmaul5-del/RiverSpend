@@ -40,7 +40,7 @@ const AGENTS = {
   documentation: "Documentazione tecnica e operativa: manuali, changelog, procedure, tracciabilità e passaggio consegne.",
 };
 
-const BASE_PROMPT = `Sei River AI ULTRA, la rete di intelligenze coordinata da Nova per l'ecosistema RiverSpend.
+const BASE_PROMPT = `Sei RiverSSAI 10.0, la rete di intelligenze coordinata da Nova per l'ecosistema RiverSpend. Nova opera come coordinatrice strategica: seleziona competenze pertinenti, confronta analisi e rende espliciti priorità, dipendenze e criteri di verifica.
 Parla in italiano, con tono chiaro, concreto e comprensibile. Il proprietario non è uno sviluppatore.
 RiverSpend comprende RiverSpendShop, Market, Pay, Shield, Box, Fidelity, Oracle, Experience, Recovery, Park, TV, Ecology, Fortress e RiverSpaceSignals.
 Gli agenti sono istanze coordinate dello stesso servizio AI, non copie autonome coscienti. Il numero di agenti è limitato dalle risorse, dai limiti del provider e dai costi.
@@ -59,11 +59,51 @@ function normalizeAgent(value) {
   return Object.prototype.hasOwnProperty.call(AGENTS, value) ? value : "nova";
 }
 
-function chooseTeam(agent, requestedSize) {
+const AGENT_SIGNALS = {
+  tech: ["codice", "bug", "errore", "api", "svilupp", "programmaz", "javascript", "typescript", "frontend", "backend", "deploy", "github"],
+  design: ["design", "grafica", "logo", "immagine", "video", "ui", "ux", "interfaccia", "banner", "colore"],
+  robotics: ["robot", "droid", "sensore", "motore", "elettronica", "firmware", "3d"],
+  science: ["scienza", "matematica", "fisica", "formula", "calcolo", "statistica", "simulazione"],
+  memory: ["memoria", "ricorda", "storico", "archivio", "decisioni", "versione", "contesto"],
+  control: ["sicurezza", "privacy", "protezione", "rischio", "permessi", "accesso", "gdpr"],
+  business: ["azienda", "impresa", "strategia", "business", "modello", "margine", "ricavi"],
+  finance: ["budget", "bilancio", "cassa", "costi", "finanza", "prevision", "flussi"],
+  markets: ["mercato", "borsa", "token", "crypto", "liquidita", "volatilita", "invest"],
+  payments: ["pagamento", "paypal", "carta", "checkout", "bonifico", "wallet", "rimborso", "stripe"],
+  data: ["dati", "database", "sql", "analisi", "dashboard", "metriche", "report"],
+  ai: ["intelligenza artificiale", "modello ai", "prompt", "llm", "agente", "machine learning", "nova"],
+  cloud: ["cloud", "server", "hosting", "scalabilita", "backup", "infrastruttura", "vercel", "supabase"],
+  cyber: ["cyber", "hacker", "attacco", "vulnerabilita", "crittografia", "enigma", "autenticazione"],
+  quality: ["test", "qualita", "collaudo", "verifica", "regressione", "controllo", "funziona"],
+  product: ["prodotto", "funzione", "roadmap", "priorita", "requisito", "rilascio"],
+  marketing: ["marketing", "pubblicita", "campagna", "brand", "promozione", "social"],
+  sales: ["vendita", "commerciale", "partner", "cliente", "offerta", "commissione"],
+  support: ["assistenza", "supporto", "reclamo", "faq", "problema cliente"],
+  legal: ["legge", "normativa", "contratto", "privacy policy", "conformita", "partita iva", "fiscale"],
+  logistics: ["spedizione", "corriere", "consegna", "tracking", "reso", "logistica"],
+  supply: ["fornitore", "magazzino", "scorte", "inventario", "approvvigionamento"],
+  automation: ["automazione", "automatico", "workflow", "integrazione", "trigger"],
+  research: ["ricerca", "fonti", "documentazione", "confronta", "studia", "approfondisci"],
+  content: ["testo", "scrivi", "articolo", "descrizione", "contenuto", "copywriting"],
+  localization: ["traduzione", "lingua", "internazionale", "paese", "valuta", "localizzazione"],
+  accessibility: ["accessibilita", "screen reader", "wcag", "tastiera", "contrasto"],
+  sustainability: ["ambiente", "ecologia", "sostenibilita", "riciclo", "impatto"],
+  operations: ["organizzazione", "processo", "operazioni", "procedura", "gestione"],
+  documentation: ["manuale", "documenta", "istruzioni", "guida", "changelog"]
+};
+
+function chooseTeam(agent, requestedSize, prompt = "") {
   if (agent !== "team") return [normalizeAgent(agent)];
   const size = [2, 4, 8, 10, 20, 30].includes(Number(requestedSize)) ? Number(requestedSize) : 4;
-  const roster = ["tech", "design", "robotics", "science", "memory", "control", "business", "finance", "markets", "payments", "data", "ai", "cloud", "cyber", "quality", "product", "marketing", "sales", "support", "legal", "logistics", "supply", "automation", "research", "content", "localization", "accessibility", "sustainability", "operations", "documentation"];
-  return roster.slice(0, Math.min(size, MAX_AGENTS));
+  const roster = Object.keys(AGENT_SIGNALS);
+  const normalizedPrompt = String(prompt).toLocaleLowerCase("it");
+  const ranked = roster.map((name, index) => {
+    const score = AGENT_SIGNALS[name].reduce((total, signal) => total + (normalizedPrompt.includes(signal) ? 1 : 0), 0);
+    return { name, score, index };
+  });
+  ranked.sort((a, b) => b.score - a.score || a.index - b.index);
+  const selected = ranked.slice(0, Math.min(size, MAX_AGENTS)).map((item) => item.name);
+  return selected;
 }
 
 async function callModel(apiKey, model, messages, maxTokens = 850) {
@@ -153,7 +193,7 @@ export default async function handler(req, res) {
   }
 
   const agent = body.agent === "team" ? "team" : normalizeAgent(body.agent);
-  const team = chooseTeam(agent, body.teamSize);
+  const team = chooseTeam(agent, body.teamSize, safeMessages[safeMessages.length - 1].content);
   const model = process.env.RIVER_AI_MODEL || MODEL_DEFAULT;
 
   try {
