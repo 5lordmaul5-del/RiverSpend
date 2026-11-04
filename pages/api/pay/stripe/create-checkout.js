@@ -20,7 +20,7 @@ export default async function handler(req, res) {
   if (authError || !authData?.user) return res.status(401).json({ error: 'Sessione non valida.' });
 
   const { orderId } = req.body || {};
-  if (!orderId) return res.status(400).json({ error: 'orderId obbligatorio.');
+  if (!orderId) return res.status(400).json({ error: 'orderId obbligatorio.' });
 
   const { data: order, error: orderError } = await admin
     .from('orders')
