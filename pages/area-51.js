@@ -73,6 +73,7 @@ export default function Area51() {
           <div style={{fontSize:12,letterSpacing:5,color:"#d9b65c",fontWeight:800}}>TOP SECRET · OWNER ACCESS</div>
           <h1 style={{fontSize:"clamp(34px,7vw,62px)",letterSpacing:2,margin:"14px 0 8px",fontWeight:900}}>AREA 51</h1>
           <p style={{fontSize:17,color:"#9fdce5",margin:0}}>RIVERSPEND RESEARCH & DEVELOPMENT</p>
+          <p style={{fontSize:"clamp(14px,3vw,19px)",fontWeight:900,letterSpacing:3,color:"#f1d58a",margin:"18px 0 0",textShadow:"0 0 16px rgba(241,213,138,.2)"}}>THINK DIFFERENT. BUILD THE FUTURE.</p>
           <p style={{maxWidth:680,margin:"18px auto 0",lineHeight:1.7,color:"#b5c7d2"}}>Laboratorio privato per ricerca, progettazione, simulazione e sviluppo di prototipi. Le divisioni sono predisposte come struttura del progetto; gli strumenti operativi verranno attivati e verificati progressivamente.</p>
         </header>
 
