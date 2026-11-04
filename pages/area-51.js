@@ -64,11 +64,8 @@ export default function Area51() {
           <Link href="/river-ai" style={{color:"#8de7ee",textDecoration:"none",fontWeight:700}}>← RiverSSAI NUPM</Link>
           <span style={{fontSize:11,letterSpacing:3,color:"#d8b65d"}}>RIVERSPEND · RESTRICTED ACCESS</span>
         </nav>
-        <div role="banner" style={{maxWidth:900,margin:"0 auto 24px",padding:5,background:"repeating-linear-gradient(135deg,#ffd400 0 18px,#111 18px 36px)",boxShadow:"0 0 24px rgba(255,210,0,.18)"}}>
-          <div style={{background:"#090d12",textAlign:"center",padding:"13px 10px",border:"1px solid #5d501c"}}>
-            <div style={{fontSize:"clamp(17px,4vw,25px)",fontWeight:1000,letterSpacing:2,color:"#ffd400"}}>⚠ WARNING — RESTRICTED AREA ⚠</div>
-            <div style={{fontSize:"clamp(11px,2.8vw,15px)",fontWeight:800,letterSpacing:2,color:"#f4f4f4",marginTop:7}}>ALIEN • ROBOTICS • UFO • DROID RESEARCH CENTER</div>
-          </div>
+        <div role="img" aria-label="Area 51 Warning Restricted Area, No Trespassing" style={{maxWidth:900,margin:"0 auto 24px",border:"5px solid #111",boxShadow:"0 0 24px rgba(255,210,0,.22)"}}>
+          <img src="/area-51-warning.svg" alt="AREA 51 — WARNING — RESTRICTED AREA — NO TRESPASSING" style={{display:"block",width:"100%",height:"auto"}} />
         </div>
         <header style={{textAlign:"center",padding:"30px 12px 36px"}}>
           <div style={{fontSize:46,marginBottom:10}}>◈</div>
