@@ -58,12 +58,18 @@ export default function Area51() {
 
   return <>
     <Head><title>RiverSpend Area 51 · Accesso riservato</title><meta name="robots" content="noindex,nofollow"/><meta name="theme-color" content="#06111e"/></Head>
-    <main style={{minHeight:"100vh",background:"radial-gradient(ellipse at 50% 0%,#123b55 0%,#071522 48%,#03080e 100%)",color:"#e8f4fa",fontFamily:"Arial,sans-serif",padding:"24px 16px 50px"}}>
+    <main style={{minHeight:"100vh",background:"radial-gradient(ellipse at 50% 0%,#123b55 0%,#071522 48%,#03080e 100%)",color:"#e8f4fa",fontFamily:"Arial,sans-serif",padding:"24px 16px 50px",boxSizing:"border-box",border:"16px solid transparent",borderImage:"repeating-linear-gradient(135deg,#ffd400 0 18px,#111 18px 36px) 16"}}>
       <div style={{maxWidth:1050,margin:"0 auto"}}>
         <nav style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:12,flexWrap:"wrap",marginBottom:34}}>
           <Link href="/river-ai" style={{color:"#8de7ee",textDecoration:"none",fontWeight:700}}>← RiverSSAI NUPM</Link>
           <span style={{fontSize:11,letterSpacing:3,color:"#d8b65d"}}>RIVERSPEND · RESTRICTED ACCESS</span>
         </nav>
+        <div role="banner" style={{maxWidth:900,margin:"0 auto 24px",padding:5,background:"repeating-linear-gradient(135deg,#ffd400 0 18px,#111 18px 36px)",boxShadow:"0 0 24px rgba(255,210,0,.18)"}}>
+          <div style={{background:"#090d12",textAlign:"center",padding:"13px 10px",border:"1px solid #5d501c"}}>
+            <div style={{fontSize:"clamp(17px,4vw,25px)",fontWeight:1000,letterSpacing:2,color:"#ffd400"}}>⚠ WARNING — RESTRICTED AREA ⚠</div>
+            <div style={{fontSize:"clamp(11px,2.8vw,15px)",fontWeight:800,letterSpacing:2,color:"#f4f4f4",marginTop:7}}>ALIEN • ROBOTICS • UFO • DROID RESEARCH CENTER</div>
+          </div>
+        </div>
         <header style={{textAlign:"center",padding:"30px 12px 36px"}}>
           <div style={{fontSize:46,marginBottom:10}}>◈</div>
           <div style={{fontSize:12,letterSpacing:5,color:"#d9b65c",fontWeight:800}}>TOP SECRET · OWNER ACCESS</div>
