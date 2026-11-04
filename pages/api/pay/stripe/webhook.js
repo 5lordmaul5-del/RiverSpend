@@ -27,13 +27,11 @@ export default async function handler(req, res) {
   let event;
   try {
     event = stripe.webhooks.constructEvent(await rawBody(req), signature, webhookSecret);
-  } catch (err) {
+  } catch {
     return res.status(400).json({ error: 'Firma webhook non valida.' });
   }
 
-  if (event.type !== 'checkout.session.completed') {
-    return res.status(200).json({ received: true });
-  }
+  if (event.type !== 'checkout.session.completed') return res.status(200).json({ received: true });
 
   const session = event.data.object;
   if (session.payment_status !== 'paid') return res.status(200).json({ received: true });
@@ -44,16 +42,24 @@ export default async function handler(req, res) {
   const admin = createClient(supabaseUrl, serviceRoleKey);
   const { data: order, error: orderError } = await admin
     .from('orders')
-    .select('id,total,currency,buyer_id,payment_status')
+    .select('id,total,currency,buyer_id,status,payment_status')
     .eq('id', orderId)
     .single();
 
   if (orderError || !order) return res.status(404).json({ error: 'Ordine non trovato.' });
+  if (order.status !== 'pending' || order.payment_status === 'paid') {
+    return res.status(409).json({ error: 'Ordine non pronto per il pagamento o già pagato.' });
+  }
 
-  const amount = Number(session.amount_total || order.total || 0) / 100;
-  const currency = String(session.currency || order.currency || 'EUR').toUpperCase();
+  const amount = Number(session.amount_total || 0) / 100;
+  const currency = String(session.currency || '').toUpperCase();
+  const expectedAmount = Number(order.total || 0);
+  const expectedCurrency = String(order.currency || 'EUR').toUpperCase();
+  if (!Number.isFinite(amount) || Math.round(amount * 100) !== Math.round(expectedAmount * 100) || currency !== expectedCurrency) {
+    return res.status(409).json({ error: 'Importo o valuta Stripe non corrispondono al totale dell’ordine.' });
+  }
+
   const idempotencyKey = 'stripe-' + session.id;
-
   const { data: paymentOrder, error: paymentOrderError } = await admin
     .from('payment_orders')
     .upsert({
@@ -103,15 +109,14 @@ export default async function handler(req, res) {
     p_rule_id: null,
     p_revenue_source_code: 'SHOP_COMMISSION'
   });
-
   if (treasuryError) return res.status(500).json({ error: treasuryError.message });
 
   const { error: orderUpdateError } = await admin
     .from('orders')
     .update({ payment_status: 'paid', status: 'confirmed' })
-    .eq('id', order.id);
+    .eq('id', order.id)
+    .eq('payment_status', 'unpaid');
 
   if (orderUpdateError) return res.status(500).json({ error: orderUpdateError.message });
-
   return res.status(200).json({ received: true });
 }
