@@ -4,16 +4,17 @@ import Link from "next/link";
 import { supabase } from "../lib/supabase";
 
 const divisions = [
-  { code: "BLACK PROJECTS", icon: "◈", title: "RS Black Projects", desc: "Progetti sperimentali, requisiti, fattibilità e gestione riservata." },
-  { code: "ADVANCED ROBOTICS", icon: "🤖", title: "RS Advanced Robotics", desc: "Droidi, robotica, esoscheletri, sensori e sistemi di controllo." },
-  { code: "AEROSPACE", icon: "✈", title: "RS Aerospace", desc: "Aerodinamica, propulsione, volo sperimentale e simulazioni." },
-  { code: "QUANTUM LAB", icon: "⚛", title: "RS Quantum Lab", desc: "Ricerca scientifica, matematica, fisica e calcolo avanzato." },
-  { code: "INTELLIGENCE", icon: "⌁", title: "RS Intelligence", desc: "Analisi strategiche, scenari, dati e valutazione dei rischi." },
-  { code: "PROTOTYPE", icon: "⚙", title: "RS Prototype", desc: "Progettazione, documentazione, test e verifica dei prototipi." }
+  { code: "BLACK PROJECTS", icon: "◈", title: "RS Black Projects", desc: "Progetti sperimentali, requisiti, fattibilità e gestione riservata.", focus: "Valutare idee riservate e trasformarle in progetti con obiettivi, risorse, rischi e tappe verificabili.", steps: ["Scheda progetto e obiettivo", "Studio di fattibilità e risorse", "Registro rischi e decisioni"] },
+  { code: "ADVANCED ROBOTICS", icon: "🤖", title: "RS Advanced Robotics", desc: "Droidi, robotica, esoscheletri, sensori e sistemi di controllo.", focus: "Progettare sistemi robotici sicuri, dalla meccanica ai sensori, con test e limiti operativi documentati.", steps: ["Concept del robot o droide", "Componenti, sensori e controllo", "Piano di test e sicurezza"] },
+  { code: "AEROSPACE", icon: "✈", title: "RS Aerospace", desc: "Aerodinamica, propulsione, volo sperimentale e simulazioni.", focus: "Studiare sistemi aerospaziali attraverso ricerca documentale, modelli teorici e simulazioni non operative.", steps: ["Domanda scientifica e requisiti", "Modello teorico e simulazione", "Analisi dei risultati e vincoli"] },
+  { code: "QUANTUM LAB", icon: "⚛", title: "RS Quantum Lab", desc: "Ricerca scientifica, matematica, fisica e calcolo avanzato.", focus: "Esplorare fisica, matematica, algoritmi e informatica quantistica con fonti e risultati riproducibili.", steps: ["Quesito e basi teoriche", "Modello matematico o algoritmo", "Esperimento simulato e verifica"] },
+  { code: "INTELLIGENCE", icon: "⌁", title: "RS Intelligence", desc: "Analisi strategiche, scenari, dati e valutazione dei rischi.", focus: "Organizzare informazioni lecite e fonti verificabili per produrre analisi, scenari e valutazioni dei rischi.", steps: ["Raccolta di fonti pubbliche e autorizzate", "Verifica, confronto e qualità dei dati", "Rapporto con scenari e incertezze"] },
+  { code: "PROTOTYPE", icon: "⚙", title: "RS Prototype", desc: "Progettazione, documentazione, test e verifica dei prototipi.", focus: "Portare un progetto dalla specifica al prototipo documentato, con prove, revisioni e criteri di accettazione.", steps: ["Disegno e specifiche", "Piano di realizzazione e test", "Risultati, revisioni e versione"] }
 ];
 
 export default function Area51() {
   const [status, setStatus] = useState("checking");
+  const [selectedDivision, setSelectedDivision] = useState(null);
   const [email, setEmail] = useState("");
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState("");
@@ -92,13 +93,22 @@ export default function Area51() {
         {status === "allowed" && <>
           <div style={{display:"flex",justifyContent:"center",marginBottom:22}}><span style={{border:"1px solid #477d6c",background:"#102d2a",color:"#9ee6bc",borderRadius:30,padding:"8px 16px",fontSize:12,letterSpacing:1}}>✓ PROPRIETARIO AUTORIZZATO</span></div>
           <section style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(260px,1fr))",gap:14}}>
-            {divisions.map(item=><article key={item.code} style={{background:"linear-gradient(145deg,#102638,#0a1723)",border:"1px solid #24465a",borderRadius:18,padding:22,minHeight:170}}>
-              <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}><span style={{fontSize:28,color:"#e4c36d"}}>{item.icon}</span><span style={{fontSize:9,letterSpacing:1.5,color:"#80a6b8"}}>IN PREPARAZIONE</span></div>
+            {divisions.map(item=><button key={item.code} type="button" onClick={()=>setSelectedDivision(selectedDivision===item.code?null:item.code)} aria-expanded={selectedDivision===item.code} style={{textAlign:"left",background:selectedDivision===item.code?"linear-gradient(145deg,#183b50,#102638)":"linear-gradient(145deg,#102638,#0a1723)",border:selectedDivision===item.code?"1px solid #d9b65c":"1px solid #24465a",borderRadius:18,padding:22,minHeight:190,cursor:"pointer",color:"inherit"}}>
+              <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}><span style={{fontSize:28,color:"#e4c36d"}}>{item.icon}</span><span style={{fontSize:9,letterSpacing:1.5,color:"#80a6b8"}}>MODULO DI RICERCA</span></div>
               <h2 style={{fontSize:19,margin:"14px 0 8px",color:"#f1d58a"}}>{item.title}</h2>
-              <p style={{fontSize:14,lineHeight:1.6,color:"#b5c7d2",margin:0}}>{item.desc}</p>
-            </article>)}
+              <p style={{fontSize:14,lineHeight:1.6,color:"#b5c7d2",margin:"0 0 14px"}}>{item.desc}</p>
+              <span style={{fontSize:12,fontWeight:800,color:"#8de7ee"}}>{selectedDivision===item.code?"CHIUDI SCHEDA ↑":"APRI DIVISIONE →"}</span>
+            </button>)}
           </section>
-          <p style={{textAlign:"center",fontSize:12,color:"#7995a6",marginTop:26}}>Area privata in fase iniziale. Nessuna divisione dichiara strumenti o laboratori già operativi.</p>
+          {selectedDivision && divisions.filter(item=>item.code===selectedDivision).map(item=><section key={item.code} style={{...panel,marginTop:18,borderColor:"#8b743d"}}>
+            <div style={{fontSize:11,letterSpacing:2,color:"#d9b65c",fontWeight:800}}>DOSSIER DIVISIONE · {item.code}</div>
+            <h2 style={{fontSize:25,color:"#f1d58a",margin:"10px 0"}}>{item.icon} {item.title}</h2>
+            <p style={{lineHeight:1.7,color:"#d1e0e8"}}>{item.focus}</p>
+            <h3 style={{fontSize:14,color:"#8de7ee",letterSpacing:1}}>PRIME AREE DI LAVORO</h3>
+            <ol style={{paddingLeft:22,lineHeight:2,color:"#c4d3dc"}}>{item.steps.map(step=><li key={step}>{step}</li>)}</ol>
+            <p style={{fontSize:12,color:"#8ba5b4",marginBottom:0}}>Stato: struttura progettuale. Gli strumenti di ricerca, archiviazione e simulazione saranno attivati in fasi successive.</p>
+          </section>)}
+          <p style={{textAlign:"center",fontSize:12,color:"#7995a6",marginTop:26}}>Le schede descrivono l'ambito e le prime attività. Non sono ancora strumenti operativi né archiviano dossier.</p>
         </>}
         <footer style={{textAlign:"center",marginTop:42,fontSize:11,color:"#678296"}}>RIVERSPEND AREA 51 · ACCESSO RISERVATO · {new Date().getFullYear()}</footer>
       </div>
