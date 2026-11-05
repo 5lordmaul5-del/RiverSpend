@@ -37,6 +37,7 @@ export default function RiverSpaceSignals() {
   const [enigmaConsents, setEnigmaConsents] = useState([]);
   const [enigmaBusy, setEnigmaBusy] = useState(false);
   const recorderRef = useRef(null);
+  const messagesEndRef = useRef(null);
 
   const activeConversation = conversations.find(c => c.id === active);
   const otherId = activeConversation
@@ -205,6 +206,10 @@ export default function RiverSpaceSignals() {
       }).subscribe();
     return () => { supabase.removeChannel(channel); supabase.removeChannel(consentChannel); };
   }, [active, loadMessages]);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }, [messages]);
 
   useEffect(() => {
     if (!user) return;
@@ -440,9 +445,12 @@ export default function RiverSpaceSignals() {
     await Promise.all([loadMessages(active), loadConversations(user.id)]);
   }
 
-  const filteredPeople = useMemo(() => profiles.filter(p =>
-    (p.display_name || 'Membro RiverSpend').toLowerCase().includes(search.toLowerCase())
-  ), [profiles, search]);
+  const filteredPeople = useMemo(() => {
+    const existingContacts = new Set(conversations.map(c => c.participant_one === user?.id ? c.participant_two : c.participant_one));
+    return profiles.filter(p => !existingContacts.has(p.id) &&
+      (p.display_name || 'Membro RiverSpend').toLowerCase().includes(search.toLowerCase())
+    );
+  }, [profiles, search, conversations, user]);
 
   return <>
     <Head>
@@ -450,13 +458,13 @@ export default function RiverSpaceSignals() {
       <meta name="description" content="Messaggi privati RiverSpaceSignals" />
       <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
       <meta name="theme-color" content="#063b4b" />
-      <link rel="icon" href="/icons/riversignals.svg" type="image/svg+xml" />
+      <link rel="icon" href="/icons/riverspace-signals-app.jpg" type="image/jpeg" />
       <link rel="apple-touch-icon" href="/icons/riverspace-signals-app.jpg" />
     </Head>
-    <main className="flex h-[100dvh] flex-col overflow-hidden bg-[#eaf7f7] text-slate-800">
+    <main translate="no" className="flex h-[100dvh] flex-col overflow-hidden bg-[#eaf7f7] text-slate-800">
       <header className="shrink-0 bg-[#073b4c] px-3 py-2 text-white shadow md:px-4 md:py-3">
         <div className="flex min-w-0 items-center gap-2">
-          <img src="/icons/riversignals.svg" alt="RiverSpaceSignals" className="h-8 w-8 shrink-0 rounded-full bg-white p-1 md:h-10 md:w-10" />
+          <img src="/icons/riverspace-signals-app.jpg" alt="RiverSpaceSignals" className="h-8 w-8 shrink-0 rounded-full bg-white p-1 md:h-10 md:w-10" />
           <div className="min-w-0"><div className="truncate text-base font-bold tracking-wide md:text-lg">RiverSpaceSignals</div><div className="truncate text-[10px] text-teal-100 md:text-xs">YOUR SPACE · YOUR SIGNAL</div></div>
         </div>
         <nav className="mt-2 flex items-center gap-2 overflow-x-auto whitespace-nowrap pb-0.5 md:justify-end"><Link href="/riverworld-live" className="shrink-0 rounded-full bg-emerald-300 px-3 py-1.5 text-xs font-bold text-slate-900 hover:bg-emerald-200">🌍 Mondo in diretta</Link><button type="button" onClick={installApp} className="shrink-0 rounded-full bg-amber-300 px-3 py-1.5 text-xs font-bold text-slate-900 hover:bg-amber-200">📲 Installa Signals</button><Link href="/" className="shrink-0 rounded-full border border-white/40 px-3 py-1.5 text-xs hover:bg-white/10">RiverSpendShop</Link><Link href="/riverspend-social-network" className="shrink-0 rounded-full border border-white/40 px-3 py-1.5 text-xs hover:bg-white/10">Comunità</Link></nav>
