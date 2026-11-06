@@ -6,7 +6,7 @@ import CookieConsent from '../components/CookieConsent';
 import AnalyticsTracker from '../components/AnalyticsTracker';
 
 const APP_MANIFESTS = [
-  { match: '/river-ai', href: '/river-ai.webmanifest', color: '#073b4c' },
+  { match: '/river-ai', href: '/river-ai.webmanifest', color: '#06172b' },
   { match: '/servizi/sound-studio-live', href: '/manifest-soundstudioissa.json', color: '#7e22ce' },
   { match: '/servizi/music', href: '/manifest-music.json', color: '#7e22ce' },
   { match: '/river-spend-stream', href: '/manifest-streaming.json', color: '#7c3aed' },

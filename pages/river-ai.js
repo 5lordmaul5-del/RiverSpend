@@ -150,11 +150,11 @@ export default function RiverAI() {
 
   return (
     <>
-    <Head><title>RiverSSAI 10.0 · CEO Edition</title><meta name="theme-color" content="#073b4c"/><meta name="apple-mobile-web-app-capable" content="yes"/><meta name="apple-mobile-web-app-title" content="River SSAI"/><link rel="icon" href="/icons/river-ssai.svg" type="image/svg+xml"/><link rel="apple-touch-icon" href="/icons/river-ssai-180.png"/></Head>
+    <Head><title>RiverSSAI 10.0 · Pure Power</title><meta name="description" content="RiverSSAI 10.0: Nova, i tre comandanti River e la rete dei 30 specialisti."/><meta name="apple-mobile-web-app-capable" content="yes"/><meta name="apple-mobile-web-app-title" content="RiverSSAI 10.0"/><link rel="icon" href="/icons/river-ssai-10.svg" type="image/svg+xml"/><link rel="apple-touch-icon" href="/icons/river-ssai-180.png"/></Head>
     <main style={{ minHeight:"100vh", background:"linear-gradient(180deg,#e9fbfc,#f7fcfd)", color:"#12343b", padding:"18px 12px 28px", fontFamily:"Arial,sans-serif" }}>
       <section style={{ maxWidth:850, minHeight:"calc(100vh - 46px)", margin:"0 auto", display:"flex", flexDirection:"column", background:"#fff", border:"1px solid #c8e8e9", borderRadius:22, overflow:"hidden", boxShadow:"0 12px 36px rgba(5,65,78,.10)" }}>
         <header className="river-ai-header" style={{ padding:"18px 20px", background:"linear-gradient(120deg,#073b4c,#087f89)", color:"#fff", display:"flex", alignItems:"center", gap:12 }}>
-          <div style={{ width:46,height:46,borderRadius:16,display:"grid",placeItems:"center",background:"rgba(255,255,255,.16)",fontSize:25 }}>🌊</div>
+          <img src="/icons/river-ssai-10.svg" alt="Nova RiverSSAI" width="52" height="52" style={{width:52,height:52,borderRadius:16,background:"#071a2d",border:"1px solid #20c9ef",objectFit:"cover"}}/>
           <div className="river-ai-brand" style={{ flex:1, minWidth:0 }}>
             <div style={{ fontSize:21,fontWeight:800 }}>RiverSSAI 10.0</div>
             <div style={{ fontSize:12,opacity:.85 }}>CEO Edition · Area privata RiverSpend</div>
@@ -163,6 +163,11 @@ export default function RiverAI() {
           <a href="/area-51" style={{ border:"1px solid #d9b65c",borderRadius:11,padding:"9px 11px",background:"rgba(217,182,92,.12)",color:"#f5d77a",fontWeight:800,textDecoration:"none",fontSize:13 }}>◈ Area 51</a>
           <button onClick={newChat} disabled={access!=="ready" || busy} style={{ border:"1px solid #ffffff66",borderRadius:11,padding:"9px 11px",background:"transparent",color:"#fff",fontWeight:700 }}>Nuova chat</button>
         </header>
+        <section aria-label="Nova e i tre comandanti River" style={{background:"#06172b",color:"#fff",padding:"12px 14px 16px"}}>
+          <img src="/images/river-ssai-10-team.svg" alt="Nova al centro, i comandanti River A1B2, A2C4 e B2D5 e l’esercito dei 30 specialisti" style={{display:"block",width:"100%",maxHeight:360,objectFit:"contain",borderRadius:14}}/>
+          <div style={{textAlign:"center",fontWeight:800,letterSpacing:1,color:"#55e6ff",fontSize:13,marginTop:8}}>NOVA · RIVER A1B2 · RIVER A2C4 · RIVER B2D5</div>
+          <div style={{textAlign:"center",fontSize:12,color:"#d7e9f5",marginTop:4}}>Una regia. Tre unità speciali. 30 specialisti.</div>
+        </section>
 
         {installMessage && <div role="status" style={{padding:"10px 18px",background:"#fff8df",color:"#72510a",fontSize:13}}>{installMessage}</div>}
         {access === "checking" ? <div style={{padding:24}}>Verifica accesso amministratore…</div> :
@@ -229,7 +234,7 @@ export default function RiverAI() {
           </div>
           <div style={{flex:1,padding:18,overflowY:"auto",minHeight:300}}>
             {messages.length === 0 && <div style={{maxWidth:560,margin:"32px auto",textAlign:"center"}}>
-              <div style={{fontSize:42}}>🌊</div><h2 style={{margin:"10px 0 6px",color:"#075766"}}>Ciao, sono River AI.</h2>
+              <img src="/icons/river-ssai-10.svg" alt="" width="104" height="104" style={{display:"block",margin:"0 auto 12px"}}/><h2 style={{margin:"10px 0 6px",color:"#075766"}}>Ciao, sono Nova.</h2>
               <p style={{lineHeight:1.6,color:"#56737a"}}>Sono Nova, coordinatrice di RiverSSAI 10.0. Posso coinvolgere gli specialisti più adatti, organizzare il lavoro e aiutarti a verificare ogni passaggio del progetto RiverSpend.</p>
               <div style={{display:"inline-block",padding:"10px 14px",borderRadius:14,background:"#effafa",color:"#27616a",fontSize:13}}>Da dove vuoi cominciare?</div>
             </div>}

@@ -20,13 +20,13 @@ const apps = [
     action: 'Apri RiverSpaceSignals'
   },
   {
-    name: 'River SSAI 1.0',
-    subtitle: 'Assistente AI privata · CEO Edition',
-    description: 'L’assistente RiverSpend con Nova e gli agenti specializzati. Accesso riservato all’account amministratore; aprila e installala come app separata sul telefono.',
-    logo: '/icons/river-ssai.svg',
+    name: 'RiverSSAI 10.0 · Pure Power',
+    subtitle: 'Nova e la rete dei 30 specialisti',
+    description: 'Nova coordina i tre comandanti RIVER A1B2, RIVER A2C4 e RIVER B2D5 e l’esercito dei 30 specialisti. Apri RiverSSAI e installala sul telefono come app separata. L’accesso resta riservato agli account autorizzati.',
+    logo: '/icons/river-ssai-10.svg',
     href: '/river-ai',
     color: '#087f89',
-    action: 'Apri e installa River SSAI'
+    action: 'Apri e installa RiverSSAI 10.0'
   },
   {
     name: 'RiverSpendSocialNetwork',
