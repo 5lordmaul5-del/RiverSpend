@@ -1,3 +1,6 @@
 node_modules/
 .next/
 .env.local
+infra/river-ai/.env
+*.dump
+*.sql.gz
