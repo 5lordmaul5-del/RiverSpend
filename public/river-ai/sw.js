@@ -1,4 +1,4 @@
-const CACHE = "river-ssai-shell-v8";
+const CACHE = "river-ssai-shell-v9";
 self.addEventListener("install", event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll([
     "/river-ai", "/river-ai.webmanifest", "/icons/river-ssai-192-final.jpg",
