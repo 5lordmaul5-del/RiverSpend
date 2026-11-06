@@ -1,7 +1,7 @@
-const CACHE = "river-ssai-shell-v5";
+const CACHE = "river-ssai-shell-v6";
 self.addEventListener("install", event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll([
-    "/river-ai", "/river-ai.webmanifest", "/icons/river-ssai-192.png", "/icons/river-ssai-512.png",
+    "/river-ai", "/river-ai.webmanifest", "/icons/river-ssai-app.jpg",
     "/images/river-ssai-10-team.svg"
   ])));
   self.skipWaiting();
