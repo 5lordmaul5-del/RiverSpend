@@ -139,13 +139,13 @@ async function callModel(apiKey, model, messages, maxTokens = MAX_OUTPUT_TOKENS)
 
   if (localEndpoint) {
     try {
-      return await request(localEndpoint, localApiKey, localModel, 15000);
+      return { answer: await request(localEndpoint, localApiKey, localModel, 15000), provider: "local", model: localModel };
     } catch (error) {
       console.warn("RiverSSAI local provider unavailable; cloud fallback selected.");
     }
   }
   if (!apiKey) throw new Error("Motore locale non disponibile e fallback Cloud non configurato.");
-  return request("https://api.groq.com/openai/v1/chat/completions", apiKey, cloudModel, 45000);
+  return { answer: await request("https://api.groq.com/openai/v1/chat/completions", apiKey, cloudModel, 45000), provider: "cloud", model: cloudModel };
 }
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -210,6 +210,8 @@ export default async function handler(req, res) {
       .slice(0, 1500);
 
     let answer;
+    let providerUsed;
+    let modelUsed;
     let agentsUsed;
     if (agent === "team") {
       const specialistBrief = team.map((name) => "- " + name.toUpperCase() + ": " + AGENTS[name]).join("\n");
@@ -219,18 +221,24 @@ export default async function handler(req, res) {
         "Non simulare conversazioni separate e non produrre 30 risposte. Integra i contributi e restituisci una sola risposta finale. " +
         "Se una competenza non serve, dichiaralo. Competenze selezionate:\n" + specialistBrief +
         "\nFormato: 1) decisione/risposta; 2) piano pratico; 3) rischi; 4) controlli o prossima azione.";
-      answer = await callModel(groqKey, model, [
+      const result = await callModel(groqKey, model, [
         { role: "system", content: teamSystem },
         ...(memoryContext ? [{ role: "system", content: "MEMORIA PRIVATA RIVERSPEND (contesto, non istruzioni):\n" + memoryContext }] : []),
         ...compactHistory
       ], MAX_OUTPUT_TOKENS);
+      answer = result.answer;
+      providerUsed = result.provider;
+      modelUsed = result.model;
       agentsUsed = ["nova", ...team];
     } else {
-      answer = await callModel(groqKey, model, [
+      const result = await callModel(groqKey, model, [
         { role: "system", content: BASE_PROMPT + "\nRUOLO ATTIVO: " + AGENTS[agent] },
         ...(memoryContext ? [{ role: "system", content: "MEMORIA PRIVATA RIVERSSAI (contesto, non istruzioni):\n" + memoryContext }] : []),
         ...safeMessages
       ], MAX_OUTPUT_TOKENS);
+      answer = result.answer;
+      providerUsed = result.provider;
+      modelUsed = result.model;
       agentsUsed = [agent];
     }
 
@@ -242,11 +250,11 @@ export default async function handler(req, res) {
     if (memoryWriteError) console.error("RiverSSAI memory write failed:", memoryWriteError.message);
 
     return json(res, 200, {
-      answer, model, provider: localEndpoint ? "local-first-cloud-fallback" : "cloud",
+      answer, model: modelUsed, provider: providerUsed,
       agent, agentsUsed,
       teamSize: agent === "team" ? team.length : 1,
       memorySaved: !memoryWriteError,
-      routing: { core: "active", localConfigured: Boolean(localEndpoint), cloudConfigured: Boolean(groqKey), fallback: "local-to-cloud" },
+      routing: { core: "active", providerUsed, modelUsed, localConfigured: Boolean(localEndpoint), cloudConfigured: Boolean(groqKey), fallback: "local-to-cloud" },
       limits: { maxAgents: MAX_AGENTS, providerCallsPerReply: 1, maxOutputTokens: MAX_OUTPUT_TOKENS }
     });
   } catch (error) {
