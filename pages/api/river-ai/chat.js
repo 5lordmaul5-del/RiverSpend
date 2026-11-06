@@ -108,30 +108,45 @@ function chooseTeam(agent, requestedSize, prompt = "") {
 }
 
 async function callModel(apiKey, model, messages, maxTokens = MAX_OUTPUT_TOKENS) {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 45000);
-  try {
-    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-      method: "POST",
-      headers: { Authorization: "Bearer " + apiKey, "Content-Type": "application/json" },
-      body: JSON.stringify({ model, messages, temperature: 0.25, max_tokens: maxTokens }),
-      signal: controller.signal
-    });
-    const payload = await response.json().catch(() => ({}));
-    if (!response.ok) {
-      const error = new Error(payload?.error?.message || "Provider AI non disponibile.");
-      error.status = response.status;
-      error.retryAfter = response.headers.get("retry-after");
-      throw error;
-    }
-    const answer = payload?.choices?.[0]?.message?.content;
-    if (typeof answer !== "string" || !answer.trim()) throw new Error("Il modello ha restituito una risposta vuota.");
-    return answer.trim();
-  } finally {
-    clearTimeout(timeout);
-  }
-}
+  const localEndpoint = process.env.RIVER_AI_LOCAL_URL || "";
+  const localApiKey = process.env.RIVER_AI_LOCAL_API_KEY || "";
+  const localModel = process.env.RIVER_AI_LOCAL_MODEL || "local-model";
+  const cloudModel = process.env.RIVER_AI_CLOUD_MODEL || model || MODEL_DEFAULT;
 
+  async function request(endpoint, key, selectedModel, timeoutMs) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      const headers = { "Content-Type": "application/json" };
+      if (key) headers.Authorization = "Bearer " + key;
+      const response = await fetch(endpoint, {
+        method: "POST", headers,
+        body: JSON.stringify({ model: selectedModel, messages, temperature: 0.25, max_tokens: maxTokens }),
+        signal: controller.signal
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        const error = new Error(payload?.error?.message || "Provider AI non disponibile.");
+        error.status = response.status;
+        error.retryAfter = response.headers.get("retry-after");
+        throw error;
+      }
+      const answer = payload?.choices?.[0]?.message?.content;
+      if (typeof answer !== "string" || !answer.trim()) throw new Error("Il modello ha restituito una risposta vuota.");
+      return answer.trim();
+    } finally { clearTimeout(timeout); }
+  }
+
+  if (localEndpoint) {
+    try {
+      return await request(localEndpoint, localApiKey, localModel, 15000);
+    } catch (error) {
+      console.warn("RiverSSAI local provider unavailable; cloud fallback selected.");
+    }
+  }
+  if (!apiKey) throw new Error("Motore locale non disponibile e fallback Cloud non configurato.");
+  return request("https://api.groq.com/openai/v1/chat/completions", apiKey, cloudModel, 45000);
+}
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
@@ -141,8 +156,9 @@ export default async function handler(req, res) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   const groqKey = process.env.GROQ_API_KEY;
-  if (!supabaseUrl || !serviceKey || !groqKey) {
-    return json(res, 503, { error: "Configurazione RiverSSAI incompleta. Verificare le variabili server." });
+  const localEndpoint = process.env.RIVER_AI_LOCAL_URL || "";
+  if (!supabaseUrl || !serviceKey || (!groqKey && !localEndpoint)) {
+    return json(res, 503, { error: "Configurazione RiverSSAI incompleta. Verificare autenticazione e almeno un motore AI." });
   }
 
   const authHeader = req.headers.authorization || "";
@@ -226,9 +242,11 @@ export default async function handler(req, res) {
     if (memoryWriteError) console.error("RiverSSAI memory write failed:", memoryWriteError.message);
 
     return json(res, 200, {
-      answer, model, agent, agentsUsed,
+      answer, model, provider: localEndpoint ? "local-first-cloud-fallback" : "cloud",
+      agent, agentsUsed,
       teamSize: agent === "team" ? team.length : 1,
       memorySaved: !memoryWriteError,
+      routing: { core: "active", localConfigured: Boolean(localEndpoint), cloudConfigured: Boolean(groqKey), fallback: "local-to-cloud" },
       limits: { maxAgents: MAX_AGENTS, providerCallsPerReply: 1, maxOutputTokens: MAX_OUTPUT_TOKENS }
     });
   } catch (error) {
