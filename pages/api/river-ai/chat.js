@@ -2,9 +2,9 @@ import { createClient } from "@supabase/supabase-js";
 
 const MODEL_DEFAULT = "openai/gpt-oss-20b";
 const MAX_AGENTS = 30;
-const MAX_MESSAGE_CHARS = 3000;
-const MAX_HISTORY = 10;
-const MAX_OUTPUT_TOKENS = 1100;
+const MAX_MESSAGE_CHARS = 2000;
+const MAX_HISTORY = 8;
+const MAX_OUTPUT_TOKENS = 850;
 
 const AGENTS = {
   nova: "Coordinatrice generale: scomponi il problema, assegna priorità, integra i risultati e dichiara le incertezze.",
@@ -197,7 +197,7 @@ export default async function handler(req, res) {
     let agentsUsed;
     if (agent === "team") {
       const specialistBrief = team.map((name) => "- " + name.toUpperCase() + ": " + AGENTS[name]).join("\n");
-      const compactHistory = safeMessages.slice(-6);
+      const compactHistory = safeMessages.slice(-4);
       const teamSystem = BASE_PROMPT +
         "\nMODALITÀ SQUADRA: analizza la richiesta attraverso queste competenze in un'unica elaborazione coordinata. " +
         "Non simulare conversazioni separate e non produrre 30 risposte. Integra i contributi e restituisci una sola risposta finale. " +
