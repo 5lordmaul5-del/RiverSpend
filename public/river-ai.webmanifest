@@ -12,9 +12,9 @@
   "lang": "it",
   "icons": [
     {
-      "src": "/icons/river-ssai-192.png",
+      "src": "/icons/river-ssai-192-final.jpg",
       "sizes": "192x192",
-      "type": "image/png",
+      "type": "image/jpeg",
       "purpose": "any"
     },
     {
