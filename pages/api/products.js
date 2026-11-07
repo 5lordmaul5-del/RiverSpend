@@ -2,20 +2,25 @@ import { createClient } from '@supabase/supabase-js';
 
 // Best-effort cache scoped to a warm serverless instance. It never invents
 // products and is refreshed only after a complete successful catalog read.
-let lastKnownGoodProducts = null;
+const lastKnownGoodProducts = new Map();
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Metodo non consentito.' });
   }
 
+  const locality = typeof req.query.locality === 'string' ? req.query.locality.trim() : '';
+  const province = typeof req.query.province === 'string' ? req.query.province.trim() : '';
+  const category = typeof req.query.category === 'string' ? req.query.category.trim() : '';
+  const cacheKey = JSON.stringify({ locality, province, category });
+
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
   if (!supabaseUrl || !supabaseKey) {
-    if (Array.isArray(lastKnownGoodProducts)) {
+    if (lastKnownGoodProducts.has(cacheKey)) {
       res.setHeader('X-Catalog-Fallback', 'warm-instance-cache');
-      return res.status(200).json(lastKnownGoodProducts);
+      return res.status(200).json(lastKnownGoodProducts.get(cacheKey));
     }
     return res.status(503).json({
       error: 'Catalogo temporaneamente non disponibile.',
@@ -44,9 +49,6 @@ export default async function handler(req, res) {
       return Number.isFinite(soldAt) && soldAt > soldCutoff;
     });
 
-    const locality = typeof req.query.locality === 'string' ? req.query.locality.trim() : '';
-    const province = typeof req.query.province === 'string' ? req.query.province.trim() : '';
-    const category = typeof req.query.category === 'string' ? req.query.category.trim() : '';
     const categorie18 = ['18🔞 ADULTI', '18🔞 Sex Toys'];
     const richiesta18 = categorie18.some((cat) => cat.toLowerCase() === category.toLowerCase());
     let filteredProducts = visibleProducts.filter((p) => {
@@ -120,15 +122,15 @@ export default async function handler(req, res) {
     });
 
     // Cache only a complete successful result, including the current filters.
-    lastKnownGoodProducts = responseProducts;
+    lastKnownGoodProducts.set(cacheKey, responseProducts);
     return res.status(200).json(responseProducts);
   } catch (error) {
     console.error('Products API:', error);
 
-    if (Array.isArray(lastKnownGoodProducts)) {
+    if (lastKnownGoodProducts.has(cacheKey)) {
       res.setHeader('X-Catalog-Fallback', 'warm-instance-cache');
       res.setHeader('Warning', '110 - "Catalogo temporaneamente servito dalla cache locale"');
-      return res.status(200).json(lastKnownGoodProducts);
+      return res.status(200).json(lastKnownGoodProducts.get(cacheKey));
     }
 
     return res.status(503).json({
