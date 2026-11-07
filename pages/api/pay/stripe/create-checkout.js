@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import Stripe from 'stripe';
+import { getFortressStatus, isModuleEnabled } from '../../../../lib/riverSSAI/killSwitch';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -7,6 +8,14 @@ const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Metodo non consentito' });
+  try {
+    const fortress = await getFortressStatus();
+    if (!isModuleEnabled('stripe', fortress)) return res.status(503).json({ error: 'Nuovi pagamenti Stripe temporaneamente sospesi per sicurezza.' });
+  } catch (error) {
+    console.error('Fortress control plane unavailable:', error.message);
+    return res.status(503).json({ error: 'Stato di sicurezza non verificabile. Pagamenti temporaneamente sospesi.' });
+  }
+
   if (!supabaseUrl || !serviceRoleKey || !stripeSecretKey) {
     return res.status(503).json({ error: 'Stripe non ancora configurato sul server.' });
   }

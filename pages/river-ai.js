@@ -150,23 +150,23 @@ export default function RiverAI() {
 
   return (
     <>
-    <Head><title>RiverSSAI 10.0 · Pure Power</title><meta name="description" content="RiverSSAI 10.0: Nova, i tre comandanti River e la rete dei 30 specialisti."/><meta name="apple-mobile-web-app-capable" content="yes"/><meta name="apple-mobile-web-app-title" content="RiverSSAI 10.0"/><link rel="icon" href="/icons/river-ssai-192.png" type="image/png"/><link rel="apple-touch-icon" href="/icons/river-ssai-192.png"/></Head>
+    <Head><title>RiverSSAI 10.0 · Pure Power</title><meta name="description" content="RiverSSAI 10.0: Nova, i tre comandanti River e la rete dei 90 specialisti."/><meta name="apple-mobile-web-app-capable" content="yes"/><meta name="apple-mobile-web-app-title" content="RiverSSAI 10.0"/><link rel="icon" href="/icons/river-ssai-192.png" type="image/png"/><link rel="apple-touch-icon" href="/icons/river-ssai-192.png"/></Head>
     <main style={{ minHeight:"100vh", background:"linear-gradient(180deg,#e9fbfc,#f7fcfd)", color:"#12343b", padding:"18px 12px 28px", fontFamily:"Arial,sans-serif" }}>
       <section style={{ maxWidth:850, minHeight:"calc(100vh - 46px)", margin:"0 auto", display:"flex", flexDirection:"column", background:"#fff", border:"1px solid #c8e8e9", borderRadius:22, overflow:"hidden", boxShadow:"0 12px 36px rgba(5,65,78,.10)" }}>
-        <header className="river-ai-header" style={{ padding:"18px 20px", background:"linear-gradient(120deg,#073b4c,#087f89)", color:"#fff", display:"flex", alignItems:"center", gap:12 }}>
+        <header className="river-ai-header" style={{ padding:"16px 20px", background:"linear-gradient(120deg,#073b4c,#087f89)", color:"#fff", display:"flex", alignItems:"center", gap:12, flexWrap:"wrap" }}>
           <img src="/icons/river-ssai-192.png" alt="Nova RiverSSAI" width="52" height="52" style={{width:52,height:52,borderRadius:16,background:"#071a2d",border:"1px solid #20c9ef",objectFit:"cover"}}/>
           <div className="river-ai-brand" style={{ flex:1, minWidth:0 }}>
             <div style={{ fontSize:21,fontWeight:800 }}>RiverSSAI 10.0</div>
             <div style={{ fontSize:12,opacity:.85 }}>CEO Edition · Area privata RiverSpend</div>
           </div>
-          <button onClick={installApp} style={{ border:"1px solid #f5d77a",borderRadius:11,padding:"9px 11px",background:"#f5d77a",color:"#12343b",fontWeight:800 }}>Installa app</button>
-          <a href="/area-51" style={{ border:"1px solid #d9b65c",borderRadius:11,padding:"9px 11px",background:"rgba(217,182,92,.12)",color:"#f5d77a",fontWeight:800,textDecoration:"none",fontSize:13 }}>◈ Area 51</a>
+          <button onClick={installApp} style={{ border:"1px solid #f5d77a",borderRadius:11,padding:"9px 11px",background:"#f5d77a",color:"#12343b",fontWeight:800,flex:"0 0 auto",whiteSpace:"nowrap",minHeight:40 }}>Scarica l'app</button>
+          <a href="/area-51" style={{ border:"1px solid #d9b65c",borderRadius:11,padding:"9px 11px",background:"rgba(217,182,92,.12)",color:"#f5d77a",fontWeight:800,textDecoration:"none",fontSize:13,flex:"0 0 auto",whiteSpace:"nowrap",minHeight:40,display:"inline-flex",alignItems:"center" }}>◈ Area 51</a>
           <button onClick={newChat} disabled={access!=="ready" || busy} style={{ border:"1px solid #ffffff66",borderRadius:11,padding:"9px 11px",background:"transparent",color:"#fff",fontWeight:700 }}>Nuova chat</button>
         </header>
         <section aria-label="Nova e i tre comandanti River" style={{background:"#06172b",color:"#fff",padding:"12px 14px 16px"}}>
-          <img src="/images/river-ssai-10-team.svg" alt="Nova al centro, i comandanti River A1B2, A2C4 e B2D5 e l’esercito dei 30 specialisti" style={{display:"block",width:"100%",maxHeight:360,objectFit:"contain",borderRadius:14}}/>
+          <img src="/images/river-ssai-10-team.svg" alt="Nova al centro, i comandanti River A1B2, A2C4 e B2D5 e l’esercito dei 90 specialisti" style={{display:"block",width:"100%",maxHeight:360,objectFit:"contain",borderRadius:14}}/>
           <div style={{textAlign:"center",fontWeight:800,letterSpacing:1,color:"#55e6ff",fontSize:13,marginTop:8}}>NOVA · RIVER A1B2 · RIVER A2C4 · RIVER B2D5</div>
-          <div style={{textAlign:"center",fontSize:12,color:"#d7e9f5",marginTop:4}}>Una regia. Tre unità speciali. 30 specialisti.</div>
+          <div style={{textAlign:"center",fontSize:12,color:"#d7e9f5",marginTop:4}}>Una regia. Tre unità speciali. 90 specialisti.</div>
         </section>
 
         {installMessage && <div role="status" style={{padding:"10px 18px",background:"#fff8df",color:"#72510a",fontSize:13}}>{installMessage}</div>}
@@ -185,7 +185,7 @@ export default function RiverAI() {
          access === "error" ? <div role="alert" style={{padding:24}}><h2>Verifica temporaneamente non disponibile</h2><p>Non posso confermare i permessi in questo momento. Riprova tra poco.</p></div> :
          <>
           <div style={{padding:"12px 18px",background:"#f0fbfa",borderBottom:"1px solid #dceeee",fontSize:12,lineHeight:1.5,color:"#42636a"}}>
-            Scegli il collaboratore specializzato. Gli agenti condividono la regia di Nova e la memoria privata. La rete dispone di 30 specialisti. Quando scegli la Squadra Ultra, Nova seleziona prima le competenze più pertinenti alla tua richiesta e coordina gruppi da 2, 4, 8, 10, 20 o 30 specialisti; il sistema li elabora a piccoli gruppi e Nova integra i risultati. La capacità effettiva dipende dai limiti del servizio e dalle risorse disponibili. Le azioni esterne restano protette da approvazione.
+            Scegli il collaboratore specializzato. Gli agenti condividono la regia di Nova e la memoria privata. La rete dispone di 90 specialisti. Quando scegli la Squadra Ultra, Nova seleziona prima le competenze più pertinenti alla tua richiesta e coordina gruppi da 2, 4, 8, 10, 20 o 30 specialisti; il sistema li elabora a piccoli gruppi e Nova integra i risultati. La capacità effettiva dipende dai limiti del servizio e dalle risorse disponibili. Le azioni esterne restano protette da approvazione.
           </div>
           <div style={{padding:"12px 18px",borderBottom:"1px solid #e3eeee",display:"flex",alignItems:"center",gap:10,flexWrap:"wrap"}}>
             <label htmlFor="river-agent" style={{fontWeight:800,color:"#075766"}}>Agente operativo</label>
