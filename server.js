@@ -3,12 +3,10 @@ const fs = require('fs');
 const path = require('path');
 
 // --- FORTEZZA RIVERSPEND: Moduli di sicurezza integrati ---
-// Se non esistono i file di sicurezza, il server userà una protezione base integrata qui sotto.
-
 const PORT = 3000;
 const PRODUCTS_FILE = path.join(__dirname, 'prodotti.json');
 
-// Funzione di utilità per leggere i prodotti del negozio
+// Funzione di utilità per leggere i prodotti del negozio in modo sicuro
 function getProducts() {
     if (!fs.existsSync(PRODUCTS_FILE)) {
         // Prodotti di default iniziali per RiverSpendShop
@@ -27,14 +25,14 @@ const server = http.createServer((req, res) => {
 
     console.log(`Richiesta ricevuta da IP: ${clientIp} - URL: ${req.url}`);
 
-    // Rotta per visualizzare i prodotti di RiverSpendShop in formato JSON (zero database esterni!)
+    // Rotta per visualizzare i prodotti di RiverSpendShop in formato JSON
     if (req.url === '/api/prodotti' && req.method === 'GET') {
-        const prodotti = getProducts();
+        const products = getProducts();
         res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
         res.end(JSON.stringify({
             brand: "RiverSpendShop",
             stato: "Protetto dalla Fortezza",
-            prodotti: prodotti
+            prodotti: products
         }));
         return;
     }
