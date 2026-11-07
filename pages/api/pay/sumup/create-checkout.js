@@ -1,9 +1,17 @@
 import { createClient } from '@supabase/supabase-js';
+import { getFortressStatus, isModuleEnabled } from '../../../../lib/riverSSAI/killSwitch';
 
 const SUMUP_API = 'https://api.sumup.com';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Metodo non consentito' });
+  try {
+    const fortress = await getFortressStatus();
+    if (!isModuleEnabled('shop', fortress)) return res.status(503).json({ error: 'RiverShop temporaneamente in manutenzione: nuovi pagamenti sospesi.' });
+  } catch (error) {
+    console.error('Fortress control plane unavailable:', error.message);
+    return res.status(503).json({ error: 'Stato di sicurezza non verificabile. Pagamenti temporaneamente sospesi.' });
+  }
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
