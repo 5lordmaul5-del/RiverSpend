@@ -123,7 +123,7 @@ export default async function handler(req, res) {
     return json(res, 400, { error: "Scrivi prima una richiesta." });
   }
 
-  const agent = body.agent === "team" ? "team" : normalizeAgent(body.agent);
+  const agent = body.agent === "team60" ? "team60" : (body.agent === "team" ? "team" : normalizeAgent(body.agent));
   const team = chooseTeam(agent, body.teamSize, safeMessages[safeMessages.length - 1].content);
   const model = process.env.RIVER_AI_MODEL || MODEL_DEFAULT;
 
@@ -162,6 +162,52 @@ export default async function handler(req, res) {
       ], 900);
       answer = synthesis;
       agentsUsed = ["nova", ...team];
+    } else if (agent === "team60") {
+      // Cinque squadre AI elaborano tutti i 59 ruoli specialistici; Nova coordina e sintetizza.
+      // Ogni squadra restituisce un contributo distinto per ciascun ruolo, senza 59 chiamate individuali.
+      const allSpecialists = Object.entries(AGENTS_REGISTRY).filter(([key]) => key !== "nova");
+      const squadSize = 12;
+      const squads = [];
+      for (let i = 0; i < allSpecialists.length; i += squadSize) squads.push(allSpecialists.slice(i, i + squadSize));
+      const teamHistory = safeMessages.slice(-4);
+      const teamMemory = memoryContext.slice(0, 900);
+      const squadResults = await runWithLimit(squads, 5, async (squad, index) => {
+        const roleBrief = squad.map(([key, specialist]) =>
+          "[AGENT:" + key + "] " + specialist.name + " — " + specialist.role + ": " + specialist.prompt
+        ).join("\n");
+        try {
+          const report = await callModel(groqKey, model, [
+            { role: "system", content: BASE_PROMPT +
+              "\nSEI UNA SQUADRA DI SPECIALISTI. Produci un contributo DISTINTO per OGNI ruolo. " +
+              "Non accorpare e non saltare ruoli. Per ciascuno scrivi esattamente il marcatore [AGENT:chiave] su una riga, " +
+              "poi analisi, proposta e controllo essenziale. Se non pertinente, dichiaralo comunque.\nRUOLI ASSEGNATI:\n" + roleBrief },
+            ...(teamMemory ? [{ role: "system", content: "CONTESTO PRIVATO RIVERSPEND (sintesi):\n" + teamMemory }] : []),
+            ...teamHistory
+          ], 1800);
+          const completed = squad.filter(([key]) => report.includes("[AGENT:" + key + "]")).map(([key]) => key);
+          return { index: index + 1, total: squad.length, report, completed, failed: false };
+        } catch (error) {
+          return { index: index + 1, total: squad.length, report: "", completed: [], failed: true };
+        }
+      });
+      const completedKeys = squadResults.flatMap((result) => result.completed);
+      const failedSquads = squadResults.filter((result) => result.failed).map((result) => result.index);
+      const omittedKeys = allSpecialists.map(([key]) => key).filter((key) => !completedKeys.includes(key));
+      const synthesisInput = squadResults.filter((result) => result.report)
+        .map((result) => "SQUADRA " + result.index + " — contributi marcati: " + result.completed.length + "/" + result.total + "\n" + result.report)
+        .join("\n\n");
+      const coverageNote = "Copertura specialisti rilevata: " + completedKeys.length +
+        "/59. Squadre non riuscite: " + (failedSquads.length ? failedSquads.join(", ") : "nessuna") +
+        ". Ruoli senza contributo rilevato: " + (omittedKeys.length ? omittedKeys.join(", ") : "nessuno") + ".";
+      answer = await callModel(groqKey, model, [
+        { role: "system", content: BASE_PROMPT +
+          "\nSei NOVA, coordinatrice. Sintetizza i contributi senza inventare quelli mancanti. " +
+          "Evidenzia convergenze, divergenze, priorità, piano operativo e verifiche. Dichiara se la copertura è incompleta." },
+        { role: "user", content: "RICHIESTA ORIGINALE:\n" + latestPrompt +
+          "\n\nCONTRIBUTI DELLE CINQUE SQUADRE:\n" + synthesisInput + "\n\nSTATO COPERTURA:\n" + coverageNote }
+      ], 1500);
+      answer += "\n\n---\n" + coverageNote;
+      agentsUsed = ["nova", ...completedKeys];
     } else {
       // Nova attiva al massimo due competenze pertinenti senza chiamate AI aggiuntive.
       const autoSpecialists = agent === "nova" ? routeToSpecialists(latestPrompt, 2) : [];
@@ -193,7 +239,8 @@ export default async function handler(req, res) {
       model,
       agent,
       agentsUsed,
-      teamSize: agent === "team" ? team.length : (agent === "nova" ? Math.max(1, agentsUsed.length - 1) : 1),
+      teamSize: agent === "team" ? team.length : (agent === "team60" ? Math.max(0, agentsUsed.length - 1) : (agent === "nova" ? Math.max(1, agentsUsed.length - 1) : 1)),
+      team60: agent === "team60" ? { totalSpecialists: 59, completedSpecialists: Math.max(0, agentsUsed.length - 1), squads: 5 } : null,
       memorySaved: !memoryWriteError,
       limits: { maxAgents: MAX_AGENTS, maxParallel: MAX_PARALLEL }
     });
