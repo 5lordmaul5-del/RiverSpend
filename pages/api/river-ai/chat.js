@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { getFortressStatus, isModuleEnabled } from "../../../lib/riverSSAI/killSwitch";
 import { callLLMWithFailover } from "../../../lib/riverSSAI/llmProvider";
 
 const MODEL_DEFAULT = "openai/gpt-oss-20b";
@@ -126,6 +127,16 @@ export default async function handler(req, res) {
     res.setHeader("Allow", "POST");
     return json(res, 405, { error: "Metodo non consentito." });
   }
+  try {
+    const fortress = await getFortressStatus();
+    if (!isModuleEnabled("ai", fortress)) {
+      return json(res, 503, { error: "RiverSSAI è temporaneamente in manutenzione per un intervento di sicurezza." });
+    }
+  } catch (error) {
+    console.error("[Fortress] control plane unavailable:", error.message);
+    return json(res, 503, { error: "Stato di sicurezza AI non verificabile. Riprova tra poco." });
+  }
+
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
