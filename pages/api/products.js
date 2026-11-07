@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { getFortressStatus, isModuleEnabled } from '../../lib/riverSSAI/killSwitch';
 
 export default async function handler(req, res) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -12,6 +13,14 @@ export default async function handler(req, res) {
 
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Metodo non consentito.' });
+  }
+
+  try {
+    const fortress = await getFortressStatus();
+    if (!isModuleEnabled('shop', fortress)) return res.status(503).json({ error: 'RiverShop temporaneamente in manutenzione.' });
+  } catch (error) {
+    console.error('Fortress control plane unavailable:', error.message);
+    return res.status(503).json({ error: 'Stato di sicurezza non verificabile. Catalogo temporaneamente non disponibile.' });
   }
 
   try {
