@@ -18,7 +18,6 @@ export default function RiverAI() {
   const [installPrompt, setInstallPrompt] = useState(null);
   const [installMessage, setInstallMessage] = useState("");
   const [selectedAgent, setSelectedAgent] = useState("nova");
-  const [teamSize, setTeamSize] = useState(4);
   const endRef = useRef(null);
   const sendLock = useRef(false);
 
@@ -129,7 +128,7 @@ export default function RiverAI() {
       const response = await fetch("/api/river-ai/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ messages: next, agent: selectedAgent, teamSize })
+        body: JSON.stringify({ messages: next, agent: selectedAgent })
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "River AI non disponibile.");
@@ -223,23 +222,7 @@ export default function RiverAI() {
               <option value="operations">🧭 River Operations · Organizzazione</option>
               <option value="documentation">📚 River Docs · Documentazione</option>
             </select>
-            {selectedAgent === "team" && <select aria-label="Numero di agenti" value={teamSize} onChange={e=>setTeamSize(Number(e.target.value))} style={{border:"1px solid #c7dfe1",borderRadius:11,padding:10,background:"#fff",color:"#173b42",fontSize:14}}>
-              <option value={2}>2 agenti + Nova</option>
-              <option value={4}>4 agenti + Nova</option>
-              <option value={8}>8 agenti + Nova</option>
-              <option value={10}>10 specialisti + Nova</option>
-              <option value={20}>20 specialisti + Nova</option>
-              <option value={30}>30 specialisti + Nova</option>
-            </select>}
-          </div>
-          <div style={{flex:1,padding:18,overflowY:"auto",minHeight:300}}>
-            {messages.length === 0 && <div style={{maxWidth:560,margin:"32px auto",textAlign:"center"}}>
-              <img src="/icons/river-ssai-192-final.jpg" alt="" width="104" height="104" style={{display:"block",margin:"0 auto 12px"}}/><h2 style={{margin:"10px 0 6px",color:"#075766"}}>Ciao, sono Nova.</h2>
-              <p style={{lineHeight:1.6,color:"#56737a"}}>Sono Nova, coordinatrice di RiverSSAI 10.0. Posso coinvolgere gli specialisti più adatti, organizzare il lavoro e aiutarti a verificare ogni passaggio del progetto RiverSpend.</p>
-              <div style={{display:"inline-block",padding:"10px 14px",borderRadius:14,background:"#effafa",color:"#27616a",fontSize:13}}>Da dove vuoi cominciare?</div>
-            </div>}
-            {messages.map((message,index)=><div key={index} style={{display:"flex",justifyContent:message.role==="user"?"flex-end":"flex-start",margin:"12px 0"}}>
-              <div style={{maxWidth:"88%",padding:"12px 14px",borderRadius:16,background:message.role==="user"?"#087f89":"#f0f5f6",color:message.role==="user"?"#fff":"#193c43",whiteSpace:"pre-wrap",lineHeight:1.55,overflowWrap:"anywhere"}}>{message.content.split(/(\*\*[^*]+\*\*)/g).map((part, partIndex) => part.startsWith("**") && part.endsWith("**") ? <strong key={partIndex}>{part.slice(2, -2)}</strong> : <span key={partIndex}>{part}</span>)}</div>
+</div>
             </div>)}
             {busy && <div style={{color:"#54757b",fontSize:13,padding:8}}>Nova e gli specialisti stanno elaborando…</div>}
             <div ref={endRef}/>
