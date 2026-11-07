@@ -1,18 +1,30 @@
 import { createClient } from '@supabase/supabase-js';
 
+// Best-effort cache scoped to a warm serverless instance. It never invents
+// products and is refreshed only after a complete successful catalog read.
+let lastKnownGoodProducts = null;
+
 export default async function handler(req, res) {
+  if (req.method !== 'GET') {
+    return res.status(405).json({ error: 'Metodo non consentito.' });
+  }
+
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
   if (!supabaseUrl || !supabaseKey) {
-    return res.status(500).json({ error: 'Configurazione Supabase mancante.' });
+    if (Array.isArray(lastKnownGoodProducts)) {
+      res.setHeader('X-Catalog-Fallback', 'warm-instance-cache');
+      return res.status(200).json(lastKnownGoodProducts);
+    }
+    return res.status(503).json({
+      error: 'Catalogo temporaneamente non disponibile.',
+      warning: 'Non è stato possibile collegarsi al catalogo. Riprova più tardi.',
+      products: []
+    });
   }
 
   const supabase = createClient(supabaseUrl, supabaseKey);
-
-  if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Metodo non consentito.' });
-  }
 
   try {
     // Read products and media separately: product_media.product_id has no
@@ -57,9 +69,8 @@ export default async function handler(req, res) {
         .order('sort_order', { ascending: true });
 
       if (mediaError) {
-        // Il catalogo deve restare visibile anche se product_media non è
-        // disponibile temporaneamente o la tabella non è ancora configurata.
-        // In quel caso usiamo il campo products.image come fallback.
+        // Keep the catalog visible with its primary product.image when
+        // secondary media are unavailable.
         console.error('Products API: media secondari non disponibili, uso le immagini principali.', mediaError);
         media = [];
       } else {
@@ -75,7 +86,7 @@ export default async function handler(req, res) {
       mediaByProduct.set(item.product_id, list);
     }
 
-    return res.status(200).json(filteredProducts.map((product) => {
+    const responseProducts = filteredProducts.map((product) => {
       const productMedia = mediaByProduct.get(product.id) || [];
       const immagini = productMedia.filter((item) => item.type === 'image').map((item) => item.url);
       if (!immagini.length && product.image) immagini.push(product.image);
@@ -106,12 +117,24 @@ export default async function handler(req, res) {
         venduto: product.status === 'sold',
         vendutoAlle: product.sold_at || null
       };
-    }));
+    });
+
+    // Cache only a complete successful result, including the current filters.
+    lastKnownGoodProducts = responseProducts;
+    return res.status(200).json(responseProducts);
   } catch (error) {
     console.error('Products API:', error);
-    return res.status(500).json({
-      error: 'Errore nel caricamento dei prodotti.',
-      detail: process.env.NODE_ENV === 'development' ? error.message : undefined
+
+    if (Array.isArray(lastKnownGoodProducts)) {
+      res.setHeader('X-Catalog-Fallback', 'warm-instance-cache');
+      res.setHeader('Warning', '110 - "Catalogo temporaneamente servito dalla cache locale"');
+      return res.status(200).json(lastKnownGoodProducts);
+    }
+
+    return res.status(503).json({
+      error: 'Errore temporaneo nel caricamento dei prodotti.',
+      warning: 'Il catalogo non è raggiungibile in questo momento. I prodotti non sono stati cancellati: riprova più tardi.',
+      products: []
     });
   }
 }
