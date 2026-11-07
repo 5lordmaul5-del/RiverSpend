@@ -1,6 +1,6 @@
-import { getFortressStatus, updateFortressState } from "../../../../lib/riverSSAI/killSwitch";
-import { verifyHmacRequest } from "../../../../lib/security/hmac";
-import { internalFortressCommandSchema } from "../../../../lib/security/schemas";
+import { getFortressStatus, updateFortressState } from "../../../lib/riverSSAI/killSwitch";
+import { verifyHmacRequest } from "../../../lib/security/hmac";
+import { internalFortressCommandSchema } from "../../../lib/security/schemas";
 
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store, max-age=0");
