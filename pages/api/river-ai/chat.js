@@ -5,7 +5,7 @@ import { routeToSpecialists, selectTeam } from "../../../lib/riverSSAI/router";
 const MODEL_DEFAULT = "openai/gpt-oss-20b";
 const MAX_AGENTS = Object.keys(AGENTS_REGISTRY).length;
 const MAX_MESSAGE_CHARS = 4000;
-const MAX_HISTORY = 16;
+const MAX_HISTORY = 10;
 const MAX_PARALLEL = 2; // limita i picchi di richieste al provider
 
 const AGENTS = Object.fromEntries(Object.entries(AGENTS_REGISTRY).map(([key, agent]) => [key, agent.prompt]));
@@ -20,6 +20,31 @@ Per mercati e token usa scenari probabilistici, dati con data e fonte quando dis
 Non chiedere password, chiavi API o codici. Non esporre segreti o dati di altri utenti.
 Nessuna azione irreversibile, modifica a pagamenti, trasferimento di fondi, investimento, pubblicazione o cancellazione senza approvazione esplicita dell'amministratore.
 Quando i dati non bastano, dillo e indica cosa occorre verificare.`;
+
+
+const MEMORY_CACHE_TTL_MS = 60 * 1000;
+const MEMORY_CACHE_MAX_USERS = 500;
+const memoryCache = new Map();
+
+async function getUserMemories(adminClient, userId) {
+  const now = Date.now();
+  const cached = memoryCache.get(userId);
+  if (cached && cached.expiresAt > now) return cached.rows;
+  const { data, error } = await adminClient
+    .from("river_ai_memories")
+    .select("title,content,category,created_at")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false })
+    .limit(12);
+  if (error) throw error;
+  const rows = data || [];
+  if (memoryCache.size >= MEMORY_CACHE_MAX_USERS) {
+    const oldestKey = memoryCache.keys().next().value;
+    if (oldestKey) memoryCache.delete(oldestKey);
+  }
+  memoryCache.set(userId, { rows, expiresAt: now + MEMORY_CACHE_TTL_MS });
+  return rows;
+}
 
 function json(res, status, body) {
   return res.status(status).json(body);
@@ -47,7 +72,7 @@ async function callModel(apiKey, model, messages, maxTokens = 850) {
       body: JSON.stringify({
         model,
         messages,
-        temperature: 0.25,
+        temperature: 0.3,
         max_tokens: maxTokens
       }),
       signal: controller.signal
@@ -128,13 +153,12 @@ export default async function handler(req, res) {
   const model = process.env.RIVER_AI_MODEL || MODEL_DEFAULT;
 
   try {
-    const { data: memories, error: memoryReadError } = await adminClient
-      .from("river_ai_memories")
-      .select("title,content,category,created_at")
-      .eq("user_id", user.id)
-      .order("created_at", { ascending: false })
-      .limit(12);
-    if (memoryReadError) console.error("River AI memory read failed:", memoryReadError.message);
+    let memories = [];
+    try {
+      memories = await getUserMemories(adminClient, user.id);
+    } catch (memoryReadError) {
+      console.error("River AI memory read failed:", memoryReadError.message);
+    }
     const memoryContext = (memories || [])
       .map((item) => "[" + (item.category || "nota") + "] " + (item.title || "") + ": " + (item.content || "").slice(0, 350))
       .join("\n")
@@ -223,7 +247,7 @@ export default async function handler(req, res) {
         { role: "system", content: BASE_PROMPT + coordinatorContext + specialistContext },
         ...(memoryContext ? [{ role: "system", content: "MEMORIA PRIVATA RIVER AI:\n" + memoryContext }] : []),
         ...safeMessages
-      ], 1500);
+      ], 250);
       agentsUsed = agent === "nova" ? ["nova", ...autoSpecialists] : [agent];
     }
 
@@ -233,6 +257,7 @@ export default async function handler(req, res) {
     ];
     const { error: memoryWriteError } = await adminClient.from("river_ai_memories").insert(memoryRows);
     if (memoryWriteError) console.error("River AI memory write failed:", memoryWriteError.message);
+    else memoryCache.delete(user.id);
 
     return json(res, 200, {
       answer,
