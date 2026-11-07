@@ -20,6 +20,26 @@ export default async function handler(req, res) {
     if (userError || !user) return res.status(401).json({ error: 'Sessione RiverSpend non valida.' });
     const { paypalOrderId } = req.body || {}; if (!paypalOrderId) return res.status(400).json({ error: 'paypalOrderId obbligatorio.' });
     const token = await accessToken();
+    // Verifica prima l'ordine PayPal e il collegamento all'ordine RiverSpend:
+    // non catturare fondi finché proprietà, stato e importo non sono verificati.
+    const paypalOrderResponse = await fetch(paypalBase() + '/v2/checkout/orders/' + encodeURIComponent(paypalOrderId), {
+      headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' }
+    });
+    const paypalOrder = await paypalOrderResponse.json();
+    if (!paypalOrderResponse.ok) return res.status(paypalOrderResponse.status).json({ error: paypalOrder?.message || 'Impossibile verificare l’ordine PayPal.' });
+    const paypalPurchase = paypalOrder.purchase_units?.[0];
+    const linkedOrderId = paypalPurchase?.reference_id || paypalPurchase?.custom_id;
+    if (!linkedOrderId || paypalOrder.status !== 'APPROVED') return res.status(409).json({ error: 'Ordine PayPal non approvato o non collegato a RiverSpend.' });
+    const { data: linkedOrder, error: linkedOrderError } = await admin.from('orders')
+      .select('id,total,currency,buyer_id,status,payment_status')
+      .eq('id', linkedOrderId).eq('buyer_id', user.id).maybeSingle();
+    if (linkedOrderError || !linkedOrder) return res.status(404).json({ error: 'Ordine RiverSpend non trovato per questo account.' });
+    if (linkedOrder.status !== 'pending' || linkedOrder.payment_status === 'paid') return res.status(409).json({ error: 'Ordine non pronto per il pagamento o già pagato.' });
+    const approvedAmount = Number(paypalPurchase?.amount?.value);
+    const approvedCurrency = String(paypalPurchase?.amount?.currency_code || '').toUpperCase();
+    if (!Number.isFinite(approvedAmount) || Math.round(approvedAmount * 100) !== Math.round(Number(linkedOrder.total) * 100) || approvedCurrency !== String(linkedOrder.currency || 'EUR').toUpperCase()) {
+      return res.status(409).json({ error: 'Importo approvato su PayPal diverso dal totale RiverSpend.' });
+    }
     const response = await fetch(paypalBase() + '/v2/checkout/orders/' + encodeURIComponent(paypalOrderId) + '/capture', { method: 'POST', headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json', 'PayPal-Request-Id': 'capture-' + paypalOrderId } });
     const capture = await response.json(); if (!response.ok) return res.status(response.status).json({ error: capture?.message || 'Pagamento PayPal non completato.' });
     const purchase = capture.purchase_units?.[0]; const orderId = purchase?.reference_id || purchase?.custom_id; const paypalCapture = purchase?.payments?.captures?.[0];

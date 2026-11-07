@@ -24,6 +24,8 @@ export default function Vendi() {
   const [venditeRicevute, setVenditeRicevute] = useState([]);
   const [caricamentoVendite, setCaricamentoVendite] = useState(false);
   const [erroreVendite, setErroreVendite] = useState('');
+  const [costiSpedizione, setCostiSpedizione] = useState({});
+  const [confermaOrdine, setConfermaOrdine] = useState('');
   const [aggiornamentoVendita, setAggiornamentoVendita] = useState('');
   const [modificaPrezzoId, setModificaPrezzoId] = useState('');
   const [nuovoNome, setNuovoNome] = useState('');
@@ -110,6 +112,36 @@ export default function Vendi() {
       setVenditeRicevute([]);
       setErroreVendite('Non riesco a leggere le vendite registrate. Potrebbe essere necessario verificare i permessi Supabase per order_items e orders.');
     } finally { setCaricamentoVendite(false); }
+  }
+
+  async function confermaSpedizione(orderId) {
+    if (!session?.user?.id || !orderId || confermaOrdine) return;
+    const raw = String(costiSpedizione[orderId] ?? '0').replace(',', '.');
+    const shippingTotal = Number(raw);
+    if (!Number.isFinite(shippingTotal) || shippingTotal < 0 || shippingTotal > 1000000) {
+      setErroreVendite('Inserisci un costo di spedizione valido, anche 0 se la consegna è gratuita.');
+      return;
+    }
+    setConfermaOrdine(String(orderId));
+    setErroreVendite('');
+    try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token;
+      if (!token) throw new Error('Sessione scaduta. Accedi di nuovo.');
+      const response = await fetch('/api/orders/confirm-shipping', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+        body: JSON.stringify({ orderId, shippingTotal })
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result?.error || 'Conferma non riuscita.');
+      await loadVenditeRicevute(session.user.id);
+      setErroreVendite('✅ Spedizione confermata. Totale ordine: € ' + Number(result.order.total).toFixed(2) + '. Ora l’acquirente può procedere al pagamento.');
+    } catch (error) {
+      setErroreVendite('❌ ' + (error?.message || 'Impossibile confermare la spedizione.'));
+    } finally {
+      setConfermaOrdine('');
+    }
   }
 
   useEffect(() => {
@@ -989,6 +1021,17 @@ export default function Vendi() {
               <div className="mt-4 space-y-3">
                 {venditeRicevute.map((item, index) => <article key={item.id || String(item.order_id) + '-' + String(item.product_id) + '-' + index} className="rounded-xl border border-slate-200 p-3">
                   <div className="flex flex-wrap items-start justify-between gap-2"><div className="min-w-0"><p className="font-semibold">{item.product_name || 'Prodotto'}</p><p className="text-sm text-slate-600">Quantità: {Number(item.quantity || 0)} · € {Number(item.unit_price || 0).toFixed(2)} cad.</p><p className="text-sm font-bold text-slate-800">Totale riga: € {Number(item.subtotal ?? Number(item.unit_price || 0) * Number(item.quantity || 0)).toFixed(2)}</p></div><div className="text-sm sm:text-right"><p className="font-semibold">Ordine #{String(item.order_id).slice(0, 8)}</p><p className="text-slate-600">{item.order.created_at ? new Date(item.order.created_at).toLocaleDateString('it-IT') : 'Data non disponibile'}</p></div></div>
+                  {item.order.status === 'pending_shipping_quote' && item.order.payment_status !== 'paid' && (
+                    <div className="mt-3 w-full rounded-xl border border-amber-200 bg-amber-50 p-3">
+                      <p className="text-sm font-bold text-amber-900">Conferma disponibilità e spedizione</p>
+                      <p className="mt-1 text-xs text-amber-800">Inserisci il costo complessivo di spedizione per questo ordine. Usa 0 per consegna gratuita.</p>
+                      <div className="mt-2 flex flex-wrap items-center gap-2">
+                        <label className="text-sm font-semibold" htmlFor={`shipping-${item.order_id}`}>Spedizione €</label>
+                        <input id={`shipping-${item.order_id}`} type="number" min="0" max="1000000" step="0.01" inputMode="decimal" value={costiSpedizione[item.order_id] ?? '0'} onChange={(e) => setCostiSpedizione((old) => ({...old, [item.order_id]: e.target.value}))} className="w-28 rounded-lg border bg-white px-3 py-2" />
+                        <button type="button" onClick={() => confermaSpedizione(item.order_id)} disabled={Boolean(confermaOrdine)} className="rounded-lg bg-teal-700 px-3 py-2 text-sm font-bold text-white disabled:opacity-50">{confermaOrdine === String(item.order_id) ? 'Confermo…' : 'Conferma ordine'}</button>
+                      </div>
+                    </div>
+                  )}
                   <div className="mt-2 flex flex-wrap gap-2 text-xs font-bold"><span className="rounded-full bg-slate-100 px-2 py-1 text-slate-700">Ordine: {item.order.status || 'da verificare'}</span><span className={`rounded-full px-2 py-1 ${item.order.payment_status === 'paid' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-900'}`}>Pagamento: {item.order.payment_status || 'da verificare'}</span></div>
                 </article>)}
               </div>
