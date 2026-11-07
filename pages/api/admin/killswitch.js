@@ -1,5 +1,6 @@
 import { getFortressStatus, updateFortressState } from "../../../lib/riverSSAI/killSwitch";
 import { isAdminRequest, isSameOriginRequest } from "../../../lib/riverSSAI/adminSession";
+import { fortressFlagsSchema } from "../../../lib/security/schemas";
 
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store, max-age=0");
@@ -13,10 +14,10 @@ export default async function handler(req, res) {
   }
   if (req.method === "POST") {
     if (!isSameOriginRequest(req)) return res.status(403).json({ success: false, error: "Origine della richiesta non valida." });
-    const flags = req.body?.flags;
-    if (!flags || typeof flags !== "object" || Array.isArray(flags)) return res.status(400).json({ success: false, error: "Payload flags non valido." });
+    const parsedFlags = fortressFlagsSchema.safeParse(req.body?.flags);
+    if (!parsedFlags.success) return res.status(400).json({ success: false, error: "Payload flags non valido." });
     try {
-      const state = await updateFortressState(flags, "admin-dashboard");
+      const state = await updateFortressState(parsedFlags.data, "admin-dashboard");
       return res.status(200).json({ success: true, fortress: state });
     } catch (error) {
       const invalid = error instanceof TypeError;
