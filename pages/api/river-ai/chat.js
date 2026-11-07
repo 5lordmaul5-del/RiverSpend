@@ -148,7 +148,7 @@ export default async function handler(req, res) {
     return json(res, 400, { error: "Scrivi prima una richiesta." });
   }
 
-  const agent = body.agent === "team60" ? "team60" : (body.agent === "team" ? "team" : normalizeAgent(body.agent));
+  const agent = (body.agent === "team90" || body.agent === "team90") ? "team90" : (body.agent === "team" ? "team" : normalizeAgent(body.agent));
   const team = chooseTeam(agent, body.teamSize, safeMessages[safeMessages.length - 1].content);
   const model = process.env.RIVER_AI_MODEL || MODEL_DEFAULT;
 
@@ -186,8 +186,8 @@ export default async function handler(req, res) {
       ], 900);
       answer = synthesis;
       agentsUsed = ["nova", ...team];
-    } else if (agent === "team60") {
-      // Cinque squadre AI elaborano tutti i 59 ruoli specialistici; Nova coordina e sintetizza.
+    } else if (agent === "team90") {
+      // Cinque squadre AI elaborano tutti gli 89 ruoli specialistici; Nova coordina e sintetizza.
       // Ogni squadra restituisce un contributo distinto per ciascun ruolo, senza 59 chiamate individuali.
       const allSpecialists = Object.entries(AGENTS_REGISTRY).filter(([key]) => key !== "nova");
       const squadSize = 12;
@@ -264,8 +264,8 @@ export default async function handler(req, res) {
       model,
       agent,
       agentsUsed,
-      teamSize: agent === "team" ? team.length : (agent === "team60" ? Math.max(0, agentsUsed.length - 1) : (agent === "nova" ? Math.max(1, agentsUsed.length - 1) : 1)),
-      team60: agent === "team60" ? { totalSpecialists: 59, completedSpecialists: Math.max(0, agentsUsed.length - 1), squads: 5 } : null,
+      teamSize: agent === "team" ? team.length : (agent === "team90" ? Math.max(0, agentsUsed.length - 1) : (agent === "nova" ? Math.max(1, agentsUsed.length - 1) : 1)),
+      team90: agent === "team90" ? { totalSpecialists: allSpecialists.length, completedSpecialists: Math.max(0, agentsUsed.length - 1), squads: 5 } : null,
       memorySaved: !memoryWriteError,
       limits: { maxAgents: MAX_AGENTS, maxParallel: MAX_PARALLEL }
     });
