@@ -135,8 +135,8 @@ export default function Vendi() {
       });
       const result = await response.json();
       if (!response.ok) throw new Error(result?.error || 'Conferma non riuscita.');
-      setErroreVendite('✅ Spedizione confermata. Totale ordine: € ' + Number(result.order.total).toFixed(2) + '. Ora l’acquirente può procedere al pagamento.');
       await loadVenditeRicevute(session.user.id);
+      setErroreVendite('✅ Spedizione confermata. Totale ordine: € ' + Number(result.order.total).toFixed(2) + '. Ora l’acquirente può procedere al pagamento.');
     } catch (error) {
       setErroreVendite('❌ ' + (error?.message || 'Impossibile confermare la spedizione.'));
     } finally {
