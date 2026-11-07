@@ -185,13 +185,14 @@ export default function RiverAI() {
          access === "error" ? <div role="alert" style={{padding:24}}><h2>Verifica temporaneamente non disponibile</h2><p>Non posso confermare i permessi in questo momento. Riprova tra poco.</p></div> :
          <>
           <div style={{padding:"12px 18px",background:"#f0fbfa",borderBottom:"1px solid #dceeee",fontSize:12,lineHeight:1.5,color:"#42636a"}}>
-            Scegli il collaboratore specializzato. Gli agenti condividono la regia di Nova e la memoria privata. La rete dispone di 60 collaboratori AI. Quando scegli la Squadra Ultra, Nova seleziona le competenze più pertinenti fra tutti i 60 e coordina gruppi da 2, 4, 8, 10, 20 o 30 specialisti; il sistema li elabora a piccoli gruppi e Nova integra i risultati. La capacità effettiva dipende dai limiti del servizio e dalle risorse disponibili. Le azioni esterne restano protette da approvazione.
+            Scegli il collaboratore specializzato. La modalità Automatica usa le competenze pertinenti; Squadra Ultra coinvolge un gruppo selezionato. SQUADRA TOTALE 60 assegna il compito a tutti i 59 ruoli specialistici in cinque gruppi AI, poi Nova confronta e sintetizza i contributi. Per contenere costi e limiti del provider, ogni gruppo elabora più ruoli in un’unica chiamata: non sono 59 chiamate indipendenti. Le azioni esterne restano protette da approvazione.
           </div>
           <div style={{padding:"12px 18px",borderBottom:"1px solid #e3eeee",display:"flex",alignItems:"center",gap:10,flexWrap:"wrap"}}>
             <label htmlFor="river-agent" style={{fontWeight:800,color:"#075766"}}>Agente operativo</label>
             <select id="river-agent" value={selectedAgent} onChange={e=>setSelectedAgent(e.target.value)} style={{flex:1,minWidth:190,border:"1px solid #c7dfe1",borderRadius:11,padding:10,background:"#fff",color:"#173b42",fontSize:14}}>
               <option value="nova">🌊 Nova · Coordinatrice</option>
               <option value="team">⚡ Squadra Ultra · gruppo coordinato</option>
+              <option value="team60">🧠 SQUADRA TOTALE 60 · tutte le intelligenze</option>
               <option value="tech">💻 River Tech · Programmazione</option>
               <option value="design">🎨 River Design · Immagini e video</option>
               <option value="robotics">🤖 River Robotics · Droidi e 3D</option>
