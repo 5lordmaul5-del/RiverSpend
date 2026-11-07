@@ -268,6 +268,7 @@ export default async function handler(req, res) {
     const latestPrompt = safeMessages[safeMessages.length - 1].content;
     let answer;
     let agentsUsed = team;
+    let providerResults = [];
 
     if (agent === "team") {
       // La Squadra usa un contesto compatto per rispettare il limite TPM del provider.
@@ -286,6 +287,7 @@ export default async function handler(req, res) {
         { role: "user", content: "RICHIESTA:\n" + latestPrompt + "\n\nRAPPORTI SPECIALISTI:\n" + reports.map((item) => "AGENTE " + item.specialist.toUpperCase() + ":\n" + item.report).join("\n\n") }
       ], 900);
       answer = synthesisResult.content;
+      providerResults = [...reports, synthesisResult];
       agentsUsed = ["nova", ...team];
     } else {
       const answerResult = await callModel(providers, [
@@ -294,6 +296,7 @@ export default async function handler(req, res) {
         ...safeMessages
       ], 1500);
       answer = answerResult.content;
+      providerResults = [answerResult];
     }
 
     const memoryRows = [
@@ -303,12 +306,8 @@ export default async function handler(req, res) {
     const { error: memoryWriteError } = await adminClient.from("river_ai_memories").insert(memoryRows);
     if (memoryWriteError) console.error("River AI memory write failed:", memoryWriteError.message);
 
-    const providersUsed = agent === "team"
-      ? [...new Set([...reports.map((item) => item.provider), synthesisResult.provider])]
-      : [answerResult.provider];
-    const modelsUsed = agent === "team"
-      ? [...new Set([...reports.map((item) => item.model), synthesisResult.model])]
-      : [answerResult.model];
+    const providersUsed = [...new Set(providerResults.map((item) => item.provider))];
+    const modelsUsed = [...new Set(providerResults.map((item) => item.model))];
     return json(res, 200, {
       answer,
       provider: providersUsed.length === 1 ? providersUsed[0] : "mixed",
