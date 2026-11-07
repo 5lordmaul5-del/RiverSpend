@@ -3,6 +3,7 @@ import { getFortressStatus, isModuleEnabled } from "../../../lib/riverSSAI/killS
 import { callLLMWithFailover } from "../../../lib/riverSSAI/llmProvider";
 import { AGENTS_REGISTRY, getAgentPrompt } from "../../../lib/riverSSAI/agentsRegistry";
 import { selectTeam } from "../../../lib/riverSSAI/router";
+import { chatRequestSchema } from "../../../lib/security/schemas";
 
 const MODEL_DEFAULT = "openai/gpt-oss-20b";
 const MAX_AGENTS = 30;
@@ -94,12 +95,14 @@ export default async function handler(req, res) {
     return json(res, 403, { error: "Nova Ultra Power Mega è riservata esclusivamente al proprietario RiverSpend." });
   }
 
-  const body = req.body || {};
-  const messages = Array.isArray(body.messages) ? body.messages.slice(-MAX_HISTORY) : [];
-  const safeMessages = messages
-    .filter((item) => item && ["user", "assistant"].includes(item.role) && typeof item.content === "string")
-    .map((item) => ({ role: item.role, content: item.content.slice(0, MAX_MESSAGE_CHARS) }));
-  if (!safeMessages.length || safeMessages[safeMessages.length - 1].role !== "user") {
+  const parsedRequest = chatRequestSchema.safeParse(req.body || {});
+  if (!parsedRequest.success) {
+    return json(res, 400, { error: "Richiesta non valida. Controlla messaggi, ruolo e dimensione della squadra." });
+  }
+  const body = parsedRequest.data;
+  const messages = body.messages.slice(-MAX_HISTORY);
+  const safeMessages = messages.map((item) => ({ role: item.role, content: item.content.slice(0, MAX_MESSAGE_CHARS) }));
+  if (safeMessages[safeMessages.length - 1].role !== "user") {
     return json(res, 400, { error: "Scrivi prima una richiesta." });
   }
 
