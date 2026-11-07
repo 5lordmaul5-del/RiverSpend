@@ -57,9 +57,7 @@ export default async function handler(req, res) {
     shipping_total: shipping,
     total,
     delivery_status: 'confirmed',
-    status: 'pending',
-    shipping_confirmed_at: new Date().toISOString(),
-    shipping_confirmed_by: auth.user.id
+    status: 'pending'
   }).eq('id', orderId).eq('status', 'pending_shipping_quote').eq('payment_status', 'unpaid')
     .select('id,total,shipping_total,status,delivery_status').maybeSingle();
 
