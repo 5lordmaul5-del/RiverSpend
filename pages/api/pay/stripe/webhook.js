@@ -32,7 +32,6 @@ export default async function handler(req, res) {
   }
 
   if (event.type !== 'checkout.session.completed') return res.status(200).json({ received: true });
-
   const session = event.data.object;
   if (session.payment_status !== 'paid') return res.status(200).json({ received: true });
 
@@ -40,15 +39,15 @@ export default async function handler(req, res) {
   if (!orderId) return res.status(400).json({ error: 'order_id mancante nel webhook.' });
 
   const admin = createClient(supabaseUrl, serviceRoleKey);
-  const { data: order, error: orderError } = await admin
-    .from('orders')
-    .select('id,total,currency,buyer_id,status,payment_status')
-    .eq('id', orderId)
-    .single();
-
+  const { data: order, error: orderError } = await admin.from('orders')
+    .select('id,total,currency,buyer_id,status,payment_status').eq('id', orderId).single();
   if (orderError || !order) return res.status(404).json({ error: 'Ordine non trovato.' });
-  if (order.status !== 'pending' || order.payment_status === 'paid') {
-    return res.status(409).json({ error: 'Ordine non pronto per il pagamento o già pagato.' });
+
+  // Un webhook Stripe può essere ritentato dopo che l'ordine è già stato confermato.
+  // Non rifiutiamo lo stato "paid": proseguiamo con upsert e controlli duplicati,
+  // così un retry può anche completare eventuali passaggi rimasti incompleti.
+  if (!['pending', 'confirmed'].includes(order.status)) {
+    return res.status(409).json({ error: 'Ordine non disponibile per il completamento del pagamento.' });
   }
 
   const amount = Number(session.amount_total || 0) / 100;
@@ -60,63 +59,34 @@ export default async function handler(req, res) {
   }
 
   const idempotencyKey = 'stripe-' + session.id;
-  const { data: paymentOrder, error: paymentOrderError } = await admin
-    .from('payment_orders')
-    .upsert({
-      user_id: order.buyer_id,
-      order_reference: order.id,
-      amount,
-      currency,
-      status: 'paid',
-      provider: 'stripe',
-      provider_order_id: session.id,
-      idempotency_key: idempotencyKey,
-      metadata: { stripe_session_id: session.id, payment_intent: session.payment_intent || null }
-    }, { onConflict: 'idempotency_key' })
-    .select('id')
-    .single();
-
+  const { data: paymentOrder, error: paymentOrderError } = await admin.from('payment_orders').upsert({
+    user_id: order.buyer_id, order_reference: order.id, amount, currency, status: 'paid',
+    provider: 'stripe', provider_order_id: session.id, idempotency_key: idempotencyKey,
+    metadata: { stripe_session_id: session.id, payment_intent: session.payment_intent || null, stripe_event_id: event.id }
+  }, { onConflict: 'idempotency_key' }).select('id').single();
   if (paymentOrderError) return res.status(500).json({ error: paymentOrderError.message });
 
-  const { data: existingTx } = await admin
-    .from('payment_transactions')
-    .select('id')
-    .eq('payment_order_id', paymentOrder.id)
-    .eq('provider', 'stripe')
-    .eq('type', 'payment')
-    .limit(1);
-
+  const { data: existingTx, error: txReadError } = await admin.from('payment_transactions').select('id')
+    .eq('payment_order_id', paymentOrder.id).eq('provider', 'stripe').eq('type', 'payment').limit(1);
+  if (txReadError) return res.status(500).json({ error: txReadError.message });
   if (!existingTx?.length) {
     const { error: txError } = await admin.from('payment_transactions').insert({
-      payment_order_id: paymentOrder.id,
-      user_id: order.buyer_id,
-      provider: 'stripe',
-      provider_transaction_id: String(session.payment_intent || session.id),
-      type: 'payment',
-      status: 'succeeded',
-      amount,
-      currency,
+      payment_order_id: paymentOrder.id, user_id: order.buyer_id, provider: 'stripe',
+      provider_transaction_id: String(session.payment_intent || session.id), type: 'payment',
+      status: 'succeeded', amount, currency,
       raw_reference: { stripe_session_id: session.id, event_id: event.id }
     });
     if (txError) return res.status(500).json({ error: txError.message });
   }
 
   const { error: treasuryError } = await admin.rpc('rs_create_treasury_allocation', {
-    p_order_id: String(order.id),
-    p_payment_id: paymentOrder.id,
-    p_gross_amount: amount,
-    p_currency: currency,
-    p_rule_id: null,
-    p_revenue_source_code: 'SHOP_COMMISSION'
+    p_order_id: String(order.id), p_payment_id: paymentOrder.id, p_gross_amount: amount,
+    p_currency: currency, p_rule_id: null, p_revenue_source_code: 'SHOP_COMMISSION'
   });
   if (treasuryError) return res.status(500).json({ error: treasuryError.message });
 
-  const { error: orderUpdateError } = await admin
-    .from('orders')
-    .update({ payment_status: 'paid', status: 'confirmed' })
-    .eq('id', order.id)
-    .eq('payment_status', 'unpaid');
-
+  const { error: orderUpdateError } = await admin.from('orders')
+    .update({ payment_status: 'paid', status: 'confirmed' }).eq('id', order.id).eq('payment_status', 'unpaid');
   if (orderUpdateError) return res.status(500).json({ error: orderUpdateError.message });
-  return res.status(200).json({ received: true });
+  return res.status(200).json({ received: true, alreadyProcessed: order.payment_status === 'paid' });
 }

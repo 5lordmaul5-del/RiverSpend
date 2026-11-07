@@ -150,7 +150,7 @@ export default function RiverAI() {
 
   return (
     <>
-    <Head><title>RiverSSAI 10.0 · Pure Power</title><meta name="description" content="RiverSSAI 10.0: Nova, i tre comandanti River e la rete dei 30 specialisti."/><meta name="apple-mobile-web-app-capable" content="yes"/><meta name="apple-mobile-web-app-title" content="RiverSSAI 10.0"/><link rel="icon" href="/icons/river-ssai-192.png" type="image/png"/><link rel="apple-touch-icon" href="/icons/river-ssai-192.png"/></Head>
+    <Head><title>RiverSSAI 10.0 · Pure Power</title><meta name="description" content="RiverSSAI 10.0: Nova, i tre comandanti River e la rete dei 90 collaboratori AI."/><meta name="apple-mobile-web-app-capable" content="yes"/><meta name="apple-mobile-web-app-title" content="RiverSSAI 10.0"/><link rel="icon" href="/icons/river-ssai-192.png" type="image/png"/><link rel="apple-touch-icon" href="/icons/river-ssai-192.png"/></Head>
     <main style={{ minHeight:"100vh", background:"linear-gradient(180deg,#e9fbfc,#f7fcfd)", color:"#12343b", padding:"18px 12px 28px", fontFamily:"Arial,sans-serif" }}>
       <section style={{ maxWidth:850, minHeight:"calc(100vh - 46px)", margin:"0 auto", display:"flex", flexDirection:"column", background:"#fff", border:"1px solid #c8e8e9", borderRadius:22, overflow:"hidden", boxShadow:"0 12px 36px rgba(5,65,78,.10)" }}>
         <header className="river-ai-header" style={{ padding:"18px 20px", background:"linear-gradient(120deg,#073b4c,#087f89)", color:"#fff", display:"flex", alignItems:"center", gap:12 }}>
@@ -164,9 +164,9 @@ export default function RiverAI() {
           <button onClick={newChat} disabled={access!=="ready" || busy} style={{ border:"1px solid #ffffff66",borderRadius:11,padding:"9px 11px",background:"transparent",color:"#fff",fontWeight:700 }}>Nuova chat</button>
         </header>
         <section aria-label="Nova e i tre comandanti River" style={{background:"#06172b",color:"#fff",padding:"12px 14px 16px"}}>
-          <img src="/images/river-ssai-10-team.svg" alt="Nova al centro, i comandanti River A1B2, A2C4 e B2D5 e l’esercito dei 30 specialisti" style={{display:"block",width:"100%",maxHeight:360,objectFit:"contain",borderRadius:14}}/>
+          <img src="/images/river-ssai-10-team.svg" alt="Nova al centro, i comandanti River A1B2, A2C4 e B2D5 e la rete dei collaboratori RiverSSAI" style={{display:"block",width:"100%",maxHeight:360,objectFit:"contain",borderRadius:14}}/>
           <div style={{textAlign:"center",fontWeight:800,letterSpacing:1,color:"#55e6ff",fontSize:13,marginTop:8}}>NOVA · RIVER A1B2 · RIVER A2C4 · RIVER B2D5</div>
-          <div style={{textAlign:"center",fontSize:12,color:"#d7e9f5",marginTop:4}}>Una regia. Tre unità speciali. 30 specialisti.</div>
+          <div style={{textAlign:"center",fontSize:12,color:"#d7e9f5",marginTop:4}}>Una regia. Tre unità speciali. 90 collaboratori AI.</div>
         </section>
 
         {installMessage && <div role="status" style={{padding:"10px 18px",background:"#fff8df",color:"#72510a",fontSize:13}}>{installMessage}</div>}
@@ -185,13 +185,14 @@ export default function RiverAI() {
          access === "error" ? <div role="alert" style={{padding:24}}><h2>Verifica temporaneamente non disponibile</h2><p>Non posso confermare i permessi in questo momento. Riprova tra poco.</p></div> :
          <>
           <div style={{padding:"12px 18px",background:"#f0fbfa",borderBottom:"1px solid #dceeee",fontSize:12,lineHeight:1.5,color:"#42636a"}}>
-            Scegli il collaboratore specializzato. Gli agenti condividono la regia di Nova e la memoria privata. La rete dispone di 30 specialisti. Quando scegli la Squadra Ultra, Nova seleziona prima le competenze più pertinenti alla tua richiesta e coordina gruppi da 2, 4, 8, 10, 20 o 30 specialisti; il sistema li elabora a piccoli gruppi e Nova integra i risultati. La capacità effettiva dipende dai limiti del servizio e dalle risorse disponibili. Le azioni esterne restano protette da approvazione.
+            Scegli il collaboratore specializzato. La modalità Automatica usa le competenze pertinenti; Squadra Ultra coinvolge un gruppo selezionato. SQUADRA TOTALE 90 assegna il compito a tutti gli 89 ruoli specialistici in otto gruppi AI, poi Nova confronta e sintetizza i contributi. Per contenere costi e limiti del provider, ogni gruppo elabora più ruoli in un’unica chiamata: non sono 89 chiamate indipendenti. Le azioni esterne restano protette da approvazione.
           </div>
           <div style={{padding:"12px 18px",borderBottom:"1px solid #e3eeee",display:"flex",alignItems:"center",gap:10,flexWrap:"wrap"}}>
             <label htmlFor="river-agent" style={{fontWeight:800,color:"#075766"}}>Agente operativo</label>
             <select id="river-agent" value={selectedAgent} onChange={e=>setSelectedAgent(e.target.value)} style={{flex:1,minWidth:190,border:"1px solid #c7dfe1",borderRadius:11,padding:10,background:"#fff",color:"#173b42",fontSize:14}}>
               <option value="nova">🌊 Nova · Coordinatrice</option>
               <option value="team">⚡ Squadra Ultra · gruppo coordinato</option>
+              <option value="team90">🧠 SQUADRA TOTALE 90 · tutte le intelligenze</option>
               <option value="tech">💻 River Tech · Programmazione</option>
               <option value="design">🎨 River Design · Immagini e video</option>
               <option value="robotics">🤖 River Robotics · Droidi e 3D</option>
@@ -222,6 +223,46 @@ export default function RiverAI() {
               <option value="sustainability">🌱 River Ecology · Sostenibilità</option>
               <option value="operations">🧭 River Operations · Organizzazione</option>
               <option value="documentation">📚 River Docs · Documentazione</option>
+              <optgroup label="Squadra A · Fisco e contabilità">
+                <option value="fiskus_bot">🧾 Fiskus-Bot · IVA Italia/UE</option>
+                <option value="pay_guardian">🛡️ PayGuardian · Frodi e chargeback</option>
+                <option value="ledger_sync">📒 LedgerSync · Riconciliazione</option>
+                <option value="margin_ai">📊 MarginAI · Margini prodotto</option>
+                <option value="invoice_validator">🧾 InvoiceValidator · Fatture elettroniche</option>
+                <option value="risk_radar">💹 RiskRadar · Liquidità e scadenze</option>
+              </optgroup>
+              <optgroup label="Squadra B · Infrastruttura e P2P">
+                <option value="signal_router">🌐 SignalRouter · WebRTC e P2P</option>
+                <option value="db_pool_guard">🗄️ DBPoolGuard · Supabase e Postgres</option>
+                <option value="edge_cache_master">⚡ EdgeCacheMaster · CDN e cache</option>
+                <option value="latency_slayer">⏱️ LatencySlayer · Performance API</option>
+                <option value="sync_engine">🔄 SyncEngine · Sincronizzazione offline</option>
+                <option value="stream_codec">🎞️ StreamCodec · Media P2P</option>
+              </optgroup>
+              <optgroup label="Squadra C · Sicurezza e privacy">
+                <option value="vault_keeper">🔐 VaultKeeper · Segreti applicativi</option>
+                <option value="gdpr_shield">🛡️ GDPRShield · Privacy engineering</option>
+                <option value="firewall_bot">🔥 FirewallBot · Difesa API</option>
+                <option value="auth_sentinel">🪪 AuthSentinel · Sessioni e identità</option>
+                <option value="audit_logger">📋 AuditLogger · Audit trail</option>
+                <option value="cors_validator">🌍 CORSValidator · CORS e header</option>
+              </optgroup>
+              <optgroup label="Squadra D · Token economy e AI Ops">
+                <option value="token_compressor">🧩 TokenCompressor · Ottimizzazione prompt</option>
+                <option value="prompt_router">🧭 PromptRouter · Smistamento AI</option>
+                <option value="memory_cacher">🧠 MemoryCacher · Cache memoria</option>
+                <option value="context_trimmer">✂️ ContextTrimmer · Finestra contesto</option>
+                <option value="cost_tracker">💰 CostTracker · Costi e quote AI</option>
+                <option value="quality_scorer">🎯 QualityScorer · Qualità risposte</option>
+              </optgroup>
+              <optgroup label="Squadra E · PWA, accessibilità e test">
+                <option value="pwa_checker">📱 PWAChecker · Installabilità PWA</option>
+                <option value="a11y_auditor">♿ A11yAuditor · Audit WCAG</option>
+                <option value="localizer">🌐 Localizer · Coerenza IT/EN</option>
+                <option value="test_runner">🧪 TestRunner · Test automatici</option>
+                <option value="notifier">🔔 Notifier · Push e webhook</option>
+                <option value="sentiment_analyzer">💬 SentimentAnalyzer · Tono conversazione</option>
+              </optgroup>
             </select>
             {selectedAgent === "team" && <select aria-label="Numero di agenti" value={teamSize} onChange={e=>setTeamSize(Number(e.target.value))} style={{border:"1px solid #c7dfe1",borderRadius:11,padding:10,background:"#fff",color:"#173b42",fontSize:14}}>
               <option value={2}>2 agenti + Nova</option>
