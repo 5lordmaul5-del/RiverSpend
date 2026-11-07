@@ -1,7 +1,8 @@
 import { createClient } from "@supabase/supabase-js";
 
 const MODEL_DEFAULT = "openai/gpt-oss-20b";
-const MAX_AGENTS = 30;
+const MAX_AGENTS = 30; // competenze disponibili nel roster
+const MAX_SPECIALISTS_PER_REQUEST = 2;
 const MAX_MESSAGE_CHARS = 2000;
 const MAX_HISTORY = 8;
 const MAX_OUTPUT_TOKENS = 850;
@@ -94,9 +95,8 @@ const AGENT_SIGNALS = {
   documentation: ["manuale", "documenta", "istruzioni", "guida", "changelog"]
 };
 
-function chooseTeam(agent, requestedSize, prompt = "") {
+function chooseTeam(agent, _requestedSize, prompt = "") {
   if (agent !== "team") return [normalizeAgent(agent)];
-  const size = [2, 4, 8, 10, 20, 30].includes(Number(requestedSize)) ? Number(requestedSize) : 4;
   const normalizedPrompt = String(prompt).toLocaleLowerCase("it");
   const ranked = Object.keys(AGENT_SIGNALS).map((name, index) => ({
     name,
@@ -104,7 +104,14 @@ function chooseTeam(agent, requestedSize, prompt = "") {
     index
   }));
   ranked.sort((a, b) => b.score - a.score || a.index - b.index);
-  return ranked.slice(0, Math.min(size, MAX_AGENTS)).map((item) => item.name);
+
+  // Deterministic, zero-extra-call router: select only relevant specialists.
+  // If no signal matches, use one research specialist instead of arbitrary agents.
+  const selected = ranked
+    .filter((item) => item.score > 0)
+    .slice(0, MAX_SPECIALISTS_PER_REQUEST)
+    .map((item) => item.name);
+  return selected.length ? selected : ["research"];
 }
 
 async function callModel(apiKey, model, messages, maxTokens = MAX_OUTPUT_TOKENS) {
@@ -255,7 +262,7 @@ export default async function handler(req, res) {
       teamSize: agent === "team" ? team.length : 1,
       memorySaved: !memoryWriteError,
       routing: { core: "active", providerUsed, modelUsed, localConfigured: Boolean(localEndpoint), cloudConfigured: Boolean(groqKey), fallback: "local-to-cloud" },
-      limits: { maxAgents: MAX_AGENTS, providerCallsPerReply: 1, maxOutputTokens: MAX_OUTPUT_TOKENS }
+      limits: { rosterSize: MAX_AGENTS, maxSpecialistsPerRequest: MAX_SPECIALISTS_PER_REQUEST, providerCallsPerReply: 1, maxOutputTokens: MAX_OUTPUT_TOKENS }
     });
   } catch (error) {
     console.error("RiverSSAI request failed:", error?.message || "unknown");
