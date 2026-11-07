@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { callLLMWithFailover } from "../../../lib/riverSSAI/llmProvider";
 
 const MODEL_DEFAULT = "openai/gpt-oss-20b";
 const MAX_AGENTS = 30;
@@ -106,71 +107,6 @@ function chooseTeam(agent, requestedSize, prompt = "") {
   return selected;
 }
 
-function isRetryableProviderError(error) {
-  if (error?.name === "AbortError" || error instanceof TypeError) return true;
-  return error?.status === 408 || error?.status === 429 || Number(error?.status) >= 500;
-}
-
-async function requestProvider(provider, messages, maxTokens) {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 45000);
-  try {
-    const headers = {
-      Authorization: "Bearer " + provider.apiKey,
-      "Content-Type": "application/json"
-    };
-    if (provider.name === "openrouter") {
-      if (process.env.OPENROUTER_SITE_URL) headers["HTTP-Referer"] = process.env.OPENROUTER_SITE_URL;
-      headers["X-Title"] = "RiverSpend RiverSSAI";
-    }
-    const response = await fetch(provider.endpoint, {
-      method: "POST",
-      headers,
-      body: JSON.stringify({
-        model: provider.model,
-        messages,
-        temperature: 0.25,
-        max_tokens: maxTokens
-      }),
-      signal: controller.signal
-    });
-    const payload = await response.json().catch(() => ({}));
-    if (!response.ok) {
-      const error = new Error(payload?.error?.message || provider.name + " non disponibile.");
-      error.status = response.status;
-      error.provider = provider.name;
-      throw error;
-    }
-    const answer = payload?.choices?.[0]?.message?.content;
-    if (typeof answer !== "string" || !answer.trim()) {
-      const error = new Error(provider.name + " ha restituito una risposta vuota.");
-      error.provider = provider.name;
-      throw error;
-    }
-    return { content: answer.trim(), provider: provider.name, model: provider.model };
-  } finally {
-    clearTimeout(timeout);
-  }
-}
-
-async function callModel(providers, messages, maxTokens = 850) {
-  let lastError;
-  for (let index = 0; index < providers.length; index += 1) {
-    const provider = providers[index];
-    try {
-      const result = await requestProvider(provider, messages, maxTokens);
-      if (index > 0) console.warn("River AI failover activated:", providers[index - 1].name, "->", provider.name);
-      return result;
-    } catch (error) {
-      lastError = error;
-      const hasBackup = index < providers.length - 1;
-      if (!hasBackup || !isRetryableProviderError(error)) throw error;
-      console.warn("River AI primary provider unavailable; trying backup:", provider.name, error?.status || error?.name || "network");
-    }
-  }
-  throw lastError || new Error("Nessun provider AI disponibile.");
-}
-
 async function runWithLimit(items, limit, worker) {
   const results = new Array(items.length);
   let next = 0;
@@ -193,31 +129,11 @@ export default async function handler(req, res) {
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  const groqKey = process.env.GROQ_API_KEY;
-  const openRouterKey = process.env.OPENROUTER_API_KEY;
-  const backupModel = process.env.RIVER_AI_BACKUP_MODEL;
-  if (!supabaseUrl || !serviceKey) {
-    return json(res, 503, { error: "Configurazione database River AI incompleta. Controllare le variabili server." });
-  }
-  if (openRouterKey && !backupModel) {
-    return json(res, 503, { error: "Configurazione failover incompleta: impostare RIVER_AI_BACKUP_MODEL." });
-  }
-  const model = process.env.RIVER_AI_MODEL || MODEL_DEFAULT;
-  const providers = [];
-  if (groqKey) providers.push({
-    name: "groq",
-    endpoint: "https://api.groq.com/openai/v1/chat/completions",
-    apiKey: groqKey,
-    model
-  });
-  if (openRouterKey && backupModel) providers.push({
-    name: "openrouter",
-    endpoint: process.env.OPENROUTER_BASE_URL || "https://openrouter.ai/api/v1/chat/completions",
-    apiKey: openRouterKey,
-    model: backupModel
-  });
-  if (!providers.length) {
-    return json(res, 503, { error: "Nessun provider AI configurato. Impostare GROQ_API_KEY o OPENROUTER_API_KEY con RIVER_AI_BACKUP_MODEL." });
+  const hasGroqKey = Boolean(process.env.GROQ_API_KEY);
+  const hasBackupKey = Boolean(process.env.BACKUP_LLM_API_KEY || process.env.OPENROUTER_API_KEY);
+  const hasBackupModel = Boolean(process.env.BACKUP_LLM_MODEL || process.env.RIVER_AI_BACKUP_MODEL);
+  if ((!hasGroqKey && !hasBackupKey) || (hasBackupKey && !hasBackupModel)) {
+    return json(res, 503, { error: "Configurazione provider AI incompleta. Verificare le chiavi e il modello di backup." });
   }
 
   const authHeader = req.headers.authorization || "";
@@ -275,26 +191,26 @@ export default async function handler(req, res) {
       const teamHistory = safeMessages.slice(-4);
       const teamMemory = memoryContext.slice(0, 900);
       const reports = await runWithLimit(team, MAX_PARALLEL, async (specialist) => {
-        const reportResult = await callModel(providers, [
+        const reportResult = await callLLMWithFailover([
           { role: "system", content: BASE_PROMPT + "\nRUOLO SPECIALISTA: " + AGENTS[specialist] + "\nFornisci un rapporto sintetico: priorità, un rischio e verifica essenziale." },
           ...(teamMemory ? [{ role: "system", content: "CONTESTO PRIVATO RIVERSPEND (sintesi):\n" + teamMemory }] : []),
           ...teamHistory
-        ], 300);
+        ], { temperature: 0.25, max_tokens: 300 });
         return { specialist, report: reportResult.content, provider: reportResult.provider, model: reportResult.model };
       });
-      const synthesisResult = await callModel(providers, [
+      const synthesisResult = await callLLMWithFailover([
         { role: "system", content: BASE_PROMPT + "\nSei NOVA, coordinatrice. Confronta i rapporti, risolvi le contraddizioni senza nasconderle e restituisci decisione, piano, rischi e verifiche." },
         { role: "user", content: "RICHIESTA:\n" + latestPrompt + "\n\nRAPPORTI SPECIALISTI:\n" + reports.map((item) => "AGENTE " + item.specialist.toUpperCase() + ":\n" + item.report).join("\n\n") }
-      ], 900);
+      ], { temperature: 0.25, max_tokens: 900 });
       answer = synthesisResult.content;
       providerResults = [...reports, synthesisResult];
       agentsUsed = ["nova", ...team];
     } else {
-      const answerResult = await callModel(providers, [
+      const answerResult = await callLLMWithFailover([
         { role: "system", content: BASE_PROMPT + "\nRUOLO ATTIVO: " + AGENTS[agent] },
         ...(memoryContext ? [{ role: "system", content: "MEMORIA PRIVATA RIVER AI:\n" + memoryContext }] : []),
         ...safeMessages
-      ], 1500);
+      ], { temperature: 0.25, max_tokens: 1500 });
       answer = answerResult.content;
       providerResults = [answerResult];
     }
