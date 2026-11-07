@@ -18,13 +18,13 @@ export default async function handler(req, res) {
     return res.status(status).json({ success: false, error: "Firma interna non valida o non verificabile." });
   }
 
-  if (parsed.data.agentName === "nova" && Object.values(parsed.data.flags).some((enabled) => enabled !== false)) {
+  if (Object.values(parsed.data.flags).some((enabled) => enabled !== false)) {
     return res.status(403).json({ success: false, error: "Nova può soltanto disattivare moduli in emergenza; la riattivazione richiede un amministratore." });
   }
 
   try {
     const current = await getFortressStatus();
-    const next = await updateFortressState(parsed.data.flags, parsed.data.agentName);
+    const next = await updateFortressState(parsed.data.flags, "nova");
     return res.status(200).json({ success: true, previous: current, fortress: next });
   } catch (error) {
     console.error("[Fortress] signed command failed:", error.message);
