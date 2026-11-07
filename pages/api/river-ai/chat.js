@@ -120,7 +120,7 @@ async function requestProvider(provider, messages, maxTokens) {
       "Content-Type": "application/json"
     };
     if (provider.name === "openrouter") {
-      headers["HTTP-Referer"] = process.env.OPENROUTER_SITE_URL || "https://riverspend.com";
+      if (process.env.OPENROUTER_SITE_URL) headers["HTTP-Referer"] = process.env.OPENROUTER_SITE_URL;
       headers["X-Title"] = "RiverSpend RiverSSAI";
     }
     const response = await fetch(provider.endpoint, {
