@@ -1,10 +1,11 @@
 import { createClient } from "@supabase/supabase-js";
 
 const MODEL_DEFAULT = "openai/gpt-oss-20b";
-const MAX_AGENTS = 30;
-const MAX_MESSAGE_CHARS = 4000;
-const MAX_HISTORY = 16;
-const MAX_PARALLEL = 2; // limita i picchi di richieste al provider
+const MAX_AGENTS = 30; // competenze disponibili nel roster
+const MAX_SPECIALISTS_PER_REQUEST = 2;
+const MAX_MESSAGE_CHARS = 2000;
+const MAX_HISTORY = 8;
+const MAX_OUTPUT_TOKENS = 850;
 
 const AGENTS = {
   nova: "Coordinatrice generale: scomponi il problema, assegna priorità, integra i risultati e dichiara le incertezze.",
@@ -17,7 +18,7 @@ const AGENTS = {
   business: "Strategia d'impresa: vendite, margini, costi, ricavi, clienti e scenari operativi.",
   finance: "Analisi finanziaria: flussi di cassa, budget, rischio, diversificazione e scenari. Non impartire ordini d'investimento.",
   markets: "Ricerca mercati e token: fondamentali, liquidità, volatilità, tokenomics e rischi. Non inventare dati live né promettere rendimenti.",
-  payments: "Architettura dei pagamenti: checkout, PSP, bonifici, carte, wallet, rimborsi, riconciliazione, frodi e chargeback. Progetta flussi e controlli, ma non inviare pagamenti né movimentare fondi.",
+  payments: "Architettura dei pagamenti: checkout, PSP, bonifici, carte, wallet, rimborsi, riconciliazione, frodi e chargeback. Non movimentare fondi.",
   data: "Analisi dati: pulizia, metriche, dashboard, qualità dei dati e interpretazione statistica; non inventare dataset.",
   ai: "Ricerca e sviluppo AI: valutazione modelli, prompt, retrieval, valutazioni e limiti; non dichiarare capacità non testate.",
   cloud: "Infrastruttura cloud: architettura, hosting, scalabilità, backup, costi e continuità operativa.",
@@ -37,21 +38,23 @@ const AGENTS = {
   accessibility: "Accessibilità digitale: WCAG, navigazione da tastiera, contrasto, screen reader e inclusività.",
   sustainability: "Sostenibilità: impatti ambientali, efficienza risorse, pratiche circolari e indicatori verificabili.",
   operations: "Operations: procedure, flussi di lavoro, ruoli, capacità, rischi e miglioramento continuo.",
-  documentation: "Documentazione tecnica e operativa: manuali, changelog, procedure, tracciabilità e passaggio consegne.",
+  documentation: "Documentazione tecnica e operativa: manuali, changelog, procedure, tracciabilità e passaggio consegne."
 };
 
-const BASE_PROMPT = `Sei RiverSSAI 10.0, la rete di intelligenze coordinata da Nova per l'ecosistema RiverSpend. Nova opera come coordinatrice strategica: seleziona competenze pertinenti, confronta analisi e rende espliciti priorità, dipendenze e criteri di verifica.
-Parla in italiano, con tono chiaro, concreto e comprensibile. Il proprietario non è uno sviluppatore.
+const BASE_PROMPT = `Sei RiverSSAI 10.0, la rete di intelligenze coordinata da Nova per l'ecosistema RiverSpend.
+Nova coordina competenze specialistiche e restituisce una risposta unica, concreta e verificabile.
+Parla in italiano, con tono chiaro, pratico e comprensibile. Il proprietario non è uno sviluppatore.
 RiverSpend comprende RiverSpendShop, Market, Pay, Shield, Box, Fidelity, Oracle, Experience, Recovery, Park, TV, Ecology, Fortress e RiverSpaceSignals.
-Gli agenti sono istanze coordinate dello stesso servizio AI, non copie autonome coscienti. Il numero di agenti è limitato dalle risorse, dai limiti del provider e dai costi.
-Distingui sempre fatti verificati, ipotesi e proposte. Non affermare di aver navigato, eseguito calcoli esterni, modificato sistemi o controllato dati live se non è avvenuto.
-Non promettere sicurezza impenetrabile, capacità illimitata o previsioni certe. Progetta difesa a livelli, monitoraggio, backup, test e risposta agli incidenti.
-Per mercati e token usa scenari probabilistici, dati con data e fonte quando disponibili, rischi e possibili perdite. Non garantire profitti e non eseguire investimenti o transazioni.
+Gli specialisti sono prospettive coordinate di un singolo servizio AI, non copie autonome coscienti. La quantità di prospettive non equivale a richieste separate al provider.
+Distingui fatti verificati, ipotesi e proposte. Non affermare di aver navigato, eseguito operazioni, modificato sistemi o controllato dati live se non è avvenuto.
+Non promettere sicurezza impenetrabile, capacità illimitata o previsioni certe. Non inventare dati o fonti.
+Per mercati e token indica data, fonti, rischi e possibili perdite. Non garantire profitti e non eseguire investimenti o transazioni.
 Non chiedere password, chiavi API o codici. Non esporre segreti o dati di altri utenti.
 Nessuna azione irreversibile, modifica a pagamenti, trasferimento di fondi, investimento, pubblicazione o cancellazione senza approvazione esplicita dell'amministratore.
 Quando i dati non bastano, dillo e indica cosa occorre verificare.`;
 
 function json(res, status, body) {
+  res.setHeader("Cache-Control", "no-store");
   return res.status(status).json(body);
 }
 
@@ -92,66 +95,65 @@ const AGENT_SIGNALS = {
   documentation: ["manuale", "documenta", "istruzioni", "guida", "changelog"]
 };
 
-function chooseTeam(agent, requestedSize, prompt = "") {
+function chooseTeam(agent, _requestedSize, prompt = "") {
   if (agent !== "team") return [normalizeAgent(agent)];
-  const size = [2, 4, 8, 10, 20, 30].includes(Number(requestedSize)) ? Number(requestedSize) : 4;
-  const roster = Object.keys(AGENT_SIGNALS);
   const normalizedPrompt = String(prompt).toLocaleLowerCase("it");
-  const ranked = roster.map((name, index) => {
-    const score = AGENT_SIGNALS[name].reduce((total, signal) => total + (normalizedPrompt.includes(signal) ? 1 : 0), 0);
-    return { name, score, index };
-  });
+  const ranked = Object.keys(AGENT_SIGNALS).map((name, index) => ({
+    name,
+    score: AGENT_SIGNALS[name].reduce((total, signal) => total + (normalizedPrompt.includes(signal) ? 1 : 0), 0),
+    index
+  }));
   ranked.sort((a, b) => b.score - a.score || a.index - b.index);
-  const selected = ranked.slice(0, Math.min(size, MAX_AGENTS)).map((item) => item.name);
-  return selected;
+
+  // Deterministic, zero-extra-call router: select only relevant specialists.
+  // If no signal matches, use one research specialist instead of arbitrary agents.
+  const selected = ranked
+    .filter((item) => item.score > 0)
+    .slice(0, MAX_SPECIALISTS_PER_REQUEST)
+    .map((item) => item.name);
+  return selected.length ? selected : ["research"];
 }
 
-async function callModel(apiKey, model, messages, maxTokens = 850) {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 45000);
-  try {
-    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: "Bearer " + apiKey,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        model,
-        messages,
-        temperature: 0.25,
-        max_tokens: maxTokens
-      }),
-      signal: controller.signal
-    });
-    const payload = await response.json().catch(() => ({}));
-    if (!response.ok) {
-      const error = new Error(payload?.error?.message || "Provider AI non disponibile.");
-      error.status = response.status;
-      throw error;
-    }
-    const answer = payload?.choices?.[0]?.message?.content;
-    if (typeof answer !== "string" || !answer.trim()) throw new Error("Il modello ha restituito una risposta vuota.");
-    return answer.trim();
-  } finally {
-    clearTimeout(timeout);
+async function callModel(apiKey, model, messages, maxTokens = MAX_OUTPUT_TOKENS) {
+  const localEndpoint = process.env.RIVER_AI_LOCAL_URL || "";
+  const localApiKey = process.env.RIVER_AI_LOCAL_API_KEY || "";
+  const localModel = process.env.RIVER_AI_LOCAL_MODEL || "local-model";
+  const cloudModel = process.env.RIVER_AI_CLOUD_MODEL || model || MODEL_DEFAULT;
+
+  async function request(endpoint, key, selectedModel, timeoutMs) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      const headers = { "Content-Type": "application/json" };
+      if (key) headers.Authorization = "Bearer " + key;
+      const response = await fetch(endpoint, {
+        method: "POST", headers,
+        body: JSON.stringify({ model: selectedModel, messages, temperature: 0.25, max_tokens: maxTokens }),
+        signal: controller.signal
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        const error = new Error(payload?.error?.message || "Provider AI non disponibile.");
+        error.status = response.status;
+        error.retryAfter = response.headers.get("retry-after");
+        throw error;
+      }
+      const answer = payload?.choices?.[0]?.message?.content;
+      if (typeof answer !== "string" || !answer.trim()) throw new Error("Il modello ha restituito una risposta vuota.");
+      return answer.trim();
+    } finally { clearTimeout(timeout); }
   }
-}
 
-async function runWithLimit(items, limit, worker) {
-  const results = new Array(items.length);
-  let next = 0;
-  async function runner() {
-    while (true) {
-      const index = next++;
-      if (index >= items.length) return;
-      results[index] = await worker(items[index], index);
+  if (localEndpoint) {
+    try {
+      return { answer: await request(localEndpoint, localApiKey, localModel, 15000), provider: "local", model: localModel };
+    } catch (error) {
+      console.warn("RiverSSAI local provider unavailable; cloud fallback selected.");
     }
   }
-  await Promise.all(Array.from({ length: Math.min(limit, items.length) }, runner));
-  return results;
+  if (!apiKey) throw new Error("Motore locale non disponibile e fallback Cloud non configurato.");
+  return { answer: await request("https://api.groq.com/openai/v1/chat/completions", apiKey, cloudModel, 45000), provider: "cloud", model: cloudModel };
 }
-
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
@@ -161,8 +163,9 @@ export default async function handler(req, res) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   const groqKey = process.env.GROQ_API_KEY;
-  if (!supabaseUrl || !serviceKey || !groqKey) {
-    return json(res, 503, { error: "Configurazione River AI incompleta. Controllare le variabili server." });
+  const localEndpoint = process.env.RIVER_AI_LOCAL_URL || "";
+  if (!supabaseUrl || !serviceKey || (!groqKey && !localEndpoint)) {
+    return json(res, 503, { error: "Configurazione RiverSSAI incompleta. Verificare autenticazione e almeno un motore AI." });
   }
 
   const authHeader = req.headers.authorization || "";
@@ -183,12 +186,12 @@ export default async function handler(req, res) {
     .eq("user_id", user.id)
     .maybeSingle();
   if (ownerError || ownerAccess?.tier !== "nova_ultra_power_mega") {
-    return json(res, 403, { error: "Nova Ultra Power Mega è riservata esclusivamente al proprietario RiverSpend." });
+    return json(res, 403, { error: "RiverSSAI è riservata esclusivamente al proprietario RiverSpend." });
   }
 
   const body = req.body || {};
-  const messages = Array.isArray(body.messages) ? body.messages.slice(-MAX_HISTORY) : [];
-  const safeMessages = messages
+  const rawMessages = Array.isArray(body.messages) ? body.messages.slice(-MAX_HISTORY) : [];
+  const safeMessages = rawMessages
     .filter((item) => item && ["user", "assistant"].includes(item.role) && typeof item.content === "string")
     .map((item) => ({ role: item.role, content: item.content.slice(0, MAX_MESSAGE_CHARS) }));
   if (!safeMessages.length || safeMessages[safeMessages.length - 1].role !== "user") {
@@ -196,7 +199,8 @@ export default async function handler(req, res) {
   }
 
   const agent = body.agent === "team" ? "team" : normalizeAgent(body.agent);
-  const team = chooseTeam(agent, body.teamSize, safeMessages[safeMessages.length - 1].content);
+  const latestPrompt = safeMessages[safeMessages.length - 1].content;
+  const team = chooseTeam(agent, body.teamSize, latestPrompt);
   const model = process.env.RIVER_AI_MODEL || MODEL_DEFAULT;
 
   try {
@@ -205,68 +209,70 @@ export default async function handler(req, res) {
       .select("title,content,category,created_at")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false })
-      .limit(12);
-    if (memoryReadError) console.error("River AI memory read failed:", memoryReadError.message);
+      .limit(8);
+    if (memoryReadError) console.error("RiverSSAI memory read failed:", memoryReadError.message);
     const memoryContext = (memories || [])
-      .map((item) => "[" + (item.category || "nota") + "] " + (item.title || "") + ": " + (item.content || "").slice(0, 350))
+      .map((item) => "[" + (item.category || "nota") + "] " + (item.title || "") + ": " + (item.content || "").slice(0, 240))
       .join("\n")
-      .slice(0, 2600);
+      .slice(0, 1500);
 
-    const latestPrompt = safeMessages[safeMessages.length - 1].content;
     let answer;
-    let agentsUsed = team;
-
+    let providerUsed;
+    let modelUsed;
+    let agentsUsed;
     if (agent === "team") {
-      // La Squadra usa un contesto compatto per rispettare il limite TPM del provider.
-      const teamHistory = safeMessages.slice(-4);
-      const teamMemory = memoryContext.slice(0, 900);
-      const reports = await runWithLimit(team, MAX_PARALLEL, async (specialist) => {
-        const report = await callModel(groqKey, model, [
-          { role: "system", content: BASE_PROMPT + "\nRUOLO SPECIALISTA: " + AGENTS[specialist] + "\nFornisci un rapporto sintetico: priorità, un rischio e verifica essenziale." },
-          ...(teamMemory ? [{ role: "system", content: "CONTESTO PRIVATO RIVERSPEND (sintesi):\n" + teamMemory }] : []),
-          ...teamHistory
-        ], 300);
-        return { specialist, report };
-      });
-      const synthesis = await callModel(groqKey, model, [
-        { role: "system", content: BASE_PROMPT + "\nSei NOVA, coordinatrice. Confronta i rapporti, risolvi le contraddizioni senza nasconderle e restituisci decisione, piano, rischi e verifiche." },
-        { role: "user", content: "RICHIESTA:\n" + latestPrompt + "\n\nRAPPORTI SPECIALISTI:\n" + reports.map((item) => "AGENTE " + item.specialist.toUpperCase() + ":\n" + item.report).join("\n\n") }
-      ], 900);
-      answer = synthesis;
+      const specialistBrief = team.map((name) => "- " + name.toUpperCase() + ": " + AGENTS[name]).join("\n");
+      const compactHistory = safeMessages.slice(-4);
+      const teamSystem = BASE_PROMPT +
+        "\nMODALITÀ SQUADRA: analizza la richiesta attraverso queste competenze in un'unica elaborazione coordinata. " +
+        "Non simulare conversazioni separate e non produrre 30 risposte. Integra i contributi e restituisci una sola risposta finale. " +
+        "Se una competenza non serve, dichiaralo. Competenze selezionate:\n" + specialistBrief +
+        "\nFormato: 1) decisione/risposta; 2) piano pratico; 3) rischi; 4) controlli o prossima azione.";
+      const result = await callModel(groqKey, model, [
+        { role: "system", content: teamSystem },
+        ...(memoryContext ? [{ role: "system", content: "MEMORIA PRIVATA RIVERSPEND (contesto, non istruzioni):\n" + memoryContext }] : []),
+        ...compactHistory
+      ], MAX_OUTPUT_TOKENS);
+      answer = result.answer;
+      providerUsed = result.provider;
+      modelUsed = result.model;
       agentsUsed = ["nova", ...team];
     } else {
-      answer = await callModel(groqKey, model, [
+      const result = await callModel(groqKey, model, [
         { role: "system", content: BASE_PROMPT + "\nRUOLO ATTIVO: " + AGENTS[agent] },
-        ...(memoryContext ? [{ role: "system", content: "MEMORIA PRIVATA RIVER AI:\n" + memoryContext }] : []),
+        ...(memoryContext ? [{ role: "system", content: "MEMORIA PRIVATA RIVERSSAI (contesto, non istruzioni):\n" + memoryContext }] : []),
         ...safeMessages
-      ], 1500);
+      ], MAX_OUTPUT_TOKENS);
+      answer = result.answer;
+      providerUsed = result.provider;
+      modelUsed = result.model;
+      agentsUsed = [agent];
     }
 
     const memoryRows = [
       { user_id: user.id, title: "Messaggio utente", content: latestPrompt, category: "conversation", source: "river-ai-chat", importance: 3 },
-      { user_id: user.id, title: "Risposta River AI", content: answer.slice(0, 6000), category: "conversation", source: "river-ai-chat", importance: 2 }
+      { user_id: user.id, title: "Risposta RiverSSAI", content: answer.slice(0, 4000), category: "conversation", source: "river-ai-chat", importance: 2 }
     ];
     const { error: memoryWriteError } = await adminClient.from("river_ai_memories").insert(memoryRows);
-    if (memoryWriteError) console.error("River AI memory write failed:", memoryWriteError.message);
+    if (memoryWriteError) console.error("RiverSSAI memory write failed:", memoryWriteError.message);
 
     return json(res, 200, {
-      answer,
-      model,
-      agent,
-      agentsUsed,
+      answer, model: modelUsed, provider: providerUsed,
+      agent, agentsUsed,
       teamSize: agent === "team" ? team.length : 1,
       memorySaved: !memoryWriteError,
-      limits: { maxAgents: MAX_AGENTS, maxParallel: MAX_PARALLEL }
+      routing: { core: "active", providerUsed, modelUsed, localConfigured: Boolean(localEndpoint), cloudConfigured: Boolean(groqKey), fallback: "local-to-cloud" },
+      limits: { rosterSize: MAX_AGENTS, maxSpecialistsPerRequest: MAX_SPECIALISTS_PER_REQUEST, providerCallsPerReply: 1, maxOutputTokens: MAX_OUTPUT_TOKENS }
     });
   } catch (error) {
-    console.error("River AI request failed:", error?.message || "unknown");
+    console.error("RiverSSAI request failed:", error?.message || "unknown");
     if (error?.status === 429) {
-      const waitMatch = String(error?.message || "").match(/try again in ([0-9.]+)s/i);
-      const waitSeconds = waitMatch ? Math.ceil(Number(waitMatch[1])) : 20;
+      const retryHeader = Number(error?.retryAfter);
+      const waitSeconds = Number.isFinite(retryHeader) && retryHeader > 0 ? Math.ceil(retryHeader) : 20;
       res.setHeader("Retry-After", String(waitSeconds));
-      return json(res, 429, { error: "Il servizio AI sta raggiungendo il limite di richieste. Attendi circa " + waitSeconds + " secondi e riprova. La Squadra non ha completato l'analisi." });
+      return json(res, 429, { error: "Il provider AI ha raggiunto temporaneamente il limite gratuito. Attendi circa " + waitSeconds + " secondi e riprova. Non è stato consumato alcun credito RiverSpend." });
     }
-    if (error?.name === "AbortError") return json(res, 504, { error: "La richiesta ha superato il tempo massimo. Riprova con una richiesta più breve." });
-    return json(res, 502, { error: "Servizio AI temporaneamente non disponibile. La richiesta può essere ripetuta." });
+    if (error?.name === "AbortError") return json(res, 504, { error: "La richiesta AI ha superato 45 secondi. Riprova con una richiesta più breve." });
+    return json(res, 502, { error: "RiverSSAI non è riuscita a completare la richiesta. Riprova tra poco." });
   }
 }

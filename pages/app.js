@@ -19,15 +19,7 @@ const apps = [
     color: '#0891b2',
     action: 'Apri RiverSpaceSignals'
   },
-  {
-    name: 'RiverSSAI 10.0 · Pure Power',
-    subtitle: 'Nova e la rete dei 30 specialisti',
-    description: 'Nova coordina i tre comandanti RIVER A1B2, RIVER A2C4 e RIVER B2D5 e l’esercito dei 30 specialisti. Apri RiverSSAI e installala sul telefono come app separata. L’accesso resta riservato agli account autorizzati.',
-    logo: '/icons/river-ssai-192.png',
-    href: '/river-ai',
-    color: '#087f89',
-    action: 'Apri e installa RiverSSAI 10.0'
-  },
+
   {
     name: 'RiverSpendSocialNetwork',
     subtitle: 'Il social network RiverSpend',
@@ -81,7 +73,16 @@ const apps = [
     href: '/park',
     color: '#0891b2',
     action: 'Apri Special Park'
-  }
+  },
+  {
+    name: 'RiverSSAI 10.0 · Pure Power',
+    subtitle: 'Nova e la rete dei 30 specialisti',
+    description: 'Nova coordina i tre comandanti RIVER A1B2, RIVER A2C4 e RIVER B2D5 e l’esercito dei 30 specialisti. Apri RiverSSAI e installala sul telefono come app separata. L’accesso resta riservato agli account autorizzati.',
+    logo: '/icons/river-ssai-192-final.jpg',
+    href: '/river-ai',
+    color: '#087f89',
+    action: 'Apri e installa RiverSSAI 10.0'
+  },
 ];
 
 export default function RiverSpendApps() {
