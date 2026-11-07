@@ -1,6 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { AGENTS_REGISTRY } from "../../../lib/riverSSAI/agentsRegistry";
 import { routeToSpecialists, selectTeam } from "../../../lib/riverSSAI/router";
+import { routeTo200PlusAgents } from "../../../lib/riverSSAI/semanticRouter";
 
 const MODEL_DEFAULT = "openai/gpt-oss-20b";
 const MAX_AGENTS = Object.keys(AGENTS_REGISTRY).length;
@@ -167,6 +168,7 @@ export default async function handler(req, res) {
     const latestPrompt = safeMessages[safeMessages.length - 1].content;
     let answer;
     let agentsUsed = team;
+    let routing = null;
 
     if (agent === "team") {
       // La Squadra usa un contesto compatto per rispettare il limite TPM del provider.
@@ -233,8 +235,25 @@ export default async function handler(req, res) {
       answer += "\n\n---\n" + coverageNote;
       agentsUsed = ["nova", ...completedKeys];
     } else {
-      // Nova attiva al massimo due competenze pertinenti senza chiamate AI aggiuntive.
-      const autoSpecialists = agent === "nova" ? routeToSpecialists(latestPrompt, 2) : [];
+      // Nuovo router in shadow mode: confronta la selezione a cluster con il router 10.0.
+      // L’attivazione vettoriale è consentita solo quando sono disponibili embedding reali.
+      const semanticRoute = agent === "nova" ? routeTo200PlusAgents(latestPrompt) : null;
+      const legacySpecialists = agent === "nova" ? routeToSpecialists(latestPrompt, 2) : [];
+      const semanticRequested = process.env.RIVER_AI_SEMANTIC_ROUTER_MODE === "active";
+      const useVectorRoute = Boolean(
+        semanticRequested && semanticRoute && semanticRoute.method === "vector" && !semanticRoute.fallback
+      );
+      const autoSpecialists = agent === "nova"
+        ? (useVectorRoute ? semanticRoute.agents.map((item) => item.key) : legacySpecialists)
+        : [];
+      routing = agent === "nova" ? {
+        mode: useVectorRoute ? "vector-active" : "shadow",
+        method: semanticRoute.method,
+        cluster: semanticRoute.cluster,
+        semanticCandidates: semanticRoute.agents.map((item) => item.key),
+        legacyCandidates: legacySpecialists,
+        selected: autoSpecialists
+      } : null;
       const specialistContext = autoSpecialists.length
         ? "\nCOMPETENZE SPECIALISTICHE ATTIVATE DA NOVA:\n" +
           autoSpecialists.map((key) => AGENTS_REGISTRY[key].name + ": " + AGENTS[key]).join("\n") +
@@ -267,6 +286,7 @@ export default async function handler(req, res) {
       teamSize: agent === "team" ? team.length : (agent === "team90" ? Math.max(0, agentsUsed.length - 1) : (agent === "nova" ? Math.max(1, agentsUsed.length - 1) : 1)),
       team90: agent === "team90" ? { totalSpecialists: MAX_AGENTS - 1, completedSpecialists: Math.max(0, agentsUsed.length - 1), squads: Math.ceil((MAX_AGENTS - 1) / 12) } : null,
       memorySaved: !memoryWriteError,
+      routing,
       limits: { maxAgents: MAX_AGENTS, maxParallel: MAX_PARALLEL }
     });
   } catch (error) {
