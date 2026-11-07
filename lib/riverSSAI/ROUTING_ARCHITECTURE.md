@@ -26,7 +26,7 @@ Il router supporta cosine similarity quando riceve `queryEmbedding` e `agentEmbe
 
 ## Rollout
 
-L’API usa inizialmente la modalità shadow: il nuovo router viene confrontato con il router 10.0, ma non cambia la selezione effettiva. Per attivarlo impostare `RIVER_AI_SEMANTIC_ROUTER_MODE=active` solo dopo test di precisione e latenza. Non sono richieste modifiche a Supabase.
+L’API usa inizialmente la modalità shadow: il nuovo router viene confrontato con il router 10.0, ma non cambia la selezione effettiva. Al momento l’API non carica ancora un modello di embedding né un indice vettoriale, quindi il percorso reale è `keyword-fallback`. La modalità `active` può usare il percorso vettoriale soltanto dopo aver integrato e passato al router query embedding e agent embedding reali. Non attivare la modalità vettoriale prima di questa integrazione e dei test di precisione/latency. Non sono richieste modifiche a Supabase.
 
 ## Misure da raccogliere
 
