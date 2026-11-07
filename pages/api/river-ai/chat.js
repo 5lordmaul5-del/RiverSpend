@@ -148,7 +148,7 @@ export default async function handler(req, res) {
     return json(res, 400, { error: "Scrivi prima una richiesta." });
   }
 
-  const agent = (body.agent === "team90" || body.agent === "team90") ? "team90" : (body.agent === "team" ? "team" : normalizeAgent(body.agent));
+  const agent = (body.agent === "team90" || body.agent === "team60") ? "team90" : (body.agent === "team" ? "team" : normalizeAgent(body.agent));
   const team = chooseTeam(agent, body.teamSize, safeMessages[safeMessages.length - 1].content);
   const model = process.env.RIVER_AI_MODEL || MODEL_DEFAULT;
 
@@ -188,7 +188,7 @@ export default async function handler(req, res) {
       agentsUsed = ["nova", ...team];
     } else if (agent === "team90") {
       // Cinque squadre AI elaborano tutti gli 89 ruoli specialistici; Nova coordina e sintetizza.
-      // Ogni squadra restituisce un contributo distinto per ciascun ruolo, senza 59 chiamate individuali.
+      // Ogni squadra restituisce un contributo distinto per ciascun ruolo, senza 89 chiamate individuali.
       const allSpecialists = Object.entries(AGENTS_REGISTRY).filter(([key]) => key !== "nova");
       const squadSize = 12;
       const squads = [];
@@ -221,14 +221,14 @@ export default async function handler(req, res) {
         .map((result) => "SQUADRA " + result.index + " — contributi marcati: " + result.completed.length + "/" + result.total + "\n" + result.report)
         .join("\n\n");
       const coverageNote = "Copertura specialisti rilevata: " + completedKeys.length +
-        "/59. Squadre non riuscite: " + (failedSquads.length ? failedSquads.join(", ") : "nessuna") +
+        "/" + allSpecialists.length + ". Squadre non riuscite: " + (failedSquads.length ? failedSquads.join(", ") : "nessuna") +
         ". Ruoli senza contributo rilevato: " + (omittedKeys.length ? omittedKeys.join(", ") : "nessuno") + ".";
       answer = await callModel(groqKey, model, [
         { role: "system", content: BASE_PROMPT +
           "\nSei NOVA, coordinatrice. Sintetizza i contributi senza inventare quelli mancanti. " +
           "Evidenzia convergenze, divergenze, priorità, piano operativo e verifiche. Dichiara se la copertura è incompleta." },
         { role: "user", content: "RICHIESTA ORIGINALE:\n" + latestPrompt +
-          "\n\nCONTRIBUTI DELLE CINQUE SQUADRE:\n" + synthesisInput + "\n\nSTATO COPERTURA:\n" + coverageNote }
+          "\n\nCONTRIBUTI DELLE OTTO SQUADRE:\n" + synthesisInput + "\n\nSTATO COPERTURA:\n" + coverageNote }
       ], 1500);
       answer += "\n\n---\n" + coverageNote;
       agentsUsed = ["nova", ...completedKeys];
@@ -265,7 +265,7 @@ export default async function handler(req, res) {
       agent,
       agentsUsed,
       teamSize: agent === "team" ? team.length : (agent === "team90" ? Math.max(0, agentsUsed.length - 1) : (agent === "nova" ? Math.max(1, agentsUsed.length - 1) : 1)),
-      team90: agent === "team90" ? { totalSpecialists: allSpecialists.length, completedSpecialists: Math.max(0, agentsUsed.length - 1), squads: 5 } : null,
+      team90: agent === "team90" ? { totalSpecialists: MAX_AGENTS - 1, completedSpecialists: Math.max(0, agentsUsed.length - 1), squads: Math.ceil((MAX_AGENTS - 1) / 12) } : null,
       memorySaved: !memoryWriteError,
       limits: { maxAgents: MAX_AGENTS, maxParallel: MAX_PARALLEL }
     });
