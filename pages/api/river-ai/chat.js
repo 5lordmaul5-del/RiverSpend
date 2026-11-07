@@ -171,7 +171,7 @@ export default async function handler(req, res) {
       for (let i = 0; i < allSpecialists.length; i += squadSize) squads.push(allSpecialists.slice(i, i + squadSize));
       const teamHistory = safeMessages.slice(-4);
       const teamMemory = memoryContext.slice(0, 900);
-      const squadResults = await runWithLimit(squads, 5, async (squad, index) => {
+      const squadResults = await runWithLimit(squads, MAX_PARALLEL, async (squad, index) => {
         const roleBrief = squad.map(([key, specialist]) =>
           "[AGENT:" + key + "] " + specialist.name + " — " + specialist.role + ": " + specialist.prompt
         ).join("\n");
