@@ -30,6 +30,8 @@ export default function Checkout() {
   const [postepayMessage, setPostepayMessage] = useState('');
   const [paypalLoading, setPaypalLoading] = useState(false);
   const [paypalMessage, setPaypalMessage] = useState('');
+  const [stripeLoading, setStripeLoading] = useState(false);
+  const [stripeMessage, setStripeMessage] = useState('');
 
   const cartLines = Object.values(items.reduce((lines, item) => {
     const id = String(item.id) + '::' + String(item.variantName || '');
@@ -70,7 +72,10 @@ export default function Checkout() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const paypal = params.get('paypal');
+    const stripe = params.get('stripe');
     const token = params.get('token');
+    if (stripe === 'success') setStripeMessage('Ritorno da Stripe ricevuto. Stiamo attendendo la verifica firmata del server: l’ordine sarà pagato solo dopo la conferma del webhook.');
+    if (stripe === 'cancelled') setStripeMessage('Pagamento Stripe annullato. Nessun pagamento è stato confermato.');
     if (paypal === 'success' && token) capturePayPalPayment(token);
     if (paypal === 'cancel') setPaypalMessage('Pagamento PayPal annullato. Nessun pagamento è stato confermato.');
     try { localStorage.removeItem('riverspend-sumup-checkout'); } catch {}
@@ -205,6 +210,28 @@ export default function Checkout() {
     } catch (err) {
       setError(err?.message || 'Impossibile avviare PayPal.');
       setPaypalLoading(false);
+    }
+  }
+
+  async function startStripePayment() {
+    setError(''); setStripeMessage(''); setStripeLoading(true);
+    try {
+      if (!orderId) throw new Error('Prima crea la richiesta d’ordine.');
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token;
+      if (!token) throw new Error('Sessione RiverSpend non valida. Accedi di nuovo.');
+      const response = await fetch('/api/pay/stripe/create-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+        body: JSON.stringify({ orderId })
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result?.error || 'Stripe non disponibile. Il venditore deve prima confermare spedizione e totale.');
+      if (!result?.url) throw new Error('Stripe non ha restituito il link di pagamento.');
+      window.location.href = result.url;
+    } catch (err) {
+      setError(err?.message || 'Impossibile avviare Stripe.');
+      setStripeLoading(false);
     }
   }
 
@@ -397,7 +424,9 @@ Invia una richiesta d’ordine. RiverSpendShop è appena partito: il venditore c
               {[
                 ['cod','🚚','RiverSpendPay · Contrassegno (contanti alla consegna)'],
                 ['postepay','💳','RiverSpendPay · PostePay (accredito da verificare)'],
-                ['transfer','🏦','RiverSpendPay · Bonifico istantaneo']
+                ['transfer','🏦','RiverSpendPay · Bonifico istantaneo'],
+                ['paypal','🅿️','PayPal (Sandbox prima dell’attivazione)'],
+                ['stripe','💳','Carta / Apple Pay / Google Pay tramite Stripe']
               ].map(([id, icon, title]) => (
                 <button key={id} type="button" onClick={() => setSelectedPayment(id)} className={`flex items-center justify-between rounded-xl border px-4 py-3 text-left ${selectedPayment === id ? 'border-teal-500 bg-teal-50' : 'border-slate-200 bg-white'}`}>
                   <span className="flex items-center gap-3"><span className="text-xl">{icon}</span><strong className="text-slate-900">{title}</strong></span>
@@ -444,6 +473,7 @@ Invia una richiesta d’ordine. RiverSpendShop è appena partito: il venditore c
           {orderId && <div className="mt-5 rounded-2xl border border-teal-200 bg-teal-50 p-4 text-sm text-teal-800">✅ Richiesta d’ordine registrata. ID: <span className="font-mono">{orderId}</span><br />Stato: <strong>in attesa di conferma della spedizione e del totale finale</strong>.<div className="mt-3"><Link href={`/ricevuta/${encodeURIComponent(orderId)}`} className="inline-flex rounded-xl bg-teal-700 px-4 py-3 font-bold text-white">⬇️ Scarica riepilogo ordine</Link></div><p className="mt-2 text-xs text-teal-900">Il riepilogo non sostituisce fattura o scontrino fiscale.</p></div>}
           {codMessage && <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">{codMessage}</div>}
           {paypalMessage && <div className="mt-4 rounded-2xl border border-sky-200 bg-sky-50 p-4 text-sm text-sky-800">{paypalMessage}</div>}
+          {stripeMessage && <div className="mt-4 rounded-2xl border border-sky-200 bg-sky-50 p-4 text-sm text-sky-800">{stripeMessage}</div>}
           {transferMessage && <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">{transferMessage}</div>}
           {postepayMessage && <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">{postepayMessage}</div>}
 
@@ -464,6 +494,12 @@ Invia una richiesta d’ordine. RiverSpendShop è appena partito: il venditore c
               {selectedPayment === 'paypal' && (
                 <button type="button" onClick={startPayPalPayment} disabled={!orderId || paypalLoading} className="rounded-xl border border-sky-400 bg-sky-600 px-5 py-3 font-black text-white disabled:cursor-not-allowed disabled:opacity-40">
                   {paypalLoading ? 'Apertura PayPal…' : 'Paga con PayPal'}
+                </button>
+              )}
+
+              {selectedPayment === 'stripe' && (
+                <button type="button" onClick={startStripePayment} disabled={!orderId || stripeLoading} className="rounded-xl border border-indigo-400 bg-indigo-600 px-5 py-3 font-black text-white disabled:cursor-not-allowed disabled:opacity-40">
+                  {stripeLoading ? 'Apertura pagamento…' : '💳 Continua con carta / wallet'}
                 </button>
               )}
 
