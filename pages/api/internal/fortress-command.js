@@ -18,8 +18,8 @@ export default async function handler(req, res) {
     return res.status(status).json({ success: false, error: "Firma interna non valida o non verificabile." });
   }
 
-  if (parsed.data.agentName === "nova" && Object.keys(parsed.data.flags).some((key) => key !== "aiChatEnabled")) {
-    return res.status(403).json({ success: false, error: "Nova può gestire il proprio modulo AI; le azioni su Shop e pagamenti richiedono un comando amministrativo." });
+  if (parsed.data.agentName === "nova" && Object.values(parsed.data.flags).some((enabled) => enabled !== false)) {
+    return res.status(403).json({ success: false, error: "Nova può soltanto disattivare moduli in emergenza; la riattivazione richiede un amministratore." });
   }
 
   try {
