@@ -229,7 +229,7 @@ const servizi = {
     titolo: 'RiverSpend Fortress',
     icona: '🏰',
     descrizione: 'Area di sicurezza dell’ecosistema con controlli e protezioni avanzate.',
-    stato: 'Base ecosistema pronta'
+    stato: 'Centro di sicurezza in ampliamento; alcune protezioni sono ancora da integrare e verificare'
   }
 };
 
@@ -286,6 +286,54 @@ export default function Servizio({ slug }) {
           <p className={slug === 'local' ? "mt-5 text-sm font-semibold uppercase tracking-widest text-teal-700" : "mt-5 text-sm font-semibold uppercase tracking-widest text-teal-300"}>RiverSpend</p>
           <h1 className="mt-2 text-4xl font-bold">{servizio.titolo}</h1>
           <p className={slug === 'local' ? "mt-5 max-w-2xl text-lg leading-8 text-slate-700" : "mt-5 max-w-2xl text-lg leading-8 text-slate-300"}>{servizio.descrizione}</p>
+          {slug === 'fortress' && (
+            <section className="mt-8 space-y-5" aria-labelledby="fortress-dashboard-title">
+              <div className="rounded-2xl border border-cyan-700/70 bg-slate-950/70 p-5">
+                <p className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-300">Security operations</p>
+                <h2 id="fortress-dashboard-title" className="mt-2 text-2xl font-bold text-white">Centro di controllo Fortress</h2>
+                <p className="mt-2 text-sm leading-6 text-slate-300">Questa schermata distingue le misure già individuate nel codice da quelle ancora da integrare. La presenza di una voce qui non significa che il controllo sia già attivo in produzione.</p>
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-2">
+                <article className="rounded-2xl border border-emerald-700/70 bg-emerald-950/30 p-4">
+                  <p className="text-sm font-bold text-emerald-200">🛡️ Intestazioni HTTP</p>
+                  <p className="mt-2 text-sm leading-6 text-slate-200">Questa release aggiunge protezioni anti-embedding, MIME sniffing, controllo del referrer e limitazioni per fotocamera e microfono. Diventano effettive dopo il deploy.</p>
+                  <span className="mt-3 inline-flex rounded-full bg-emerald-900/70 px-3 py-1 text-xs font-semibold text-emerald-200">Incluse nel codice della release</span>
+                </article>
+
+                <article className="rounded-2xl border border-amber-700/70 bg-amber-950/20 p-4">
+                  <p className="text-sm font-bold text-amber-200">🔐 API e identità</p>
+                  <p className="mt-2 text-sm leading-6 text-slate-200">Restano da completare la verifica sistematica delle autorizzazioni server-side, gli schemi di input per le rotte e il rate limiting distribuito.</p>
+                  <span className="mt-3 inline-flex rounded-full bg-amber-900/70 px-3 py-1 text-xs font-semibold text-amber-200">Da implementare e testare</span>
+                </article>
+
+                <article className="rounded-2xl border border-emerald-700/70 bg-emerald-950/30 p-4">
+                  <p className="text-sm font-bold text-emerald-200">💳 Pagamenti</p>
+                  <p className="mt-2 text-sm leading-6 text-slate-200">Il webhook Stripe presente nel progetto verifica già la firma del provider. Mancano ancora test di concorrenza e una garanzia transazionale completa per l'intero flusso di accredito.</p>
+                  <span className="mt-3 inline-flex rounded-full bg-emerald-900/70 px-3 py-1 text-xs font-semibold text-emerald-200">Firma Stripe presente; verifica completa pendente</span>
+                </article>
+
+                <article className="rounded-2xl border border-amber-700/70 bg-amber-950/20 p-4">
+                  <p className="text-sm font-bold text-amber-200">☁️ Continuità operativa</p>
+                  <p className="mt-2 text-sm leading-6 text-slate-200">Replica database, backup con prove di ripristino, failover AI e interruttori di emergenza richiedono configurazione e test dedicati.</p>
+                  <span className="mt-3 inline-flex rounded-full bg-amber-900/70 px-3 py-1 text-xs font-semibold text-amber-200">Da progettare e verificare</span>
+                </article>
+              </div>
+
+              <div className="rounded-2xl border border-cyan-800/70 bg-slate-950/60 p-5">
+                <h3 className="font-bold text-cyan-200">Prossime difese</h3>
+                <ol className="mt-3 grid gap-2 text-sm leading-6 text-slate-300">
+                  <li>1. Inventario delle API e controllo delle autorizzazioni per ogni operazione.</li>
+                  <li>2. Rate limiting condiviso tra istanze, con limiti distinti per login, pagamenti e AI.</li>
+                  <li>3. Webhook idempotenti con vincoli atomici e test di replay/concorrenza.</li>
+                  <li>4. Backup ripristinabili, modalità catalogo in sola lettura e failover controllato.</li>
+                  <li>5. Kill switch amministrativi con audit log e procedure di riattivazione.</li>
+                </ol>
+              </div>
+              <p className="text-xs leading-5 text-slate-400">Non inserire chiavi API, password o dati di pagamento in questa pagina. Le credenziali devono restare in variabili d'ambiente server-side.</p>
+            </section>
+          )}
+
 
           {slug === 'box' && (
             <section className="mt-7 rounded-2xl border border-teal-700/80 bg-slate-950/60 p-5">
