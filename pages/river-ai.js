@@ -150,7 +150,7 @@ export default function RiverAI() {
 
   return (
     <>
-    <Head><title>RiverSSAI 10.0 · Pure Power</title><meta name="description" content="RiverSSAI 10.0: Nova, i tre comandanti River e la rete dei 60 collaboratori AI."/><meta name="apple-mobile-web-app-capable" content="yes"/><meta name="apple-mobile-web-app-title" content="RiverSSAI 10.0"/><link rel="icon" href="/icons/river-ssai-192.png" type="image/png"/><link rel="apple-touch-icon" href="/icons/river-ssai-192.png"/></Head>
+    <Head><title>RiverSSAI 10.0 · Pure Power</title><meta name="description" content="RiverSSAI 10.0: Nova, i tre comandanti River e la rete dei 90 collaboratori AI."/><meta name="apple-mobile-web-app-capable" content="yes"/><meta name="apple-mobile-web-app-title" content="RiverSSAI 10.0"/><link rel="icon" href="/icons/river-ssai-192.png" type="image/png"/><link rel="apple-touch-icon" href="/icons/river-ssai-192.png"/></Head>
     <main style={{ minHeight:"100vh", background:"linear-gradient(180deg,#e9fbfc,#f7fcfd)", color:"#12343b", padding:"18px 12px 28px", fontFamily:"Arial,sans-serif" }}>
       <section style={{ maxWidth:850, minHeight:"calc(100vh - 46px)", margin:"0 auto", display:"flex", flexDirection:"column", background:"#fff", border:"1px solid #c8e8e9", borderRadius:22, overflow:"hidden", boxShadow:"0 12px 36px rgba(5,65,78,.10)" }}>
         <header className="river-ai-header" style={{ padding:"18px 20px", background:"linear-gradient(120deg,#073b4c,#087f89)", color:"#fff", display:"flex", alignItems:"center", gap:12 }}>
@@ -166,7 +166,7 @@ export default function RiverAI() {
         <section aria-label="Nova e i tre comandanti River" style={{background:"#06172b",color:"#fff",padding:"12px 14px 16px"}}>
           <img src="/images/river-ssai-10-team.svg" alt="Nova al centro, i comandanti River A1B2, A2C4 e B2D5 e la rete dei collaboratori RiverSSAI" style={{display:"block",width:"100%",maxHeight:360,objectFit:"contain",borderRadius:14}}/>
           <div style={{textAlign:"center",fontWeight:800,letterSpacing:1,color:"#55e6ff",fontSize:13,marginTop:8}}>NOVA · RIVER A1B2 · RIVER A2C4 · RIVER B2D5</div>
-          <div style={{textAlign:"center",fontSize:12,color:"#d7e9f5",marginTop:4}}>Una regia. Tre unità speciali. 60 collaboratori AI.</div>
+          <div style={{textAlign:"center",fontSize:12,color:"#d7e9f5",marginTop:4}}>Una regia. Tre unità speciali. 90 collaboratori AI.</div>
         </section>
 
         {installMessage && <div role="status" style={{padding:"10px 18px",background:"#fff8df",color:"#72510a",fontSize:13}}>{installMessage}</div>}
