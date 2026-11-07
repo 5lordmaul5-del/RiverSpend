@@ -18,33 +18,80 @@ export default async function handler(req, res) {
     const admin = createClient(supabaseUrl, serviceRoleKey);
     const { data: { user }, error: userError } = await admin.auth.getUser(bearer);
     if (userError || !user) return res.status(401).json({ error: 'Sessione RiverSpend non valida.' });
-    const { paypalOrderId } = req.body || {}; if (!paypalOrderId) return res.status(400).json({ error: 'paypalOrderId obbligatorio.' });
+    const { paypalOrderId } = req.body || {};
+    if (!paypalOrderId || typeof paypalOrderId !== 'string') return res.status(400).json({ error: 'paypalOrderId obbligatorio.' });
+
     const token = await accessToken();
-    const response = await fetch(paypalBase() + '/v2/checkout/orders/' + encodeURIComponent(paypalOrderId) + '/capture', { method: 'POST', headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json', 'PayPal-Request-Id': 'capture-' + paypalOrderId } });
-    const capture = await response.json(); if (!response.ok) return res.status(response.status).json({ error: capture?.message || 'Pagamento PayPal non completato.' });
-    const purchase = capture.purchase_units?.[0]; const orderId = purchase?.reference_id || purchase?.custom_id; const paypalCapture = purchase?.payments?.captures?.[0];
-    if (!orderId || !paypalCapture?.id || paypalCapture.status !== 'COMPLETED' || !paypalCapture.amount?.value || !paypalCapture.amount?.currency_code) {
-      return res.status(400).json({ error: 'PayPal non ha restituito una cattura completa e verificabile.' });
+    const paypalOrderResponse = await fetch(paypalBase() + '/v2/checkout/orders/' + encodeURIComponent(paypalOrderId), {
+      headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' }
+    });
+    const paypalOrder = await paypalOrderResponse.json().catch(() => ({}));
+    if (!paypalOrderResponse.ok) return res.status(paypalOrderResponse.status).json({ error: paypalOrder?.message || 'Impossibile verificare l’ordine PayPal.' });
+
+    const purchase = paypalOrder.purchase_units?.[0];
+    const riverOrderId = purchase?.reference_id || purchase?.custom_id;
+    if (!riverOrderId) return res.status(400).json({ error: 'Ordine PayPal privo del riferimento RiverSpend.' });
+
+    const { data: order, error: orderError } = await admin.from('orders')
+      .select('id,total,currency,buyer_id,status,payment_status')
+      .eq('id', riverOrderId).eq('buyer_id', user.id).maybeSingle();
+    if (orderError || !order) return res.status(404).json({ error: 'Ordine RiverSpend non trovato per questo account.' });
+    if (order.payment_status === 'paid') return res.status(200).json({ ok: true, orderId: order.id, alreadyPaid: true });
+    if (order.status !== 'pending') return res.status(409).json({ error: 'Ordine non pronto per il pagamento.' });
+
+    const expectedAmount = Number(order.total || 0);
+    const expectedCurrency = String(order.currency || 'EUR').toUpperCase();
+    const paypalAmount = Number(purchase?.amount?.value);
+    const paypalCurrency = String(purchase?.amount?.currency_code || '').toUpperCase();
+    if (!Number.isFinite(expectedAmount) || expectedAmount <= 0 ||
+        Math.round(paypalAmount * 100) !== Math.round(expectedAmount * 100) ||
+        paypalCurrency !== expectedCurrency) {
+      return res.status(409).json({ error: 'Importo o valuta dell’ordine PayPal non corrispondono all’ordine RiverSpend.' });
     }
-    const { data: order, error: orderError } = await admin.from('orders').select('id,total,currency,buyer_id,status,payment_status').eq('id', orderId).eq('buyer_id', user.id).single();
-    if (orderError || !order) return res.status(404).json({ error: 'Ordine RiverSpend non trovato.' });
-    if (order.status !== 'pending' || order.payment_status === 'paid') return res.status(409).json({ error: 'Ordine non pronto per il pagamento o già pagato.' });
-    const amount = Number(order.total || 0); const currency = String(order.currency || 'EUR').toUpperCase();
-    const capturedAmount = Number(paypalCapture.amount.value);
-    const capturedCurrency = String(paypalCapture.amount.currency_code).toUpperCase();
-    if (!Number.isFinite(capturedAmount) || Math.round(capturedAmount * 100) !== Math.round(amount * 100) || capturedCurrency !== currency) {
-      return res.status(409).json({ error: 'Importo o valuta PayPal non corrispondono al totale confermato dell’ordine. Contatta l’assistenza.' });
+    if (paypalOrder.status !== 'APPROVED') return res.status(409).json({ error: 'L’ordine PayPal non risulta approvato e pronto per la cattura.' });
+
+    // La proprietà dell’ordine e l’importo sono verificati prima di chiedere a PayPal di catturare il denaro.
+    const response = await fetch(paypalBase() + '/v2/checkout/orders/' + encodeURIComponent(paypalOrderId) + '/capture', {
+      method: 'POST',
+      headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json', 'PayPal-Request-Id': 'capture-' + paypalOrderId }
+    });
+    const capture = await response.json().catch(() => ({}));
+    if (!response.ok) return res.status(response.status).json({ error: capture?.message || 'Pagamento PayPal non completato.' });
+    const capturedPurchase = capture.purchase_units?.[0];
+    const paypalCapture = capturedPurchase?.payments?.captures?.[0];
+    if (capture.status !== 'COMPLETED' || !paypalCapture?.id || paypalCapture.status !== 'COMPLETED' ||
+        Math.round(Number(paypalCapture.amount?.value) * 100) !== Math.round(expectedAmount * 100) ||
+        String(paypalCapture.amount?.currency_code || '').toUpperCase() !== expectedCurrency) {
+      return res.status(409).json({ error: 'PayPal non ha restituito una cattura completa con importo e valuta verificati.' });
     }
-    const { data: paymentOrder, error: paymentOrderError } = await admin.from('payment_orders').upsert({ user_id: order.buyer_id, order_reference: order.id, amount, currency, status: 'paid', provider: 'paypal', provider_order_id: paypalOrderId, idempotency_key: 'paypal-' + paypalCapture.id, metadata: { paypal_order_id: paypalOrderId, capture_id: paypalCapture.id, test_mode: (process.env.PAYPAL_MODE || 'live') !== 'live' } }, { onConflict: 'idempotency_key' }).select('id').single();
+
+    const { data: paymentOrder, error: paymentOrderError } = await admin.from('payment_orders').upsert({
+      user_id: order.buyer_id, order_reference: order.id, amount: expectedAmount, currency: expectedCurrency,
+      status: 'paid', provider: 'paypal', provider_order_id: paypalOrderId,
+      idempotency_key: 'paypal-' + paypalCapture.id,
+      metadata: { paypal_order_id: paypalOrderId, capture_id: paypalCapture.id, test_mode: (process.env.PAYPAL_MODE || 'live') !== 'live' }
+    }, { onConflict: 'idempotency_key' }).select('id').single();
     if (paymentOrderError) return res.status(500).json({ error: paymentOrderError.message });
-    const { data: existingTx } = await admin.from('payment_transactions').select('id').eq('payment_order_id', paymentOrder.id).eq('provider', 'paypal').eq('type', 'payment').limit(1);
+
+    const { data: existingTx, error: txReadError } = await admin.from('payment_transactions').select('id')
+      .eq('payment_order_id', paymentOrder.id).eq('provider', 'paypal').eq('type', 'payment').limit(1);
+    if (txReadError) return res.status(500).json({ error: txReadError.message });
     if (!existingTx?.length) {
-      const { error: txError } = await admin.from('payment_transactions').insert({ payment_order_id: paymentOrder.id, user_id: order.buyer_id, provider: 'paypal', provider_transaction_id: String(paypalCapture.id), type: 'payment', status: 'succeeded', amount, currency, raw_reference: { paypal_order_id: paypalOrderId, capture_id: paypalCapture.id } });
+      const { error: txError } = await admin.from('payment_transactions').insert({
+        payment_order_id: paymentOrder.id, user_id: order.buyer_id, provider: 'paypal',
+        provider_transaction_id: String(paypalCapture.id), type: 'payment', status: 'succeeded',
+        amount: expectedAmount, currency: expectedCurrency,
+        raw_reference: { paypal_order_id: paypalOrderId, capture_id: paypalCapture.id }
+      });
       if (txError) return res.status(500).json({ error: txError.message });
     }
-    const { error: treasuryError } = await admin.rpc('rs_create_treasury_allocation', { p_order_id: String(order.id), p_payment_id: paymentOrder.id, p_gross_amount: amount, p_currency: currency, p_rule_id: null, p_revenue_source_code: 'SHOP_COMMISSION' });
+    const { error: treasuryError } = await admin.rpc('rs_create_treasury_allocation', {
+      p_order_id: String(order.id), p_payment_id: paymentOrder.id, p_gross_amount: expectedAmount,
+      p_currency: expectedCurrency, p_rule_id: null, p_revenue_source_code: 'SHOP_COMMISSION'
+    });
     if (treasuryError) return res.status(500).json({ error: 'Pagamento riuscito, ma Treasury non aggiornato.' });
-    const { error: updateError } = await admin.from('orders').update({ payment_status: 'paid', status: 'confirmed' }).eq('id', order.id).eq('payment_status', 'unpaid');
+    const { error: updateError } = await admin.from('orders').update({ payment_status: 'paid', status: 'confirmed' })
+      .eq('id', order.id).eq('payment_status', 'unpaid');
     if (updateError) return res.status(500).json({ error: 'Pagamento riuscito, ma ordine non aggiornato.' });
     return res.status(200).json({ ok: true, orderId: order.id, paymentId: paypalCapture.id });
   } catch (error) { return res.status(500).json({ error: error?.message || 'Errore PayPal.' }); }
