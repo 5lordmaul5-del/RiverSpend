@@ -781,7 +781,7 @@ export default function Home() {
     fetch(catalogUrl, { cache: 'no-store' })
       .then(async (res) => {
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Catalogo non disponibile');
+        if (!res.ok) throw new Error(data.warning || data.error || 'Catalogo non disponibile');
         return data;
       })
       .then((data) => {
