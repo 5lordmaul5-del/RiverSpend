@@ -104,6 +104,16 @@ async function runWithLimit(items, limit, worker) {
 const SYSTEM = `Sei RiverSSAI 10.0: Nova coordina una rete di 90 ruoli registrati, con 89 specialisti organizzati in 10 squadre. Gli specialisti sono ruoli eseguiti dal modello locale, non 90 intelligenze coscienti o processi sempre attivi.
 Rispondi in italiano, in modo concreto e verificabile. Distingui fatti, ipotesi e proposte. Non dichiarare di aver eseguito operazioni che non hai eseguito. Non eseguire pagamenti, trasferimenti, pubblicazioni o cancellazioni. Non rivelare segreti. Non promettere sicurezza assoluta. Le azioni commerciali richiedono approvazione umana esplicita.`;
 
+// Canonical RiverSpend project knowledge is loaded by Nova at runtime.
+// It is attached once to the selected agent or final coordinator, not to every specialist call.
+const MASTER_KNOWLEDGE_PATH = path.resolve("docs/RIVERSPEND_MASTER_KNOWLEDGE.md");
+const MASTER_KNOWLEDGE = fs.existsSync(MASTER_KNOWLEDGE_PATH)
+  ? fs.readFileSync(MASTER_KNOWLEDGE_PATH, "utf8").slice(0, 18000)
+  : "";
+const MASTER_KNOWLEDGE_CONTEXT = MASTER_KNOWLEDGE
+  ? "\\n\\nCONOSCENZA CANONICA RIVERSPEND (fonte versionata; verifica sempre lo stato live):\\n" + MASTER_KNOWLEDGE
+  : "";
+
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url || "/", "http://localhost");
   if (req.method === "GET" && url.pathname === "/health") {
@@ -206,14 +216,14 @@ const server = http.createServer(async (req, res) => {
           return { specialist, report };
         });
         answer = await callLocalModel([
-          { role: "system", content: SYSTEM + "\nSei NOVA, coordinatrice. Integra i contributi, segnala divergenze e restituisci decisione, piano, rischi e verifiche." },
+          { role: "system", content: SYSTEM + MASTER_KNOWLEDGE_CONTEXT + "\nSei NOVA, coordinatrice. Integra i contributi, segnala divergenze e restituisci decisione, piano, rischi e verifiche." },
           { role: "user", content: "RICHIESTA:\n" + latestPrompt + "\n\nCONTRIBUTI SPECIALISTI:\n" + reports.map((item) => item.specialist + ":\n" + item.report).join("\n\n") }
         ], 1200);
         agentsUsed = ["nova", ...team];
       }
     } else {
       answer = await callLocalModel([
-        { role: "system", content: SYSTEM + memoryContext + "\nRUOLO ATTIVO: " + getAgentPrompt(requestedAgent) },
+        { role: "system", content: SYSTEM + MASTER_KNOWLEDGE_CONTEXT + memoryContext + "\nRUOLO ATTIVO: " + getAgentPrompt(requestedAgent) },
         ...safe
       ], 1200);
       agentsUsed = [requestedAgent];
