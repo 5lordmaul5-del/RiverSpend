@@ -32,9 +32,11 @@ The 90 entries are registered specialist roles, not 90 always-running independen
    - RIVER_AI_ADMIN_TOKEN: random secret of at least 32 characters.
    - RIVER_AI_LOCAL_MODEL: model suitable for available RAM/CPU/GPU (default qwen2.5:7b).
 4. Start: docker compose up -d --build.
-5. Pull the model once: docker compose exec ollama ollama pull qwen2.5:7b.
+5. Download the model once: docker compose exec ollama ollama pull qwen2.5:7b.
 6. Check locally: curl http://127.0.0.1:8787/health.
 7. Put a TLS reverse proxy (Caddy or Nginx) in front of port 8787. Keep PostgreSQL and Ollama private; never expose ports 5432 or 11434 publicly.
+
+**Network note:** PostgreSQL and the RiverSSAI API use an internal Docker network. Ollama joins that private network and a separate outbound-only Docker network so it can download model weights. Ollama has no published host port; the RiverSSAI API is the only published service and is bound to 127.0.0.1.
 
 ## API
 All endpoints except GET /health require the owner Bearer token.
