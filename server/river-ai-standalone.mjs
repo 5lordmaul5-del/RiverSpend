@@ -111,7 +111,7 @@ const MASTER_KNOWLEDGE = fs.existsSync(MASTER_KNOWLEDGE_PATH)
   ? fs.readFileSync(MASTER_KNOWLEDGE_PATH, "utf8").slice(0, 18000)
   : "";
 const MASTER_KNOWLEDGE_CONTEXT = MASTER_KNOWLEDGE
-  ? "\\n\\nCONOSCENZA CANONICA RIVERSPEND (fonte versionata; verifica sempre lo stato live):\\n" + MASTER_KNOWLEDGE
+  ? "\n\nCONOSCENZA CANONICA RIVERSPEND (fonte versionata; verifica sempre lo stato live):\n" + MASTER_KNOWLEDGE
   : "";
 
 const server = http.createServer(async (req, res) => {
