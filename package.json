@@ -14,7 +14,6 @@
     "tailwindcss": "^4.1.13",
     "@bg0/browser": "^0.1.1",
     "stripe": "^18.5.0",
-    "pg": "^8.16.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.13",
