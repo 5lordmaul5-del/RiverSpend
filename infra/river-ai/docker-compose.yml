@@ -19,7 +19,9 @@ services:
     restart: unless-stopped
     volumes:
       - ollama_models:/root/.ollama
-    networks: [river-private]
+    # Private access from RiverSSAI plus outbound access to download model weights.
+    # No host port is published for Ollama.
+    networks: [river-private, ollama-egress]
   river-ai:
     build:
       context: ../..
@@ -46,3 +48,4 @@ volumes:
 networks:
   river-private:
     internal: true
+  ollama-egress:
