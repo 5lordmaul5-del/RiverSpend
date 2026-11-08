@@ -33,6 +33,7 @@ services:
       RIVER_AI_LOCAL_URL: http://ollama:11434/v1/chat/completions
       RIVER_AI_LOCAL_MODEL: ${RIVER_AI_LOCAL_MODEL:-qwen2.5:7b}
       RIVER_AI_MAX_REQUESTS_PER_MINUTE: ${RIVER_AI_MAX_REQUESTS_PER_MINUTE:-20}
+      RIVER_AI_MAX_PARALLEL: ${RIVER_AI_MAX_PARALLEL:-1}
     depends_on:
       riverdb:
         condition: service_healthy
