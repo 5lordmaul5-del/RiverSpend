@@ -3,7 +3,10 @@ import { createClient } from "@supabase/supabase-js";
 const MODEL_DEFAULT = "openai/gpt-oss-20b";
 const MAX_AGENTS = 30;
 const MAX_MESSAGE_CHARS = 4000;
-const MAX_HISTORY = 16;
+const MAX_HISTORY = 8; // ultimi 4 scambi utente/assistente
+const MAX_MEMORY_ROWS = 6;
+const MAX_MEMORY_CHARS = 1400;
+const MAX_OUTPUT_TOKENS = 250;
 const MAX_PARALLEL = 2; // limita i picchi di richieste al provider
 
 const AGENTS = {
@@ -40,16 +43,14 @@ const AGENTS = {
   documentation: "Documentazione tecnica e operativa: manuali, changelog, procedure, tracciabilità e passaggio consegne.",
 };
 
-const BASE_PROMPT = `Sei RiverSSAI 10.0, la rete di intelligenze coordinata da Nova per l'ecosistema RiverSpend. Nova opera come coordinatrice strategica: seleziona competenze pertinenti, confronta analisi e rende espliciti priorità, dipendenze e criteri di verifica.
-Parla in italiano, con tono chiaro, concreto e comprensibile. Il proprietario non è uno sviluppatore.
-RiverSpend comprende RiverSpendShop, Market, Pay, Shield, Box, Fidelity, Oracle, Experience, Recovery, Park, TV, Ecology, Fortress e RiverSpaceSignals.
-Gli agenti sono istanze coordinate dello stesso servizio AI, non copie autonome coscienti. Il numero di agenti è limitato dalle risorse, dai limiti del provider e dai costi.
-Distingui sempre fatti verificati, ipotesi e proposte. Non affermare di aver navigato, eseguito calcoli esterni, modificato sistemi o controllato dati live se non è avvenuto.
-Non promettere sicurezza impenetrabile, capacità illimitata o previsioni certe. Progetta difesa a livelli, monitoraggio, backup, test e risposta agli incidenti.
-Per mercati e token usa scenari probabilistici, dati con data e fonte quando disponibili, rischi e possibili perdite. Non garantire profitti e non eseguire investimenti o transazioni.
-Non chiedere password, chiavi API o codici. Non esporre segreti o dati di altri utenti.
-Nessuna azione irreversibile, modifica a pagamenti, trasferimento di fondi, investimento, pubblicazione o cancellazione senza approvazione esplicita dell'amministratore.
-Quando i dati non bastano, dillo e indica cosa occorre verificare.`;
+// Istruzioni essenziali: meno token, stessi vincoli di sicurezza e accuratezza.
+const BASE_PROMPT = `Sei RiverSSAI 10.0, coordinata da Nova nell'ecosistema RiverSpend.
+Rispondi in italiano, con chiarezza e concretezza: il proprietario non è uno sviluppatore.
+Distingui fatti verificati, ipotesi e proposte. Non inventare dati, verifiche, navigazione o modifiche non eseguite.
+Non promettere sicurezza assoluta, risultati certi o capacità illimitate.
+Proteggi privacy, credenziali e dati degli altri utenti. Non chiedere password o chiavi API.
+Non eseguire pagamenti, investimenti, pubblicazioni, cancellazioni o azioni irreversibili senza approvazione esplicita.
+Se mancano dati, dichiaralo e indica la verifica necessaria.`;
 
 function json(res, status, body) {
   return res.status(status).json(body);
@@ -102,11 +103,10 @@ function chooseTeam(agent, requestedSize, prompt = "") {
     return { name, score, index };
   });
   ranked.sort((a, b) => b.score - a.score || a.index - b.index);
-  const selected = ranked.slice(0, Math.min(size, MAX_AGENTS)).map((item) => item.name);
-  return selected;
+  return ranked.slice(0, Math.min(size, MAX_AGENTS)).map((item) => item.name);
 }
 
-async function callModel(apiKey, model, messages, maxTokens = 850) {
+async function callModel(apiKey, model, messages) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 45000);
   try {
@@ -119,8 +119,8 @@ async function callModel(apiKey, model, messages, maxTokens = 850) {
       body: JSON.stringify({
         model,
         messages,
-        temperature: 0.25,
-        max_tokens: maxTokens
+        temperature: 0.3,
+        max_tokens: MAX_OUTPUT_TOKENS
       }),
       signal: controller.signal
     });
@@ -205,41 +205,39 @@ export default async function handler(req, res) {
       .select("title,content,category,created_at")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false })
-      .limit(12);
+      .range(0, MAX_MEMORY_ROWS - 1);
     if (memoryReadError) console.error("River AI memory read failed:", memoryReadError.message);
     const memoryContext = (memories || [])
-      .map((item) => "[" + (item.category || "nota") + "] " + (item.title || "") + ": " + (item.content || "").slice(0, 350))
+      .map((item) => "[" + (item.category || "nota") + "] " + (item.title || "") + ": " + (item.content || "").slice(0, 220))
       .join("\n")
-      .slice(0, 2600);
+      .slice(0, MAX_MEMORY_CHARS);
 
     const latestPrompt = safeMessages[safeMessages.length - 1].content;
     let answer;
     let agentsUsed = team;
 
     if (agent === "team") {
-      // La Squadra usa un contesto compatto per rispettare il limite TPM del provider.
-      const teamHistory = safeMessages.slice(-4);
-      const teamMemory = memoryContext.slice(0, 900);
+      const teamHistory = safeMessages.slice(-MAX_HISTORY);
+      const teamMemory = memoryContext.slice(0, 700);
       const reports = await runWithLimit(team, MAX_PARALLEL, async (specialist) => {
         const report = await callModel(groqKey, model, [
-          { role: "system", content: BASE_PROMPT + "\nRUOLO SPECIALISTA: " + AGENTS[specialist] + "\nFornisci un rapporto sintetico: priorità, un rischio e verifica essenziale." },
-          ...(teamMemory ? [{ role: "system", content: "CONTESTO PRIVATO RIVERSPEND (sintesi):\n" + teamMemory }] : []),
+          { role: "system", content: BASE_PROMPT + "\nRUOLO: " + AGENTS[specialist] + "\nRispondi in massimo 3 punti: priorità, rischio, verifica." },
+          ...(teamMemory ? [{ role: "system", content: "MEMORIA (sintesi):\n" + teamMemory }] : []),
           ...teamHistory
-        ], 300);
+        ]);
         return { specialist, report };
       });
-      const synthesis = await callModel(groqKey, model, [
-        { role: "system", content: BASE_PROMPT + "\nSei NOVA, coordinatrice. Confronta i rapporti, risolvi le contraddizioni senza nasconderle e restituisci decisione, piano, rischi e verifiche." },
-        { role: "user", content: "RICHIESTA:\n" + latestPrompt + "\n\nRAPPORTI SPECIALISTI:\n" + reports.map((item) => "AGENTE " + item.specialist.toUpperCase() + ":\n" + item.report).join("\n\n") }
-      ], 900);
-      answer = synthesis;
+      answer = await callModel(groqKey, model, [
+        { role: "system", content: BASE_PROMPT + "\nSei Nova, coordinatrice. Integra i rapporti e restituisci decisione, passi e verifiche in modo conciso." },
+        { role: "user", content: "RICHIESTA:\n" + latestPrompt + "\n\nRAPPORTI:\n" + reports.map((item) => item.specialist.toUpperCase() + ": " + item.report).join("\n") }
+      ]);
       agentsUsed = ["nova", ...team];
     } else {
       answer = await callModel(groqKey, model, [
-        { role: "system", content: BASE_PROMPT + "\nRUOLO ATTIVO: " + AGENTS[agent] },
-        ...(memoryContext ? [{ role: "system", content: "MEMORIA PRIVATA RIVER AI:\n" + memoryContext }] : []),
+        { role: "system", content: BASE_PROMPT + "\nRUOLO: " + AGENTS[agent] },
+        ...(memoryContext ? [{ role: "system", content: "MEMORIA PRIVATA (sintesi):\n" + memoryContext }] : []),
         ...safeMessages
-      ], 1500);
+      ]);
     }
 
     const memoryRows = [
@@ -256,7 +254,7 @@ export default async function handler(req, res) {
       agentsUsed,
       teamSize: agent === "team" ? team.length : 1,
       memorySaved: !memoryWriteError,
-      limits: { maxAgents: MAX_AGENTS, maxParallel: MAX_PARALLEL }
+      limits: { maxAgents: MAX_AGENTS, maxParallel: MAX_PARALLEL, maxHistory: MAX_HISTORY, maxOutputTokens: MAX_OUTPUT_TOKENS }
     });
   } catch (error) {
     console.error("River AI request failed:", error?.message || "unknown");
