@@ -3,8 +3,8 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import pg from "pg";
-import { AGENTS_REGISTRY, AGENT_SQUADS, getAgentPrompt } from "../lib/riverSSAI/agentsRegistry.js";
-import { selectTeam } from "../lib/riverSSAI/router.js";
+import { AGENTS_REGISTRY, AGENT_SQUADS, getAgentPrompt } from "../lib/riverSSAI/agentsRegistry.mjs";
+import { selectTeam } from "../lib/riverSSAI/router.mjs";
 
 const { Pool } = pg;
 const PORT = Number(process.env.PORT || 8787);
