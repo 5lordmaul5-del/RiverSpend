@@ -21,7 +21,11 @@ async function requestWithRetry(url, options = {}) {
   let lastError;
   for (let attempt = 0; attempt < 4; attempt += 1) {
     try {
-      const response = await fetch(url, { ...options, headers: { ...headers, ...(options.headers || {}) } });
+      const requestHeaders = { ...headers, ...(options.headers || {}) };
+      for (const [key, value] of Object.entries(requestHeaders)) {
+        if (value === undefined || value === null) delete requestHeaders[key];
+      }
+      const response = await fetch(url, { ...options, headers: requestHeaders });
       if (response.ok) return response;
       if (![429, 500, 502, 503, 504].includes(response.status)) {
         throw new Error(`Supabase Storage request failed with HTTP ${response.status}.`);
