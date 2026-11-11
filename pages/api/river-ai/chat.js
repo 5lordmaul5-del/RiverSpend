@@ -1,4 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
+import { AGENTS_REGISTRY } from "../../../lib/riverSSAI/agentsRegistry.js";
+import { selectTeam } from "../../../lib/riverSSAI/router.js";
 
 const MODEL_DEFAULT = "openai/gpt-oss-20b";
 const MAX_AGENTS = 30;
@@ -6,39 +8,9 @@ const MAX_MESSAGE_CHARS = 2000;
 const MAX_HISTORY = 8;
 const MAX_OUTPUT_TOKENS = 850;
 
-const AGENTS = {
-  nova: "Coordinatrice generale: scomponi il problema, assegna priorità, integra i risultati e dichiara le incertezze.",
-  tech: "Ingegneria software e sistemi: architettura, codice, API, database, test e deployment.",
-  design: "Design e creatività: UI/UX, identità visiva, immagini, video, storyboard e 3D.",
-  robotics: "Robotica: sensori, attuatori, elettronica, firmware, simulazioni e sicurezza fisica.",
-  science: "Scienza e calcolo: matematica, fisica, statistica, simulazioni e controlli dimensionali.",
-  memory: "Gestione della conoscenza: organizza requisiti, decisioni, versioni e informazioni fornite.",
-  control: "Sicurezza e qualità: threat modeling, vulnerabilità, privacy, casi limite e verifiche.",
-  business: "Strategia d'impresa: vendite, margini, costi, ricavi, clienti e scenari operativi.",
-  finance: "Analisi finanziaria: flussi di cassa, budget, rischio, diversificazione e scenari. Non impartire ordini d'investimento.",
-  markets: "Ricerca mercati e token: fondamentali, liquidità, volatilità, tokenomics e rischi. Non inventare dati live né promettere rendimenti.",
-  payments: "Architettura dei pagamenti: checkout, PSP, bonifici, carte, wallet, rimborsi, riconciliazione, frodi e chargeback. Non movimentare fondi.",
-  data: "Analisi dati: pulizia, metriche, dashboard, qualità dei dati e interpretazione statistica; non inventare dataset.",
-  ai: "Ricerca e sviluppo AI: valutazione modelli, prompt, retrieval, valutazioni e limiti; non dichiarare capacità non testate.",
-  cloud: "Infrastruttura cloud: architettura, hosting, scalabilità, backup, costi e continuità operativa.",
-  cyber: "Cybersecurity difensiva: modellazione minacce, hardening, gestione vulnerabilità e risposta agli incidenti; solo attività autorizzate.",
-  quality: "Quality assurance: piani di test, test funzionali, regressione, casi limite e criteri di accettazione.",
-  product: "Gestione prodotto: requisiti, priorità, roadmap, dipendenze e criteri di rilascio.",
-  marketing: "Marketing: posizionamento, campagne, segmentazione, comunicazione e misurazione; niente promesse ingannevoli.",
-  sales: "Vendite e partnership: processi commerciali, offerte, canali, negoziazione e relazioni.",
-  support: "Assistenza clienti: procedure, FAQ, gestione reclami, tono empatico e risoluzione problemi.",
-  legal: "Analisi normativa e conformità: individua questioni da verificare con professionisti abilitati; non sostituisce consulenza legale.",
-  logistics: "Logistica: spedizioni, corrieri, tracking, resi, tempi e costi di consegna.",
-  supply: "Fornitori e inventario: approvvigionamento, scorte, disponibilità, riordino e rischio fornitori.",
-  automation: "Automazione dei processi: flussi, integrazioni, trigger, controlli e approvazioni umane.",
-  research: "Ricerca documentale: formula quesiti, valuta fonti, separa evidenze, ipotesi e informazioni mancanti.",
-  content: "Contenuti editoriali: testi, guide, descrizioni prodotto, tono di voce e revisione.",
-  localization: "Localizzazione internazionale: traduzioni contestuali, valute, formati, usi locali e adattamento mercati.",
-  accessibility: "Accessibilità digitale: WCAG, navigazione da tastiera, contrasto, screen reader e inclusività.",
-  sustainability: "Sostenibilità: impatti ambientali, efficienza risorse, pratiche circolari e indicatori verificabili.",
-  operations: "Operations: procedure, flussi di lavoro, ruoli, capacità, rischi e miglioramento continuo.",
-  documentation: "Documentazione tecnica e operativa: manuali, changelog, procedure, tracciabilità e passaggio consegne."
-};
+const AGENTS = Object.fromEntries(
+  Object.entries(AGENTS_REGISTRY).map(([key, specialist]) => [key, specialist.prompt])
+);
 
 const BASE_PROMPT = `Sei RiverSSAI 10.0, la rete di intelligenze coordinata da Nova per l'ecosistema RiverSpend.
 Nova coordina competenze specialistiche e restituisce una risposta unica, concreta e verificabile.
@@ -58,53 +30,13 @@ function json(res, status, body) {
 }
 
 function normalizeAgent(value) {
-  return Object.prototype.hasOwnProperty.call(AGENTS, value) ? value : "nova";
+  return Object.prototype.hasOwnProperty.call(AGENTS_REGISTRY, value) ? value : "nova";
 }
-
-const AGENT_SIGNALS = {
-  tech: ["codice", "bug", "errore", "api", "svilupp", "programmaz", "javascript", "typescript", "frontend", "backend", "deploy", "github"],
-  design: ["design", "grafica", "logo", "immagine", "video", "ui", "ux", "interfaccia", "banner", "colore"],
-  robotics: ["robot", "droid", "sensore", "motore", "elettronica", "firmware", "3d"],
-  science: ["scienza", "matematica", "fisica", "formula", "calcolo", "statistica", "simulazione"],
-  memory: ["memoria", "ricorda", "storico", "archivio", "decisioni", "versione", "contesto"],
-  control: ["sicurezza", "privacy", "protezione", "rischio", "permessi", "accesso", "gdpr"],
-  business: ["azienda", "impresa", "strategia", "business", "modello", "margine", "ricavi"],
-  finance: ["budget", "bilancio", "cassa", "costi", "finanza", "prevision", "flussi"],
-  markets: ["mercato", "borsa", "token", "crypto", "liquidita", "volatilita", "invest"],
-  payments: ["pagamento", "paypal", "carta", "checkout", "bonifico", "wallet", "rimborso", "stripe"],
-  data: ["dati", "database", "sql", "analisi", "dashboard", "metriche", "report"],
-  ai: ["intelligenza artificiale", "modello ai", "prompt", "llm", "agente", "machine learning", "nova"],
-  cloud: ["cloud", "server", "hosting", "scalabilita", "backup", "infrastruttura", "vercel", "supabase"],
-  cyber: ["cyber", "hacker", "attacco", "vulnerabilita", "crittografia", "enigma", "autenticazione"],
-  quality: ["test", "qualita", "collaudo", "verifica", "regressione", "controllo", "funziona"],
-  product: ["prodotto", "funzione", "roadmap", "priorita", "requisito", "rilascio"],
-  marketing: ["marketing", "pubblicita", "campagna", "brand", "promozione", "social"],
-  sales: ["vendita", "commerciale", "partner", "cliente", "offerta", "commissione"],
-  support: ["assistenza", "supporto", "reclamo", "faq", "problema cliente"],
-  legal: ["legge", "normativa", "contratto", "privacy policy", "conformita", "partita iva", "fiscale"],
-  logistics: ["spedizione", "corriere", "consegna", "tracking", "reso", "logistica"],
-  supply: ["fornitore", "magazzino", "scorte", "inventario", "approvvigionamento"],
-  automation: ["automazione", "automatico", "workflow", "integrazione", "trigger"],
-  research: ["ricerca", "fonti", "documentazione", "confronta", "studia", "approfondisci"],
-  content: ["testo", "scrivi", "articolo", "descrizione", "contenuto", "copywriting"],
-  localization: ["traduzione", "lingua", "internazionale", "paese", "valuta", "localizzazione"],
-  accessibility: ["accessibilita", "screen reader", "wcag", "tastiera", "contrasto"],
-  sustainability: ["ambiente", "ecologia", "sostenibilita", "riciclo", "impatto"],
-  operations: ["organizzazione", "processo", "operazioni", "procedura", "gestione"],
-  documentation: ["manuale", "documenta", "istruzioni", "guida", "changelog"]
-};
 
 function chooseTeam(agent, requestedSize, prompt = "") {
   if (agent !== "team") return [normalizeAgent(agent)];
-  const size = [2, 4, 8, 10, 20, 30].includes(Number(requestedSize)) ? Number(requestedSize) : 4;
-  const normalizedPrompt = String(prompt).toLocaleLowerCase("it");
-  const ranked = Object.keys(AGENT_SIGNALS).map((name, index) => ({
-    name,
-    score: AGENT_SIGNALS[name].reduce((total, signal) => total + (normalizedPrompt.includes(signal) ? 1 : 0), 0),
-    index
-  }));
-  ranked.sort((a, b) => b.score - a.score || a.index - b.index);
-  return ranked.slice(0, Math.min(size, MAX_AGENTS)).map((item) => item.name);
+  const selected = selectTeam(requestedSize, prompt);
+  return selected.filter((key) => Object.prototype.hasOwnProperty.call(AGENTS_REGISTRY, key));
 }
 
 async function callModel(apiKey, model, messages, maxTokens = MAX_OUTPUT_TOKENS) {
@@ -217,6 +149,7 @@ export default async function handler(req, res) {
       const specialistBrief = team.map((name) => "- " + name.toUpperCase() + ": " + AGENTS[name]).join("\n");
       const compactHistory = safeMessages.slice(-4);
       const teamSystem = BASE_PROMPT +
+        "\nCOORDINATRICE NOVA: " + AGENTS.nova +
         "\nMODALITÀ SQUADRA: analizza la richiesta attraverso queste competenze in un'unica elaborazione coordinata. " +
         "Non simulare conversazioni separate e non produrre 30 risposte. Integra i contributi e restituisci una sola risposta finale. " +
         "Se una competenza non serve, dichiaralo. Competenze selezionate:\n" + specialistBrief +
@@ -229,7 +162,7 @@ export default async function handler(req, res) {
       answer = result.answer;
       providerUsed = result.provider;
       modelUsed = result.model;
-      agentsUsed = ["nova", ...team];
+      agentsUsed = [...new Set(["nova", ...team])];
     } else {
       const result = await callModel(groqKey, model, [
         { role: "system", content: BASE_PROMPT + "\nRUOLO ATTIVO: " + AGENTS[agent] },
