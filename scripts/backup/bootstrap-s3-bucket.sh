@@ -6,6 +6,7 @@ umask 077
 AWS_REGION="${RIVER_BACKUP_AWS_REGION:-eu-west-1}"
 
 command -v aws >/dev/null 2>&1 || { echo "AWS CLI v2 is required." >&2; exit 1; }
+command -v jq >/dev/null 2>&1 || { echo "jq is required." >&2; exit 1; }
 aws sts get-caller-identity --no-cli-pager >/dev/null
 
 if aws s3api head-bucket --bucket "$RIVER_BACKUP_S3_BUCKET" --no-cli-pager 2>/dev/null; then
@@ -25,7 +26,7 @@ aws s3api put-public-access-block   --bucket "$RIVER_BACKUP_S3_BUCKET"   --publi
 
 aws s3api put-bucket-versioning   --bucket "$RIVER_BACKUP_S3_BUCKET"   --versioning-configuration Status=Enabled   --no-cli-pager >/dev/null
 
-aws s3api put-bucket-encryption   --bucket "$RIVER_BACKUP_S3_BUCKET"   --server-side-encryption-configuration '{"Rules":[{"ApplyServerSideEncryptionByDefault":{"SSEAlgorithm":"AES256"},"BucketKeyEnabled":true}]}'   --no-cli-pager >/dev/null
+aws s3api put-bucket-encryption   --bucket "$RIVER_BACKUP_S3_BUCKET"   --server-side-encryption-configuration '{"Rules":[{"ApplyServerSideEncryptionByDefault":{"SSEAlgorithm":"AES256"}}]}'   --no-cli-pager >/dev/null
 
 aws s3api put-object-lock-configuration   --bucket "$RIVER_BACKUP_S3_BUCKET"   --object-lock-configuration '{"ObjectLockEnabled":"Enabled","Rule":{"DefaultRetention":{"Mode":"GOVERNANCE","Days":30}}}'   --no-cli-pager >/dev/null
 
