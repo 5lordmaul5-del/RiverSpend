@@ -4,3 +4,10 @@ node_modules/
 infra/river-ai/.env
 *.dump
 *.sql.gz
+
+# Temporary encrypted backup artifacts (never commit backup payloads or keys)
+backup-work/
+*.age
+*.bundle
+*.plaintext.tmp
+river-backup.tar.gz
