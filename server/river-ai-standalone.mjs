@@ -123,14 +123,50 @@ const server = http.createServer(async (req, res) => {
         ok: true,
         service: "RiverSSAI Independent Core",
         database: "connected",
-        provider: "local-configured",
-        model: MODEL,
+        status: "alive",
         registeredRoles: Object.keys(AGENTS_REGISTRY).length,
         squads: Object.keys(AGENT_SQUADS).length
       });
     } catch {
-      return send(res, 503, { ok: false, service: "RiverSSAI Independent Core", database: "unavailable" });
+      return send(res, 503, { ok: false, service: "RiverSSAI Independent Core", database: "unavailable", status: "not-ready" });
     }
+  }
+
+  // Readiness is separate from liveness: the API may be alive while Ollama
+  // is starting or the configured model has not yet been downloaded.
+  if (req.method === "GET" && url.pathname === "/ready") {
+    let database = "connected";
+    let modelStatus = "available";
+    try {
+      await pool.query("SELECT 1");
+    } catch {
+      database = "unavailable";
+    }
+    try {
+      const ollamaOrigin = new URL(MODEL_URL).origin;
+      const response = await fetch(ollamaOrigin + "/api/tags", {
+        signal: AbortSignal.timeout(3000)
+      });
+      if (!response.ok) {
+        modelStatus = "unreachable";
+      } else {
+        const payload = await response.json();
+        const models = Array.isArray(payload.models) ? payload.models : [];
+        modelStatus = models.some((item) => item?.name === MODEL) ? "available" : "not-installed";
+      }
+    } catch {
+      modelStatus = "unreachable";
+    }
+    const ready = database === "connected" && modelStatus === "available";
+    return send(res, ready ? 200 : 503, {
+      ok: ready,
+      service: "RiverSSAI Independent Core",
+      database,
+      provider: "ollama",
+      model: MODEL,
+      modelStatus,
+      status: ready ? "ready" : "not-ready"
+    });
   }
 
   if (!["POST", "GET"].includes(req.method) || !["/v1/chat", "/v1/memories", "/v1/agents"].includes(url.pathname)) {
