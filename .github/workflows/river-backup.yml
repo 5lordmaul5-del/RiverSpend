@@ -1,0 +1,89 @@
+name: RiverSpend encrypted offsite backup
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 2 * * *"
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: river-backup-production
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    # Scheduled backups must only run from the protected default branch.
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Check out complete repository history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      # Pin the CLI to the latest v2 line because v3 changed remote-target
+      # defaults and flags. Upgrade only after validating the new workflow.
+      - name: Set up Supabase CLI
+        uses: supabase/setup-cli@v3
+        with:
+          version: "2.122.1"
+
+      - name: Install backup utilities
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes age jq
+
+      - name: Configure AWS credentials with GitHub OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.RIVER_BACKUP_AWS_ROLE_ARN }}
+          aws-region: ${{ vars.RIVER_BACKUP_AWS_REGION }}
+          role-session-name: RiverSpendBackup-${{ github.run_id }}
+
+      - name: Create encrypted database, storage and repository backup
+        env:
+          SUPABASE_DB_URL: ${{ secrets.RIVER_BACKUP_SUPABASE_DB_URL }}
+          SUPABASE_URL: ${{ vars.RIVER_BACKUP_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.RIVER_BACKUP_SUPABASE_SERVICE_ROLE_KEY }}
+          BACKUP_AGE_RECIPIENT: ${{ vars.RIVER_BACKUP_AGE_RECIPIENT }}
+        run: bash scripts/backup/create-backup.sh
+
+      - name: Verify S3 bucket protections and upload
+        env:
+          S3_BUCKET: ${{ vars.RIVER_BACKUP_S3_BUCKET }}
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          ARCHIVE="$RUNNER_TEMP/river-backup.tar.gz.age"
+          CHECKSUM_FILE="$ARCHIVE.sha256"
+          test -s "$ARCHIVE"
+          test -s "$CHECKSUM_FILE"
+          sha256sum --check "$CHECKSUM_FILE"
+
+          VERSIONING="$(aws s3api get-bucket-versioning --bucket "$S3_BUCKET")"
+          echo "$VERSIONING" | jq -e '.Status == "Enabled"' >/dev/null
+
+          LOCK="$(aws s3api get-object-lock-configuration --bucket "$S3_BUCKET")"
+          echo "$LOCK" | jq -e '
+            .ObjectLockConfiguration.ObjectLockEnabled == "Enabled"
+            and .ObjectLockConfiguration.Rule.DefaultRetention.Mode == "GOVERNANCE"
+            and .ObjectLockConfiguration.Rule.DefaultRetention.Days >= 30
+          ' >/dev/null
+
+          KEY="river-backups/${GITHUB_RUN_ID}/${GITHUB_RUN_ATTEMPT}/river-backup.tar.gz.age"
+          aws s3api put-object             --bucket "$S3_BUCKET"             --key "$KEY"             --body "$ARCHIVE"             --server-side-encryption AES256             --metadata "sha256=$(cut -d' ' -f1 "$CHECKSUM_FILE")"             --no-cli-pager >/dev/null
+          aws s3api put-object             --bucket "$S3_BUCKET"             --key "$KEY.sha256"             --body "$CHECKSUM_FILE"             --server-side-encryption AES256             --no-cli-pager >/dev/null
+
+          aws s3 cp "s3://$S3_BUCKET/$KEY" "$RUNNER_TEMP/river-backup-verify.tar.gz.age" --only-show-errors
+          cmp --silent "$ARCHIVE" "$RUNNER_TEMP/river-backup-verify.tar.gz.age"
+          rm -f "$RUNNER_TEMP/river-backup-verify.tar.gz.age"
+          echo "Encrypted backup uploaded and byte-for-byte verified: s3://$S3_BUCKET/$KEY"

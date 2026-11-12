@@ -1,0 +1,34 @@
+name: RiverBackup code validation
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/river-backup.yml"
+      - ".github/workflows/riverbackup-validation.yml"
+      - "scripts/backup/**"
+  push:
+    branches:
+      - main
+      - feat/riverssai-10-independent-core-90
+    paths:
+      - ".github/workflows/river-backup.yml"
+      - ".github/workflows/riverbackup-validation.yml"
+      - "scripts/backup/**"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Validate shell scripts
+        run: |
+          bash -n scripts/backup/create-backup.sh
+          bash -n scripts/backup/bootstrap-s3-bucket.sh
+      - name: Validate Node.js script syntax
+        run: node --check scripts/backup/export-supabase-storage.mjs
