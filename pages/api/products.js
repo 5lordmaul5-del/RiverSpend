@@ -86,11 +86,12 @@ export default async function handler(req, res) {
       return res.status(200).json((data || []).map((item) => String(item.id)));
     }
 
+    const soldCutoff = new Date(Date.now() - SOLD_WINDOW_MS).toISOString();
     let query = supabase
       .from('products')
       .select(columns)
       .in('status', ['published', 'sold'])
-      .or('status.eq.published,and(status.eq.sold,sold_at.gt.' + new Date(Date.now() - 60 * 60 * 1000).toISOString() + ')')
+      .or(`status.eq.published,and(status.eq.sold,sold_at.gt.${soldCutoff})`)
       .order('created_at', { ascending: false });
 
     const category = typeof req.query.category === 'string' ? req.query.category.trim() : '';
