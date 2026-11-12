@@ -121,9 +121,9 @@ export default async function handler(req, res) {
       if (category && ADULT_CATEGORIES.some((item) => item.toLowerCase() === category.toLowerCase())) {
         query = query.eq('category', category);
       } else {
-        query = query.not('category', 'in', '(' + ADULT_CATEGORIES.map((item) => '"' + item.replace(/"/g, '') + '"').join(',') + ')');
+        query = query.or('category.is.null,and(category.neq."' + ADULT_CATEGORIES[0] + '",category.neq."' + ADULT_CATEGORIES[1] + '")');
       }
-      query = query.range(offset, offset + limit - 1);
+      query = query.range(offset, offset + limit);
     } else if (mode !== 'legacy') {
       return res.status(400).json({ error: 'Modalità di catalogo non riconosciuta.' });
     }
@@ -156,14 +156,14 @@ export default async function handler(req, res) {
       }
     }
 
-    const mapped = mapProducts(products, media);
+    const mapped = mapProducts(mode === 'page' ? products.slice(0, Math.min(PAGE_SIZE_MAX, Math.max(1, Number.parseInt(String(req.query.limit || PAGE_SIZE_DEFAULT), 10) || PAGE_SIZE_DEFAULT))) : products, media);
     if (mode === 'single') return res.status(200).json(mapped[0] || null);
     if (mode === 'page') {
       return res.status(200).json({
         items: mapped,
         limit: Math.min(PAGE_SIZE_MAX, Math.max(1, Number.parseInt(String(req.query.limit || PAGE_SIZE_DEFAULT), 10) || PAGE_SIZE_DEFAULT)),
         offset: Math.max(0, Number.parseInt(String(req.query.offset || '0'), 10) || 0),
-        hasMore: mapped.length === Math.min(PAGE_SIZE_MAX, Math.max(1, Number.parseInt(String(req.query.limit || PAGE_SIZE_DEFAULT), 10) || PAGE_SIZE_DEFAULT))
+        hasMore: products.length > mapped.length
       });
     }
     return res.status(200).json(mapped);
