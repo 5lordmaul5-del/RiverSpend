@@ -90,6 +90,7 @@ export default async function handler(req, res) {
       .from('products')
       .select(columns)
       .in('status', ['published', 'sold'])
+      .or('status.eq.published,and(status.eq.sold,sold_at.gt.' + new Date(Date.now() - 60 * 60 * 1000).toISOString() + ')')
       .order('created_at', { ascending: false });
 
     const category = typeof req.query.category === 'string' ? req.query.category.trim() : '';
@@ -129,7 +130,7 @@ export default async function handler(req, res) {
     const { data: rows, error: productsError } = await query;
     if (productsError) throw productsError;
 
-    let products = (rows || []).filter(isRecentlySold);
+    let products = rows || [];
     if (mode === 'legacy') {
       const requestedAdultCategory = ADULT_CATEGORIES.some((item) => item.toLowerCase() === category.toLowerCase());
       products = products.filter((product) => requestedAdultCategory
@@ -137,8 +138,6 @@ export default async function handler(req, res) {
         : !isAdultProduct(product));
       if (locality) products = products.filter((product) => (product.locality || '').toLocaleLowerCase('it').includes(locality.toLocaleLowerCase('it')));
       if (province) products = products.filter((product) => (product.province || '').toLocaleLowerCase('it').includes(province.toLocaleLowerCase('it')));
-    } else if (mode === 'single' || mode === 'ids') {
-      products = products.filter((product) => !isAdultProduct(product) || mode === 'single' || mode === 'ids');
     }
 
     const ids = products.map((product) => product.id);
