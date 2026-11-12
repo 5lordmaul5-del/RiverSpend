@@ -64,12 +64,14 @@ function RSLocalFinder() {
     setStato('Cerco gli annunci RiverSpendShop…');
     try {
       const params = new URLSearchParams();
+      params.set('mode', 'page');
+      params.set('limit', '48');
       params.set('locality', localitaRicerca);
       if (provinciaRicerca) params.set('province', provinciaRicerca);
       const prodottiResponse = await fetch('/api/products?' + params.toString(), { cache: 'no-store' });
       if (!prodottiResponse.ok) throw new Error('Non riesco a caricare gli annunci RiverSpendShop in questa zona.');
       const annunci = await prodottiResponse.json();
-      const annunciLocali = Array.isArray(annunci) ? annunci.filter((p) => p.localita) : [];
+      const annunciLocali = Array.isArray(annunci?.items) ? annunci.items.filter((p) => p.localita) : [];
       setProdottiLocal(annunciLocali);
       setStato(annunciLocali.length ? 'Annunci RiverSpendShop trovati. Verifico la mappa delle attività…' : 'Nessun annuncio RiverSpendShop trovato con questa località. Verifico comunque la mappa…');
     } catch (e) {
