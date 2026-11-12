@@ -2,6 +2,19 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { supabase } from '../lib/supabase';
 
+async function fetchProductsByIds(ids) {
+  const uniqueIds = [...new Set((ids || []).map(String).filter(Boolean))];
+  const products = [];
+  for (let index = 0; index < uniqueIds.length; index += 100) {
+    const params = new URLSearchParams({ mode: 'ids', ids: uniqueIds.slice(index, index + 100).join(',') });
+    const response = await fetch('/api/products?' + params.toString(), { cache: 'no-store' });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || 'Prodotti non disponibili');
+    if (Array.isArray(data)) products.push(...data);
+  }
+  return products;
+}
+
 export default function Rete() {
   const [items, setItems] = useState([]);
 
@@ -40,11 +53,9 @@ export default function Rete() {
               ...localSaved.map((item) => String(item.id))
             ])];
             if (ids.length) {
-              const res = await fetch('/api/products', { cache: 'no-store' });
-              const data = await res.json();
-              if (res.ok && Array.isArray(data)) {
+              const data = await fetchProductsByIds(ids);
+              if (Array.isArray(data)) {
                 saved = data
-                  .filter((product) => ids.includes(String(product.id)))
                   .map((product) => {
                     const previous = localSaved.find((entry) => String(entry.id) === String(product.id));
                     return {
@@ -71,11 +82,9 @@ export default function Rete() {
           const ids = cookie ? decodeURIComponent(cookie.split('=').slice(1).join('=')) : '';
           const parsedIds = ids ? ids.split(',').filter(Boolean) : [];
           if (parsedIds.length) {
-            const res = await fetch('/api/products', { cache: 'no-store' });
-            const data = await res.json();
-            if (res.ok && Array.isArray(data)) {
+            const data = await fetchProductsByIds(parsedIds);
+            if (Array.isArray(data)) {
               saved = data
-                .filter((product) => parsedIds.some((id) => String(id) === String(product.id)))
                 .map((product) => {
                   const previous = saved.find((entry) => String(entry.id) === String(product.id));
                   return {

@@ -66,24 +66,12 @@ export default function Prodotto() {
   useEffect(() => {
     let attivo = true;
     const id = window.location.pathname.split('/').filter(Boolean).pop();
-    fetch('/api/products', { cache: 'no-store' })
+    fetch('/api/products?mode=single&id=' + encodeURIComponent(decodeURIComponent(id || '')), { cache: 'no-store' })
       .then(async (res) => {
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Prodotto non disponibile');
-        const targetId = decodeURIComponent(id || '');
-        const trovato = (Array.isArray(data) ? data : []).find((item) => String(item.id) === targetId);
-        if (trovato) return trovato;
-
-        // Gli articoli 18+ sono volutamente esclusi dal catalogo generale.
-        // Se l'utente apre direttamente la scheda, proviamo quindi la vetrina 18+ dedicata.
-        return fetch('/api/products?category=' + encodeURIComponent('18🔞 Sex Toys'), { cache: 'no-store' })
-          .then(async (adultRes) => {
-            const adultData = await adultRes.json();
-            if (!adultRes.ok) throw new Error(adultData.error || 'Prodotto non disponibile');
-            const adultProduct = (Array.isArray(adultData) ? adultData : []).find((item) => String(item.id) === targetId);
-            if (!adultProduct) throw new Error('Questo prodotto non è disponibile.');
-            return adultProduct;
-          });
+        if (!data) throw new Error('Questo prodotto non è disponibile.');
+        return data;
       })
       .then((item) => {
         if (!attivo) return;
