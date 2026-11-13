@@ -20,6 +20,8 @@ export default function RiverAI() {
   const [selectedAgent, setSelectedAgent] = useState("team");
   const [agents, setAgents] = useState([{ id: "nova", name: "Nova", role: "Coordinatrice centrale", squad: "Core & Prodotto" }]);
   const [teamSize, setTeamSize] = useState(30);
+  const [menuNotice, setMenuNotice] = useState("");
+  const [menuOpen, setMenuOpen] = useState(true);
   const endRef = useRef(null);
   const sendLock = useRef(false);
 
@@ -162,11 +164,63 @@ export default function RiverAI() {
     setTeamSize(30);
   }
 
+  const navButtonStyle = { textAlign:"left",padding:"11px",borderRadius:10,border:"1px solid #1b526c",background:"#0c2a40",color:"#f2fbff",fontWeight:700,fontSize:13,cursor:"pointer" };
+  const navDisabledStyle = { textAlign:"left",display:"flex",justifyContent:"space-between",gap:6,padding:"10px 11px",borderRadius:10,border:"1px solid #243d52",background:"#102438",color:"#9eb3c5",fontSize:13,opacity:.8 };
+  const smallActionStyle = {border:"1px solid #b9d8dd",background:"#fff",color:"#17545e",borderRadius:9,padding:"7px 9px",fontSize:12,fontWeight:700};
+  const smallDisabledStyle = {border:"1px solid #d7e2e4",background:"#f2f6f6",color:"#7a9094",borderRadius:9,padding:"7px 9px",fontSize:11};
+  function shareChat() {
+    if (!messages.length) { setMenuNotice("La chat è vuota: non c’è nulla da condividere."); return; }
+    const transcript = messages.map((item) => (item.role === "user" ? "Tu" : "Nova") + ": " + item.content).join("\n\n");
+    const payload = { title: "Conversazione RiverSSAI 10.0", text: transcript };
+    if (navigator.share) navigator.share(payload).then(() => setMenuNotice("Condivisione avviata.")).catch(() => {});
+    else if (navigator.clipboard?.writeText) navigator.clipboard.writeText(transcript).then(() => setMenuNotice("Conversazione copiata negli appunti.")).catch(() => setMenuNotice("Condivisione non disponibile su questo dispositivo."));
+    else setMenuNotice("Condivisione non supportata dal browser.");
+  }
+
+  function archiveChat() {
+    if (!messages.length) { setMenuNotice("La chat è vuota."); return; }
+    try {
+      const key = "riverssai-archive-v1";
+      const saved = JSON.parse(localStorage.getItem(key) || "[]");
+      saved.unshift({ id: Date.now(), title: (messages.find((item) => item.role === "user")?.content || "Chat RiverSSAI").slice(0, 72), messages, archivedAt: new Date().toISOString() });
+      localStorage.setItem(key, JSON.stringify(saved.slice(0, 100)));
+      setMessages([]); setInput(""); setMenuNotice("Chat archiviata su questo dispositivo.");
+    } catch { setMenuNotice("Non è stato possibile archiviare la chat."); }
+  }
+
+  function pinChat() {
+    if (!messages.length) { setMenuNotice("Scrivi almeno un messaggio prima di fissare la chat."); return; }
+    try {
+      const key = "riverssai-pinned-v1";
+      const saved = JSON.parse(localStorage.getItem(key) || "[]");
+      saved.unshift({ id: Date.now(), title: (messages.find((item) => item.role === "user")?.content || "Chat RiverSSAI").slice(0, 72), messages, pinnedAt: new Date().toISOString() });
+      localStorage.setItem(key, JSON.stringify(saved.slice(0, 30)));
+      setMenuNotice("Chat fissata su questo dispositivo.");
+    } catch { setMenuNotice("Non è stato possibile fissare la chat."); }
+  }
+
+  function deleteChat() {
+    setMessages([]); setInput(""); setError(""); setMenuNotice("Conversazione corrente eliminata da questo dispositivo.");
+  }
+
   return (
     <>
     <Head><title>RiverSSAI 10.0 · Pure Power</title><meta name="description" content="RiverSSAI 10.0: Nova coordina il registro di 89 specialisti in 10 squadre."/><meta name="apple-mobile-web-app-capable" content="yes"/><meta name="apple-mobile-web-app-title" content="RiverSSAI 10.0"/><meta name="theme-color" content="#06172b"/><link rel="manifest" href="/river-ai.webmanifest"/><link rel="icon" href="/icons/river-ssai-10.svg" type="image/svg+xml"/><link rel="apple-touch-icon" href="/icons/river-ssai-192.png"/></Head>
-    <main style={{ minHeight:"100vh", background:"linear-gradient(180deg,#e9fbfc,#f7fcfd)", color:"#12343b", padding:"18px 12px 28px", fontFamily:"Arial,sans-serif" }}>
-      <section style={{ maxWidth:850, minHeight:"calc(100vh - 46px)", margin:"0 auto", display:"flex", flexDirection:"column", background:"#fff", border:"1px solid #c8e8e9", borderRadius:22, overflow:"hidden", boxShadow:"0 12px 36px rgba(5,65,78,.10)" }}>
+    <main style={{ minHeight:"100vh", background:"linear-gradient(180deg,#e9fbfc,#f7fcfd)", color:"#12343b", padding:"18px 12px 28px", fontFamily:"Arial,sans-serif", display:"flex", alignItems:"flex-start", justifyContent:"center", gap:12, flexWrap:"wrap" }}>
+      {access === "ready" && <aside aria-label="Menu RiverSSAI" style={{width:230,flex:"0 0 230px",background:"#07182b",color:"#e8f4ff",borderRadius:18,padding:14,boxSizing:"border-box",boxShadow:"0 12px 30px rgba(5,30,50,.16)"}}>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:14}}><strong style={{fontSize:15}}>RiverSSAI</strong><button onClick={()=>setMenuOpen(!menuOpen)} aria-label="Apri o chiudi menu" style={{background:"transparent",border:"1px solid #416079",color:"#fff",borderRadius:8,padding:"4px 8px"}}>{menuOpen?"Nascondi":"Menu"}</button></div>
+        {menuOpen && <nav style={{display:"grid",gap:7}}>
+          <button onClick={newChat} style={navButtonStyle}>＋ Nuova chat</button>
+          <button disabled style={navDisabledStyle}>▧ Immagini <small>In preparazione</small></button>
+          <button disabled style={navDisabledStyle}>▶ Video <small>In preparazione</small></button>
+          <button disabled style={navDisabledStyle}>▣ Progetti <small>In preparazione</small></button>
+          <button disabled style={navDisabledStyle}>⌕ Esplora <small>In preparazione</small></button>
+          <button disabled style={navDisabledStyle}>⚙ Personalizza <small>In preparazione</small></button>
+          <a href="/river-ai/piani" style={{display:"block",padding:"10px 11px",borderRadius:10,background:"#123b54",color:"#9fe8ff",textDecoration:"none",fontSize:13,fontWeight:700}}>€ Piani e costi</a>
+        </nav>}
+        <div style={{marginTop:16,paddingTop:12,borderTop:"1px solid #28465e",fontSize:11,lineHeight:1.5,color:"#a8bfd2"}}>Nova + 89 specialisti registrati · 10 squadre</div>
+      </aside>
+      <section style={{ maxWidth:980, minHeight:"calc(100vh - 46px)", margin:"0", display:"flex", flexDirection:"column", background:"#fff", border:"1px solid #c8e8e9", borderRadius:22, overflow:"hidden", boxShadow:"0 12px 36px rgba(5,65,78,.10)",flex:"1 1 640px",minWidth:0 }}>
         <header className="river-ai-header" style={{ padding:"18px 20px", background:"linear-gradient(120deg,#073b4c,#087f89)", color:"#fff", display:"flex", alignItems:"center", gap:12 }}>
           <img src="/icons/river-ssai-10.svg" alt="Nova RiverSSAI" width="52" height="52" style={{width:52,height:52,borderRadius:16,background:"#071a2d",border:"1px solid #20c9ef",objectFit:"cover"}}/>
           <div className="river-ai-brand" style={{ flex:1, minWidth:0 }}>
@@ -198,6 +252,15 @@ export default function RiverAI() {
          access === "denied" ? <div style={{padding:24}}><h2>Accesso non autorizzato</h2><p>Questa assistente è riservata esclusivamente al proprietario RiverSpend.</p></div> :
          access === "error" ? <div role="alert" style={{padding:24}}><h2>Verifica temporaneamente non disponibile</h2><p>Non posso confermare i permessi in questo momento. Riprova tra poco.</p></div> :
          <>
+          <div style={{display:"flex",gap:7,flexWrap:"wrap",padding:"10px 16px",borderBottom:"1px solid #e3eeee",background:"#fbfefe"}}>
+            <button onClick={shareChat} style={smallActionStyle}>Condividi</button>
+            <button onClick={pinChat} style={smallActionStyle}>Fissa</button>
+            <button onClick={archiveChat} style={smallActionStyle}>Archivia</button>
+            <button onClick={deleteChat} style={smallActionStyle}>Elimina chat</button>
+            <button disabled style={smallDisabledStyle}>Carica file · in preparazione</button>
+            <button disabled style={smallDisabledStyle}>Aggiungi al progetto · in preparazione</button>
+          </div>
+          {menuNotice && <div role="status" style={{padding:"8px 16px",background:"#fff8df",color:"#72510a",fontSize:12}}>{menuNotice}</div>}
           <div style={{padding:"12px 18px",background:"#f0fbfa",borderBottom:"1px solid #dceeee",fontSize:12,lineHeight:1.5,color:"#42636a"}}>
             Scegli il collaboratore specializzato. Il registro comprende 89 specialisti coordinati da Nova in 10 squadre. Con Squadra Ultra, Nova seleziona fino a 30 specialisti dal registro e li integra in un’unica elaborazione AI. I ruoli sono competenze coordinate, non modelli autonomi né richieste separate al provider. Le azioni esterne restano protette da approvazione.
           </div>
