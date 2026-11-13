@@ -22,6 +22,9 @@ export default function RiverAI() {
   const [teamSize, setTeamSize] = useState(30);
   const [menuNotice, setMenuNotice] = useState("");
   const [menuOpen, setMenuOpen] = useState(true);
+  const [activeView, setActiveView] = useState("home");
+  const [savedChats, setSavedChats] = useState([]);
+  const [pinnedChats, setPinnedChats] = useState([]);
   const endRef = useRef(null);
   const sendLock = useRef(false);
 
@@ -162,6 +165,22 @@ export default function RiverAI() {
     setError("");
     setSelectedAgent("team");
     setTeamSize(30);
+    setActiveView("chat");
+  }
+
+  function openSavedList(kind) {
+    try {
+      const key = kind === "archive" ? "riverssai-archive-v1" : "riverssai-pinned-v1";
+      const parsed = JSON.parse(localStorage.getItem(key) || "[]");
+      const items = Array.isArray(parsed) ? parsed : [];
+      if (kind === "archive") setSavedChats(items); else setPinnedChats(items);
+      setActiveView(kind);
+    } catch { setMenuNotice("Non riesco a leggere le conversazioni salvate su questo dispositivo."); }
+  }
+
+  function reopenSavedChat(item) {
+    setMessages(Array.isArray(item.messages) ? item.messages : []);
+    setInput(""); setError(""); setActiveView("chat");
   }
 
   const navButtonStyle = { textAlign:"left",padding:"11px",borderRadius:10,border:"1px solid #1b526c",background:"#0c2a40",color:"#f2fbff",fontWeight:700,fontSize:13,cursor:"pointer" };
@@ -210,12 +229,16 @@ export default function RiverAI() {
       {access === "ready" && <aside aria-label="Menu RiverSSAI" style={{width:230,flex:"0 0 230px",background:"#07182b",color:"#e8f4ff",borderRadius:18,padding:14,boxSizing:"border-box",boxShadow:"0 12px 30px rgba(5,30,50,.16)"}}>
         <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:14}}><strong style={{fontSize:15}}>RiverSSAI</strong><button onClick={()=>setMenuOpen(!menuOpen)} aria-label="Apri o chiudi menu" style={{background:"transparent",border:"1px solid #416079",color:"#fff",borderRadius:8,padding:"4px 8px"}}>{menuOpen?"Nascondi":"Menu"}</button></div>
         {menuOpen && <nav style={{display:"grid",gap:7}}>
-          <button onClick={newChat} style={navButtonStyle}>＋ Nuova chat</button>
-          <button disabled style={navDisabledStyle}>▧ Immagini <small>In preparazione</small></button>
-          <button disabled style={navDisabledStyle}>▶ Video <small>In preparazione</small></button>
-          <button disabled style={navDisabledStyle}>▣ Progetti <small>In preparazione</small></button>
-          <button disabled style={navDisabledStyle}>⌕ Esplora <small>In preparazione</small></button>
-          <button disabled style={navDisabledStyle}>⚙ Personalizza <small>In preparazione</small></button>
+          <button onClick={()=>setActiveView("home")} style={navButtonStyle}>⌂ Home RiverSSAI</button>
+          <button onClick={newChat} style={navButtonStyle}>＋ Chat con Nova</button>
+          <button onClick={()=>{setSelectedAgent("team");setActiveView("chat");}} style={navButtonStyle}>⚡ Squadra Ultra · specialisti</button>
+          <button onClick={()=>openSavedList("archive")} style={navButtonStyle}>▤ Archivio conversazioni</button>
+          <button onClick={()=>openSavedList("pinned")} style={navButtonStyle}>★ Chat fissate</button>
+          <button disabled style={navDisabledStyle}>▧ Immagini <small>In sviluppo</small></button>
+          <button disabled style={navDisabledStyle}>▶ Video <small>In sviluppo</small></button>
+          <button disabled style={navDisabledStyle}>▣ Progetti <small>In sviluppo</small></button>
+          <button disabled style={navDisabledStyle}>⌕ Esplora <small>In sviluppo</small></button>
+          <button disabled style={navDisabledStyle}>⚙ Personalizza <small>In sviluppo</small></button>
           <a href="/river-ai/piani" style={{display:"block",padding:"10px 11px",borderRadius:10,background:"#123b54",color:"#9fe8ff",textDecoration:"none",fontSize:13,fontWeight:700}}>€ Piani e costi</a>
         </nav>}
         <div style={{marginTop:16,paddingTop:12,borderTop:"1px solid #28465e",fontSize:11,lineHeight:1.5,color:"#a8bfd2"}}>Nova + 89 specialisti registrati · 10 squadre</div>
@@ -252,6 +275,53 @@ export default function RiverAI() {
          access === "denied" ? <div style={{padding:24}}><h2>Accesso non autorizzato</h2><p>Questa assistente è riservata esclusivamente al proprietario RiverSpend.</p></div> :
          access === "error" ? <div role="alert" style={{padding:24}}><h2>Verifica temporaneamente non disponibile</h2><p>Non posso confermare i permessi in questo momento. Riprova tra poco.</p></div> :
          <>
+          {activeView === "home" ? (
+            <div style={{padding:"24px 18px 30px",background:"linear-gradient(180deg,#f5fcff,#fff)",flex:1}}>
+              <div style={{maxWidth:820,margin:"0 auto"}}>
+                <div style={{display:"flex",alignItems:"center",gap:16,flexWrap:"wrap",marginBottom:22}}>
+                  <img src="/icons/river-ssai-10.svg" alt="RiverSSAI 10.0" width="76" height="76" style={{borderRadius:18,background:"#07182b"}}/>
+                  <div style={{flex:1,minWidth:220}}>
+                    <div style={{fontSize:12,fontWeight:900,letterSpacing:2,color:"#07859a"}}>CENTRO OPERATIVO RIVERSPEND</div>
+                    <h1 style={{fontSize:28,lineHeight:1.1,margin:"6px 0",color:"#082b43"}}>Benvenuto in RiverSSAI 10.0</h1>
+                    <p style={{margin:0,color:"#58727e",fontSize:14}}>Nova · 3 unità di coordinamento · 89 specialisti nel registro</p>
+                  </div>
+                </div>
+                <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(min(100%,220px),1fr))",gap:12}}>
+                  {[
+                    {icon:"✦",title:"Chat con Nova",body:"Apri la conversazione e assegna il lavoro a Nova.",action:()=>setActiveView("chat"),active:true},
+                    {icon:"⚡",title:"Squadra Ultra",body:"Seleziona fino a 30 competenze coordinate in un’unica elaborazione AI.",action:()=>{setSelectedAgent("team");setTeamSize(30);setActiveView("chat");},active:true},
+                    {icon:"▤",title:"Archivio",body:"Riapri le conversazioni archiviate su questo dispositivo.",action:()=>openSavedList("archive"),active:true},
+                    {icon:"★",title:"Chat fissate",body:"Ritrova le conversazioni che hai fissato.",action:()=>openSavedList("pinned"),active:true},
+                    {icon:"▧",title:"Immagini",body:"Area prevista per creazione e gestione immagini.",status:"In sviluppo"},
+                    {icon:"▶",title:"Video",body:"Area prevista per strumenti video.",status:"In sviluppo"},
+                    {icon:"▣",title:"Progetti",body:"Spazio previsto per progetti, attività e avanzamento lavori.",status:"In sviluppo"},
+                    {icon:"⌕",title:"Esplora",body:"Catalogo previsto per strumenti e competenze RiverSSAI.",status:"In sviluppo"},
+                    {icon:"⚙",title:"Personalizza",body:"Impostazioni personali e preferenze dell’assistente.",status:"In sviluppo"},
+                    {icon:"€",title:"Piani e costi",body:"Consulta i piani pubblicati per RiverSSAI.",href:"/river-ai/piani"}
+                  ].map((item)=>(
+                    <article key={item.title} style={{background:"#fff",border:"1px solid #d5e8ed",borderRadius:16,padding:16,boxShadow:"0 5px 16px rgba(6,48,66,.05)",display:"flex",flexDirection:"column",minHeight:145}}>
+                      <div style={{fontSize:23,color:"#07859a",fontWeight:900}}>{item.icon}</div>
+                      <h2 style={{fontSize:17,color:"#0b354c",margin:"8px 0 5px",fontWeight:850}}>{item.title}</h2>
+                      <p style={{fontSize:13,color:"#617985",lineHeight:1.45,margin:"0 0 14px",flex:1}}>{item.body}</p>
+                      {item.active ? <button onClick={item.action} style={{border:0,borderRadius:10,padding:"10px 12px",background:"#087f89",color:"#fff",fontWeight:800}}>Apri sezione →</button> :
+                       item.href ? <a href={item.href} style={{textAlign:"center",borderRadius:10,padding:"10px 12px",background:"#0b3853",color:"#fff",fontWeight:800,textDecoration:"none"}}>Apri →</a> :
+                       <div style={{fontSize:11,fontWeight:800,color:"#8a6a20",background:"#fff7df",borderRadius:8,padding:"8px 10px"}}>{item.status} · non ancora attivo</div>}
+                    </article>
+                  ))}
+                </div>
+                <div style={{marginTop:18,padding:15,borderRadius:14,background:"#eaf7fa",color:"#46636e",fontSize:12,lineHeight:1.55}}>
+                  Le sezioni indicate come “In sviluppo” sono visibili nel menu ma non sono ancora operative. Le funzioni attive oggi sono chat, selezione della squadra, archivio locale, chat fissate e consultazione dei piani.
+                </div>
+              </div>
+            </div>
+          ) : activeView === "archive" || activeView === "pinned" ? (
+            <div style={{padding:20,minHeight:420}}>
+              <h2 style={{color:"#0b4052",fontSize:23,marginTop:0}}>{activeView === "archive" ? "Archivio conversazioni" : "Chat fissate"}</h2>
+              <p style={{color:"#607983",fontSize:13}}>Questi elementi sono salvati localmente su questo dispositivo.</p>
+              {(activeView === "archive" ? savedChats : pinnedChats).length === 0 ? <p style={{padding:18,background:"#f1f8fa",borderRadius:12,color:"#58717a"}}>Non ci sono ancora conversazioni in questa sezione.</p> :
+                (activeView === "archive" ? savedChats : pinnedChats).map((item)=><button key={item.id} onClick={()=>reopenSavedChat(item)} style={{display:"block",width:"100%",textAlign:"left",padding:14,margin:"8px 0",border:"1px solid #d4e6e9",borderRadius:12,background:"#fff",color:"#173b42"}}><strong>{item.title || "Conversazione RiverSSAI"}</strong><div style={{fontSize:11,color:"#78909a",marginTop:5}}>{item.messages?.length || 0} messaggi · Tocca per riaprire</div></button>)}
+            </div>
+          ) : (
           <div style={{display:"flex",gap:7,flexWrap:"wrap",padding:"10px 16px",borderBottom:"1px solid #e3eeee",background:"#fbfefe"}}>
             <button onClick={shareChat} style={smallActionStyle}>Condividi</button>
             <button onClick={pinChat} style={smallActionStyle}>Fissa</button>
@@ -296,6 +366,7 @@ export default function RiverAI() {
             <textarea value={input} onChange={e=>setInput(e.target.value)} placeholder="Scrivi a RiverSSAI…" rows={2} maxLength={2000} disabled={busy} style={{flex:1,minWidth:0,resize:"vertical",border:"1px solid #c7dfe1",borderRadius:14,padding:12,fontSize:16,outlineColor:"#0e9aa4",color:"#173b42"}}/>
             <button type="submit" disabled={busy || !input.trim()} style={{alignSelf:"stretch",border:0,borderRadius:14,padding:"0 18px",background:busy||!input.trim()?"#a9c8ca":"#087f89",color:"#fff",fontWeight:800}}>Invia</button>
           </form>
+          )}
          </>}
       </section>
     </main>
