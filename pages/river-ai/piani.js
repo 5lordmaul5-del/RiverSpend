@@ -6,6 +6,7 @@ const accents = {
   silver: { edge: "#aeb9c5", glow: "rgba(174,185,197,.16)" },
   gold: { edge: "#d6aa37", glow: "rgba(214,170,55,.14)" },
   platinum: { edge: "#b8c8dc", glow: "rgba(184,200,220,.16)" },
+  free: { edge: "#35c9dd", glow: "rgba(53,201,221,.14)" },
 };
 
 const money = (value) => new Intl.NumberFormat("it-IT", {
@@ -44,8 +45,8 @@ export default function RiverSSAIPlans() {
                   <h2 style={{ fontSize: 25, margin: "12px 0 5px" }}>{plan.name}</h2>
                   <p style={{ color: "#aebfd0", margin: "0 0 22px", minHeight: 36 }}>{plan.audience}</p>
                   <div style={{ display: "flex", alignItems: "baseline", gap: 5 }}>
-                    <strong style={{ fontSize: 35 }}>{money(plan.priceEur)}</strong>
-                    <span style={{ color: "#aebfd0" }}>/ mese</span>
+                    <strong style={{ fontSize: 35 }}>{plan.priceEur === 0 ? "Gratis" : money(plan.priceEur)}</strong>
+                    {plan.priceEur > 0 && <span style={{ color: "#aebfd0" }}>/ mese</span>}
                   </div>
                   <p style={{ color: "#d0deeb", lineHeight: 1.55, minHeight: 72 }}>{plan.description}</p>
                   <div style={{ marginTop: "auto", borderTop: "1px solid rgba(210,230,245,.15)", paddingTop: 16, color: "#ffe7a3", fontSize: 13, fontWeight: 700 }}>Disponibilità in preparazione</div>
