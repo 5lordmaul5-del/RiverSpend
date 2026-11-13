@@ -1,15 +1,16 @@
 # RiverSSAI 10.0 — struttura commerciale (anteprima)
 
-Stato: catalogo prezzi approvato; nessun pagamento o abbonamento attivo.
+Stato: proposta commerciale aggiornata; nessun pagamento o abbonamento attivo.
 
 ## Piani pubblici
 
 | Piano | Prezzo mensile |
 |---|---:|
-| Bronzo | € 4,99 |
-| Argento | € 9,99 |
-| Oro | € 19,99 |
-| Platinum | € 39,99 |
+| Free | Gratis |
+| Bronzo | € 2,99 |
+| Argento | € 5,99 |
+| Oro | € 12,99 |
+| Platinum | € 24,99 |
 
 Valuta: EUR. Periodicità proposta: mensile.
 
