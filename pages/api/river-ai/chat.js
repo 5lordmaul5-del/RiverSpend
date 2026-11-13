@@ -141,7 +141,7 @@ export default async function handler(req, res) {
       const teamSystem = BASE_PROMPT +
         "\nMODALITÀ SQUADRA: analizza la richiesta attraverso queste competenze in un'unica elaborazione coordinata. " +
         "Non simulare conversazioni separate e non produrre risposte separate. Integra i contributi in un’unica elaborazione e restituisci una sola risposta finale. " +
-        "Se una competenza non serve, dichiaralo. Competenze selezionate dal registro dei 89 specialisti:\n" + specialistBrief +
+        "Se una competenza non serve, dichiaralo. Competenze selezionate dal registro degli 89 specialisti:\n" + specialistBrief +
         "\nFormato: 1) decisione/risposta; 2) piano pratico; 3) rischi; 4) controlli o prossima azione.";
       const result = await callModel(groqKey, model, [
         { role: "system", content: teamSystem },
