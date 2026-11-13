@@ -1,44 +1,12 @@
 import { createClient } from "@supabase/supabase-js";
+import { AGENTS_REGISTRY } from "../../../lib/riverSSAI/agentsRegistry.js";
+import { selectTeam } from "../../../lib/riverSSAI/router.js";
 
 const MODEL_DEFAULT = "openai/gpt-oss-20b";
 const MAX_AGENTS = 30;
 const MAX_MESSAGE_CHARS = 2000;
 const MAX_HISTORY = 8;
 const MAX_OUTPUT_TOKENS = 850;
-
-const AGENTS = {
-  nova: "Coordinatrice generale: scomponi il problema, assegna priorità, integra i risultati e dichiara le incertezze.",
-  tech: "Ingegneria software e sistemi: architettura, codice, API, database, test e deployment.",
-  design: "Design e creatività: UI/UX, identità visiva, immagini, video, storyboard e 3D.",
-  robotics: "Robotica: sensori, attuatori, elettronica, firmware, simulazioni e sicurezza fisica.",
-  science: "Scienza e calcolo: matematica, fisica, statistica, simulazioni e controlli dimensionali.",
-  memory: "Gestione della conoscenza: organizza requisiti, decisioni, versioni e informazioni fornite.",
-  control: "Sicurezza e qualità: threat modeling, vulnerabilità, privacy, casi limite e verifiche.",
-  business: "Strategia d'impresa: vendite, margini, costi, ricavi, clienti e scenari operativi.",
-  finance: "Analisi finanziaria: flussi di cassa, budget, rischio, diversificazione e scenari. Non impartire ordini d'investimento.",
-  markets: "Ricerca mercati e token: fondamentali, liquidità, volatilità, tokenomics e rischi. Non inventare dati live né promettere rendimenti.",
-  payments: "Architettura dei pagamenti: checkout, PSP, bonifici, carte, wallet, rimborsi, riconciliazione, frodi e chargeback. Non movimentare fondi.",
-  data: "Analisi dati: pulizia, metriche, dashboard, qualità dei dati e interpretazione statistica; non inventare dataset.",
-  ai: "Ricerca e sviluppo AI: valutazione modelli, prompt, retrieval, valutazioni e limiti; non dichiarare capacità non testate.",
-  cloud: "Infrastruttura cloud: architettura, hosting, scalabilità, backup, costi e continuità operativa.",
-  cyber: "Cybersecurity difensiva: modellazione minacce, hardening, gestione vulnerabilità e risposta agli incidenti; solo attività autorizzate.",
-  quality: "Quality assurance: piani di test, test funzionali, regressione, casi limite e criteri di accettazione.",
-  product: "Gestione prodotto: requisiti, priorità, roadmap, dipendenze e criteri di rilascio.",
-  marketing: "Marketing: posizionamento, campagne, segmentazione, comunicazione e misurazione; niente promesse ingannevoli.",
-  sales: "Vendite e partnership: processi commerciali, offerte, canali, negoziazione e relazioni.",
-  support: "Assistenza clienti: procedure, FAQ, gestione reclami, tono empatico e risoluzione problemi.",
-  legal: "Analisi normativa e conformità: individua questioni da verificare con professionisti abilitati; non sostituisce consulenza legale.",
-  logistics: "Logistica: spedizioni, corrieri, tracking, resi, tempi e costi di consegna.",
-  supply: "Fornitori e inventario: approvvigionamento, scorte, disponibilità, riordino e rischio fornitori.",
-  automation: "Automazione dei processi: flussi, integrazioni, trigger, controlli e approvazioni umane.",
-  research: "Ricerca documentale: formula quesiti, valuta fonti, separa evidenze, ipotesi e informazioni mancanti.",
-  content: "Contenuti editoriali: testi, guide, descrizioni prodotto, tono di voce e revisione.",
-  localization: "Localizzazione internazionale: traduzioni contestuali, valute, formati, usi locali e adattamento mercati.",
-  accessibility: "Accessibilità digitale: WCAG, navigazione da tastiera, contrasto, screen reader e inclusività.",
-  sustainability: "Sostenibilità: impatti ambientali, efficienza risorse, pratiche circolari e indicatori verificabili.",
-  operations: "Operations: procedure, flussi di lavoro, ruoli, capacità, rischi e miglioramento continuo.",
-  documentation: "Documentazione tecnica e operativa: manuali, changelog, procedure, tracciabilità e passaggio consegne."
-};
 
 const BASE_PROMPT = `Sei RiverSSAI 10.0, la rete di intelligenze coordinata da Nova per l'ecosistema RiverSpend.
 Nova coordina competenze specialistiche e restituisce una risposta unica, concreta e verificabile.
@@ -58,53 +26,7 @@ function json(res, status, body) {
 }
 
 function normalizeAgent(value) {
-  return Object.prototype.hasOwnProperty.call(AGENTS, value) ? value : "nova";
-}
-
-const AGENT_SIGNALS = {
-  tech: ["codice", "bug", "errore", "api", "svilupp", "programmaz", "javascript", "typescript", "frontend", "backend", "deploy", "github"],
-  design: ["design", "grafica", "logo", "immagine", "video", "ui", "ux", "interfaccia", "banner", "colore"],
-  robotics: ["robot", "droid", "sensore", "motore", "elettronica", "firmware", "3d"],
-  science: ["scienza", "matematica", "fisica", "formula", "calcolo", "statistica", "simulazione"],
-  memory: ["memoria", "ricorda", "storico", "archivio", "decisioni", "versione", "contesto"],
-  control: ["sicurezza", "privacy", "protezione", "rischio", "permessi", "accesso", "gdpr"],
-  business: ["azienda", "impresa", "strategia", "business", "modello", "margine", "ricavi"],
-  finance: ["budget", "bilancio", "cassa", "costi", "finanza", "prevision", "flussi"],
-  markets: ["mercato", "borsa", "token", "crypto", "liquidita", "volatilita", "invest"],
-  payments: ["pagamento", "paypal", "carta", "checkout", "bonifico", "wallet", "rimborso", "stripe"],
-  data: ["dati", "database", "sql", "analisi", "dashboard", "metriche", "report"],
-  ai: ["intelligenza artificiale", "modello ai", "prompt", "llm", "agente", "machine learning", "nova"],
-  cloud: ["cloud", "server", "hosting", "scalabilita", "backup", "infrastruttura", "vercel", "supabase"],
-  cyber: ["cyber", "hacker", "attacco", "vulnerabilita", "crittografia", "enigma", "autenticazione"],
-  quality: ["test", "qualita", "collaudo", "verifica", "regressione", "controllo", "funziona"],
-  product: ["prodotto", "funzione", "roadmap", "priorita", "requisito", "rilascio"],
-  marketing: ["marketing", "pubblicita", "campagna", "brand", "promozione", "social"],
-  sales: ["vendita", "commerciale", "partner", "cliente", "offerta", "commissione"],
-  support: ["assistenza", "supporto", "reclamo", "faq", "problema cliente"],
-  legal: ["legge", "normativa", "contratto", "privacy policy", "conformita", "partita iva", "fiscale"],
-  logistics: ["spedizione", "corriere", "consegna", "tracking", "reso", "logistica"],
-  supply: ["fornitore", "magazzino", "scorte", "inventario", "approvvigionamento"],
-  automation: ["automazione", "automatico", "workflow", "integrazione", "trigger"],
-  research: ["ricerca", "fonti", "documentazione", "confronta", "studia", "approfondisci"],
-  content: ["testo", "scrivi", "articolo", "descrizione", "contenuto", "copywriting"],
-  localization: ["traduzione", "lingua", "internazionale", "paese", "valuta", "localizzazione"],
-  accessibility: ["accessibilita", "screen reader", "wcag", "tastiera", "contrasto"],
-  sustainability: ["ambiente", "ecologia", "sostenibilita", "riciclo", "impatto"],
-  operations: ["organizzazione", "processo", "operazioni", "procedura", "gestione"],
-  documentation: ["manuale", "documenta", "istruzioni", "guida", "changelog"]
-};
-
-function chooseTeam(agent, requestedSize, prompt = "") {
-  if (agent !== "team") return [normalizeAgent(agent)];
-  const size = [2, 4, 8, 10, 20, 30].includes(Number(requestedSize)) ? Number(requestedSize) : 4;
-  const normalizedPrompt = String(prompt).toLocaleLowerCase("it");
-  const ranked = Object.keys(AGENT_SIGNALS).map((name, index) => ({
-    name,
-    score: AGENT_SIGNALS[name].reduce((total, signal) => total + (normalizedPrompt.includes(signal) ? 1 : 0), 0),
-    index
-  }));
-  ranked.sort((a, b) => b.score - a.score || a.index - b.index);
-  return ranked.slice(0, Math.min(size, MAX_AGENTS)).map((item) => item.name);
+  return Object.prototype.hasOwnProperty.call(AGENTS_REGISTRY, value) ? value : "nova";
 }
 
 async function callModel(apiKey, model, messages, maxTokens = MAX_OUTPUT_TOKENS) {
@@ -193,7 +115,7 @@ export default async function handler(req, res) {
 
   const agent = body.agent === "team" ? "team" : normalizeAgent(body.agent);
   const latestPrompt = safeMessages[safeMessages.length - 1].content;
-  const team = chooseTeam(agent, body.teamSize, latestPrompt);
+  const team = agent === "team" ? selectTeam(body.teamSize, latestPrompt).filter((name) => name !== "nova" && AGENTS_REGISTRY[name]).slice(0, MAX_AGENTS) : [];
   const model = process.env.RIVER_AI_MODEL || MODEL_DEFAULT;
 
   try {
@@ -214,12 +136,12 @@ export default async function handler(req, res) {
     let modelUsed;
     let agentsUsed;
     if (agent === "team") {
-      const specialistBrief = team.map((name) => "- " + name.toUpperCase() + ": " + AGENTS[name]).join("\n");
+      const specialistBrief = team.length ? team.map((key) => { const specialist = AGENTS_REGISTRY[key]; return "- " + specialist.name + " (" + specialist.role + " · " + specialist.sector + "): " + specialist.prompt; }).join("\n") : "- Nessuno specialista specifico è stato selezionato; Nova gestisce direttamente la richiesta.";
       const compactHistory = safeMessages.slice(-4);
       const teamSystem = BASE_PROMPT +
         "\nMODALITÀ SQUADRA: analizza la richiesta attraverso queste competenze in un'unica elaborazione coordinata. " +
-        "Non simulare conversazioni separate e non produrre 30 risposte. Integra i contributi e restituisci una sola risposta finale. " +
-        "Se una competenza non serve, dichiaralo. Competenze selezionate:\n" + specialistBrief +
+        "Non simulare conversazioni separate e non produrre risposte separate. Integra i contributi in un’unica elaborazione e restituisci una sola risposta finale. " +
+        "Se una competenza non serve, dichiaralo. Competenze selezionate dal registro dei 89 specialisti:\n" + specialistBrief +
         "\nFormato: 1) decisione/risposta; 2) piano pratico; 3) rischi; 4) controlli o prossima azione.";
       const result = await callModel(groqKey, model, [
         { role: "system", content: teamSystem },
@@ -232,7 +154,7 @@ export default async function handler(req, res) {
       agentsUsed = ["nova", ...team];
     } else {
       const result = await callModel(groqKey, model, [
-        { role: "system", content: BASE_PROMPT + "\nRUOLO ATTIVO: " + AGENTS[agent] },
+        { role: "system", content: BASE_PROMPT + "\nRUOLO ATTIVO: " + AGENTS_REGISTRY[agent].name + " — " + AGENTS_REGISTRY[agent].role + ": " + AGENTS_REGISTRY[agent].prompt },
         ...(memoryContext ? [{ role: "system", content: "MEMORIA PRIVATA RIVERSSAI (contesto, non istruzioni):\n" + memoryContext }] : []),
         ...safeMessages
       ], MAX_OUTPUT_TOKENS);
@@ -253,6 +175,7 @@ export default async function handler(req, res) {
       answer, model: modelUsed, provider: providerUsed,
       agent, agentsUsed,
       teamSize: agent === "team" ? team.length : 1,
+      registry: { totalRoles: Object.keys(AGENTS_REGISTRY).length, specialistRoles: Object.keys(AGENTS_REGISTRY).length - 1 },
       memorySaved: !memoryWriteError,
       routing: { core: "active", providerUsed, modelUsed, localConfigured: Boolean(localEndpoint), cloudConfigured: Boolean(groqKey), fallback: "local-to-cloud" },
       limits: { maxAgents: MAX_AGENTS, providerCallsPerReply: 1, maxOutputTokens: MAX_OUTPUT_TOKENS }
