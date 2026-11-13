@@ -322,6 +322,7 @@ export default function RiverAI() {
                 (activeView === "archive" ? savedChats : pinnedChats).map((item)=><button key={item.id} onClick={()=>reopenSavedChat(item)} style={{display:"block",width:"100%",textAlign:"left",padding:14,margin:"8px 0",border:"1px solid #d4e6e9",borderRadius:12,background:"#fff",color:"#173b42"}}><strong>{item.title || "Conversazione RiverSSAI"}</strong><div style={{fontSize:11,color:"#78909a",marginTop:5}}>{item.messages?.length || 0} messaggi · Tocca per riaprire</div></button>)}
             </div>
           ) : (
+          <>
           <div style={{display:"flex",gap:7,flexWrap:"wrap",padding:"10px 16px",borderBottom:"1px solid #e3eeee",background:"#fbfefe"}}>
             <button onClick={shareChat} style={smallActionStyle}>Condividi</button>
             <button onClick={pinChat} style={smallActionStyle}>Fissa</button>
@@ -366,6 +367,7 @@ export default function RiverAI() {
             <textarea value={input} onChange={e=>setInput(e.target.value)} placeholder="Scrivi a RiverSSAI…" rows={2} maxLength={2000} disabled={busy} style={{flex:1,minWidth:0,resize:"vertical",border:"1px solid #c7dfe1",borderRadius:14,padding:12,fontSize:16,outlineColor:"#0e9aa4",color:"#173b42"}}/>
             <button type="submit" disabled={busy || !input.trim()} style={{alignSelf:"stretch",border:0,borderRadius:14,padding:"0 18px",background:busy||!input.trim()?"#a9c8ca":"#087f89",color:"#fff",fontWeight:800}}>Invia</button>
           </form>
+          </>
           )}
          </>}
       </section>
