@@ -1021,6 +1021,10 @@ export default function Home() {
                 <img src="/icons/riverspendshop-app.jpg" alt="RSShop" className="h-20 w-20 rounded-2xl object-cover shadow-md ring-2 ring-cyan-200 sm:h-24 sm:w-24" loading="lazy" />
                 <span className="w-full break-words text-xs font-extrabold leading-tight text-slate-900">RSShop</span>
               </a>
+              <a href="/river-ai" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RiverSSAI 10.0 · Nova AI">
+                <img src="/icons/river-ssai-192.png" alt="RiverSSAI 10.0 · Nova AI" className="h-20 w-20 rounded-2xl object-contain shadow-md ring-2 ring-cyan-200 sm:h-24 sm:w-24" loading="lazy" />
+                <span className="w-full break-words text-xs font-extrabold leading-tight text-slate-900">RiverSSAI 10.0</span>
+              </a>
               <a href="/riverspace-signals" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RiverSpaceSignals">
                 <img src="/icons/riverspace-signals-app.jpg" alt="RiverSpaceSignals" className="h-20 w-20 rounded-2xl object-contain shadow-md ring-2 ring-cyan-200 sm:h-24 sm:w-24" loading="lazy" />
                 <span className="w-full break-words text-xs font-extrabold leading-tight text-slate-900">RiverSpaceSignals</span>
@@ -1515,7 +1519,7 @@ export default function Home() {
                 </button>
                 {riverVoiceStatus && <p role="status" className="mt-2 rounded-lg bg-white/5 p-2 text-xs leading-5 text-cyan-100">{riverVoiceStatus}</p>}
                 <p className="mt-2 text-[11px] leading-4 text-slate-400">La voce parte solo quando premi il pulsante. Le richieste vocali supportate aprono sezioni o avviano la ricerca; l’assistente AI conversazionale completo sarà un’integrazione successiva.</p>
-                <a href="/river-ai" className="mt-3 block w-full overflow-hidden rounded-2xl border border-amber-300/60 bg-slate-900/80 p-3 text-center transition hover:border-amber-200 hover:bg-slate-900"><img src="/icons/river-ssai-10.svg" alt="RiverSpend AI – Nova · 30 specialisti coordinati" className="mx-auto mb-3 h-28 w-28 rounded-2xl" /><span className="block text-base font-black text-amber-200">RiverSSAI 10.0 · Pure Power</span><span className="mt-1 block text-xs text-cyan-100">Nova · 30 specialisti coordinati</span><span className="mt-3 flex w-full items-center justify-center rounded-xl bg-amber-300 px-4 py-3 text-sm font-black text-slate-950">Apri e installa l’app ↗</span></a>
+                <a href="/river-ai" className="mt-3 block w-full overflow-hidden rounded-2xl border border-amber-300/60 bg-slate-900/80 p-3 text-center transition hover:border-amber-200 hover:bg-slate-900"><img src="/icons/river-ssai-192.png" alt="RiverSSAI 10.0 · Nova AI" className="mx-auto mb-3 h-28 w-28 rounded-2xl object-contain" /><span className="block text-base font-black text-amber-200">RiverSSAI 10.0 · Pure Power</span><span className="mt-1 block text-xs text-cyan-100">Nova · 30 specialisti coordinati</span><span className="mt-3 flex w-full items-center justify-center rounded-xl bg-amber-300 px-4 py-3 text-sm font-black text-slate-950">Apri e installa l’app ↗</span></a>
               </div>
             </section>
           ) : (
