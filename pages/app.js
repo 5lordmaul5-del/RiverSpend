@@ -76,12 +76,12 @@ const apps = [
   },
   {
     name: 'RiverSSAI 10.0 · Pure Power',
-    subtitle: 'Nova e la rete dei 30 specialisti',
-    description: 'Nova coordina i tre comandanti RIVER A1B2, RIVER A2C4 e RIVER B2D5 e l’esercito dei 30 specialisti. Apri RiverSSAI e installala sul telefono come app separata. L’accesso resta riservato agli account autorizzati.',
+    subtitle: 'L’assistente centrale dell’ecosistema RiverSpend',
+    description: 'Apri RiverSSAI 10.0: la casa operativa di Nova, con chat, squadra specialistica, archivio, chat fissate e piani. Il registro comprende 89 specialisti; Nova può coordinarne fino a 30 in una singola elaborazione. Installabile sul telefono come app separata.',
     logo: '/icons/river-ssai-10.svg',
     href: '/river-ai',
     color: '#087f89',
-    action: 'Apri e installa RiverSSAI 10.0'
+    action: 'Apri RiverSSAI 10.0 e installa'
   },
 ];
 
