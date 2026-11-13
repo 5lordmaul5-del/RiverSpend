@@ -1021,9 +1021,10 @@ export default function Home() {
                 <img src="/icons/riverspendshop-app.jpg" alt="RSShop" className="h-20 w-20 rounded-2xl object-cover shadow-md ring-2 ring-cyan-200 sm:h-24 sm:w-24" loading="lazy" />
                 <span className="w-full break-words text-xs font-extrabold leading-tight text-slate-900">RSShop</span>
               </a>
-              <a href="/river-ai" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RiverSSAI 10.0 · Nova AI">
-                <img src="/icons/river-ssai-192-final.jpg" alt="RiverSSAI 10.0 · Nova AI" className="h-20 w-20 rounded-2xl object-contain shadow-md ring-2 ring-cyan-200 sm:h-24 sm:w-24" loading="lazy" />
-                <span className="w-full break-words text-xs font-extrabold leading-tight text-slate-900">RiverSSAI 10.0</span>
+              <a href="/river-ai" className="col-span-3 flex min-w-0 flex-col items-center gap-2 rounded-2xl border-2 border-cyan-300 bg-slate-950 p-2 text-center shadow-lg" aria-label="RiverSSAI 10.0 · Nova AI">
+                <img src="/images/river-ssai-10-team.svg" alt="RiverSSAI 10.0: Nova al centro con le unità speciali e gli specialisti" className="block h-44 w-full rounded-xl bg-[#06172b] object-contain sm:h-52" loading="eager" />
+                <span className="w-full break-words text-sm font-black leading-tight text-cyan-200">RiverSSAI 10.0 · Pure Power</span>
+                <span className="text-xs font-semibold text-white">Apri l'app di Nova</span>
               </a>
               <a href="/riverspace-signals" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RiverSpaceSignals">
                 <img src="/icons/riverspace-signals-app.jpg" alt="RiverSpaceSignals" className="h-20 w-20 rounded-2xl object-contain shadow-md ring-2 ring-cyan-200 sm:h-24 sm:w-24" loading="lazy" />
