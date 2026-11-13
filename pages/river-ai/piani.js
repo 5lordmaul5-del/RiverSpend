@@ -55,6 +55,19 @@ export default function RiverSSAIPlans() {
             })}
           </section>
 
+          <section style={{ maxWidth: 980, margin: "30px auto 0", padding: 22, border: "1px solid rgba(137,181,214,.25)", borderRadius: 18, background: "rgba(8,25,43,.7)", lineHeight: 1.65 }}>
+            <h2 style={{marginTop:0,fontSize:22}}>Cosa potrà fare River con ciascun piano</h2>
+            <p style={{color:"#c0d3e5"}}>Questa è la struttura funzionale prevista per il catalogo pubblico. Le quote numeriche, i limiti d’uso e l’attivazione effettiva delle singole funzioni saranno definiti e collaudati prima di aprire gli abbonamenti.</p>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(210px,1fr))",gap:12}}>
+              <article style={{padding:15,border:"1px solid rgba(53,201,221,.35)",borderRadius:14}}><h3 style={{marginTop:0,color:"#6ee7f9"}}>Free · 0 €</h3><ul style={{paddingLeft:18,color:"#d0deeb"}}><li>Conversazioni essenziali con Nova</li><li>Spiegazioni e domande quotidiane</li><li>Aiuto di base per testi e idee</li></ul></article>
+              <article style={{padding:15,border:"1px solid rgba(184,121,69,.4)",borderRadius:14}}><h3 style={{marginTop:0,color:"#d6a477"}}>Bronzo · 2,99 €/mese</h3><ul style={{paddingLeft:18,color:"#d0deeb"}}><li>Tutto ciò che offre Free</li><li>Supporto per scrittura e organizzazione</li><li>Attività quotidiane più articolate</li></ul></article>
+              <article style={{padding:15,border:"1px solid rgba(174,185,197,.4)",borderRadius:14}}><h3 style={{marginTop:0,color:"#c7d1dc"}}>Argento · 5,99 €/mese</h3><ul style={{paddingLeft:18,color:"#d0deeb"}}><li>Tutto ciò che offre Bronzo</li><li>Analisi e pianificazione strutturate</li><li>Accesso ampliato agli strumenti compatibili</li></ul></article>
+              <article style={{padding:15,border:"1px solid rgba(214,170,55,.4)",borderRadius:14}}><h3 style={{marginTop:0,color:"#f1cf72"}}>Oro · 12,99 €/mese</h3><ul style={{paddingLeft:18,color:"#d0deeb"}}><li>Tutto ciò che offre Argento</li><li>Supporto specialistico per ambiti diversi</li><li>Workflow più complessi e capacità superiori</li></ul></article>
+              <article style={{padding:15,border:"1px solid rgba(184,200,220,.45)",borderRadius:14}}><h3 style={{marginTop:0,color:"#d6e5f7"}}>Platinum · 24,99 €/mese</h3><ul style={{paddingLeft:18,color:"#d0deeb"}}><li>Tutto ciò che offre Oro</li><li>Massimo livello pubblico previsto</li><li>Priorità e capacità d’uso superiori</li></ul></article>
+            </div>
+            <p style={{fontSize:12,color:"#ffe7a3",marginBottom:0}}>Nota: questa matrice descrive le funzionalità previste, non un servizio già attivo. Immagini, video, caricamento file, progetti, limiti quantitativi e accesso specialistico saranno abilitati solo dopo implementazione e collaudo. La versione Owner resta separata dai piani clienti.</p>
+          </section>
+
           <section style={{ maxWidth: 820, margin: "30px auto 0", padding: 22, border: "1px solid rgba(137,181,214,.25)", borderRadius: 18, background: "rgba(8,25,43,.7)", lineHeight: 1.65 }}>
             <h2 style={{ marginTop: 0, fontSize: 20 }}>Un ambiente separato per il proprietario</h2>
             <p style={{ color: "#c0d3e5", marginBottom: 0 }}>I quattro piani sono destinati al pubblico. L'edizione Owner e i relativi privilegi amministrativi restano separati e non sono acquistabili né assegnabili tramite questa pagina.</p>
