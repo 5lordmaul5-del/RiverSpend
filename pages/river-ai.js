@@ -154,9 +154,12 @@ export default function RiverAI() {
   }
 
   function newChat() {
-    if (!window.confirm("Vuoi iniziare una nuova conversazione? La cronologia salvata su questo dispositivo verrà cancellata.")) return;
+    // Evita i dialoghi nativi di conferma, che possono non comparire nelle PWA installate.
     setMessages([]);
+    setInput("");
     setError("");
+    setSelectedAgent("nova");
+    setTeamSize(4);
   }
 
   return (
