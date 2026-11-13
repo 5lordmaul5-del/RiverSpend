@@ -78,7 +78,7 @@ const apps = [
     name: 'RiverSSAI 10.0 · Pure Power',
     subtitle: 'L’assistente centrale dell’ecosistema RiverSpend',
     description: 'Apri RiverSSAI 10.0: la casa operativa di Nova, con chat, squadra specialistica, archivio, chat fissate e piani. Il registro comprende 89 specialisti; Nova può coordinarne fino a 30 in una singola elaborazione. Installabile sul telefono come app separata.',
-    logo: '/icons/river-ssai-10.svg',
+    logo: '/icons/river-ssai-192.png',
     href: '/river-ai',
     color: '#087f89',
     action: 'Apri RiverSSAI 10.0 e installa'
