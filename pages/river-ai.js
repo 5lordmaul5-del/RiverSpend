@@ -17,9 +17,9 @@ export default function RiverAI() {
   const [loginSent, setLoginSent] = useState(false);
   const [installPrompt, setInstallPrompt] = useState(null);
   const [installMessage, setInstallMessage] = useState("");
-  const [selectedAgent, setSelectedAgent] = useState("nova");
+  const [selectedAgent, setSelectedAgent] = useState("team");
   const [agents, setAgents] = useState([{ id: "nova", name: "Nova", role: "Coordinatrice centrale", squad: "Core & Prodotto" }]);
-  const [teamSize, setTeamSize] = useState(4);
+  const [teamSize, setTeamSize] = useState(30);
   const endRef = useRef(null);
   const sendLock = useRef(false);
 
@@ -158,8 +158,8 @@ export default function RiverAI() {
     setMessages([]);
     setInput("");
     setError("");
-    setSelectedAgent("nova");
-    setTeamSize(4);
+    setSelectedAgent("team");
+    setTeamSize(30);
   }
 
   return (
@@ -199,7 +199,7 @@ export default function RiverAI() {
          access === "error" ? <div role="alert" style={{padding:24}}><h2>Verifica temporaneamente non disponibile</h2><p>Non posso confermare i permessi in questo momento. Riprova tra poco.</p></div> :
          <>
           <div style={{padding:"12px 18px",background:"#f0fbfa",borderBottom:"1px solid #dceeee",fontSize:12,lineHeight:1.5,color:"#42636a"}}>
-            Scegli il collaboratore specializzato. Il registro comprende 89 specialisti coordinati da Nova in 10 squadre. Con Squadra Ultra, Nova seleziona fino a 30 prospettive pertinenti dal registro e le integra in un’unica elaborazione AI. I ruoli sono competenze coordinate, non modelli autonomi né richieste separate al provider. Le azioni esterne restano protette da approvazione.
+            Scegli il collaboratore specializzato. Il registro comprende 89 specialisti coordinati da Nova in 10 squadre. Con Squadra Ultra, Nova seleziona fino a 30 specialisti dal registro e li integra in un’unica elaborazione AI. I ruoli sono competenze coordinate, non modelli autonomi né richieste separate al provider. Le azioni esterne restano protette da approvazione.
           </div>
           <div style={{padding:"12px 18px",borderBottom:"1px solid #e3eeee",display:"flex",alignItems:"center",gap:10,flexWrap:"wrap"}}>
             <label htmlFor="river-agent" style={{fontWeight:800,color:"#075766"}}>Agente operativo</label>
