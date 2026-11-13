@@ -18,6 +18,7 @@ export default function RiverAI() {
   const [installPrompt, setInstallPrompt] = useState(null);
   const [installMessage, setInstallMessage] = useState("");
   const [selectedAgent, setSelectedAgent] = useState("nova");
+  const [agents, setAgents] = useState([{ id: "nova", name: "Nova", role: "Coordinatrice centrale", squad: "Core & Prodotto" }]);
   const [teamSize, setTeamSize] = useState(4);
   const endRef = useRef(null);
   const sendLock = useRef(false);
@@ -68,6 +69,16 @@ export default function RiverAI() {
           return;
         }
         if (!response.ok) throw new Error("Verifica dei permessi non disponibile.");
+        try {
+          const registryResponse = await fetch("/api/river-ai/agents", {
+            method: "GET",
+            headers: { Authorization: `Bearer ${session.access_token}` }
+          });
+          if (registryResponse.ok) {
+            const registryData = await registryResponse.json();
+            if (Array.isArray(registryData.agents) && registryData.agents.length) setAgents(registryData.agents);
+          }
+        } catch {}
         const key = `${STORAGE_KEY}:${session.user.id}`;
         let saved = [];
         try {
@@ -150,7 +161,7 @@ export default function RiverAI() {
 
   return (
     <>
-    <Head><title>RiverSSAI 10.0 · Pure Power</title><meta name="description" content="RiverSSAI 10.0: Nova, i tre comandanti River e la rete dei 30 specialisti."/><meta name="apple-mobile-web-app-capable" content="yes"/><meta name="apple-mobile-web-app-title" content="RiverSSAI 10.0"/><link rel="icon" href="/icons/river-ssai-10.svg" type="image/svg+xml"/><link rel="apple-touch-icon" href="/icons/river-ssai-10.svg"/></Head>
+    <Head><title>RiverSSAI 10.0 · Pure Power</title><meta name="description" content="RiverSSAI 10.0: Nova coordina il registro di 89 specialisti in 10 squadre."/><meta name="apple-mobile-web-app-capable" content="yes"/><meta name="apple-mobile-web-app-title" content="RiverSSAI 10.0"/><meta name="theme-color" content="#06172b"/><link rel="manifest" href="/river-ai.webmanifest"/><link rel="icon" href="/icons/river-ssai-10.svg" type="image/svg+xml"/><link rel="apple-touch-icon" href="/icons/river-ssai-192.png"/></Head>
     <main style={{ minHeight:"100vh", background:"linear-gradient(180deg,#e9fbfc,#f7fcfd)", color:"#12343b", padding:"18px 12px 28px", fontFamily:"Arial,sans-serif" }}>
       <section style={{ maxWidth:850, minHeight:"calc(100vh - 46px)", margin:"0 auto", display:"flex", flexDirection:"column", background:"#fff", border:"1px solid #c8e8e9", borderRadius:22, overflow:"hidden", boxShadow:"0 12px 36px rgba(5,65,78,.10)" }}>
         <header className="river-ai-header" style={{ padding:"18px 20px", background:"linear-gradient(120deg,#073b4c,#087f89)", color:"#fff", display:"flex", alignItems:"center", gap:12 }}>
@@ -166,7 +177,7 @@ export default function RiverAI() {
         <section aria-label="Nova e i tre comandanti River" style={{background:"#06172b",color:"#fff",padding:"12px 14px 16px"}}>
           <img src="/images/river-ssai-10-team.svg" alt="Nova al centro, i comandanti River A1B2, A2C4 e B2D5 e l’esercito dei 30 specialisti" style={{display:"block",width:"100%",maxHeight:360,objectFit:"contain",borderRadius:14}}/>
           <div style={{textAlign:"center",fontWeight:800,letterSpacing:1,color:"#55e6ff",fontSize:13,marginTop:8}}>NOVA · RIVER A1B2 · RIVER A2C4 · RIVER B2D5</div>
-          <div style={{textAlign:"center",fontSize:12,color:"#d7e9f5",marginTop:4}}>Una regia. Tre unità speciali. 30 specialisti.</div>
+          <div style={{textAlign:"center",fontSize:12,color:"#d7e9f5",marginTop:4}}>Una regia. Tre unità speciali. 89 specialisti registrati.</div>
         </section>
 
         {installMessage && <div role="status" style={{padding:"10px 18px",background:"#fff8df",color:"#72510a",fontSize:13}}>{installMessage}</div>}
@@ -185,43 +196,12 @@ export default function RiverAI() {
          access === "error" ? <div role="alert" style={{padding:24}}><h2>Verifica temporaneamente non disponibile</h2><p>Non posso confermare i permessi in questo momento. Riprova tra poco.</p></div> :
          <>
           <div style={{padding:"12px 18px",background:"#f0fbfa",borderBottom:"1px solid #dceeee",fontSize:12,lineHeight:1.5,color:"#42636a"}}>
-            Scegli il collaboratore specializzato. La rete dispone di 30 competenze coordinate da Nova. Con Squadra Ultra, Nova seleziona le prospettive più pertinenti e le integra in un'unica elaborazione AI: così evitiamo chiamate multiple che possono saturare i limiti del servizio. Il numero indica gli specialisti coinvolti nell'analisi, non richieste separate. Le azioni esterne restano protette da approvazione.
+            Scegli il collaboratore specializzato. Il registro comprende 89 specialisti coordinati da Nova in 10 squadre. Con Squadra Ultra, Nova seleziona fino a 30 prospettive pertinenti dal registro e le integra in un’unica elaborazione AI. I ruoli sono competenze coordinate, non modelli autonomi né richieste separate al provider. Le azioni esterne restano protette da approvazione.
           </div>
           <div style={{padding:"12px 18px",borderBottom:"1px solid #e3eeee",display:"flex",alignItems:"center",gap:10,flexWrap:"wrap"}}>
             <label htmlFor="river-agent" style={{fontWeight:800,color:"#075766"}}>Agente operativo</label>
             <select id="river-agent" value={selectedAgent} onChange={e=>setSelectedAgent(e.target.value)} style={{flex:1,minWidth:190,border:"1px solid #c7dfe1",borderRadius:11,padding:10,background:"#fff",color:"#173b42",fontSize:14}}>
-              <option value="nova">🌊 Nova · Coordinatrice</option>
-              <option value="team">⚡ Squadra Ultra · gruppo coordinato</option>
-              <option value="tech">💻 River Tech · Programmazione</option>
-              <option value="design">🎨 River Design · Immagini e video</option>
-              <option value="robotics">🤖 River Robotics · Droidi e 3D</option>
-              <option value="science">🧪 River Science · Calcoli e ricerca</option>
-              <option value="memory">🧠 River Memory · Archivio e conoscenza</option>
-              <option value="control">🛡️ River Control · Verifiche e sicurezza</option>
-              <option value="business">🏢 River Business · Strategia e gestione</option>
-              <option value="finance">💰 River Finance · Budget e finanza</option>
-              <option value="markets">📊 River Markets · Mercati e token</option>
-              <option value="payments">💳 River Payments · Pagamenti e protezione</option>
-              <option value="data">📈 River Data · Dati e analisi</option>
-              <option value="ai">🧠 River AI Lab · Modelli e apprendimento</option>
-              <option value="cloud">☁️ River Cloud · Infrastruttura cloud</option>
-              <option value="cyber">🔐 River Cyber · Difesa informatica</option>
-              <option value="quality">🧪 River Quality · Test e qualità</option>
-              <option value="product">📦 River Product · Prodotto e roadmap</option>
-              <option value="marketing">📣 River Marketing · Comunicazione</option>
-              <option value="sales">🤝 River Sales · Vendite e partnership</option>
-              <option value="support">💬 River Support · Assistenza clienti</option>
-              <option value="legal">⚖️ River Legal · Norme e conformità</option>
-              <option value="logistics">🚚 River Logistics · Spedizioni e consegne</option>
-              <option value="supply">🏭 River Supply · Fornitori e scorte</option>
-              <option value="automation">⚙️ River Automation · Processi automatici</option>
-              <option value="research">🔬 River Research · Ricerca e fonti</option>
-              <option value="content">✍️ River Content · Testi e contenuti</option>
-              <option value="localization">🌍 River Localization · Lingue e mercati</option>
-              <option value="accessibility">♿ River Access · Accessibilità</option>
-              <option value="sustainability">🌱 River Ecology · Sostenibilità</option>
-              <option value="operations">🧭 River Operations · Organizzazione</option>
-              <option value="documentation">📚 River Docs · Documentazione</option>
+              {agents.map((agent) => <option key={agent.id} value={agent.id}>{agent.name} · {agent.role}</option>)}
             </select>
             {selectedAgent === "team" && <select aria-label="Numero di agenti" value={teamSize} onChange={e=>setTeamSize(Number(e.target.value))} style={{border:"1px solid #c7dfe1",borderRadius:11,padding:10,background:"#fff",color:"#173b42",fontSize:14}}>
               <option value={2}>2 agenti + Nova</option>
