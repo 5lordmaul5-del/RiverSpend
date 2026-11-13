@@ -224,7 +224,7 @@ export default function RiverAI() {
 
   return (
     <>
-    <Head><title>RiverSSAI 10.0 · Pure Power</title><meta name="description" content="RiverSSAI 10.0: Nova coordina il registro di 89 specialisti in 10 squadre."/><meta name="apple-mobile-web-app-capable" content="yes"/><meta name="apple-mobile-web-app-title" content="RiverSSAI 10.0"/><meta name="theme-color" content="#06172b"/><link rel="manifest" href="/river-ai.webmanifest"/><link rel="icon" href="/icons/river-ssai-10.svg" type="image/svg+xml"/><link rel="apple-touch-icon" href="/icons/river-ssai-192.png"/></Head>
+    <Head><title>RiverSSAI 10.0 · Pure Power</title><meta name="description" content="RiverSSAI 10.0: Nova coordina il registro di 89 specialisti in 10 squadre."/><meta name="apple-mobile-web-app-capable" content="yes"/><meta name="apple-mobile-web-app-title" content="RiverSSAI 10.0"/><meta name="theme-color" content="#06172b"/><link rel="manifest" href="/river-ai.webmanifest"/><link rel="icon" href="/icons/river-ssai-192-final.jpg" type="image/svg+xml"/><link rel="apple-touch-icon" href="/icons/river-ssai-192-final.jpg"/></Head>
     <main style={{ minHeight:"100vh", background:"linear-gradient(180deg,#e9fbfc,#f7fcfd)", color:"#12343b", padding:"18px 12px 28px", fontFamily:"Arial,sans-serif", display:"flex", alignItems:"flex-start", justifyContent:"center", gap:12, flexWrap:"wrap" }}>
       {access === "ready" && <aside aria-label="Menu RiverSSAI" style={{width:230,flex:"0 0 230px",background:"#07182b",color:"#e8f4ff",borderRadius:18,padding:14,boxSizing:"border-box",boxShadow:"0 12px 30px rgba(5,30,50,.16)"}}>
         <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:14}}><strong style={{fontSize:15}}>RiverSSAI</strong><button onClick={()=>setMenuOpen(!menuOpen)} aria-label="Apri o chiudi menu" style={{background:"transparent",border:"1px solid #416079",color:"#fff",borderRadius:8,padding:"4px 8px"}}>{menuOpen?"Nascondi":"Menu"}</button></div>
@@ -245,7 +245,7 @@ export default function RiverAI() {
       </aside>}
       <section style={{ maxWidth:980, minHeight:"calc(100vh - 46px)", margin:"0", display:"flex", flexDirection:"column", background:"#fff", border:"1px solid #c8e8e9", borderRadius:22, overflow:"hidden", boxShadow:"0 12px 36px rgba(5,65,78,.10)",flex:"1 1 640px",minWidth:0 }}>
         <header className="river-ai-header" style={{ padding:"18px 20px", background:"linear-gradient(120deg,#073b4c,#087f89)", color:"#fff", display:"flex", alignItems:"center", gap:12 }}>
-          <img src="/icons/river-ssai-10.svg" alt="Nova RiverSSAI" width="52" height="52" style={{width:52,height:52,borderRadius:16,background:"#071a2d",border:"1px solid #20c9ef",objectFit:"cover"}}/>
+          <img src="/icons/river-ssai-192-final.jpg" alt="Nova RiverSSAI" width="52" height="52" style={{width:52,height:52,borderRadius:16,background:"#071a2d",border:"1px solid #20c9ef",objectFit:"cover"}}/>
           <div className="river-ai-brand" style={{ flex:1, minWidth:0 }}>
             <div style={{ fontSize:21,fontWeight:800 }}>RiverSSAI 10.0</div>
             <div style={{ fontSize:12,opacity:.85 }}>Pure Power · Area privata RiverSpend</div>
@@ -279,7 +279,7 @@ export default function RiverAI() {
             <div style={{padding:"24px 18px 30px",background:"linear-gradient(180deg,#f5fcff,#fff)",flex:1}}>
               <div style={{maxWidth:820,margin:"0 auto"}}>
                 <div style={{display:"flex",alignItems:"center",gap:16,flexWrap:"wrap",marginBottom:22}}>
-                  <img src="/icons/river-ssai-10.svg" alt="RiverSSAI 10.0" width="76" height="76" style={{borderRadius:18,background:"#07182b"}}/>
+                  <img src="/icons/river-ssai-192-final.jpg" alt="RiverSSAI 10.0" width="76" height="76" style={{borderRadius:18,background:"#07182b"}}/>
                   <div style={{flex:1,minWidth:220}}>
                     <div style={{fontSize:12,fontWeight:900,letterSpacing:2,color:"#07859a"}}>CENTRO OPERATIVO RIVERSPEND</div>
                     <h1 style={{fontSize:28,lineHeight:1.1,margin:"6px 0",color:"#082b43"}}>Benvenuto in RiverSSAI 10.0</h1>
@@ -352,7 +352,7 @@ export default function RiverAI() {
           </div>
           <div style={{flex:1,padding:18,overflowY:"auto",minHeight:300}}>
             {messages.length === 0 && <div style={{maxWidth:560,margin:"32px auto",textAlign:"center"}}>
-              <img src="/icons/river-ssai-10.svg" alt="" width="104" height="104" style={{display:"block",margin:"0 auto 12px"}}/><h2 style={{margin:"10px 0 6px",color:"#075766"}}>Ciao, sono Nova.</h2>
+              <img src="/icons/river-ssai-192-final.jpg" alt="" width="104" height="104" style={{display:"block",margin:"0 auto 12px"}}/><h2 style={{margin:"10px 0 6px",color:"#075766"}}>Ciao, sono Nova.</h2>
               <p style={{lineHeight:1.6,color:"#56737a"}}>Sono Nova, coordinatrice di RiverSSAI 10.0. Posso coinvolgere gli specialisti più adatti, organizzare il lavoro e aiutarti a verificare ogni passaggio del progetto RiverSpend.</p>
               <div style={{display:"inline-block",padding:"10px 14px",borderRadius:14,background:"#effafa",color:"#27616a",fontSize:13}}>Da dove vuoi cominciare?</div>
             </div>}
