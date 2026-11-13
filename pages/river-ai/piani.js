@@ -32,7 +32,7 @@ export default function RiverSSAIPlans() {
 
           <div role="status" style={{ border: "1px solid #d6aa37", background: "rgba(214,170,55,.10)", borderRadius: 14, padding: "14px 16px", margin: "0 auto 26px", maxWidth: 760, textAlign: "center", color: "#ffe7a3", lineHeight: 1.5 }}>
             <strong>Anteprima commerciale — pagamenti non attivi.</strong><br />
-            I prezzi sono stati definiti. Attivazione degli abbonamenti, registrazione commerciale e checkout saranno abilitati solo dopo i collaudi e una decisione esplicita del proprietario.
+            I prezzi sono stati definiti. {RIVERSSAI_COMMERCE_STATUS.checkoutEnabled ? "Gli abbonamenti sono disponibili." : "Attivazione degli abbonamenti, registrazione commerciale e checkout in seguito ai collaudi e a una decisione esplicita del proprietario."}
           </div>
 
           <section aria-label="Piani mensili RiverSSAI" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(225px,1fr))", gap: 16 }}>
