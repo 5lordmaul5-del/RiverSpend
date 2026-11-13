@@ -219,7 +219,7 @@ export default function RiverAI() {
           <a href="/river-ai/piani" style={{display:"block",padding:"10px 11px",borderRadius:10,background:"#123b54",color:"#9fe8ff",textDecoration:"none",fontSize:13,fontWeight:700}}>€ Piani e costi</a>
         </nav>}
         <div style={{marginTop:16,paddingTop:12,borderTop:"1px solid #28465e",fontSize:11,lineHeight:1.5,color:"#a8bfd2"}}>Nova + 89 specialisti registrati · 10 squadre</div>
-      </aside>
+      </aside>}
       <section style={{ maxWidth:980, minHeight:"calc(100vh - 46px)", margin:"0", display:"flex", flexDirection:"column", background:"#fff", border:"1px solid #c8e8e9", borderRadius:22, overflow:"hidden", boxShadow:"0 12px 36px rgba(5,65,78,.10)",flex:"1 1 640px",minWidth:0 }}>
         <header className="river-ai-header" style={{ padding:"18px 20px", background:"linear-gradient(120deg,#073b4c,#087f89)", color:"#fff", display:"flex", alignItems:"center", gap:12 }}>
           <img src="/icons/river-ssai-10.svg" alt="Nova RiverSSAI" width="52" height="52" style={{width:52,height:52,borderRadius:16,background:"#071a2d",border:"1px solid #20c9ef",objectFit:"cover"}}/>
