@@ -76,12 +76,13 @@ const apps = [
   },
   {
     name: 'RiverSSAI 10.0 · Pure Power',
-    subtitle: 'Nova e la rete dei 30 specialisti',
-    description: 'Nova coordina i tre comandanti RIVER A1B2, RIVER A2C4 e RIVER B2D5 e l’esercito dei 30 specialisti. Apri RiverSSAI e installala sul telefono come app separata. L’accesso resta riservato agli account autorizzati.',
-    logo: '/icons/river-ssai-10.svg',
+    subtitle: 'L’assistente centrale dell’ecosistema RiverSpend',
+    description: 'Apri RiverSSAI 10.0: la casa operativa di Nova, con chat, squadra specialistica, archivio, chat fissate e piani. Il registro comprende 89 specialisti; Nova può coordinarne fino a 30 in una singola elaborazione. Installabile sul telefono come app separata.',
+    logo: '/icons/river-ssai-192-final.jpg',
+    hero: '/images/river-ssai-10-team.svg',
     href: '/river-ai',
     color: '#087f89',
-    action: 'Apri e installa RiverSSAI 10.0'
+    action: 'Apri RiverSSAI 10.0 e installa'
   },
 ];
 
@@ -121,6 +122,7 @@ export default function RiverSpendApps() {
             {apps.map((app) => (
               <article key={app.name} style={{ background: 'rgba(255,255,255,.07)', border: '1px solid rgba(103,232,249,.28)', borderRadius: 22, padding: 22, display: 'flex', flexDirection: 'column', minHeight: 270, boxShadow: '0 12px 32px rgba(0,0,0,.18)' }}>
                 <div aria-hidden="true" style={{ width: 88, height: 88, display: 'grid', placeItems: 'center', overflow: 'hidden', borderRadius: 18, background: 'transparent', padding: 0, marginBottom: 16, boxShadow: 'none' }}><img src={app.logo} alt={'Logo ' + app.name} style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: 14 }} /></div>
+                {app.hero && <img src={app.hero} alt="Nova al centro con le unità speciali River e gli specialisti" style={{ display: 'block', width: '100%', height: 280, maxHeight: '42vh', minHeight: 220, objectFit: 'contain', background: '#06172b', border: '1px solid rgba(103,232,249,.35)', borderRadius: 16, padding: 8, boxSizing: 'border-box', marginBottom: 16 }} />}
                 <h2 style={{ fontSize: 21, fontWeight: 850, margin: '0 0 5px' }}>{app.name}</h2>
                 <div style={{ color: '#fbbf24', fontWeight: 700, fontSize: 13, marginBottom: 10 }}>{app.subtitle}</div>
                 <p style={{ color: '#cbd5e1', lineHeight: 1.55, fontSize: 14, flexGrow: 1 }}>{app.description}</p>
