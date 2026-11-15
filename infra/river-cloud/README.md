@@ -39,7 +39,7 @@ This is an adapter boundary, not a replacement identity provider and not a new l
 - `GET /v1/me`: validates the bearer token and returns only the caller's RiverCloud profile.
 - `PUT /v1/me`: validates the bearer token and creates/updates only the caller's display name.
 
-The API uses parameterized SQL, a dedicated non-superuser database role, a private schema and forced row-level security. It sets a transaction-local subject UUID for each request. It applies a small in-process rate limit, a 4 KiB request-body limit and `Cache-Control: no-store`. It has no public listener mapping, no admin endpoint, no cross-user lookup and no service-role key.
+The API uses parameterized psql variables, a dedicated non-superuser database role, a private schema and forced row-level security. It sets a transaction-local subject UUID for each request. It applies a bounded in-process rate limit, an 8-second database command timeout, a 4 KiB request-body limit and `Cache-Control: no-store`. It has no public listener mapping, no admin endpoint, no cross-user lookup and no service-role key. The RiverAuth adapter calls the upstream Auth user-verification endpoint; the official SDK documents `getUser(jwt)` as an Auth-server network request whose result is authentic for authorization.
 
 For local testing, the API is available to another container as `http://rivercloud-api:8080`. Do not expose it directly to the Internet.
 
@@ -58,7 +58,11 @@ The restore drill requires the adjacent SHA-256 file, verifies it, decrypts the 
 
 The GitHub Actions workflow `.github/workflows/rivercloud-local-validation.yml` validates Compose configuration, starts PostgreSQL and the API, checks readiness, stops and restarts PostgreSQL while checking persisted data, creates an encrypted backup, and restores it into the isolated disposable database.
 
-A passing CI run is required before considering this development stack validated. CI does not validate production performance, public TLS ingress, off-host replication or real user login.
+A passing CI run is required before considering this development stack validated. The workflow is configured for PR changes and for changes pushed to `main`; it will run after this draft is approved and merged because GitHub only loads pull-request workflows from the base branch. CI does not validate production performance, public TLS ingress, off-host replication or real user login.
+
+On a database volume created before the RiverCloud init script was added, Docker will not automatically replay `init/001-rivercloud.sql`. After reviewing the script, apply it once to that development database with `docker compose exec -T rivercloud-db psql -U rivercloud -d rivercloud -v ON_ERROR_STOP=1 -f - < init/001-rivercloud.sql`. Do not run this against production.
+
+The row-isolation regression test can be run with `docker compose exec -T rivercloud-db psql -U rivercloud -d rivercloud -v ON_ERROR_STOP=1 -f - < ../../scripts/river-cloud/test-rls.sql`.
 
 ## Multi-machine resilience plan
 
