@@ -1,0 +1,27 @@
+services:
+  rivercloud-db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: rivercloud
+      POSTGRES_USER: rivercloud
+      POSTGRES_PASSWORD: ${RIVER_CLOUD_DB_PASSWORD:?Set RIVER_CLOUD_DB_PASSWORD in infra/river-cloud/.env}
+    volumes:
+      - rivercloud_pgdata:/var/lib/postgresql/data
+    ports:
+      # Local development only: never bind PostgreSQL to a public interface.
+      - "127.0.0.1:55432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rivercloud -d rivercloud"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - rivercloud-private
+
+volumes:
+  rivercloud_pgdata:
+
+networks:
+  rivercloud-private:
+    internal: true
