@@ -78,8 +78,8 @@ age --decrypt --identity "$RIVER_CLOUD_AGE_IDENTITY_FILE" "$BACKUP_FILE" \
       --exit-on-error
 
 TABLE_COUNT="$(docker exec "$CONTAINER_NAME" psql -U postgres -d rivercloud_restore -At \
-  -c "SELECT count(*) FROM pg_tables WHERE schemaname = 'public';")"
+  -c "SELECT count(*) FROM pg_tables WHERE schemaname NOT IN ('pg_catalog', 'information_schema');")"
 
 echo "Restore drill passed in disposable isolated PostgreSQL."
-echo "Restored public tables: $TABLE_COUNT"
+echo "Restored application tables: $TABLE_COUNT"
 echo "Disposable database will now be removed."
