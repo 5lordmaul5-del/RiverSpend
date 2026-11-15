@@ -115,3 +115,11 @@ The registry includes RiverSS Print as a distinct entry. Unknown repository path
 Validation is implemented in `scripts/river-registry/validate.mjs` and runs through `.github/workflows/river-registry-validation.yml`. The validator checks JSON readability, unique IDs and required inventory fields. Passing this validation proves registry structure only; it does not verify application existence, deployment health or production status.
 
 Next inventory work: inspect repository trees and deployment metadata, then replace each initial status only when evidence supports it. Do not infer deployment URLs or health endpoints from names.
+
+
+## RiverSSAI and RiverSS Print application surfaces
+
+- RiverSSAI is served by the dedicated `/river-ai` Next.js route in the RiverSpend web project, with its own PWA manifest and service worker; it is not a separate Vercel project.
+- The RiverSSAI launcher artwork is `public/icons/river-ssai-app.svg`. The manifest and page favicon/header use this SVG; the existing 180px PNG remains the Apple touch icon fallback, while the 192px and 512px PNGs remain compatibility fallbacks in the manifest.
+- RiverSS Print is represented by `/river-print` and `public/icons/river-ss-print.svg`. The current page is an informational placeholder only: no catalog, customization, quote, order, payment or production workflow is active.
+- These routes remain part of the isolated Fortress branch until separately approved for production publication. Device installation icons and route behavior require a post-build browser/device smoke test.
