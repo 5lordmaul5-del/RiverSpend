@@ -1,5 +1,5 @@
 import http from 'node:http';
-import { createRiverAuth } from '../auth/river-auth.mjs';
+import { createRiverAuth } from './river-auth.mjs';
 import { spawn } from 'node:child_process';
 
 const PORT = Number(process.env.PORT || 8080);
@@ -80,7 +80,7 @@ function runProfileSql(sql, variables) {
     }
 
     const child = spawn('psql', args, {
-      env: { ...process.env, PGPASSWORD: DATABASE_PASSWORD },
+      env: { ...process.env, PGPASSWORD: DATABASE_PASSWORD, PGOPTIONS: '-c statement_timeout=5000' },
       stdio: ['pipe', 'pipe', 'pipe'],
     });
     let stdout = '';
@@ -172,7 +172,7 @@ const server = http.createServer(async (req, res) => {
        FROM subject_context
        ON CONFLICT (user_id) DO UPDATE
        SET display_name = EXCLUDED.display_name, updated_at = now()
-       RETURNING row_to_json(rivercloud.user_profiles)::text;
+       RETURNING json_build_object('user_id', user_id, 'display_name', display_name, 'updated_at', updated_at)::text;
        COMMIT;`,
       { subject: user.subject, display_name: displayName },
     );
