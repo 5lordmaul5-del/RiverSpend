@@ -16,7 +16,7 @@ permissions:
   contents: read
 
 jobs:
-  android-bundle:
+  android-build:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -28,9 +28,26 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
       - name: Install app dependencies
         run: npm install --no-audit --no-fund
       - name: Check Expo project configuration
         run: npx expo-doctor
       - name: Export Android JavaScript bundle
         run: npx expo export --platform android
+      - name: Generate Android native project
+        run: npx expo prebuild --platform android --no-install
+      - name: Build installable Android debug APK
+        working-directory: apps/riverspend-panel-control/android
+        run: ./gradlew assembleDebug --no-daemon
+      - name: Upload Android APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: river-control-center-android-debug
+          path: apps/riverspend-panel-control/android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 7
