@@ -38,6 +38,15 @@ const apps = [
     action: 'Apri RiverSpend Social'
   },
   {
+    name: 'River Video',
+    subtitle: 'La piattaforma video River',
+    description: 'Film, serie, creator, live e produzioni originali. L’app e il catalogo sono in preparazione: la riproduzione sarà attivata dopo l’integrazione del backend video e la verifica dei diritti.',
+    logo: '/icons/river-video.svg',
+    href: '/river-video',
+    color: '#0f172a',
+    action: 'Apri River Video'
+  },
+  {
     name: 'RiverSpend Streaming',
     subtitle: 'Video e contenuti',
     description: 'Accedi all’area dedicata ai contenuti RiverSpend.',
