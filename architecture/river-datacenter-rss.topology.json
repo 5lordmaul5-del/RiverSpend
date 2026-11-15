@@ -1,0 +1,265 @@
+{
+  "topology_version": "1.0.0",
+  "name": "River DataCenter RSS target topology",
+  "status": "design_only",
+  "updated_at": "2026-11-15",
+  "source_registry": "registry/river-apps.registry.json",
+  "rule": "All edges describe intended relationships only. No edge asserts that services are deployed, connected, authenticated or operational.",
+  "nodes": [
+    {
+      "id": "river-cloud",
+      "name": "RiverCloud",
+      "kind": "platform_service",
+      "status": "design_or_partial_implementation"
+    },
+    {
+      "id": "river-database",
+      "name": "River Database",
+      "kind": "platform_service",
+      "status": "design_or_partial_implementation"
+    },
+    {
+      "id": "river-id-auth",
+      "name": "River ID / RiverAuth",
+      "kind": "platform_service",
+      "status": "design_or_partial_implementation"
+    },
+    {
+      "id": "river-ssai",
+      "name": "RiverSSAI 10.0",
+      "kind": "platform_service",
+      "status": "design_or_partial_implementation"
+    },
+    {
+      "id": "river-api-gateway",
+      "name": "River API Gateway",
+      "kind": "platform_service",
+      "status": "design_or_partial_implementation"
+    },
+    {
+      "id": "river-payments",
+      "name": "River Payments",
+      "kind": "platform_service",
+      "status": "design_or_partial_implementation"
+    },
+    {
+      "id": "river-security",
+      "name": "River Security",
+      "kind": "platform_service",
+      "status": "design_or_partial_implementation"
+    },
+    {
+      "id": "river-backup",
+      "name": "River Backup",
+      "kind": "platform_service",
+      "status": "design_or_partial_implementation"
+    },
+    {
+      "id": "river-recovery",
+      "name": "River Recovery",
+      "kind": "platform_service",
+      "status": "design_or_partial_implementation"
+    },
+    {
+      "id": "river-monitor",
+      "name": "River Monitor",
+      "kind": "platform_service",
+      "status": "design_or_partial_implementation"
+    },
+    {
+      "id": "river-datacenter-rss",
+      "name": "River DataCenter RSS",
+      "kind": "platform_service",
+      "status": "design_only"
+    },
+    {
+      "id": "river-git",
+      "name": "RiverGit",
+      "kind": "platform_service",
+      "status": "scaffold_only"
+    },
+    {
+      "id": "river-deploy",
+      "name": "RiverDeploy",
+      "kind": "platform_service",
+      "status": "design_only"
+    },
+    {
+      "id": "riverspend",
+      "name": "RiverSpend",
+      "kind": "application",
+      "status": "identified_unverified"
+    },
+    {
+      "id": "riverspend-shop",
+      "name": "RiverSpendShop",
+      "kind": "application",
+      "status": "identified_unverified"
+    },
+    {
+      "id": "river-video",
+      "name": "River Video",
+      "kind": "application",
+      "status": "identified_unverified"
+    },
+    {
+      "id": "river-streaming",
+      "name": "RiverStreaming",
+      "kind": "application",
+      "status": "identified_unverified"
+    },
+    {
+      "id": "enigma",
+      "name": "Enigma",
+      "kind": "application",
+      "status": "identified_unverified"
+    },
+    {
+      "id": "river-print",
+      "name": "RiverPrint",
+      "kind": "application",
+      "status": "identified_unverified"
+    },
+    {
+      "id": "river-ss-print",
+      "name": "RiverSS Print",
+      "kind": "application",
+      "status": "identified_unverified"
+    },
+    {
+      "id": "river-signals",
+      "name": "RiverSignals",
+      "kind": "application",
+      "status": "identified_unverified"
+    },
+    {
+      "id": "river-space-signals",
+      "name": "RiverSpaceSignals",
+      "kind": "application",
+      "status": "identified_unverified"
+    },
+    {
+      "id": "river-spend-playstore-shop",
+      "name": "RiverSpend PlayStoreShop",
+      "kind": "application",
+      "status": "identified_unverified"
+    },
+    {
+      "id": "river-spend-playstore-games-shop",
+      "name": "RiverSpend PlayStoreGamesShop",
+      "kind": "application",
+      "status": "identified_unverified"
+    },
+    {
+      "id": "river-s-plays",
+      "name": "RiverS PlayS",
+      "kind": "application",
+      "status": "identified_unverified"
+    },
+    {
+      "id": "quiz-arena",
+      "name": "Quiz Arena",
+      "kind": "application",
+      "status": "identified_unverified"
+    },
+    {
+      "id": "karma-relax-zen",
+      "name": "Karma Relax Zen",
+      "kind": "application",
+      "status": "identified_unverified"
+    },
+    {
+      "id": "river-ai-karma-guardian",
+      "name": "River AI – Karma Guardian",
+      "kind": "application",
+      "status": "identified_unverified"
+    },
+    {
+      "id": "riverspend-panel-control",
+      "name": "RiverSpend Panel Control (RSPC)",
+      "kind": "application",
+      "status": "identified_unverified"
+    },
+    {
+      "id": "river-ssai",
+      "name": "RiverSSAI 10.0",
+      "kind": "application",
+      "status": "identified_unverified"
+    }
+  ],
+  "edges": [
+    {
+      "from": "river-datacenter-rss",
+      "to": "river-fortress",
+      "relation": "coordinates",
+      "status": "planned"
+    },
+    {
+      "from": "river-fortress",
+      "to": "river-security",
+      "relation": "policy_and_audit",
+      "status": "planned"
+    },
+    {
+      "from": "river-fortress",
+      "to": "river-monitor",
+      "relation": "observability",
+      "status": "planned"
+    },
+    {
+      "from": "river-fortress",
+      "to": "river-backup",
+      "relation": "recovery_status",
+      "status": "planned"
+    },
+    {
+      "from": "river-api-gateway",
+      "to": "river-id-auth",
+      "relation": "authentication_and_scopes",
+      "status": "planned"
+    },
+    {
+      "from": "river-api-gateway",
+      "to": "river-database",
+      "relation": "service_owned_data_access",
+      "status": "planned"
+    },
+    {
+      "from": "river-ssai",
+      "to": "river-api-gateway",
+      "relation": "scoped_service_requests",
+      "status": "planned"
+    },
+    {
+      "from": "river-git",
+      "to": "river-deploy",
+      "relation": "source_to_preview_delivery",
+      "status": "planned"
+    },
+    {
+      "from": "river-deploy",
+      "to": "river-monitor",
+      "relation": "deployment_health_signals",
+      "status": "planned"
+    },
+    {
+      "from": "river-database",
+      "to": "river-backup",
+      "relation": "database_backup",
+      "status": "planned"
+    },
+    {
+      "from": "river-backup",
+      "to": "river-recovery",
+      "relation": "restore_and_recovery",
+      "status": "planned"
+    }
+  ],
+  "guardrails": [
+    "No production traffic until per-service acceptance gates pass.",
+    "No shared unrestricted database; data access is service-owned and API-mediated.",
+    "No secrets or credentials in this topology file.",
+    "RiverGit CI runners must be isolated from Git, database and backup hosts.",
+    "Backups must be independent of the primary host before recovery is claimed."
+  ]
+}
