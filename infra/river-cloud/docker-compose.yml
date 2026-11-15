@@ -23,7 +23,8 @@ services:
 
   rivercloud-api:
     build:
-      context: ./api
+      context: ../..
+      dockerfile: infra/river-cloud/api/Dockerfile
     restart: unless-stopped
     environment:
       PORT: "8080"
