@@ -137,7 +137,7 @@ const MASTER_KNOWLEDGE = fs.existsSync(MASTER_KNOWLEDGE_PATH)
   ? fs.readFileSync(MASTER_KNOWLEDGE_PATH, "utf8").slice(0, 18000)
   : "";
 const MASTER_KNOWLEDGE_CONTEXT = MASTER_KNOWLEDGE
-  ? "\\n\\nCONOSCENZA CANONICA RIVERSPEND (fonte versionata; verifica sempre lo stato live):\\n" + MASTER_KNOWLEDGE
+  ? "\n\nCONOSCENZA CANONICA RIVERSPEND (fonte versionata; verifica sempre lo stato live):\n" + MASTER_KNOWLEDGE
   : "";
 
 const server = http.createServer(async (req, res) => {
@@ -253,9 +253,9 @@ const server = http.createServer(async (req, res) => {
     );
     const memoryText = memoryResult.rows
       .map((m) => "[" + m.category + "] " + m.title + ": " + m.content.slice(0, 300))
-      .join("\\n")
+      .join("\n")
       .slice(0, 1800);
-    const memoryContext = memoryText ? "\\nMemoria privata:\\n" + memoryText : "";
+    const memoryContext = memoryText ? "\nMemoria privata:\n" + memoryText : "";
 
     let answer;
     let agentsUsed;
@@ -265,28 +265,28 @@ const server = http.createServer(async (req, res) => {
         .slice(0, MAX_TEAM_SPECIALISTS);
       if (!team.length) {
         answer = await callLocalModel([
-          { role: "system", content: SYSTEM + memoryContext + "\\nRUOLO: " + getAgentPrompt("nova") },
+          { role: "system", content: SYSTEM + memoryContext + "\nRUOLO: " + getAgentPrompt("nova") },
           ...safe
         ], 1100);
         agentsUsed = ["nova"];
       } else {
         const reports = await runWithLimit(team, MAX_PARALLEL, async (specialist) => {
           const report = await callLocalModel([
-            { role: "system", content: SYSTEM + "\\nRUOLO SPECIALISTA: " + getAgentPrompt(specialist) + "\\nFornisci un contributo breve: analisi, un rischio e una verifica." },
+            { role: "system", content: SYSTEM + "\nRUOLO SPECIALISTA: " + getAgentPrompt(specialist) + "\nFornisci un contributo breve: analisi, un rischio e una verifica." },
             ...(memoryContext ? [{ role: "system", content: memoryContext }] : []),
             { role: "user", content: latestPrompt }
           ], 280);
           return { specialist, report };
         });
         answer = await callLocalModel([
-          { role: "system", content: SYSTEM + MASTER_KNOWLEDGE_CONTEXT + "\\nSei NOVA, coordinatrice. Integra i contributi, segnala divergenze e restituisci decisione, piano, rischi e verifiche." },
-          { role: "user", content: "RICHIESTA:\\n" + latestPrompt + "\\n\\nCONTRIBUTI SPECIALISTI:\\n" + reports.map((item) => item.specialist + ":\\n" + item.report).join("\\n\\n") }
+          { role: "system", content: SYSTEM + MASTER_KNOWLEDGE_CONTEXT + "\nSei NOVA, coordinatrice. Integra i contributi, segnala divergenze e restituisci decisione, piano, rischi e verifiche." },
+          { role: "user", content: "RICHIESTA:\n" + latestPrompt + "\n\nCONTRIBUTI SPECIALISTI:\n" + reports.map((item) => item.specialist + ":\n" + item.report).join("\n\n") }
         ], 1200);
         agentsUsed = ["nova", ...team];
       }
     } else {
       answer = await callLocalModel([
-        { role: "system", content: SYSTEM + MASTER_KNOWLEDGE_CONTEXT + memoryContext + "\\nRUOLO ATTIVO: " + getAgentPrompt(requestedAgent) },
+        { role: "system", content: SYSTEM + MASTER_KNOWLEDGE_CONTEXT + memoryContext + "\nRUOLO ATTIVO: " + getAgentPrompt(requestedAgent) },
         ...safe
       ], 1200);
       agentsUsed = [requestedAgent];
