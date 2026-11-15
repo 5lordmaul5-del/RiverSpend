@@ -32,16 +32,16 @@ for cmd in docker age sha256sum openssl; do
 done
 
 # Verify the encrypted artifact before attempting decryption.
-if [[ -f "$BACKUP_FILE.sha256" ]]; then
-  EXPECTED_CHECKSUM="$(awk 'NR == 1 {print $1}' "$BACKUP_FILE.sha256")"
-  ACTUAL_CHECKSUM="$(sha256sum "$BACKUP_FILE" | awk '{print $1}')"
-  [[ -n "$EXPECTED_CHECKSUM" && "$EXPECTED_CHECKSUM" == "$ACTUAL_CHECKSUM" ]] || {
-    echo "Backup checksum verification failed." >&2
-    exit 1
-  }
-else
-  echo "Warning: no adjacent SHA-256 file found; continuing without checksum verification." >&2
-fi
+[[ -f "$BACKUP_FILE.sha256" ]] || {
+  echo "Missing checksum file: $BACKUP_FILE.sha256" >&2
+  exit 1
+}
+EXPECTED_CHECKSUM="$(awk 'NR == 1 {print $1}' "$BACKUP_FILE.sha256")"
+ACTUAL_CHECKSUM="$(sha256sum "$BACKUP_FILE" | awk '{print $1}')"
+[[ -n "$EXPECTED_CHECKSUM" && "$EXPECTED_CHECKSUM" == "$ACTUAL_CHECKSUM" ]] || {
+  echo "Backup checksum verification failed." >&2
+  exit 1
+}
 
 # The disposable database has no published ports, no persistent volume, and no network.
 # Plaintext SQL/custom dump data is streamed directly into pg_restore, never written to disk.
