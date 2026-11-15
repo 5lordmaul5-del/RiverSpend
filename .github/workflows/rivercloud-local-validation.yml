@@ -33,6 +33,7 @@ jobs:
         run: |
           node --check infra/river-cloud/auth/river-auth.mjs
           node --check infra/river-cloud/api/server.mjs
+          node --test infra/river-cloud/auth/river-auth.test.mjs
 
       - name: Validate Compose configuration
         working-directory: infra/river-cloud
