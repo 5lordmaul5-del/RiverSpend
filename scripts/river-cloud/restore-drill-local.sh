@@ -69,6 +69,12 @@ for _ in $(seq 1 60); do
 done
 [[ "$READY" -eq 1 ]] || { echo "Disposable PostgreSQL did not become ready." >&2; exit 1; }
 
+# The dump contains RLS policies that reference this application role.
+# Create it explicitly in the disposable target before restoring the schema.
+docker exec "$CONTAINER_NAME" \
+  psql -U postgres -d rivercloud_restore -v ON_ERROR_STOP=1 \
+  -c "CREATE ROLE rivercloud_api NOLOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT;"
+
 age --decrypt --identity "$RIVER_CLOUD_AGE_IDENTITY_FILE" "$BACKUP_FILE" \
   | docker exec -i "$CONTAINER_NAME" pg_restore \
       --username=postgres \
@@ -76,6 +82,11 @@ age --decrypt --identity "$RIVER_CLOUD_AGE_IDENTITY_FILE" "$BACKUP_FILE" \
       --no-owner \
       --no-acl \
       --exit-on-error
+
+# Re-run the ownership-isolation regression against the restored schema.
+docker exec -i "$CONTAINER_NAME" \
+  psql -U postgres -d rivercloud_restore -v ON_ERROR_STOP=1 \
+  < "$ROOT_DIR/scripts/river-cloud/test-rls.sql"
 
 TABLE_COUNT="$(docker exec "$CONTAINER_NAME" psql -U postgres -d rivercloud_restore -At \
   -c "SELECT count(*) FROM pg_tables WHERE schemaname NOT IN ('pg_catalog', 'information_schema');")"
