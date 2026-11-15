@@ -7,6 +7,8 @@ on:
     paths:
       - "registry/**"
       - "scripts/river-registry/**"
+      - "architecture/**"
+      - "scripts/river-datacenter/**"
       - ".github/workflows/river-registry-validation.yml"
   pull_request:
     paths:
@@ -29,4 +31,6 @@ jobs:
         with:
           node-version: 22
       - name: Validate application registry
-        run: node scripts/river-registry/validate.mjs
+        run: |
+          node scripts/river-registry/validate.mjs
+          node scripts/river-datacenter/validate-topology.mjs
