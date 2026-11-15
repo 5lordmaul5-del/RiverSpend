@@ -177,6 +177,7 @@ const server = http.createServer(async (req, res) => {
        INSERT INTO rivercloud.user_profiles (user_id, display_name)
        SELECT :'subject'::uuid, :'display_name'
        FROM subject_context
+       WHERE true
        ON CONFLICT (user_id) DO UPDATE
        SET display_name = EXCLUDED.display_name, updated_at = now()
        RETURNING json_build_object('user_id', user_id, 'display_name', display_name, 'updated_at', updated_at)::text;
