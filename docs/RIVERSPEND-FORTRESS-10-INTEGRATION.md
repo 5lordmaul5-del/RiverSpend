@@ -62,3 +62,45 @@ The following isolated GitHub Actions runs completed successfully:
 An earlier RiverCloud run, [43739008487](https://github.com/5lordmaul5-del/RiverSpend/actions/runs/43739008487), correctly failed at the post-restore RLS test because the dump omitted grants. The restore drill was then updated to recreate the non-login role and reapply only the required schema/table grants; the later run above passed.
 
 **What these results do not prove:** RiverSSAI has not yet completed a live Ollama inference/chat test with PostgreSQL, and neither service has been tested on a dedicated staging host with real TLS, production identity, multi-user authorization, off-site backup or failover. CI success is not production approval.
+
+
+## RiverSpend Fortress as the Central Operations Plane
+
+The strategic role of Fortress is now defined as the **central operations plane** for the RiverSpend ecosystem. It is not a replacement for every product UI and it is not a monolithic application. It is the shared control and service foundation through which RiverSpend applications are onboarded, authenticated, connected, observed, protected and recovered.
+
+### Operating model
+
+- **Product plane:** RiverSpendShop, River Video / RiverStreaming, Enigma, RiverPrint, RiverSS Print, RiverSignals, RiverSpend PlayStoreShop and future apps retain their own product interfaces and domain logic.
+- **Control plane:** Fortress maintains service registry, application identity, policy, configuration references, health state, audit events, release metadata and operational status.
+- **Data plane:** application traffic moves through versioned, authenticated APIs. Databases remain service-owned; no universal shared database or unrestricted cross-service SQL access.
+- **Recovery plane:** backups, restore drills, off-host copies and documented recovery procedures are independently verifiable. Replication and failover are separate capabilities and must not be claimed until tested.
+
+### Central Operations Console — target capability
+
+The operator console is a later, authenticated administrative interface backed by server-side APIs. Its initial read-only view should report:
+1. registered applications and their owner/service boundaries;
+2. service health and readiness, with last successful check timestamps;
+3. deployment/environment identity and current release version;
+4. backup age, last restore-drill result and recovery status;
+5. security events, failed authentication trends and audit trail;
+6. CI validation status and outstanding release gates.
+
+The console must not expose secrets, raw credentials, unrestricted database access, or administrative tokens to browsers. Any future write/action controls require role-based authorization, explicit confirmation for high-impact actions, audit logging and rollback paths.
+
+### Application onboarding contract
+
+Every application is onboarded through a documented manifest containing a stable app ID, display name, owning team/service, environment, API version, required scopes, health/readiness endpoints, data classification, backup owner, and release/rollback reference. Secrets are referenced from a secret manager; they are never stored in the manifest or repository.
+
+### Delivery sequence and acceptance gates
+
+1. **Inventory and registry:** enumerate actual repository apps, services, branches and deployment targets; mark unknown or unverified items as such. Include RiverSS Print explicitly.
+2. **Identity and service trust:** implement the RiverCloud-to-RiverSSAI short-lived signed assertion contract, per-user UUID scoping and cross-user isolation tests before user-facing AI integration.
+3. **Gateway and registry API:** define versioned app/service registration and authenticated routing without exposing private databases.
+4. **Observability:** standard health/readiness contracts, structured logs, correlation/request IDs, metrics and alert thresholds.
+5. **Backup and recovery:** independent off-host backup policy, encryption/key custody, scheduled restore drills and documented RPO/RTO targets validated by exercises.
+6. **Operator console:** build a read-only operational dashboard against real service APIs and CI/deployment evidence; only later add carefully permissioned actions.
+7. **Staging integration:** run end-to-end tests on an isolated staging environment before any production proposal.
+
+### Boundaries
+
+This document changes the architecture target, not production state. The current branch remains isolated. No production deployment, merge, live database migration, payment activation, customer-data access or production secret change is authorized by this design. The console and central control plane must not be described as operational until implemented and demonstrated against real services.
