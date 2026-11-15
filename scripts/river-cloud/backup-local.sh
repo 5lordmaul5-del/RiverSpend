@@ -20,6 +20,9 @@ command -v age >/dev/null || { echo "age is required" >&2; exit 1; }
 command -v sha256sum >/dev/null || { echo "sha256sum is required" >&2; exit 1; }
 
 BACKUP_DIR="${RIVER_CLOUD_BACKUP_DIR:-$ROOT_DIR/infra/river-cloud/backups}"
+if [[ "$BACKUP_DIR" != /* ]]; then
+  BACKUP_DIR="$ROOT_DIR/infra/river-cloud/${BACKUP_DIR#./}"
+fi
 mkdir -p "$BACKUP_DIR"
 chmod 700 "$BACKUP_DIR"
 STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
