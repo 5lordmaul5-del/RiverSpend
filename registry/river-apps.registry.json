@@ -479,6 +479,39 @@
       "health_endpoint": null,
       "environment": "isolated-development",
       "last_verified_at": null
+    },
+    {
+      "service_id": "river-datacenter-rss",
+      "display_name": "River DataCenter RSS",
+      "domain": "ecosystem coordination and infrastructure architecture",
+      "status": "design_only",
+      "repository": "5lordmaul5-del/RiverSpend",
+      "evidence": "Master architecture and inventory defined in docs/RIVER-DATACENTER-RSS-MASTER-PLAN.md; no data center hosts provisioned.",
+      "health_endpoint": null,
+      "environment": "design-only",
+      "last_verified_at": null
+    },
+    {
+      "service_id": "river-git",
+      "display_name": "RiverGit",
+      "domain": "source control and repository hosting",
+      "status": "scaffold_only",
+      "repository": "5lordmaul5-del/RiverSpend",
+      "evidence": "Forgejo plus PostgreSQL Compose scaffold exists under infrastructure/rivergit; not installed or tested on a host.",
+      "health_endpoint": null,
+      "environment": "isolated-development",
+      "last_verified_at": null
+    },
+    {
+      "service_id": "river-deploy",
+      "display_name": "RiverDeploy",
+      "domain": "build and deployment orchestration",
+      "status": "design_only",
+      "repository": "5lordmaul5-del/RiverSpend",
+      "evidence": "Coolify selected as a self-hosted candidate; no installation or deployment performed.",
+      "health_endpoint": null,
+      "environment": "design-only",
+      "last_verified_at": null
     }
   ]
 }
