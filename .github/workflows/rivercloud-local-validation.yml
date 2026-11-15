@@ -26,7 +26,10 @@ jobs:
       - name: Validate Compose configuration
         working-directory: infra/river-cloud
         env:
-          RIVER_CLOUD_DB_PASSWORD: ci-only-password-not-for-production
+          RIVER_CLOUD_DB_PASSWORD: ci-only-db-password
+          RIVER_CLOUD_API_DB_PASSWORD: ci-only-api-password
+          RIVERAUTH_ISSUER_URL: https://example.supabase.co
+          RIVERAUTH_PUBLISHABLE_KEY: sb_publishable_ci_placeholder
         run: docker compose config --quiet
 
       - name: Generate ephemeral backup identity
@@ -37,10 +40,28 @@ jobs:
           RECIPIENT="$(age-keygen -y "$RUNNER_TEMP/rivercloud-age-identity.txt")"
           echo "recipient=$RECIPIENT" >> "$GITHUB_OUTPUT"
 
+      - name: Write ephemeral local environment
+        env:
+          RIVER_CLOUD_AGE_RECIPIENT: ${{ steps.age.outputs.recipient }}
+        run: |
+          cat > infra/river-cloud/.env <<EOF
+          RIVER_CLOUD_DB_PASSWORD=ci-only-db-password
+          RIVER_CLOUD_API_DB_PASSWORD=ci-only-api-password
+          RIVER_CLOUD_AGE_RECIPIENT=$RIVER_CLOUD_AGE_RECIPIENT
+          RIVER_CLOUD_AGE_IDENTITY_FILE=$RUNNER_TEMP/rivercloud-age-identity.txt
+          RIVER_CLOUD_BACKUP_DIR=./backups
+          RIVERAUTH_ISSUER_URL=https://example.supabase.co
+          RIVERAUTH_PUBLISHABLE_KEY=sb_publishable_ci_placeholder
+          EOF
+          chmod 600 infra/river-cloud/.env
+
       - name: Start database and verify readiness
         working-directory: infra/river-cloud
         env:
-          RIVER_CLOUD_DB_PASSWORD: ci-only-password-not-for-production
+          RIVER_CLOUD_DB_PASSWORD: ci-only-db-password
+          RIVER_CLOUD_API_DB_PASSWORD: ci-only-api-password
+          RIVERAUTH_ISSUER_URL: https://example.supabase.co
+          RIVERAUTH_PUBLISHABLE_KEY: sb_publishable_ci_placeholder
         run: |
           docker compose up -d --wait
           docker compose exec -T rivercloud-db pg_isready -U rivercloud -d rivercloud
@@ -50,10 +71,13 @@ jobs:
       - name: Verify stop and restart preserves data
         working-directory: infra/river-cloud
         env:
-          RIVER_CLOUD_DB_PASSWORD: ci-only-password-not-for-production
+          RIVER_CLOUD_DB_PASSWORD: ci-only-db-password
+          RIVER_CLOUD_API_DB_PASSWORD: ci-only-api-password
+          RIVERAUTH_ISSUER_URL: https://example.supabase.co
+          RIVERAUTH_PUBLISHABLE_KEY: sb_publishable_ci_placeholder
         run: |
           docker compose stop rivercloud-db
-          test "$(docker inspect -f '{{.State.Running}}' "$(docker compose ps -q rivercloud-db)")" = "false"
+          test "$(docker inspect -f '{{.State.Running}}' "$(docker compose ps -a -q rivercloud-db)")" = "false"
           docker compose up -d --wait rivercloud-db
           docker compose exec -T rivercloud-db pg_isready -U rivercloud -d rivercloud
           test "$(docker compose exec -T rivercloud-db psql -U rivercloud -d rivercloud -Atc "SELECT marker FROM public.restore_probe WHERE id = 1")" = "rivercloud-ci"
