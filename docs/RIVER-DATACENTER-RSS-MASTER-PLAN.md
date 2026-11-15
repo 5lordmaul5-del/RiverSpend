@@ -191,3 +191,38 @@ A green CI check proves only the checks it actually ran. A READY deployment does
 6. Add service health contracts and API versioning templates before wiring apps together.
 
 **Current truth:** this blueprint and registry document the target architecture. They do not mean River DataCenter RSS, RiverGit, RiverDeploy, RiverDatabase, offsite backup or the unified network are already running.
+
+
+## 11. River Control Center — pannello centrale
+
+The existing Expo application at `apps/riverspend-panel-control` is the designated client for the **River Control Center**. Its first milestone is an inventory and operations-readiness console, not a live super-admin interface.
+
+### Initial sections
+- **Overview:** ecosystem summary and counts from the central registry.
+- **Applications:** catalogue of all 17 app IDs and their evidence-backed state.
+- **Infrastructure:** River DataCenter RSS, Fortress, RiverCloud, RiverGit, RiverDeploy, RiverDatabase, River ID, API Gateway, RiverSSAI, Payments, Security, Backup, Recovery and Monitor.
+- **Security:** future operator authentication, role/permission matrix, MFA policy and append-only audit trail.
+- **Backup & Recovery:** future backup freshness, encryption, restore evidence, recovery objectives and drill history.
+
+### Command and authorization model
+The initial client is intentionally read-only. It contains no privileged credentials and no live service actions. A future command must pass all of these gates:
+1. Operator authenticated by River ID / RiverAuth.
+2. Server-side role and resource scope authorization; UI visibility is not authorization.
+3. Explicit confirmation for high-impact actions, with a preview of target and consequences.
+4. Server-side policy validation and idempotency key for retryable operations.
+5. Audit event recording operator, action, target, timestamp, correlation ID and result, without secrets.
+6. Health/permission preconditions and a documented rollback or recovery path where applicable.
+7. Two-person approval for destructive, financial, identity-root or production-wide operations.
+
+The mobile client must never contain database service-role keys, deployment tokens, SSH private keys or root credentials. Commands are sent to authenticated server APIs; no direct privileged access from the app to databases or infrastructure.
+
+### Future command domains
+- App lifecycle: inspect status, request restart, request deployment/rollback.
+- Infrastructure: inspect host/service state, maintenance windows and capacity.
+- Identity: manage operator roles and revoke sessions.
+- Security: review alerts, quarantine a service and inspect audit history.
+- Data: request approved backup/restore jobs; never run arbitrary SQL from the panel.
+- Payments: inspect reconciliations and initiate controlled workflows only after compliance and payment-provider integration; no real payment action in the current scope.
+
+### Current implementation boundary
+The first client release displays the 17-app catalogue and 14-service catalogue with explicit non-live status labels, plus security and recovery readiness notes. It does not poll services, authenticate operators, issue commands or claim operational health. Its visual counts are inventory counts, not telemetry.
