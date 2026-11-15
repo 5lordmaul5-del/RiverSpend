@@ -201,19 +201,19 @@
       "status": "planned"
     },
     {
-      "from": "river-fortress",
+      "from": "river-fortress-10",
       "to": "river-security",
       "relation": "policy_and_audit",
       "status": "planned"
     },
     {
-      "from": "river-fortress",
+      "from": "river-fortress-10",
       "to": "river-monitor",
       "relation": "observability",
       "status": "planned"
     },
     {
-      "from": "river-fortress",
+      "from": "river-fortress-10",
       "to": "river-backup",
       "relation": "recovery_status",
       "status": "planned"
