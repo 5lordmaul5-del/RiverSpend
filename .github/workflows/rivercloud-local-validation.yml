@@ -1,6 +1,12 @@
 name: RiverCloud local validation
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - "infra/river-cloud/**"
+      - "scripts/river-cloud/**"
+      - ".github/workflows/rivercloud-local-validation.yml"
   pull_request:
     paths:
       - "infra/river-cloud/**"
