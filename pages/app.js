@@ -22,11 +22,20 @@ const apps = [
   {
     name: 'RiverSSAI 10.0 · Pure Power',
     subtitle: 'Nova e la rete dei 30 specialisti',
-    description: 'Nova coordina i tre comandanti RIVER A1B2, RIVER A2C4 e RIVER B2D5 e l’esercito dei 30 specialisti. Apri RiverSSAI e installala sul telefono come app separata. L’accesso resta riservato agli account autorizzati.',
-    logo: '/icons/river-ssai-192.png',
+    description: 'Nova coordina i tre comandanti RIVER A1B2, RIVER A2C4 e RIVER B2D5 e la rete dei 30 specialisti. Apri RiverSSAI e installala sul telefono come app separata. L’accesso resta riservato agli account autorizzati.',
+    logo: '/icons/river-ssai-app.svg',
     href: '/river-ai',
     color: '#087f89',
     action: 'Apri e installa RiverSSAI 10.0'
+  },
+  {
+    name: 'RiverSS Print',
+    subtitle: 'Il servizio di stampa RiverSpend',
+    description: 'Il progetto RiverSpend dedicato ai prodotti stampati e alla stampa personalizzata. Il servizio è in progettazione: catalogo, preventivi, ordini e produzione non sono ancora attivi.',
+    logo: '/icons/river-ss-print.svg',
+    href: '/river-print',
+    color: '#2563eb',
+    action: 'Scopri RiverSS Print'
   },
   {
     name: 'RiverSpendSocialNetwork',
