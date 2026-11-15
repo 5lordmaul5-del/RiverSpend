@@ -1,0 +1,15 @@
+{
+  "id": "/river-plays",
+  "name": "RiverS PlayS",
+  "short_name": "River PlayS",
+  "description": "Gaming, quiz e multiplayer RiverSpend",
+  "start_url": "/river-plays",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#030712",
+  "theme_color": "#111827",
+  "orientation": "any",
+  "icons": [
+    { "src": "/icons/river-plays.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
