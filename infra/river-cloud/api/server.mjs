@@ -117,7 +117,7 @@ const server = http.createServer(async (req, res) => {
     if (!user) return send(res, 401, { error: 'unauthorized' });
 
     if (req.method === 'GET') {
-      const result = await withUserTransaction(user.id, (client) =>
+      const result = await withUserTransaction(user.subject, (client) =>
         client.query(
           'SELECT user_id, display_name, updated_at FROM rivercloud.user_profiles WHERE user_id = $1',
           [user.subject],
@@ -135,7 +135,7 @@ const server = http.createServer(async (req, res) => {
       return send(res, 400, { error: 'display_name_must_be_1_to_80_characters' });
     }
 
-    const result = await withUserTransaction(user.id, (client) =>
+    const result = await withUserTransaction(user.subject, (client) =>
       client.query(
         `INSERT INTO rivercloud.user_profiles (user_id, display_name)
          VALUES ($1, $2)
