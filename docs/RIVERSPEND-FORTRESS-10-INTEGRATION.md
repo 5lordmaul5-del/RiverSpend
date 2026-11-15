@@ -19,8 +19,8 @@ RiverCloud and the RiverSSAI prototype currently have separate PostgreSQL instan
 - RiverSSAI prototype uses a single owner bearer token and owner-scoped memory; it is not yet a multi-user production identity system.
 - RiverCloud currently validates identities through the existing Supabase Auth issuer; it is an adapter, not an independent River ID provider.
 - Local Ollama model installation, hardware sizing, TLS ingress, secrets, monitoring, off-host backups, failover and real end-to-end tests remain to be performed.
-- RiverCloud restore validation has a known role-creation issue from the previous review; do not call RiverCloud validated until a fresh complete workflow run and restore drill pass.
-- The runtime image and compose configuration still require execution in CI and on a controlled staging host. Source presence is not proof of operation.
+- RiverCloud restore drill now creates the required non-login policy role in the disposable target before restore and reruns the RLS ownership regression after restore. The updated workflow must pass before RiverCloud is considered validated.
+- RiverSSAI container hardening now includes a non-root runtime, read-only root filesystem, dropped capabilities, no-new-privileges, bounded rate-limit memory and PostgreSQL password values that do not require URL encoding. CI must pass on the current head, followed by controlled staging tests.
 
 ## Safety and release boundary
 - This branch is not production.
