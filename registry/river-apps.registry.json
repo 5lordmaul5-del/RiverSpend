@@ -140,20 +140,22 @@
       "display_name": "RiverSS Print",
       "category": "printing application",
       "status": "identified_unverified",
-      "evidence": "Mentioned in project context; repository and deployment evidence still required.",
-      "repository": null,
-      "repository_path": null,
-      "deployment_url": null,
-      "environment": null,
-      "runtime": null,
+      "evidence": "RiverSS Print placeholder page and SVG icon present in the Fortress branch. Page explicitly states that catalog, customization, quotes, orders, payments and production are not active.",
+      "repository": "5lordmaul5-del/RiverSpend",
+      "repository_path": "pages/river-print.js",
+      "deployment_url": "https://river-spend-m7t9a8im7-mauryle75-8055s-projects.vercel.app/river-print",
+      "environment": "Vercel Preview route via RiverSpend; page is informational only",
+      "runtime": "Next.js 16 / React 19",
       "health_endpoint": null,
       "api_version": null,
       "owner_service": null,
       "dependencies": [],
       "data_classification": "unclassified",
       "backup_policy": "not_verified",
-      "last_verified_at": null,
-      "notes": []
+      "last_verified_at": "2026-11-15",
+      "notes": [
+        "No printing, order intake or payment functionality is implemented by this page."
+      ]
     },
     {
       "app_id": "river-signals",
@@ -337,6 +339,31 @@
       "last_verified_at": "2026-11-15",
       "notes": [
         "Separate from the web Vercel project named riverspend-rspc until repository linkage is proven."
+      ]
+    },
+    {
+      "app_id": "river-ssai",
+      "display_name": "RiverSSAI 10.0",
+      "category": "AI assistant application",
+      "status": "identified_unverified",
+      "evidence": "Dedicated Next.js route pages/river-ai.js, PWA manifest, service worker, API chat endpoint and icon assets verified in the RiverSpend repository. Vercel deployment is inherited from the RiverSpend web project; no independent app project.",
+      "repository": "5lordmaul5-del/RiverSpend",
+      "repository_path": "pages/river-ai.js",
+      "deployment_url": "https://river-spend-m7t9a8im7-mauryle75-8055s-projects.vercel.app/river-ai",
+      "environment": "Vercel Preview route via RiverSpend; latest code changes await Preview build",
+      "runtime": "Next.js 16 / React 19 / PWA",
+      "health_endpoint": null,
+      "api_version": null,
+      "owner_service": "river-ssai",
+      "dependencies": [
+        "Supabase Auth",
+        "River AI chat API"
+      ],
+      "data_classification": "restricted_administrator",
+      "backup_policy": "not_verified",
+      "last_verified_at": "2026-11-15",
+      "notes": [
+        "PWA icon metadata now points to a dedicated SVG; Apple touch icon remains the existing 180px PNG fallback. User-device install icon must be checked after Preview deployment."
       ]
     }
   ],
