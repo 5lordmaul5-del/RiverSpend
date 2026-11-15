@@ -1,0 +1,62 @@
+name: rivergit
+
+services:
+  db:
+    image: ${RIVERGIT_POSTGRES_IMAGE:?Set a tested immutable PostgreSQL image digest in the host .env}
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${RIVERGIT_DB_NAME:-forgejo}
+      POSTGRES_USER: ${RIVERGIT_DB_USER:-forgejo}
+      POSTGRES_PASSWORD: ${RIVERGIT_DB_PASSWORD:?Set a unique database password in the host .env}
+    volumes:
+      - rivergit-postgres:/var/lib/postgresql/data
+    networks:
+      - rivergit-private
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    security_opt:
+      - no-new-privileges:true
+
+  forgejo:
+    image: ${RIVERGIT_FORGEJO_IMAGE:?Set a tested immutable Forgejo image digest in the host .env}
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      USER_UID: ${FORGEJO_UID:-1000}
+      USER_GID: ${FORGEJO_GID:-1000}
+      FORGEJO__database__DB_TYPE: postgres
+      FORGEJO__database__HOST: db:5432
+      FORGEJO__database__NAME: ${RIVERGIT_DB_NAME:-forgejo}
+      FORGEJO__database__USER: ${RIVERGIT_DB_USER:-forgejo}
+      FORGEJO__database__PASSWD: ${RIVERGIT_DB_PASSWORD:?Set a unique database password in the host .env}
+      FORGEJO__server__DOMAIN: ${RIVERGIT_DOMAIN:?Set the RiverGit hostname}
+      FORGEJO__server__ROOT_URL: ${RIVERGIT_ROOT_URL:?Set the HTTPS RiverGit URL}
+      FORGEJO__server__HTTP_PORT: "3000"
+      FORGEJO__server__SSH_PORT: ${RIVERGIT_SSH_PORT:-2222}
+      FORGEJO__security__INSTALL_LOCK: "true"
+      FORGEJO__service__DISABLE_REGISTRATION: "true"
+    volumes:
+      - rivergit-data:/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "127.0.0.1:3000:3000"
+      - "127.0.0.1:2222:22"
+    networks:
+      - rivergit-private
+    security_opt:
+      - no-new-privileges:true
+
+networks:
+  rivergit-private:
+    internal: true
+
+volumes:
+  rivergit-postgres:
+  rivergit-data:
