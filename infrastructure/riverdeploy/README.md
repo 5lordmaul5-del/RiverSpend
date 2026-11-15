@@ -1,0 +1,1 @@
+docs(riverdeploy): define isolated Coolify deployment plane
