@@ -27,10 +27,21 @@ services:
       context: ../..
       dockerfile: infra/river-ai/Dockerfile
     restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
     environment:
       NODE_ENV: production
       PORT: 8787
-      DATABASE_URL: postgres://rivercore:${RIVERDB_PASSWORD}@riverdb:5432/rivercore
+      PGHOST: riverdb
+      PGPORT: 5432
+      PGDATABASE: rivercore
+      PGUSER: rivercore
+      PGPASSWORD: ${RIVERDB_PASSWORD:?Set RIVERDB_PASSWORD in .env}
       RIVER_AI_ADMIN_TOKEN: ${RIVER_AI_ADMIN_TOKEN:?Set RIVER_AI_ADMIN_TOKEN in .env}
       RIVER_AI_LOCAL_URL: http://ollama:11434/v1/chat/completions
       RIVER_AI_LOCAL_MODEL: ${RIVER_AI_LOCAL_MODEL:-qwen2.5:7b}
