@@ -81,6 +81,25 @@ async function authenticatedUser(req) {
   return data.user;
 }
 
+async function withUserTransaction(userId, operation) {
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    await client.query(
+      "SELECT set_config('rivercloud.user_id', $1, true)",
+      [userId],
+    );
+    const result = await operation(client);
+    await client.query('COMMIT');
+    return result;
+  } catch (error) {
+    await client.query('ROLLBACK').catch(() => {});
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
 const server = http.createServer(async (req, res) => {
   try {
     if (rateLimited(req)) return send(res, 429, { error: 'rate_limited' });
@@ -98,9 +117,11 @@ const server = http.createServer(async (req, res) => {
     if (!user) return send(res, 401, { error: 'unauthorized' });
 
     if (req.method === 'GET') {
-      const result = await pool.query(
-        'SELECT user_id, display_name, updated_at FROM rivercloud.user_profiles WHERE user_id = $1',
-        [user.id],
+      const result = await withUserTransaction(user.id, (client) =>
+        client.query(
+          'SELECT user_id, display_name, updated_at FROM rivercloud.user_profiles WHERE user_id = $1',
+          [user.id],
+        ),
       );
       return send(res, 200, { profile: result.rows[0] || null });
     }
@@ -114,13 +135,15 @@ const server = http.createServer(async (req, res) => {
       return send(res, 400, { error: 'display_name_must_be_1_to_80_characters' });
     }
 
-    const result = await pool.query(
-      `INSERT INTO rivercloud.user_profiles (user_id, display_name)
-       VALUES ($1, $2)
-       ON CONFLICT (user_id) DO UPDATE
-       SET display_name = EXCLUDED.display_name, updated_at = now()
-       RETURNING user_id, display_name, updated_at`,
-      [user.id, displayName],
+    const result = await withUserTransaction(user.id, (client) =>
+      client.query(
+        `INSERT INTO rivercloud.user_profiles (user_id, display_name)
+         VALUES ($1, $2)
+         ON CONFLICT (user_id) DO UPDATE
+         SET display_name = EXCLUDED.display_name, updated_at = now()
+         RETURNING user_id, display_name, updated_at`,
+        [user.id, displayName],
+      ),
     );
     return send(res, 200, { profile: result.rows[0] });
   } catch (error) {
