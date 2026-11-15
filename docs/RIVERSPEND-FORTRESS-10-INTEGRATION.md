@@ -104,3 +104,14 @@ Every application is onboarded through a documented manifest containing a stable
 ### Boundaries
 
 This document changes the architecture target, not production state. The current branch remains isolated. No production deployment, merge, live database migration, payment activation, customer-data access or production secret change is authorized by this design. The console and central control plane must not be described as operational until implemented and demonstrated against real services.
+
+
+## Central application registry — first implementation
+
+The first machine-readable central registry is stored at `registry/river-apps.registry.json`. It separates product applications from shared Fortress platform services and assigns stable IDs. Initial application entries are explicitly marked `identified_unverified`: they are project inventory candidates, not claims that a repository, deployment, runtime or live endpoint has been verified.
+
+The registry includes RiverSS Print as a distinct entry. Unknown repository paths, deployment URLs, environments, runtimes, owners, API versions and health endpoints remain null until verified from source evidence.
+
+Validation is implemented in `scripts/river-registry/validate.mjs` and runs through `.github/workflows/river-registry-validation.yml`. The validator checks JSON readability, unique IDs and required inventory fields. Passing this validation proves registry structure only; it does not verify application existence, deployment health or production status.
+
+Next inventory work: inspect repository trees and deployment metadata, then replace each initial status only when evidence supports it. Do not infer deployment URLs or health endpoints from names.
