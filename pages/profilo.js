@@ -111,6 +111,43 @@ export default function Profilo() {
           {session ? (
             <>
               <p className="mt-6 text-slate-700">Accesso effettuato come <strong>{session.user.email}</strong></p>
+              <section aria-labelledby="river-id-title" className="mt-6 rounded-3xl border border-slate-200 bg-slate-950 p-5 text-white shadow-sm">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <p className="text-xs font-bold uppercase tracking-[0.2em] text-cyan-300">Un solo accesso per tutto l’ecosistema</p>
+                    <h2 id="river-id-title" className="mt-1 text-2xl font-black">Il mio River ID</h2>
+                    <p className="mt-1 text-sm text-slate-300">Il tuo spazio personale per i servizi River.</p>
+                  </div>
+                  <span className="rounded-full border border-emerald-400/40 bg-emerald-400/10 px-3 py-1 text-xs font-bold text-emerald-200">Account connesso</span>
+                </div>
+                <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                  <Link href="/servizi/broadcast" className="rounded-2xl border border-cyan-400/30 bg-cyan-400/10 p-4 transition hover:bg-cyan-400/20">
+                    <span className="text-2xl" aria-hidden="true">📡</span>
+                    <span className="mt-2 block text-lg font-bold">RiverStreaming</span>
+                    <span className="mt-1 block text-sm text-slate-300">Apri l’area streaming RiverSpend.</span>
+                    <span className="mt-3 inline-block text-sm font-bold text-cyan-200">Apri servizio →</span>
+                  </Link>
+                  <div className="rounded-2xl border border-violet-400/30 bg-violet-400/10 p-4">
+                    <span className="text-2xl" aria-hidden="true">🎬</span>
+                    <span className="mt-2 block text-lg font-bold">River Video</span>
+                    <span className="mt-1 block text-sm text-slate-300">La futura videoteca personale: contenuti, preferiti e acquisti.</span>
+                    <span className="mt-3 inline-block text-xs font-bold uppercase tracking-wide text-violet-200">Collegamento in preparazione</span>
+                  </div>
+                  <div className="rounded-2xl border border-emerald-400/30 bg-emerald-400/10 p-4">
+                    <span className="text-2xl" aria-hidden="true">🎮</span>
+                    <span className="mt-2 block text-lg font-bold">RiverS PlayS</span>
+                    <span className="mt-1 block text-sm text-slate-300">La futura libreria giochi, con progressi, punteggi e tornei.</span>
+                    <span className="mt-3 inline-block text-xs font-bold uppercase tracking-wide text-emerald-200">Collegamento in preparazione</span>
+                  </div>
+                  <div className="rounded-2xl border border-amber-400/30 bg-amber-400/10 p-4">
+                    <span className="text-2xl" aria-hidden="true">🕹️</span>
+                    <span className="mt-2 block text-lg font-bold">RiverSpend StoreGamesShop</span>
+                    <span className="mt-1 block text-sm text-slate-300">La futura area acquisti per giochi e prodotti digitali autorizzati.</span>
+                    <span className="mt-3 inline-block text-xs font-bold uppercase tracking-wide text-amber-200">Collegamento in preparazione</span>
+                  </div>
+                </div>
+                <p className="mt-4 rounded-xl border border-white/10 bg-white/5 p-3 text-xs leading-relaxed text-slate-300">Questa è la prima interfaccia del River ID. Le librerie, gli ordini, gli abbonamenti e i progressi non sono ancora collegati: verranno attivati solo dopo l’integrazione e i test dei rispettivi servizi.</p>
+              </section>
               <section className="mt-4 rounded-2xl border border-teal-200 bg-teal-50 p-4">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div><h2 className="text-xl font-bold text-slate-900">Modifica profilo</h2><p className="text-sm text-slate-600">Aggiorna i tuoi dati personali.</p></div>
