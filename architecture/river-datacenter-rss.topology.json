@@ -185,12 +185,18 @@
       "name": "RiverSSAI 10.0",
       "kind": "application",
       "status": "identified_unverified"
+    },
+    {
+      "id": "river-fortress-10",
+      "name": "River Fortress 10.0",
+      "kind": "platform_service",
+      "status": "design_or_partial_implementation"
     }
   ],
   "edges": [
     {
       "from": "river-datacenter-rss",
-      "to": "river-fortress",
+      "to": "river-fortress-10",
       "relation": "coordinates",
       "status": "planned"
     },
