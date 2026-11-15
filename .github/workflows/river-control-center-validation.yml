@@ -1,0 +1,36 @@
+name: River Control Center Validation
+
+on:
+  push:
+    branches:
+      - feat/river-fortress-integration-core
+    paths:
+      - "apps/riverspend-panel-control/**"
+      - ".github/workflows/river-control-center-validation.yml"
+  pull_request:
+    paths:
+      - "apps/riverspend-panel-control/**"
+      - ".github/workflows/river-control-center-validation.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  android-bundle:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/riverspend-panel-control
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install app dependencies
+        run: npm install --no-audit --no-fund
+      - name: Check Expo project configuration
+        run: npx expo-doctor
+      - name: Export Android JavaScript bundle
+        run: npx expo export --platform android
