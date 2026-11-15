@@ -102,7 +102,7 @@ function runProfileSql(sql, variables) {
         reject(error);
         return;
       }
-      const jsonLine = stdout.split(/\\r?\\n/).map((line) => line.trim())
+      const jsonLine = stdout.split(/\r?\n/).map((line) => line.trim())
         .filter((line) => line === 'null' || line.startsWith('{')).at(-1);
       if (!jsonLine) {
         reject(new Error(`RiverCloud database returned no profile result: ${stderr.slice(0, 300)}`));
