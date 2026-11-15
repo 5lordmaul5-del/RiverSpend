@@ -36,6 +36,13 @@ function rateLimited(req) {
   const now = Date.now();
   const entry = windows.get(key);
   if (!entry || now - entry.start >= RATE_WINDOW_MS) {
+    if (windows.size >= 10_000) {
+      for (const [storedKey, storedEntry] of windows) {
+        if (now - storedEntry.start >= RATE_WINDOW_MS) windows.delete(storedKey);
+        if (windows.size < 8_000) break;
+      }
+      if (windows.size >= 10_000) windows.delete(windows.keys().next().value);
+    }
     windows.set(key, { start: now, count: 1 });
     return false;
   }
