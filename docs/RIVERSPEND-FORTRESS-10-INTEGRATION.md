@@ -37,3 +37,17 @@ RiverCloud and the RiverSSAI prototype currently have separate PostgreSQL instan
 5. A controlled staging test proves database readiness, Ollama readiness, authenticated chat and audit behavior.
 6. Security review closes all critical/high findings.
 7. Integration with RiverCloud identity/database is separately designed and tested; no implicit trust between the two prototypes.
+
+## RiverCloud ↔ RiverSSAI service contract (design gate)
+
+The two prototypes must communicate through authenticated APIs, not by sharing tables or database credentials.
+
+1. **User identity authority:** during the transition, RiverCloud continues to validate the existing Supabase Auth bearer token and derive the immutable user UUID. This does not replace the current login provider.
+2. **Application gateway:** the browser must call the RiverCloud-facing application API. It must never receive the RiverSSAI administrative token or a database credential.
+3. **Service identity:** before enabling chat for end users, RiverCloud must mint a short-lived signed service assertion for RiverSSAI. Required claims: issuer, audience, subject UUID, issued-at, not-before, expiry (maximum five minutes), unique token ID, and explicit scopes such as `ai:chat`, `memory:read`, and `memory:write`.
+4. **Key separation:** use an asymmetric signing key held only by the RiverCloud secret manager; RiverSSAI receives only the matching public verification key. Support key IDs and an overlap period for rotation. Never reuse the owner admin token as a service credential.
+5. **Per-user authorization:** convert RiverSSAI memory ownership from the current fixed `owner` scope to the verified subject UUID. Every read and write must include that subject and be tested for cross-user isolation. A signed token is not permission to read another user's data.
+6. **Service boundary:** RiverCloud and RiverSSAI keep separate databases. RiverCloud owns user/profile identity; RiverSSAI owns AI conversation/memory records. Cross-service calls use versioned APIs with request IDs, bounded timeouts, rate limits and audit records.
+7. **Release gates:** contract tests must prove missing/expired/wrong-audience tokens are rejected, scope violations are rejected, two users cannot read or mutate each other's memories, key rotation works, and RiverCloud remains functional when RiverSSAI is unavailable.
+
+This is a design specification only. No shared identity token, production key, live account, or public endpoint has been created or enabled in this branch.
