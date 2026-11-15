@@ -28,19 +28,21 @@ The 90 entries are registered specialist roles, not 90 always-running independen
 1. Install Docker Engine and the Docker Compose plugin.
 2. Copy this repository to the host.
 3. In infra/river-ai, create a private .env file with:
-   - RIVERDB_PASSWORD: long random database password.
+   - RIVERDB_PASSWORD: long random database password (any characters are supported; it is passed as a password value, not embedded in a URL).
    - RIVER_AI_ADMIN_TOKEN: random secret of at least 32 characters.
    - RIVER_AI_LOCAL_MODEL: model suitable for available RAM/CPU/GPU (default qwen2.5:7b).
 4. Start: docker compose up -d --build.
 5. Download the model once: docker compose exec ollama ollama pull qwen2.5:7b.
-6. Check locally: curl http://127.0.0.1:8787/health.
-7. Put a TLS reverse proxy (Caddy or Nginx) in front of port 8787. Keep PostgreSQL and Ollama private; never expose ports 5432 or 11434 publicly.
+6. Check liveness: curl http://127.0.0.1:8787/health.
+7. Check readiness after the model download: curl http://127.0.0.1:8787/ready.
+8. Put a TLS reverse proxy (Caddy or Nginx) in front of port 8787. Keep PostgreSQL and Ollama private; never expose ports 5432 or 11434 publicly.
 
-**Network note:** PostgreSQL and the RiverSSAI API use an internal Docker network. Ollama joins that private network and a separate outbound-only Docker network so it can download model weights. Ollama has no published host port; the RiverSSAI API is the only published service and is bound to 127.0.0.1.
+**Network note:** PostgreSQL and the RiverSSAI API use an internal Docker network. Ollama joins that private network and a separate outbound Docker network so it can download model weights. Ollama has no published host port; the RiverSSAI API is the only published service and is bound to 127.0.0.1. The RiverSSAI container runs as the unprivileged Node user, with a read-only root filesystem, dropped Linux capabilities, and no-new-privileges enabled.
 
 ## API
-All endpoints except GET /health require the owner Bearer token.
-- GET /health: health check and registered-role/squad counts.
+GET /health and GET /ready are public status endpoints and do not return secrets. All /v1 endpoints require the owner Bearer token.
+- GET /health: liveness check for the API and PostgreSQL.
+- GET /ready: readiness check for PostgreSQL and the configured Ollama model.
 - GET /v1/agents: list the 90-role registry and 10 squads.
 - POST /v1/chat: send messages; optional agent selects one registered role, or agent: "team" with teamSize of 2, 4, 8, 10, 20, or 30 asks Nova to coordinate relevant specialists.
 - POST /v1/memories: store an owner memory.
@@ -49,6 +51,8 @@ Example chat request:
 ~~~json
 {"agent":"team","teamSize":4,"messages":[{"role":"user","content":"Controlla la sicurezza del server"}]}
 ~~~
+
+**Identity limitation:** this is still a single-owner development prototype. The Bearer token is an administrative credential and memory rows use one fixed owner scope. It is not yet a multi-user identity system and must not be connected to public user accounts or production customer data. River ID/RiverAuth and per-user authorization must be completed and tested first.
 
 ## Zero-budget development phase
 Free-tier managed services can be used for isolated testing, but they remain external dependencies with quotas, suspension policies, and availability limits. Do not describe a free-tier deployment as fully independent infrastructure. A local model is not automatically free: compute, storage, electricity, and connectivity have costs.
