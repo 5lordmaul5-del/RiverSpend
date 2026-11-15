@@ -12,7 +12,7 @@
 
 ## Deployment stages
 
-- **Stage 0 — isolated local DB:** PostgreSQL container, loopback-only port, persistent volume, encrypted dump helper.
+- **Stage 0 — isolated local DB:** PostgreSQL container, loopback-only port, persistent volume, encrypted dump helper, and a disposable restore-drill script. The restore drill uses a temporary PostgreSQL 17 container with no network, published ports, or persistent volume; decrypted dump data is streamed into it and is never written to the host filesystem.
 - **Stage 1 — RiverAuth and API:** identity provider, session validation, role-based authorization, API gateway, audit logging.
 - **Stage 2 — RiverStorage:** select and test an S3-compatible or self-hosted object store; private buckets, lifecycle, malware scanning and signed URLs.
 - **Stage 3 — resilience:** off-host encrypted copies in two independent locations, restore automation, health checks, alerting and documented RTO/RPO.
@@ -24,7 +24,7 @@
 - Database and API are not publicly reachable except through the authenticated gateway.
 - AuthZ tests prove users cannot read or mutate another user's records.
 - Storage policies prove private objects cannot be fetched without authorization.
-- Backups decrypt and restore successfully into a clean isolated database.
+- Backups pass SHA-256 verification and decrypt/restore successfully into a clean disposable database; the drill records the restored public-table count.
 - A failed primary host can be recovered from an independent copy.
 - Secrets are stored in a secret manager and rotated; none are committed to Git.
 - Load, rate-limit, backup/restore, and incident-recovery tests are recorded.
