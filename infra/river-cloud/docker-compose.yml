@@ -29,7 +29,7 @@ services:
       PORT: "8080"
       RIVERAUTH_ISSUER_URL: ${RIVERAUTH_ISSUER_URL:?Set RIVERAUTH_ISSUER_URL in infra/river-cloud/.env}
       RIVERAUTH_PUBLISHABLE_KEY: ${RIVERAUTH_PUBLISHABLE_KEY:?Set RIVERAUTH_PUBLISHABLE_KEY in infra/river-cloud/.env}
-      RIVER_CLOUD_API_DATABASE_URL: postgres://rivercloud_api:${RIVER_CLOUD_API_DB_PASSWORD:?Set RIVER_CLOUD_API_DB_PASSWORD in infra/river-cloud/.env}@rivercloud-db:5432/rivercloud
+      RIVER_CLOUD_API_DB_PASSWORD: ${RIVER_CLOUD_API_DB_PASSWORD:?Set RIVER_CLOUD_API_DB_PASSWORD in infra/river-cloud/.env}
     depends_on:
       rivercloud-db:
         condition: service_healthy
