@@ -16,16 +16,31 @@ const MAX_BODY = 24 * 1024;
 const MAX_MESSAGE = 4000;
 const MAX_HISTORY = 12;
 const MAX_TEAM_SPECIALISTS = 30;
-const MAX_PARALLEL = Math.max(1, Math.min(2, Number(process.env.RIVER_AI_MAX_PARALLEL || 1)));
-const RATE_LIMIT = Math.max(1, Number(process.env.RIVER_AI_MAX_REQUESTS_PER_MINUTE || 20));
 const ALLOWED_TEAM_SIZES = [2, 4, 8, 10, 20, 30];
 const hits = new Map();
 
-if (!DATABASE_URL || ADMIN_TOKEN.length < 32) {
-  throw new Error("DATABASE_URL and a RIVER_AI_ADMIN_TOKEN of at least 32 characters are required.");
+function boundedPositiveInt(value, fallback, maximum) {
+  const parsed = Number(value);
+  return Number.isSafeInteger(parsed) && parsed > 0 ? Math.min(parsed, maximum) : fallback;
+}
+
+const MAX_PARALLEL = boundedPositiveInt(process.env.RIVER_AI_MAX_PARALLEL, 1, 2);
+const RATE_LIMIT = boundedPositiveInt(process.env.RIVER_AI_MAX_REQUESTS_PER_MINUTE, 20, 1000);
+const databaseConfig = DATABASE_URL
+  ? { connectionString: DATABASE_URL }
+  : {
+      host: process.env.PGHOST,
+      port: boundedPositiveInt(process.env.PGPORT, 5432, 65535),
+      database: process.env.PGDATABASE,
+      user: process.env.PGUSER,
+      password: process.env.PGPASSWORD
+    };
+
+if ((!DATABASE_URL && ![databaseConfig.host, databaseConfig.database, databaseConfig.user, databaseConfig.password].every(Boolean)) || ADMIN_TOKEN.length < 32) {
+  throw new Error("Configure DATABASE_URL or PGHOST/PGDATABASE/PGUSER/PGPASSWORD and a RIVER_AI_ADMIN_TOKEN of at least 32 characters.");
 }
 const pool = new Pool({
-  connectionString: DATABASE_URL,
+  ...databaseConfig,
   max: 10,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 5000,
@@ -60,6 +75,17 @@ function rateLimited(req) {
   const recent = (hits.get(ip) || []).filter((t) => now - t < 60000);
   recent.push(now);
   hits.set(ip, recent);
+
+  // Bound memory use if requests arrive from many distinct source addresses.
+  if (hits.size > 5000) {
+    for (const [key, timestamps] of hits) {
+      const active = timestamps.filter((t) => now - t < 60000);
+      if (active.length) hits.set(key, active);
+      else hits.delete(key);
+      if (hits.size <= 5000) break;
+    }
+    while (hits.size > 5000) hits.delete(hits.keys().next().value);
+  }
   return recent.length > RATE_LIMIT;
 }
 async function readBody(req) {
@@ -111,7 +137,7 @@ const MASTER_KNOWLEDGE = fs.existsSync(MASTER_KNOWLEDGE_PATH)
   ? fs.readFileSync(MASTER_KNOWLEDGE_PATH, "utf8").slice(0, 18000)
   : "";
 const MASTER_KNOWLEDGE_CONTEXT = MASTER_KNOWLEDGE
-  ? "\n\nCONOSCENZA CANONICA RIVERSPEND (fonte versionata; verifica sempre lo stato live):\n" + MASTER_KNOWLEDGE
+  ? "\\n\\nCONOSCENZA CANONICA RIVERSPEND (fonte versionata; verifica sempre lo stato live):\\n" + MASTER_KNOWLEDGE
   : "";
 
 const server = http.createServer(async (req, res) => {
@@ -172,8 +198,9 @@ const server = http.createServer(async (req, res) => {
   if (!["POST", "GET"].includes(req.method) || !["/v1/chat", "/v1/memories", "/v1/agents"].includes(url.pathname)) {
     return send(res, 404, { error: "Not found" });
   }
-  if (!authorized(req)) return send(res, 401, { error: "Accesso amministratore non valido." });
+  // Rate-limit before token validation to slow down bearer-token guessing.
   if (rateLimited(req)) return send(res, 429, { error: "Limite temporaneo raggiunto. Riprova tra un minuto." });
+  if (!authorized(req)) return send(res, 401, { error: "Accesso amministratore non valido." });
 
   if (req.method === "GET" && url.pathname === "/v1/agents") {
     return send(res, 200, {
@@ -226,9 +253,9 @@ const server = http.createServer(async (req, res) => {
     );
     const memoryText = memoryResult.rows
       .map((m) => "[" + m.category + "] " + m.title + ": " + m.content.slice(0, 300))
-      .join("\n")
+      .join("\\n")
       .slice(0, 1800);
-    const memoryContext = memoryText ? "\nMemoria privata:\n" + memoryText : "";
+    const memoryContext = memoryText ? "\\nMemoria privata:\\n" + memoryText : "";
 
     let answer;
     let agentsUsed;
@@ -238,28 +265,28 @@ const server = http.createServer(async (req, res) => {
         .slice(0, MAX_TEAM_SPECIALISTS);
       if (!team.length) {
         answer = await callLocalModel([
-          { role: "system", content: SYSTEM + memoryContext + "\nRUOLO: " + getAgentPrompt("nova") },
+          { role: "system", content: SYSTEM + memoryContext + "\\nRUOLO: " + getAgentPrompt("nova") },
           ...safe
         ], 1100);
         agentsUsed = ["nova"];
       } else {
         const reports = await runWithLimit(team, MAX_PARALLEL, async (specialist) => {
           const report = await callLocalModel([
-            { role: "system", content: SYSTEM + "\nRUOLO SPECIALISTA: " + getAgentPrompt(specialist) + "\nFornisci un contributo breve: analisi, un rischio e una verifica." },
+            { role: "system", content: SYSTEM + "\\nRUOLO SPECIALISTA: " + getAgentPrompt(specialist) + "\\nFornisci un contributo breve: analisi, un rischio e una verifica." },
             ...(memoryContext ? [{ role: "system", content: memoryContext }] : []),
             { role: "user", content: latestPrompt }
           ], 280);
           return { specialist, report };
         });
         answer = await callLocalModel([
-          { role: "system", content: SYSTEM + MASTER_KNOWLEDGE_CONTEXT + "\nSei NOVA, coordinatrice. Integra i contributi, segnala divergenze e restituisci decisione, piano, rischi e verifiche." },
-          { role: "user", content: "RICHIESTA:\n" + latestPrompt + "\n\nCONTRIBUTI SPECIALISTI:\n" + reports.map((item) => item.specialist + ":\n" + item.report).join("\n\n") }
+          { role: "system", content: SYSTEM + MASTER_KNOWLEDGE_CONTEXT + "\\nSei NOVA, coordinatrice. Integra i contributi, segnala divergenze e restituisci decisione, piano, rischi e verifiche." },
+          { role: "user", content: "RICHIESTA:\\n" + latestPrompt + "\\n\\nCONTRIBUTI SPECIALISTI:\\n" + reports.map((item) => item.specialist + ":\\n" + item.report).join("\\n\\n") }
         ], 1200);
         agentsUsed = ["nova", ...team];
       }
     } else {
       answer = await callLocalModel([
-        { role: "system", content: SYSTEM + MASTER_KNOWLEDGE_CONTEXT + memoryContext + "\nRUOLO ATTIVO: " + getAgentPrompt(requestedAgent) },
+        { role: "system", content: SYSTEM + MASTER_KNOWLEDGE_CONTEXT + memoryContext + "\\nRUOLO ATTIVO: " + getAgentPrompt(requestedAgent) },
         ...safe
       ], 1200);
       agentsUsed = [requestedAgent];
