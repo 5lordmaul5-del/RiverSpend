@@ -512,6 +512,17 @@
       "health_endpoint": null,
       "environment": "design-only",
       "last_verified_at": null
+    },
+    {
+      "service_id": "river-fortress-10",
+      "display_name": "River Fortress 10.0",
+      "domain": "central operations control plane",
+      "status": "design_or_partial_implementation",
+      "repository": "5lordmaul5-del/RiverSpend",
+      "evidence": "Fortress architecture, registry and validation work exist on the isolated branch; no live operations console is established.",
+      "health_endpoint": null,
+      "environment": "isolated-development",
+      "last_verified_at": null
     }
   ]
 }
