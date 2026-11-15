@@ -51,3 +51,14 @@ The two prototypes must communicate through authenticated APIs, not by sharing t
 7. **Release gates:** contract tests must prove missing/expired/wrong-audience tokens are rejected, scope violations are rejected, two users cannot read or mutate each other's memories, key rotation works, and RiverCloud remains functional when RiverSSAI is unavailable.
 
 This is a design specification only. No shared identity token, production key, live account, or public endpoint has been created or enabled in this branch.
+
+## CI evidence — 15 November 2026
+
+The following isolated GitHub Actions runs completed successfully:
+
+- **RiverSSAI runtime validation:** [run 43738965105](https://github.com/5lordmaul5-del/RiverSpend/actions/runs/43738965105), commit `72938a25c76e371d9250ee83e94b909c54fc4a86`. Passed registry/router assertions (90 unique roles, 10 squads, 89 routing maps), JavaScript syntax checks, Docker Compose validation and standalone image build.
+- **RiverCloud lifecycle and recovery:** [run 43739041638](https://github.com/5lordmaul5-del/RiverSpend/actions/runs/43739041638), commit `5a4dfbe2abc45286869dab208bd4faef65289464`. Passed RiverAuth unit tests (4/4), Compose validation, PostgreSQL startup, RLS isolation, stop/restart persistence, encrypted backup, disposable restore, and the post-restore RLS regression. The restore drill reported 2 restored application tables.
+
+An earlier RiverCloud run, [43739008487](https://github.com/5lordmaul5-del/RiverSpend/actions/runs/43739008487), correctly failed at the post-restore RLS test because the dump omitted grants. The restore drill was then updated to recreate the non-login role and reapply only the required schema/table grants; the later run above passed.
+
+**What these results do not prove:** RiverSSAI has not yet completed a live Ollama inference/chat test with PostgreSQL, and neither service has been tested on a dedicated staging host with real TLS, production identity, multi-user authorization, off-site backup or failover. CI success is not production approval.
