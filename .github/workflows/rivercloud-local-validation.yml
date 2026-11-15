@@ -2,7 +2,7 @@ name: RiverCloud local validation
 
 on:
   push:
-    branches: [main]
+    branches: [main, feat/river-fortress-integration-core]
     paths:
       - "infra/river-cloud/**"
       - "scripts/river-cloud/**"
