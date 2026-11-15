@@ -1,8 +1,7 @@
 import http from 'node:http';
 import { createRiverAuth } from '../auth/river-auth.mjs';
-import pg from 'pg';
+import { spawn } from 'node:child_process';
 
-const { Pool } = pg;
 const PORT = Number(process.env.PORT || 8080);
 const SUPABASE_URL = process.env.RIVERAUTH_ISSUER_URL;
 const SUPABASE_PUBLISHABLE_KEY = process.env.RIVERAUTH_PUBLISHABLE_KEY;
@@ -15,18 +14,6 @@ if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY || !DATABASE_PASSWORD) {
 const riverAuth = createRiverAuth({
   issuerUrl: SUPABASE_URL,
   publishableKey: SUPABASE_PUBLISHABLE_KEY,
-});
-const pool = new Pool({
-  host: 'rivercloud-db',
-  port: 5432,
-  database: 'rivercloud',
-  user: 'rivercloud_api',
-  password: DATABASE_PASSWORD,
-  max: 5,
-  idleTimeoutMillis: 10_000,
-  connectionTimeoutMillis: 3_000,
-  statement_timeout: 5_000,
-  application_name: 'rivercloud-private-api',
 });
 
 const windows = new Map();
@@ -81,23 +68,54 @@ async function authenticatedUser(req) {
   return riverAuth.verifyBearerToken(req.headers.authorization || '');
 }
 
-async function withUserTransaction(userId, operation) {
-  const client = await pool.connect();
-  try {
-    await client.query('BEGIN');
-    await client.query(
-      "SELECT set_config('rivercloud.user_id', $1, true)",
-      [userId],
-    );
-    const result = await operation(client);
-    await client.query('COMMIT');
-    return result;
-  } catch (error) {
-    await client.query('ROLLBACK').catch(() => {});
-    throw error;
-  } finally {
-    client.release();
-  }
+function runProfileSql(sql, variables) {
+  return new Promise((resolve, reject) => {
+    const args = [
+      '-X', '-qAt', '-v', 'ON_ERROR_STOP=1',
+      '-h', 'rivercloud-db', '-p', '5432',
+      '-U', 'rivercloud_api', '-d', 'rivercloud',
+    ];
+    for (const [key, value] of Object.entries(variables)) {
+      args.push('-v', `${key}=${value}`);
+    }
+
+    const child = spawn('psql', args, {
+      env: { ...process.env, PGPASSWORD: DATABASE_PASSWORD },
+      stdio: ['pipe', 'pipe', 'pipe'],
+    });
+    let stdout = '';
+    let stderr = '';
+    child.stdout.setEncoding('utf8');
+    child.stderr.setEncoding('utf8');
+    child.stdout.on('data', (chunk) => { stdout += chunk; });
+    child.stderr.on('data', (chunk) => { stderr += chunk; });
+    const timeout = setTimeout(() => child.kill('SIGKILL'), 8000);
+    child.on('error', (error) => {
+      clearTimeout(timeout);
+      reject(error);
+    });
+    child.on('close', (code) => {
+      clearTimeout(timeout);
+      if (code !== 0) {
+        const error = new Error('RiverCloud database operation failed');
+        error.status = 503;
+        reject(error);
+        return;
+      }
+      const jsonLine = stdout.split(/\\r?\\n/).map((line) => line.trim())
+        .filter((line) => line === 'null' || line.startsWith('{')).at(-1);
+      if (!jsonLine) {
+        reject(new Error(`RiverCloud database returned no profile result: ${stderr.slice(0, 300)}`));
+        return;
+      }
+      try {
+        resolve(JSON.parse(jsonLine));
+      } catch {
+        reject(new Error('RiverCloud database returned invalid JSON'));
+      }
+    });
+    child.stdin.end(sql);
+  });
 }
 
 const server = http.createServer(async (req, res) => {
@@ -117,13 +135,22 @@ const server = http.createServer(async (req, res) => {
     if (!user) return send(res, 401, { error: 'unauthorized' });
 
     if (req.method === 'GET') {
-      const result = await withUserTransaction(user.subject, (client) =>
-        client.query(
-          'SELECT user_id, display_name, updated_at FROM rivercloud.user_profiles WHERE user_id = $1',
-          [user.subject],
-        ),
+      const profile = await runProfileSql(
+        `BEGIN;
+         WITH subject_context AS (
+           SELECT set_config('rivercloud.user_id', :'subject', true)
+         )
+         SELECT COALESCE(
+           (SELECT row_to_json(profile)::text
+            FROM rivercloud.user_profiles AS profile
+            WHERE profile.user_id = :'subject'::uuid),
+           'null'
+         )
+         FROM subject_context;
+         COMMIT;`,
+        { subject: user.subject },
       );
-      return send(res, 200, { profile: result.rows[0] || null });
+      return send(res, 200, { profile });
     }
 
     const body = await readJson(req);
@@ -135,17 +162,21 @@ const server = http.createServer(async (req, res) => {
       return send(res, 400, { error: 'display_name_must_be_1_to_80_characters' });
     }
 
-    const result = await withUserTransaction(user.subject, (client) =>
-      client.query(
-        `INSERT INTO rivercloud.user_profiles (user_id, display_name)
-         VALUES ($1, $2)
-         ON CONFLICT (user_id) DO UPDATE
-         SET display_name = EXCLUDED.display_name, updated_at = now()
-         RETURNING user_id, display_name, updated_at`,
-        [user.subject, displayName],
-      ),
+    const profile = await runProfileSql(
+      `BEGIN;
+       WITH subject_context AS (
+         SELECT set_config('rivercloud.user_id', :'subject', true)
+       )
+       INSERT INTO rivercloud.user_profiles (user_id, display_name)
+       SELECT :'subject'::uuid, :'display_name'
+       FROM subject_context
+       ON CONFLICT (user_id) DO UPDATE
+       SET display_name = EXCLUDED.display_name, updated_at = now()
+       RETURNING row_to_json(rivercloud.user_profiles)::text;
+       COMMIT;`,
+      { subject: user.subject, display_name: displayName },
     );
-    return send(res, 200, { profile: result.rows[0] });
+    return send(res, 200, { profile });
   } catch (error) {
     const status = Number.isInteger(error?.status) ? error.status : 500;
     if (status === 500) console.error('RiverCloud API request failed:', error?.message || 'unknown error');
@@ -159,7 +190,6 @@ server.listen(PORT, '0.0.0.0', () => {
 
 async function shutdown() {
   server.close(async () => {
-    await pool.end().catch(() => {});
     process.exit(0);
   });
   setTimeout(() => process.exit(1), 10_000).unref();
