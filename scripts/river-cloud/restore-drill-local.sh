@@ -33,7 +33,12 @@ done
 
 # Verify the encrypted artifact before attempting decryption.
 if [[ -f "$BACKUP_FILE.sha256" ]]; then
-  (cd "$(dirname "$BACKUP_FILE")" && sha256sum -c "$(basename "$BACKUP_FILE").sha256")
+  EXPECTED_CHECKSUM="$(awk 'NR == 1 {print $1}' "$BACKUP_FILE.sha256")"
+  ACTUAL_CHECKSUM="$(sha256sum "$BACKUP_FILE" | awk '{print $1}')"
+  [[ -n "$EXPECTED_CHECKSUM" && "$EXPECTED_CHECKSUM" == "$ACTUAL_CHECKSUM" ]] || {
+    echo "Backup checksum verification failed." >&2
+    exit 1
+  }
 else
   echo "Warning: no adjacent SHA-256 file found; continuing without checksum verification." >&2
 fi
