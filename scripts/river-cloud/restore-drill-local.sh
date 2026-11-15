@@ -83,6 +83,12 @@ age --decrypt --identity "$RIVER_CLOUD_AGE_IDENTITY_FILE" "$BACKUP_FILE" \
       --no-acl \
       --exit-on-error
 
+# The backup intentionally omits ACLs; restore the minimum grants required
+# for the application-role RLS regression without granting login capability.
+docker exec "$CONTAINER_NAME" \
+  psql -U postgres -d rivercloud_restore -v ON_ERROR_STOP=1 \
+  -c "GRANT USAGE ON SCHEMA rivercloud TO rivercloud_api; GRANT SELECT, INSERT, UPDATE ON rivercloud.user_profiles TO rivercloud_api;"
+
 # Re-run the ownership-isolation regression against the restored schema.
 docker exec -i "$CONTAINER_NAME" \
   psql -U postgres -d rivercloud_restore -v ON_ERROR_STOP=1 \
