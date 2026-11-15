@@ -14,40 +14,44 @@
       "display_name": "RiverSpend",
       "category": "core commerce ecosystem",
       "status": "identified_unverified",
-      "evidence": "Mentioned in project context; repository and deployment evidence still required.",
-      "repository": null,
-      "repository_path": null,
-      "deployment_url": null,
-      "environment": null,
-      "runtime": null,
+      "evidence": "Root Next.js application verified in repository; Vercel project river-spend has a READY preview deployment for the Fortress branch. Production status is not established by this preview.",
+      "repository": "5lordmaul5-del/RiverSpend",
+      "repository_path": ".",
+      "deployment_url": "https://river-spend-m7t9a8im7-mauryle75-8055s-projects.vercel.app",
+      "environment": "Vercel Preview; READY deployment observed for Fortress branch, not production",
+      "runtime": "Next.js 16 / React 19",
       "health_endpoint": null,
       "api_version": null,
       "owner_service": null,
       "dependencies": [],
       "data_classification": "unclassified",
       "backup_policy": "not_verified",
-      "last_verified_at": null,
-      "notes": []
+      "last_verified_at": "2026-11-15",
+      "notes": [
+        "Vercel project also has riverspend.com and www.riverspend.com domains configured; current branch deployment inspected is Preview."
+      ]
     },
     {
       "app_id": "riverspend-shop",
       "display_name": "RiverSpendShop",
       "category": "commerce",
       "status": "identified_unverified",
-      "evidence": "Mentioned in project context; repository and deployment evidence still required.",
-      "repository": null,
-      "repository_path": null,
+      "evidence": "Observed in repository tree on branch feat/river-fortress-integration-core; app manifests and package metadata inspected. app.json identifies RiverSpendShop with Android package com.riverspend.shop and iOS bundle identifier com.riverspend.shop.",
+      "repository": "5lordmaul5-del/RiverSpend",
+      "repository_path": "apps/riverspendshop",
       "deployment_url": null,
-      "environment": null,
-      "runtime": null,
+      "environment": "source present; native build/store distribution not verified",
+      "runtime": "Expo SDK 57 / React Native 0.86",
       "health_endpoint": null,
       "api_version": null,
       "owner_service": null,
       "dependencies": [],
       "data_classification": "unclassified",
       "backup_policy": "not_verified",
-      "last_verified_at": null,
-      "notes": []
+      "last_verified_at": "2026-11-15",
+      "notes": [
+        "Separate native app package; no matching Vercel deployment established."
+      ]
     },
     {
       "app_id": "river-video",
@@ -74,20 +78,22 @@
       "display_name": "RiverStreaming",
       "category": "video and streaming platform",
       "status": "identified_unverified",
-      "evidence": "Mentioned in project context; repository and deployment evidence still required.",
-      "repository": null,
-      "repository_path": null,
+      "evidence": "Observed in repository tree on branch feat/river-fortress-integration-core; app manifests and package metadata inspected. app.json identifies RiverSpendStream with Android package com.riverspend.stream and iOS bundle identifier com.riverspend.stream.",
+      "repository": "5lordmaul5-del/RiverSpend",
+      "repository_path": "apps/riverspendstream",
       "deployment_url": null,
-      "environment": null,
-      "runtime": null,
+      "environment": "source present; native build/store distribution not verified",
+      "runtime": "Expo SDK 57 / React Native 0.86",
       "health_endpoint": null,
       "api_version": null,
       "owner_service": null,
       "dependencies": [],
       "data_classification": "unclassified",
       "backup_policy": "not_verified",
-      "last_verified_at": null,
-      "notes": []
+      "last_verified_at": "2026-11-15",
+      "notes": [
+        "Likely related to the RiverStreaming concept, but the exact product-name mapping is not confirmed. Kept separate from River Video."
+      ]
     },
     {
       "app_id": "enigma",
@@ -154,11 +160,11 @@
       "display_name": "RiverSignals",
       "category": "signals and communications",
       "status": "identified_unverified",
-      "evidence": "Mentioned in project context; repository and deployment evidence still required.",
+      "evidence": "Vercel project riversignals has a verified riversignals.vercel.app domain and READY deployments with production target. Git repository linkage and application source path were not established.",
       "repository": null,
       "repository_path": null,
-      "deployment_url": null,
-      "environment": null,
+      "deployment_url": "https://riversignals.vercel.app",
+      "environment": "Vercel production deployment observed; repository/runtime mapping not verified",
       "runtime": null,
       "health_endpoint": null,
       "api_version": null,
@@ -166,8 +172,10 @@
       "dependencies": [],
       "data_classification": "unclassified",
       "backup_policy": "not_verified",
-      "last_verified_at": null,
-      "notes": []
+      "last_verified_at": "2026-11-15",
+      "notes": [
+        "Deployment existence does not by itself prove current application health or source ownership."
+      ]
     },
     {
       "app_id": "river-space-signals",
@@ -308,6 +316,28 @@
       "backup_policy": "not_verified",
       "last_verified_at": null,
       "notes": []
+    },
+    {
+      "app_id": "riverspend-panel-control",
+      "display_name": "RiverSpend Panel Control (RSPC)",
+      "category": "administrative control application",
+      "status": "identified_unverified",
+      "evidence": "Observed in repository tree on branch feat/river-fortress-integration-core; app manifests and package metadata inspected. Expo app manifest identifies RiverSpendPanelControl; Vercel project riverspend-rspc exists but its source mapping to this native app is not confirmed.",
+      "repository": "5lordmaul5-del/RiverSpend",
+      "repository_path": "apps/riverspend-panel-control",
+      "deployment_url": null,
+      "environment": "source present; native build/store distribution not verified",
+      "runtime": "Expo SDK 57 / React Native 0.86",
+      "health_endpoint": null,
+      "api_version": null,
+      "owner_service": null,
+      "dependencies": [],
+      "data_classification": "unclassified",
+      "backup_policy": "not_verified",
+      "last_verified_at": "2026-11-15",
+      "notes": [
+        "Separate from the web Vercel project named riverspend-rspc until repository linkage is proven."
+      ]
     }
   ],
   "platform_services": [
