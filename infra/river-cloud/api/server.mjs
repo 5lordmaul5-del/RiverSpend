@@ -6,17 +6,21 @@ const { Pool } = pg;
 const PORT = Number(process.env.PORT || 8080);
 const SUPABASE_URL = process.env.RIVERAUTH_ISSUER_URL;
 const SUPABASE_PUBLISHABLE_KEY = process.env.RIVERAUTH_PUBLISHABLE_KEY;
-const DATABASE_URL = process.env.RIVER_CLOUD_API_DATABASE_URL;
+const DATABASE_PASSWORD = process.env.RIVER_CLOUD_API_DB_PASSWORD;
 
-if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY || !DATABASE_URL) {
-  throw new Error('RIVERAUTH_ISSUER_URL, RIVERAUTH_PUBLISHABLE_KEY and RIVER_CLOUD_API_DATABASE_URL are required');
+if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY || !DATABASE_PASSWORD) {
+  throw new Error('RIVERAUTH_ISSUER_URL, RIVERAUTH_PUBLISHABLE_KEY and RIVER_CLOUD_API_DB_PASSWORD are required');
 }
 
 const identity = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
   auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
 });
 const pool = new Pool({
-  connectionString: DATABASE_URL,
+  host: 'rivercloud-db',
+  port: 5432,
+  database: 'rivercloud',
+  user: 'rivercloud_api',
+  password: DATABASE_PASSWORD,
   max: 5,
   idleTimeoutMillis: 10_000,
   connectionTimeoutMillis: 3_000,
