@@ -143,8 +143,8 @@
       "evidence": "RiverSS Print placeholder page and SVG icon present in the Fortress branch. Page explicitly states that catalog, customization, quotes, orders, payments and production are not active.",
       "repository": "5lordmaul5-del/RiverSpend",
       "repository_path": "pages/river-print.js",
-      "deployment_url": "https://river-spend-m7t9a8im7-mauryle75-8055s-projects.vercel.app/river-print",
-      "environment": "Vercel Preview route via RiverSpend; page is informational only",
+      "deployment_url": null,
+      "environment": "source present on Fortress branch; current Vercel Preview build not yet available",
       "runtime": "Next.js 16 / React 19",
       "health_endpoint": null,
       "api_version": null,
@@ -154,7 +154,8 @@
       "backup_policy": "not_verified",
       "last_verified_at": "2026-11-15",
       "notes": [
-        "No printing, order intake or payment functionality is implemented by this page."
+        "No printing, order intake or payment functionality is implemented by this page.",
+        "Do not treat the earlier READY Preview deployment as containing this commit; Vercel build checks currently report build-rate-limit."
       ]
     },
     {
@@ -349,8 +350,8 @@
       "evidence": "Dedicated Next.js route pages/river-ai.js, PWA manifest, service worker, API chat endpoint and icon assets verified in the RiverSpend repository. Vercel deployment is inherited from the RiverSpend web project; no independent app project.",
       "repository": "5lordmaul5-del/RiverSpend",
       "repository_path": "pages/river-ai.js",
-      "deployment_url": "https://river-spend-m7t9a8im7-mauryle75-8055s-projects.vercel.app/river-ai",
-      "environment": "Vercel Preview route via RiverSpend; latest code changes await Preview build",
+      "deployment_url": null,
+      "environment": "source present on Fortress branch; current Vercel Preview build not yet available",
       "runtime": "Next.js 16 / React 19 / PWA",
       "health_endpoint": null,
       "api_version": null,
@@ -363,7 +364,8 @@
       "backup_policy": "not_verified",
       "last_verified_at": "2026-11-15",
       "notes": [
-        "PWA icon metadata now points to a dedicated SVG; Apple touch icon remains the existing 180px PNG fallback. User-device install icon must be checked after Preview deployment."
+        "PWA icon metadata now points to a dedicated SVG; Apple touch icon remains the existing 180px PNG fallback. User-device install icon must be checked after Preview deployment.",
+        "Do not treat the earlier READY Preview deployment as containing this commit; Vercel build checks currently report build-rate-limit."
       ]
     }
   ],
