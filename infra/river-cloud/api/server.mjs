@@ -1,5 +1,5 @@
 import http from 'node:http';
-import { createClient } from '@supabase/supabase-js';
+import { createRiverAuth } from '../auth/river-auth.mjs';
 import pg from 'pg';
 
 const { Pool } = pg;
@@ -12,8 +12,9 @@ if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY || !DATABASE_PASSWORD) {
   throw new Error('RIVERAUTH_ISSUER_URL, RIVERAUTH_PUBLISHABLE_KEY and RIVER_CLOUD_API_DB_PASSWORD are required');
 }
 
-const identity = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
-  auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+const riverAuth = createRiverAuth({
+  issuerUrl: SUPABASE_URL,
+  publishableKey: SUPABASE_PUBLISHABLE_KEY,
 });
 const pool = new Pool({
   host: 'rivercloud-db',
@@ -77,12 +78,7 @@ async function readJson(req) {
 }
 
 async function authenticatedUser(req) {
-  const header = req.headers.authorization || '';
-  const match = /^Bearer ([A-Za-z0-9._~-]+)$/.exec(header);
-  if (!match) return null;
-  const { data, error } = await identity.auth.getUser(match[1]);
-  if (error || !data?.user?.id) return null;
-  return data.user;
+  return riverAuth.verifyBearerToken(req.headers.authorization || '');
 }
 
 async function withUserTransaction(userId, operation) {
@@ -124,7 +120,7 @@ const server = http.createServer(async (req, res) => {
       const result = await withUserTransaction(user.id, (client) =>
         client.query(
           'SELECT user_id, display_name, updated_at FROM rivercloud.user_profiles WHERE user_id = $1',
-          [user.id],
+          [user.subject],
         ),
       );
       return send(res, 200, { profile: result.rows[0] || null });
@@ -146,7 +142,7 @@ const server = http.createServer(async (req, res) => {
          ON CONFLICT (user_id) DO UPDATE
          SET display_name = EXCLUDED.display_name, updated_at = now()
          RETURNING user_id, display_name, updated_at`,
-        [user.id, displayName],
+        [user.subject, displayName],
       ),
     );
     return send(res, 200, { profile: result.rows[0] });
