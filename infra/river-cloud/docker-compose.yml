@@ -6,8 +6,10 @@ services:
       POSTGRES_DB: rivercloud
       POSTGRES_USER: rivercloud
       POSTGRES_PASSWORD: ${RIVER_CLOUD_DB_PASSWORD:?Set RIVER_CLOUD_DB_PASSWORD in infra/river-cloud/.env}
+      RIVER_CLOUD_API_DB_PASSWORD: ${RIVER_CLOUD_API_DB_PASSWORD:?Set RIVER_CLOUD_API_DB_PASSWORD in infra/river-cloud/.env}
     volumes:
       - rivercloud_pgdata:/var/lib/postgresql/data
+      - ./init:/docker-entrypoint-initdb.d:ro
     ports:
       # Local development only: never bind PostgreSQL to a public interface.
       - "127.0.0.1:55432:5432"
@@ -19,9 +21,35 @@ services:
     networks:
       - rivercloud-private
 
+  rivercloud-api:
+    build:
+      context: ./api
+    restart: unless-stopped
+    environment:
+      PORT: "8080"
+      RIVERAUTH_ISSUER_URL: ${RIVERAUTH_ISSUER_URL:?Set RIVERAUTH_ISSUER_URL in infra/river-cloud/.env}
+      RIVERAUTH_PUBLISHABLE_KEY: ${RIVERAUTH_PUBLISHABLE_KEY:?Set RIVERAUTH_PUBLISHABLE_KEY in infra/river-cloud/.env}
+      RIVER_CLOUD_API_DATABASE_URL: postgres://rivercloud_api:${RIVER_CLOUD_API_DB_PASSWORD:?Set RIVER_CLOUD_API_DB_PASSWORD in infra/river-cloud/.env}@rivercloud-db:5432/rivercloud
+    depends_on:
+      rivercloud-db:
+        condition: service_healthy
+    expose:
+      - "8080"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8080/health').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    networks:
+      - rivercloud-private
+      - rivercloud-egress
+
 volumes:
   rivercloud_pgdata:
 
 networks:
   rivercloud-private:
     internal: true
+  # Only the API joins this network to validate upstream RiverAuth tokens.
+  rivercloud-egress:
+    driver: bridge
