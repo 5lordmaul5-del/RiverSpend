@@ -56,13 +56,22 @@ const apps = [
     action: 'Apri RiverSpend Social'
   },
   {
-    name: 'River Video · RiverSpend Streaming',
+    name: 'River Video',
+    subtitle: 'La piattaforma video River',
+    description: 'Film, serie, creator, live e produzioni originali. L’app e il catalogo sono in preparazione: la riproduzione sarà attivata dopo l’integrazione del backend video e la verifica dei diritti.',
+    logo: '/icons/river-video.svg',
+    href: '/river-video',
+    color: '#0f172a',
+    action: 'Apri River Video'
+  },
+  {
+    name: 'RiverSpend Streaming',
     subtitle: 'Film, serie, creator e dirette',
     description: 'Apri la piattaforma RiverSpend dedicata a film, serie, videoclip, creator e contenuti in streaming. Le funzioni di riproduzione e i cataloghi vengono attivati progressivamente.',
     logo: '/icons/streaming.svg',
     href: '/river-spend-stream',
     color: '#7c3aed',
-    action: 'Apri River Video'
+    action: 'Apri RiverSpend Streaming'
   },
   {
     name: 'RS SoundStudio',
