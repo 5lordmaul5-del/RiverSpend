@@ -47,13 +47,13 @@ const apps = [
     action: 'Apri RiverSpend Social'
   },
   {
-    name: 'RiverSpend Streaming',
-    subtitle: 'Video e contenuti',
-    description: 'Accedi all’area dedicata ai contenuti RiverSpend.',
+    name: 'River Video · RiverSpend Streaming',
+    subtitle: 'Film, serie, creator e dirette',
+    description: 'Apri la piattaforma RiverSpend dedicata a film, serie, videoclip, creator e contenuti in streaming. Le funzioni di riproduzione e i cataloghi vengono attivati progressivamente.',
     logo: '/icons/streaming.svg',
-    href: '/servizi/broadcast',
+    href: '/river-spend-stream',
     color: '#7c3aed',
-    action: 'Apri Streaming'
+    action: 'Apri River Video'
   },
   {
     name: 'RS SoundStudio',
@@ -74,13 +74,13 @@ const apps = [
     action: 'Apri RiverSpend Music'
   },
   {
-    name: 'RS PanelControl',
-    subtitle: 'Area privata del CEO',
-    description: 'Pannello riservato agli account autorizzati. L’accesso richiede autenticazione.',
-    logo: '/1000186325.png',
+    name: 'River Control Center',
+    subtitle: 'Centro di controllo RiverSpend',
+    description: 'Pannello di gestione dell’ecosistema RiverSpend. L’accesso e le funzioni amministrative sono riservati agli account autorizzati.',
+    logo: '/icons/panelcontrol.svg',
     href: '/rs-control-center',
     color: '#0f172a',
-    action: 'Apri PanelControl'
+    action: 'Apri River Control Center'
   },
   {
     name: 'RiverSpend Special Park',
@@ -128,7 +128,7 @@ export default function RiverSpendApps() {
           <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,230px),1fr))', gap: 16 }}>
             {apps.map((app) => (
               <article key={app.name} style={{ background: 'rgba(255,255,255,.07)', border: '1px solid rgba(103,232,249,.28)', borderRadius: 22, padding: 22, display: 'flex', flexDirection: 'column', minHeight: 270, boxShadow: '0 12px 32px rgba(0,0,0,.18)' }}>
-                <div aria-hidden="true" style={{ width: 88, height: 88, display: 'grid', placeItems: 'center', overflow: 'hidden', borderRadius: 18, background: 'transparent', padding: 0, marginBottom: 16, boxShadow: 'none' }}><img src={app.logo} alt={'Logo ' + app.name} style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: 14 }} /></div>
+                <div style={{ width: 88, height: 88, display: 'grid', placeItems: 'center', overflow: 'hidden', borderRadius: 18, background: 'rgba(255,255,255,.96)', padding: 9, marginBottom: 16, boxShadow: '0 6px 18px rgba(0,0,0,.18)' }}><img src={app.logo} alt={'Logo ' + app.name} loading="lazy" onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = '/icons/icon-192.png'; }} style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: 10 }} /></div>
                 <h2 style={{ fontSize: 21, fontWeight: 850, margin: '0 0 5px' }}>{app.name}</h2>
                 <div style={{ color: '#fbbf24', fontWeight: 700, fontSize: 13, marginBottom: 10 }}>{app.subtitle}</div>
                 <p style={{ color: '#cbd5e1', lineHeight: 1.55, fontSize: 14, flexGrow: 1 }}>{app.description}</p>
