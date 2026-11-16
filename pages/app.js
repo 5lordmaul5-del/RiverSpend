@@ -2,6 +2,15 @@ import Head from 'next/head';
 
 const apps = [
   {
+    name: 'RiverCloud',
+    subtitle: 'La fortezza digitale RiverSpend',
+    description: 'Infrastruttura per database portabile, storage, sicurezza, backup indipendenti e continuità operativa. La fondazione è pubblicata; i servizi autonomi sono in fase di realizzazione.',
+    logo: '/icons/river-cloud.svg',
+    href: '/river-cloud',
+    color: '#2563eb',
+    action: 'Apri RiverCloud'
+  },
+  {
     name: 'RiverSpendShop',
     subtitle: 'Il marketplace',
     description: 'Scopri prodotti, crea la tua rete e metti in vendita i tuoi articoli.',
