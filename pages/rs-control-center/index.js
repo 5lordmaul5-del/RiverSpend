@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Head from "next/head";
 import { supabase } from "../../lib/supabase";
 
 const cards = [
@@ -234,6 +235,12 @@ export default function RSControlCenter() {
         padding: 20,
       }}
     >
+      <Head>
+        <title>River Control Center · RSPC</title>
+        <meta name="description" content="Pannello amministrativo centrale dell’ecosistema RiverSpend." />
+        <meta name="theme-color" content="#0f172a" />
+        <link rel="icon" href="/icons/panelcontrol.svg" type="image/svg+xml" />
+      </Head>
       <header style={{ ...panel, marginBottom: 22 }}>
         <div style={{ color: "#08a7cf", fontSize: 25, fontWeight: 700 }}>
           RiverSpend
