@@ -1,0 +1,21 @@
+{
+  "id": "/river-cloud",
+  "name": "RiverCloud · RiverSpend",
+  "short_name": "RiverCloud",
+  "description": "Infrastruttura e sicurezza dell'ecosistema RiverSpend",
+  "start_url": "/river-cloud",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#071b35",
+  "theme_color": "#071b35",
+  "lang": "it",
+  "icons": [
+    {
+      "src": "/icons/river-cloud.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
