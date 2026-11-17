@@ -319,11 +319,7 @@ const server = http.createServer(async (req, res) => {
       agentsUsed = [requestedAgent];
     }
 
-    const last = safe[safe.length - 1].content;
-    await pool.query(
-      "INSERT INTO river_ai_memories(title,content,category,source) VALUES($1,$2,$3,$4),($5,$6,$7,$8)",
-      ["Messaggio utente", last, "conversation", "river-ai-chat", "Risposta Nova", answer.slice(0, 4000), "conversation", "river-ai-chat"]
-    );
+    // Conversation history is not permanent memory; durable memories use /v1/memories explicitly.
     await pool.query(
       "INSERT INTO river_ai_audit(action,status,details) VALUES($1,$2,$3)",
       ["chat", "success", { model: MODEL, agentsUsed }]
@@ -335,7 +331,8 @@ const server = http.createServer(async (req, res) => {
       agent: isTeam ? "team" : requestedAgent,
       agentsUsed,
       teamSize: isTeam ? Math.max(0, agentsUsed.length - 1) : 1,
-      memory: "saved",
+      memory: "not_saved",
+      memoryPolicy: "explicit-only",
       maxParallel: MAX_PARALLEL
     });
   } catch (error) {
