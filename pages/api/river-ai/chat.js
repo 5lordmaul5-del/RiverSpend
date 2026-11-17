@@ -175,12 +175,7 @@ export default async function handler(req, res) {
       ], 1500);
     }
 
-    const memoryRows = [
-      { user_id: user.id, title: "Messaggio utente", content: latestPrompt, category: "conversation", source: "river-ai-chat", importance: 3 },
-      { user_id: user.id, title: "Risposta River AI", content: answer.slice(0, 6000), category: "conversation", source: "river-ai-chat", importance: 2 }
-    ];
-    const { error: memoryWriteError } = await adminClient.from("river_ai_memories").insert(memoryRows);
-    if (memoryWriteError) console.error("River AI memory write failed:", memoryWriteError.message);
+    // Chat history is not permanent memory. Durable memories must be saved explicitly.
 
     return json(res, 200, {
       answer,
@@ -188,7 +183,8 @@ export default async function handler(req, res) {
       agent,
       agentsUsed,
       teamSize: agent === "team" ? team.length : 1,
-      memorySaved: !memoryWriteError,
+      memorySaved: false,
+      memoryPolicy: "explicit-only",
       limits: { maxAgents: MAX_AGENTS, maxParallel: MAX_PARALLEL }
     });
   } catch (error) {
