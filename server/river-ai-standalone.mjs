@@ -196,7 +196,7 @@ const server = http.createServer(async (req, res) => {
     });
   }
 
-  const jobStatusMatch = /^\\/v1\\/jobs\\/([0-9a-f-]{36})$/i.exec(url.pathname);
+  const jobStatusMatch = /^\/v1\/jobs\/([0-9a-f-]{36})$/i.exec(url.pathname);
   if (!["POST", "GET"].includes(req.method) || !["/v1/chat", "/v1/memories", "/v1/agents", "/v1/jobs"].includes(url.pathname) && !jobStatusMatch) {
     return send(res, 404, { error: "Not found" });
   }
