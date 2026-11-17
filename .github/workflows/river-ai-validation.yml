@@ -6,15 +6,18 @@ on:
       - "infra/river-ai/**"
       - "server/river-ai-standalone.mjs"
       - "lib/riverSSAI/**"
+      - "pages/api/river-ai/chat.js"
       - "scripts/river-ai/**"
       - ".github/workflows/river-ai-validation.yml"
   push:
     branches:
       - feat/river-fortress-integration-core
+      - fix/riverworld-header-fortress-2026-11-16
     paths:
       - "infra/river-ai/**"
       - "server/river-ai-standalone.mjs"
       - "lib/riverSSAI/**"
+      - "pages/api/river-ai/chat.js"
       - "scripts/river-ai/**"
       - ".github/workflows/river-ai-validation.yml"
 
@@ -36,6 +39,7 @@ jobs:
           node --check server/river-ai-standalone.mjs
           node --check lib/riverSSAI/agentsRegistry.mjs
           node --check lib/riverSSAI/router.mjs
+          node --check pages/api/river-ai/chat.js
       - name: Validate Docker Compose configuration
         run: |
           cat > infra/river-ai/.env <<'EOF'
