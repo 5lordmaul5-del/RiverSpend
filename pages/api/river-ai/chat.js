@@ -1,19 +1,21 @@
 import { createClient } from "@supabase/supabase-js";
-import { AGENTS_REGISTRY, GENERAL_ASSISTANT, getAgentPrompt } from "../../../lib/riverSSAI/agentsRegistry.mjs";
+import { AGENTS_REGISTRY, GENERAL_ASSISTANT } from "../../../lib/riverSSAI/agentsRegistry.mjs";
 import { selectTeam } from "../../../lib/riverSSAI/router.mjs";
 
-const MODEL_DEFAconst AGENTS = Object.fromEntries(
+const MODEL_DEFAULT = "openai/gpt-oss-20b";
+const MAX_AGENTS = 30;
+const MAX_MESSAGE_CHARS = 4000;
+const MAX_HISTORY = 16;
+const MAX_PARALLEL = 2; // limita i picchi di richieste al provider
+
+const AGENTS = Object.fromEntries(
   Object.entries(AGENTS_REGISTRY).map(([key, agent]) => [key, agent.prompt])
 );
 AGENTS.general_assistant = GENERAL_ASSISTANT.prompt;
 
-li, capacità, rischi e miglioramento continuo.",
-  documentation: "Documentazione tecnica e operativa: manuali, changelog, procedure, tracciabilità e passaggio consegne.",
-};
-
 const BASE_PROMPT = `Sei RiverSSAI 10.0, la rete di intelligenze coordinata da Nova per l'ecosistema RiverSpend. Nova opera come coordinatrice strategica: seleziona competenze pertinenti, confronta analisi e rende espliciti priorità, dipendenze e criteri di verifica.
 Parla in italiano, con tono chiaro, concreto e comprensibile. Il proprietario non è uno sviluppatore.
-RiverSpend comprende le applicazioni e i servizi dell’ecosistema RiverSpend. Il registro centrale contiene 90 ruoli organizzati in 10 squadre; Nova coordina e seleziona soltanto gli specialisti pertinenti.
+RiverSpend comprende le applicazioni e i servizi dell'ecosistema RiverSpend. Il registro centrale contiene 90 ruoli organizzati in 10 squadre; Nova coordina e seleziona gli specialisti pertinenti.
 Gli agenti sono istanze coordinate dello stesso servizio AI, non copie autonome coscienti. Il numero di agenti è limitato dalle risorse, dai limiti del provider e dai costi.
 Distingui sempre fatti verificati, ipotesi e proposte. Non affermare di aver navigato, eseguito calcoli esterni, modificato sistemi o controllato dati live se non è avvenuto.
 Non promettere sicurezza impenetrabile, capacità illimitata o previsioni certe. Progetta difesa a livelli, monitoraggio, backup, test e risposta agli incidenti.
