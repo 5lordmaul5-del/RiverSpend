@@ -1018,51 +1018,60 @@ export default function Home() {
           </div>
         </header>
 
-          <section aria-label="App RiverSpend" className="mb-4 rounded-2xl border border-cyan-200/70 bg-white/90 px-2 py-3 shadow-md">
-            <div className="mb-2 text-center text-[11px] font-extrabold uppercase tracking-[.16em] text-slate-700">Le app RiverSpend</div>
-            <div className="grid grid-cols-3 gap-x-2 gap-y-4 sm:grid-cols-3">
-              <a href="/app" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RSShop">
-                <img src="/icons/riverspendshop-app.jpg" alt="RSShop" className="h-20 w-20 rounded-2xl object-cover shadow-md ring-2 ring-cyan-200 sm:h-24 sm:w-24" loading="lazy" />
-                <span className="w-full break-words text-xs font-extrabold leading-tight text-slate-900">RSShop</span>
+          <section aria-label="App RiverSpend" className="mb-4 rounded-2xl border border-cyan-200/70 bg-white/95 px-3 py-4 shadow-md">
+            <div className="mb-1 text-center text-xs font-extrabold uppercase tracking-[.16em] text-slate-800">Le applicazioni RiverSpend</div>
+            <p className="mb-4 text-center text-xs leading-5 text-slate-600">Apri l'app che ti interessa. Dalla sua pagina potrai installarla o aggiungerla alla schermata Home quando supportato dal dispositivo.</p>
+            <div className="grid grid-cols-3 gap-x-2 gap-y-4 sm:grid-cols-4 lg:grid-cols-6">
+              <a href="/" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RiverSpendShop">
+                <img src="/icons/riverspendshop-app.jpg" alt="RiverSpendShop" className="h-16 w-16 rounded-2xl object-cover shadow-md ring-2 ring-cyan-200 sm:h-20 sm:w-20" loading="lazy" />
+                <span className="w-full break-words text-xs font-extrabold leading-tight text-slate-900">RiverSpendShop</span>
               </a>
               <a href="/riverspace-signals" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RiverSpaceSignals">
-                <img src="/icons/riverspace-signals-app.jpg" alt="RiverSpaceSignals" className="h-20 w-20 rounded-2xl object-contain shadow-md ring-2 ring-cyan-200 sm:h-24 sm:w-24" loading="lazy" />
+                <img src="/icons/riverspace-signals-app.jpg" alt="RiverSpaceSignals" className="h-16 w-16 rounded-2xl object-contain shadow-md ring-2 ring-cyan-200 sm:h-20 sm:w-20" loading="lazy" />
                 <span className="w-full break-words text-xs font-extrabold leading-tight text-slate-900">RiverSpaceSignals</span>
               </a>
-              <a href="/rs-sound-studio" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RSSoundStudio System ISSA">
-                <img src="/rssoundstudio-issa-banner.jpg" alt="RSSoundStudio System ISSA" className="h-20 w-20 rounded-2xl object-cover shadow-md ring-2 ring-cyan-200 sm:h-24 sm:w-24" loading="lazy" />
-                <span className="w-full break-words text-xs font-extrabold leading-tight text-slate-900">RSSoundStudio<br />System ISSA</span>
+              <a href="/river-ai" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RiverSSAI 10.0">
+                <img src="/icons/river-ssai-app.svg" alt="RiverSSAI 10.0" className="h-16 w-16 rounded-2xl object-contain shadow-md ring-2 ring-cyan-200 sm:h-20 sm:w-20" loading="lazy" />
+                <span className="w-full break-words text-xs font-extrabold leading-tight text-slate-900">RiverSSAI 10.0</span>
               </a>
-              <a href="/servizi/broadcast" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RSStreaming">
-                <img src="/icons/streaming.svg" alt="RSStreaming" className="h-20 w-20 rounded-2xl object-contain shadow-md ring-2 ring-cyan-200 sm:h-24 sm:w-24" loading="lazy" />
-                <span className="w-full break-words text-xs font-extrabold leading-tight text-slate-900">RSStreaming</span>
+              <a href="/rs-control-center" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RSPC RiverSpend Panel Control">
+                <img src="/icons/panelcontrol.svg" alt="RSPC RiverSpend Panel Control" className="h-16 w-16 rounded-2xl object-contain shadow-md ring-2 ring-amber-300 sm:h-20 sm:w-20" loading="lazy" />
+                <span className="w-full break-words text-xs font-extrabold leading-tight text-slate-900">RSPC Panel Control</span>
               </a>
-              <a href="/park" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RSPark">
-                <img src="/1000187343.png" alt="RSPark" className="h-20 w-20 rounded-2xl object-cover shadow-md ring-2 ring-cyan-200 sm:h-24 sm:w-24" loading="lazy" />
-                <span className="w-full break-words text-xs font-extrabold leading-tight text-slate-900">RSPark</span>
+              <a href="/river-cloud" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RiverCloud">
+                <img src="/icons/river-cloud.svg" alt="RiverCloud" className="h-16 w-16 rounded-2xl object-contain shadow-md ring-2 ring-cyan-200 sm:h-20 sm:w-20" loading="lazy" />
+                <span className="w-full break-words text-xs font-extrabold leading-tight text-slate-900">RiverCloud</span>
               </a>
-              <a href="/riverspend-social-network" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RiverSpendSocialNetwork">
-                <img src="/icons/riverspend-social.svg" alt="RiverSpendSocialNetwork" className="h-20 w-20 rounded-2xl object-cover shadow-md ring-2 ring-cyan-200 sm:h-24 sm:w-24" loading="lazy" />
-                <span className="w-full break-words text-xs font-extrabold leading-tight text-slate-900">RiverSpendSocialNetwork</span>
+              <a href="/rs-sound-studio" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="River SoundStudio">
+                <img src="/rssoundstudio-issa-banner.jpg" alt="River SoundStudio" className="h-16 w-16 rounded-2xl object-cover shadow-md ring-2 ring-cyan-200 sm:h-20 sm:w-20" loading="lazy" />
+                <span className="w-full break-words text-xs font-extrabold leading-tight text-slate-900">RS SoundStudio</span>
               </a>
-              <a href="/servizi/music" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RSMusic">
-                <img src="/icons/music.svg" alt="RSMusic" className="h-20 w-20 rounded-2xl object-contain shadow-md ring-2 ring-cyan-200 sm:h-24 sm:w-24" loading="lazy" />
-                <span className="w-full break-words text-xs font-extrabold leading-tight text-slate-900">RSMusic</span>
+              <a href="/river-spend-stream" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RiverSpend Streaming">
+                <img src="/icons/streaming.svg" alt="RiverSpend Streaming" className="h-16 w-16 rounded-2xl object-contain shadow-md ring-2 ring-cyan-200 sm:h-20 sm:w-20" loading="lazy" />
+                <span className="w-full break-words text-xs font-extrabold leading-tight text-slate-900">River Streaming</span>
               </a>
-
+              <a href="/river-video" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="River Video">
+                <img src="/icons/river-video.svg" alt="River Video" className="h-16 w-16 rounded-2xl object-contain shadow-md ring-2 ring-cyan-200 sm:h-20 sm:w-20" loading="lazy" />
+                <span className="w-full break-words text-xs font-extrabold leading-tight text-slate-900">River Video</span>
+              </a>
+              <a href="/river-print" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RiverSS Print">
+                <img src="/icons/river-ss-print.svg" alt="RiverSS Print" className="h-16 w-16 rounded-2xl object-contain shadow-md ring-2 ring-cyan-200 sm:h-20 sm:w-20" loading="lazy" />
+                <span className="w-full break-words text-xs font-extrabold leading-tight text-slate-900">RiverSS Print</span>
+              </a>
+              <a href="/riverspend-social-network" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RiverSpend Social Network">
+                <img src="/icons/riverspend-social.svg" alt="RiverSpend Social Network" className="h-16 w-16 rounded-2xl object-contain shadow-md ring-2 ring-cyan-200 sm:h-20 sm:w-20" loading="lazy" />
+                <span className="w-full break-words text-xs font-extrabold leading-tight text-slate-900">RiverSpend Social</span>
+              </a>
+              <a href="/servizi/music" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RiverSpend Music">
+                <img src="/icons/music.svg" alt="RiverSpend Music" className="h-16 w-16 rounded-2xl object-contain shadow-md ring-2 ring-cyan-200 sm:h-20 sm:w-20" loading="lazy" />
+                <span className="w-full break-words text-xs font-extrabold leading-tight text-slate-900">RiverSpend Music</span>
+              </a>
+              <a href="/park" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RiverSpend Park">
+                <img src="/1000187343.png" alt="RiverSpend Park" className="h-16 w-16 rounded-2xl object-cover shadow-md ring-2 ring-cyan-200 sm:h-20 sm:w-20" loading="lazy" />
+                <span className="w-full break-words text-xs font-extrabold leading-tight text-slate-900">RiverSpend Park</span>
+              </a>
             </div>
-            <a href="/app" className="mt-2 block text-center text-[10px] font-semibold text-teal-800 underline underline-offset-2">Istruzioni per installarle da Google Chrome · App Store non ancora disponibile</a>
-          </section>
-
-          <section aria-label="Scarica le app RiverSpend con QR code" style={{backgroundColor:"#10243a",color:"#ffffff",borderColor:"#22d3ee"}} className="mb-4 flex items-center gap-3 rounded-2xl border-2 p-3 shadow-lg shadow-cyan-950/20">
-            <a href="/app" aria-label="Apri la pagina per scegliere le app RiverSpend" className="shrink-0 rounded-xl bg-white p-1 focus:outline-none focus:ring-2 focus:ring-amber-300">
-              <img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=6&data=https%3A%2F%2Fwww.riverspend.com%2Fapp" alt="QR code per la pagina delle app RiverSpend" width="88" height="88" className="h-[88px] w-[88px] rounded-lg" loading="lazy" />
-            </a>
-            <div className="min-w-0 flex-1">
-              <h2 style={{color:"#ffffff",fontWeight:900}} className="text-base font-black leading-snug">📲 LE APP RIVERSPEND — SCARICA QUI</h2>
-              <p style={{color:"#ffffff",fontWeight:700}} className="mt-2 text-sm leading-6">Scansiona il QR per scegliere la tua app. Se stai usando il telefono, premi direttamente il pulsante qui sotto.</p>
-              <a href="/app" style={{backgroundColor:"#67e8f9",color:"#082f49",fontWeight:900}} className="mt-3 inline-flex rounded-lg px-3 py-3 text-sm">SCEGLI E INSTALLA UN'APP →</a>
-            </div>
+            <a href="/app" className="mt-4 block rounded-xl bg-cyan-700 px-4 py-3 text-center text-sm font-extrabold text-white shadow-sm">APRI IL CATALOGO COMPLETO E INSTALLA LE APP →</a>
           </section>
 
           <div className="rs-apps-grid mb-5 flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain px-1 pb-3" aria-label="Scopri le iniziative RiverSpend: scorri orizzontalmente">
