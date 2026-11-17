@@ -64,3 +64,17 @@ Back up PostgreSQL with scheduled pg_dump to storage outside the database host. 
 
 ## Current limitations
 This prototype is intentionally isolated from the live RiverSpendShop database. It does not migrate or modify products, customers, orders, payments, or existing Supabase data. The website UI is not switched to this API. A deployment target, secrets, TLS, model sizing, backup destination, authentication integration, and end-to-end acceptance tests are still required before production use.
+
+
+## Autonomous worker queue (isolated runtime)
+
+The standalone RiverCloud runtime includes a durable PostgreSQL queue and a separate `river-ai-worker` service. The API process initializes `worker-queue.sql` at startup. Workers claim jobs atomically with `FOR UPDATE SKIP LOCKED`, receive a time-limited lease, and persist success/failure events. Expired leases are re-queued; failed jobs use bounded exponential retry and eventually enter `dead_letter`. The initial worker concurrency defaults to **1** and is capped at 2 until host capacity is measured.
+
+### Queue API (owner token only)
+- `POST /v1/jobs` with `{ "agentKey": "tech", "task": "Review the API design" }` returns HTTP 202 and a job ID.
+- `GET /v1/jobs/<job-uuid>` returns status, attempts, result, and error information.
+- Jobs are analysis tasks only. The worker does not execute shell commands, modify repositories, publish content, or perform payments.
+- The admin bearer token must stay server-side. Do not expose it in browser JavaScript or mobile app bundles.
+
+### Start and validate
+Run `docker compose up -d --build`, then check `docker compose ps`, `curl http://127.0.0.1:8787/health`, and `curl http://127.0.0.1:8787/ready`. Submit a test job only after readiness is green. Check its status using the returned UUID. Keep concurrency at 1 for the first host test. This worker stack remains separate from production Supabase and the live RiverSpendShop until a separate migration, security review, restore test, and explicit production rollout.
