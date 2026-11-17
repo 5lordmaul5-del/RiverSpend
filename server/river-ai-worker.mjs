@@ -25,7 +25,8 @@ const active = new Set();
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 async function callModel(agentKey, payload) {
-  const agent = AGENTS_REGISTRY[agentKey] || AGENTS_REGISTRY.nova;
+  const agent = AGENTS_REGISTRY[agentKey];
+  if (!agent) throw new Error("Unknown RiverSSAI agent key: " + String(agentKey));
   const task = typeof payload.task === "string" ? payload.task.slice(0, 12000) : "";
   if (!task.trim()) throw new Error("Job payload.task is required.");
   const response = await fetch(modelUrl, {
@@ -81,23 +82,33 @@ async function processOne() {
 async function loop() {
   console.log("RiverSSAI worker online:", workerId, "concurrency:", maxParallel);
   while (!stopping) {
+    let work;
     try {
-      const didWork = await processOne();
-      if (!didWork) await sleep(pollMs);
+      work = processOne();
+      active.add(work);
+      const didWork = await work;
+      if (!didWork && !stopping) await sleep(pollMs);
     } catch (error) {
       console.error("Worker loop error:", error.message);
-      await sleep(Math.min(15000, pollMs * 4));
+      if (!stopping) await sleep(Math.min(15000, pollMs * 4));
+    } finally {
+      if (work) active.delete(work);
     }
   }
 }
+let shutdownPromise;
 async function shutdown(signal) {
-  if (stopping) return;
+  if (shutdownPromise) return shutdownPromise;
   stopping = true;
-  console.log("Worker stopping:", signal);
-  await Promise.allSettled([...active]);
-  await pool.end();
-  process.exit(0);
+  shutdownPromise = (async () => {
+    console.log("Worker stopping:", signal, "- waiting for", active.size, "active job(s)");
+    await Promise.allSettled([...active]);
+    await pool.end();
+    console.log("Worker stopped cleanly.");
+  })();
+  return shutdownPromise;
 }
-process.on("SIGTERM",()=>shutdown("SIGTERM"));
-process.on("SIGINT",()=>shutdown("SIGINT"));
+process.on("SIGTERM", () => { void shutdown("SIGTERM"); });
+process.on("SIGINT", () => { void shutdown("SIGINT"); });
 await Promise.all(Array.from({length:maxParallel},()=>loop()));
+await shutdown("loop-complete");
