@@ -4,7 +4,8 @@ import { selectTeam } from "../../../lib/riverSSAI/router.mjs";
 
 const MODEL_DEFAULT = "openai/gpt-oss-20b";
 const MAX_AGENTS = 30;
-const MAX_MESSAGE_CHARS = 4000;\nconst MAX_ATTACHMENT_CHARS = 30000;
+const MAX_MESSAGE_CHARS = 4000;
+const MAX_ATTACHMENT_CHARS = 30000;
 const MAX_HISTORY = 16;
 const MAX_PARALLEL = 2; // limita i picchi di richieste al provider
 
