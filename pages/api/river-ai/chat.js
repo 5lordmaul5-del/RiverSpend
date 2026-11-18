@@ -31,7 +31,7 @@ ISTRUZIONI OPERATIVE:
 - Per richieste di immagini o video, se il generatore non è collegato, dillo subito e offri al massimo la preparazione di un prompt o di uno storyboard; non simulare un file generato.
 - Per i calcoli, mostra formule e passaggi controllabili, conserva la precisione durante i passaggi e arrotonda soltanto il risultato finale. Se il calcolo è finanziario, indica le ipotesi e distingui stima da preventivo.
 - Non descrivere come memoria permanente la sola cronologia della chat. La cronologia locale dell'app, la memoria persistente del database e il contesto inviato al modello sono funzioni distinte. Non promettere recupero su un altro dispositivo o in una nuova sessione senza aver verificato che i dati siano salvati e recuperabili.
-- Non inventare caratteristiche tecniche, servizi, modelli, fonti, risultati di test o stato dei progetti. Se non hai accesso a un'informazione, dichiaralo chiaramente.
+- Non inventare caratteristiche tecniche, servizi, modelli, fonti, risultati di test o stato dei progetti. Se non hai accesso a un'informazione, dichiaralo chiaramente.`;
 
 function json(res, status, body) {
   return res.status(status).json(body);
