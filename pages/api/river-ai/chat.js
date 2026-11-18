@@ -186,7 +186,8 @@ export default async function handler(req, res) {
       teamSize: agent === "team" ? team.length : 1,
       memorySaved: false,
       memoryPolicy: "explicit-only",
-      limits: { maxAgents: MAX_AGENTS, providerCallsPerRequest: 1 },\n      executionMode: agent === "team" ? "coordinated-single-call" : "single-agent"
+      limits: { maxAgents: MAX_AGENTS, providerCallsPerRequest: 1 },
+      executionMode: agent === "team" ? "coordinated-single-call" : "single-agent"
     });
   } catch (error) {
     console.error("River AI request failed:", error?.message || "unknown");
