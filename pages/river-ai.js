@@ -123,7 +123,8 @@ export default function RiverAI() {
     const text = input.trim();
     if ((!text && !attachedFile) || busy || sendLock.current || access !== "ready") return;
     sendLock.current = true;
-    const composed = attachedFile ? `${text || "Analizza il documento allegato."}\\n\\n[Documento: ${attachedFile.name}]\\n${attachedFile.text.slice(0, 30000)}` : text;\n    const next = [...messages, { role: "user", content: composed }].slice(-16);
+    const composed = attachedFile ? `${text || "Analizza il documento allegato."}\\n\\n[Documento: ${attachedFile.name}]\\n${attachedFile.text.slice(0, 30000)}` : text;
+    const next = [...messages, { role: "user", content: composed }].slice(-16);
     setMessages(next);
     setInput("");
     setBusy(true);
