@@ -3,11 +3,11 @@ import { AGENTS_REGISTRY, GENERAL_ASSISTANT } from "../../../lib/riverSSAI/agent
 import { selectTeam } from "../../../lib/riverSSAI/router.mjs";
 
 const MODEL_DEFAULT = "openai/gpt-oss-20b";
-const MAX_AGENTS = 30;
-const MAX_MESSAGE_CHARS = 4000;
-const MAX_ATTACHMENT_CHARS = 30000;
-const MAX_HISTORY = 16;
-const MAX_PARALLEL = 2; // limita i picchi di richieste al provider
+const MAX_AGENTS = 4; // limite operativo iniziale per il piano Groq attuale
+const MAX_MESSAGE_CHARS = 1800;
+const MAX_ATTACHMENT_CHARS = 8000;
+const MAX_HISTORY = 6;
+const MAX_PARALLEL = 1; // evita picchi TPM sul piano attuale
 
 const AGENTS = Object.fromEntries(
   Object.entries(AGENTS_REGISTRY).map(([key, agent]) => [key, agent.prompt])
@@ -35,7 +35,8 @@ function normalizeAgent(value) {
 
 function chooseTeam(agent, requestedSize, prompt = "") {
   if (agent !== "team") return [normalizeAgent(agent)];
-  const size = [2, 4, 8, 10, 20, 30].includes(Number(requestedSize)) ? Number(requestedSize) : 4;
+  const requested = [2, 4, 8, 10, 20, 30].includes(Number(requestedSize)) ? Number(requestedSize) : 4;
+  const size = Math.min(requested, MAX_AGENTS);
   const selected = selectTeam(size, prompt).filter((key) => Object.prototype.hasOwnProperty.call(AGENTS, key));
   return selected.length ? selected : ["general_assistant"];
 }
@@ -133,8 +134,8 @@ export default async function handler(req, res) {
   const team = chooseTeam(agent, body.teamSize, safeMessages[safeMessages.length - 1].content);
   const model = process.env.RIVER_AI_MODEL || MODEL_DEFAULT;
   const thinkingMode = body.thinkingMode === "deep" ? "deep" : "standard";
-  const responseTokens = thinkingMode === "deep" ? 2200 : 1500;
-  const modeInstruction = thinkingMode === "deep" ? "\\nMODALITÀ APPROFONDITA: analizza con attenzione, verifica presupposti, confronta alternative e restituisci conclusioni, passaggi, rischi e controlli. Non mostrare ragionamenti interni privati." : "";
+  const responseTokens = thinkingMode === "deep" ? 1000 : 700;
+  const modeInstruction = thinkingMode === "deep" ? "\nMODALITÀ APPROFONDITA: analizza con attenzione, verifica presupposti, confronta alternative e restituisci conclusioni, passaggi, rischi e controlli. Non mostrare ragionamenti interni privati." : "";
 
   try {
     const { data: memories, error: memoryReadError } = await adminClient
@@ -145,9 +146,9 @@ export default async function handler(req, res) {
       .limit(12);
     if (memoryReadError) console.error("River AI memory read failed:", memoryReadError.message);
     const memoryContext = (memories || [])
-      .map((item) => "[" + (item.category || "nota") + "] " + (item.title || "") + ": " + (item.content || "").slice(0, 350))
+      .map((item) => "[" + (item.category || "nota") + "] " + (item.title || "") + ": " + (item.content || "").slice(0, 120))
       .join("\n")
-      .slice(0, 2600);
+      .slice(0, 900);
 
     const latestPrompt = safeMessages[safeMessages.length - 1].content;
     let answer;
@@ -155,20 +156,20 @@ export default async function handler(req, res) {
 
     if (agent === "team") {
       // La Squadra usa un contesto compatto per rispettare il limite TPM del provider.
-      const teamHistory = safeMessages.slice(-4);
-      const teamMemory = memoryContext.slice(0, 900);
+      const teamHistory = safeMessages.slice(-3);
+      const teamMemory = memoryContext.slice(0, 350);
       const reports = await runWithLimit(team, MAX_PARALLEL, async (specialist) => {
         const report = await callModel(groqKey, model, [
           { role: "system", content: BASE_PROMPT + modeInstruction + "\nRUOLO SPECIALISTA: " + AGENTS[specialist] + "\nFornisci un rapporto sintetico: priorità, un rischio e verifica essenziale." },
           ...(teamMemory ? [{ role: "system", content: "CONTESTO PRIVATO RIVERSPEND (sintesi):\n" + teamMemory }] : []),
           ...teamHistory
-        ], 300);
+        ], 180);
         return { specialist, report };
       });
       const synthesis = await callModel(groqKey, model, [
         { role: "system", content: BASE_PROMPT + modeInstruction + "\nSei NOVA, coordinatrice. Confronta i rapporti, risolvi le contraddizioni senza nasconderle e restituisci decisione, piano, rischi e verifiche." },
         { role: "user", content: "RICHIESTA:\n" + latestPrompt + "\n\nRAPPORTI SPECIALISTI:\n" + reports.map((item) => "AGENTE " + item.specialist.toUpperCase() + ":\n" + item.report).join("\n\n") }
-      ], 900);
+      ], 650);
       answer = synthesis;
       agentsUsed = ["nova", ...team];
     } else {
