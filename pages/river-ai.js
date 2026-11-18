@@ -15,6 +15,10 @@ export default function RiverAI() {
   const [attachedFile, setAttachedFile] = useState(null);
   const [thinkingMode, setThinkingMode] = useState("standard");
   const [showTools, setShowTools] = useState(false);
+  const [showChatMenu, setShowChatMenu] = useState(false);
+  const [showArchived, setShowArchived] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const recognitionRef = useRef(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [loginEmail, setLoginEmail] = useState("");
@@ -209,13 +213,52 @@ export default function RiverAI() {
     const updated = chatSessions.map((chat) => chat.id === activeChatId
       ? { ...chat, messages: messages.slice(-40), updatedAt: Date.now() }
       : chat);
-    const nextChats = [...updated, { id: nextId, title: "Nuova conversazione", updatedAt: Date.now(), messages: [] }].slice(-30);
+    const nextChats = [...updated, { id: nextId, title: "Nuova conversazione", updatedAt: Date.now(), messages: [], archived: false }].slice(-30);
     setChatSessions(nextChats);
     setActiveChatId(nextId);
     setMessages([]);
     setInput("");
     setAttachedFile(null);
     setError("");
+  }
+
+  function archiveCurrentChat() {
+    if (!activeChatId || busy) return;
+    const updated = chatSessions.map((chat) => chat.id === activeChatId ? { ...chat, messages: messages.slice(-40), archived: true, updatedAt: Date.now() } : chat);
+    const remaining = updated.filter((chat) => !chat.archived);
+    const next = remaining[remaining.length - 1] || { id: "chat-" + Date.now(), title: "Nuova conversazione", updatedAt: Date.now(), messages: [], archived: false };
+    const nextChats = remaining.length ? updated : [...updated, next];
+    setChatSessions(nextChats); setActiveChatId(next.id); setMessages(next.messages || []); setShowChatMenu(false);
+  }
+
+  function deleteCurrentChat() {
+    if (!activeChatId || busy) return;
+    if (!window.confirm("Vuoi eliminare definitivamente questa conversazione da questo dispositivo?")) return;
+    const remaining = chatSessions.filter((chat) => chat.id !== activeChatId);
+    const next = remaining.filter((chat) => !chat.archived).slice(-1)[0] || { id: "chat-" + Date.now(), title: "Nuova conversazione", updatedAt: Date.now(), messages: [], archived: false };
+    const nextChats = remaining.length ? remaining : [next];
+    setChatSessions(nextChats); setActiveChatId(next.id); setMessages(next.messages || []); setShowChatMenu(false);
+  }
+
+  async function shareCurrentChat() {
+    const transcript = messages.map((m) => `${m.role === "user" ? "Tu" : "Nova"}:\n${m.content}`).join("\n\n");
+    if (!transcript) { setError("Questa conversazione è vuota."); return; }
+    try {
+      if (navigator.share) await navigator.share({ title: "Conversazione RiverSSAI", text: transcript });
+      else if (navigator.clipboard?.writeText) { await navigator.clipboard.writeText(transcript); setInstallMessage("Conversazione copiata: ora puoi condividerla."); }
+      else downloadChat();
+    } catch (err) { if (err?.name !== "AbortError") setError("Condivisione non disponibile su questo dispositivo."); }
+  }
+
+  function toggleMicrophone() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) { setError("La dettatura vocale non è supportata. Puoi usare il microfono della tastiera Android."); return; }
+    if (isListening) { recognitionRef.current?.stop(); setIsListening(false); return; }
+    const recognition = new SpeechRecognition(); recognition.lang = "it-IT"; recognition.interimResults = true; recognition.continuous = false;
+    recognition.onresult = (event) => { const spoken = Array.from(event.results).map((r) => r[0]?.transcript || "").join(""); setInput((old) => (old ? old + " " : "") + spoken); };
+    recognition.onerror = () => { setIsListening(false); setError("Problema di ricezione audio. Controlla il permesso del microfono."); };
+    recognition.onend = () => setIsListening(false); recognitionRef.current = recognition;
+    try { recognition.start(); setIsListening(true); setError(""); } catch { setIsListening(false); setError("Impossibile avviare il microfono."); }
   }
 
   function openChat(chatId) {
@@ -246,9 +289,9 @@ export default function RiverAI() {
           </div>
           <button onClick={installApp} style={{ border:"1px solid #f5d77a",borderRadius:11,padding:"9px 11px",background:"#f5d77a",color:"#12343b",fontWeight:800 }}>Installa app</button>
           <a href="/area-51" style={{ border:"1px solid #d9b65c",borderRadius:11,padding:"9px 11px",background:"rgba(217,182,92,.12)",color:"#f5d77a",fontWeight:800,textDecoration:"none",fontSize:13 }}>◈ Area 51</a>
-          {access === "ready" && <select aria-label="Conversazioni salvate" value={activeChatId} onChange={(event) => openChat(event.target.value)} disabled={busy} style={{maxWidth:150,minWidth:90,border:"1px solid #ffffff66",borderRadius:10,padding:"8px 7px",background:"#075766",color:"#fff",fontWeight:700}}>
-            {chatSessions.map((chat) => <option key={chat.id} value={chat.id}>{chat.title || "Conversazione"}</option>)}
-          </select>}
+          {access === "ready" && <><select aria-label="Conversazioni salvate" value={activeChatId} onChange={(event) => openChat(event.target.value)} disabled={busy} style={{maxWidth:150,minWidth:90,border:"1px solid #ffffff66",borderRadius:10,padding:"8px 7px",background:"#075766",color:"#fff",fontWeight:700}}>
+            {chatSessions.filter((chat) => showArchived ? chat.archived : !chat.archived).map((chat) => <option key={chat.id} value={chat.id}>{chat.title || "Conversazione"}</option>)}
+          </select><button type="button" onClick={() => setShowArchived((v) => !v)} style={{border:"1px solid #ffffff66",borderRadius:10,padding:"8px 9px",background:"transparent",color:"#fff",fontWeight:700}}>{showArchived ? "Attive" : "Archivio"}</button><button type="button" aria-label="Menu conversazione" onClick={() => setShowChatMenu((v) => !v)} style={{border:"1px solid #ffffff66",borderRadius:10,padding:"8px 12px",background:"transparent",color:"#fff",fontSize:18}}>⋯</button></>}
           <button onClick={newChat} disabled={access!=="ready" || busy} style={{ border:"1px solid #ffffff66",borderRadius:11,padding:"9px 11px",background:"transparent",color:"#fff",fontWeight:700 }}>＋ Nuova chat</button>
         </header>
         <section aria-label="Nova e i tre comandanti River" style={{background:"#06172b",color:"#fff",padding:"12px 14px 16px"}}>
@@ -258,6 +301,7 @@ export default function RiverAI() {
         </section>
 
         {installMessage && <div role="status" style={{padding:"10px 18px",background:"#fff8df",color:"#72510a",fontSize:13}}>{installMessage}</div>}
+        {showChatMenu && access === "ready" && <div style={{display:"flex",gap:8,flexWrap:"wrap",padding:"10px 14px",background:"#edf8f8",borderBottom:"1px solid #dceeee"}}><button type="button" onClick={shareCurrentChat} style={{border:"1px solid #b9dadd",borderRadius:10,padding:"8px 12px",background:"#fff",color:"#075766",fontWeight:700}}>Condividi</button><button type="button" onClick={archiveCurrentChat} disabled={busy || !messages.length} style={{border:"1px solid #b9dadd",borderRadius:10,padding:"8px 12px",background:"#fff",color:"#075766",fontWeight:700}}>Archivia</button><button type="button" onClick={deleteCurrentChat} disabled={busy} style={{border:"1px solid #f0c7c2",borderRadius:10,padding:"8px 12px",background:"#fff",color:"#a12d20",fontWeight:700}}>Elimina</button><button type="button" onClick={() => setShowChatMenu(false)} style={{border:"1px solid #b9dadd",borderRadius:10,padding:"8px 12px",background:"#fff",color:"#075766"}}>Chiudi</button></div>}
         {access === "checking" ? <div style={{padding:24}}>Verifica accesso amministratore…</div> :
          access === "login" ? <div style={{padding:24}}>
           <h2 style={{marginTop:0,color:"#075766"}}>Accesso amministratore</h2>
@@ -331,6 +375,7 @@ export default function RiverAI() {
           {error && <div role="alert" style={{margin:"0 16px 10px",padding:12,borderRadius:12,background:"#fff3f0",color:"#9a3412",fontSize:13}}>{error}</div>}
           <div style={{display:"flex",gap:8,flexWrap:"wrap",padding:"10px 14px",borderTop:"1px solid #dceeee",background:"#f5fbfb"}}>
             <button type="button" onClick={()=>setShowTools(v=>!v)} style={{border:"1px solid #b9dadd",borderRadius:10,padding:"8px 11px",background:"#fff",color:"#075766",fontWeight:700}}>＋ Strumenti</button>
+            <button type="button" onClick={shareCurrentChat} disabled={!messages.length} style={{border:"1px solid #b9dadd",borderRadius:10,padding:"8px 11px",background:"#fff",color:"#075766",fontWeight:700}}>Condividi</button>
             <select aria-label="Modalità di risposta" value={thinkingMode} onChange={e=>setThinkingMode(e.target.value)} style={{border:"1px solid #b9dadd",borderRadius:10,padding:"8px 10px",background:"#fff",color:"#075766"}}><option value="standard">Risposta rapida</option><option value="deep">Pensa intensamente</option></select>
             <button type="button" onClick={downloadChat} disabled={!messages.length} style={{border:"1px solid #b9dadd",borderRadius:10,padding:"8px 11px",background:"#fff",color:"#075766",fontWeight:700}}>Scarica chat</button>
           </div>
@@ -343,6 +388,7 @@ export default function RiverAI() {
           </div>}
           <form onSubmit={send} style={{display:"flex",gap:8,padding:14,borderTop:"1px solid #dceeee",background:"#fbfefe"}}>
             <textarea value={input} onChange={e=>setInput(e.target.value)} placeholder="Scrivi a River AI…" rows={2} maxLength={4000} disabled={busy} style={{flex:1,minWidth:0,resize:"vertical",border:"1px solid #c7dfe1",borderRadius:14,padding:12,fontSize:16,outlineColor:"#0e9aa4",color:"#173b42"}}/>
+            <button type="button" aria-label="Microfono" onClick={toggleMicrophone} disabled={busy} style={{alignSelf:"stretch",border:"1px solid #b9dadd",borderRadius:14,padding:"0 13px",background:isListening?"#fee2e2":"#fff",color:isListening?"#b91c1c":"#075766",fontSize:20}}>{isListening ? "■" : "🎙"}</button>
             <button type="submit" disabled={busy || (!input.trim() && !attachedFile)} style={{alignSelf:"stretch",border:0,borderRadius:14,padding:"0 18px",background:busy||!input.trim()?"#a9c8ca":"#087f89",color:"#fff",fontWeight:800}}>Invia</button>
           </form>
          </>}
