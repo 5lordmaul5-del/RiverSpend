@@ -4,7 +4,7 @@ import { selectTeam } from "../../../lib/riverSSAI/router.mjs";
 
 const MODEL_DEFAULT = "openai/gpt-oss-20b";
 const MAX_AGENTS = 30;
-const MAX_MESSAGE_CHARS = 4000;
+const MAX_MESSAGE_CHARS = 4000;\nconst MAX_ATTACHMENT_CHARS = 30000;
 const MAX_HISTORY = 16;
 const MAX_PARALLEL = 2; // limita i picchi di richieste al provider
 
@@ -123,14 +123,14 @@ export default async function handler(req, res) {
   const messages = Array.isArray(body.messages) ? body.messages.slice(-MAX_HISTORY) : [];
   const safeMessages = messages
     .filter((item) => item && ["user", "assistant"].includes(item.role) && typeof item.content === "string")
-    .map((item) => ({ role: item.role, content: item.content.slice(0, MAX_MESSAGE_CHARS) }));
+    .map((item, index, all) => ({ role: item.role, content: item.content.slice(0, index === all.length - 1 && item.role === "user" ? MAX_ATTACHMENT_CHARS : MAX_MESSAGE_CHARS) }));
   if (!safeMessages.length || safeMessages[safeMessages.length - 1].role !== "user") {
     return json(res, 400, { error: "Scrivi prima una richiesta." });
   }
 
   const agent = body.agent === "team" ? "team" : normalizeAgent(body.agent);
   const team = chooseTeam(agent, body.teamSize, safeMessages[safeMessages.length - 1].content);
-  const model = process.env.RIVER_AI_MODEL || MODEL_DEFAULT;
+  const model = process.env.RIVER_AI_MODEL || MODEL_DEFAULT;\n  const thinkingMode = body.thinkingMode === "deep" ? "deep" : "standard";\n  const responseTokens = thinkingMode === "deep" ? 2200 : 1500;\n  const modeInstruction = thinkingMode === "deep" ? "\\nMODALITÀ APPROFONDITA: analizza con attenzione, verifica presupposti, confronta alternative e restituisci conclusioni, passaggi, rischi e controlli. Non mostrare ragionamenti interni privati." : "";
 
   try {
     const { data: memories, error: memoryReadError } = await adminClient
