@@ -130,7 +130,10 @@ export default async function handler(req, res) {
 
   const agent = body.agent === "team" ? "team" : normalizeAgent(body.agent);
   const team = chooseTeam(agent, body.teamSize, safeMessages[safeMessages.length - 1].content);
-  const model = process.env.RIVER_AI_MODEL || MODEL_DEFAULT;\n  const thinkingMode = body.thinkingMode === "deep" ? "deep" : "standard";\n  const responseTokens = thinkingMode === "deep" ? 2200 : 1500;\n  const modeInstruction = thinkingMode === "deep" ? "\\nMODALITÀ APPROFONDITA: analizza con attenzione, verifica presupposti, confronta alternative e restituisci conclusioni, passaggi, rischi e controlli. Non mostrare ragionamenti interni privati." : "";
+  const model = process.env.RIVER_AI_MODEL || MODEL_DEFAULT;
+  const thinkingMode = body.thinkingMode === "deep" ? "deep" : "standard";
+  const responseTokens = thinkingMode === "deep" ? 2200 : 1500;
+  const modeInstruction = thinkingMode === "deep" ? "\\nMODALITÀ APPROFONDITA: analizza con attenzione, verifica presupposti, confronta alternative e restituisci conclusioni, passaggi, rischi e controlli. Non mostrare ragionamenti interni privati." : "";
 
   try {
     const { data: memories, error: memoryReadError } = await adminClient
