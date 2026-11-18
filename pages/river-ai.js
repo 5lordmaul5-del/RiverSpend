@@ -8,6 +8,8 @@ export default function RiverAI() {
   const [access, setAccess] = useState("checking");
   const [token, setToken] = useState("");
   const [messages, setMessages] = useState([]);
+  const [chatSessions, setChatSessions] = useState([]);
+  const [activeChatId, setActiveChatId] = useState("");
   const [storageKey, setStorageKey] = useState("");
   const [input, setInput] = useState("");
   const [attachedFile, setAttachedFile] = useState(null);
@@ -72,12 +74,26 @@ export default function RiverAI() {
         }
         if (!response.ok) throw new Error("Verifica dei permessi non disponibile.");
         const key = `${STORAGE_KEY}:${session.user.id}`;
-        let saved = [];
-        try {
-          const parsed = JSON.parse(localStorage.getItem(key) || "[]");
-          if (Array.isArray(parsed)) saved = parsed.slice(-40);
-        } catch {}
-        setMessages(saved);
+        let parsed = null;
+        try { parsed = JSON.parse(localStorage.getItem(key) || "null"); } catch {}
+        let chats = [];
+        if (Array.isArray(parsed)) {
+          const legacyMessages = parsed.filter((item) => item && ["user", "assistant"].includes(item.role) && typeof item.content === "string").slice(-40);
+          if (legacyMessages.length) chats = [{ id: "legacy-" + session.user.id, title: "Conversazione precedente", updatedAt: Date.now(), messages: legacyMessages }];
+        } else if (parsed && Array.isArray(parsed.chats)) {
+          chats = parsed.chats
+            .filter((chat) => chat && typeof chat.id === "string" && Array.isArray(chat.messages))
+            .slice(-30)
+            .map((chat) => ({ ...chat, messages: chat.messages.slice(-40) }));
+        }
+        if (!chats.length) chats = [{ id: "chat-" + Date.now(), title: "Nuova conversazione", updatedAt: Date.now(), messages: [] }];
+        const activeId = parsed && typeof parsed.activeChatId === "string" && chats.some((chat) => chat.id === parsed.activeChatId)
+          ? parsed.activeChatId
+          : chats[0].id;
+        const activeChat = chats.find((chat) => chat.id === activeId) || chats[0];
+        setChatSessions(chats);
+        setActiveChatId(activeChat.id);
+        setMessages(activeChat.messages || []);
         setStorageKey(key);
         setToken(session.access_token);
         setAccess("ready");
@@ -91,11 +107,21 @@ export default function RiverAI() {
   }, []);
 
   useEffect(() => {
-    if (storageKey) {
-      try { localStorage.setItem(storageKey, JSON.stringify(messages.slice(-40))); } catch {}
+    if (storageKey && activeChatId) {
+      const updatedChats = (chatSessions.length ? chatSessions : [{ id: activeChatId, title: "Nuova conversazione", messages: [] }])
+        .map((chat) => {
+          if (chat.id !== activeChatId) return chat;
+          const firstUserMessage = messages.find((message) => message.role === "user");
+          const title = chat.title === "Nuova conversazione" && firstUserMessage
+            ? firstUserMessage.content.replace(/\\s+/g, " ").slice(0, 44)
+            : chat.title;
+          return { ...chat, title, messages: messages.slice(-40), updatedAt: Date.now() };
+        });
+      setChatSessions(updatedChats);
+      try { localStorage.setItem(storageKey, JSON.stringify({ version: 2, activeChatId, chats: updatedChats })); } catch {}
     }
     endRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, busy, storageKey]);
+  }, [messages, busy, storageKey, activeChatId]);
 
   async function requestLogin(event) {
     event?.preventDefault();
@@ -130,15 +156,35 @@ export default function RiverAI() {
     setBusy(true);
     setError("");
     try {
-      const response = await fetch("/api/river-ai/chat", {
+      const requestBody = JSON.stringify({ messages: next, agent: selectedAgent, teamSize, thinkingMode });
+      const sendWithToken = (accessToken) => fetch("/api/river-ai/chat", {
         method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ messages: next, agent: selectedAgent, teamSize, thinkingMode })
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${accessToken}` },
+        body: requestBody
       });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || "River AI non disponibile.");
+      let response = await sendWithToken(token);
+      if (response.status === 401) {
+        const { data: refreshed } = await supabase.auth.refreshSession();
+        const refreshedToken = refreshed?.session?.access_token;
+        if (refreshedToken) {
+          setToken(refreshedToken);
+          response = await sendWithToken(refreshedToken);
+        }
+      }
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        const failure = new Error(data.error || "River AI non disponibile.");
+        failure.status = response.status;
+        throw failure;
+      }
       setMessages((current) => [...current, { role: "assistant", content: data.answer }].slice(-40));
+      setAttachedFile(null);
     } catch (err) {
+      setMessages((current) => {
+        const last = current[current.length - 1];
+        return last?.role === "user" && last.content === composed ? current.slice(0, -1) : current;
+      });
+      setInput(text);
       setError(err.message || "Errore di connessione.");
     } finally {
       sendLock.current = false;
@@ -158,8 +204,32 @@ export default function RiverAI() {
   }
 
   function newChat() {
-    if (!window.confirm("Vuoi iniziare una nuova conversazione? La cronologia salvata su questo dispositivo verrà cancellata.")) return;
+    if (busy) return;
+    const nextId = "chat-" + Date.now();
+    const updated = chatSessions.map((chat) => chat.id === activeChatId
+      ? { ...chat, messages: messages.slice(-40), updatedAt: Date.now() }
+      : chat);
+    const nextChats = [...updated, { id: nextId, title: "Nuova conversazione", updatedAt: Date.now(), messages: [] }].slice(-30);
+    setChatSessions(nextChats);
+    setActiveChatId(nextId);
     setMessages([]);
+    setInput("");
+    setAttachedFile(null);
+    setError("");
+  }
+
+  function openChat(chatId) {
+    if (busy || !chatId || chatId === activeChatId) return;
+    const updated = chatSessions.map((chat) => chat.id === activeChatId
+      ? { ...chat, messages: messages.slice(-40), updatedAt: Date.now() }
+      : chat);
+    const selected = updated.find((chat) => chat.id === chatId);
+    if (!selected) return;
+    setChatSessions(updated);
+    setActiveChatId(chatId);
+    setMessages(selected.messages || []);
+    setInput("");
+    setAttachedFile(null);
     setError("");
   }
 
@@ -176,7 +246,10 @@ export default function RiverAI() {
           </div>
           <button onClick={installApp} style={{ border:"1px solid #f5d77a",borderRadius:11,padding:"9px 11px",background:"#f5d77a",color:"#12343b",fontWeight:800 }}>Installa app</button>
           <a href="/area-51" style={{ border:"1px solid #d9b65c",borderRadius:11,padding:"9px 11px",background:"rgba(217,182,92,.12)",color:"#f5d77a",fontWeight:800,textDecoration:"none",fontSize:13 }}>◈ Area 51</a>
-          <button onClick={newChat} disabled={access!=="ready" || busy} style={{ border:"1px solid #ffffff66",borderRadius:11,padding:"9px 11px",background:"transparent",color:"#fff",fontWeight:700 }}>Nuova chat</button>
+          {access === "ready" && <select aria-label="Conversazioni salvate" value={activeChatId} onChange={(event) => openChat(event.target.value)} disabled={busy} style={{maxWidth:150,minWidth:90,border:"1px solid #ffffff66",borderRadius:10,padding:"8px 7px",background:"#075766",color:"#fff",fontWeight:700}}>
+            {chatSessions.map((chat) => <option key={chat.id} value={chat.id}>{chat.title || "Conversazione"}</option>)}
+          </select>}
+          <button onClick={newChat} disabled={access!=="ready" || busy} style={{ border:"1px solid #ffffff66",borderRadius:11,padding:"9px 11px",background:"transparent",color:"#fff",fontWeight:700 }}>＋ Nuova chat</button>
         </header>
         <section aria-label="Nova e i tre comandanti River" style={{background:"#06172b",color:"#fff",padding:"12px 14px 16px"}}>
           <img src="/images/river-ssai-10-team.svg" alt="Nova al centro, i comandanti River A1B2, A2C4 e B2D5 e i 90 ruoli specialistici registrati" style={{display:"block",width:"100%",maxHeight:360,objectFit:"contain",borderRadius:14}}/>
