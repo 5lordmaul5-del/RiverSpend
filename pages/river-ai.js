@@ -10,6 +10,9 @@ export default function RiverAI() {
   const [messages, setMessages] = useState([]);
   const [storageKey, setStorageKey] = useState("");
   const [input, setInput] = useState("");
+  const [attachedFile, setAttachedFile] = useState(null);
+  const [thinkingMode, setThinkingMode] = useState("standard");
+  const [showTools, setShowTools] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [loginEmail, setLoginEmail] = useState("");
@@ -120,7 +123,7 @@ export default function RiverAI() {
     const text = input.trim();
     if (!text || busy || sendLock.current || access !== "ready") return;
     sendLock.current = true;
-    const next = [...messages, { role: "user", content: text }].slice(-16);
+    const composed = attachedFile ? `${text || "Analizza il documento allegato."}\\n\\n[Documento: ${attachedFile.name}]\\n${attachedFile.text.slice(0, 30000)}` : text;\n    const next = [...messages, { role: "user", content: composed }].slice(-16);
     setMessages(next);
     setInput("");
     setBusy(true);
@@ -129,7 +132,7 @@ export default function RiverAI() {
       const response = await fetch("/api/river-ai/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ messages: next, agent: selectedAgent, teamSize })
+        body: JSON.stringify({ messages: next, agent: selectedAgent, teamSize, thinkingMode })
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "River AI non disponibile.");
@@ -140,6 +143,17 @@ export default function RiverAI() {
       sendLock.current = false;
       setBusy(false);
     }
+  }
+
+  function downloadChat() {
+    const transcript = messages.map((m) => `${m.role === "user" ? "Tu" : "RiverSSAI"}:\\n${m.content}`).join("\\n\\n");
+    const blob = new Blob([transcript], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `river-ssai-chat-${new Date().toISOString().slice(0,10)}.txt`;
+    link.click();
+    URL.revokeObjectURL(url);
   }
 
   function newChat() {
@@ -245,6 +259,18 @@ export default function RiverAI() {
             <div ref={endRef}/>
           </div>
           {error && <div role="alert" style={{margin:"0 16px 10px",padding:12,borderRadius:12,background:"#fff3f0",color:"#9a3412",fontSize:13}}>{error}</div>}
+          <div style={{display:"flex",gap:8,flexWrap:"wrap",padding:"10px 14px",borderTop:"1px solid #dceeee",background:"#f5fbfb"}}>
+            <button type="button" onClick={()=>setShowTools(v=>!v)} style={{border:"1px solid #b9dadd",borderRadius:10,padding:"8px 11px",background:"#fff",color:"#075766",fontWeight:700}}>＋ Strumenti</button>
+            <select aria-label="Modalità di risposta" value={thinkingMode} onChange={e=>setThinkingMode(e.target.value)} style={{border:"1px solid #b9dadd",borderRadius:10,padding:"8px 10px",background:"#fff",color:"#075766"}}><option value="standard">Risposta rapida</option><option value="deep">Pensa intensamente</option></select>
+            <button type="button" onClick={downloadChat} disabled={!messages.length} style={{border:"1px solid #b9dadd",borderRadius:10,padding:"8px 11px",background:"#fff",color:"#075766",fontWeight:700}}>Scarica chat</button>
+          </div>
+          {showTools && <div style={{padding:"12px 14px",background:"#fff",borderTop:"1px solid #e3eeee",display:"grid",gap:9}}>
+            <label style={{fontWeight:700,color:"#075766"}}>Allega un documento (TXT, MD, CSV o JSON, massimo 1 MB)
+              <input type="file" accept=".txt,.md,.csv,.json,text/plain,text/markdown,text/csv,application/json" onChange={async e=>{const file=e.target.files?.[0]; if(!file)return; if(file.size>1024*1024){setError("Il file supera il limite di 1 MB.");e.target.value="";return;} try{const text=await file.text();setAttachedFile({name:file.name,text});setInput(v=>v ? v : `Analizza il documento allegato: ${file.name}`);setError("");}catch{setError("Non riesco a leggere questo file.");}}} style={{display:"block",marginTop:7,maxWidth:"100%"}} />
+            </label>
+            {attachedFile && <div style={{fontSize:13,color:"#17616a"}}>Allegato pronto: {attachedFile.name} <button type="button" onClick={()=>setAttachedFile(null)} style={{marginLeft:8,color:"#9a3412"}}>Rimuovi</button></div>}
+            <div style={{fontSize:13,color:"#76531a",background:"#fff8df",padding:10,borderRadius:9}}>Generazione diretta di immagini e video: non ancora collegata a un servizio dedicato. Non ti mostreremo un falso pulsante di generazione.</div>
+          </div>}
           <form onSubmit={send} style={{display:"flex",gap:8,padding:14,borderTop:"1px solid #dceeee",background:"#fbfefe"}}>
             <textarea value={input} onChange={e=>setInput(e.target.value)} placeholder="Scrivi a River AI…" rows={2} maxLength={4000} disabled={busy} style={{flex:1,minWidth:0,resize:"vertical",border:"1px solid #c7dfe1",borderRadius:14,padding:12,fontSize:16,outlineColor:"#0e9aa4",color:"#173b42"}}/>
             <button type="submit" disabled={busy || !input.trim()} style={{alignSelf:"stretch",border:0,borderRadius:14,padding:"0 18px",background:busy||!input.trim()?"#a9c8ca":"#087f89",color:"#fff",fontWeight:800}}>Invia</button>
