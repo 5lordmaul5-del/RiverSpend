@@ -4,10 +4,9 @@ import { selectTeam } from "../../../lib/riverSSAI/router.mjs";
 
 const MODEL_DEFAULT = "openai/gpt-oss-20b";
 const MAX_AGENTS = 4; // limite operativo iniziale per il piano Groq attuale
-const MAX_MESSAGE_CHARS = 1800;
+const MAX_MESSAGE_CHARS = 4000;
 const MAX_ATTACHMENT_CHARS = 8000;
 const MAX_HISTORY = 6;
-const MAX_PARALLEL = 1; // evita picchi TPM sul piano attuale
 
 const AGENTS = Object.fromEntries(
   Object.entries(AGENTS_REGISTRY).map(([key, agent]) => [key, agent.prompt])
@@ -134,7 +133,7 @@ export default async function handler(req, res) {
   const team = chooseTeam(agent, body.teamSize, safeMessages[safeMessages.length - 1].content);
   const model = process.env.RIVER_AI_MODEL || MODEL_DEFAULT;
   const thinkingMode = body.thinkingMode === "deep" ? "deep" : "standard";
-  const responseTokens = thinkingMode === "deep" ? 1000 : 700;
+  const responseTokens = thinkingMode === "deep" ? 1800 : 1100;
   const modeInstruction = thinkingMode === "deep" ? "\nMODALITÀ APPROFONDITA: analizza con attenzione, verifica presupposti, confronta alternative e restituisci conclusioni, passaggi, rischi e controlli. Non mostrare ragionamenti interni privati." : "";
 
   try {
@@ -155,22 +154,19 @@ export default async function handler(req, res) {
     let agentsUsed = team;
 
     if (agent === "team") {
-      // La Squadra usa un contesto compatto per rispettare il limite TPM del provider.
-      const teamHistory = safeMessages.slice(-3);
-      const teamMemory = memoryContext.slice(0, 350);
-      const reports = await runWithLimit(team, MAX_PARALLEL, async (specialist) => {
-        const report = await callModel(groqKey, model, [
-          { role: "system", content: BASE_PROMPT + modeInstruction + "\nRUOLO SPECIALISTA: " + AGENTS[specialist] + "\nFornisci un rapporto sintetico: priorità, un rischio e verifica essenziale." },
-          ...(teamMemory ? [{ role: "system", content: "CONTESTO PRIVATO RIVERSPEND (sintesi):\n" + teamMemory }] : []),
-          ...teamHistory
-        ], 180);
-        return { specialist, report };
-      });
-      const synthesis = await callModel(groqKey, model, [
-        { role: "system", content: BASE_PROMPT + modeInstruction + "\nSei NOVA, coordinatrice. Confronta i rapporti, risolvi le contraddizioni senza nasconderle e restituisci decisione, piano, rischi e verifiche." },
-        { role: "user", content: "RICHIESTA:\n" + latestPrompt + "\n\nRAPPORTI SPECIALISTI:\n" + reports.map((item) => "AGENTE " + item.specialist.toUpperCase() + ":\n" + item.report).join("\n\n") }
-      ], 650);
-      answer = synthesis;
+      const specialistBrief = team
+        .map((specialist) => "- " + specialist.toUpperCase() + ": " + AGENTS[specialist])
+        .join("\n");
+      answer = await callModel(groqKey, model, [
+        {
+          role: "system",
+          content: BASE_PROMPT + modeInstruction
+            + "\nSQUADRA ULTRA COORDINATA: usa le competenze dei seguenti specialisti in un'unica elaborazione del modello. Integra le prospettive in una risposta coerente; evidenzia eventuali disaccordi, incertezze, rischi e verifiche. Non dichiarare che siano stati eseguiti calcoli o controlli esterni se non lo sono stati.\n"
+            + specialistBrief
+        },
+        ...(memoryContext ? [{ role: "system", content: "MEMORIA PRIVATA RIVER AI:\n" + memoryContext }] : []),
+        ...safeMessages
+      ], responseTokens);
       agentsUsed = ["nova", ...team];
     } else {
       answer = await callModel(groqKey, model, [
@@ -190,15 +186,23 @@ export default async function handler(req, res) {
       teamSize: agent === "team" ? team.length : 1,
       memorySaved: false,
       memoryPolicy: "explicit-only",
-      limits: { maxAgents: MAX_AGENTS, maxParallel: MAX_PARALLEL }
+      limits: { maxAgents: MAX_AGENTS, providerCallsPerRequest: 1 },\n      executionMode: agent === "team" ? "coordinated-single-call" : "single-agent"
     });
   } catch (error) {
     console.error("River AI request failed:", error?.message || "unknown");
     if (error?.status === 429) {
-      const waitMatch = String(error?.message || "").match(/try again in ([0-9.]+)s/i);
-      const waitSeconds = waitMatch ? Math.ceil(Number(waitMatch[1])) : 20;
-      res.setHeader("Retry-After", String(waitSeconds));
-      return json(res, 429, { error: "Il servizio AI sta raggiungendo il limite di richieste. Attendi circa " + waitSeconds + " secondi e riprova. La Squadra non ha completato l'analisi." });
+      const providerMessage = String(error?.message || "");
+      const quotaExhausted = /tokens per day|requests per day|daily quota|quota giornaliera|limit reached/i.test(providerMessage);
+      const waitMatch = providerMessage.match(/try again in ([0-9.]+)s/i);
+      const waitSeconds = waitMatch ? Math.max(1, Math.ceil(Number(waitMatch[1]))) : null;
+      if (waitSeconds) res.setHeader("Retry-After", String(waitSeconds));
+      return json(res, 429, {
+        code: quotaExhausted ? "PROVIDER_QUOTA_EXHAUSTED" : "PROVIDER_RATE_LIMIT",
+        retryAfterSeconds: waitSeconds,
+        error: quotaExhausted
+          ? "La quota del servizio AI è temporaneamente esaurita. Non è un blocco del tuo account amministratore: serve attendere il ripristino della quota o configurare un provider di riserva."
+          : "Il servizio AI sta ricevendo troppe richieste. La richiesta non è stata completata; riprova tra " + (waitSeconds ? waitSeconds + " secondi" : "qualche istante") + "."
+      });
     }
     if (error?.name === "AbortError") return json(res, 504, { error: "La richiesta ha superato il tempo massimo. Riprova con una richiesta più breve." });
     return json(res, 502, { error: "Servizio AI temporaneamente non disponibile. La richiesta può essere ripetuta." });
