@@ -121,7 +121,7 @@ export default function RiverAI() {
   async function send(event) {
     event?.preventDefault();
     const text = input.trim();
-    if (!text || busy || sendLock.current || access !== "ready") return;
+    if ((!text && !attachedFile) || busy || sendLock.current || access !== "ready") return;
     sendLock.current = true;
     const composed = attachedFile ? `${text || "Analizza il documento allegato."}\\n\\n[Documento: ${attachedFile.name}]\\n${attachedFile.text.slice(0, 30000)}` : text;\n    const next = [...messages, { role: "user", content: composed }].slice(-16);
     setMessages(next);
@@ -273,7 +273,7 @@ export default function RiverAI() {
           </div>}
           <form onSubmit={send} style={{display:"flex",gap:8,padding:14,borderTop:"1px solid #dceeee",background:"#fbfefe"}}>
             <textarea value={input} onChange={e=>setInput(e.target.value)} placeholder="Scrivi a River AI…" rows={2} maxLength={4000} disabled={busy} style={{flex:1,minWidth:0,resize:"vertical",border:"1px solid #c7dfe1",borderRadius:14,padding:12,fontSize:16,outlineColor:"#0e9aa4",color:"#173b42"}}/>
-            <button type="submit" disabled={busy || !input.trim()} style={{alignSelf:"stretch",border:0,borderRadius:14,padding:"0 18px",background:busy||!input.trim()?"#a9c8ca":"#087f89",color:"#fff",fontWeight:800}}>Invia</button>
+            <button type="submit" disabled={busy || (!input.trim() && !attachedFile)} style={{alignSelf:"stretch",border:0,borderRadius:14,padding:"0 18px",background:busy||!input.trim()?"#a9c8ca":"#087f89",color:"#fff",fontWeight:800}}>Invia</button>
           </form>
          </>}
       </section>
