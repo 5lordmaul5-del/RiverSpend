@@ -123,7 +123,7 @@ export default function RiverAI() {
     const text = input.trim();
     if ((!text && !attachedFile) || busy || sendLock.current || access !== "ready") return;
     sendLock.current = true;
-    const composed = attachedFile ? `${text || "Analizza il documento allegato."}\\n\\n[Documento: ${attachedFile.name}]\\n${attachedFile.text.slice(0, 30000)}` : text;
+    const composed = attachedFile ? `${text || "Analizza il documento allegato."}\n\n[Documento: ${attachedFile.name}]\n${attachedFile.text.slice(0, 8000)}` : text;
     const next = [...messages, { role: "user", content: composed }].slice(-16);
     setMessages(next);
     setInput("");
@@ -147,7 +147,7 @@ export default function RiverAI() {
   }
 
   function downloadChat() {
-    const transcript = messages.map((m) => `${m.role === "user" ? "Tu" : "RiverSSAI"}:\\n${m.content}`).join("\\n\\n");
+    const transcript = messages.map((m) => `${m.role === "user" ? "Tu" : "RiverSSAI"}:\n${m.content}`).join("\n\n");
     const blob = new Blob([transcript], { type: "text/plain;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -165,7 +165,7 @@ export default function RiverAI() {
 
   return (
     <>
-    <Head><title>RiverSSAI 10.0 · Pure Power</title><meta name="description" content="RiverSSAI 10.0: Nova, i tre comandanti River e la rete dei 30 specialisti."/><meta name="theme-color" content="#06172b"/><meta name="apple-mobile-web-app-capable" content="yes"/><meta name="apple-mobile-web-app-title" content="RiverSSAI 10.0"/><link rel="manifest" href="/river-ai.webmanifest"/><link rel="icon" href="/icons/river-ssai-app.svg" type="image/svg+xml"/><link rel="apple-touch-icon" href="/icons/river-ssai-180.png"/></Head>
+    <Head><title>RiverSSAI 10.0 · Pure Power</title><meta name="description" content="RiverSSAI 10.0: Nova, i tre comandanti River e il registro dei 90 ruoli specialistici."/><meta name="theme-color" content="#06172b"/><meta name="apple-mobile-web-app-capable" content="yes"/><meta name="apple-mobile-web-app-title" content="RiverSSAI 10.0"/><link rel="manifest" href="/river-ai.webmanifest"/><link rel="icon" href="/icons/river-ssai-app.svg" type="image/svg+xml"/><link rel="apple-touch-icon" href="/icons/river-ssai-180.png"/></Head>
     <main style={{ minHeight:"100vh", background:"linear-gradient(180deg,#e9fbfc,#f7fcfd)", color:"#12343b", padding:"18px 12px 28px", fontFamily:"Arial,sans-serif" }}>
       <section style={{ maxWidth:850, minHeight:"calc(100vh - 46px)", margin:"0 auto", display:"flex", flexDirection:"column", background:"#fff", border:"1px solid #c8e8e9", borderRadius:22, overflow:"hidden", boxShadow:"0 12px 36px rgba(5,65,78,.10)" }}>
         <header className="river-ai-header" style={{ padding:"18px 20px", background:"linear-gradient(120deg,#073b4c,#087f89)", color:"#fff", display:"flex", alignItems:"center", gap:12 }}>
@@ -179,9 +179,9 @@ export default function RiverAI() {
           <button onClick={newChat} disabled={access!=="ready" || busy} style={{ border:"1px solid #ffffff66",borderRadius:11,padding:"9px 11px",background:"transparent",color:"#fff",fontWeight:700 }}>Nuova chat</button>
         </header>
         <section aria-label="Nova e i tre comandanti River" style={{background:"#06172b",color:"#fff",padding:"12px 14px 16px"}}>
-          <img src="/images/river-ssai-10-team.svg" alt="Nova al centro, i comandanti River A1B2, A2C4 e B2D5 e l’esercito dei 30 specialisti" style={{display:"block",width:"100%",maxHeight:360,objectFit:"contain",borderRadius:14}}/>
+          <img src="/images/river-ssai-10-team.svg" alt="Nova al centro, i comandanti River A1B2, A2C4 e B2D5 e i 90 ruoli specialistici registrati" style={{display:"block",width:"100%",maxHeight:360,objectFit:"contain",borderRadius:14}}/>
           <div style={{textAlign:"center",fontWeight:800,letterSpacing:1,color:"#55e6ff",fontSize:13,marginTop:8}}>NOVA · RIVER A1B2 · RIVER A2C4 · RIVER B2D5</div>
-          <div style={{textAlign:"center",fontSize:12,color:"#d7e9f5",marginTop:4}}>Una regia. Tre unità speciali. 30 specialisti.</div>
+          <div style={{textAlign:"center",fontSize:12,color:"#d7e9f5",marginTop:4}}>Una regia. Tre unità speciali. 90 ruoli registrati · fino a 4 attivi per richiesta.</div>
         </section>
 
         {installMessage && <div role="status" style={{padding:"10px 18px",background:"#fff8df",color:"#72510a",fontSize:13}}>{installMessage}</div>}
