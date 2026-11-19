@@ -361,7 +361,7 @@ export default function Home() {
         p_reward_label: 'server_random',
         p_rivermoney: 0,
         p_rsp: 0,
-        p_metadata: {}
+        p_metadata: { server_random: true }
       });
       if (error) {
         if (error.message?.includes('FORTUNE_ALREADY_PLAYED')) {
