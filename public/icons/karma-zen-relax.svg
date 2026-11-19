@@ -1,17 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-<defs>
- <linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff1a8"/><stop offset=".42" stop-color="#d6a63b"/><stop offset="1" stop-color="#8a5b13"/></linearGradient>
- <radialGradient id="b"><stop stop-color="#145a63"/><stop offset="1" stop-color="#062b35"/></radialGradient>
- <filter id="s"><feGaussianBlur stdDeviation="7"/></filter>
-</defs>
-<rect x="14" y="14" width="484" height="484" rx="112" fill="url(#b)" stroke="url(#g)" stroke-width="14"/>
-<circle cx="256" cy="224" r="132" fill="none" stroke="#e8bd58" stroke-width="5" opacity=".45"/>
-<circle cx="256" cy="224" r="101" fill="none" stroke="#e8bd58" stroke-width="4" opacity=".65"/>
-<path d="M130 224c42-65 82-65 126 0s84 65 126 0" fill="none" stroke="#f8d978" stroke-width="23" stroke-linecap="round" filter="url(#s)" opacity=".35"/>
-<path d="M130 224c42-65 82-65 126 0s84 65 126 0" fill="none" stroke="url(#g)" stroke-width="18" stroke-linecap="round"/>
-<path d="M150 270c36-35 72-35 106 0s70 35 106 0" fill="none" stroke="#f8e6a7" stroke-width="10" stroke-linecap="round"/>
-<path d="M182 321c25-20 49-20 74 0s49 20 74 0" fill="none" stroke="#d9ae4b" stroke-width="8" stroke-linecap="round"/>
-<g fill="#ffe9a0"><circle cx="256" cy="78" r="8"/><circle cx="100" cy="222" r="6"/><circle cx="412" cy="222" r="6"/><path d="m365 102 7 18 18 7-18 7-7 18-7-18-18-7 18-7z"/></g>
-<text x="256" y="414" text-anchor="middle" font-family="Arial,sans-serif" font-size="39" font-weight="900" letter-spacing="5" fill="url(#g)">RIVERSPACE</text>
-<text x="256" y="455" text-anchor="middle" font-family="Arial,sans-serif" font-size="28" font-weight="800" letter-spacing="9" fill="#fff0bd">SIGNALS</text>
+<defs><linearGradient id="gold" x2="1" y2="1"><stop stop-color="#fff3b0"/><stop offset=".48" stop-color="#e6b84f"/><stop offset="1" stop-color="#9b671e"/></linearGradient><radialGradient id="water"><stop stop-color="#176b7a"/><stop offset="1" stop-color="#041e2c"/></radialGradient><filter id="glow"><feGaussianBlur stdDeviation="8"/></filter></defs>
+<rect x="12" y="12" width="488" height="488" rx="110" fill="url(#water)" stroke="url(#gold)" stroke-width="12"/>
+<circle cx="256" cy="170" r="82" fill="#fff1ba" opacity=".14"/><circle cx="256" cy="170" r="67" fill="none" stroke="#ffe9a4" stroke-width="5" opacity=".85"/>
+<path d="M85 180 C35 110 80 62 140 92 C195 120 168 184 115 172 C72 162 83 115 120 120" fill="none" stroke="#27dff5" stroke-width="18" stroke-linecap="round" filter="url(#glow)"/>
+<path d="M85 180 C35 110 80 62 140 92 C195 120 168 184 115 172 C72 162 83 115 120 120" fill="none" stroke="#42eaff" stroke-width="9" stroke-linecap="round"/>
+<path d="M427 180 C477 110 432 62 372 92 C317 120 344 184 397 172 C440 162 429 115 392 120" fill="none" stroke="#27dff5" stroke-width="18" stroke-linecap="round" filter="url(#glow)"/>
+<path d="M427 180 C477 110 432 62 372 92 C317 120 344 184 397 172 C440 162 429 115 392 120" fill="none" stroke="#42eaff" stroke-width="9" stroke-linecap="round"/>
+<g transform="translate(256 300)" fill="url(#gold)" stroke="#fff0b0" stroke-width="3"><path d="M0 55 C-100 50 -105 -15 -58 -20 C-32 -23 -15 14 0 55Z"/><path d="M0 55 C100 50 105 -15 58 -20 C32 -23 15 14 0 55Z"/><path d="M0 55 C-70 12 -55 -65 -18 -58 C-3 -55 -1 0 0 55Z"/><path d="M0 55 C70 12 55 -65 18 -58 C3 -55 1 0 0 55Z"/><path d="M-65 58 Q0 35 65 58 Q0 90 -65 58Z"/></g>
+<path d="M70 395 Q150 360 256 395 T442 395" fill="none" stroke="#39e8f5" stroke-width="8" stroke-linecap="round"/><path d="M85 425 Q170 395 256 425 T427 425" fill="none" stroke="#d6b35d" stroke-width="5" stroke-linecap="round"/>
+<text x="256" y="474" text-anchor="middle" font-family="Arial" font-size="25" font-weight="800" letter-spacing="4" fill="#fff0bd">KARMA ZEN</text>
 </svg>
