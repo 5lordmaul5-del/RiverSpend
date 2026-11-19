@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 560" role="img" aria-labelledby="title desc">
+<title id="title">Karma Zen Relax, loto in movimento</title><desc id="desc">Loto dorato rotante al centro di un lago notturno, luna luminosa, acqua animata e due onde energetiche a forma di S.</desc>
+<defs>
+ <linearGradient id="sky" x2="0" y2="1"><stop stop-color="#031326"/><stop offset=".55" stop-color="#07506a"/><stop offset="1" stop-color="#061e2d"/></linearGradient>
+ <linearGradient id="gold" x2="0" y2="1"><stop stop-color="#fff9d7"/><stop offset=".5" stop-color="#f5cf72"/><stop offset="1" stop-color="#b27626"/></linearGradient>
+ <linearGradient id="cyan" x2="1" y2="1"><stop stop-color="#d5ffff"/><stop offset=".35" stop-color="#28eaff"/><stop offset="1" stop-color="#087da9"/></linearGradient>
+ <radialGradient id="moon"><stop stop-color="#fffce4"/><stop offset=".75" stop-color="#ffe8a0"/><stop offset="1" stop-color="#e3a948"/></radialGradient>
+ <filter id="glow"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<rect width="900" height="560" rx="28" fill="url(#sky)"/>
+<circle cx="450" cy="120" r="76" fill="#f8d77c" opacity=".22" filter="url(#glow)"/><circle cx="450" cy="120" r="58" fill="url(#moon)"/>
+<path d="M0 310L105 205 190 275 285 190 380 300 470 210 565 295 680 190 790 275 900 205V390H0Z" fill="#0b3448"/>
+<path d="M0 355L140 280 250 340 365 270 480 350 620 275 760 345 900 280V410H0Z" fill="#092a3b"/>
+<path d="M0 390Q110 365 220 390T440 390T660 390T900 390V560H0Z" fill="#06374b"/>
+<g opacity=".85" stroke="#d4b15e" stroke-width="3" fill="none"><path d="M0 415Q120 390 240 415T480 415T720 415T960 415"><animate attributeName="stroke-dashoffset" values="0;180" dur="16s" repeatCount="indefinite"/></path><path d="M0 455Q120 430 240 455T480 455T720 455T960 455" stroke="#28dff3"><animate attributeName="stroke-dashoffset" values="180;0" dur="12s" repeatCount="indefinite"/></path></g>
+<g fill="none" stroke="url(#cyan)" stroke-linecap="round" filter="url(#glow)">
+ <path d="M35 180C120 60 270 75 310 170C350 270 235 315 165 260C105 215 150 150 210 172" stroke-width="15"><animate attributeName="stroke-dashoffset" values="0;240" dur="18s" repeatCount="indefinite"/></path>
+ <path d="M865 180C780 60 630 75 590 170C550 270 665 315 735 260C795 215 750 150 690 172" stroke-width="15"><animate attributeName="stroke-dashoffset" values="240;0" dur="18s" repeatCount="indefinite"/></path>
+</g>
+<g fill="none" stroke="#e8ffff" stroke-width="3" opacity=".8"><path d="M35 180C120 60 270 75 310 170C350 270 235 315 165 260C105 215 150 150 210 172"/><path d="M865 180C780 60 630 75 590 170C550 270 665 315 735 260C795 215 750 150 690 172"/></g>
+<g transform="translate(450 355)" filter="url(#glow)">
+ <g>
+  <animateTransform attributeName="transform" type="rotate" values="0;360" dur="80s" repeatCount="indefinite"/>
+  <g fill="url(#gold)" stroke="#fff2bd" stroke-width="3">
+   <path d="M0 65C-135 55-155-35-90-45C-45-52-18 18 0 65Z"/>
+   <path d="M0 65C135 55 155-35 90-45C45-52 18 18 0 65Z"/>
+   <path d="M0 65C-95 5-78-100-28-90C-3-84-2-5 0 65Z"/>
+   <path d="M0 65C95 5 78-100 28-90C3-84 2-5 0 65Z"/>
+   <path d="M0 65C-40-25-28-135 0-135C28-135 40-25 0 65Z"/>
+  </g>
+ </g>
+ <circle r="14" fill="#fff8d8"/>
+</g>
+<g fill="none" stroke="#28dff3" stroke-width="5" opacity=".85">
+ <ellipse cx="450" cy="430" rx="210" ry="24"><animate attributeName="rx" values="160;300;160" dur="8s" repeatCount="indefinite"/><animate attributeName="opacity" values=".8;.25;.8" dur="8s" repeatCount="indefinite"/></ellipse>
+ <ellipse cx="450" cy="455" rx="280" ry="18"><animate attributeName="rx" values="220;350;220" dur="10s" repeatCount="indefinite"/></ellipse>
+</g>
+<g fill="#fff5c8"><circle cx="125" cy="130" r="3"><animate attributeName="opacity" values=".2;1;.2" dur="3s" repeatCount="indefinite"/></circle><circle cx="760" cy="145" r="4"><animate attributeName="opacity" values="1;.2;1" dur="4s" repeatCount="indefinite"/></circle><circle cx="330" cy="80" r="3"><animate attributeName="opacity" values=".1;1;.1" dur="2.6s" repeatCount="indefinite"/></circle><circle cx="600" cy="60" r="2"><animate attributeName="opacity" values="1;.2;1" dur="3.4s" repeatCount="indefinite"/></circle></g>
+</svg>
