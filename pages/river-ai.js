@@ -24,6 +24,8 @@ export default function RiverAI() {
   const [loginEmail, setLoginEmail] = useState("");
   const [loginBusy, setLoginBusy] = useState(false);
   const [loginSent, setLoginSent] = useState(false);
+  const [loginCooldownUntil, setLoginCooldownUntil] = useState(0);
+  const [searchChats, setSearchChats] = useState("");
   const [installPrompt, setInstallPrompt] = useState(null);
   const [installMessage, setInstallMessage] = useState("");
   const [selectedAgent, setSelectedAgent] = useState("nova");
@@ -50,6 +52,16 @@ export default function RiverAI() {
     setInstallMessage(choice?.outcome === "accepted" ? "Installazione avviata." : "Installazione non completata. Puoi riprovare.");
     setInstallPrompt(null);
   }
+
+  useEffect(() => {
+    try { const until = Number(sessionStorage.getItem("river-ai-login-cooldown") || 0); if (until > Date.now()) setLoginCooldownUntil(until); } catch {}
+  }, []);
+
+  useEffect(() => {
+    if (!loginCooldownUntil) return;
+    const timer = window.setTimeout(() => setLoginCooldownUntil(0), Math.max(0, loginCooldownUntil - Date.now()));
+    return () => window.clearTimeout(timer);
+  }, [loginCooldownUntil]);
 
   useEffect(() => {
     let alive = true;
@@ -90,10 +102,9 @@ export default function RiverAI() {
             .slice(-30)
             .map((chat) => ({ ...chat, messages: chat.messages.slice(-40) }));
         }
-        if (!chats.length) chats = [{ id: "chat-" + Date.now(), title: "Nuova conversazione", updatedAt: Date.now(), messages: [] }];
-        const activeId = parsed && typeof parsed.activeChatId === "string" && chats.some((chat) => chat.id === parsed.activeChatId)
-          ? parsed.activeChatId
-          : chats[0].id;
+        if (!chats.some((chat) => !chat.archived)) chats.push({ id: "chat-" + Date.now(), title: "Nuova conversazione", updatedAt: Date.now(), messages: [], archived: false });
+        const requestedActive = parsed && typeof parsed.activeChatId === "string" ? chats.find((chat) => chat.id === parsed.activeChatId && !chat.archived) : null;
+        const activeId = requestedActive?.id || chats.find((chat) => !chat.archived).id;
         const activeChat = chats.find((chat) => chat.id === activeId) || chats[0];
         setChatSessions(chats);
         setActiveChatId(activeChat.id);
@@ -131,6 +142,8 @@ export default function RiverAI() {
     event?.preventDefault();
     const cleanEmail = loginEmail.trim();
     if (!cleanEmail || loginBusy) return;
+    const storedCooldown = Number(sessionStorage.getItem("river-ai-login-cooldown") || 0);
+    if (storedCooldown > Date.now()) { setLoginCooldownUntil(storedCooldown); setError("Attendi ancora " + Math.ceil((storedCooldown - Date.now()) / 1000) + " secondi prima di richiedere un altro link."); return; }
     setLoginBusy(true);
     setError("");
     setLoginSent(false);
@@ -141,8 +154,17 @@ export default function RiverAI() {
       });
       if (authError) throw authError;
       setLoginSent(true);
+      const until = Date.now() + 60000;
+      setLoginCooldownUntil(until);
+      try { sessionStorage.setItem("river-ai-login-cooldown", String(until)); } catch {}
     } catch (err) {
-      setError(err.message || "Non riesco a inviare il link di accesso.");
+      const message = String(err?.message || "");
+      if (/429|rate limit|too many requests/i.test(message)) {
+        const until = Date.now() + 60000;
+        setLoginCooldownUntil(until);
+        try { sessionStorage.setItem("river-ai-login-cooldown", String(until)); } catch {}
+        setError("Supabase sta limitando temporaneamente gli invii email (429). Attendi almeno 60 secondi prima di riprovare. Se il problema continua, serve configurare un SMTP dedicato.");
+      } else setError(message || "Non riesco a inviare il link di accesso.");
     } finally {
       setLoginBusy(false);
     }
@@ -222,13 +244,31 @@ export default function RiverAI() {
     setError("");
   }
 
+  function saveChatList(nextChats, nextActiveId = activeChatId) {
+    setChatSessions(nextChats);
+    if (nextActiveId) setActiveChatId(nextActiveId);
+    try { if (storageKey) localStorage.setItem(storageKey, JSON.stringify({ version: 2, activeChatId: nextActiveId, chats: nextChats })); } catch {}
+  }
+
   function archiveCurrentChat() {
     if (!activeChatId || busy) return;
     const updated = chatSessions.map((chat) => chat.id === activeChatId ? { ...chat, messages: messages.slice(-40), archived: true, updatedAt: Date.now() } : chat);
     const remaining = updated.filter((chat) => !chat.archived);
     const next = remaining[remaining.length - 1] || { id: "chat-" + Date.now(), title: "Nuova conversazione", updatedAt: Date.now(), messages: [], archived: false };
     const nextChats = remaining.length ? updated : [...updated, next];
-    setChatSessions(nextChats); setActiveChatId(next.id); setMessages(next.messages || []); setShowChatMenu(false);
+    saveChatList(nextChats, next.id); setMessages(next.messages || []); setShowChatMenu(false); setShowArchived(false);
+  }
+
+  function restoreCurrentChat() {
+    if (!activeChatId || busy) return;
+    const updated = chatSessions.map((chat) => chat.id === activeChatId ? { ...chat, archived: false, updatedAt: Date.now() } : chat);
+    saveChatList(updated, activeChatId); setShowArchived(false); setShowChatMenu(false);
+  }
+
+  function togglePinCurrentChat() {
+    if (!activeChatId || busy) return;
+    const updated = chatSessions.map((chat) => chat.id === activeChatId ? { ...chat, pinned: !chat.pinned, updatedAt: Date.now() } : chat);
+    saveChatList(updated, activeChatId);
   }
 
   function deleteCurrentChat() {
@@ -237,7 +277,7 @@ export default function RiverAI() {
     const remaining = chatSessions.filter((chat) => chat.id !== activeChatId);
     const next = remaining.filter((chat) => !chat.archived).slice(-1)[0] || { id: "chat-" + Date.now(), title: "Nuova conversazione", updatedAt: Date.now(), messages: [], archived: false };
     const nextChats = remaining.length ? remaining : [next];
-    setChatSessions(nextChats); setActiveChatId(next.id); setMessages(next.messages || []); setShowChatMenu(false);
+    saveChatList(nextChats, next.id); setMessages(next.messages || []); setShowChatMenu(false);
   }
 
   async function shareCurrentChat() {
@@ -260,6 +300,11 @@ export default function RiverAI() {
     recognition.onend = () => setIsListening(false); recognitionRef.current = recognition;
     try { recognition.start(); setIsListening(true); setError(""); } catch { setIsListening(false); setError("Impossibile avviare il microfono."); }
   }
+
+  const visibleChats = chatSessions
+    .filter((chat) => showArchived ? !!chat.archived : !chat.archived || chat.id === activeChatId)
+    .filter((chat) => !searchChats.trim() || (chat.title || "").toLowerCase().includes(searchChats.trim().toLowerCase()) || (chat.messages || []).some((message) => (message.content || "").toLowerCase().includes(searchChats.trim().toLowerCase())))
+    .sort((a, b) => Number(!!b.pinned) - Number(!!a.pinned) || (b.updatedAt || 0) - (a.updatedAt || 0));
 
   function openChat(chatId) {
     if (busy || !chatId || chatId === activeChatId) return;
@@ -289,8 +334,8 @@ export default function RiverAI() {
           </div>
           <button onClick={installApp} style={{ border:"1px solid #f5d77a",borderRadius:11,padding:"9px 11px",background:"#f5d77a",color:"#12343b",fontWeight:800 }}>Installa app</button>
           <a href="/area-51" style={{ border:"1px solid #d9b65c",borderRadius:11,padding:"9px 11px",background:"rgba(217,182,92,.12)",color:"#f5d77a",fontWeight:800,textDecoration:"none",fontSize:13 }}>◈ Area 51</a>
-          {access === "ready" && <><select aria-label="Conversazioni salvate" value={activeChatId} onChange={(event) => openChat(event.target.value)} disabled={busy} style={{maxWidth:150,minWidth:90,border:"1px solid #ffffff66",borderRadius:10,padding:"8px 7px",background:"#075766",color:"#fff",fontWeight:700}}>
-            {chatSessions.filter((chat) => showArchived ? chat.archived : !chat.archived).map((chat) => <option key={chat.id} value={chat.id}>{chat.title || "Conversazione"}</option>)}
+          {access === "ready" && <><input aria-label="Cerca conversazioni" value={searchChats} onChange={(event) => setSearchChats(event.target.value)} placeholder="Cerca chat" style={{maxWidth:130,minWidth:85,border:"1px solid #ffffff66",borderRadius:10,padding:"8px 7px",background:"#075766",color:"#fff",fontSize:12}}/><select aria-label="Conversazioni salvate" value={visibleChats.some((chat) => chat.id === activeChatId) ? activeChatId : ""} onChange={(event) => openChat(event.target.value)} disabled={busy} style={{maxWidth:150,minWidth:90,border:"1px solid #ffffff66",borderRadius:10,padding:"8px 7px",background:"#075766",color:"#fff",fontWeight:700}}>
+            {visibleChats.map((chat) => <option key={chat.id} value={chat.id}>{chat.pinned ? "📌 " : ""}{chat.title || "Conversazione"}</option>)}
           </select><button type="button" onClick={() => setShowArchived((v) => !v)} style={{border:"1px solid #ffffff66",borderRadius:10,padding:"8px 9px",background:"transparent",color:"#fff",fontWeight:700}}>{showArchived ? "Attive" : "Archivio"}</button><button type="button" aria-label="Menu conversazione" onClick={() => setShowChatMenu((v) => !v)} style={{border:"1px solid #ffffff66",borderRadius:10,padding:"8px 12px",background:"transparent",color:"#fff",fontSize:18}}>⋯</button></>}
           <button onClick={newChat} disabled={access!=="ready" || busy} style={{ border:"1px solid #ffffff66",borderRadius:11,padding:"9px 11px",background:"transparent",color:"#fff",fontWeight:700 }}>＋ Nuova chat</button>
         </header>
@@ -301,14 +346,14 @@ export default function RiverAI() {
         </section>
 
         {installMessage && <div role="status" style={{padding:"10px 18px",background:"#fff8df",color:"#72510a",fontSize:13}}>{installMessage}</div>}
-        {showChatMenu && access === "ready" && <div style={{display:"flex",gap:8,flexWrap:"wrap",padding:"10px 14px",background:"#edf8f8",borderBottom:"1px solid #dceeee"}}><button type="button" onClick={shareCurrentChat} style={{border:"1px solid #b9dadd",borderRadius:10,padding:"8px 12px",background:"#fff",color:"#075766",fontWeight:700}}>Condividi</button><button type="button" onClick={archiveCurrentChat} disabled={busy || !messages.length} style={{border:"1px solid #b9dadd",borderRadius:10,padding:"8px 12px",background:"#fff",color:"#075766",fontWeight:700}}>Archivia</button><button type="button" onClick={deleteCurrentChat} disabled={busy} style={{border:"1px solid #f0c7c2",borderRadius:10,padding:"8px 12px",background:"#fff",color:"#a12d20",fontWeight:700}}>Elimina</button><button type="button" onClick={() => setShowChatMenu(false)} style={{border:"1px solid #b9dadd",borderRadius:10,padding:"8px 12px",background:"#fff",color:"#075766"}}>Chiudi</button></div>}
+        {showChatMenu && access === "ready" && <div style={{display:"flex",gap:8,flexWrap:"wrap",padding:"10px 14px",background:"#edf8f8",borderBottom:"1px solid #dceeee"}}><button type="button" onClick={shareCurrentChat} style={{border:"1px solid #b9dadd",borderRadius:10,padding:"8px 12px",background:"#fff",color:"#075766",fontWeight:700}}>Condividi</button><button type="button" onClick={() => chatSessions.find((chat) => chat.id === activeChatId)?.archived ? restoreCurrentChat() : archiveCurrentChat()} disabled={busy || !messages.length} style={{border:"1px solid #b9dadd",borderRadius:10,padding:"8px 12px",background:"#fff",color:"#075766",fontWeight:700}}>{chatSessions.find((chat) => chat.id === activeChatId)?.archived ? "Ripristina" : "Archivia"}</button><button type="button" onClick={togglePinCurrentChat} disabled={busy} style={{border:"1px solid #b9dadd",borderRadius:10,padding:"8px 12px",background:"#fff",color:"#075766",fontWeight:700}}>{chatSessions.find((chat) => chat.id === activeChatId)?.pinned ? "Rimuovi fissaggio" : "Fissa chat"}</button><button type="button" onClick={deleteCurrentChat} disabled={busy} style={{border:"1px solid #f0c7c2",borderRadius:10,padding:"8px 12px",background:"#fff",color:"#a12d20",fontWeight:700}}>Elimina</button><button type="button" onClick={() => setShowChatMenu(false)} style={{border:"1px solid #b9dadd",borderRadius:10,padding:"8px 12px",background:"#fff",color:"#075766"}}>Chiudi</button></div>}
         {access === "checking" ? <div style={{padding:24}}>Verifica accesso amministratore…</div> :
          access === "login" ? <div style={{padding:24}}>
           <h2 style={{marginTop:0,color:"#075766"}}>Accesso amministratore</h2>
           <p>Inserisci l'indirizzo email del tuo account RiverSpend. Ti invieremo un link sicuro per entrare. Solo il proprietario autorizzato potrà usare RiverSSAI NUPM.</p>
           <form onSubmit={requestLogin} style={{display:"grid",gap:10,maxWidth:460}}>
             <input type="email" required autoComplete="email" value={loginEmail} onChange={e=>setLoginEmail(e.target.value)} placeholder="La tua email RiverSpend" style={{width:"100%",boxSizing:"border-box",border:"1px solid #c7dfe1",borderRadius:12,padding:13,fontSize:16,color:"#173b42"}} />
-            <button type="submit" disabled={loginBusy || !loginEmail.trim()} style={{border:0,borderRadius:12,padding:13,background:loginBusy?"#a9c8ca":"#087f89",color:"#fff",fontWeight:800}}>{loginBusy?"Invio in corso…":"Invia link di accesso"}</button>
+            <button type="submit" disabled={loginBusy || !loginEmail.trim() || loginCooldownUntil > Date.now()} style={{border:0,borderRadius:12,padding:13,background:loginBusy || loginCooldownUntil > Date.now()?"#a9c8ca":"#087f89",color:"#fff",fontWeight:800}}>{loginBusy?"Invio in corso…":loginCooldownUntil > Date.now()?"Attendi prima di reinviare":"Invia link di accesso"}</button>
           </form>
           {loginSent && <p role="status" style={{marginTop:14,padding:12,borderRadius:12,background:"#effaf5",color:"#166534"}}>Link inviato. Apri l'email sullo stesso dispositivo e completa l'accesso; poi River AI si aprirà automaticamente.</p>}
           <p style={{fontSize:12,color:"#63818a",marginTop:16}}>L'accesso è gestito da Supabase. Non inserire qui password o chiavi API.</p>
@@ -389,7 +434,7 @@ export default function RiverAI() {
           <form onSubmit={send} style={{display:"flex",gap:8,padding:14,borderTop:"1px solid #dceeee",background:"#fbfefe"}}>
             <textarea value={input} onChange={e=>setInput(e.target.value)} placeholder="Scrivi a River AI…" rows={2} maxLength={4000} disabled={busy} style={{flex:1,minWidth:0,resize:"vertical",border:"1px solid #c7dfe1",borderRadius:14,padding:12,fontSize:16,outlineColor:"#0e9aa4",color:"#173b42"}}/>
             <button type="button" aria-label="Microfono" onClick={toggleMicrophone} disabled={busy} style={{alignSelf:"stretch",border:"1px solid #b9dadd",borderRadius:14,padding:"0 13px",background:isListening?"#fee2e2":"#fff",color:isListening?"#b91c1c":"#075766",fontSize:20}}>{isListening ? "■" : "🎙"}</button>
-            <button type="submit" disabled={busy || (!input.trim() && !attachedFile)} style={{alignSelf:"stretch",border:0,borderRadius:14,padding:"0 18px",background:busy||!input.trim()?"#a9c8ca":"#087f89",color:"#fff",fontWeight:800}}>Invia</button>
+            <button type="submit" aria-label="Invia messaggio" disabled={busy || (!input.trim() && !attachedFile)} style={{alignSelf:"stretch",border:0,borderRadius:14,padding:"0 18px",background:busy||(!input.trim() && !attachedFile)?"#a9c8ca":"#087f89",color:"#fff",fontWeight:800,fontSize:20}}>➤</button>
           </form>
          </>}
       </section>
