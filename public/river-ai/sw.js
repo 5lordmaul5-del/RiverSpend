@@ -1,12 +1,12 @@
-const CACHE = "river-ssai-shell-v6";
+const CACHE = "river-ssai-shell-v7";
 const APP_ASSETS = [
   "/river-ai",
   "/river-ai.webmanifest",
-  "/icons/river-ssai-app.svg",
+  "/icons/river-ssai-app.svg?v=10.1-20261119",
   "/icons/river-ssai-180.png",
   "/icons/river-ssai-192.png",
   "/icons/river-ssai-512.png",
-  "/images/river-ssai-10-team.svg"
+  "/images/river-ssai-10-team.svg?v=10.1-20261119"
 ];
 self.addEventListener("install", event => {
   event.waitUntil((async () => {
