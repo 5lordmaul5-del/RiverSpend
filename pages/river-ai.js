@@ -24,6 +24,11 @@ export default function RiverAI() {
   const [loginEmail, setLoginEmail] = useState("");
   const [loginBusy, setLoginBusy] = useState(false);
   const [loginSent, setLoginSent] = useState(false);
+  const [resetSent, setResetSent] = useState(false);
+  const [recoveryActive, setRecoveryActive] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [passwordBusy, setPasswordBusy] = useState(false);
+  const [passwordUpdated, setPasswordUpdated] = useState(false);
   const [loginCooldownUntil, setLoginCooldownUntil] = useState(0);
   const [searchChats, setSearchChats] = useState("");
   const [installPrompt, setInstallPrompt] = useState(null);
@@ -117,7 +122,10 @@ export default function RiverAI() {
       }
     }
     check();
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => check());
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "PASSWORD_RECOVERY") setRecoveryActive(true);
+      check();
+    });
     return () => { alive = false; subscription?.unsubscribe(); };
   }, []);
 
@@ -167,6 +175,59 @@ export default function RiverAI() {
       } else setError(message || "Non riesco a inviare il link di accesso.");
     } finally {
       setLoginBusy(false);
+    }
+  }
+
+  async function requestPasswordReset() {
+    const cleanEmail = loginEmail.trim();
+    if (!cleanEmail || loginBusy || loginCooldownUntil > Date.now()) return;
+    setLoginBusy(true);
+    setError("");
+    setResetSent(false);
+    try {
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(cleanEmail, {
+        redirectTo: window.location.origin + "/river-ai?reset=1"
+      });
+      if (resetError) throw resetError;
+      setResetSent(true);
+      const until = Date.now() + 60000;
+      setLoginCooldownUntil(until);
+      try { sessionStorage.setItem("river-ai-login-cooldown", String(until)); } catch {}
+    } catch (err) {
+      const message = String(err?.message || "");
+      if (/429|rate limit|too many requests/i.test(message)) {
+        const until = Date.now() + 60000;
+        setLoginCooldownUntil(until);
+        try { sessionStorage.setItem("river-ai-login-cooldown", String(until)); } catch {}
+        setError("Il servizio email Supabase sta limitando gli invii (429). Attendi prima di riprovare; per risolvere stabilmente serve configurare SMTP dedicato.");
+      } else setError(message || "Non riesco a inviare l’email per reimpostare la password.");
+    } finally {
+      setLoginBusy(false);
+    }
+  }
+
+  async function saveNewPassword(event) {
+    event?.preventDefault();
+    if (newPassword.length < 8 || passwordBusy) return;
+    setPasswordBusy(true);
+    setError("");
+    try {
+      const { error: updateError } = await supabase.auth.updateUser({ password: newPassword });
+      if (updateError) throw updateError;
+      setPasswordUpdated(true);
+      setRecoveryActive(false);
+      setNewPassword("");
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.access_token) {
+        setToken(session.access_token);
+        setAccess("checking");
+        const response = await fetch("/api/area-51/access", { headers: { Authorization: "Bearer " + session.access_token } });
+        setAccess(response.ok ? "ready" : response.status === 403 ? "denied" : "error");
+      }
+    } catch (err) {
+      setError(err?.message || "Non è stato possibile aggiornare la password.");
+    } finally {
+      setPasswordBusy(false);
     }
   }
 
@@ -348,6 +409,14 @@ export default function RiverAI() {
         {installMessage && <div role="status" style={{padding:"10px 18px",background:"#fff8df",color:"#72510a",fontSize:13}}>{installMessage}</div>}
         {showChatMenu && access === "ready" && <div style={{display:"flex",gap:8,flexWrap:"wrap",padding:"10px 14px",background:"#edf8f8",borderBottom:"1px solid #dceeee"}}><button type="button" onClick={shareCurrentChat} style={{border:"1px solid #b9dadd",borderRadius:10,padding:"8px 12px",background:"#fff",color:"#075766",fontWeight:700}}>Condividi</button><button type="button" onClick={() => chatSessions.find((chat) => chat.id === activeChatId)?.archived ? restoreCurrentChat() : archiveCurrentChat()} disabled={busy || !messages.length} style={{border:"1px solid #b9dadd",borderRadius:10,padding:"8px 12px",background:"#fff",color:"#075766",fontWeight:700}}>{chatSessions.find((chat) => chat.id === activeChatId)?.archived ? "Ripristina" : "Archivia"}</button><button type="button" onClick={togglePinCurrentChat} disabled={busy} style={{border:"1px solid #b9dadd",borderRadius:10,padding:"8px 12px",background:"#fff",color:"#075766",fontWeight:700}}>{chatSessions.find((chat) => chat.id === activeChatId)?.pinned ? "Rimuovi fissaggio" : "Fissa chat"}</button><button type="button" onClick={deleteCurrentChat} disabled={busy} style={{border:"1px solid #f0c7c2",borderRadius:10,padding:"8px 12px",background:"#fff",color:"#a12d20",fontWeight:700}}>Elimina</button><button type="button" onClick={() => setShowChatMenu(false)} style={{border:"1px solid #b9dadd",borderRadius:10,padding:"8px 12px",background:"#fff",color:"#075766"}}>Chiudi</button></div>}
         {access === "checking" ? <div style={{padding:24}}>Verifica accesso amministratore…</div> :
+         recoveryActive ? <div style={{padding:24}}>
+          <h2 style={{marginTop:0,color:"#075766"}}>Crea la nuova password</h2>
+          <p>Il collegamento di recupero è stato aperto. Scegli una nuova password di almeno 8 caratteri.</p>
+          <form onSubmit={saveNewPassword} style={{display:"grid",gap:10,maxWidth:460}}>
+            <input type="password" required minLength={8} autoComplete="new-password" value={newPassword} onChange={e=>setNewPassword(e.target.value)} placeholder="Nuova password (almeno 8 caratteri)" style={{width:"100%",boxSizing:"border-box",border:"1px solid #c7dfe1",borderRadius:12,padding:13,fontSize:16,color:"#173b42"}} />
+            <button type="submit" disabled={passwordBusy || newPassword.length < 8} style={{border:0,borderRadius:12,padding:13,background:"#087f89",color:"#fff",fontWeight:800}}>{passwordBusy ? "Aggiornamento…" : "Salva nuova password"}</button>
+          </form>
+         </div> :
          access === "login" ? <div style={{padding:24}}>
           <h2 style={{marginTop:0,color:"#075766"}}>Accesso amministratore</h2>
           <p>Inserisci l'indirizzo email del tuo account RiverSpend. Ti invieremo un link sicuro per entrare. Solo il proprietario autorizzato potrà usare RiverSSAI NUPM.</p>
@@ -355,7 +424,10 @@ export default function RiverAI() {
             <input type="email" required autoComplete="email" value={loginEmail} onChange={e=>setLoginEmail(e.target.value)} placeholder="La tua email RiverSpend" style={{width:"100%",boxSizing:"border-box",border:"1px solid #c7dfe1",borderRadius:12,padding:13,fontSize:16,color:"#173b42"}} />
             <button type="submit" disabled={loginBusy || !loginEmail.trim() || loginCooldownUntil > Date.now()} style={{border:0,borderRadius:12,padding:13,background:loginBusy || loginCooldownUntil > Date.now()?"#a9c8ca":"#087f89",color:"#fff",fontWeight:800}}>{loginBusy?"Invio in corso…":loginCooldownUntil > Date.now()?"Attendi prima di reinviare":"Invia link di accesso"}</button>
           </form>
-          {loginSent && <p role="status" style={{marginTop:14,padding:12,borderRadius:12,background:"#effaf5",color:"#166534"}}>Richiesta accettata dal servizio email. Controlla anche Spam e Promozioni: questo non garantisce la consegna del messaggio. Apri il link sullo stesso dispositivo.</p>}
+          <button type="button" onClick={requestPasswordReset} disabled={loginBusy || !loginEmail.trim() || loginCooldownUntil > Date.now()} style={{width:"100%",maxWidth:460,marginTop:10,border:"1px solid #087f89",borderRadius:12,padding:12,background:"#fff",color:"#075766",fontWeight:800}}>{loginBusy ? "Invio in corso…" : "Reinvia email e reimposta password"}</button>
+          {loginSent && <p role="status" style={{marginTop:14,padding:12,borderRadius:12,background:"#effaf5",color:"#166534"}}>Richiesta di accesso accettata dal servizio email. Controlla anche Spam e Promozioni: questo non garantisce la consegna del messaggio.</p>}
+          {resetSent && <p role="status" style={{marginTop:14,padding:12,borderRadius:12,background:"#effaf5",color:"#166534"}}>Richiesta di reimpostazione accettata dal servizio email. Controlla anche Spam e Promozioni. Quando ricevi il link, aprilo su questo stesso indirizzo del sito per scegliere la nuova password.</p>}
+          {passwordUpdated && <p role="status" style={{marginTop:14,padding:12,borderRadius:12,background:"#effaf5",color:"#166534"}}>Password aggiornata. La sessione resta attiva.</p>}
           <p style={{fontSize:12,color:"#63818a",marginTop:16}}>L'accesso è gestito da Supabase. Non inserire qui password o chiavi API.</p>
          </div> :
          access === "denied" ? <div style={{padding:24}}><h2>Accesso non autorizzato</h2><p>Questa assistente è riservata esclusivamente al proprietario RiverSpend.</p></div> :
