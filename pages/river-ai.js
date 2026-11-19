@@ -514,49 +514,71 @@ export default function RiverAI() {
     </main>
 
     <style jsx global>{`
+      .river-ai-header > button,
+      .river-ai-header > a {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        white-space: normal;
+        line-height: 1.25;
+        box-sizing: border-box;
+      }
       @media (max-width: 600px) {
         .river-ai-header {
+          display: flex;
           flex-wrap: wrap;
           align-items: center;
-          gap: 8px !important;
+          gap: 10px !important;
           padding: 14px !important;
         }
         .river-ai-header .river-ai-brand {
-          flex: 1 1 calc(100% - 58px) !important;
+          flex: 1 1 calc(100% - 62px) !important;
           min-width: 0;
         }
+        .river-ai-header > button,
+        .river-ai-header > a {
+          flex: 1 1 calc(50% - 10px) !important;
+          width: calc(50% - 5px);
+          min-width: calc(50% - 5px) !important;
+          max-width: calc(50% - 5px) !important;
+          min-height: 48px;
+          padding: 11px 12px !important;
+          border-radius: 14px !important;
+          font-size: 13px !important;
+          font-weight: 800 !important;
+          line-height: 1.25;
+          white-space: normal;
+          overflow-wrap: break-word;
+          word-break: normal;
+        }
+        .river-ai-header > input,
+        .river-ai-header > select {
+          flex: 1 1 calc(50% - 10px);
+          width: calc(50% - 5px);
+          min-width: 0 !important;
+          max-width: calc(50% - 5px) !important;
+          min-height: 46px;
+          box-sizing: border-box;
+          padding: 10px 11px !important;
+          font-size: 12px !important;
+          border-radius: 12px !important;
+        }
+        .river-ai-header > input,
+        .river-ai-header > select { text-align: left; }
+      }
+      @media (max-width: 360px) {
         .river-ai-header > button,
         .river-ai-header > a,
         .river-ai-header > input,
         .river-ai-header > select {
-          flex: 1 1 calc(50% - 8px);
-          min-width: 124px;
-          max-width: calc(50% - 4px);
-          min-height: 46px;
-          box-sizing: border-box;
-          padding: 10px 12px !important;
-          font-size: 13px !important;
-          line-height: 1.2;
-          text-align: center;
-          justify-content: center;
-          white-space: normal;
-          overflow-wrap: normal;
-          border-radius: 13px !important;
-        }
-        .river-ai-header > input,
-        .river-ai-header > select { text-align: left; }
-        .river-ai-header > button,
-        .river-ai-header > a { display: inline-flex; align-items: center; }
-        .river-ai-header > button:active,
-        .river-ai-header > a:active { transform: scale(.98); }
-        @media (max-width: 360px) {
-          .river-ai-header > button,
-          .river-ai-header > a,
-          .river-ai-header > input,
-          .river-ai-header > select { min-width: 0; max-width: calc(50% - 4px); }
+          min-width: 0 !important;
+          width: calc(50% - 5px);
+          max-width: calc(50% - 5px) !important;
         }
       }
-    `}</style>
+    `}</style>}</style>
     </>
   );
 }
