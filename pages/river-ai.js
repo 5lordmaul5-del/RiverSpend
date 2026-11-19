@@ -124,7 +124,8 @@ export default function RiverAI() {
     check();
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === "PASSWORD_RECOVERY") setRecoveryActive(true);
-      check();
+      // Defer session reads until Supabase finishes its auth event to avoid lock contention.
+      window.setTimeout(() => { if (alive) check(); }, 0);
     });
     return () => { alive = false; subscription?.unsubscribe(); };
   }, []);
