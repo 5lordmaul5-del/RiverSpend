@@ -344,64 +344,60 @@ export default function Home() {
 
   async function giraRsFortune() {
     if (rsFortuneSpinning) return;
-    // Il controllo definitivo è sul server: il CEO/admin non viene bloccato dal localStorage.
-    const winner = Math.floor(Math.random() * RS_FORTUNE_PRIZES.length);
-    const segment = 360 / RS_FORTUNE_PRIZES.length;
-    const target = 7 * 360 + (360 - winner * segment - segment / 2);
     setRsFortuneAperta(true);
     setRsFortunePrize('');
     setRsFortuneSpinning(true);
-    setRsFortuneRotation((prev) => prev + target);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        setRsFortunePrize('🔐 Accedi al tuo account per ricevere il premio.');
+        setRsFortuneSpinning(false);
+        return;
+      }
 
-    window.setTimeout(async () => {
-      const label = RS_FORTUNE_PRIZES[winner];
-      const rewardMap = [
-        { type: 'rivermoney', rivermoney: 5, rsp: 0 },
-        { type: 'rivermoney', rivermoney: 10, rsp: 0 },
-        { type: 'rivermoney', rivermoney: 20, rsp: 0 },
-        { type: 'shipping', rivermoney: 0, rsp: 0 },
-        { type: 'discount', rivermoney: 0, rsp: 0 },
-        { type: 'booster', rivermoney: 0, rsp: 0 },
-        { type: 'surprise', rivermoney: 0, rsp: 0 },
-        { type: 'rsp', rivermoney: 0, rsp: 500 }
-      ];
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) {
-          setRsFortuneSpinning(false);
-          setRsFortunePrize('🔐 Accedi al tuo account per ricevere il premio.');
-          return;
+      // The database chooses and credits the prize atomically; browser values are not trusted.
+      const { data, error } = await supabase.rpc('rs_fortune_credit', {
+        p_reward_type: 'server_random',
+        p_reward_label: 'server_random',
+        p_rivermoney: 0,
+        p_rsp: 0,
+        p_metadata: {}
+      });
+      if (error) {
+        if (error.message?.includes('FORTUNE_ALREADY_PLAYED')) {
+          setRsFortunePrize('🍀 Hai già usato il tuo unico giro. La fortuna è già stata assegnata.');
+        } else {
+          console.error('RS FORTUNE credit error:', error);
+          setRsFortunePrize('⚠️ Il premio non è stato accreditato. Riprova.');
         }
-        const reward = rewardMap[winner];
-        const { error } = await supabase.rpc('rs_fortune_credit', {
-          p_reward_type: reward.type,
-          p_reward_label: label,
-          p_rivermoney: reward.rivermoney,
-          p_rsp: reward.rsp,
-          p_metadata: { wheel_index: winner }
-        });
-        if (error) {
-          if (error.message?.includes('FORTUNE_ALREADY_PLAYED')) {
-            setRsFortunePrize('🍀 Hai già usato il tuo unico giro. La fortuna è già stata assegnata.');
-          } else {
-            console.error('RS FORTUNE credit error:', error);
-            setRsFortunePrize('⚠️ Il premio non è stato accreditato. Riprova.');
-          }
-          return;
-        }
-        if (!rsAdmin) {
+        setRsFortuneSpinning(false);
+        return;
+      }
+
+      const result = Array.isArray(data) ? data[0] : data;
+      const winner = Number(result?.wheel_index);
+      if (!Number.isInteger(winner) || winner < 0 || winner >= RS_FORTUNE_PRIZES.length) {
+        throw new Error('Risultato della ruota non valido.');
+      }
+      const label = String(result.reward_label || RS_FORTUNE_PRIZES[winner]);
+      const segment = 360 / RS_FORTUNE_PRIZES.length;
+      const target = 7 * 360 + (360 - winner * segment - segment / 2);
+      setRsFortuneRotation((prev) => prev + target);
+
+      window.setTimeout(() => {
+        if (!result.is_admin) {
           try { localStorage.setItem('riverspend-fortune-played', 'true'); } catch {}
         }
         setRsFortunePrize(label);
         setRsFortuneCelebration(true);
         window.setTimeout(() => setRsFortuneCelebration(false), 1800);
-      } catch (error) {
-        console.error('RS FORTUNE credit:', error);
-        setRsFortunePrize('⚠️ Il premio non è stato accreditato. Riprova.');
-      } finally {
         setRsFortuneSpinning(false);
-      }
-    }, 5200);
+      }, 5200);
+    } catch (error) {
+      console.error('RS FORTUNE credit:', error);
+      setRsFortunePrize('⚠️ Il premio non è stato accreditato. Riprova.');
+      setRsFortuneSpinning(false);
+    }
   }
 
   function eseguiRichiestaNovaTestuale() {
