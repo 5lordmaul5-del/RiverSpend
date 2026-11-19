@@ -1,0 +1,124 @@
+name: RiverCloud local validation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "infra/river-cloud/**"
+      - "scripts/river-cloud/**"
+      - ".github/workflows/rivercloud-local-validation.yml"
+  pull_request:
+    paths:
+      - "infra/river-cloud/**"
+      - "scripts/river-cloud/**"
+      - ".github/workflows/rivercloud-local-validation.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  postgres-lifecycle-backup-restore:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install age
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes age
+
+      - name: Check RiverAuth and API JavaScript syntax
+        run: |
+          node --check infra/river-cloud/auth/river-auth.mjs
+          node --check infra/river-cloud/api/server.mjs
+          node --test infra/river-cloud/auth/river-auth.test.mjs
+
+      - name: Validate Compose configuration
+        working-directory: infra/river-cloud
+        env:
+          RIVER_CLOUD_DB_PASSWORD: ci-only-db-password
+          RIVER_CLOUD_API_DB_PASSWORD: ci-only-api-password
+          RIVERAUTH_ISSUER_URL: https://example.supabase.co
+          RIVERAUTH_PUBLISHABLE_KEY: sb_publishable_ci_placeholder
+        run: docker compose config --quiet
+
+      - name: Generate ephemeral backup identity
+        id: age
+        run: |
+          age-keygen -o "$RUNNER_TEMP/rivercloud-age-identity.txt"
+          chmod 600 "$RUNNER_TEMP/rivercloud-age-identity.txt"
+          RECIPIENT="$(age-keygen -y "$RUNNER_TEMP/rivercloud-age-identity.txt")"
+          echo "recipient=$RECIPIENT" >> "$GITHUB_OUTPUT"
+
+      - name: Write ephemeral local environment
+        env:
+          RIVER_CLOUD_AGE_RECIPIENT: ${{ steps.age.outputs.recipient }}
+        run: |
+          cat > infra/river-cloud/.env <<EOF
+          RIVER_CLOUD_DB_PASSWORD=ci-only-db-password
+          RIVER_CLOUD_API_DB_PASSWORD=ci-only-api-password
+          RIVER_CLOUD_AGE_RECIPIENT=$RIVER_CLOUD_AGE_RECIPIENT
+          RIVER_CLOUD_AGE_IDENTITY_FILE=$RUNNER_TEMP/rivercloud-age-identity.txt
+          RIVER_CLOUD_BACKUP_DIR=./backups
+          RIVERAUTH_ISSUER_URL=https://example.supabase.co
+          RIVERAUTH_PUBLISHABLE_KEY=sb_publishable_ci_placeholder
+          EOF
+          chmod 600 infra/river-cloud/.env
+
+      - name: Start database and verify readiness
+        working-directory: infra/river-cloud
+        env:
+          RIVER_CLOUD_DB_PASSWORD: ci-only-db-password
+          RIVER_CLOUD_API_DB_PASSWORD: ci-only-api-password
+          RIVERAUTH_ISSUER_URL: https://example.supabase.co
+          RIVERAUTH_PUBLISHABLE_KEY: sb_publishable_ci_placeholder
+        run: |
+          docker compose up -d --wait
+          docker compose exec -T rivercloud-db pg_isready -U rivercloud -d rivercloud
+          docker compose exec -T rivercloud-db psql -U rivercloud -d rivercloud -v ON_ERROR_STOP=1 -c "CREATE TABLE IF NOT EXISTS public.restore_probe (id integer PRIMARY KEY, marker text NOT NULL);"
+          docker compose exec -T rivercloud-db psql -U rivercloud -d rivercloud -v ON_ERROR_STOP=1 -c "INSERT INTO public.restore_probe VALUES (1, 'rivercloud-ci') ON CONFLICT (id) DO UPDATE SET marker = EXCLUDED.marker;"
+
+      - name: Verify row-level ownership isolation
+        working-directory: infra/river-cloud
+        run: |
+          docker compose exec -T rivercloud-db psql -U rivercloud -d rivercloud -v ON_ERROR_STOP=1 -f - < ../../scripts/river-cloud/test-rls.sql
+
+      - name: Verify stop and restart preserves data
+        working-directory: infra/river-cloud
+        env:
+          RIVER_CLOUD_DB_PASSWORD: ci-only-db-password
+          RIVER_CLOUD_API_DB_PASSWORD: ci-only-api-password
+          RIVERAUTH_ISSUER_URL: https://example.supabase.co
+          RIVERAUTH_PUBLISHABLE_KEY: sb_publishable_ci_placeholder
+        run: |
+          docker compose stop rivercloud-db
+          test "$(docker inspect -f '{{.State.Running}}' "$(docker compose ps -a -q rivercloud-db)")" = "false"
+          docker compose up -d --wait rivercloud-db
+          docker compose exec -T rivercloud-db pg_isready -U rivercloud -d rivercloud
+          test "$(docker compose exec -T rivercloud-db psql -U rivercloud -d rivercloud -Atc "SELECT marker FROM public.restore_probe WHERE id = 1")" = "rivercloud-ci"
+
+      - name: Create encrypted backup
+        working-directory: infra/river-cloud
+        env:
+          RIVER_CLOUD_DB_PASSWORD: ci-only-db-password
+          RIVER_CLOUD_AGE_RECIPIENT: ${{ steps.age.outputs.recipient }}
+          RIVER_CLOUD_BACKUP_DIR: ./backups
+        run: bash ../../scripts/river-cloud/backup-local.sh
+
+      - name: Restore encrypted backup into isolated disposable database
+        env:
+          RIVER_CLOUD_DB_PASSWORD: ci-only-db-password
+          RIVER_CLOUD_AGE_RECIPIENT: ${{ steps.age.outputs.recipient }}
+          RIVER_CLOUD_AGE_IDENTITY_FILE: ${{ runner.temp }}/rivercloud-age-identity.txt
+          RIVER_CLOUD_BACKUP_DIR: ./backups
+        run: |
+          BACKUP_FILE="$(find infra/river-cloud/backups -maxdepth 1 -type f -name '*.dump.age' -print -quit)"
+          test -n "$BACKUP_FILE"
+          bash scripts/river-cloud/restore-drill-local.sh "$BACKUP_FILE"
+
+      - name: Stop database without deleting its persistent volume
+        if: always()
+        working-directory: infra/river-cloud
+        run: docker compose down
