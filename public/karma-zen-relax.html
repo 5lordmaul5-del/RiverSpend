@@ -18,7 +18,7 @@ main{max-width:620px;margin:auto}.brand{text-align:center;padding:20px 0}.brand 
 <header class="back"><a href="https://www.riverspend.com/">← Torna a RiverSpendShop</a></header>
 <main>
 <header class="brand">
-<img src="/icons/karma-zen-relax.svg" alt="RiverSpaceSignals">
+<img src="/images/karma-zen-relax.svg?v=2" alt="Karma Zen Relax: loto luminoso e due onde sonore a forma di S">
 <div class="eyebrow">RIVERSPACE SIGNALS · ISSA</div>
 <h1>Karma <span>Zen Relax</span></h1>
 <p>Uno spazio sonoro immersivo per rallentare, respirare e ritrovare equilibrio.</p>
@@ -33,18 +33,72 @@ main{max-width:620px;margin:auto}.brand{text-align:center;padding:20px 0}.brand 
 <button class="track" data-src="https://riversignals-7xr64gfcw-mauryle75-8055s-projects.vercel.app/audio/05-himalayan-bowls-1.mp3" data-title="Himalayan Bowls I"><span class="num">05</span><span><strong>Himalayan Bowls I</strong><small>Risonanze himalayane</small></span><span class="play">▶</span></button>
 <button class="track" data-src="https://riversignals-7xr64gfcw-mauryle75-8055s-projects.vercel.app/audio/06-himalayan-bowls-2.mp3" data-title="Himalayan Bowls II"><span class="num">06</span><span><strong>Himalayan Bowls II</strong><small>Suoni profondi e distensivi</small></span><span class="play">▶</span></button>
 </div>
-<div class="controls"><audio id="player" controls preload="none"></audio></div>
+<div class="controls"><button id="toggleAudio" type="button" class="track" style="justify-content:center;margin-bottom:12px"><strong>▶ Avvia ascolto</strong></button><label for="volume" style="display:flex;align-items:center;gap:12px;color:#c4d5d5;font-size:12px">Volume <input id="volume" type="range" min="0" max="1" step="0.01" value="0.55" style="flex:1"></label><p id="audioStatus" class="note" role="status">Scegli una traccia e premi Avvia ascolto.</p></div>
 <p class="note">L'audio parte solo quando scegli una traccia. Usa i comandi per pausa e volume.</p>
 </section>
 </main>
 <script>
-const player=document.getElementById('player'),title=document.getElementById('currentTitle');
-document.querySelectorAll('.track').forEach(button=>button.addEventListener('click',async()=>{
- document.querySelectorAll('.track').forEach(b=>{b.classList.remove('active');b.setAttribute('aria-pressed','false')});
- button.classList.add('active');button.setAttribute('aria-pressed','true');
- title.textContent=button.dataset.title;
- if(player.src!==button.dataset.src){player.src=button.dataset.src}
- try{await player.play()}catch(e){title.textContent=button.dataset.title+' · premi play per ascoltare'}
-}));
+const title=document.getElementById('currentTitle');
+const status=document.getElementById('audioStatus');
+const toggle=document.getElementById('toggleAudio');
+const volume=document.getElementById('volume');
+const tracks=[...document.querySelectorAll('.track[data-title]')];
+const presets=[
+ {base:110,bell:[523,659,784],label:'Voce meditativa · drone caldo'},
+ {base:174.61,bell:[659,880,1046.5],label:'Campane tibetane'},
+ {base:220,bell:[784,988,1174.7],label:'Campana armonica'},
+ {base:130.81,bell:[587,698,880],label:'Atmosfera ambient'},
+ {base:146.83,bell:[698,880,1046.5],label:'Risonanze himalayane I'},
+ {base:196,bell:[880,1046.5,1318.5],label:'Risonanze himalayane II'}
+];
+let context=null, master=null, nodes=[], activeIndex=-1, playing=false, cycleTimer=null;
+function stopSound(){
+ playing=false;
+ if(cycleTimer) clearTimeout(cycleTimer);
+ cycleTimer=null;
+ if(master){try{master.gain.cancelScheduledValues(context.currentTime);master.gain.setTargetAtTime(0,context.currentTime,0.12)}catch{}}
+ const old=nodes.slice();nodes=[];
+ setTimeout(()=>old.forEach(n=>{try{n.stop()}catch{};try{n.disconnect()}catch{}}),450);
+ toggle.innerHTML='<strong>▶ Riprendi ascolto</strong>';
+ tracks.forEach(b=>{b.classList.remove('active');b.querySelector('.play').textContent='▶'});
+}
+function tone(freq,when,duration,level,type='sine'){
+ const osc=context.createOscillator(),gain=context.createGain();
+ osc.type=type;osc.frequency.setValueAtTime(freq,when);
+ gain.gain.setValueAtTime(0,when);gain.gain.linearRampToValueAtTime(level,when+0.35);
+ gain.gain.exponentialRampToValueAtTime(0.0001,when+duration);
+ osc.connect(gain);gain.connect(master);osc.start(when);osc.stop(when+duration+0.1);nodes.push(osc,gain);
+}
+async function startSound(index){
+ try{
+  const AC=window.AudioContext||window.webkitAudioContext;
+  if(!AC){status.textContent='Questo browser non supporta l’audio immersivo.';return}
+  if(!context)context=new AC();
+  if(context.state==='suspended')await context.resume();
+  if(master){try{master.disconnect()}catch{}}
+  master=context.createGain();master.gain.value=0;master.connect(context.destination);
+  master.gain.setTargetAtTime(Number(volume.value),context.currentTime,0.25);
+  nodes=[];activeIndex=index;playing=true;
+  const p=presets[index],now=context.currentTime;
+  [1,1.5,2.01].forEach((ratio,i)=>{
+   const osc=context.createOscillator(),gain=context.createGain(),lfo=context.createOscillator(),lfoGain=context.createGain();
+   osc.type='sine';osc.frequency.value=p.base*ratio;
+   gain.gain.value=[0.13,0.055,0.025][i];
+   lfo.frequency.value=0.06+i*0.025;lfoGain.gain.value=0.8+i*0.3;
+   lfo.connect(lfoGain);lfoGain.connect(osc.detune);osc.connect(gain);gain.connect(master);
+   osc.start();lfo.start();nodes.push(osc,gain,lfo,lfoGain);
+  });
+  p.bell.forEach((f,i)=>tone(f,now+1.4+i*3.1,4.8,0.12,'sine'));
+  tracks.forEach((b,i)=>{b.classList.toggle('active',i===index);b.querySelector('.play').textContent=i===index?'Ⅱ':'▶'});
+  title.textContent=tracks[index].dataset.title;
+  status.textContent= p.label+' · suono ambient originale generato nel dispositivo';
+  toggle.innerHTML='<strong>Ⅱ Pausa</strong>';
+  cycleTimer=setTimeout(()=>{if(playing&&activeIndex===index)startSound(index)},11500);
+ }catch(error){status.textContent='Impossibile avviare l’audio: tocca di nuovo Avvia ascolto.';playing=false}
+}
+tracks.forEach((button,index)=>button.addEventListener('click',()=>{if(activeIndex===index&&playing){stopSound();return}stopSound();startSound(index)}));
+toggle.addEventListener('click',()=>{if(playing){stopSound()}else{startSound(activeIndex<0?0:activeIndex)}});
+volume.addEventListener('input',()=>{if(master&&context)master.gain.setTargetAtTime(Number(volume.value),context.currentTime,0.08)});
+window.addEventListener('pagehide',stopSound);
 </script>
 </body></html>
