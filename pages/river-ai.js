@@ -355,7 +355,7 @@ export default function RiverAI() {
             <input type="email" required autoComplete="email" value={loginEmail} onChange={e=>setLoginEmail(e.target.value)} placeholder="La tua email RiverSpend" style={{width:"100%",boxSizing:"border-box",border:"1px solid #c7dfe1",borderRadius:12,padding:13,fontSize:16,color:"#173b42"}} />
             <button type="submit" disabled={loginBusy || !loginEmail.trim() || loginCooldownUntil > Date.now()} style={{border:0,borderRadius:12,padding:13,background:loginBusy || loginCooldownUntil > Date.now()?"#a9c8ca":"#087f89",color:"#fff",fontWeight:800}}>{loginBusy?"Invio in corso…":loginCooldownUntil > Date.now()?"Attendi prima di reinviare":"Invia link di accesso"}</button>
           </form>
-          {loginSent && <p role="status" style={{marginTop:14,padding:12,borderRadius:12,background:"#effaf5",color:"#166534"}}>Link inviato. Apri l'email sullo stesso dispositivo e completa l'accesso; poi River AI si aprirà automaticamente.</p>}
+          {loginSent && <p role="status" style={{marginTop:14,padding:12,borderRadius:12,background:"#effaf5",color:"#166534"}}>Richiesta accettata dal servizio email. Controlla anche Spam e Promozioni: questo non garantisce la consegna del messaggio. Apri il link sullo stesso dispositivo.</p>}
           <p style={{fontSize:12,color:"#63818a",marginTop:16}}>L'accesso è gestito da Supabase. Non inserire qui password o chiavi API.</p>
          </div> :
          access === "denied" ? <div style={{padding:24}}><h2>Accesso non autorizzato</h2><p>Questa assistente è riservata esclusivamente al proprietario RiverSpend.</p></div> :
