@@ -526,16 +526,34 @@ export default function RiverAI() {
           min-width: 0;
         }
         .river-ai-header > button,
-        .river-ai-header > a {
-          flex: 1 1 0;
-          min-width: 0;
-          max-width: 100%;
+        .river-ai-header > a,
+        .river-ai-header > input,
+        .river-ai-header > select {
+          flex: 1 1 calc(50% - 8px);
+          min-width: 124px;
+          max-width: calc(50% - 4px);
+          min-height: 46px;
           box-sizing: border-box;
-          padding: 8px 6px !important;
-          font-size: 12px !important;
-          line-height: 1.25;
+          padding: 10px 12px !important;
+          font-size: 13px !important;
+          line-height: 1.2;
           text-align: center;
-          overflow-wrap: anywhere;
+          justify-content: center;
+          white-space: normal;
+          overflow-wrap: normal;
+          border-radius: 13px !important;
+        }
+        .river-ai-header > input,
+        .river-ai-header > select { text-align: left; }
+        .river-ai-header > button,
+        .river-ai-header > a { display: inline-flex; align-items: center; }
+        .river-ai-header > button:active,
+        .river-ai-header > a:active { transform: scale(.98); }
+        @media (max-width: 360px) {
+          .river-ai-header > button,
+          .river-ai-header > a,
+          .river-ai-header > input,
+          .river-ai-header > select { min-width: 0; max-width: calc(50% - 4px); }
         }
       }
     `}</style>
