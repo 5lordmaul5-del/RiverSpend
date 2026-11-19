@@ -3,10 +3,10 @@ import { AGENTS_REGISTRY, GENERAL_ASSISTANT } from "../../../lib/riverSSAI/agent
 import { selectTeam } from "../../../lib/riverSSAI/router.mjs";
 
 const MODEL_DEFAULT = "openai/gpt-oss-20b";
-const MAX_AGENTS = 30;
+const MAX_AGENTS = 4; // limite operativo iniziale per il piano Groq attuale
 const MAX_MESSAGE_CHARS = 4000;
+const MAX_ATTACHMENT_CHARS = 8000;
 const MAX_HISTORY = 16;
-const MAX_PARALLEL = 2; // limita i picchi di richieste al provider
 
 const AGENTS = Object.fromEntries(
   Object.entries(AGENTS_REGISTRY).map(([key, agent]) => [key, agent.prompt])
@@ -22,7 +22,16 @@ Non promettere sicurezza impenetrabile, capacità illimitata o previsioni certe.
 Per mercati e token usa scenari probabilistici, dati con data e fonte quando disponibili, rischi e possibili perdite. Non garantire profitti e non eseguire investimenti o transazioni.
 Non chiedere password, chiavi API o codici. Non esporre segreti o dati di altri utenti.
 Nessuna azione irreversibile, modifica a pagamenti, trasferimento di fondi, investimento, pubblicazione o cancellazione senza approvazione esplicita dell'amministratore.
-Quando i dati non bastano, dillo e indica cosa occorre verificare.`;
+Quando i dati non bastano, dillo e indica cosa occorre verificare.
+ISTRUZIONI OPERATIVE:
+- Se la richiesta è sufficientemente chiara, esegui direttamente il compito. Non trasformare una richiesta operativa in un questionario o in un piano di test, a meno che l'utente chieda proprio un piano.
+- Fai al massimo una domanda di chiarimento, solo quando manca un dato indispensabile. Se puoi procedere con un'ipotesi ragionevole, dichiarala e procedi.
+- Se l'utente chiede un test, esegui le prove richieste nella risposta: mostra input, risultato e limiti. Non dire soltanto come potrebbe essere testato.
+- Distingui sempre la capacità del modello linguistico dalle funzioni realmente collegate all'app. Non dichiarare che RiverSSAI genera immagini, video, audio, esegue ricerche live, usa strumenti esterni o modifica sistemi se l'integrazione corrispondente non è presente e non è stata eseguita.
+- Per richieste di immagini o video, se il generatore non è collegato, dillo subito e offri al massimo la preparazione di un prompt o di uno storyboard; non simulare un file generato.
+- Per i calcoli, mostra formule e passaggi controllabili, conserva la precisione durante i passaggi e arrotonda soltanto il risultato finale. Se il calcolo è finanziario, indica le ipotesi e distingui stima da preventivo.
+- Non descrivere come memoria permanente la sola cronologia della chat. La cronologia locale dell'app, la memoria persistente del database e il contesto inviato al modello sono funzioni distinte. Non promettere recupero su un altro dispositivo o in una nuova sessione senza aver verificato che i dati siano salvati e recuperabili.
+- Non inventare caratteristiche tecniche, servizi, modelli, fonti, risultati di test o stato dei progetti. Se non hai accesso a un'informazione, dichiaralo chiaramente.`;
 
 function json(res, status, body) {
   return res.status(status).json(body);
@@ -34,7 +43,8 @@ function normalizeAgent(value) {
 
 function chooseTeam(agent, requestedSize, prompt = "") {
   if (agent !== "team") return [normalizeAgent(agent)];
-  const size = [2, 4, 8, 10, 20, 30].includes(Number(requestedSize)) ? Number(requestedSize) : 4;
+  const requested = [2, 4, 8, 10, 20, 30].includes(Number(requestedSize)) ? Number(requestedSize) : 4;
+  const size = Math.min(requested, MAX_AGENTS);
   const selected = selectTeam(size, prompt).filter((key) => Object.prototype.hasOwnProperty.call(AGENTS, key));
   return selected.length ? selected : ["general_assistant"];
 }
@@ -123,7 +133,7 @@ export default async function handler(req, res) {
   const messages = Array.isArray(body.messages) ? body.messages.slice(-MAX_HISTORY) : [];
   const safeMessages = messages
     .filter((item) => item && ["user", "assistant"].includes(item.role) && typeof item.content === "string")
-    .map((item) => ({ role: item.role, content: item.content.slice(0, MAX_MESSAGE_CHARS) }));
+    .map((item, index, all) => ({ role: item.role, content: item.content.slice(0, index === all.length - 1 && item.role === "user" ? MAX_ATTACHMENT_CHARS : MAX_MESSAGE_CHARS) }));
   if (!safeMessages.length || safeMessages[safeMessages.length - 1].role !== "user") {
     return json(res, 400, { error: "Scrivi prima una richiesta." });
   }
@@ -131,6 +141,9 @@ export default async function handler(req, res) {
   const agent = body.agent === "team" ? "team" : normalizeAgent(body.agent);
   const team = chooseTeam(agent, body.teamSize, safeMessages[safeMessages.length - 1].content);
   const model = process.env.RIVER_AI_MODEL || MODEL_DEFAULT;
+  const thinkingMode = body.thinkingMode === "deep" ? "deep" : "standard";
+  const responseTokens = thinkingMode === "deep" ? 1800 : 1100;
+  const modeInstruction = thinkingMode === "deep" ? "\nMODALITÀ APPROFONDITA: analizza con attenzione, verifica presupposti, confronta alternative e restituisci conclusioni, passaggi, rischi e controlli. Non mostrare ragionamenti interni privati." : "";
 
   try {
     const { data: memories, error: memoryReadError } = await adminClient
@@ -141,46 +154,38 @@ export default async function handler(req, res) {
       .limit(12);
     if (memoryReadError) console.error("River AI memory read failed:", memoryReadError.message);
     const memoryContext = (memories || [])
-      .map((item) => "[" + (item.category || "nota") + "] " + (item.title || "") + ": " + (item.content || "").slice(0, 350))
+      .map((item) => "[" + (item.category || "nota") + "] " + (item.title || "") + ": " + (item.content || "").slice(0, 120))
       .join("\n")
-      .slice(0, 2600);
+      .slice(0, 900);
 
     const latestPrompt = safeMessages[safeMessages.length - 1].content;
     let answer;
     let agentsUsed = team;
 
     if (agent === "team") {
-      // La Squadra usa un contesto compatto per rispettare il limite TPM del provider.
-      const teamHistory = safeMessages.slice(-4);
-      const teamMemory = memoryContext.slice(0, 900);
-      const reports = await runWithLimit(team, MAX_PARALLEL, async (specialist) => {
-        const report = await callModel(groqKey, model, [
-          { role: "system", content: BASE_PROMPT + "\nRUOLO SPECIALISTA: " + AGENTS[specialist] + "\nFornisci un rapporto sintetico: priorità, un rischio e verifica essenziale." },
-          ...(teamMemory ? [{ role: "system", content: "CONTESTO PRIVATO RIVERSPEND (sintesi):\n" + teamMemory }] : []),
-          ...teamHistory
-        ], 300);
-        return { specialist, report };
-      });
-      const synthesis = await callModel(groqKey, model, [
-        { role: "system", content: BASE_PROMPT + "\nSei NOVA, coordinatrice. Confronta i rapporti, risolvi le contraddizioni senza nasconderle e restituisci decisione, piano, rischi e verifiche." },
-        { role: "user", content: "RICHIESTA:\n" + latestPrompt + "\n\nRAPPORTI SPECIALISTI:\n" + reports.map((item) => "AGENTE " + item.specialist.toUpperCase() + ":\n" + item.report).join("\n\n") }
-      ], 900);
-      answer = synthesis;
+      const specialistBrief = team
+        .map((specialist) => "- " + specialist.toUpperCase() + ": " + AGENTS[specialist])
+        .join("\n");
+      answer = await callModel(groqKey, model, [
+        {
+          role: "system",
+          content: BASE_PROMPT + modeInstruction
+            + "\nSQUADRA ULTRA COORDINATA: usa le competenze dei seguenti specialisti in un'unica elaborazione del modello. Integra le prospettive in una risposta coerente; evidenzia eventuali disaccordi, incertezze, rischi e verifiche. Non dichiarare che siano stati eseguiti calcoli o controlli esterni se non lo sono stati.\n"
+            + specialistBrief
+        },
+        ...(memoryContext ? [{ role: "system", content: "MEMORIA PRIVATA RIVER AI:\n" + memoryContext }] : []),
+        ...safeMessages
+      ], responseTokens);
       agentsUsed = ["nova", ...team];
     } else {
       answer = await callModel(groqKey, model, [
-        { role: "system", content: BASE_PROMPT + "\nRUOLO ATTIVO: " + AGENTS[agent] },
+        { role: "system", content: BASE_PROMPT + modeInstruction + "\nRUOLO ATTIVO: " + AGENTS[agent] },
         ...(memoryContext ? [{ role: "system", content: "MEMORIA PRIVATA RIVER AI:\n" + memoryContext }] : []),
         ...safeMessages
-      ], 1500);
+      ], responseTokens);
     }
 
-    const memoryRows = [
-      { user_id: user.id, title: "Messaggio utente", content: latestPrompt, category: "conversation", source: "river-ai-chat", importance: 3 },
-      { user_id: user.id, title: "Risposta River AI", content: answer.slice(0, 6000), category: "conversation", source: "river-ai-chat", importance: 2 }
-    ];
-    const { error: memoryWriteError } = await adminClient.from("river_ai_memories").insert(memoryRows);
-    if (memoryWriteError) console.error("River AI memory write failed:", memoryWriteError.message);
+    // Chat history is not permanent memory. Durable memories must be saved explicitly.
 
     return json(res, 200, {
       answer,
@@ -188,16 +193,26 @@ export default async function handler(req, res) {
       agent,
       agentsUsed,
       teamSize: agent === "team" ? team.length : 1,
-      memorySaved: !memoryWriteError,
-      limits: { maxAgents: MAX_AGENTS, maxParallel: MAX_PARALLEL }
+      memorySaved: false,
+      memoryPolicy: "explicit-only",
+      limits: { maxAgents: MAX_AGENTS, providerCallsPerRequest: 1 },
+      executionMode: agent === "team" ? "coordinated-single-call" : "single-agent"
     });
   } catch (error) {
     console.error("River AI request failed:", error?.message || "unknown");
     if (error?.status === 429) {
-      const waitMatch = String(error?.message || "").match(/try again in ([0-9.]+)s/i);
-      const waitSeconds = waitMatch ? Math.ceil(Number(waitMatch[1])) : 20;
-      res.setHeader("Retry-After", String(waitSeconds));
-      return json(res, 429, { error: "Il servizio AI sta raggiungendo il limite di richieste. Attendi circa " + waitSeconds + " secondi e riprova. La Squadra non ha completato l'analisi." });
+      const providerMessage = String(error?.message || "");
+      const quotaExhausted = /tokens per day|requests per day|daily quota|quota giornaliera|limit reached/i.test(providerMessage);
+      const waitMatch = providerMessage.match(/try again in ([0-9.]+)s/i);
+      const waitSeconds = waitMatch ? Math.max(1, Math.ceil(Number(waitMatch[1]))) : null;
+      if (waitSeconds) res.setHeader("Retry-After", String(waitSeconds));
+      return json(res, 429, {
+        code: quotaExhausted ? "PROVIDER_QUOTA_EXHAUSTED" : "PROVIDER_RATE_LIMIT",
+        retryAfterSeconds: waitSeconds,
+        error: quotaExhausted
+          ? "La quota del servizio AI è temporaneamente esaurita. Non è un blocco del tuo account amministratore: serve attendere il ripristino della quota o configurare un provider di riserva."
+          : "Il servizio AI sta ricevendo troppe richieste. La richiesta non è stata completata; riprova tra " + (waitSeconds ? waitSeconds + " secondi" : "qualche istante") + "."
+      });
     }
     if (error?.name === "AbortError") return json(res, 504, { error: "La richiesta ha superato il tempo massimo. Riprova con una richiesta più breve." });
     return json(res, 502, { error: "Servizio AI temporaneamente non disponibile. La richiesta può essere ripetuta." });

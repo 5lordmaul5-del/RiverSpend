@@ -49,6 +49,7 @@ const pool = new Pool({
 
 const schemaPath = path.resolve("infra/river-ai/schema.sql");
 await pool.query(fs.readFileSync(schemaPath, "utf8"));
+await pool.query(fs.readFileSync(path.resolve("infra/river-ai/worker-queue.sql"), "utf8"));
 
 function send(res, status, body) {
   const payload = JSON.stringify(body);
@@ -195,13 +196,39 @@ const server = http.createServer(async (req, res) => {
     });
   }
 
-  if (!["POST", "GET"].includes(req.method) || !["/v1/chat", "/v1/memories", "/v1/agents"].includes(url.pathname)) {
+  const jobStatusMatch = /^\/v1\/jobs\/([0-9a-f-]{36})$/i.exec(url.pathname);
+  if (!["POST", "GET"].includes(req.method) || !["/v1/chat", "/v1/memories", "/v1/agents", "/v1/jobs"].includes(url.pathname) && !jobStatusMatch) {
     return send(res, 404, { error: "Not found" });
   }
   // Rate-limit before token validation to slow down bearer-token guessing.
   if (rateLimited(req)) return send(res, 429, { error: "Limite temporaneo raggiunto. Riprova tra un minuto." });
   if (!authorized(req)) return send(res, 401, { error: "Accesso amministratore non valido." });
 
+  if (req.method === "POST" && url.pathname === "/v1/jobs") {
+    try {
+      const body = await readBody(req);
+      const agentKey = String(body.agentKey || "nova");
+      const task = typeof body.task === "string" ? body.task.trim().slice(0, 12000) : "";
+      if (!Object.prototype.hasOwnProperty.call(AGENTS_REGISTRY, agentKey)) return send(res, 400, { error: "Specialista non riconosciuto." });
+      if (!task) return send(res, 400, { error: "Il campo task è obbligatorio." });
+      const priority = Number.isInteger(body.priority) ? Math.max(0, Math.min(1000, body.priority)) : 100;
+      const inserted = await pool.query(
+        "INSERT INTO river_ai_jobs(agent_key,payload,priority) VALUES($1,$2::jsonb,$3) RETURNING id,status,created_at",
+        [agentKey, JSON.stringify({ task }), priority]
+      );
+      await pool.query("INSERT INTO river_ai_audit(action,status,details) VALUES($1,$2,$3)", ["worker.job.enqueue", "success", { jobId: inserted.rows[0].id, agentKey }]);
+      return send(res, 202, { job: inserted.rows[0], message: "Compito accodato per RiverSSAI." });
+    } catch (error) {
+      if (error.message === "BODY_TOO_LARGE") return send(res, 413, { error: "Richiesta troppo grande." });
+      if (error instanceof SyntaxError) return send(res, 400, { error: "JSON non valido." });
+      return send(res, 500, { error: "Impossibile accodare il compito." });
+    }
+  }
+  if (req.method === "GET" && jobStatusMatch) {
+    const result = await pool.query("SELECT id,agent_key,status,attempts,max_attempts,result,last_error,created_at,started_at,finished_at FROM river_ai_jobs WHERE id=$1", [jobStatusMatch[1]]);
+    if (!result.rows[0]) return send(res, 404, { error: "Compito non trovato." });
+    return send(res, 200, { job: result.rows[0] });
+  }
   if (req.method === "GET" && url.pathname === "/v1/agents") {
     return send(res, 200, {
       totalRoles: Object.keys(AGENTS_REGISTRY).length,
@@ -292,11 +319,7 @@ const server = http.createServer(async (req, res) => {
       agentsUsed = [requestedAgent];
     }
 
-    const last = safe[safe.length - 1].content;
-    await pool.query(
-      "INSERT INTO river_ai_memories(title,content,category,source) VALUES($1,$2,$3,$4),($5,$6,$7,$8)",
-      ["Messaggio utente", last, "conversation", "river-ai-chat", "Risposta Nova", answer.slice(0, 4000), "conversation", "river-ai-chat"]
-    );
+    // Conversation history is not permanent memory; durable memories use /v1/memories explicitly.
     await pool.query(
       "INSERT INTO river_ai_audit(action,status,details) VALUES($1,$2,$3)",
       ["chat", "success", { model: MODEL, agentsUsed }]
@@ -308,7 +331,8 @@ const server = http.createServer(async (req, res) => {
       agent: isTeam ? "team" : requestedAgent,
       agentsUsed,
       teamSize: isTeam ? Math.max(0, agentsUsed.length - 1) : 1,
-      memory: "saved",
+      memory: "not_saved",
+      memoryPolicy: "explicit-only",
       maxParallel: MAX_PARALLEL
     });
   } catch (error) {

@@ -5,6 +5,7 @@ on:
     paths:
       - "infra/river-ai/**"
       - "server/river-ai-standalone.mjs"
+      - "server/river-ai-worker.mjs"
       - "lib/riverSSAI/**"
       - "pages/api/river-ai/chat.js"
       - "scripts/river-ai/**"
@@ -13,6 +14,7 @@ on:
     branches:
       - feat/river-fortress-integration-core
       - fix/riverworld-header-fortress-2026-11-16
+      - feat/riverssai-autonomous-workers
     paths:
       - "infra/river-ai/**"
       - "server/river-ai-standalone.mjs"
@@ -37,6 +39,7 @@ jobs:
       - name: Validate JavaScript syntax
         run: |
           node --check server/river-ai-standalone.mjs
+          node --check server/river-ai-worker.mjs
           node --check lib/riverSSAI/agentsRegistry.mjs
           node --check lib/riverSSAI/router.mjs
           node --check pages/api/river-ai/chat.js

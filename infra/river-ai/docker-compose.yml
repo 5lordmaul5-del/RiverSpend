@@ -22,6 +22,34 @@ services:
     # Private access from RiverSSAI plus outbound access to download model weights.
     # No host port is published for Ollama.
     networks: [river-private, ollama-egress]
+  river-ai-worker:
+    build:
+      context: ../..
+      dockerfile: infra/river-ai/Dockerfile
+    command: ["node", "server/river-ai-worker.mjs"]
+    restart: unless-stopped
+    read_only: true
+    tmpfs: [/tmp]
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+    environment:
+      NODE_ENV: production
+      PGHOST: riverdb
+      PGPORT: 5432
+      PGDATABASE: rivercore
+      PGUSER: rivercore
+      PGPASSWORD: ${RIVERDB_PASSWORD:?Set RIVERDB_PASSWORD in .env}
+      RIVER_AI_LOCAL_URL: http://ollama:11434/v1/chat/completions
+      RIVER_AI_LOCAL_MODEL: ${RIVER_AI_LOCAL_MODEL:-qwen2.5:7b}
+      RIVER_AI_WORKER_CONCURRENCY: ${RIVER_AI_WORKER_CONCURRENCY:-1}
+      RIVER_AI_WORKER_POLL_MS: ${RIVER_AI_WORKER_POLL_MS:-2500}
+      RIVER_AI_WORKER_LEASE_SECONDS: ${RIVER_AI_WORKER_LEASE_SECONDS:-180}
+    depends_on:
+      riverdb:
+        condition: service_healthy
+      river-ai:
+        condition: service_started
+    networks: [river-private]
   river-ai:
     build:
       context: ../..
