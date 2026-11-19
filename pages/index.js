@@ -87,6 +87,17 @@ function rsProductBorderColor(product) {
 }
 
 export default function Home() {
+  useEffect(() => {
+    const restoreAppRail = () => {
+      const rail = document.querySelector('[aria-label="Applicazioni disponibili, scorrimento orizzontale"]');
+      if (!rail) return;
+      Object.assign(rail.style, {display:"flex",flexDirection:"row",flexWrap:"nowrap",width:"100%",minWidth:"0",maxWidth:"100%",overflowX:"auto",overflowY:"hidden",WebkitOverflowScrolling:"touch",scrollSnapType:"x mandatory"});
+      Array.from(rail.children).forEach((item) => Object.assign(item.style, {flex:"0 0 96px",minWidth:"96px",scrollSnapAlign:"start"}));
+    };
+    restoreAppRail();
+    window.addEventListener("pageshow", restoreAppRail);
+    return () => window.removeEventListener("pageshow", restoreAppRail);
+  }, []);
   const [language, setLanguage] = useState('it');
   const t = (key) => (HOME_TEXT[language] || HOME_TEXT.en)[key] || HOME_TEXT.it[key] || key;
   useEffect(() => {
@@ -1017,7 +1028,7 @@ export default function Home() {
           <section aria-label="App RiverSpend" className="mb-4 rounded-2xl border border-cyan-200/70 bg-white/95 px-3 py-3 shadow-md">
             <div className="mb-1 text-center text-xs font-extrabold uppercase tracking-[.16em] text-slate-800">Le applicazioni RiverSpend</div>
             <p className="mb-3 text-center text-xs text-slate-600">Scorri con il dito per vedere tutte le app</p>
-            <div role="list" aria-label="Applicazioni disponibili, scorrimento orizzontale" className="flex w-full gap-3 overflow-x-auto overscroll-x-contain pb-2 touch-pan-x snap-x snap-mandatory" style={{ WebkitOverflowScrolling: "touch" }}>
+            <div role="list" aria-label="Applicazioni disponibili, scorrimento orizzontale" className="flex w-full min-w-0 flex-nowrap gap-3 overflow-x-auto overflow-y-hidden overscroll-x-contain pb-2 touch-pan-x snap-x snap-mandatory" style={{ display:"flex",flexDirection:"row",flexWrap:"nowrap",width:"100%",minWidth:0,maxWidth:"100%",overflowX:"auto",overflowY:"hidden",WebkitOverflowScrolling:"touch",scrollSnapType:"x mandatory",gap:12 }}>
               <a role="listitem" href="/" className="flex w-24 flex-none snap-start flex-col items-center gap-1 text-center" aria-label="RiverSpendShop">
                 <img src="/icons/riverspendshop-app.jpg" alt="RiverSpendShop" className="h-16 w-16 rounded-2xl object-cover shadow-md ring-2 ring-cyan-200" loading="lazy" />
                 <span className="w-full whitespace-normal text-xs font-extrabold leading-tight text-slate-900">RiverSpendShop</span>
@@ -1027,7 +1038,7 @@ export default function Home() {
                 <span className="w-full whitespace-normal text-xs font-extrabold leading-tight text-slate-900">RiverSpaceSignals</span>
               </a>
               <a role="listitem" href="/river-ai" className="flex w-24 flex-none snap-start flex-col items-center gap-1 text-center" aria-label="RiverSSAI 10.0">
-                <img src="/icons/river-ssai-app.svg" alt="RiverSSAI 10.0" className="h-16 w-16 rounded-2xl object-contain shadow-md ring-2 ring-cyan-200" loading="lazy" />
+                <img src="/icons/river-ssai-app.svg?v=10.1-20261119" alt="RiverSSAI 10.0" className="h-16 w-16 rounded-2xl object-contain shadow-md ring-2 ring-cyan-200" loading="lazy" />
                 <span className="w-full whitespace-normal text-xs font-extrabold leading-tight text-slate-900">RiverSSAI 10.0</span>
               </a>
               <a role="listitem" href="/rs-control-center" className="flex w-24 flex-none snap-start flex-col items-center gap-1 text-center" aria-label="RSPC RiverSpend Panel Control">
