@@ -32,7 +32,7 @@ const apps = [
     name: 'RiverSSAI 10.0 · Pure Power',
     subtitle: 'Nova e la rete dei 30 specialisti',
     description: 'Nova coordina i tre comandanti RIVER A1B2, RIVER A2C4 e RIVER B2D5 e la rete dei 30 specialisti. Apri RiverSSAI e installala sul telefono come app separata. L’accesso resta riservato agli account autorizzati.',
-    logo: '/icons/river-ssai-app.svg',
+    logo: '/icons/river-ssai-app.svg?v=10.1-20261119',
     href: '/river-ai',
     color: '#087f89',
     action: 'Apri e installa RiverSSAI 10.0'
