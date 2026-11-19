@@ -578,7 +578,7 @@ export default function RiverAI() {
           max-width: calc(50% - 5px) !important;
         }
       }
-    `}</style>}</style>
+    `}</style>
     </>
   );
 }
