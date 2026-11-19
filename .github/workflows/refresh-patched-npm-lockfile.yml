@@ -23,7 +23,7 @@ jobs:
         with:
           node-version: 22
       - name: Resolve pinned security updates
-        run: npm update next sharp --package-lock-only --ignore-scripts --no-audit --no-fund
+        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
       - name: Commit lockfile
         run: |
           if ! git diff --quiet -- package-lock.json; then
