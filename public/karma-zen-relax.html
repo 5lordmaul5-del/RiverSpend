@@ -93,7 +93,7 @@ async function startSound(index){
   title.textContent=tracks[index].dataset.title;
   status.textContent= p.label+' · suono ambient originale generato nel dispositivo';
   toggle.innerHTML='<strong>Ⅱ Pausa</strong>';
-  cycleTimer=setTimeout(()=>{if(playing&&activeIndex===index)startSound(index)},11500);
+  cycleTimer=setTimeout(()=>{if(playing&&activeIndex===index){stopSound();startSound(index)}},11500);
  }catch(error){status.textContent='Impossibile avviare l’audio: tocca di nuovo Avvia ascolto.';playing=false}
 }
 tracks.forEach((button,index)=>button.addEventListener('click',()=>{if(activeIndex===index&&playing){stopSound();return}stopSound();startSound(index)}));
