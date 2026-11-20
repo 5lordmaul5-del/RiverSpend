@@ -278,7 +278,7 @@ export default async function handler(req, res) {
           : "Il servizio AI sta ricevendo troppe richieste. La richiesta non è stata completata; riprova tra " + (waitSeconds ? waitSeconds + " secondi" : "qualche istante") + "."
       });
     }
-    if (error?.name === "AbortError") return json(res, 504, { error: "La richiesta ha superato il tempo massimo. Riprova con una richiesta più breve." });
+    if (error?.name === "AbortError" || error?.name === "TimeoutError") return json(res, 504, { error: "La richiesta ha superato il tempo massimo. Riprova tra poco." });
     return json(res, 502, { error: "Servizio AI temporaneamente non disponibile. La richiesta può essere ripetuta." });
   }
 }
