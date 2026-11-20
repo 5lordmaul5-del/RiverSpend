@@ -25,7 +25,7 @@
       "status": "design_or_partial_implementation"
     },
     {
-      "id": "river-ssai",
+      "id": "river-ssai-runtime",
       "name": "RiverSSAI 10.0",
       "kind": "platform_service",
       "status": "design_or_partial_implementation"
@@ -231,7 +231,7 @@
       "status": "planned"
     },
     {
-      "from": "river-ssai",
+      "from": "river-ssai-runtime",
       "to": "river-api-gateway",
       "relation": "scoped_service_requests",
       "status": "planned"
