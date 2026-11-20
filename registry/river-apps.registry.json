@@ -404,7 +404,7 @@
       "last_verified_at": null
     },
     {
-      "service_id": "river-ssai",
+      "service_id": "river-ssai-runtime",
       "display_name": "RiverSSAI 10.0",
       "domain": "AI platform",
       "status": "design_or_partial_implementation",
