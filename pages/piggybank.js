@@ -20,15 +20,14 @@ export default function PiggyBank() {
       return;
     }
 
-    fetch('/api/products', { cache: 'no-store' })
+    fetch('/api/products?mode=single&id=' + encodeURIComponent(productId), { cache: 'no-store' })
       .then(async (res) => {
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Prodotti non disponibili');
+        if (!data) throw new Error('Prodotto non trovato.');
         return data;
       })
-      .then((data) => {
-        const found = Array.isArray(data) ? data.find((item) => String(item.id) === productId) : null;
-        if (!found) throw new Error('Prodotto non trovato.');
+      .then((found) => {
         setProduct(found);
         try {
           const value = Number(localStorage.getItem('riverspend-piggybank-' + productId) || 0);
