@@ -1,0 +1,36 @@
+name: River Registry Validation
+
+on:
+  push:
+    branches:
+      - feat/river-fortress-integration-core
+    paths:
+      - "registry/**"
+      - "scripts/river-registry/**"
+      - "architecture/**"
+      - "scripts/river-datacenter/**"
+      - ".github/workflows/river-registry-validation.yml"
+  pull_request:
+    paths:
+      - "registry/**"
+      - "scripts/river-registry/**"
+      - ".github/workflows/river-registry-validation.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-registry:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Validate application registry
+        run: |
+          node scripts/river-registry/validate.mjs
+          node scripts/river-datacenter/validate-topology.mjs

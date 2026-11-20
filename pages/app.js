@@ -2,6 +2,15 @@ import Head from 'next/head';
 
 const apps = [
   {
+    name: 'RiverCloud',
+    subtitle: 'La fortezza digitale RiverSpend',
+    description: 'Infrastruttura per database portabile, storage, sicurezza, backup indipendenti e continuità operativa. La fondazione è pubblicata; i servizi autonomi sono in fase di realizzazione.',
+    logo: '/icons/river-cloud.svg',
+    href: '/river-cloud',
+    color: '#2563eb',
+    action: 'Apri RiverCloud'
+  },
+  {
     name: 'RiverSpendShop',
     subtitle: 'Il marketplace',
     description: 'Scopri prodotti, crea la tua rete e metti in vendita i tuoi articoli.',
@@ -22,11 +31,20 @@ const apps = [
   {
     name: 'RiverSSAI 10.0 · Pure Power',
     subtitle: 'Nova e la rete dei 30 specialisti',
-    description: 'Nova coordina i tre comandanti RIVER A1B2, RIVER A2C4 e RIVER B2D5 e l’esercito dei 30 specialisti. Apri RiverSSAI e installala sul telefono come app separata. L’accesso resta riservato agli account autorizzati.',
-    logo: '/icons/river-ssai-192.png',
+    description: 'Nova coordina i tre comandanti RIVER A1B2, RIVER A2C4 e RIVER B2D5 e la rete dei 30 specialisti. Apri RiverSSAI e installala sul telefono come app separata. L’accesso resta riservato agli account autorizzati.',
+    logo: '/icons/river-ssai-app.svg?v=10.1-20261119',
     href: '/river-ai',
     color: '#087f89',
     action: 'Apri e installa RiverSSAI 10.0'
+  },
+  {
+    name: 'RiverSS Print',
+    subtitle: 'Il servizio di stampa RiverSpend',
+    description: 'Il progetto RiverSpend dedicato ai prodotti stampati e alla stampa personalizzata. Il servizio è in progettazione: catalogo, preventivi, ordini e produzione non sono ancora attivi.',
+    logo: '/icons/river-ss-print.svg',
+    href: '/river-print',
+    color: '#2563eb',
+    action: 'Scopri RiverSS Print'
   },
   {
     name: 'RiverSpendSocialNetwork',
@@ -38,13 +56,22 @@ const apps = [
     action: 'Apri RiverSpend Social'
   },
   {
+    name: 'River Video',
+    subtitle: 'La piattaforma video River',
+    description: 'Film, serie, creator, live e produzioni originali. L’app e il catalogo sono in preparazione: la riproduzione sarà attivata dopo l’integrazione del backend video e la verifica dei diritti.',
+    logo: '/icons/river-video.svg',
+    href: '/river-video',
+    color: '#0f172a',
+    action: 'Apri River Video'
+  },
+  {
     name: 'RiverSpend Streaming',
-    subtitle: 'Video e contenuti',
-    description: 'Accedi all’area dedicata ai contenuti RiverSpend.',
+    subtitle: 'Film, serie, creator e dirette',
+    description: 'Apri la piattaforma RiverSpend dedicata a film, serie, videoclip, creator e contenuti in streaming. Le funzioni di riproduzione e i cataloghi vengono attivati progressivamente.',
     logo: '/icons/streaming.svg',
-    href: '/servizi/broadcast',
+    href: '/river-spend-stream',
     color: '#7c3aed',
-    action: 'Apri Streaming'
+    action: 'Apri RiverSpend Streaming'
   },
   {
     name: 'RS SoundStudio',
@@ -65,13 +92,13 @@ const apps = [
     action: 'Apri RiverSpend Music'
   },
   {
-    name: 'RS PanelControl',
-    subtitle: 'Area privata del CEO',
-    description: 'Pannello riservato agli account autorizzati. L’accesso richiede autenticazione.',
-    logo: '/1000186325.png',
+    name: 'River Control Center',
+    subtitle: 'Centro di controllo RiverSpend',
+    description: 'Pannello di gestione dell’ecosistema RiverSpend. L’accesso e le funzioni amministrative sono riservati agli account autorizzati.',
+    logo: '/icons/panelcontrol.svg',
     href: '/rs-control-center',
     color: '#0f172a',
-    action: 'Apri PanelControl'
+    action: 'Apri River Control Center'
   },
   {
     name: 'RiverSpend Special Park',
@@ -119,7 +146,7 @@ export default function RiverSpendApps() {
           <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,230px),1fr))', gap: 16 }}>
             {apps.map((app) => (
               <article key={app.name} style={{ background: 'rgba(255,255,255,.07)', border: '1px solid rgba(103,232,249,.28)', borderRadius: 22, padding: 22, display: 'flex', flexDirection: 'column', minHeight: 270, boxShadow: '0 12px 32px rgba(0,0,0,.18)' }}>
-                <div aria-hidden="true" style={{ width: 88, height: 88, display: 'grid', placeItems: 'center', overflow: 'hidden', borderRadius: 18, background: 'transparent', padding: 0, marginBottom: 16, boxShadow: 'none' }}><img src={app.logo} alt={'Logo ' + app.name} style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: 14 }} /></div>
+                <div style={{ width: 88, height: 88, display: 'grid', placeItems: 'center', overflow: 'hidden', borderRadius: 18, background: 'rgba(255,255,255,.96)', padding: 9, marginBottom: 16, boxShadow: '0 6px 18px rgba(0,0,0,.18)' }}><img src={app.logo} alt={'Logo ' + app.name} loading="lazy" onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = '/icons/icon-192.png'; }} style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: 10 }} /></div>
                 <h2 style={{ fontSize: 21, fontWeight: 850, margin: '0 0 5px' }}>{app.name}</h2>
                 <div style={{ color: '#fbbf24', fontWeight: 700, fontSize: 13, marginBottom: 10 }}>{app.subtitle}</div>
                 <p style={{ color: '#cbd5e1', lineHeight: 1.55, fontSize: 14, flexGrow: 1 }}>{app.description}</p>

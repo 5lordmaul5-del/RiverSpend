@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Head from "next/head";
 import { supabase } from "../../lib/supabase";
 
 const cards = [
@@ -22,6 +23,10 @@ export default function RSControlCenter() {
   const [globalIntel, setGlobalIntel] = useState(null);
   const [globalIntelError, setGlobalIntelError] = useState("");
   const [collaborators, setCollaborators] = useState([]);
+  const [customers, setCustomers] = useState([]);
+  const [customerError, setCustomerError] = useState("");
+  const [customerSearch, setCustomerSearch] = useState("");
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [newName, setNewName] = useState("");
   const [newEmail, setNewEmail] = useState("");
   const [newPermissions, setNewPermissions] = useState({ marketplace:false, users:false, analytics:true, logistics:false, security:false, finance:false });
@@ -41,6 +46,17 @@ export default function RSControlCenter() {
   const [secretSubject, setSecretSubject] = useState("");
   const [secretBody, setSecretBody] = useState("");
   const [secretRecipients, setSecretRecipients] = useState([]);
+
+  async function loadCustomers() {
+    setCustomerError("");
+    const { data, error } = await supabase.rpc("rs_admin_shop_customers");
+    if (error) {
+      setCustomerError(error.message || "El registro clienti non è disponibile.");
+      setCustomers([]);
+      return;
+    }
+    setCustomers(Array.isArray(data) ? data : []);
+  }
 
   async function loadGlobalIntel() {
     setGlobalIntelError("");
@@ -117,8 +133,7 @@ export default function RSControlCenter() {
         products: results[0].error ? null : results[0].count,
         orders: results[1].error ? null : results[1].count,
       });
-      await loadInsights();
-      await loadGlobalIntel();
+      await Promise.all([loadInsights(), loadGlobalIntel(), loadCustomers()]);
       await loadCollaborators();
     }
 
@@ -220,6 +235,12 @@ export default function RSControlCenter() {
         padding: 20,
       }}
     >
+      <Head>
+        <title>River Control Center · RSPC</title>
+        <meta name="description" content="Pannello amministrativo centrale dell’ecosistema RiverSpend." />
+        <meta name="theme-color" content="#0f172a" />
+        <link rel="icon" href="/icons/panelcontrol.svg" type="image/svg+xml" />
+      </Head>
       <header style={{ ...panel, marginBottom: 22 }}>
         <div style={{ color: "#08a7cf", fontSize: 25, fontWeight: 700 }}>
           RiverSpend
@@ -350,6 +371,50 @@ export default function RSControlCenter() {
               </section>
             </>
           )}
+
+          <section style={{ ...panel, marginTop: 28 }}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:12,flexWrap:"wrap"}}>
+              <div>
+                <h2 style={{margin:"0 0 5px"}}>👥 Utenti e clienti RiverSpend</h2>
+                <p style={{margin:0,color:"#63818a",fontSize:13}}>Elenco reale dal database. Seleziona una persona per aprire la scheda e leggere ordini e attività.</p>
+              </div>
+              <button onClick={loadCustomers} style={{padding:"9px 12px",border:0,borderRadius:9,background:"#087f9e",color:"#fff",fontWeight:700}}>↻ Aggiorna</button>
+            </div>
+            <input value={customerSearch} onChange={e=>setCustomerSearch(e.target.value)} placeholder="Cerca per nome o email" style={{width:"100%",boxSizing:"border-box",padding:12,marginTop:14,border:"1px solid #d7e5e9",borderRadius:10}} />
+            {customerError ? <p style={{color:"#b45309"}}>{customerError}</p> : (
+              <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(min(100%,260px),1fr))",gap:10,marginTop:12}}>
+                {customers.filter(c=>`${c.display_name||""} ${c.email||""}`.toLowerCase().includes(customerSearch.toLowerCase())).map(c=>(
+                  <button key={c.user_id} onClick={()=>setSelectedCustomer(c)} style={{textAlign:"left",padding:13,borderRadius:12,border:selectedCustomer?.user_id===c.user_id?"2px solid #087f9e":"1px solid #dcecef",background:selectedCustomer?.user_id===c.user_id?"#effbfe":"#fff",cursor:"pointer"}}>
+                    <b>{c.display_name || "Utente RiverSpend"}</b>
+                    <div style={{fontSize:12,color:"#63818a",marginTop:4,wordBreak:"break-word"}}>{c.email}</div>
+                    <div style={{display:"flex",justifyContent:"space-between",gap:8,marginTop:10,fontSize:12}}>
+                      <span>{c.seller_type || "Privato"}</span><b>{Number(c.order_count||0)} ordini</b>
+                    </div>
+                  </button>
+                ))}
+                {!customers.length && <div style={{color:"#718a91"}}>Nessun utente restituito dal registro amministrativo.</div>}
+              </div>
+            )}
+            {selectedCustomer && (
+              <div style={{marginTop:14,padding:16,borderRadius:14,background:"#f1f9fb",border:"1px solid #cfe8ee"}}>
+                <div style={{display:"flex",justifyContent:"space-between",gap:10,alignItems:"center",flexWrap:"wrap"}}>
+                  <div><b style={{fontSize:18}}>{selectedCustomer.display_name || "Utente RiverSpend"}</b><div style={{fontSize:13,color:"#63818a",wordBreak:"break-word"}}>{selectedCustomer.email}</div></div>
+                  <button onClick={()=>setSelectedCustomer(null)} style={{padding:"7px 10px",border:0,borderRadius:8}}>Chiudi scheda</button>
+                </div>
+                <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(135px,1fr))",gap:9,marginTop:13}}>
+                  {[
+                    ["Ordini",selectedCustomer.order_count],
+                    ["Pagati",selectedCustomer.paid_order_count],
+                    ["Totale speso",Number(selectedCustomer.total_spent||0).toLocaleString("it-IT",{style:"currency",currency:"EUR"})],
+                    ["Articoli nella Rete",selectedCustomer.net_items_count],
+                    ["Visite prodotto",selectedCustomer.product_views],
+                    ["Ricerche",selectedCustomer.searches]
+                  ].map(([label,value])=><div key={label} style={{padding:11,borderRadius:10,background:"#fff"}}><div style={{fontSize:11,color:"#63818a"}}>{label}</div><b style={{fontSize:17}}>{value ?? "—"}</b></div>)}
+                </div>
+                <div style={{fontSize:12,color:"#63818a",marginTop:12}}>Registrazione: {selectedCustomer.registered_at ? new Date(selectedCustomer.registered_at).toLocaleString("it-IT") : "—"} · Ultimo accesso: {selectedCustomer.last_sign_in_at ? new Date(selectedCustomer.last_sign_in_at).toLocaleString("it-IT") : "—"} · Ultimo ordine: {selectedCustomer.last_order_at ? new Date(selectedCustomer.last_order_at).toLocaleString("it-IT") : "—"}</div>
+              </div>
+            )}
+          </section>
 
           <section style={{marginTop:30,padding:16,borderRadius:22,background:"radial-gradient(circle at 50% 30%,#123d68 0%,#07182c 48%,#030914 100%)",color:"#f4fbff",border:"1px solid #164a75",boxShadow:"0 14px 40px rgba(0,30,60,.22)",overflow:"hidden"}}>
             <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:12,flexWrap:"wrap"}}>

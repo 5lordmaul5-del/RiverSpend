@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 700" role="img" aria-labelledby="t d">
+<title id="t">Karma Zen Relax — loto, acqua e doppie onde S animate</title><desc id="d">Un loto dorato ruota dolcemente al centro di un lago luminoso. Onde a forma di S fluttuano ai lati e l'acqua crea cerchi concentrici.</desc>
+<defs>
+ <linearGradient id="bg" x2="0" y2="1"><stop stop-color="#03132e"/><stop offset=".55" stop-color="#07506b"/><stop offset="1" stop-color="#041c2c"/></linearGradient>
+ <linearGradient id="gold" x2="0" y2="1"><stop stop-color="#fffbd2"/><stop offset=".45" stop-color="#f9d36e"/><stop offset="1" stop-color="#ad6a20"/></linearGradient>
+ <linearGradient id="cyan" x2="1" y2="1"><stop stop-color="#aafaff"/><stop offset=".45" stop-color="#14d9f7"/><stop offset="1" stop-color="#0872ac"/></linearGradient>
+ <radialGradient id="moon"><stop stop-color="#fffef0"/><stop offset=".72" stop-color="#ffe69a"/><stop offset="1" stop-color="#d89a42"/></radialGradient>
+ <filter id="glow"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+ <filter id="soft"><feGaussianBlur stdDeviation="16"/></filter>
+</defs>
+<style>
+ @keyframes lotusTurn{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+ @keyframes breathe{0%,100%{transform:scale(1);opacity:.82}50%{transform:scale(1.055);opacity:1}}
+ @keyframes ripple{0%{transform:scale(.78);opacity:.8}100%{transform:scale(1.32);opacity:0}}
+ @keyframes waveFlow{0%{stroke-dashoffset:0;transform:translateY(0)}50%{transform:translateY(-8px)}100%{stroke-dashoffset:-180;transform:translateY(0)}}
+ @keyframes shimmer{0%,100%{opacity:.55}50%{opacity:1}}
+ .lotus-spin{transform-origin:450px 485px;animation:lotusTurn 38s linear infinite}
+ .lotus-breathe{transform-origin:450px 485px;animation:breathe 7s ease-in-out infinite}
+ .ripple{transform-origin:450px 565px;animation:ripple 6s ease-out infinite}
+ .ripple.delay{animation-delay:3s}
+ .s-wave{fill:none;stroke:url(#cyan);stroke-width:19;stroke-linecap:round;stroke-dasharray:24 18;filter:url(#glow);animation:waveFlow 14s ease-in-out infinite}
+ .s-wave.second{animation-delay:-7s;animation-duration:17s}
+ .spark{animation:shimmer 3.5s ease-in-out infinite}
+ @media(prefers-reduced-motion:reduce){.lotus-spin,.lotus-breathe,.ripple,.s-wave,.spark{animation:none!important}}
+</style>
+<rect width="900" height="700" rx="30" fill="url(#bg)"/>
+<circle cx="450" cy="150" r="145" fill="#ffd96c" opacity=".13" filter="url(#soft)"/>
+<circle cx="450" cy="150" r="87" fill="url(#moon)" filter="url(#glow)"/>
+<path d="M0 360L105 285 185 330 270 250 350 337 450 235 545 332 630 255 730 330 810 270 900 350V700H0Z" fill="#092a42" opacity=".92"/>
+<path d="M0 390L120 320 190 355 280 290 360 360 450 270 545 365 630 295 740 360 820 310 900 390" fill="none" stroke="#2c91a6" stroke-width="5" opacity=".65"/>
+<path d="M0 440Q150 395 300 440T600 440T900 440V700H0Z" fill="#06405a" opacity=".82"/>
+<path d="M0 510Q150 465 300 510T600 510T900 510" fill="none" stroke="#28d8ed" stroke-width="5" opacity=".35"/>
+<path class="s-wave" d="M75 360C20 290 80 190 185 205S330 310 235 365 70 405 110 315 265 180 320 245"/>
+<path class="s-wave second" d="M825 360C880 290 820 190 715 205S570 310 665 365 830 405 790 315 635 180 580 245"/>
+<g fill="#eafcff" class="spark"><circle cx="120" cy="140" r="4"/><circle cx="760" cy="135" r="5"/><circle cx="340" cy="85" r="3"/><circle cx="585" cy="95" r="3"/><circle cx="205" cy="440" r="3"/><circle cx="710" cy="430" r="3"/></g>
+<g class="ripple" fill="none" stroke="#49eaff" stroke-width="5"><ellipse cx="450" cy="565" rx="190" ry="28"/><ellipse cx="450" cy="565" rx="270" ry="40"/></g>
+<g class="ripple delay" fill="none" stroke="#f5d477" stroke-width="3"><ellipse cx="450" cy="565" rx="165" ry="22"/><ellipse cx="450" cy="565" rx="245" ry="36"/></g>
+<g class="lotus-breathe">
+ <g class="lotus-spin" filter="url(#glow)" stroke="#fff0b0" stroke-width="3">
+  <path fill="url(#gold)" d="M450 535C365 490 330 420 375 398 415 379 440 449 450 535Z"/>
+  <path fill="url(#gold)" d="M450 535C535 490 570 420 525 398 485 379 460 449 450 535Z"/>
+  <path fill="url(#gold)" d="M450 535C330 535 270 470 305 435 340 402 410 470 450 535Z"/>
+  <path fill="url(#gold)" d="M450 535C570 535 630 470 595 435 560 402 490 470 450 535Z"/>
+  <path fill="url(#gold)" d="M450 535C390 445 405 355 450 342 495 355 510 445 450 535Z"/>
+  <path fill="url(#gold)" d="M450 535C360 555 315 530 320 495 326 465 395 492 450 535Z"/>
+  <path fill="url(#gold)" d="M450 535C540 555 585 530 580 495 574 465 505 492 450 535Z"/>
+ </g>
+</g>
+<path d="M0 625Q140 590 280 625T560 625T900 625" fill="none" stroke="url(#cyan)" stroke-width="7" opacity=".8"/>
+<path d="M0 655Q140 620 280 655T560 655T900 655" fill="none" stroke="#e8c66d" stroke-width="4" opacity=".8"/>
+<text x="450" y="682" fill="#fff1bf" font-family="Arial,sans-serif" font-size="18" text-anchor="middle" letter-spacing="5">KARMA · ZEN · RELAX</text>
+</svg>

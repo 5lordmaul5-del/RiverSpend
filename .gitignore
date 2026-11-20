@@ -1,3 +1,10 @@
 node_modules/
 .next/
 .env.local
+
+# Local RiverCloud secrets and backup artifacts
+.env
+.env.*
+!.env.example
+infra/river-cloud/.env
+infra/river-cloud/backups/

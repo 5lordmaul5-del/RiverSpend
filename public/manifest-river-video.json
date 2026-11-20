@@ -1,0 +1,16 @@
+{
+  "id": "/river-video",
+  "name": "River Video",
+  "short_name": "River Video",
+  "description": "Film, serie, creator, live e produzioni originali River.",
+  "start_url": "/river-video",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#071426",
+  "theme_color": "#0f172a",
+  "lang": "it",
+  "icons": [
+    { "src": "/icons/river-video.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

@@ -1,0 +1,1 @@
+docs(riverdatabase): define Supabase self-hosting migration gate

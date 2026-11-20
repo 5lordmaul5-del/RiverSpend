@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+<title id="title">RiverSSAI 10.0 — Nova</title>
+<desc id="desc">Nova, l'intelligenza artificiale RiverSpend, sopra tre onde azzurre su fondo blu notte.</desc>
+<defs>
+ <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#07172d"/><stop offset="1" stop-color="#063d55"/></linearGradient>
+ <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff0ae"/><stop offset="1" stop-color="#d39a2e"/></linearGradient>
+ <linearGradient id="water" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#76f5ff"/><stop offset=".55" stop-color="#10c9e9"/><stop offset="1" stop-color="#1678c8"/></linearGradient>
+ <filter id="glow"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<rect x="12" y="12" width="488" height="488" rx="112" fill="url(#bg)" stroke="url(#gold)" stroke-width="12"/>
+<circle cx="256" cy="206" r="126" fill="#062b42" stroke="#13d7ec" stroke-width="8"/>
+<path d="M164 206a92 92 0 0 1 184 0v55H164z" fill="url(#gold)" filter="url(#glow)"/>
+<path d="M183 211a73 73 0 0 1 146 0v31H183z" fill="#08283e"/>
+<path d="M207 205q18-25 36 0M269 205q18-25 36 0" fill="none" stroke="#65f4ff" stroke-width="12" stroke-linecap="round"/>
+<path d="M221 235q35 25 70 0" fill="none" stroke="#65f4ff" stroke-width="10" stroke-linecap="round"/>
+<path d="M256 60l-28 42h56z" fill="url(#gold)"/>
+<path d="M65 350q72-35 144 0t238 0" fill="none" stroke="url(#water)" stroke-width="20" stroke-linecap="round"/>
+<path d="M65 390q72-35 144 0t238 0" fill="none" stroke="#56e8f4" stroke-width="17" stroke-linecap="round"/>
+<path d="M65 427q72-30 144 0t238 0" fill="none" stroke="#147fbd" stroke-width="16" stroke-linecap="round"/>
+<text x="256" y="476" fill="#fff0ae" font-family="Arial,sans-serif" font-size="34" font-weight="800" text-anchor="middle" letter-spacing="2">RIVERSSAI 10.0</text>
+</svg>

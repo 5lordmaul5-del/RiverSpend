@@ -1,55 +1,37 @@
 import { createClient } from "@supabase/supabase-js";
+import { AGENTS_REGISTRY, GENERAL_ASSISTANT } from "../../../lib/riverSSAI/agentsRegistry.mjs";
+import { selectTeam } from "../../../lib/riverSSAI/router.mjs";
 
 const MODEL_DEFAULT = "openai/gpt-oss-20b";
-const MAX_AGENTS = 30;
+const MAX_AGENTS = 4; // limite operativo iniziale per il piano Groq attuale
 const MAX_MESSAGE_CHARS = 4000;
+const MAX_ATTACHMENT_CHARS = 8000;
 const MAX_HISTORY = 16;
-const MAX_PARALLEL = 2; // limita i picchi di richieste al provider
 
-const AGENTS = {
-  nova: "Coordinatrice generale: scomponi il problema, assegna priorità, integra i risultati e dichiara le incertezze.",
-  tech: "Ingegneria software e sistemi: architettura, codice, API, database, test e deployment.",
-  design: "Design e creatività: UI/UX, identità visiva, immagini, video, storyboard e 3D.",
-  robotics: "Robotica: sensori, attuatori, elettronica, firmware, simulazioni e sicurezza fisica.",
-  science: "Scienza e calcolo: matematica, fisica, statistica, simulazioni e controlli dimensionali.",
-  memory: "Gestione della conoscenza: organizza requisiti, decisioni, versioni e informazioni fornite.",
-  control: "Sicurezza e qualità: threat modeling, vulnerabilità, privacy, casi limite e verifiche.",
-  business: "Strategia d'impresa: vendite, margini, costi, ricavi, clienti e scenari operativi.",
-  finance: "Analisi finanziaria: flussi di cassa, budget, rischio, diversificazione e scenari. Non impartire ordini d'investimento.",
-  markets: "Ricerca mercati e token: fondamentali, liquidità, volatilità, tokenomics e rischi. Non inventare dati live né promettere rendimenti.",
-  payments: "Architettura dei pagamenti: checkout, PSP, bonifici, carte, wallet, rimborsi, riconciliazione, frodi e chargeback. Progetta flussi e controlli, ma non inviare pagamenti né movimentare fondi.",
-  data: "Analisi dati: pulizia, metriche, dashboard, qualità dei dati e interpretazione statistica; non inventare dataset.",
-  ai: "Ricerca e sviluppo AI: valutazione modelli, prompt, retrieval, valutazioni e limiti; non dichiarare capacità non testate.",
-  cloud: "Infrastruttura cloud: architettura, hosting, scalabilità, backup, costi e continuità operativa.",
-  cyber: "Cybersecurity difensiva: modellazione minacce, hardening, gestione vulnerabilità e risposta agli incidenti; solo attività autorizzate.",
-  quality: "Quality assurance: piani di test, test funzionali, regressione, casi limite e criteri di accettazione.",
-  product: "Gestione prodotto: requisiti, priorità, roadmap, dipendenze e criteri di rilascio.",
-  marketing: "Marketing: posizionamento, campagne, segmentazione, comunicazione e misurazione; niente promesse ingannevoli.",
-  sales: "Vendite e partnership: processi commerciali, offerte, canali, negoziazione e relazioni.",
-  support: "Assistenza clienti: procedure, FAQ, gestione reclami, tono empatico e risoluzione problemi.",
-  legal: "Analisi normativa e conformità: individua questioni da verificare con professionisti abilitati; non sostituisce consulenza legale.",
-  logistics: "Logistica: spedizioni, corrieri, tracking, resi, tempi e costi di consegna.",
-  supply: "Fornitori e inventario: approvvigionamento, scorte, disponibilità, riordino e rischio fornitori.",
-  automation: "Automazione dei processi: flussi, integrazioni, trigger, controlli e approvazioni umane.",
-  research: "Ricerca documentale: formula quesiti, valuta fonti, separa evidenze, ipotesi e informazioni mancanti.",
-  content: "Contenuti editoriali: testi, guide, descrizioni prodotto, tono di voce e revisione.",
-  localization: "Localizzazione internazionale: traduzioni contestuali, valute, formati, usi locali e adattamento mercati.",
-  accessibility: "Accessibilità digitale: WCAG, navigazione da tastiera, contrasto, screen reader e inclusività.",
-  sustainability: "Sostenibilità: impatti ambientali, efficienza risorse, pratiche circolari e indicatori verificabili.",
-  operations: "Operations: procedure, flussi di lavoro, ruoli, capacità, rischi e miglioramento continuo.",
-  documentation: "Documentazione tecnica e operativa: manuali, changelog, procedure, tracciabilità e passaggio consegne.",
-};
+const AGENTS = Object.fromEntries(
+  Object.entries(AGENTS_REGISTRY).map(([key, agent]) => [key, agent.prompt])
+);
+AGENTS.general_assistant = GENERAL_ASSISTANT.prompt;
 
 const BASE_PROMPT = `Sei RiverSSAI 10.0, la rete di intelligenze coordinata da Nova per l'ecosistema RiverSpend. Nova opera come coordinatrice strategica: seleziona competenze pertinenti, confronta analisi e rende espliciti priorità, dipendenze e criteri di verifica.
 Parla in italiano, con tono chiaro, concreto e comprensibile. Il proprietario non è uno sviluppatore.
-RiverSpend comprende RiverSpendShop, Market, Pay, Shield, Box, Fidelity, Oracle, Experience, Recovery, Park, TV, Ecology, Fortress e RiverSpaceSignals.
+RiverSpend comprende le applicazioni e i servizi dell'ecosistema RiverSpend. Il registro centrale contiene 90 ruoli organizzati in 10 squadre; Nova coordina e seleziona gli specialisti pertinenti.
 Gli agenti sono istanze coordinate dello stesso servizio AI, non copie autonome coscienti. Il numero di agenti è limitato dalle risorse, dai limiti del provider e dai costi.
 Distingui sempre fatti verificati, ipotesi e proposte. Non affermare di aver navigato, eseguito calcoli esterni, modificato sistemi o controllato dati live se non è avvenuto.
 Non promettere sicurezza impenetrabile, capacità illimitata o previsioni certe. Progetta difesa a livelli, monitoraggio, backup, test e risposta agli incidenti.
 Per mercati e token usa scenari probabilistici, dati con data e fonte quando disponibili, rischi e possibili perdite. Non garantire profitti e non eseguire investimenti o transazioni.
 Non chiedere password, chiavi API o codici. Non esporre segreti o dati di altri utenti.
 Nessuna azione irreversibile, modifica a pagamenti, trasferimento di fondi, investimento, pubblicazione o cancellazione senza approvazione esplicita dell'amministratore.
-Quando i dati non bastano, dillo e indica cosa occorre verificare.`;
+Quando i dati non bastano, dillo e indica cosa occorre verificare.
+ISTRUZIONI OPERATIVE:
+- Se la richiesta è sufficientemente chiara, esegui direttamente il compito. Non trasformare una richiesta operativa in un questionario o in un piano di test, a meno che l'utente chieda proprio un piano.
+- Fai al massimo una domanda di chiarimento, solo quando manca un dato indispensabile. Se puoi procedere con un'ipotesi ragionevole, dichiarala e procedi.
+- Se l'utente chiede un test, esegui le prove richieste nella risposta: mostra input, risultato e limiti. Non dire soltanto come potrebbe essere testato.
+- Distingui sempre la capacità del modello linguistico dalle funzioni realmente collegate all'app. Non dichiarare che RiverSSAI genera immagini, video, audio, esegue ricerche live, usa strumenti esterni o modifica sistemi se l'integrazione corrispondente non è presente e non è stata eseguita.
+- Per richieste di immagini o video, se il generatore non è collegato, dillo subito e offri al massimo la preparazione di un prompt o di uno storyboard; non simulare un file generato.
+- Per i calcoli, mostra formule e passaggi controllabili, conserva la precisione durante i passaggi e arrotonda soltanto il risultato finale. Se il calcolo è finanziario, indica le ipotesi e distingui stima da preventivo.
+- Non descrivere come memoria permanente la sola cronologia della chat. La cronologia locale dell'app, la memoria persistente del database e il contesto inviato al modello sono funzioni distinte. Non promettere recupero su un altro dispositivo o in una nuova sessione senza aver verificato che i dati siano salvati e recuperabili.
+- Non inventare caratteristiche tecniche, servizi, modelli, fonti, risultati di test o stato dei progetti. Se non hai accesso a un'informazione, dichiaralo chiaramente.`;
 
 function json(res, status, body) {
   return res.status(status).json(body);
@@ -59,51 +41,12 @@ function normalizeAgent(value) {
   return Object.prototype.hasOwnProperty.call(AGENTS, value) ? value : "nova";
 }
 
-const AGENT_SIGNALS = {
-  tech: ["codice", "bug", "errore", "api", "svilupp", "programmaz", "javascript", "typescript", "frontend", "backend", "deploy", "github"],
-  design: ["design", "grafica", "logo", "immagine", "video", "ui", "ux", "interfaccia", "banner", "colore"],
-  robotics: ["robot", "droid", "sensore", "motore", "elettronica", "firmware", "3d"],
-  science: ["scienza", "matematica", "fisica", "formula", "calcolo", "statistica", "simulazione"],
-  memory: ["memoria", "ricorda", "storico", "archivio", "decisioni", "versione", "contesto"],
-  control: ["sicurezza", "privacy", "protezione", "rischio", "permessi", "accesso", "gdpr"],
-  business: ["azienda", "impresa", "strategia", "business", "modello", "margine", "ricavi"],
-  finance: ["budget", "bilancio", "cassa", "costi", "finanza", "prevision", "flussi"],
-  markets: ["mercato", "borsa", "token", "crypto", "liquidita", "volatilita", "invest"],
-  payments: ["pagamento", "paypal", "carta", "checkout", "bonifico", "wallet", "rimborso", "stripe"],
-  data: ["dati", "database", "sql", "analisi", "dashboard", "metriche", "report"],
-  ai: ["intelligenza artificiale", "modello ai", "prompt", "llm", "agente", "machine learning", "nova"],
-  cloud: ["cloud", "server", "hosting", "scalabilita", "backup", "infrastruttura", "vercel", "supabase"],
-  cyber: ["cyber", "hacker", "attacco", "vulnerabilita", "crittografia", "enigma", "autenticazione"],
-  quality: ["test", "qualita", "collaudo", "verifica", "regressione", "controllo", "funziona"],
-  product: ["prodotto", "funzione", "roadmap", "priorita", "requisito", "rilascio"],
-  marketing: ["marketing", "pubblicita", "campagna", "brand", "promozione", "social"],
-  sales: ["vendita", "commerciale", "partner", "cliente", "offerta", "commissione"],
-  support: ["assistenza", "supporto", "reclamo", "faq", "problema cliente"],
-  legal: ["legge", "normativa", "contratto", "privacy policy", "conformita", "partita iva", "fiscale"],
-  logistics: ["spedizione", "corriere", "consegna", "tracking", "reso", "logistica"],
-  supply: ["fornitore", "magazzino", "scorte", "inventario", "approvvigionamento"],
-  automation: ["automazione", "automatico", "workflow", "integrazione", "trigger"],
-  research: ["ricerca", "fonti", "documentazione", "confronta", "studia", "approfondisci"],
-  content: ["testo", "scrivi", "articolo", "descrizione", "contenuto", "copywriting"],
-  localization: ["traduzione", "lingua", "internazionale", "paese", "valuta", "localizzazione"],
-  accessibility: ["accessibilita", "screen reader", "wcag", "tastiera", "contrasto"],
-  sustainability: ["ambiente", "ecologia", "sostenibilita", "riciclo", "impatto"],
-  operations: ["organizzazione", "processo", "operazioni", "procedura", "gestione"],
-  documentation: ["manuale", "documenta", "istruzioni", "guida", "changelog"]
-};
-
 function chooseTeam(agent, requestedSize, prompt = "") {
   if (agent !== "team") return [normalizeAgent(agent)];
-  const size = [2, 4, 8, 10, 20, 30].includes(Number(requestedSize)) ? Number(requestedSize) : 4;
-  const roster = Object.keys(AGENT_SIGNALS);
-  const normalizedPrompt = String(prompt).toLocaleLowerCase("it");
-  const ranked = roster.map((name, index) => {
-    const score = AGENT_SIGNALS[name].reduce((total, signal) => total + (normalizedPrompt.includes(signal) ? 1 : 0), 0);
-    return { name, score, index };
-  });
-  ranked.sort((a, b) => b.score - a.score || a.index - b.index);
-  const selected = ranked.slice(0, Math.min(size, MAX_AGENTS)).map((item) => item.name);
-  return selected;
+  const requested = [2, 4, 8, 10, 20, 30].includes(Number(requestedSize)) ? Number(requestedSize) : 4;
+  const size = Math.min(requested, MAX_AGENTS);
+  const selected = selectTeam(size, prompt).filter((key) => Object.prototype.hasOwnProperty.call(AGENTS, key));
+  return selected.length ? selected : ["general_assistant"];
 }
 
 async function callModel(apiKey, model, messages, maxTokens = 850) {
@@ -161,8 +104,9 @@ export default async function handler(req, res) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   const groqKey = process.env.GROQ_API_KEY;
-  if (!supabaseUrl || !serviceKey || !groqKey) {
-    return json(res, 503, { error: "Configurazione River AI incompleta. Controllare le variabili server." });
+  const provider = String(process.env.RIVER_AI_PROVIDER || "groq").toLowerCase();
+  if (!supabaseUrl || !serviceKey || !["groq", "standalone"].includes(provider) || (provider === "groq" && !groqKey)) {
+    return json(res, 503, { error: "Configurazione River AI incompleta. Controllare provider e variabili server." });
   }
 
   const authHeader = req.headers.authorization || "";
@@ -190,7 +134,7 @@ export default async function handler(req, res) {
   const messages = Array.isArray(body.messages) ? body.messages.slice(-MAX_HISTORY) : [];
   const safeMessages = messages
     .filter((item) => item && ["user", "assistant"].includes(item.role) && typeof item.content === "string")
-    .map((item) => ({ role: item.role, content: item.content.slice(0, MAX_MESSAGE_CHARS) }));
+    .map((item, index, all) => ({ role: item.role, content: item.content.slice(0, index === all.length - 1 && item.role === "user" ? MAX_ATTACHMENT_CHARS : MAX_MESSAGE_CHARS) }));
   if (!safeMessages.length || safeMessages[safeMessages.length - 1].role !== "user") {
     return json(res, 400, { error: "Scrivi prima una richiesta." });
   }
@@ -198,8 +142,74 @@ export default async function handler(req, res) {
   const agent = body.agent === "team" ? "team" : normalizeAgent(body.agent);
   const team = chooseTeam(agent, body.teamSize, safeMessages[safeMessages.length - 1].content);
   const model = process.env.RIVER_AI_MODEL || MODEL_DEFAULT;
+  const thinkingMode = body.thinkingMode === "deep" ? "deep" : "standard";
+  const responseTokens = thinkingMode === "deep" ? 1800 : 1100;
+  const modeInstruction = thinkingMode === "deep" ? "\nMODALITÀ APPROFONDITA: analizza con attenzione, verifica presupposti, confronta alternative e restituisci conclusioni, passaggi, rischi e controlli. Non mostrare ragionamenti interni privati." : "";
 
   try {
+    if (provider === "standalone") {
+      const standaloneUrl = String(process.env.RIVER_AI_STANDALONE_URL || "").trim();
+      const standaloneToken = String(process.env.RIVER_AI_ADMIN_TOKEN || "");
+      if (!standaloneUrl || standaloneToken.length < 32) {
+        return json(res, 503, { error: "RiverSSAI locale non configurato: mancano URL o token amministrativo server-side." });
+      }
+      let endpoint;
+      try {
+        endpoint = new URL(standaloneUrl);
+      } catch {
+        return json(res, 503, { error: "URL del runtime RiverSSAI non valido." });
+      }
+      const localDevelopment = process.env.NODE_ENV !== "production" && ["localhost", "127.0.0.1"].includes(endpoint.hostname);
+      if (endpoint.protocol !== "https:" && !localDevelopment) {
+        return json(res, 503, { error: "Il runtime RiverSSAI deve essere raggiunto tramite HTTPS." });
+      }
+      endpoint.pathname = endpoint.pathname.replace(/\/$/, "") + "/v1/chat";
+      endpoint.search = "";
+      endpoint.hash = "";
+      const standaloneMessages = safeMessages.slice(-8).map((item, index, all) => ({
+        role: item.role,
+        content: item.content.slice(0, index === all.length - 1 && item.role === "user" ? 4000 : 2400)
+      }));
+      const standaloneResponse = await fetch(endpoint.toString(), {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer " + standaloneToken,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          agent,
+          teamSize: [2, 4, 8, 10, 20, 30].includes(Number(body.teamSize)) ? Number(body.teamSize) : 4,
+          messages: standaloneMessages
+        }),
+        signal: AbortSignal.timeout(95000)
+      });
+      const standalonePayload = await standaloneResponse.json().catch(() => ({}));
+      if (!standaloneResponse.ok) {
+        console.error("RiverSSAI standalone returned", standaloneResponse.status);
+        if (standaloneResponse.status === 429) {
+          res.setHeader("Retry-After", "60");
+          return json(res, 429, { code: "RIVER_AI_LOCAL_BUSY", error: "RiverSSAI locale è temporaneamente occupato. Riprova tra un minuto." });
+        }
+        return json(res, standaloneResponse.status >= 500 ? 503 : standaloneResponse.status, {
+          error: standalonePayload?.error || "Il runtime RiverSSAI non ha completato la richiesta."
+        });
+      }
+      if (typeof standalonePayload.answer !== "string" || !standalonePayload.answer.trim()) {
+        return json(res, 502, { error: "Il runtime RiverSSAI ha restituito una risposta non valida." });
+      }
+      return json(res, 200, {
+        answer: standalonePayload.answer,
+        provider: "rivercloud-local",
+        model: standalonePayload.model || "local",
+        agent,
+        agentsUsed: Array.isArray(standalonePayload.agentsUsed) ? standalonePayload.agentsUsed : [agent],
+        teamSize: standalonePayload.teamSize || (agent === "team" ? body.teamSize || 4 : 1),
+        memorySaved: false,
+        memoryPolicy: "rivercloud-owner-memory",
+        executionMode: standalonePayload.executionMode || (agent === "team" ? "local-coordinated-team" : "local-single-agent")
+      });
+    }
+
     const { data: memories, error: memoryReadError } = await adminClient
       .from("river_ai_memories")
       .select("title,content,category,created_at")
@@ -208,46 +218,38 @@ export default async function handler(req, res) {
       .limit(12);
     if (memoryReadError) console.error("River AI memory read failed:", memoryReadError.message);
     const memoryContext = (memories || [])
-      .map((item) => "[" + (item.category || "nota") + "] " + (item.title || "") + ": " + (item.content || "").slice(0, 350))
+      .map((item) => "[" + (item.category || "nota") + "] " + (item.title || "") + ": " + (item.content || "").slice(0, 120))
       .join("\n")
-      .slice(0, 2600);
+      .slice(0, 900);
 
     const latestPrompt = safeMessages[safeMessages.length - 1].content;
     let answer;
     let agentsUsed = team;
 
     if (agent === "team") {
-      // La Squadra usa un contesto compatto per rispettare il limite TPM del provider.
-      const teamHistory = safeMessages.slice(-4);
-      const teamMemory = memoryContext.slice(0, 900);
-      const reports = await runWithLimit(team, MAX_PARALLEL, async (specialist) => {
-        const report = await callModel(groqKey, model, [
-          { role: "system", content: BASE_PROMPT + "\nRUOLO SPECIALISTA: " + AGENTS[specialist] + "\nFornisci un rapporto sintetico: priorità, un rischio e verifica essenziale." },
-          ...(teamMemory ? [{ role: "system", content: "CONTESTO PRIVATO RIVERSPEND (sintesi):\n" + teamMemory }] : []),
-          ...teamHistory
-        ], 300);
-        return { specialist, report };
-      });
-      const synthesis = await callModel(groqKey, model, [
-        { role: "system", content: BASE_PROMPT + "\nSei NOVA, coordinatrice. Confronta i rapporti, risolvi le contraddizioni senza nasconderle e restituisci decisione, piano, rischi e verifiche." },
-        { role: "user", content: "RICHIESTA:\n" + latestPrompt + "\n\nRAPPORTI SPECIALISTI:\n" + reports.map((item) => "AGENTE " + item.specialist.toUpperCase() + ":\n" + item.report).join("\n\n") }
-      ], 900);
-      answer = synthesis;
+      const specialistBrief = team
+        .map((specialist) => "- " + specialist.toUpperCase() + ": " + AGENTS[specialist])
+        .join("\n");
+      answer = await callModel(groqKey, model, [
+        {
+          role: "system",
+          content: BASE_PROMPT + modeInstruction
+            + "\nSQUADRA ULTRA COORDINATA: usa le competenze dei seguenti specialisti in un'unica elaborazione del modello. Integra le prospettive in una risposta coerente; evidenzia eventuali disaccordi, incertezze, rischi e verifiche. Non dichiarare che siano stati eseguiti calcoli o controlli esterni se non lo sono stati.\n"
+            + specialistBrief
+        },
+        ...(memoryContext ? [{ role: "system", content: "MEMORIA PRIVATA RIVER AI:\n" + memoryContext }] : []),
+        ...safeMessages
+      ], responseTokens);
       agentsUsed = ["nova", ...team];
     } else {
       answer = await callModel(groqKey, model, [
-        { role: "system", content: BASE_PROMPT + "\nRUOLO ATTIVO: " + AGENTS[agent] },
+        { role: "system", content: BASE_PROMPT + modeInstruction + "\nRUOLO ATTIVO: " + AGENTS[agent] },
         ...(memoryContext ? [{ role: "system", content: "MEMORIA PRIVATA RIVER AI:\n" + memoryContext }] : []),
         ...safeMessages
-      ], 1500);
+      ], responseTokens);
     }
 
-    const memoryRows = [
-      { user_id: user.id, title: "Messaggio utente", content: latestPrompt, category: "conversation", source: "river-ai-chat", importance: 3 },
-      { user_id: user.id, title: "Risposta River AI", content: answer.slice(0, 6000), category: "conversation", source: "river-ai-chat", importance: 2 }
-    ];
-    const { error: memoryWriteError } = await adminClient.from("river_ai_memories").insert(memoryRows);
-    if (memoryWriteError) console.error("River AI memory write failed:", memoryWriteError.message);
+    // Chat history is not permanent memory. Durable memories must be saved explicitly.
 
     return json(res, 200, {
       answer,
@@ -255,18 +257,28 @@ export default async function handler(req, res) {
       agent,
       agentsUsed,
       teamSize: agent === "team" ? team.length : 1,
-      memorySaved: !memoryWriteError,
-      limits: { maxAgents: MAX_AGENTS, maxParallel: MAX_PARALLEL }
+      memorySaved: false,
+      memoryPolicy: "explicit-only",
+      limits: { maxAgents: MAX_AGENTS, providerCallsPerRequest: 1 },
+      executionMode: agent === "team" ? "coordinated-single-call" : "single-agent"
     });
   } catch (error) {
     console.error("River AI request failed:", error?.message || "unknown");
     if (error?.status === 429) {
-      const waitMatch = String(error?.message || "").match(/try again in ([0-9.]+)s/i);
-      const waitSeconds = waitMatch ? Math.ceil(Number(waitMatch[1])) : 20;
-      res.setHeader("Retry-After", String(waitSeconds));
-      return json(res, 429, { error: "Il servizio AI sta raggiungendo il limite di richieste. Attendi circa " + waitSeconds + " secondi e riprova. La Squadra non ha completato l'analisi." });
+      const providerMessage = String(error?.message || "");
+      const quotaExhausted = /tokens per day|requests per day|daily quota|quota giornaliera|limit reached/i.test(providerMessage);
+      const waitMatch = providerMessage.match(/try again in ([0-9.]+)s/i);
+      const waitSeconds = waitMatch ? Math.max(1, Math.ceil(Number(waitMatch[1]))) : null;
+      if (waitSeconds) res.setHeader("Retry-After", String(waitSeconds));
+      return json(res, 429, {
+        code: quotaExhausted ? "PROVIDER_QUOTA_EXHAUSTED" : "PROVIDER_RATE_LIMIT",
+        retryAfterSeconds: waitSeconds,
+        error: quotaExhausted
+          ? "La quota del servizio AI è temporaneamente esaurita. Non è un blocco del tuo account amministratore: serve attendere il ripristino della quota o configurare un provider di riserva."
+          : "Il servizio AI sta ricevendo troppe richieste. La richiesta non è stata completata; riprova tra " + (waitSeconds ? waitSeconds + " secondi" : "qualche istante") + "."
+      });
     }
-    if (error?.name === "AbortError") return json(res, 504, { error: "La richiesta ha superato il tempo massimo. Riprova con una richiesta più breve." });
+    if (error?.name === "AbortError" || error?.name === "TimeoutError") return json(res, 504, { error: "La richiesta ha superato il tempo massimo. Riprova tra poco." });
     return json(res, 502, { error: "Servizio AI temporaneamente non disponibile. La richiesta può essere ripetuta." });
   }
 }
