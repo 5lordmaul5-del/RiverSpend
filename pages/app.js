@@ -29,6 +29,15 @@ const apps = [
     action: 'Apri e installa RiverSSAI 10.0'
   },
   {
+    name: 'RiverS PlayS',
+    subtitle: 'Gaming, quiz e multiplayer',
+    description: 'Entra nella nuova area gaming River: quiz gratuiti, giochi classici, sfide e una piattaforma predisposta per tornei e cloud gaming.',
+    logo: '/icons/river-plays.svg',
+    href: '/river-plays',
+    color: '#7c3aed',
+    action: 'Entra in RiverS PlayS'
+  },
+  {
     name: 'RiverSpendSocialNetwork',
     subtitle: 'Il social network RiverSpend',
     description: 'Condividi post, notizie, video e link; partecipa alla community e alle conversazioni. Le funzioni social di Signals confluiscono qui.',
