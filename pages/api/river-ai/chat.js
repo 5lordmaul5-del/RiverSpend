@@ -104,8 +104,9 @@ export default async function handler(req, res) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   const groqKey = process.env.GROQ_API_KEY;
-  if (!supabaseUrl || !serviceKey || !groqKey) {
-    return json(res, 503, { error: "Configurazione River AI incompleta. Controllare le variabili server." });
+  const provider = String(process.env.RIVER_AI_PROVIDER || "groq").toLowerCase();
+  if (!supabaseUrl || !serviceKey || !["groq", "standalone"].includes(provider) || (provider === "groq" && !groqKey)) {
+    return json(res, 503, { error: "Configurazione River AI incompleta. Controllare provider e variabili server." });
   }
 
   const authHeader = req.headers.authorization || "";
@@ -146,6 +147,69 @@ export default async function handler(req, res) {
   const modeInstruction = thinkingMode === "deep" ? "\nMODALITÀ APPROFONDITA: analizza con attenzione, verifica presupposti, confronta alternative e restituisci conclusioni, passaggi, rischi e controlli. Non mostrare ragionamenti interni privati." : "";
 
   try {
+    if (provider === "standalone") {
+      const standaloneUrl = String(process.env.RIVER_AI_STANDALONE_URL || "").trim();
+      const standaloneToken = String(process.env.RIVER_AI_ADMIN_TOKEN || "");
+      if (!standaloneUrl || standaloneToken.length < 32) {
+        return json(res, 503, { error: "RiverSSAI locale non configurato: mancano URL o token amministrativo server-side." });
+      }
+      let endpoint;
+      try {
+        endpoint = new URL(standaloneUrl);
+      } catch {
+        return json(res, 503, { error: "URL del runtime RiverSSAI non valido." });
+      }
+      const localDevelopment = process.env.NODE_ENV !== "production" && ["localhost", "127.0.0.1"].includes(endpoint.hostname);
+      if (endpoint.protocol !== "https:" && !localDevelopment) {
+        return json(res, 503, { error: "Il runtime RiverSSAI deve essere raggiunto tramite HTTPS." });
+      }
+      endpoint.pathname = endpoint.pathname.replace(/\\/$/, "") + "/v1/chat";
+      endpoint.search = "";
+      endpoint.hash = "";
+      const standaloneMessages = safeMessages.slice(-8).map((item, index, all) => ({
+        role: item.role,
+        content: item.content.slice(0, index === all.length - 1 && item.role === "user" ? 4000 : 2400)
+      }));
+      const standaloneResponse = await fetch(endpoint.toString(), {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer " + standaloneToken,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          agent,
+          teamSize: [2, 4, 8, 10, 20, 30].includes(Number(body.teamSize)) ? Number(body.teamSize) : 4,
+          messages: standaloneMessages
+        }),
+        signal: AbortSignal.timeout(95000)
+      });
+      const standalonePayload = await standaloneResponse.json().catch(() => ({}));
+      if (!standaloneResponse.ok) {
+        console.error("RiverSSAI standalone returned", standaloneResponse.status);
+        if (standaloneResponse.status === 429) {
+          res.setHeader("Retry-After", "60");
+          return json(res, 429, { code: "RIVER_AI_LOCAL_BUSY", error: "RiverSSAI locale è temporaneamente occupato. Riprova tra un minuto." });
+        }
+        return json(res, standaloneResponse.status >= 500 ? 503 : standaloneResponse.status, {
+          error: standalonePayload?.error || "Il runtime RiverSSAI non ha completato la richiesta."
+        });
+      }
+      if (typeof standalonePayload.answer !== "string" || !standalonePayload.answer.trim()) {
+        return json(res, 502, { error: "Il runtime RiverSSAI ha restituito una risposta non valida." });
+      }
+      return json(res, 200, {
+        answer: standalonePayload.answer,
+        provider: "rivercloud-local",
+        model: standalonePayload.model || "local",
+        agent,
+        agentsUsed: Array.isArray(standalonePayload.agentsUsed) ? standalonePayload.agentsUsed : [agent],
+        teamSize: standalonePayload.teamSize || (agent === "team" ? body.teamSize || 4 : 1),
+        memorySaved: false,
+        memoryPolicy: "rivercloud-owner-memory",
+        executionMode: standalonePayload.executionMode || (agent === "team" ? "local-coordinated-team" : "local-single-agent")
+      });
+    }
+
     const { data: memories, error: memoryReadError } = await adminClient
       .from("river_ai_memories")
       .select("title,content,category,created_at")
