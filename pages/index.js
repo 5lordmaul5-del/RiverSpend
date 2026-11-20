@@ -920,13 +920,17 @@ export default function Home() {
                 <span className="mt-0.5 whitespace-nowrap text-[7px] font-semibold tracking-[.08em] text-slate-500 sm:text-[9px] sm:tracking-[.14em]">YOUR SHOP • YOUR FLOW</span>
               </a>
               <div className="flex items-center justify-end gap-2 text-slate-900 sm:gap-4">
-                <a href="/riverworld-live" aria-label="Apri RiverWorld Live" title="RiverWorld Live" className="flex h-9 items-center rounded-full border border-emerald-300 bg-emerald-50 px-2 text-[10px] font-extrabold text-emerald-900 hover:bg-emerald-100 sm:px-3 sm:text-xs">🌍 World Live</a>
                 <a href="/rete" aria-label="Apri la Rete e gli articoli salvati" className="relative flex h-10 w-10 items-center justify-center text-2xl hover:text-teal-700">
                   🛒
                   {reteIds.length > 0 && <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-teal-700 px-1 text-[10px] font-bold text-white">{reteIds.length}</span>}
                 </a>
                 <a href="/profilo" aria-label={t('profile')} className="flex h-10 w-8 items-center justify-center text-2xl hover:text-teal-700">♙</a>
               </div>
+            </div>
+            <div className="mt-2 flex justify-center">
+              <a href="/riverworld-live" aria-label="Apri RiverWorld Live" title="RiverWorld Live" className="inline-flex min-h-9 items-center justify-center rounded-full border border-emerald-300 bg-emerald-50 px-4 py-2 text-xs font-extrabold text-emerald-900 shadow-sm hover:bg-emerald-100">
+                🌍 Apri RiverWorld Live
+              </a>
             </div>
             <div className="mx-auto mt-2 flex max-w-[380px] items-center justify-center gap-2 rounded-full border border-blue-200 bg-gradient-to-r from-blue-50 via-white to-sky-50 px-3 py-1 shadow-[0_2px_8px_rgba(3,105,161,.10)]">
               <span className="shrink-0 text-xs font-black tracking-tight text-blue-900">Hey River</span>
