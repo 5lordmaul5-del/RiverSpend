@@ -61,13 +61,16 @@ docker run --detach \
 
 READY=0
 for _ in $(seq 1 60); do
-  if docker exec "$CONTAINER_NAME" pg_isready -U postgres -d rivercloud_restore >/dev/null 2>&1; then
+  # pg_isready alone can report the server as ready before POSTGRES_DB has
+  # finished initialization. Confirm the target database actually exists.
+  if docker exec "$CONTAINER_NAME" psql -U postgres -d postgres -Atqc \
+    "SELECT 1 FROM pg_database WHERE datname = 'rivercloud_restore'" 2>/dev/null | grep -qx "1"; then
     READY=1
     break
   fi
   sleep 1
 done
-[[ "$READY" -eq 1 ]] || { echo "Disposable PostgreSQL did not become ready." >&2; exit 1; }
+[[ "$READY" -eq 1 ]] || { echo "Disposable PostgreSQL restore database was not initialized." >&2; exit 1; }
 
 # The dump contains RLS policies that reference this application role.
 # Create it explicitly in the disposable target before restoring the schema.
