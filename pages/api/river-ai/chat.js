@@ -163,7 +163,7 @@ export default async function handler(req, res) {
       if (endpoint.protocol !== "https:" && !localDevelopment) {
         return json(res, 503, { error: "Il runtime RiverSSAI deve essere raggiunto tramite HTTPS." });
       }
-      endpoint.pathname = endpoint.pathname.replace(/\\/$/, "") + "/v1/chat";
+      endpoint.pathname = endpoint.pathname.replace(/\/$/, "") + "/v1/chat";
       endpoint.search = "";
       endpoint.hash = "";
       const standaloneMessages = safeMessages.slice(-8).map((item, index, all) => ({
