@@ -28,6 +28,18 @@ export default function RiverSpaceSignals() {
   const [installMessage, setInstallMessage] = useState('');
   const [attachment, setAttachment] = useState(null);
   const [mediaUrls, setMediaUrls] = useState({});
+
+  // Revoke temporary object URLs created for decrypted ENIGMA attachments.
+  // Signed Storage URLs are remote URLs and must not be passed to revokeObjectURL.
+  useEffect(() => {
+    return () => {
+      Object.values(mediaUrls).forEach((url) => {
+        if (typeof url === 'string' && url.startsWith('blob:')) {
+          URL.revokeObjectURL(url);
+        }
+      });
+    };
+  }, [mediaUrls]);
   const [uploading, setUploading] = useState(false);
   const [recording, setRecording] = useState('');
   const [moneyAction, setMoneyAction] = useState('');
