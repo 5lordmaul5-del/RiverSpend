@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Head from 'next/head';
 
 const sections = [
   ['▶️','Continua a guardare','Riprendi film, serie e video dal punto in cui ti sei fermato.'],
@@ -12,6 +13,12 @@ const sections = [
 export default function RiverSpendStream() {
   return (
     <main className="min-h-screen bg-[#f2fbfa] px-4 py-6 text-slate-900">
+      <Head>
+        <title>RiverSpend Streaming · RiverSpend</title>
+        <meta name="description" content="La piattaforma streaming RiverSpend per film, musica, serie, creator e dirette." />
+        <meta name="theme-color" content="#7c3aed" />
+        <link rel="icon" href="/icons/streaming.svg" type="image/svg+xml" />
+      </Head>
       <div className="mx-auto max-w-7xl">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <Link href="/" className="font-bold text-teal-700">🌊 RiverSpend</Link>

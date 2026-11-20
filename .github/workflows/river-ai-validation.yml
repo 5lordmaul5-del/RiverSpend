@@ -1,0 +1,55 @@
+name: RiverSSAI independent runtime validation
+
+on:
+  pull_request:
+    paths:
+      - "infra/river-ai/**"
+      - "server/river-ai-standalone.mjs"
+      - "server/river-ai-worker.mjs"
+      - "lib/riverSSAI/**"
+      - "pages/api/river-ai/chat.js"
+      - "scripts/river-ai/**"
+      - ".github/workflows/river-ai-validation.yml"
+  push:
+    branches:
+      - feat/river-fortress-integration-core
+      - fix/riverworld-header-fortress-2026-11-16
+      - feat/riverssai-autonomous-workers
+    paths:
+      - "infra/river-ai/**"
+      - "server/river-ai-standalone.mjs"
+      - "lib/riverSSAI/**"
+      - "pages/api/river-ai/chat.js"
+      - "scripts/river-ai/**"
+      - ".github/workflows/river-ai-validation.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Validate registry and specialist routing
+        run: node scripts/river-ai/validate-runtime.mjs
+      - name: Validate JavaScript syntax
+        run: |
+          node --check server/river-ai-standalone.mjs
+          node --check server/river-ai-worker.mjs
+          node --check lib/riverSSAI/agentsRegistry.mjs
+          node --check lib/riverSSAI/router.mjs
+          node --check pages/api/river-ai/chat.js
+      - name: Validate Docker Compose configuration
+        run: |
+          cat > infra/river-ai/.env <<'EOF'
+          RIVERDB_PASSWORD=ci-test-password-1234567890
+          RIVER_AI_ADMIN_TOKEN=ci-test-admin-token-at-least-32-characters
+          RIVER_AI_LOCAL_MODEL=qwen2.5:7b
+          EOF
+          docker compose -f infra/river-ai/docker-compose.yml config --quiet
+      - name: Build standalone runtime image
+        run: docker build -f infra/river-ai/Dockerfile -t riverssai-independent-core:ci .

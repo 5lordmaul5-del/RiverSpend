@@ -544,7 +544,7 @@ export default function RiverSpaceSignals() {
               <button onClick={() => setActive('')} className="rounded-lg px-2 py-1 text-xl md:hidden" aria-label="Torna ai contatti">‹</button>
               <span className="grid h-10 w-10 place-items-center rounded-full bg-teal-100">👤</span>
               <div><div className="font-bold">{otherProfile?.display_name || 'Membro RiverSpend'}</div><div className="text-xs text-emerald-600">Conversazione privata</div></div>
-              <Link href="/karma-zen-relax.html" className="ml-auto rounded-full bg-[#073b4c] px-3 py-2 text-xs font-semibold text-white">🪷 Karma Zen</Link>
+              <Link href="/karma-zen-relax.html" className="ml-auto inline-flex shrink-0 items-center gap-2 rounded-full border border-amber-300/60 bg-[#073b4c] px-3 py-2 text-xs font-semibold text-white shadow-lg shadow-cyan-950/20"><img src="/images/karma-zen-animated.svg?v=1" alt="" className="h-7 w-7 rounded-full object-cover" />Karma Zen</Link>
             </div>
             <div className="flex shrink-0 items-center gap-2 overflow-x-auto whitespace-nowrap border-b border-amber-200 bg-amber-50 px-2 py-1.5">
               <div className="min-w-0 flex-1 truncate text-[11px] text-amber-950">{enigmaActive ? '🔐 ENIGMA attivo · cifratura end-to-end in versione beta' : myEnigmaConsent ? '🔐 Hai chiesto ENIGMA: in attesa del consenso dell’altra persona' : '🛡️ Chat normale · ENIGMA è facoltativo e richiede il consenso di entrambi'}</div>

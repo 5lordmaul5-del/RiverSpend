@@ -1,0 +1,13 @@
+FROM node:22-alpine
+WORKDIR /app
+RUN npm init -y && npm install --omit=dev --no-audit --no-fund pg@8.16.3
+COPY server/river-ai-standalone.mjs ./server/river-ai-standalone.mjs
+COPY server/river-ai-worker.mjs ./server/river-ai-worker.mjs
+COPY infra/river-ai/schema.sql ./infra/river-ai/schema.sql
+COPY infra/river-ai/worker-queue.sql ./infra/river-ai/worker-queue.sql
+COPY lib/riverSSAI/agentsRegistry.mjs ./lib/riverSSAI/agentsRegistry.mjs
+COPY lib/riverSSAI/router.mjs ./lib/riverSSAI/router.mjs
+ENV NODE_ENV=production
+USER node
+EXPOSE 8787
+CMD ["node","server/river-ai-standalone.mjs"]

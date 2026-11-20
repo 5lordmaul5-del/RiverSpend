@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "RiverSpendPanelControl",
+    "name": "River Control Center",
     "slug": "riverspend-panel-control",
     "version": "0.1.0",
     "orientation": "portrait",
@@ -11,6 +11,7 @@
     },
     "ios": {
       "bundleIdentifier": "com.riverspend.panelcontrol"
-    }
+    },
+    "description": "Pannello centrale River DataCenter RSS e River Fortress 10.0"
   }
 }

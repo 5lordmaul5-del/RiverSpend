@@ -1,0 +1,96 @@
+services:
+  riverdb:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: rivercore
+      POSTGRES_USER: rivercore
+      POSTGRES_PASSWORD: ${RIVERDB_PASSWORD:?Set RIVERDB_PASSWORD in .env}
+    volumes:
+      - riverdb_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rivercore -d rivercore"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks: [river-private]
+  ollama:
+    image: ollama/ollama:latest
+    restart: unless-stopped
+    volumes:
+      - ollama_models:/root/.ollama
+    # Private access from RiverSSAI plus outbound access to download model weights.
+    # No host port is published for Ollama.
+    networks: [river-private, ollama-egress]
+  river-ai-worker:
+    build:
+      context: ../..
+      dockerfile: infra/river-ai/Dockerfile
+    command: ["node", "server/river-ai-worker.mjs"]
+    restart: unless-stopped
+    read_only: true
+    tmpfs: [/tmp]
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+    environment:
+      NODE_ENV: production
+      PGHOST: riverdb
+      PGPORT: 5432
+      PGDATABASE: rivercore
+      PGUSER: rivercore
+      PGPASSWORD: ${RIVERDB_PASSWORD:?Set RIVERDB_PASSWORD in .env}
+      RIVER_AI_LOCAL_URL: http://ollama:11434/v1/chat/completions
+      RIVER_AI_LOCAL_MODEL: ${RIVER_AI_LOCAL_MODEL:-qwen2.5:7b}
+      RIVER_AI_WORKER_CONCURRENCY: ${RIVER_AI_WORKER_CONCURRENCY:-1}
+      RIVER_AI_WORKER_POLL_MS: ${RIVER_AI_WORKER_POLL_MS:-2500}
+      RIVER_AI_WORKER_LEASE_SECONDS: ${RIVER_AI_WORKER_LEASE_SECONDS:-180}
+    depends_on:
+      riverdb:
+        condition: service_healthy
+      river-ai:
+        condition: service_started
+    networks: [river-private]
+  river-ai:
+    build:
+      context: ../..
+      dockerfile: infra/river-ai/Dockerfile
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    environment:
+      NODE_ENV: production
+      PORT: 8787
+      PGHOST: riverdb
+      PGPORT: 5432
+      PGDATABASE: rivercore
+      PGUSER: rivercore
+      PGPASSWORD: ${RIVERDB_PASSWORD:?Set RIVERDB_PASSWORD in .env}
+      RIVER_AI_ADMIN_TOKEN: ${RIVER_AI_ADMIN_TOKEN:?Set RIVER_AI_ADMIN_TOKEN in .env}
+      RIVER_AI_LOCAL_URL: http://ollama:11434/v1/chat/completions
+      RIVER_AI_LOCAL_MODEL: ${RIVER_AI_LOCAL_MODEL:-qwen2.5:7b}
+      RIVER_AI_MAX_REQUESTS_PER_MINUTE: ${RIVER_AI_MAX_REQUESTS_PER_MINUTE:-20}
+      RIVER_AI_MAX_PARALLEL: ${RIVER_AI_MAX_PARALLEL:-1}
+    depends_on:
+      riverdb:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:8787:8787"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8787/health').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    networks: [river-private]
+volumes:
+  riverdb_data:
+  ollama_models:
+networks:
+  river-private:
+    internal: true
+  ollama-egress:
