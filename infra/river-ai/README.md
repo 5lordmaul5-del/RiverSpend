@@ -62,8 +62,21 @@ The first cloud deployment must be a separate development/staging environment. D
 ## Backup and recovery
 Back up PostgreSQL with scheduled pg_dump to storage outside the database host. Keep encrypted copies and test restores. A database volume or provider snapshot alone is not a complete recovery plan.
 
+## Optional RiverSSAI website adapter (staging only)
+
+The Next.js chat API supports an explicit server-side provider switch. It remains on Groq by default. Do not switch it until the standalone RiverCloud host is deployed, TLS is active, and the readiness endpoint returns HTTP 200.
+
+For a **Preview/staging deployment only**, configure these server-side environment variables in Vercel:
+- `RIVER_AI_PROVIDER=standalone`
+- `RIVER_AI_STANDALONE_URL=https://your-private-rivercloud-host` (origin only; do not append `/v1/chat`)
+- `RIVER_AI_ADMIN_TOKEN`: the same strong token configured on the standalone RiverSSAI host (at least 32 characters).
+
+Keep `RIVER_AI_ADMIN_TOKEN` as a server-only secret. Never use a `NEXT_PUBLIC_` variable for it and never place it in browser or Android code. The adapter still verifies the Supabase user session and the owner-access tier before forwarding a request. It forwards a bounded conversation context and selected agent/team size over HTTPS. If the standalone provider is selected but its URL/token is missing, the API fails closed; it does not silently fall back to Groq.
+
+The standalone runtime currently uses a single-owner administrative token and owner memory scope. This adapter is therefore for the owner-only staging test, not public multi-user chat. Do not enable it in Production until RiverAuth/per-user authorization, request auditing, timeout/load tests, backup/restore, and two-account isolation tests are complete.
+
 ## Current limitations
-This prototype is intentionally isolated from the live RiverSpendShop database. It does not migrate or modify products, customers, orders, payments, or existing Supabase data. The website UI is not switched to this API. A deployment target, secrets, TLS, model sizing, backup destination, authentication integration, and end-to-end acceptance tests are still required before production use.
+This prototype remains isolated from the live RiverSpendShop database. It does not migrate or modify products, customers, orders, payments, or existing Supabase data. The website UI is **not switched** to the standalone API unless the explicit staging environment variables above are configured. A persistent host, TLS, secrets, model sizing, backup destination, authentication integration, and end-to-end acceptance tests are still required before production use.
 
 
 ## Autonomous worker queue (isolated runtime)
