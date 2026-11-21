@@ -162,6 +162,7 @@ export default function RiverSpaceSignals() {
   useEffect(() => {
     function beforeInstall(event) {
       event.preventDefault();
+      window.__riverspendInstallPrompt = event;
       setInstallPrompt(event);
       if (window.location.search.includes('install=1')) setInstallPanelOpen(true);
     }
@@ -173,10 +174,14 @@ export default function RiverSpaceSignals() {
     const standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
     setIsInstalled(standalone);
     if (window.location.search.includes('install=1') && !standalone) setInstallPanelOpen(true);
+    const installReady = () => setInstallPrompt(window.__riverspendInstallPrompt || null);
+    setInstallPrompt(window.__riverspendInstallPrompt || null);
     window.addEventListener('beforeinstallprompt', beforeInstall);
+    window.addEventListener('riverspend:install-ready', installReady);
     window.addEventListener('appinstalled', installed);
     return () => {
       window.removeEventListener('beforeinstallprompt', beforeInstall);
+      window.removeEventListener('riverspend:install-ready', installReady);
       window.removeEventListener('appinstalled', installed);
     };
   }, []);
