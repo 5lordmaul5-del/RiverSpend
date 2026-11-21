@@ -18,7 +18,8 @@ const modules = [
   { icon: '🚩', name: 'Local', group: 'Posizione', description: 'Condivisione volontaria e temporanea della posizione in chat, con anteprima, destinatari e revoca.', phase: 'Privacy', status: 'Invio coordinate in chat già presente; Local temporaneo da completare' },
   { icon: '🏫', name: 'Gruppi Scuola · Lavoro · Sport', group: 'Community', description: 'Gruppi tematici con ruoli, inviti, moderazione, segnalazioni e gestione membri.', phase: 'Community', status: 'Da implementare e verificare' },
   { icon: '🍕', name: 'Ordina da mangiare', group: 'Servizi locali', description: 'Pizza, hamburger, sushi e ristoranti aderenti: menu, carrello, consegna o ritiro e stato ordine.', phase: 'Community', status: 'Da collegare a ristoranti e ordini reali' },
-  { icon: '🎨', name: 'Sticker & Effects Studio', group: 'Creatività', description: 'Sticker originali, emoji ampliati, effetti visuali e temi personalizzabili.', phase: 'Creatività', status: 'Catalogo base presente; studio avanzato da realizzare' }
+  { icon: '🎨', name: 'Sticker & Effects Studio', group: 'Creatività', description: 'Sticker originali, emoji ampliati, effetti visuali e temi personalizzabili.', phase: 'Creatività', status: 'Catalogo base presente; studio avanzato da realizzare' },
+  { icon: '🔠', name: 'Alfabeto NATO · Mimetica', group: 'Strumenti', description: 'Alfabeto fonetico internazionale ICAO per compitare nomi, codici e messaggi, con una scheda grafica a tema mimetico.', phase: 'Strumenti', status: 'Sezione informativa integrata' }
 ];
 
 const phases = [
@@ -66,6 +67,30 @@ export default function RiverSignalsUniverse() {
             <p className="mt-2 min-h-[76px] text-sm leading-relaxed text-slate-600">{m.description}</p>
             <div className="mt-4 border-t border-slate-100 pt-3"><div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Stato del progetto</div><div className="mt-1 text-xs font-semibold text-amber-800">{m.status}</div></div>
           </article>)}
+        </div>
+      </section>
+      <section id="alfabeto-nato" className="border-y border-emerald-900/30 bg-[#e8eee2]">
+        <div className="mx-auto max-w-6xl px-4 py-10">
+          <div className="overflow-hidden rounded-3xl border border-emerald-950/30 shadow-lg">
+            <div className="bg-[linear-gradient(135deg,#263b2a_0%,#65734a_24%,#d0c7a0_25%,#8b9664_42%,#344b35_43%,#344b35_58%,#b0a77b_59%,#65734a_76%,#263b2a_100%)] p-6 text-white md:p-8">
+              <div className="inline-flex rounded-full border border-white/40 bg-black/20 px-3 py-1 text-xs font-bold uppercase tracking-widest">Signals Field Tools</div>
+              <h2 className="mt-3 text-3xl font-black md:text-4xl">🔠 Alfabeto fonetico NATO · ICAO</h2>
+              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-white/90">Compita lettere, nomi e codici usando le parole standard internazionali. Sezione grafica a tema mimetico.</p>
+            </div>
+            <div className="grid grid-cols-2 gap-px bg-emerald-950/15 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+              {[
+                ['A','Alpha (Alfa)'],['B','Bravo'],['C','Charlie'],['D','Delta'],['E','Echo'],
+                ['F','Foxtrot'],['G','Golf'],['H','Hotel'],['I','India'],['J','Juliett'],
+                ['K','Kilo'],['L','Lima'],['M','Mike'],['N','November'],['O','Oscar'],
+                ['P','Papa'],['Q','Quebec'],['R','Romeo'],['S','Sierra'],['T','Tango'],
+                ['U','Uniform'],['V','Victor'],['W','Whiskey'],['X','X-Ray'],['Y','Yankee'],['Z','Zulu']
+              ].map(([letter,word]) => <div key={letter} className="flex items-center gap-3 bg-[#f5f7ef] px-4 py-3">
+                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-emerald-900/20 bg-[#dce5d3] text-lg font-black text-[#263b2a]">{letter}</span>
+                <span className="text-sm font-bold text-[#263b2a]">{word}</span>
+              </div>)}
+            </div>
+            <div className="bg-[#263b2a] px-5 py-3 text-xs text-emerald-50">Standard fonetico ICAO · 26 lettere · utile per comunicazioni chiare via voce o chat.</div>
+          </div>
         </div>
       </section>
       <section className="border-y border-teal-100 bg-white">
