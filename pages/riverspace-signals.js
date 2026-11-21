@@ -283,7 +283,7 @@ export default function RiverSpaceSignals() {
     e.preventDefault(); setBusy(true); setError(''); setNotice('');
     const { error: e1 } = await supabase.auth.signInWithOtp({
       email: email.trim(),
-      options: { emailRedirectTo: window.location.origin + '/riverspace-signals' }
+      options: { emailRedirectTo: 'https://www.riverspend.com/riverspace-signals' }
     });
     setBusy(false);
     if (e1) setError(e1.message);
