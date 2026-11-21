@@ -187,21 +187,22 @@ export default function RiverSpaceSignals() {
 
   useEffect(() => {
     let alive = true;
-    // Restore the locally persisted Supabase session first. getSession reads the
-    // device session; getUser performs a server round-trip and can briefly report
-    // no user while a mobile app is resuming or refreshing its token.
+    // Restore the saved device session. Do not let a late getSession response
+    // overwrite a newer SIGNED_IN / TOKEN_REFRESHED event from Supabase.
+    let authEventReceived = false;
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!alive) return;
+      authEventReceived = true;
       setUser(session?.user || null);
       setAuthReady(true);
     });
     supabase.auth.getSession().then(({ data, error: sessionError }) => {
-      if (!alive) return;
+      if (!alive || authEventReceived) return;
       if (sessionError) setError('Ripristino sessione non riuscito: ' + sessionError.message);
       setUser(data?.session?.user || null);
       setAuthReady(true);
     }).catch(error => {
-      if (!alive) return;
+      if (!alive || authEventReceived) return;
       setError('Non riesco a ripristinare la sessione: ' + (error?.message || 'errore sconosciuto'));
       setAuthReady(true);
     });
