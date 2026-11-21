@@ -13,7 +13,7 @@ export default function RiverSpaceSignals() {
   const [statusCaption, setStatusCaption] = useState('');
   const [statusFile, setStatusFile] = useState(null);
   const [statusBusy, setStatusBusy] = useState(false);
-  const [conversations, setConversations] = useState([]);
+  const [conversations, setConversations] = useState([]);\n  const [unreadCounts, setUnreadCounts] = useState({});\n  const [incomingToast, setIncomingToast] = useState('');
   const [messages, setMessages] = useState([]);
   const [active, setActive] = useState('');
   const [draft, setDraft] = useState('');
@@ -102,7 +102,7 @@ export default function RiverSpaceSignals() {
     setConversations(data || []);
   }, []);
 
-  const loadMessages = useCallback(async (conversationId) => {
+  const refreshUnreadCounts = useCallback(async (uid) => {\n    if (!uid) { setUnreadCounts({}); return; }\n    const { data, error: e } = await supabase.from('rs_chat_messages').select('conversation_id').neq('sender_id', uid).is('read_at', null);\n    if (e) { console.warn('Unread count refresh:', e.message); return; }\n    const counts = {};\n    for (const row of data || []) counts[row.conversation_id] = (counts[row.conversation_id] || 0) + 1;\n    setUnreadCounts(counts);\n  }, []);\n\n  const loadMessages = useCallback(async (conversationId) => {
     if (!conversationId) return setMessages([]);
     const { data, error: e } = await supabase.from('rs_chat_messages')
       .select('id,conversation_id,sender_id,body,created_at,read_at,message_type,attachment_path,attachment_name,attachment_mime,attachment_size,metadata')
@@ -140,7 +140,7 @@ export default function RiverSpaceSignals() {
       return row;
     }));
     setMessages(decoded); setMediaUrls(media);
-  }, [user, otherId]);
+  }, [user, otherId, refreshUnreadCounts]);
 
   useEffect(() => {
     function beforeInstall(event) {
@@ -178,17 +178,17 @@ export default function RiverSpaceSignals() {
   }, []);
 
   useEffect(() => {
-    if (!user) { setProfiles([]); setConversations([]); setMessages([]); setActive(''); setDeviceInfo(null); return; }
+    if (!user) { setProfiles([]); setConversations([]); setMessages([]); setActive(''); setDeviceInfo(null); setUnreadCounts({}); return; }
     ensureEnigmaDevice(supabase, user.id).then(setDeviceInfo).catch(e => setError('ENIGMA non inizializzato: ' + (e.message || 'errore dispositivo')));
     let alive = true;
     (async () => {
       try {
         setError('');
-        await Promise.all([loadPeople(user.id), loadConversations(user.id), loadStatuses()]);
+        await Promise.all([loadPeople(user.id), loadConversations(user.id), loadStatuses(), refreshUnreadCounts(user.id)]);
       } catch (e) { if (alive) setError(e.message || 'Errore nel caricamento di Signals.'); }
     })();
     return () => { alive = false; };
-  }, [user, loadPeople, loadConversations, loadStatuses]);
+  }, [user, loadPeople, loadConversations, loadStatuses, refreshUnreadCounts]);
 
   useEffect(() => {
     if (!active) { setMessages([]); setEnigmaConsents([]); return; }
@@ -229,7 +229,25 @@ export default function RiverSpaceSignals() {
     return () => { supabase.removeChannel(channel); };
   }, [user, loadConversations]);
 
-  async function sendLogin(e) {
+
+  useEffect(() => {
+    if (!user) return;
+    const channel = supabase.channel('signals-incoming-global-' + user.id)
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'rs_chat_messages' }, payload => {
+        const msg = payload.new;
+        if (!msg || msg.sender_id === user.id) return;
+        if (msg.conversation_id === active) { loadMessages(active).catch(e => setError(e.message)); return; }
+        refreshUnreadCounts(user.id);
+        setIncomingToast('Nuovo messaggio ricevuto');
+        if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
+          try { new Notification('RiverSignals', { body: 'Hai ricevuto un nuovo messaggio', icon: '/icons/riverspace-signals-app.jpg' }); } catch {}
+        }
+      }).subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [user, active, loadMessages, refreshUnreadCounts]);
+
+  useEffect(() => { if (!incomingToast) return; const id = setTimeout(() => setIncomingToast(''), 5000); return () => clearTimeout(id); }, [incomingToast]);
+\n  async function sendLogin(e) {
     e.preventDefault(); setBusy(true); setError(''); setNotice('');
     const { error: e1 } = await supabase.auth.signInWithOtp({
       email: email.trim(),
@@ -470,7 +488,7 @@ export default function RiverSpaceSignals() {
         <nav className="mt-2 flex items-center gap-2 overflow-x-auto whitespace-nowrap pb-0.5 md:justify-end"><Link href="/riverworld-live" className="shrink-0 rounded-full bg-emerald-300 px-3 py-1.5 text-xs font-bold text-slate-900 hover:bg-emerald-200">🌍 Mondo in diretta</Link><button type="button" onClick={installApp} className="shrink-0 rounded-full bg-amber-300 px-3 py-1.5 text-xs font-bold text-slate-900 hover:bg-amber-200">📲 Installa Signals</button><Link href="/" className="shrink-0 rounded-full border border-white/40 px-3 py-1.5 text-xs hover:bg-white/10">RiverSpendShop</Link><Link href="/riverspend-social-network" className="shrink-0 rounded-full border border-white/40 px-3 py-1.5 text-xs hover:bg-white/10">Comunità</Link></nav>
       </header>
 
-      {installMessage && <div role="status" className="mx-auto mt-3 max-w-6xl rounded-xl bg-amber-100 px-4 py-3 text-sm text-amber-900">{installMessage}</div>}
+      {incomingToast && <div role="status" className="fixed left-3 right-3 top-3 z-50 mx-auto max-w-md rounded-2xl bg-[#073b4c] px-4 py-3 text-sm font-semibold text-white shadow-xl">💬 {incomingToast}</div>}\n      {installMessage && <div role="status" className="mx-auto mt-3 max-w-6xl rounded-xl bg-amber-100 px-4 py-3 text-sm text-amber-900">{installMessage}</div>}
       {error && <div role="alert" className="mx-auto mt-3 max-w-6xl rounded-xl bg-red-100 px-4 py-3 text-sm text-red-800">{error}</div>}
       {notice && <div role="status" className="mx-auto mt-3 max-w-6xl rounded-xl bg-emerald-100 px-4 py-3 text-sm text-emerald-800">{notice}</div>}
 
@@ -525,7 +543,7 @@ export default function RiverSpaceSignals() {
               const person = profiles.find(p => p.id === id);
               return <button key={c.id} onClick={() => setActive(c.id)} className={`mb-1 flex w-full items-center gap-3 rounded-xl p-3 text-left ${active === c.id ? 'bg-teal-50 ring-1 ring-teal-200' : 'hover:bg-slate-50'}`}>
                 <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-teal-100 text-lg">👤</span>
-                <span className="min-w-0"><span className="block truncate font-semibold">{person?.display_name || 'Membro RiverSpend'}</span><span className="text-xs text-slate-500">Apri conversazione</span></span>
+                <span className="min-w-0"><span className="block truncate font-semibold">{person?.display_name || 'Membro RiverSpend'}</span><span className="text-xs text-slate-500">Apri conversazione</span></span>{(unreadCounts[c.id] || 0) > 0 && <span className="ml-auto grid h-6 min-w-6 place-items-center rounded-full bg-red-600 px-1.5 text-xs font-bold text-white">{unreadCounts[c.id]}</span>}
               </button>;
             })}
             <div className="mb-2 mt-5 text-xs font-bold uppercase tracking-wider text-slate-400">Trova persone</div>
