@@ -17,7 +17,7 @@ This blueprint is a product scope and implementation order. A feature is not con
 2. RiverGhost — per-message opt-in expiry and view-once media. Deletion must cover database rows, object storage and backups according to a documented retention policy. Screenshots and external recording cannot be guaranteed against.
 3. RiverMask — face blur, masks and avatars applied to outgoing video before encoding/upload. Fallback full-frame blur if face tracking is unavailable.
 4. RiverVoice — voice effects on recorded messages first; real-time call processing later, subject to latency/device testing.
-5. RiverSSAI Assistant — optional user-invoked assistant; disclose what content is sent to the AI service and obtain consent.
+5. RiverSSAI Base — lightweight, optional chat helper limited to basic writing assistance and simple answers. It must not include the full RiverSSAI 10.0 engine, CEO/unlimited mode, the 90-specialist registry, advanced media generation or premium capabilities. Keep the full RiverSSAI product separate. Disclose what content is sent to the AI service and obtain consent.
 6. RiverWorld — translation, transcription and captions; disclose processing and third-party providers.
 7. RiverPay — money requests and payments through a licensed PSP/marketplace product. Chat intents are not money transfers. Do not custody seller funds in an ordinary company bank account.
 8. RiverLive — live broadcasts, rooms and creator features with moderation and reporting.
@@ -37,7 +37,7 @@ View-once/expiring messages, storage cleanup, app lock, device revocation, repor
 WebRTC audio/video calls, signaling, TURN, permission handling, reconnects, call notifications and two-network/two-device tests. Add RiverMask and RiverVoice after reliable media transport exists.
 
 ### Phase 4 — AI and international communication
-RiverSSAI backend integration, user-consented context sharing, translation, transcription and captions.
+Connect RiverSSAI Base only with limited capabilities and user-consented context sharing; translation, transcription and captions remain separate modules. Do not embed the full RiverSSAI 10.0 engine in Signals.
 
 ### Phase 5 — payments and community
 PSP onboarding, KYC where required, seller/payment flows, refunds/disputes, groups, channels, live and moderation tooling.
@@ -56,6 +56,6 @@ A module can be labelled LIVE only after:
 - Existing Signals route contains chat, status, attachment and some ENIGMA beta functionality.
 - Money controls currently create chat intentions; they do not transfer money.
 - Audio/video call controls are notices; actual WebRTC calling is not complete.
-- RiverSSAI helper is a static guidance panel, not a connected assistant engine.
+- RiverSSAI helper is currently a static guidance panel, not a connected assistant engine. The planned Signals integration is BASE only; the full RiverSSAI 10.0 remains a separate product.
 - Several menu entries are informational notices rather than complete workflows.
 - This document and the Universe page are a roadmap/overview, not proof of implementation.
