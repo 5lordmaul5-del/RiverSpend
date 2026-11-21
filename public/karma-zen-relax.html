@@ -43,61 +43,89 @@ const toggle=document.getElementById('toggleAudio');
 const volume=document.getElementById('volume');
 const tracks=[...document.querySelectorAll('.track[data-title]')];
 const presets=[
- {base:110,bell:[523,659,784],label:'Voce meditativa · drone caldo'},
- {base:174.61,bell:[659,880,1046.5],label:'Campane tibetane'},
- {base:220,bell:[784,988,1174.7],label:'Campana armonica'},
- {base:130.81,bell:[587,698,880],label:'Atmosfera ambient'},
- {base:146.83,bell:[698,880,1046.5],label:'Risonanze himalayane I'},
- {base:196,bell:[880,1046.5,1318.5],label:'Risonanze himalayane II'}
+ {base:110,bell:[523.25,659.25,783.99],label:'Voce meditativa · drone caldo'},
+ {base:174.61,bell:[659.25,880,1046.5],label:'Campane tibetane'},
+ {base:220,bell:[783.99,987.77,1174.66],label:'Campana armonica'},
+ {base:130.81,bell:[587.33,698.46,880],label:'Atmosfera ambient'},
+ {base:146.83,bell:[698.46,880,1046.5],label:'Risonanze himalayane I'},
+ {base:196,bell:[880,1046.5,1318.51],label:'Risonanze himalayane II'}
 ];
-let context=null, master=null, nodes=[], activeIndex=-1, playing=false, cycleTimer=null;
-function stopSound(){
- playing=false;
- if(cycleTimer) clearTimeout(cycleTimer);
- cycleTimer=null;
- if(master){try{master.gain.cancelScheduledValues(context.currentTime);master.gain.setTargetAtTime(0,context.currentTime,0.12)}catch{}}
- const old=nodes.slice();nodes=[];
- setTimeout(()=>old.forEach(n=>{try{n.stop()}catch{};try{n.disconnect()}catch{}}),450);
- toggle.innerHTML='<strong>▶ Riprendi ascolto</strong>';
- tracks.forEach(b=>{b.classList.remove('active');b.querySelector('.play').textContent='▶'});
+let context=null, master=null, voices=[], activeIndex=-1, playing=false, loopTimer=null, generation=0;
+function clearVoices(){
+ voices.forEach(node=>{try{node.stop?.()}catch{};try{node.disconnect?.()}catch{}});
+ voices=[];
 }
-function tone(freq,when,duration,level,type='sine'){
+function stopSound(){
+ generation++;
+ playing=false;
+ if(loopTimer){clearTimeout(loopTimer);loopTimer=null}
+ if(master&&context){
+  try{master.gain.cancelScheduledValues(context.currentTime);master.gain.setTargetAtTime(0,context.currentTime,0.06)}catch{}
+ }
+ const old=voices.slice();voices=[];
+ setTimeout(()=>old.forEach(node=>{try{node.stop?.()}catch{};try{node.disconnect?.()}catch{}}),180);
+ toggle.innerHTML='<strong>▶ Riprendi ascolto</strong>';
+ tracks.forEach(button=>{button.classList.remove('active');button.querySelector('.play').textContent='▶'});
+ status.textContent='Audio in pausa. Premi Riprendi ascolto per continuare.';
+}
+function addDrone(frequency,ratio,level,token){
+ const osc=context.createOscillator(), gain=context.createGain(), lfo=context.createOscillator(), depth=context.createGain();
+ osc.type='sine';osc.frequency.value=frequency*ratio;
+ gain.gain.value=level;
+ lfo.type='sine';lfo.frequency.value=0.07+ratio*0.012;depth.gain.value=frequency*ratio*0.0015;
+ lfo.connect(depth);depth.connect(osc.frequency);osc.connect(gain);gain.connect(master);
+ osc.start();lfo.start();voices.push(osc,lfo,gain,depth);
+}
+function addBell(frequency,when,token){
  const osc=context.createOscillator(),gain=context.createGain();
- osc.type=type;osc.frequency.setValueAtTime(freq,when);
- gain.gain.setValueAtTime(0,when);gain.gain.linearRampToValueAtTime(level,when+0.35);
- gain.gain.exponentialRampToValueAtTime(0.0001,when+duration);
- osc.connect(gain);gain.connect(master);osc.start(when);osc.stop(when+duration+0.1);nodes.push(osc,gain);
+ osc.type='sine';osc.frequency.setValueAtTime(frequency,when);
+ gain.gain.setValueAtTime(0.0001,when);
+ gain.gain.exponentialRampToValueAtTime(0.075,when+0.18);
+ gain.gain.exponentialRampToValueAtTime(0.0001,when+4.2);
+ osc.connect(gain);gain.connect(master);osc.start(when);osc.stop(when+4.3);
+ voices.push(osc,gain);
+}
+function scheduleBells(index,token){
+ if(!playing||token!==generation||!context)return;
+ const p=presets[index],now=context.currentTime+0.15;
+ p.bell.forEach((frequency,i)=>addBell(frequency,now+i*1.35,token));
+ loopTimer=setTimeout(()=>scheduleBells(index,token),8200);
 }
 async function startSound(index){
  try{
-  const AC=window.AudioContext||window.webkitAudioContext;
-  if(!AC){status.textContent='Questo browser non supporta l’audio immersivo.';return}
-  if(!context)context=new AC();
-  if(context.state==='suspended')await context.resume();
+  const AudioContextClass=window.AudioContext||window.webkitAudioContext;
+  if(!AudioContextClass){status.textContent='Questo browser non supporta la riproduzione audio.';return}
+  if(!context)context=new AudioContextClass();
+  if(context.state!=='running')await context.resume();
+  if(context.state!=='running')throw new Error('Audio del dispositivo sospeso: controlla il volume multimediale.');
+  if(loopTimer){clearTimeout(loopTimer);loopTimer=null}
+  clearVoices();
   if(master){try{master.disconnect()}catch{}}
   master=context.createGain();master.gain.value=0;master.connect(context.destination);
-  master.gain.setTargetAtTime(Number(volume.value),context.currentTime,0.25);
-  nodes=[];activeIndex=index;playing=true;
-  const p=presets[index],now=context.currentTime;
-  [1,1.5,2.01].forEach((ratio,i)=>{
-   const osc=context.createOscillator(),gain=context.createGain(),lfo=context.createOscillator(),lfoGain=context.createGain();
-   osc.type='sine';osc.frequency.value=p.base*ratio;
-   gain.gain.value=[0.13,0.055,0.025][i];
-   lfo.frequency.value=0.06+i*0.025;lfoGain.gain.value=0.8+i*0.3;
-   lfo.connect(lfoGain);lfoGain.connect(osc.detune);osc.connect(gain);gain.connect(master);
-   osc.start();lfo.start();nodes.push(osc,gain,lfo,lfoGain);
-  });
-  p.bell.forEach((f,i)=>tone(f,now+1.4+i*3.1,4.8,0.12,'sine'));
-  tracks.forEach((b,i)=>{b.classList.toggle('active',i===index);b.querySelector('.play').textContent=i===index?'Ⅱ':'▶'});
+  const token=++generation;
+  activeIndex=index;playing=true;
+  master.gain.setTargetAtTime(Number(volume.value),context.currentTime,0.18);
+  const p=presets[index];
+  addDrone(p.base,1,0.12,token);addDrone(p.base,1.5,0.045,token);addDrone(p.base,2.01,0.022,token);
+  scheduleBells(index,token);
+  tracks.forEach((button,i)=>{button.classList.toggle('active',i===index);button.querySelector('.play').textContent=i===index?'Ⅱ':'▶'});
   title.textContent=tracks[index].dataset.title;
-  status.textContent= p.label+' · suono ambient originale generato nel dispositivo';
+  status.textContent=p.label+' · paesaggio sonoro sintetizzato nel dispositivo';
   toggle.innerHTML='<strong>Ⅱ Pausa</strong>';
-  cycleTimer=setTimeout(()=>{if(playing&&activeIndex===index){stopSound();startSound(index)}},11500);
- }catch(error){status.textContent='Impossibile avviare l’audio: tocca di nuovo Avvia ascolto.';playing=false}
+ }catch(error){
+  playing=false;status.textContent='Audio non avviato: '+(error?.message||'tocca di nuovo Avvia ascolto.');
+  toggle.innerHTML='<strong>▶ Riprova</strong>';
+ }
 }
-tracks.forEach((button,index)=>button.addEventListener('click',()=>{if(activeIndex===index&&playing){stopSound();return}stopSound();startSound(index)}));
-toggle.addEventListener('click',()=>{if(playing){stopSound()}else{startSound(activeIndex<0?0:activeIndex)}});
-volume.addEventListener('input',()=>{if(master&&context)master.gain.setTargetAtTime(Number(volume.value),context.currentTime,0.08)});
+tracks.forEach((button,index)=>button.addEventListener('click',()=>{
+ if(activeIndex===index&&playing){stopSound();return}
+ stopSound();startSound(index);
+}));
+toggle.addEventListener('click',()=>{if(playing)stopSound();else startSound(activeIndex<0?0:activeIndex)});
+volume.addEventListener('input',()=>{
+ if(master&&context&&playing)master.gain.setTargetAtTime(Number(volume.value),context.currentTime,0.08);
+});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&playing)stopSound()});
 window.addEventListener('pagehide',stopSound);
 </script>
 </body></html>
