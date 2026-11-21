@@ -621,11 +621,10 @@ export default function RiverSpaceSignals() {
                 ? <button type="button" disabled={enigmaBusy} onClick={disableEnigma} className="shrink-0 rounded-full border border-amber-700 px-2.5 py-1 text-[11px] font-semibold text-amber-900">Disattiva ENIGMA</button>
                 : <button type="button" disabled={enigmaBusy || !deviceInfo} onClick={enableEnigma} className="shrink-0 rounded-full bg-[#073b4c] px-2.5 py-1 text-[11px] font-semibold text-white disabled:opacity-50">{enigmaBusy ? 'Attendo…' : myEnigmaConsent ? 'Consenso inviato' : 'Attiva ENIGMA'}</button>}
             </div>
-            <div className="grid shrink-0 grid-cols-4 gap-1 border-b border-teal-100 bg-teal-50 px-2 py-1.5">
-              <button type="button" onClick={() => setMoneyAction("send")} className="flex min-h-9 flex-col items-center justify-center rounded-lg bg-white px-1 py-1 text-center text-[10px] font-semibold leading-tight text-teal-900 shadow-sm">💸 Invia denaro</button>
-              <button type="button" onClick={() => setMoneyAction("request")} className="flex min-h-11 items-center justify-center rounded-xl bg-white px-2 py-2 text-center text-xs font-semibold leading-tight text-teal-900 shadow-sm">💰 Richiedi denaro</button>
-              <button type="button" onClick={() => setMoneyAction("donate")} className="flex min-h-11 items-center justify-center rounded-xl bg-white px-2 py-2 text-center text-xs font-semibold leading-tight text-teal-900 shadow-sm">🎁 Fai una donazione</button>
-              <button type="button" onClick={() => setMoneyAction("receive_donation")} className="flex min-h-11 items-center justify-center rounded-xl bg-white px-2 py-2 text-center text-xs font-semibold leading-tight text-teal-900 shadow-sm">🙏 Ricevi donazione</button>
+            <div className="flex shrink-0 items-center gap-1 overflow-x-auto whitespace-nowrap border-b border-teal-100 bg-teal-50 px-2 py-1">
+              {[
+                ["💸","Invia","send"],["💰","Richiedi","request"],["🎁","Dona","donate"],["🙏","Ricevi","receive_donation"]
+              ].map(([icon,label,action]) => <button key={action} type="button" onClick={() => setMoneyAction(action)} className="flex h-8 shrink-0 items-center gap-1 rounded-lg bg-white px-2 text-[10px] font-semibold text-teal-900 shadow-sm">{icon} {label}</button>)}
             </div>
             {moneyAction && <div className="shrink-0 border-b border-amber-200 bg-amber-50 p-3">
               <form onSubmit={sendMoneyIntent} className="mx-auto max-w-xl space-y-2">
