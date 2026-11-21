@@ -29,6 +29,8 @@ export default function RiverSpaceSignals() {
   const [attachMenuOpen, setAttachMenuOpen] = useState(false);
   const [installPrompt, setInstallPrompt] = useState(null);
   const [installMessage, setInstallMessage] = useState('');
+  const [installPanelOpen, setInstallPanelOpen] = useState(false);
+  const [isInstalled, setIsInstalled] = useState(false);
   const [attachment, setAttachment] = useState(null);
   const [mediaUrls, setMediaUrls] = useState({});
   const [uploading, setUploading] = useState(false);
@@ -161,11 +163,16 @@ export default function RiverSpaceSignals() {
     function beforeInstall(event) {
       event.preventDefault();
       setInstallPrompt(event);
+      if (window.location.search.includes('install=1')) setInstallPanelOpen(true);
     }
     function installed() {
       setInstallPrompt(null);
-      setInstallMessage('RiverSpaceSignals è stata installata sul dispositivo.');
+      setIsInstalled(true);
+      setInstallMessage('RiverSignals è stata installata sul dispositivo. Ora puoi aprirla dalla sua icona.');
     }
+    const standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    setIsInstalled(standalone);
+    if (window.location.search.includes('install=1') && !standalone) setInstallPanelOpen(true);
     window.addEventListener('beforeinstallprompt', beforeInstall);
     window.addEventListener('appinstalled', installed);
     return () => {
@@ -176,13 +183,14 @@ export default function RiverSpaceSignals() {
 
   async function installApp() {
     if (!installPrompt) {
-      setInstallMessage('Per installarla, apri il menu ⋮ di Chrome e scegli “Installa app” oppure “Aggiungi a schermata Home”.');
+      setInstallMessage('L’installazione diretta non è disponibile in questo browser o dispositivo. Puoi comunque usare Signals qui; su un browser compatibile apparirà automaticamente il pulsante di installazione.');
       return;
     }
     installPrompt.prompt();
     const choice = await installPrompt.userChoice;
     setInstallMessage(choice?.outcome === 'accepted' ? 'Installazione avviata.' : 'Installazione non completata. Puoi riprovare.');
     setInstallPrompt(null);
+    if (choice?.outcome === 'accepted') setInstallPanelOpen(false);
   }
 
   useEffect(() => {
@@ -512,6 +520,17 @@ export default function RiverSpaceSignals() {
       <link rel="icon" href="/icons/riverspace-signals-app.jpg" type="image/jpeg" />
       <link rel="apple-touch-icon" href="/icons/riverspace-signals-app.jpg" />
     </Head>
+    {installPanelOpen && !isInstalled && <div className="fixed inset-0 z-[100] grid place-items-center bg-slate-950/75 p-4" role="dialog" aria-modal="true" aria-labelledby="signals-install-title">
+      <section className="w-full max-w-sm rounded-3xl border border-amber-300/70 bg-white p-6 text-center shadow-2xl">
+        <div className="mx-auto mb-3 grid h-20 w-20 place-items-center overflow-hidden rounded-2xl bg-teal-50"><img src="/icons/riverspace-signals-app.jpg" alt="RiverSignals" className="h-full w-full object-contain" /></div>
+        <h2 id="signals-install-title" className="text-2xl font-black text-[#073b4c]">Installa RiverSignals</h2>
+        <p className="mt-2 text-sm leading-relaxed text-slate-600">Aggiungi Signals al telefono e aprilo dalla sua icona, come una normale app.</p>
+        <button type="button" onClick={installApp} disabled={!installPrompt} className="mt-5 w-full rounded-xl bg-[#087e8b] px-4 py-3 font-extrabold text-white shadow-lg disabled:cursor-not-allowed disabled:opacity-50">{installPrompt ? 'INSTALLA RIVERSIGNALS' : 'PREPARO L’INSTALLAZIONE…'}</button>
+        {installMessage && <p className="mt-3 rounded-xl bg-amber-50 p-3 text-xs leading-relaxed text-amber-950">{installMessage}</p>}
+        {!installPrompt && <p className="mt-3 text-xs text-slate-500">Se il dispositivo non offre l’installazione automatica, potrai continuare a usare Signals dal sito. La disponibilità dipende dal browser e dal sistema operativo.</p>}
+        <button type="button" onClick={() => setInstallPanelOpen(false)} className="mt-4 text-sm font-semibold text-slate-500 underline">Continua sul sito</button>
+      </section>
+    </div>}
     <main translate="no" className="flex h-[100dvh] flex-col overflow-hidden bg-[#eaf7f7] text-slate-800">
       <header className="shrink-0 bg-[#073b4c] px-3 py-2 text-white shadow md:px-4 md:py-3">
         <div className="flex min-w-0 items-center gap-2">
