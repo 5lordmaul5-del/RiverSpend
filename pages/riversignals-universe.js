@@ -13,6 +13,11 @@ const modules = [
   { icon: '👥', name: 'RiverCommunity', group: 'Community', description: 'Gruppi, canali, comunità locali e internazionali, eventi e spazi per associazioni e aziende.', phase: 'Community', status: 'Da implementare e verificare' },
   { icon: '🪪', name: 'RiverIdentity', group: 'Identità', description: 'Profilo personalizzabile, avatar, identità personale e professionale e accesso unico all’ecosistema RiverSpend.', phase: 'Fondamenta', status: 'Da implementare e verificare' },
   { icon: '🔐', name: 'River ENIGMA', group: 'Privacy avanzata', description: 'Cifratura e gestione delle chiavi per dispositivo, con consenso esplicito e verifica indipendente della sicurezza.', phase: 'Privacy', status: 'Versione beta: non presentarla come sicurezza certificata' },
+  { icon: '🎲', name: 'Chat casuale', group: 'Scoperta', description: 'Abbinamento volontario tra persone, con uscita immediata, blocco, segnalazione e controlli anti-abuso.', phase: 'Community', status: 'Da implementare e verificare' },
+  { icon: '📍', name: 'Chi c’è nelle vicinanze', group: 'Scoperta locale', description: 'Ricerca solo su consenso, distanza approssimativa e posizione mai pubblica per impostazione predefinita.', phase: 'Community', status: 'Da implementare con protezioni privacy' },
+  { icon: '🚩', name: 'Local', group: 'Posizione', description: 'Condivisione volontaria e temporanea della posizione in chat, con anteprima, destinatari e revoca.', phase: 'Privacy', status: 'Invio coordinate in chat già presente; Local temporaneo da completare' },
+  { icon: '🏫', name: 'Gruppi Scuola · Lavoro · Sport', group: 'Community', description: 'Gruppi tematici con ruoli, inviti, moderazione, segnalazioni e gestione membri.', phase: 'Community', status: 'Da implementare e verificare' },
+  { icon: '🍕', name: 'Ordina da mangiare', group: 'Servizi locali', description: 'Pizza, hamburger, sushi e ristoranti aderenti: menu, carrello, consegna o ritiro e stato ordine.', phase: 'Community', status: 'Da collegare a ristoranti e ordini reali' },
   { icon: '🎨', name: 'Sticker & Effects Studio', group: 'Creatività', description: 'Sticker originali, emoji ampliati, effetti visuali e temi personalizzabili.', phase: 'Creatività', status: 'Catalogo base presente; studio avanzato da realizzare' }
 ];
 
