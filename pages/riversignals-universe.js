@@ -6,7 +6,7 @@ const modules = [
   { icon: '👻', name: 'RiverGhost', group: 'Privacy', description: 'Messaggi con scadenza, contenuti che si eliminano dopo la visualizzazione e indicatori di apertura.', phase: 'Privacy', status: 'Da implementare e verificare' },
   { icon: '🎭', name: 'RiverMask', group: 'Video e identità', description: 'Effetti sul volto applicati al flusso video e ai video-messaggi prima dell’invio: sfocatura, maschere e avatar.', phase: 'Media', status: 'Da implementare e verificare' },
   { icon: '🎙️', name: 'RiverVoice', group: 'Audio e identità', description: 'Filtri vocali per messaggi registrati e, in una fase successiva, chiamate in tempo reale.', phase: 'Media', status: 'Da implementare e verificare' },
-  { icon: '🤖', name: 'RiverSSAI Assistant', group: 'Intelligenza artificiale', description: 'Assistente nella chat, riassunti, aiuto nella scrittura e strumenti AI attivati solo con il consenso dell’utente.', phase: 'AI', status: 'Collegamento al motore da realizzare' },
+  { icon: '🤖', name: 'RiverSSAI Base', group: 'Intelligenza artificiale', description: 'Assistente essenziale nelle chat: aiuto semplice nella scrittura e risposte di base, solo quando richiesto e con il consenso dell’utente. Non include la versione completa RiverSSAI 10.0, la modalità CEO o i 90 specialisti.', phase: 'AI', status: 'Versione base prevista; collegamento da realizzare' },
   { icon: '🌍', name: 'RiverWorld', group: 'Comunicazione globale', description: 'Traduzione di chat e vocali, sottotitoli e supporto multilingue durante le chiamate.', phase: 'AI', status: 'Da implementare e verificare' },
   { icon: '💸', name: 'RiverPay', group: 'Pagamenti', description: 'Invio e richiesta di denaro, divisione spese, acquisti e donazioni tramite prestatore autorizzato.', phase: 'Pagamenti', status: 'Solo intenzioni in chat; pagamenti reali non attivi' },
   { icon: '📡', name: 'RiverLive', group: 'Live e streaming', description: 'Dirette, stanze tematiche, eventi, creator e collegamento con RiverStreaming.', phase: 'Community', status: 'Da implementare e verificare' },
@@ -20,7 +20,7 @@ const phases = [
   { n: '01', title: 'Fondamenta affidabili', detail: 'Account persistente, chat, notifiche, gestione dispositivi, sicurezza, backup e test su due telefoni.' },
   { n: '02', title: 'Privacy e identità', detail: 'RiverGhost, RiverShield e consenso chiaro per ogni funzione di privacy.' },
   { n: '03', title: 'Chiamate e creatività', detail: 'Chiamate WebRTC con infrastruttura TURN, RiverMask, RiverVoice ed effetti.' },
-  { n: '04', title: 'AI e mondo', detail: 'RiverSSAI, traduzione, sottotitoli e assistenza multilingue.' },
+  { n: '04', title: 'AI e mondo', detail: 'RiverSSAI Base con funzioni essenziali; traduzione, sottotitoli e assistenza multilingue saranno moduli separati.' },
   { n: '05', title: 'Economia e community', detail: 'Pagamenti tramite PSP autorizzato, dirette, gruppi, canali e creator.' }
 ];
 
