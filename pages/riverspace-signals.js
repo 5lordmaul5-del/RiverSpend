@@ -611,6 +611,7 @@ export default function RiverSpaceSignals() {
                       ['🚩','Segnalazioni persone e canali','Le segnalazioni richiedono ancora un flusso dedicato.'],
                       ['ℹ️','Info App','RiverSignals · RiverSpend']
                     ].map(([icon,label,detail]) => <button key={label} type="button" onClick={() => { setMoreMenuOpen(false); setNotice(detail); }} className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-teal-50"><span className="text-lg">{icon}</span><span>{label}</span></button>)}
+                    <Link href="/riversignals-universe#alfabeto-nato" onClick={() => setMoreMenuOpen(false)} className="flex w-full items-center gap-3 border-t border-slate-100 px-4 py-3 text-left font-semibold text-emerald-900 hover:bg-emerald-50"><span className="text-lg">🔠</span><span>Alfabeto NATO · Mimetica</span></Link>
                   </div>}
                 </div>
               </div>
