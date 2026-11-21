@@ -892,8 +892,7 @@ export default function Home() {
     <main className="rs-site min-h-screen bg-slate-950 text-white">
       <section role="status" aria-label="Avviso versione di test" className="border-b border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-950">
         <div className="mx-auto max-w-6xl">
-          <p className="font-extrabold">⚠️ RiverSpend è online in versione di test</p>
-          <p className="mt-1">Il sito è in fase di sviluppo e verifica: funzioni, pagine, procedure di acquisto, pagamenti e disponibilità possono cambiare, essere temporaneamente limitati o non essere ancora attivi. Non considerare attive le funzioni di trattenuta e svincolo dei fondi finché non saranno confermate da RiverSpend. Grazie per la pazienza.</p>
+          <p className="text-xs font-semibold">Versione test — ancora in fase di test</p>
         </div>
       </section>
       {mostraGate18 && (
