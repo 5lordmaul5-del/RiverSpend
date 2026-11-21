@@ -20,10 +20,10 @@ const aree = [
 ];
 
 const piattaforme = [
-  ['🗄️','RS Database','Database centrale dell’ecosistema RiverSpend','Supabase · attivo'],
-  ['🖼️','RS Storage','Foto, video e media dei prodotti','Supabase Storage · attivo'],
-  ['☁️','RS Cloud','Backend, servizi cloud e collegamento dell’ecosistema','Cloud · attivo'],
-  ['📺','RiverSpendStream','Streaming: film, musica, creator, live e Originals · Web attivo','/river-spend-stream'],
+  ['🗄️','RS Database','Database centrale dell’ecosistema RiverSpend','In fase di test'],
+  ['🖼️','RS Storage','Foto, video e media dei prodotti','In fase di test'],
+  ['☁️','RS Cloud','Backend, servizi cloud e collegamento dell’ecosistema','In fase di test'],
+  ['📺','RiverSpendStream','Streaming: film, musica, creator, live e Originals · In fase di test','/river-spend-stream'],
   ['📱','RiverSpendShop App','App marketplace per Android e Apple iOS','Android • Apple'],
   ['🎛️','RiverSpend Panel Control','Area riservata CEO e collaboratori autorizzati','/rs-control-center']
 ];
@@ -56,8 +56,7 @@ export default function Ecosistema() {
         <section className="mt-10">
           <h2 className="mb-2 text-2xl font-black">⚙️ Piattaforme, Cloud & App</h2>
           <p className="mb-4 max-w-3xl text-sm text-slate-600">
-            La parte tecnica che sostiene RiverSpend: database, storage media, cloud, streaming,
-            app mobile e pannello di controllo.
+            Componenti e servizi dell’ecosistema RiverSpend, attualmente in fase di test.
           </p>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {piattaforme.map(([icon,title,note,linkOrStatus]) => {
