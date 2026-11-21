@@ -13,7 +13,9 @@ export default function RiverSpaceSignals() {
   const [statusCaption, setStatusCaption] = useState('');
   const [statusFile, setStatusFile] = useState(null);
   const [statusBusy, setStatusBusy] = useState(false);
-  const [conversations, setConversations] = useState([]);\n  const [unreadCounts, setUnreadCounts] = useState({});\n  const [incomingToast, setIncomingToast] = useState('');
+  const [conversations, setConversations] = useState([]);
+  const [unreadCounts, setUnreadCounts] = useState({});
+  const [incomingToast, setIncomingToast] = useState('');
   const [messages, setMessages] = useState([]);
   const [active, setActive] = useState('');
   const [draft, setDraft] = useState('');
@@ -488,7 +490,8 @@ export default function RiverSpaceSignals() {
         <nav className="mt-2 flex items-center gap-2 overflow-x-auto whitespace-nowrap pb-0.5 md:justify-end"><Link href="/riverworld-live" className="shrink-0 rounded-full bg-emerald-300 px-3 py-1.5 text-xs font-bold text-slate-900 hover:bg-emerald-200">🌍 Mondo in diretta</Link><button type="button" onClick={installApp} className="shrink-0 rounded-full bg-amber-300 px-3 py-1.5 text-xs font-bold text-slate-900 hover:bg-amber-200">📲 Installa Signals</button><Link href="/" className="shrink-0 rounded-full border border-white/40 px-3 py-1.5 text-xs hover:bg-white/10">RiverSpendShop</Link><Link href="/riverspend-social-network" className="shrink-0 rounded-full border border-white/40 px-3 py-1.5 text-xs hover:bg-white/10">Comunità</Link></nav>
       </header>
 
-      {incomingToast && <div role="status" className="fixed left-3 right-3 top-3 z-50 mx-auto max-w-md rounded-2xl bg-[#073b4c] px-4 py-3 text-sm font-semibold text-white shadow-xl">💬 {incomingToast}</div>}\n      {installMessage && <div role="status" className="mx-auto mt-3 max-w-6xl rounded-xl bg-amber-100 px-4 py-3 text-sm text-amber-900">{installMessage}</div>}
+      {incomingToast && <div role="status" className="fixed left-3 right-3 top-3 z-50 mx-auto max-w-md rounded-2xl bg-[#073b4c] px-4 py-3 text-sm font-semibold text-white shadow-xl">💬 {incomingToast}</div>}
+      {installMessage && <div role="status" className="mx-auto mt-3 max-w-6xl rounded-xl bg-amber-100 px-4 py-3 text-sm text-amber-900">{installMessage}</div>}
       {error && <div role="alert" className="mx-auto mt-3 max-w-6xl rounded-xl bg-red-100 px-4 py-3 text-sm text-red-800">{error}</div>}
       {notice && <div role="status" className="mx-auto mt-3 max-w-6xl rounded-xl bg-emerald-100 px-4 py-3 text-sm text-emerald-800">{notice}</div>}
 
