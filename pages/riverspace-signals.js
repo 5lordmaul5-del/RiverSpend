@@ -6,6 +6,7 @@ import { ensureEnigmaDevice, encryptEnigmaText, decryptEnigmaText, encryptEnigma
 
 export default function RiverSpaceSignals() {
   const [user, setUser] = useState(null);
+  const [authReady, setAuthReady] = useState(false);
   const [email, setEmail] = useState('');
   const [profiles, setProfiles] = useState([]);
   const [statuses, setStatuses] = useState([]);
@@ -186,8 +187,24 @@ export default function RiverSpaceSignals() {
 
   useEffect(() => {
     let alive = true;
-    supabase.auth.getUser().then(({ data }) => { if (alive) setUser(data?.user || null); });
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => setUser(session?.user || null));
+    // Restore the locally persisted Supabase session first. getSession reads the
+    // device session; getUser performs a server round-trip and can briefly report
+    // no user while a mobile app is resuming or refreshing its token.
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!alive) return;
+      setUser(session?.user || null);
+      setAuthReady(true);
+    });
+    supabase.auth.getSession().then(({ data, error: sessionError }) => {
+      if (!alive) return;
+      if (sessionError) setError('Ripristino sessione non riuscito: ' + sessionError.message);
+      setUser(data?.session?.user || null);
+      setAuthReady(true);
+    }).catch(error => {
+      if (!alive) return;
+      setError('Non riesco a ripristinare la sessione: ' + (error?.message || 'errore sconosciuto'));
+      setAuthReady(true);
+    });
     return () => { alive = false; listener?.subscription?.unsubscribe(); };
   }, []);
 
@@ -508,7 +525,7 @@ export default function RiverSpaceSignals() {
       {error && <div role="alert" className="mx-auto mt-3 max-w-6xl rounded-xl bg-red-100 px-4 py-3 text-sm text-red-800">{error}</div>}
       {notice && <div role="status" className="mx-auto mt-3 max-w-6xl rounded-xl bg-emerald-100 px-4 py-3 text-sm text-emerald-800">{notice}</div>}
 
-      {!user ? <section className="mx-auto mt-12 max-w-md rounded-3xl bg-white p-7 shadow-lg">
+      {!authReady ? <section className="mx-auto mt-12 max-w-md rounded-3xl bg-white p-7 text-center text-sm text-slate-600 shadow-lg">Ripristino della sessione…</section> : !user ? <section className="mx-auto mt-12 max-w-md rounded-3xl bg-white p-7 shadow-lg">
         <div className="mb-5 text-center text-5xl">💬</div>
         <h1 className="text-center text-2xl font-bold text-[#073b4c]">Entra in Signals</h1>
         <p className="mt-2 text-center text-sm text-slate-600">Accedi con la tua email per inviare e ricevere messaggi privati.</p>
@@ -549,7 +566,7 @@ export default function RiverSpaceSignals() {
                 <div className="mt-2 flex justify-end gap-2"><button type="button" onClick={() => { setStatusFile(null); setStatusCaption(''); }} className="text-xs text-slate-500">Annulla</button><button type="button" disabled={statusBusy || (!statusFile && !statusCaption.trim())} onClick={publishStatus} className="rounded-lg bg-teal-700 px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-50">{statusBusy ? 'Pubblico…' : 'Condividi'}</button></div>
               </div>}
             </div>
-            <div className="flex items-center justify-between"><h1 className="text-xl font-bold text-[#073b4c]">Messaggi</h1><button onClick={() => supabase.auth.signOut()} className="text-xs text-slate-500 underline">Esci</button></div>
+            <div className="flex items-center justify-between"><h1 className="text-xl font-bold text-[#073b4c]">Messaggi</h1><span className="text-[11px] text-emerald-700">● Sessione salvata</span></div>
             <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Cerca persone…" className="mt-3 w-full rounded-xl bg-slate-100 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-teal-500" />
           </div>
           <div className="p-3">
