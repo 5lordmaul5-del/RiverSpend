@@ -59,3 +59,19 @@ A module can be labelled LIVE only after:
 - RiverSSAI helper is currently a static guidance panel, not a connected assistant engine. The planned Signals integration is BASE only; the full RiverSSAI 10.0 remains a separate product.
 - Several menu entries are informational notices rather than complete workflows.
 - This document and the Universe page are a roadmap/overview, not proof of implementation.
+
+## Additional requested experiences
+13. Random chat discovery — opt-in matching queue, age/safety controls where legally required, block/report, anti-spam limits and immediate exit. Never expose a user's identity or location by default.
+14. Nearby people — opt-in approximate-radius discovery only while enabled; no continuous background tracking, no exact coordinates shown, and clear pause/delete controls. Availability and privacy safeguards must be validated before release.
+15. Local 🚩 — an explicit location-sharing action attached to a message or temporary live share, with recipient selection, duration, revoke control and clear preview before sending.
+16. Groups by purpose — create and manage School, Work, Sport and custom groups, with roles, invite links, member approval, moderation, reporting and group-level ENIGMA design review.
+17. Food ordering — discovery of participating pizza, hamburger, sushi and other restaurants, menu/cart, delivery or pickup, order confirmation, status updates and provider-backed payment. Until merchant/order integrations exist, Signals must not pretend an order was placed.
+18. Compact action strip — money actions (send, request, donate, receive donation) remain small and on one horizontal row on mobile; other actions live in an accessible overflow/attachment menu.
+19. One-time lifetime access — present the proposed EUR-equivalent local price before first use, with one verified payment per account and restore after reinstall/new phone. The checkout stays disabled until a provider, webhook, refunds and entitlement checks are implemented.
+
+## Safety and privacy constraints for discovery
+- Nearby and random matching are strictly opt-in and can be disabled immediately.
+- Never publish precise GPS coordinates to a public directory. Use coarse distance buckets and avoid exposing home/work patterns.
+- Location sharing is per-conversation, time-limited and revocable; the user previews what will be shared.
+- Groups and discovery require block/report, rate limits, moderation and abuse response before public launch.
+- Restaurant ordering requires real merchant availability, menus, prices, delivery areas and order acceptance; do not label a chat message as a confirmed order.
