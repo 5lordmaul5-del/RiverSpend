@@ -622,10 +622,10 @@ export default function RiverSpaceSignals() {
                 ? <button type="button" disabled={enigmaBusy} onClick={disableEnigma} className="shrink-0 rounded-full border border-amber-700 px-2.5 py-1 text-[11px] font-semibold text-amber-900">Disattiva ENIGMA</button>
                 : <button type="button" disabled={enigmaBusy || !deviceInfo} onClick={enableEnigma} className="shrink-0 rounded-full bg-[#073b4c] px-2.5 py-1 text-[11px] font-semibold text-white disabled:opacity-50">{enigmaBusy ? 'Attendo…' : myEnigmaConsent ? 'Consenso inviato' : 'Attiva ENIGMA'}</button>}
             </div>
-            <div className="flex shrink-0 items-center gap-1 overflow-x-auto whitespace-nowrap border-b border-teal-100 bg-teal-50 px-2 py-1">
+            <div className="flex shrink-0 items-center gap-1 overflow-x-auto whitespace-nowrap border-b border-teal-100 bg-teal-50 px-1.5 py-1">
               {[
                 ["💸","Invia","send"],["💰","Richiedi","request"],["🎁","Dona","donate"],["🙏","Ricevi","receive_donation"]
-              ].map(([icon,label,action]) => <button key={action} type="button" onClick={() => setMoneyAction(action)} className="flex h-8 shrink-0 items-center gap-1 rounded-lg bg-white px-2 text-[10px] font-semibold text-teal-900 shadow-sm">{icon} {label}</button>)}
+              ].map(([icon,label,action]) => <button key={action} type="button" onClick={() => setMoneyAction(action)} aria-label={({send:"Invia denaro",request:"Richiedi denaro",donate:"Fai una donazione",receive_donation:"Ricevi una donazione"})[action]} className="flex h-7 shrink-0 items-center gap-0.5 rounded-md bg-white px-1.5 text-[9px] font-semibold text-teal-900 shadow-sm">{icon} {label}</button>)}
             </div>
             {moneyAction && <div className="shrink-0 border-b border-amber-200 bg-amber-50 p-3">
               <form onSubmit={sendMoneyIntent} className="mx-auto max-w-xl space-y-2">
