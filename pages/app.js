@@ -22,11 +22,11 @@ const apps = [
   {
     name: 'RiverSpaceSignals',
     subtitle: 'Messaggistica RiverSpend · ISSA',
-    description: 'La messaggistica integrata in RiverSpendShop, installabile anche come app. Chat, contenuti, emoji e Karma Zen Relax; le funzioni avanzate saranno attivate progressivamente e verificate.',
+    description: 'Installa RiverSignals sul telefono con un passaggio guidato e apri la chat dalla sua icona, senza cercare le opzioni di Chrome.',
     logo: '/icons/riverspace-signals-app.jpg',
     href: '/riverspace-signals',
     color: '#0891b2',
-    action: 'Apri RiverSpaceSignals'
+    action: 'Installa RiverSignals'
   },
   {
     name: 'RiverSSAI 10.0 · Pure Power',
@@ -124,7 +124,7 @@ export default function RiverSpendApps() {
           <header style={{ textAlign: 'center', padding: '30px 0 24px' }}>
             <div style={{ fontSize: 13, letterSpacing: 4, color: '#fbbf24', fontWeight: 800 }}>YOUR SHOP • YOUR FLOW</div>
             <h1 style={{ fontSize: 'clamp(30px,6vw,48px)', lineHeight: 1.1, margin: '12px 0', fontWeight: 900 }}>Le app RiverSpend</h1>
-            <p style={{ color: '#cbd5e1', maxWidth: 650, margin: '0 auto 18px', lineHeight: 1.6 }}>Scegli una delle app RiverSpend. Aprila e usa il menu del browser per aggiungerla alla schermata Home o installarla, quando l’opzione è disponibile.</p>
+            <p style={{ color: '#cbd5e1', maxWidth: 650, margin: '0 auto 18px', lineHeight: 1.6 }}>Scegli un’app e tocca il pulsante dedicato. Quando il dispositivo supporta l’installazione diretta, ti mostreremo subito la richiesta di installazione.</p>
             <button type="button" onClick={async () => {
               const shareData = { title: 'Le app RiverSpend', text: 'Scopri e apri le app RiverSpend!', url: window.location.origin + '/app' };
               try {
@@ -150,7 +150,7 @@ export default function RiverSpendApps() {
                 <h2 style={{ fontSize: 21, fontWeight: 850, margin: '0 0 5px' }}>{app.name}</h2>
                 <div style={{ color: '#fbbf24', fontWeight: 700, fontSize: 13, marginBottom: 10 }}>{app.subtitle}</div>
                 <p style={{ color: '#cbd5e1', lineHeight: 1.55, fontSize: 14, flexGrow: 1 }}>{app.description}</p>
-                <a href={app.href} style={{ display: 'block', textAlign: 'center', background: '#06b6d4', color: '#062b45', fontWeight: 850, borderRadius: 12, padding: '12px 10px', textDecoration: 'none' }}>{app.action} →</a>
+                <a href={app.name === 'RiverSpaceSignals' ? '/riverspace-signals?install=1' : app.href} style={{ display: 'block', textAlign: 'center', background: '#06b6d4', color: '#062b45', fontWeight: 850, borderRadius: 12, padding: '12px 10px', textDecoration: 'none' }}>{app.action} →</a>
               </article>
             ))}
           </section>

@@ -24,12 +24,20 @@ export default function App({ Component, pageProps }) {
   const themeColor = selectedApp ? selectedApp.color : '#06b6d4';
 
   useEffect(() => {
+    // Capture Chrome's install event at the app shell, before route-specific pages mount.
+    const captureInstall = (event) => {
+      event.preventDefault();
+      window.__riverspendInstallPrompt = event;
+      window.dispatchEvent(new Event('riverspend:install-ready'));
+    };
+    window.addEventListener('beforeinstallprompt', captureInstall);
     // Keep the existing notification service worker active and make the site install-friendly.
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch((error) => {
         console.warn('RiverSpend service worker registration failed:', error);
       });
     }
+    return () => window.removeEventListener('beforeinstallprompt', captureInstall);
   }, []);
 
   return (

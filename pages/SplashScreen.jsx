@@ -16,7 +16,7 @@ export default function SplashScreen({ onEnter }) {
       try {
         window.speechSynthesis.cancel();
         const welcome = new SpeechSynthesisUtterance(
-          'Bip… bip… Sistema RiverSpend attivo. Benvenuti su RiverSpendShop! Il vostro shopping, il vostro mondo. Io sono Nova, la vostra assistente virtuale. Pronti a esplorare? RiverSpendShop… il futuro dello shopping è qui!'
+          'Bip… bip… Benvenuti su RiverSpendShop! Il vostro shopping, il vostro mondo. Io sono Nova, la vostra assistente virtuale. Pronti a esplorare? RiverSpendShop… il futuro dello shopping è qui!'
         );
         welcome.lang = 'it-IT';
         welcome.pitch = 0.78;
