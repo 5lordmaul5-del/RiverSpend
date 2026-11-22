@@ -188,6 +188,7 @@ export default function RiverSpaceSignals() {
     const standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
     setIsInstalled(standalone);
     if (window.location.search.includes('install=1') && !standalone) setInstallPanelOpen(true);
+    if (new URLSearchParams(window.location.search).get('tools') === '1') setFieldToolsOpen(true);
     const installReady = () => setInstallPrompt(window.__riverspendInstallPrompt || null);
     setInstallPrompt(window.__riverspendInstallPrompt || null);
     window.addEventListener('beforeinstallprompt', beforeInstall);
@@ -492,15 +493,17 @@ export default function RiverSpaceSignals() {
     try {
       setError('');
       const stream = await navigator.mediaDevices.getUserMedia(kind === 'video' ? { audio: true, video: { facingMode: 'user' } } : { audio: true });
-      const options = kind === 'video' ? { mimeType: 'video/webm' } : { mimeType: 'audio/webm' };
-      const recorder = new MediaRecorder(stream, MediaRecorder.isTypeSupported(options.mimeType) ? options : undefined);
+      const candidates = kind === 'video' ? ['video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm', 'video/mp4'] : ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4'];
+      const mimeType = candidates.find(value => MediaRecorder.isTypeSupported?.(value));
+      const recorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
       const chunks = []; recorderRef.current = recorder;
       recorder.ondataavailable = event => { if (event.data?.size) chunks.push(event.data); };
-      recorder.onerror = () => setError('Errore durante la registrazione.');
+      recorder.onerror = () => { setError('Errore durante la registrazione.'); stream.getTracks().forEach(track => track.stop()); recorderRef.current = null; setRecording(''); };
       recorder.onstop = () => {
         const type = recorder.mimeType || (kind === 'video' ? 'video/webm' : 'audio/webm');
         const blob = new Blob(chunks, { type });
-        if (blob.size) setAttachment(new File([blob], (kind === 'video' ? 'video-messaggio-' : 'messaggio-vocale-') + Date.now() + '.webm', { type }));
+        const extension = type.includes('mp4') ? (kind === 'video' ? 'mp4' : 'm4a') : 'webm';
+        if (blob.size) setAttachment(new File([blob], (kind === 'video' ? 'video-messaggio-' : 'messaggio-vocale-') + Date.now() + '.' + extension, { type }));
         stream.getTracks().forEach(track => track.stop()); recorderRef.current = null; setRecording('');
       };
       recorder.start(500); setRecording(kind); setAttachMenuOpen(false);
@@ -745,17 +748,18 @@ export default function RiverSpaceSignals() {
                       ['🚩','Segnalazioni persone e canali','Le segnalazioni richiedono ancora un flusso dedicato.'],
                       ['ℹ️','Info App','RiverSignals · RiverSpend']
                     ].map(([icon,label,detail]) => <button key={label} type="button" onClick={() => { setMoreMenuOpen(false); setNotice(detail); }} className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-teal-50"><span className="text-lg">{icon}</span><span>{label}</span></button>)}
-                    <Link href="/riversignals-universe#alfabeto-nato" onClick={() => setMoreMenuOpen(false)} className="flex w-full items-center gap-3 border-t border-slate-100 px-4 py-3 text-left font-semibold text-emerald-900 hover:bg-emerald-50"><span className="text-lg">🔠</span><span>Alfabeto NATO · Mimetica</span></Link>
+                    <button type="button" onClick={() => { setMoreMenuOpen(false); setFieldToolsOpen(true); }} className="flex w-full items-center gap-3 border-t border-slate-100 px-4 py-3 text-left font-semibold text-emerald-900 hover:bg-emerald-50"><span className="text-lg">🔠</span><span>Strumenti NATO · Morse · Walkie</span></button>
                   </div>}
                 </div>
               </div>
             </div>
             <div className="flex shrink-0 items-center gap-2 overflow-x-auto whitespace-nowrap border-b border-amber-200 bg-amber-50 px-2 py-1.5">
-              <div className="min-w-0 flex-1 truncate text-[11px] text-amber-950">{enigmaActive ? '🔐 ENIGMA attivo · cifratura end-to-end in versione beta' : myEnigmaConsent ? '🔐 Hai chiesto ENIGMA: in attesa del consenso dell’altra persona' : '🛡️ Chat normale · ENIGMA è facoltativo e richiede il consenso di entrambi'}</div>
+              <div className="min-w-0 flex-1 truncate text-[11px] text-amber-950">{enigmaActive ? '🔐 ENIGMA Beta attivo · cifratura ECDH/AES-GCM su questa chat' : myEnigmaConsent ? '🔐 Hai chiesto ENIGMA: in attesa del consenso dell’altra persona' : '🛡️ Chat normale · ENIGMA Beta è facoltativo e richiede il consenso di entrambi'}</div>
               {enigmaActive
                 ? <button type="button" disabled={enigmaBusy} onClick={disableEnigma} className="shrink-0 rounded-full border border-amber-700 px-2.5 py-1 text-[11px] font-semibold text-amber-900">Disattiva ENIGMA</button>
                 : <button type="button" disabled={enigmaBusy || !deviceInfo} onClick={enableEnigma} className="shrink-0 rounded-full bg-[#073b4c] px-2.5 py-1 text-[11px] font-semibold text-white disabled:opacity-50">{enigmaBusy ? 'Attendo…' : myEnigmaConsent ? 'Consenso inviato' : 'Attiva ENIGMA'}</button>}
             </div>
+            <p className="shrink-0 border-b border-amber-200 bg-amber-50 px-3 pb-2 text-[10px] leading-relaxed text-amber-950">ENIGMA è una beta non sottoposta ad audit indipendente: le chiavi sono conservate nel browser di ciascun dispositivo e non esiste ancora una verifica dell’impronta con il contatto. Non cancellare i dati del browser o disinstallare prima di aver protetto le chiavi.</p>
             <div className="flex shrink-0 items-center gap-1 overflow-x-auto whitespace-nowrap border-b border-teal-100 bg-teal-50 px-1.5 py-1">
               {[
                 ["💸","Invia","send"],["💰","Richiedi","request"],["🎁","Dona","donate"],["🙏","Ricevi","receive_donation"]
