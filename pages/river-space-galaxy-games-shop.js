@@ -3,7 +3,7 @@ import { useState } from 'react';
 
 const products = [
   { id:'RSGG-DROID-001', name:'Droide standard', category:'Droidi e intelligenza', icon:'🤖', price:0.01, unit:'cad.', description:'Unità robotica virtuale per le attività e le future squadre di gioco.', state:'Prezzo indicativo definito' },
-  { id:'RSGG-SHIP-001', name:'Astronave standard', category:'Astronavi e flotte', icon:'🚀', price:10, unit:'cad.', description:'Veicolo spaziale virtuale per l'esplorazione dell’universo.', state:'Prezzo indicativo definito' },
+  { id:'RSGG-SHIP-001', name:'Astronave standard', category:'Astronavi e flotte', icon:'🚀', price:10, unit:'cad.', description:"Veicolo spaziale virtuale per l’esplorazione dell’universo.", state:'Prezzo indicativo definito' },
   { id:'RSGG-COUNCIL-001', name:'Gran Consiglio', category:'Città e civiltà', icon:'🏛️', price:1000, unit:'pacchetto', description:'Pacchetto virtuale di rappresentanza e gestione del Gran Consiglio.', state:'Prezzo indicativo definito' },
   { id:'RSGG-DEFENSE-001', name:'Difesa orbitale', category:'Difesa e tecnologia', icon:'🛡️', price:null, unit:'modulo', description:'Modulo virtuale di protezione per basi e stazioni.', state:'Prezzo da definire' },
   { id:'RSGG-RESOURCE-001', name:'Pacchetto risorse', category:'Materiali e risorse', icon:'💎', price:null, unit:'pacchetto', description:'Materiali virtuali per le future attività di costruzione e ricerca.', state:'Prezzo da definire' },
