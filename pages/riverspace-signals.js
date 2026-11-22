@@ -2,6 +2,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { supabase } from '../lib/supabase';
+import SignalsFieldTools from '../components/SignalsFieldTools';
+import SignalsArea51 from '../components/SignalsArea51';
 import { ensureEnigmaDevice, encryptEnigmaText, decryptEnigmaText, encryptEnigmaFile, decryptEnigmaFile, isEnigmaCiphertext } from '../lib/signals-enigma';
 
 export default function RiverSpaceSignals() {
@@ -40,11 +42,21 @@ export default function RiverSpaceSignals() {
   const [moneyReason, setMoneyReason] = useState('');
   const [moreMenuOpen, setMoreMenuOpen] = useState(false);
   const [assistantOpen, setAssistantOpen] = useState(false);
+  const [assistantMessages, setAssistantMessages] = useState([]);
+  const [assistantDraft, setAssistantDraft] = useState('');
+  const [assistantBusy, setAssistantBusy] = useState(false);
+  const [assistantError, setAssistantError] = useState('');
+  const [fieldToolsOpen, setFieldToolsOpen] = useState(false);
+  const [fieldToolsTab, setFieldToolsTab] = useState('nato');
+  const [area51Open, setArea51Open] = useState(false);
+  const [loginCooldownUntil, setLoginCooldownUntil] = useState(0);
+  const [loginCooldownSeconds, setLoginCooldownSeconds] = useState(0);
   const [deviceInfo, setDeviceInfo] = useState(null);
   const [enigmaConsents, setEnigmaConsents] = useState([]);
   const [enigmaBusy, setEnigmaBusy] = useState(false);
   const recorderRef = useRef(null);
   const messagesEndRef = useRef(null);
+  const mediaUrlsRef = useRef({});
 
   const activeConversation = conversations.find(c => c.id === active);
   const otherId = activeConversation
@@ -156,6 +168,11 @@ export default function RiverSpaceSignals() {
       }
       return row;
     }));
+    const nextMediaValues = Object.values(media);
+    Object.values(mediaUrlsRef.current).forEach(url => {
+      if (typeof url === 'string' && url.startsWith('blob:') && !nextMediaValues.includes(url)) URL.revokeObjectURL(url);
+    });
+    mediaUrlsRef.current = media;
     setMessages(decoded); setMediaUrls(media);
   }, [user, otherId, refreshUnreadCounts]);
 
@@ -174,6 +191,7 @@ export default function RiverSpaceSignals() {
     const standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
     setIsInstalled(standalone);
     if (window.location.search.includes('install=1') && !standalone) setInstallPanelOpen(true);
+    if (new URLSearchParams(window.location.search).get('tools') === '1') setFieldToolsOpen(true);
     const installReady = () => setInstallPrompt(window.__riverspendInstallPrompt || null);
     setInstallPrompt(window.__riverspendInstallPrompt || null);
     window.addEventListener('beforeinstallprompt', beforeInstall);
@@ -197,6 +215,37 @@ export default function RiverSpaceSignals() {
     setInstallPrompt(null);
     if (choice?.outcome === 'accepted') setInstallPanelOpen(false);
   }
+
+  useEffect(() => {
+    if (!loginCooldownUntil) { setLoginCooldownSeconds(0); return; }
+    const update = () => {
+      const remaining = Math.max(0, Math.ceil((loginCooldownUntil - Date.now()) / 1000));
+      setLoginCooldownSeconds(remaining);
+      if (remaining === 0) setLoginCooldownUntil(0);
+    };
+    update();
+    const timer = window.setInterval(update, 1000);
+    return () => window.clearInterval(timer);
+  }, [loginCooldownUntil]);
+
+  useEffect(() => {
+    if (!authReady || typeof window === 'undefined') return;
+    const url = new URL(window.location.href);
+    const authError = url.searchParams.get('error_description') || url.searchParams.get('error');
+    if (authError) {
+      setError('Accesso email non completato: ' + authError.replace(/\+/g, ' '));
+      url.searchParams.delete('error_description');
+      url.searchParams.delete('error');
+      url.searchParams.delete('error_code');
+      window.history.replaceState({}, document.title, url.pathname + url.search + url.hash);
+      return;
+    }
+    if (user && url.searchParams.get('auth_return') === '1') {
+      setNotice('Accesso confermato. La sessione RiverSignals è stata ripristinata su questo dispositivo.');
+      url.searchParams.delete('auth_return');
+      window.history.replaceState({}, document.title, url.pathname + url.search + url.hash);
+    }
+  }, [authReady, user]);
 
   useEffect(() => {
     let alive = true;
@@ -256,6 +305,12 @@ export default function RiverSpaceSignals() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
   }, [messages]);
 
+  useEffect(() => () => {
+    Object.values(mediaUrlsRef.current).forEach(url => {
+      if (typeof url === 'string' && url.startsWith('blob:')) URL.revokeObjectURL(url);
+    });
+  }, []);
+
   useEffect(() => {
     if (!user) return;
     const channel = supabase.channel('signals-statuses-' + user.id)
@@ -294,14 +349,36 @@ export default function RiverSpaceSignals() {
   useEffect(() => { if (!incomingToast) return; const id = setTimeout(() => setIncomingToast(''), 5000); return () => clearTimeout(id); }, [incomingToast]);
 
   async function sendLogin(e) {
-    e.preventDefault(); setBusy(true); setError(''); setNotice('');
-    const { error: e1 } = await supabase.auth.signInWithOtp({
-      email: email.trim(),
-      options: { emailRedirectTo: 'https://www.riverspend.com/riverspace-signals' }
-    });
-    setBusy(false);
-    if (e1) setError(e1.message);
-    else setNotice('Link di accesso inviato. Controlla la tua email e aprilo per entrare in Signals.');
+    e.preventDefault();
+    if (busy) return;
+    if (loginCooldownUntil > Date.now()) {
+      setError('Hai già richiesto un link. Attendi ancora ' + Math.ceil((loginCooldownUntil - Date.now()) / 1000) + ' secondi prima di riprovare.');
+      return;
+    }
+    const cleanEmail = email.trim();
+    if (!cleanEmail) { setError('Inserisci la tua email.'); return; }
+    setBusy(true); setError(''); setNotice('');
+    try {
+      const { error: authError } = await supabase.auth.signInWithOtp({
+        email: cleanEmail,
+        options: { emailRedirectTo: window.location.origin + '/riverspace-signals?auth_return=1' }
+      });
+      if (authError) throw authError;
+      const until = Date.now() + 60000;
+      setLoginCooldownUntil(until);
+      setNotice('Link di accesso inviato. Aprilo una sola volta: il ritorno è impostato sullo stesso ambiente RiverSignals da cui hai richiesto il link.');
+    } catch (authError) {
+      const message = String(authError?.message || 'Invio link non riuscito.');
+      if (/429|rate limit|too many requests|over_email_send_rate_limit/i.test(message)) {
+        const until = Date.now() + 60000;
+        setLoginCooldownUntil(until);
+        setError('Limite temporaneo di invio email raggiunto. Non è un blocco del tuo account: attendi 60 secondi prima di richiedere un altro link.');
+      } else {
+        setError(message);
+      }
+    } finally {
+      setBusy(false);
+    }
   }
 
   async function startChat(person) {
@@ -419,15 +496,17 @@ export default function RiverSpaceSignals() {
     try {
       setError('');
       const stream = await navigator.mediaDevices.getUserMedia(kind === 'video' ? { audio: true, video: { facingMode: 'user' } } : { audio: true });
-      const options = kind === 'video' ? { mimeType: 'video/webm' } : { mimeType: 'audio/webm' };
-      const recorder = new MediaRecorder(stream, MediaRecorder.isTypeSupported(options.mimeType) ? options : undefined);
+      const candidates = kind === 'video' ? ['video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm', 'video/mp4'] : ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4'];
+      const mimeType = candidates.find(value => MediaRecorder.isTypeSupported?.(value));
+      const recorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
       const chunks = []; recorderRef.current = recorder;
       recorder.ondataavailable = event => { if (event.data?.size) chunks.push(event.data); };
-      recorder.onerror = () => setError('Errore durante la registrazione.');
+      recorder.onerror = () => { setError('Errore durante la registrazione.'); stream.getTracks().forEach(track => track.stop()); recorderRef.current = null; setRecording(''); };
       recorder.onstop = () => {
         const type = recorder.mimeType || (kind === 'video' ? 'video/webm' : 'audio/webm');
         const blob = new Blob(chunks, { type });
-        if (blob.size) setAttachment(new File([blob], (kind === 'video' ? 'video-messaggio-' : 'messaggio-vocale-') + Date.now() + '.webm', { type }));
+        const extension = type.includes('mp4') ? (kind === 'video' ? 'mp4' : 'm4a') : 'webm';
+        if (blob.size) setAttachment(new File([blob], (kind === 'video' ? 'video-messaggio-' : 'messaggio-vocale-') + Date.now() + '.' + extension, { type }));
         stream.getTracks().forEach(track => track.stop()); recorderRef.current = null; setRecording('');
       };
       recorder.start(500); setRecording(kind); setAttachMenuOpen(false);
@@ -509,6 +588,37 @@ export default function RiverSpaceSignals() {
     await Promise.all([loadMessages(active), loadConversations(user.id)]);
   }
 
+  async function sendAssistantMessage(e) {
+    e?.preventDefault?.();
+    const content = assistantDraft.trim();
+    if (!content || assistantBusy) return;
+    const nextMessages = [...assistantMessages, { role: 'user', content }].slice(-10);
+    setAssistantMessages(nextMessages);
+    setAssistantDraft('');
+    setAssistantBusy(true);
+    setAssistantError('');
+    try {
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError) throw sessionError;
+      const token = sessionData?.session?.access_token;
+      if (!token) throw new Error('La sessione non è attiva. Accedi di nuovo a RiverSignals.');
+      const response = await fetch('/api/river-ai/signals-base', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+        body: JSON.stringify({ messages: nextMessages })
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(payload?.error || 'RiverSSAI Base non disponibile.');
+      if (typeof payload.answer !== 'string' || !payload.answer.trim()) throw new Error('RiverSSAI Base non ha restituito una risposta valida.');
+      setAssistantMessages(current => [...current, { role: 'assistant', content: payload.answer.trim() }].slice(-10));
+    } catch (assistantError) {
+      setAssistantError(assistantError?.message || 'Connessione RiverSSAI Base non riuscita.');
+      setAssistantDraft(content);
+    } finally {
+      setAssistantBusy(false);
+    }
+  }
+
   const filteredPeople = useMemo(() => {
     const existingContacts = new Set(conversations.map(c => c.participant_one === user?.id ? c.participant_two : c.participant_one));
     return profiles.filter(p => !existingContacts.has(p.id) &&
@@ -530,19 +640,25 @@ export default function RiverSpaceSignals() {
         <div className="mx-auto mb-3 grid h-20 w-20 place-items-center overflow-hidden rounded-2xl bg-teal-50"><img src="/icons/riverspace-signals-app.jpg" alt="RiverSignals" className="h-full w-full object-contain" /></div>
         <h2 id="signals-install-title" className="text-2xl font-black text-[#073b4c]">Installa RiverSignals</h2>
         <p className="mt-2 text-sm leading-relaxed text-slate-600">Aggiungi Signals al telefono e aprilo dalla sua icona, come una normale app.</p>
-        <button type="button" onClick={installApp} disabled={!installPrompt} className="mt-5 w-full rounded-xl bg-[#087e8b] px-4 py-3 font-extrabold text-white shadow-lg disabled:cursor-not-allowed disabled:opacity-50">{installPrompt ? 'INSTALLA RIVERSIGNALS' : 'PREPARO L’INSTALLAZIONE…'}</button>
+        <button type="button" onClick={installApp} className="mt-5 w-full rounded-xl bg-[#087e8b] px-4 py-3 font-extrabold text-white shadow-lg">{installPrompt ? 'INSTALLA RIVERSIGNALS' : 'VERIFICA INSTALLAZIONE'}</button>
         {installMessage && <p className="mt-3 rounded-xl bg-amber-50 p-3 text-xs leading-relaxed text-amber-950">{installMessage}</p>}
         {!installPrompt && <p className="mt-3 text-xs text-slate-500">Se il dispositivo non offre l’installazione automatica, potrai continuare a usare Signals dal sito. La disponibilità dipende dal browser e dal sistema operativo.</p>}
         <button type="button" onClick={() => setInstallPanelOpen(false)} className="mt-4 text-sm font-semibold text-slate-500 underline">Continua sul sito</button>
       </section>
     </div>}
+    <SignalsArea51 open={area51Open} onClose={() => setArea51Open(false)} onOpenFieldTools={(tab) => { setFieldToolsTab(tab); setFieldToolsOpen(true); }} onOpenEnigma={() => setNotice(active ? 'ENIGMA è disponibile nella barra di sicurezza della conversazione aperta.' : 'Apri una conversazione per attivare ENIGMA con il consenso di entrambi.')} />
+    <SignalsFieldTools open={fieldToolsOpen} onClose={() => setFieldToolsOpen(false)} initialTab={fieldToolsTab} canTalk={Boolean(user && active)} onVoiceReady={(file) => {
+      setAttachment(file);
+      setAttachMenuOpen(false);
+      setNotice('Messaggio PTT pronto nella conversazione. Puoi ascoltarlo e premere Invia.');
+    }} />
     <main translate="no" className="flex h-[100dvh] flex-col overflow-hidden bg-[#eaf7f7] text-slate-800">
       <header className="shrink-0 bg-[#073b4c] px-3 py-2 text-white shadow md:px-4 md:py-3">
         <div className="flex min-w-0 items-center gap-2">
           <img src="/icons/riverspace-signals-app.jpg" alt="RiverSpaceSignals" className="h-8 w-8 shrink-0 rounded-full bg-white p-1 md:h-10 md:w-10" />
           <div className="min-w-0"><div className="truncate text-base font-bold tracking-wide md:text-lg">RiverSpaceSignals</div><div className="truncate text-[10px] text-teal-100 md:text-xs">YOUR SPACE · YOUR SIGNAL</div></div>
         </div>
-        <nav className="mt-2 flex items-center gap-2 overflow-x-auto whitespace-nowrap pb-0.5 md:justify-end"><Link href="/riverworld-live" className="shrink-0 rounded-full bg-emerald-300 px-3 py-1.5 text-xs font-bold text-slate-900 hover:bg-emerald-200">🌍 Mondo in diretta</Link><Link href="/riversignals-universe" className="shrink-0 rounded-full border border-amber-300/70 bg-white/10 px-3 py-1.5 text-xs font-bold text-amber-100 hover:bg-white/20">✨ Esplora Signals</Link><button type="button" onClick={installApp} className="shrink-0 rounded-full bg-amber-300 px-3 py-1.5 text-xs font-bold text-slate-900 hover:bg-amber-200">📲 Installa Signals</button><Link href="/" className="shrink-0 rounded-full border border-white/40 px-3 py-1.5 text-xs hover:bg-white/10">RiverSpendShop</Link><Link href="/riverspend-social-network" className="shrink-0 rounded-full border border-white/40 px-3 py-1.5 text-xs hover:bg-white/10">Comunità</Link></nav>
+        <nav className="mt-2 flex items-center gap-2 overflow-x-auto whitespace-nowrap pb-0.5 md:justify-end"><button type="button" onClick={() => setArea51Open(true)} className="shrink-0 rounded-full border-2 border-amber-300 bg-[#263b2a] px-3 py-1.5 text-xs font-black text-amber-100 shadow-[0_0_12px_#d4b34f44]">🚨 AREA51 · TOP SECRET</button><button type="button" onClick={() => { setFieldToolsTab('nato'); setFieldToolsOpen(true); }} className="shrink-0 rounded-full bg-[#dce5d3] px-3 py-1.5 text-xs font-black text-[#263b2a]">🔠 Morse · Walkie</button><Link href="/riverworld-live" className="shrink-0 rounded-full bg-emerald-300 px-3 py-1.5 text-xs font-bold text-slate-900 hover:bg-emerald-200">🌍 Mondo in diretta</Link><Link href="/riversignals-universe" className="shrink-0 rounded-full border border-amber-300/70 bg-white/10 px-3 py-1.5 text-xs font-bold text-amber-100 hover:bg-white/20">✨ Esplora Signals</Link><button type="button" onClick={installApp} className="shrink-0 rounded-full bg-amber-300 px-3 py-1.5 text-xs font-bold text-slate-900 hover:bg-amber-200">📲 Installa Signals</button><Link href="/" className="shrink-0 rounded-full border border-white/40 px-3 py-1.5 text-xs hover:bg-white/10">RiverSpendShop</Link><Link href="/riverspend-social-network" className="shrink-0 rounded-full border border-white/40 px-3 py-1.5 text-xs hover:bg-white/10">Comunità</Link></nav>
       </header>
 
       {incomingToast && <div role="status" className="fixed left-3 right-3 top-3 z-50 mx-auto max-w-md rounded-2xl bg-[#073b4c] px-4 py-3 text-sm font-semibold text-white shadow-xl">💬 {incomingToast}</div>}
@@ -557,9 +673,9 @@ export default function RiverSpaceSignals() {
         <form onSubmit={sendLogin} className="mt-6 space-y-3">
           <label className="block text-sm font-semibold">La tua email</label>
           <input type="email" required value={email} onChange={e => setEmail(e.target.value)} placeholder="nome@email.com" className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-teal-600" />
-          <button disabled={busy} className="w-full rounded-xl bg-[#087e8b] px-4 py-3 font-semibold text-white disabled:opacity-50">{busy ? 'Invio…' : 'Ricevi il link di accesso'}</button>
+          <button disabled={busy || loginCooldownSeconds > 0} className="w-full rounded-xl bg-[#087e8b] px-4 py-3 font-semibold text-white disabled:opacity-50">{busy ? 'Invio…' : loginCooldownSeconds > 0 ? 'Riprova tra ' + loginCooldownSeconds + ' s' : 'Ricevi il link di accesso'}</button>
         </form>
-        <p className="mt-4 text-center text-xs text-slate-500">L'accesso avviene tramite link email sicuro.</p>
+        <p className="mt-4 text-center text-xs text-slate-500">L'accesso avviene tramite link email sicuro. Dopo il primo accesso, Signals mantiene la sessione sul dispositivo; non richiedere un nuovo link a ogni apertura.</p>
       </section> : <section className="mx-auto grid min-h-0 w-full max-w-6xl flex-1 grid-cols-1 overflow-hidden bg-white shadow-xl md:grid-cols-[320px_1fr] md:rounded-3xl">
         <aside className={`min-h-0 overflow-y-auto border-r border-slate-200 ${active ? 'hidden md:block' : 'block'}`}>
           <div className="border-b border-slate-200 p-4">
@@ -636,17 +752,18 @@ export default function RiverSpaceSignals() {
                       ['🚩','Segnalazioni persone e canali','Le segnalazioni richiedono ancora un flusso dedicato.'],
                       ['ℹ️','Info App','RiverSignals · RiverSpend']
                     ].map(([icon,label,detail]) => <button key={label} type="button" onClick={() => { setMoreMenuOpen(false); setNotice(detail); }} className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-teal-50"><span className="text-lg">{icon}</span><span>{label}</span></button>)}
-                    <Link href="/riversignals-universe#alfabeto-nato" onClick={() => setMoreMenuOpen(false)} className="flex w-full items-center gap-3 border-t border-slate-100 px-4 py-3 text-left font-semibold text-emerald-900 hover:bg-emerald-50"><span className="text-lg">🔠</span><span>Alfabeto NATO · Mimetica</span></Link>
+                    <button type="button" onClick={() => { setMoreMenuOpen(false); setArea51Open(true); }} className="flex w-full items-center gap-3 border-t border-slate-100 px-4 py-3 text-left font-semibold text-emerald-900 hover:bg-emerald-50"><span className="text-lg">🚨</span><span>AREA51 · TOP SECRET</span></button>
                   </div>}
                 </div>
               </div>
             </div>
             <div className="flex shrink-0 items-center gap-2 overflow-x-auto whitespace-nowrap border-b border-amber-200 bg-amber-50 px-2 py-1.5">
-              <div className="min-w-0 flex-1 truncate text-[11px] text-amber-950">{enigmaActive ? '🔐 ENIGMA attivo · cifratura end-to-end in versione beta' : myEnigmaConsent ? '🔐 Hai chiesto ENIGMA: in attesa del consenso dell’altra persona' : '🛡️ Chat normale · ENIGMA è facoltativo e richiede il consenso di entrambi'}</div>
+              <div className="min-w-0 flex-1 truncate text-[11px] text-amber-950">{enigmaActive ? '🔐 ENIGMA Beta attivo · cifratura ECDH/AES-GCM su questa chat' : myEnigmaConsent ? '🔐 Hai chiesto ENIGMA: in attesa del consenso dell’altra persona' : '🛡️ Chat normale · ENIGMA Beta è facoltativo e richiede il consenso di entrambi'}</div>
               {enigmaActive
                 ? <button type="button" disabled={enigmaBusy} onClick={disableEnigma} className="shrink-0 rounded-full border border-amber-700 px-2.5 py-1 text-[11px] font-semibold text-amber-900">Disattiva ENIGMA</button>
                 : <button type="button" disabled={enigmaBusy || !deviceInfo} onClick={enableEnigma} className="shrink-0 rounded-full bg-[#073b4c] px-2.5 py-1 text-[11px] font-semibold text-white disabled:opacity-50">{enigmaBusy ? 'Attendo…' : myEnigmaConsent ? 'Consenso inviato' : 'Attiva ENIGMA'}</button>}
             </div>
+            <p className="shrink-0 border-b border-amber-200 bg-amber-50 px-3 pb-2 text-[10px] leading-relaxed text-amber-950">ENIGMA è una beta non sottoposta ad audit indipendente: le chiavi sono conservate nel browser di ciascun dispositivo e non esiste ancora una verifica dell’impronta con il contatto. Non cancellare i dati del browser o disinstallare prima di aver protetto le chiavi.</p>
             <div className="flex shrink-0 items-center gap-1 overflow-x-auto whitespace-nowrap border-b border-teal-100 bg-teal-50 px-1.5 py-1">
               {[
                 ["💸","Invia","send"],["💰","Richiedi","request"],["🎁","Dona","donate"],["🙏","Ricevi","receive_donation"]
@@ -711,12 +828,21 @@ export default function RiverSpaceSignals() {
         </div>
       </div>}
       {user && <div className="fixed bottom-20 right-4 z-30 flex flex-col items-end gap-2">
-        {assistantOpen && <div className="w-72 rounded-2xl border border-teal-100 bg-white p-4 shadow-2xl">
-          <div className="mb-2 flex items-center justify-between"><strong className="text-sm text-[#073b4c]">RiverSSAI · Assistente</strong><button type="button" onClick={() => setAssistantOpen(false)} aria-label="Chiudi assistente">×</button></div>
-          <p className="text-xs leading-relaxed text-slate-600">Ciao! Sono l’assistente di RiverSignals. Posso aiutarti a orientarti nell’app. Il collegamento al motore conversazionale RiverSSAI sarà attivato quando sarà disponibile nel backend.</p>
-          <div className="mt-3 flex flex-wrap gap-2"><button type="button" onClick={() => setNotice('Per la privacy: condividi dati personali solo con persone di cui ti fidi.')} className="rounded-full bg-teal-50 px-3 py-2 text-xs text-teal-900">Privacy</button><button type="button" onClick={() => setNotice('Per assistenza, usa il menu ⋮ della conversazione.')} className="rounded-full bg-teal-50 px-3 py-2 text-xs text-teal-900">Aiuto</button></div>
-        </div>}
-        <button type="button" onClick={() => setAssistantOpen(v => !v)} aria-label="Apri RiverSSAI" title="RiverSSAI" className="grid h-12 w-12 place-items-center rounded-full border-2 border-amber-300 bg-[#073b4c] text-2xl text-white shadow-xl">🤖</button>
+        {assistantOpen && <section className="flex max-h-[70dvh] w-[min(92vw,360px)] flex-col overflow-hidden rounded-2xl border border-amber-300/70 bg-white shadow-2xl">
+          <header className="flex items-center justify-between gap-2 bg-[#073b4c] px-3 py-3 text-white"><div><strong className="text-sm">RiverSSAI Base</strong><div className="text-[10px] text-teal-100">Assistente leggero integrato in Signals</div></div><button type="button" onClick={() => setAssistantOpen(false)} aria-label="Chiudi assistente" className="text-2xl">×</button></header>
+          <div className="min-h-24 flex-1 space-y-2 overflow-y-auto bg-[#f4fafa] p-3">
+            {!assistantMessages.length && <p className="rounded-xl bg-white p-3 text-xs leading-relaxed text-slate-600">Ciao! Sono RiverSSAI Base. Posso aiutarti a scrivere, tradurre o riassumere testi e a orientarti in Signals. Non posso amministrare RiverSpend né accedere alle tue chat private.</p>}
+            {assistantMessages.map((message, index) => <div key={index} className={'max-w-[92%] whitespace-pre-wrap break-words rounded-xl px-3 py-2 text-xs leading-relaxed ' + (message.role === 'user' ? 'ml-auto bg-[#087e8b] text-white' : 'bg-white text-slate-700 shadow-sm')}>{message.content}</div>)}
+            {assistantBusy && <div className="text-xs text-slate-500">RiverSSAI sta preparando la risposta…</div>}
+            {assistantError && <div role="alert" className="rounded-lg bg-red-50 p-2 text-xs text-red-800">{assistantError}</div>}
+          </div>
+          <form onSubmit={sendAssistantMessage} className="flex gap-2 border-t border-slate-200 p-2">
+            <input value={assistantDraft} onChange={e => setAssistantDraft(e.target.value)} maxLength={1600} placeholder="Scrivi a RiverSSAI Base…" className="min-w-0 flex-1 rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-900 outline-none focus:border-teal-600" />
+            <button type="submit" disabled={assistantBusy || !assistantDraft.trim()} className="rounded-xl bg-[#087e8b] px-3 py-2 text-xs font-bold text-white disabled:opacity-40">Invia</button>
+          </form>
+          <div className="flex items-center justify-between px-3 pb-2 text-[10px] text-slate-500"><span>Versione Base · risposte AI reali se il provider è configurato</span><Link href="/river-ai" className="font-semibold text-teal-800 underline">RiverSSAI 10.0</Link></div>
+        </section>}
+        <button type="button" onClick={() => setAssistantOpen(v => !v)} aria-label="Apri RiverSSAI Base" title="RiverSSAI Base" className="grid h-12 w-12 place-items-center rounded-full border-2 border-amber-300 bg-[#073b4c] text-2xl text-white shadow-xl">🤖</button>
       </div>}
       <footer className="hidden shrink-0 flex-wrap items-center justify-center gap-4 py-2 text-xs text-slate-500 md:flex"><span>RiverSpaceSignals · RiverSpend · Comunicazioni private</span><button type="button" onClick={() => window.dispatchEvent(new Event("riverspend:open-cookie-settings"))} className="underline underline-offset-2">Privacy e cookie</button><Link href="/" className="underline underline-offset-2">Torna al sito RiverSpend</Link></footer>
     </main>

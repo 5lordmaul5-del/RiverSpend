@@ -17,7 +17,7 @@ main{max-width:620px;margin:auto}.brand{text-align:center;padding:20px 0}.zen-sc
 <body>
 <header class="back"><a href="/riverspace-signals">← Torna alla Chat RiverSpaceSignals</a></header>
 <main>
-<header class="brand">\n<img class="zen-scene" src="/images/karma-zen-animated.svg?v=3" alt="Karma Zen Relax: loto dorato, acqua in movimento e doppie onde a S">
+<header class="brand"><img class="zen-scene" src="/images/karma-zen-animated.svg?v=3" alt="Karma Zen Relax: loto dorato, acqua in movimento e doppie onde a S">
 <div class="eyebrow">RIVERSPACE SIGNALS · ISSA</div>
 <h1>Karma <span>Zen Relax</span></h1>
 <p>Uno spazio sonoro immersivo per rallentare, respirare e ritrovare equilibrio.</p>
@@ -25,15 +25,15 @@ main{max-width:620px;margin:auto}.brand{text-align:center;padding:20px 0}.zen-sc
 <section class="panel" aria-label="Lettore Karma Zen Relax">
 <div class="now"><div class="orb" aria-hidden="true">〰</div><div><h2 id="currentTitle">Scegli una traccia</h2><p>Immersive Sound Space Ambient · RiverSpend</p></div></div>
 <div class="tracks" id="tracks">
-<button class="track" data-title="Tibetan Monks"><span class="num">01</span><span><strong>Tibetan Monks</strong><small>Voce e atmosfera meditativa</small></span><span class="play">▶</span></button>
-<button class="track" data-title="Tibetan Singing Bowl"><span class="num">02</span><span><strong>Tibetan Singing Bowl</strong><small>Campane tibetane · meditazione</small></span><span class="play">▶</span></button>
-<button class="track" data-title="Bianzhong Bell"><span class="num">03</span><span><strong>Bianzhong Bell</strong><small>Risonanza di campana</small></span><span class="play">▶</span></button>
-<button class="track" data-title="Tibetan Bowl Ambient"><span class="num">04</span><span><strong>Tibetan Bowl Ambient</strong><small>Atmosfera sonora avvolgente</small></span><span class="play">▶</span></button>
-<button class="track" data-title="Himalayan Bowls I"><span class="num">05</span><span><strong>Himalayan Bowls I</strong><small>Risonanze himalayane</small></span><span class="play">▶</span></button>
-<button class="track" data-title="Himalayan Bowls II"><span class="num">06</span><span><strong>Himalayan Bowls II</strong><small>Suoni profondi e distensivi</small></span><span class="play">▶</span></button>
+<button class="track" data-title="Drone meditativo"><span class="num">01</span><span><strong>Drone meditativo</strong><small>Drone sintetico morbido · nessuna voce registrata</small></span><span class="play">▶</span></button>
+<button class="track" data-title="Campane sintetiche"><span class="num">02</span><span><strong>Campane sintetiche</strong><small>Toni sintetici ispirati alle singing bowls</small></span><span class="play">▶</span></button>
+<button class="track" data-title="Campana armonica sintetica"><span class="num">03</span><span><strong>Campana armonica sintetica</strong><small>Risonanza sintetica</small></span><span class="play">▶</span></button>
+<button class="track" data-title="Ambient sintetico"><span class="num">04</span><span><strong>Ambient sintetico</strong><small>Tappeto sonoro sintetizzato</small></span><span class="play">▶</span></button>
+<button class="track" data-title="Risonanze sintetiche I"><span class="num">05</span><span><strong>Risonanze sintetiche I</strong><small>Risonanze himalayane</small></span><span class="play">▶</span></button>
+<button class="track" data-title="Risonanze sintetiche II"><span class="num">06</span><span><strong>Risonanze sintetiche II</strong><small>Suoni profondi e distensivi</small></span><span class="play">▶</span></button>
 </div>
-<div class="controls"><button id="toggleAudio" type="button" class="track" style="justify-content:center;margin-bottom:12px"><strong>▶ Avvia ascolto</strong></button><label for="volume" style="display:flex;align-items:center;gap:12px;color:#c4d5d5;font-size:12px">Volume <input id="volume" type="range" min="0" max="1" step="0.01" value="0.55" style="flex:1"></label><p id="audioStatus" class="note" role="status">Scegli una traccia e premi Avvia ascolto.</p></div>
-<p class="note">Audio ambient originale generato nel dispositivo. Tocca una traccia per avviare il suono; usa Pausa e il volume per regolare l’ascolto.</p>
+<div class="controls"><button id="toggleAudio" type="button" class="track" style="justify-content:center;margin-bottom:12px"><strong>▶ Avvia ascolto</strong></button><button id="testTone" type="button" class="track" style="justify-content:center;margin-bottom:12px"><strong>🔊 Prova audio (tono di test)</strong></button><label for="volume" style="display:flex;align-items:center;gap:12px;color:#c4d5d5;font-size:12px">Volume <input id="volume" type="range" min="0" max="1" step="0.01" value="0.55" style="flex:1"></label><p id="audioStatus" class="note" role="status">Scegli una traccia e premi Avvia ascolto.</p></div>
+<p class="note">Paesaggi sonori sintetizzati direttamente dal dispositivo: non sono registrazioni di monaci o strumenti reali. Usa “Prova audio” per verificare prima il volume.</p>
 </section>
 </main>
 <script>
@@ -43,12 +43,12 @@ const toggle=document.getElementById('toggleAudio');
 const volume=document.getElementById('volume');
 const tracks=[...document.querySelectorAll('.track[data-title]')];
 const presets=[
- {base:110,bell:[523.25,659.25,783.99],label:'Voce meditativa · drone caldo'},
- {base:174.61,bell:[659.25,880,1046.5],label:'Campane tibetane'},
- {base:220,bell:[783.99,987.77,1174.66],label:'Campana armonica'},
+ {base:110,bell:[523.25,659.25,783.99],label:'Drone meditativo sintetico'},
+ {base:174.61,bell:[659.25,880,1046.5],label:'Campane sintetiche'},
+ {base:220,bell:[783.99,987.77,1174.66],label:'Campana armonica sintetica'},
  {base:130.81,bell:[587.33,698.46,880],label:'Atmosfera ambient'},
- {base:146.83,bell:[698.46,880,1046.5],label:'Risonanze himalayane I'},
- {base:196,bell:[880,1046.5,1318.51],label:'Risonanze himalayane II'}
+ {base:146.83,bell:[698.46,880,1046.5],label:'Risonanze ambient sintetizzate I'},
+ {base:196,bell:[880,1046.5,1318.51],label:'Risonanze ambient sintetizzate II'}
 ];
 let context=null, master=null, voices=[], activeIndex=-1, playing=false, loopTimer=null, generation=0;
 function clearVoices(){
@@ -67,6 +67,23 @@ function stopSound(){
  toggle.innerHTML='<strong>▶ Riprendi ascolto</strong>';
  tracks.forEach(button=>{button.classList.remove('active');button.querySelector('.play').textContent='▶'});
  status.textContent='Audio in pausa. Premi Riprendi ascolto per continuare.';
+}
+async function testAudioTone(){
+ try{
+  const AudioContextClass=window.AudioContext||window.webkitAudioContext;
+  if(!AudioContextClass){status.textContent='Questo browser non supporta Web Audio.';return}
+  if(!context)context=new AudioContextClass();
+  if(context.state!=='running')await context.resume();
+  if(context.state!=='running')throw new Error('Audio sospeso: controlla il volume multimediale.');
+  const osc=context.createOscillator(),gain=context.createGain(),now=context.currentTime;
+  osc.type='sine';osc.frequency.setValueAtTime(880,now);
+  gain.gain.setValueAtTime(0.0001,now);
+  gain.gain.exponentialRampToValueAtTime(0.12,now+0.025);
+  gain.gain.setValueAtTime(0.12,now+0.16);
+  gain.gain.exponentialRampToValueAtTime(0.0001,now+0.24);
+  osc.connect(gain);gain.connect(context.destination);osc.start(now);osc.stop(now+0.25);
+  status.textContent='Tono di test riprodotto. Se non lo senti, controlla volume multimediale e uscita audio del telefono.';
+ }catch(error){status.textContent='Test audio non avviato: '+(error?.message||'controlla il dispositivo.')}
 }
 function addDrone(frequency,ratio,level,token){
  const osc=context.createOscillator(), gain=context.createGain(), lfo=context.createOscillator(), depth=context.createGain();
@@ -117,6 +134,7 @@ async function startSound(index){
   toggle.innerHTML='<strong>▶ Riprova</strong>';
  }
 }
+document.getElementById('testTone').addEventListener('click',testAudioTone);
 tracks.forEach((button,index)=>button.addEventListener('click',()=>{
  if(activeIndex===index&&playing){stopSound();return}
  stopSound();startSound(index);
