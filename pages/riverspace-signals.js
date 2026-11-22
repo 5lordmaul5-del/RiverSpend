@@ -47,6 +47,7 @@ export default function RiverSpaceSignals() {
   const [assistantBusy, setAssistantBusy] = useState(false);
   const [assistantError, setAssistantError] = useState('');
   const [fieldToolsOpen, setFieldToolsOpen] = useState(false);
+  const [fieldToolsTab, setFieldToolsTab] = useState('nato');
   const [area51Open, setArea51Open] = useState(false);
   const [loginCooldownUntil, setLoginCooldownUntil] = useState(0);
   const [loginCooldownSeconds, setLoginCooldownSeconds] = useState(0);
@@ -645,8 +646,8 @@ export default function RiverSpaceSignals() {
         <button type="button" onClick={() => setInstallPanelOpen(false)} className="mt-4 text-sm font-semibold text-slate-500 underline">Continua sul sito</button>
       </section>
     </div>}
-    <SignalsArea51 open={area51Open} onClose={() => setArea51Open(false)} onOpenFieldTools={(tab) => { window.__signalsArea51Tab = tab; setFieldToolsOpen(true); }} onOpenEnigma={() => setNotice(active ? 'ENIGMA è disponibile nella barra di sicurezza della conversazione aperta.' : 'Apri una conversazione per attivare ENIGMA con il consenso di entrambi.')} />
-    <SignalsFieldTools open={fieldToolsOpen} onClose={() => setFieldToolsOpen(false)} initialTab={typeof window !== 'undefined' ? window.__signalsArea51Tab || 'nato' : 'nato'} canTalk={Boolean(user && active)} onVoiceReady={(file) => {
+    <SignalsArea51 open={area51Open} onClose={() => setArea51Open(false)} onOpenFieldTools={(tab) => { setFieldToolsTab(tab); setFieldToolsOpen(true); }} onOpenEnigma={() => setNotice(active ? 'ENIGMA è disponibile nella barra di sicurezza della conversazione aperta.' : 'Apri una conversazione per attivare ENIGMA con il consenso di entrambi.')} />
+    <SignalsFieldTools open={fieldToolsOpen} onClose={() => setFieldToolsOpen(false)} initialTab={fieldToolsTab} canTalk={Boolean(user && active)} onVoiceReady={(file) => {
       setAttachment(file);
       setAttachMenuOpen(false);
       setNotice('Messaggio PTT pronto nella conversazione. Puoi ascoltarlo e premere Invia.');
@@ -657,7 +658,7 @@ export default function RiverSpaceSignals() {
           <img src="/icons/riverspace-signals-app.jpg" alt="RiverSpaceSignals" className="h-8 w-8 shrink-0 rounded-full bg-white p-1 md:h-10 md:w-10" />
           <div className="min-w-0"><div className="truncate text-base font-bold tracking-wide md:text-lg">RiverSpaceSignals</div><div className="truncate text-[10px] text-teal-100 md:text-xs">YOUR SPACE · YOUR SIGNAL</div></div>
         </div>
-        <nav className="mt-2 flex items-center gap-2 overflow-x-auto whitespace-nowrap pb-0.5 md:justify-end"><button type="button" onClick={() => setArea51Open(true)} className="shrink-0 rounded-full border-2 border-amber-300 bg-[#263b2a] px-3 py-1.5 text-xs font-black text-amber-100 shadow-[0_0_12px_#d4b34f44]">🚨 AREA51 · TOP SECRET</button><button type="button" onClick={() => setFieldToolsOpen(true)} className="shrink-0 rounded-full bg-[#dce5d3] px-3 py-1.5 text-xs font-black text-[#263b2a]">🔠 Morse · Walkie</button><Link href="/riverworld-live" className="shrink-0 rounded-full bg-emerald-300 px-3 py-1.5 text-xs font-bold text-slate-900 hover:bg-emerald-200">🌍 Mondo in diretta</Link><Link href="/riversignals-universe" className="shrink-0 rounded-full border border-amber-300/70 bg-white/10 px-3 py-1.5 text-xs font-bold text-amber-100 hover:bg-white/20">✨ Esplora Signals</Link><button type="button" onClick={installApp} className="shrink-0 rounded-full bg-amber-300 px-3 py-1.5 text-xs font-bold text-slate-900 hover:bg-amber-200">📲 Installa Signals</button><Link href="/" className="shrink-0 rounded-full border border-white/40 px-3 py-1.5 text-xs hover:bg-white/10">RiverSpendShop</Link><Link href="/riverspend-social-network" className="shrink-0 rounded-full border border-white/40 px-3 py-1.5 text-xs hover:bg-white/10">Comunità</Link></nav>
+        <nav className="mt-2 flex items-center gap-2 overflow-x-auto whitespace-nowrap pb-0.5 md:justify-end"><button type="button" onClick={() => setArea51Open(true)} className="shrink-0 rounded-full border-2 border-amber-300 bg-[#263b2a] px-3 py-1.5 text-xs font-black text-amber-100 shadow-[0_0_12px_#d4b34f44]">🚨 AREA51 · TOP SECRET</button><button type="button" onClick={() => { setFieldToolsTab('nato'); setFieldToolsOpen(true); }} className="shrink-0 rounded-full bg-[#dce5d3] px-3 py-1.5 text-xs font-black text-[#263b2a]">🔠 Morse · Walkie</button><Link href="/riverworld-live" className="shrink-0 rounded-full bg-emerald-300 px-3 py-1.5 text-xs font-bold text-slate-900 hover:bg-emerald-200">🌍 Mondo in diretta</Link><Link href="/riversignals-universe" className="shrink-0 rounded-full border border-amber-300/70 bg-white/10 px-3 py-1.5 text-xs font-bold text-amber-100 hover:bg-white/20">✨ Esplora Signals</Link><button type="button" onClick={installApp} className="shrink-0 rounded-full bg-amber-300 px-3 py-1.5 text-xs font-bold text-slate-900 hover:bg-amber-200">📲 Installa Signals</button><Link href="/" className="shrink-0 rounded-full border border-white/40 px-3 py-1.5 text-xs hover:bg-white/10">RiverSpendShop</Link><Link href="/riverspend-social-network" className="shrink-0 rounded-full border border-white/40 px-3 py-1.5 text-xs hover:bg-white/10">Comunità</Link></nav>
       </header>
 
       {incomingToast && <div role="status" className="fixed left-3 right-3 top-3 z-50 mx-auto max-w-md rounded-2xl bg-[#073b4c] px-4 py-3 text-sm font-semibold text-white shadow-xl">💬 {incomingToast}</div>}
