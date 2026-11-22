@@ -77,11 +77,30 @@ const apps = [
     name: 'RiverSpend Special Park',
     subtitle: 'Il mondo delle attrazioni',
     description: 'Scopri il parco e le sue attrazioni.',
-    logo: '/1000187343.png',
+    logo: '/icons/river-park-future.svg',
     href: '/park',
     color: '#0891b2',
     action: 'Apri Special Park'
-  }
+  },
+  {
+    name: 'RiverSpend Games',
+    subtitle: 'Un nuovo gioco ogni mese',
+    description: 'Il comparto centrale dei videogiochi RiverSpend: catalogo, nuove uscite mensili e accesso ai mondi di gioco.',
+    logo: '/icons/riverspend-games-premium.svg',
+    href: '/games',
+    color: '#d6a84f',
+    action: 'Apri RiverSpend Games'
+  },
+  {
+    name: 'RiverSpaceGalaxyGames',
+    subtitle: 'Universo galattico · App Games',
+    description: 'Esplora il primo universo RiverSpend: pianeti, astronavi, droidi, civiltà, agenti AI e catalogo GamesShopS. Il prototipo web è in sviluppo progressivo.',
+    logo: '/icons/riverspend-games-premium.svg',
+    href: '/river-space-galaxy-games',
+    color: '#d6a84f',
+    action: 'Entra nell’universo'
+  },
+
 ];
 
 export default function RiverSpendApps() {
