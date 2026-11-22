@@ -1,8 +1,8 @@
 {
   "id": "/riverspace-signals",
-  "name": "RiverSpaceSignals",
+  "name": "RiverSignals",
   "short_name": "Signals",
-  "description": "Messaggi privati RiverSpaceSignals",
+  "description": "Chat privata, strumenti di comunicazione e privacy RiverSignals.",
   "start_url": "/riverspace-signals",
   "scope": "/",
   "display": "standalone",
@@ -12,10 +12,19 @@
   "lang": "it",
   "icons": [
     {
-      "src": "/icons/riverspace-signals-app.jpg?v=signals-20261105",
+      "src": "/icons/riverspace-signals-192.svg?v=20261122",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/riverspace-signals-app.jpg?v=signals-20261122",
       "sizes": "512x512",
       "type": "image/jpeg",
       "purpose": "any"
     }
-  ]
+  ],
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  }
 }
