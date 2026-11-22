@@ -50,7 +50,7 @@ export default function RiverSpendGames() {
         </article>)}</div>
       </section>
       <section className="classic-band" id="classici">
-        <div><span className="eyebrow">ONE-TIME UNLOCK · NO SUBSCRIPTION</span><h2>Giochi classici <em>per tutti.</em></h2><p>Scacchi, battaglia navale, dama, sudoku, mahjong e altri titoli: prova gratuita e sblocco con un solo pagamento per ciascun gioco. Nessun abbonamento.</p><a href="/games-classics" className="gold-button">Apri il catalogo dei giochi classici →</a></div>
+        <div><span className="eyebrow">ALL CLASSICS · €1 LIFETIME PASS</span><h2>Giochi classici <em>per tutti.</em></h2><p>Scacchi, battaglia navale, dama, sudoku, mahjong e memory sono giocabili. Un solo pagamento di €1, una tantum, per sbloccare tutti i giochi classici a vita: nessun abbonamento.</p><a href="/games-classics" className="gold-button">Apri il catalogo dei giochi classici →</a></div>
         <div className="classic-icons"><span>♟</span><span>⚓</span><span>♛</span><span>▦</span></div>
       </section>
       <section className="release-section" id="uscite">
