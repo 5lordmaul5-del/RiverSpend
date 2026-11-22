@@ -1,0 +1,13 @@
+{
+  "name": "RiverSpend Electronics",
+  "short_name": "RS Electronics",
+  "description": "RiverPhone, RiverWatch, RiverSound, RiverISSA e RiverBox",
+  "start_url": "/electronics",
+  "scope": "/electronics",
+  "display": "standalone",
+  "background_color": "#10131b",
+  "theme_color": "#10131b",
+  "icons": [
+    { "src": "/icons/riverspendshop-app.jpg", "sizes": "512x512", "type": "image/jpeg", "purpose": "any" }
+  ]
+}
