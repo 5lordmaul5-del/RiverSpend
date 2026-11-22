@@ -98,7 +98,9 @@ export default function SignalsFieldTools({ open, onClose, canTalk, onVoiceReady
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(natoOutput.replaceAll("/", "pausa"));
     utterance.lang = "en-US";
-    utterance.rate = 0.82;
+    utterance.pitch = 0.95;
+    utterance.volume = 1;
+    utterance.rate = 0.55;
     utterance.onstart = () => setSpeaking(true);
     utterance.onend = () => setSpeaking(false);
     utterance.onerror = () => setSpeaking(false);
@@ -117,7 +119,7 @@ export default function SignalsFieldTools({ open, onClose, canTalk, onVoiceReady
       const context = audioContextRef.current || new AudioContextClass();
       audioContextRef.current = context;
       if (context.state !== "running") await context.resume();
-      const unit = 0.085;
+      const unit = 0.18;
       let at = context.currentTime + 0.08;
       const oscillator = context.createOscillator();
       const gain = context.createGain();
@@ -130,7 +132,7 @@ export default function SignalsFieldTools({ open, onClose, canTalk, onVoiceReady
       for (const symbol of code) {
         if (symbol === "." || symbol === "-") {
           const duration = symbol === "." ? unit : unit * 3;
-          gain.gain.setValueAtTime(0.18, at);
+          gain.gain.setValueAtTime(0.12, at);
           gain.gain.setValueAtTime(0, at + duration);
           at += duration + unit;
         } else if (symbol === " ") {
