@@ -5,7 +5,8 @@ import '../styles/globals.css';
 import CookieConsent from '../components/CookieConsent';
 import AnalyticsTracker from '../components/AnalyticsTracker';
 
-const APP_MANIFESTS = [\n  { match: '/games-app', href: '/manifest-games.json', color: '#071629' },
+const APP_MANIFESTS = [
+  { match: '/games-app', href: '/manifest-games.json', color: '#071629' },
   { match: '/river-ai', href: '/river-ai.webmanifest', color: '#06172b' },
   { match: '/servizi/sound-studio-live', href: '/manifest-soundstudioissa.json', color: '#7e22ce' },
   { match: '/servizi/music', href: '/manifest-music.json', color: '#7e22ce' },
