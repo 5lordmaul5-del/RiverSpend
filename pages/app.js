@@ -81,7 +81,7 @@ const apps = [
     href: '/park',
     color: '#0891b2',
     action: 'Apri Special Park'
-  }
+  },
   {
     name: 'RiverSpaceGalaxyGames',
     subtitle: 'Universo galattico · App Games',
