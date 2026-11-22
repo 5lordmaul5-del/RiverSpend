@@ -53,6 +53,22 @@ export default function RiverSpendGames() {
         <div><span className="eyebrow">ALL CLASSICS · €1 LIFETIME PASS</span><h2>Giochi classici <em>per tutti.</em></h2><p>Scacchi, battaglia navale, dama, sudoku, mahjong e memory sono giocabili. Un solo pagamento di €1, una tantum, per sbloccare tutti i giochi classici a vita: nessun abbonamento.</p><a href="/games-classics" className="gold-button">Apri il catalogo dei giochi classici →</a></div>
         <div className="classic-icons"><span>♟</span><span>⚓</span><span>♛</span><span>▦</span></div>
       </section>
+      <section className="game-worlds" id="generi">
+        <div className="section-head"><div><span className="eyebrow">GAMES FOR EVERY GENERATION</span><h2>Ogni genere. <em>Ogni età.</em></h2></div><span className="count">CATALOGO IN ESPANSIONE</span></div>
+        <div className="world-grid">
+          <article><span>🧩</span><h3>Enigmi & mente</h3><p>Risolvi enigmi, rompicapi, indovinelli, escape room, trova le differenze, memoria e logica.</p></article>
+          <article><span>🕹️</span><h3>Arcade anni '80</h3><p>Flipper, Space Invaders, platform, labirinti, corse a punteggio e classici arcade originali.</p></article>
+          <article><span>🏎️</span><h3>Sport & motori</h3><p>Calcio, basket, tennis, corse, F1-style, rally, moto e sfide multiplayer.</p></article>
+          <article><span>🛡️</span><h3>Azione & strategia</h3><p>War, tattica, missioni, spionaggio e infiltrazione: nuove avventure originali, non copie di titoli protetti.</p></article>
+          <article><span>🧸</span><h3>Kids & famiglia</h3><p>Giochi semplici, creativi, educativi e sicuri, con livelli adatti a bambini e famiglie.</p></article>
+          <article><span>🌌</span><h3>Avventura & VR</h3><p>Mondi 3D, esplorazione, fantascienza, simulazione e titoli predisposti per visori compatibili.</p></article>
+        </div>
+      </section>
+      <section className="play-anywhere">
+        <div><span className="eyebrow">PLAY YOUR WAY</span><h2>Gioca sul tuo schermo.<br/><em>Porta il gioco sul grande schermo.</em></h2><p>Progettiamo un comparto per collegare RiverSpend Games a TV e PC tramite rete Wi-Fi, Bluetooth e tecnologie di proiezione compatibili; supporto per controller, cuffie e visori VR quando il dispositivo e il gioco lo consentono.</p></div>
+        <div className="connect-grid"><span>📶<b>Wi-Fi / rete locale</b></span><span>🔵<b>Bluetooth</b></span><span>📺<b>TV / proiettore</b></span><span>🖥️<b>PC</b></span><span>🥽<b>Visori VR</b></span><span>🎧<b>Cuffie & audio</b></span></div>
+        <small>Compatibilità e funzioni da verificare per ogni dispositivo. Il collegamento non è ancora attivo in questa versione.</small>
+      </section>
       <section className="release-section" id="uscite">
         <div className="section-head"><div><span className="eyebrow">MONTHLY RELEASE PLAN</span><h2>Un gioco <em>ogni mese</em></h2></div><p>Calendario di pianificazione. Una nuova uscita sarà annunciata quando il gioco avrà superato i test di qualità.</p></div>
         <div className="release-list">{roadmap.map((item,index)=><article className="release-item" key={item.month}><div className="release-date"><b>{item.month}</b><span>{item.label}</span></div><div className="release-title"><span>0{index+1}</span><h3>{item.title}</h3></div><div className="release-status">{item.status}</div></article>)}</div>
