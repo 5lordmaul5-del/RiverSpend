@@ -26,7 +26,9 @@ function normalizeText(value) {
   return String(value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
 }
 function encodeNato(value) {
-  return normalizeText(value).split("").map((char) => NATO[char] || (char === " " ? " / " : char)).join(" ").replace(/\s+\/\s+/g, "   /   ");
+  return normalizeText(value).trim().split(/\s+/).filter(Boolean)
+    .map((word) => Array.from(word).map((char) => NATO[char] || char).join(" "))
+    .join("   /   ");
 }
 function encodeMorse(value) {
   return normalizeText(value).split("").map((char) => {
@@ -239,6 +241,9 @@ export default function SignalsFieldTools({ open, onClose, canTalk, onVoiceReady
             <div className="mt-3 rounded-2xl border border-emerald-900/20 bg-white p-3">
               <div className="text-[10px] font-black uppercase tracking-wider text-emerald-900">Conversione NATO · ICAO</div>
               <p className="mt-2 min-h-12 whitespace-pre-wrap break-words text-sm font-semibold text-[#263b2a]">{natoOutput || "Qui apparirà la conversione."}</p>
+              <div className="mt-3 grid grid-cols-2 gap-1.5 sm:grid-cols-4 md:grid-cols-5">
+                {Object.entries(NATO).map(([letter, word]) => <div key={letter} className="flex items-center gap-2 rounded-lg bg-[#eef3e9] px-2 py-1.5"><span className="grid h-6 w-6 shrink-0 place-items-center rounded-md bg-[#263b2a] text-[10px] font-black text-white">{letter}</span><span className="truncate text-[10px] font-bold text-[#263b2a]">{word}</span></div>)}
+              </div>
               <div className="mt-3 flex flex-wrap gap-2">
                 <button type="button" disabled={!natoOutput} onClick={() => copyText(natoOutput, "Conversione copiata")} className="rounded-xl bg-[#263b2a] px-3 py-2 text-xs font-bold text-white disabled:opacity-40">Copia</button>
                 <button type="button" disabled={!natoOutput} onClick={speakNato} className="rounded-xl bg-amber-300 px-3 py-2 text-xs font-bold text-[#263b2a] disabled:opacity-40">{speaking ? "Pronuncia in corso…" : "🔊 Ascolta"}</button>
@@ -268,7 +273,7 @@ export default function SignalsFieldTools({ open, onClose, canTalk, onVoiceReady
               <div className="text-center text-5xl">📻</div>
               <h3 className="mt-2 text-center text-lg font-black text-[#263b2a]">Push‑to‑Talk RiverSignals</h3>
               <p className="mt-2 text-center text-sm leading-relaxed text-slate-600">Tieni premuto mentre parli, rilascia per preparare il messaggio vocale. Potrai ascoltarlo nella chat prima di inviarlo.</p>
-              <button type="button" disabled={!canTalk || recording} onPointerDown={beginPushToTalk} onPointerUp={endPushToTalk} onPointerCancel={endPushToTalk} onPointerLeave={endPushToTalk} onContextMenu={(e) => e.preventDefault()} className={"mt-5 flex min-h-20 w-full select-none touch-none items-center justify-center rounded-2xl px-4 py-5 text-base font-black text-white shadow-lg " + (recording ? "bg-red-700" : "bg-[#263b2a]") + (!canTalk ? " opacity-40" : "")}>
+              <button type="button" disabled={!canTalk} onPointerDown={beginPushToTalk} onPointerUp={endPushToTalk} onPointerCancel={endPushToTalk} onPointerLeave={endPushToTalk} onContextMenu={(e) => e.preventDefault()} className={"mt-5 flex min-h-20 w-full select-none touch-none items-center justify-center rounded-2xl px-4 py-5 text-base font-black text-white shadow-lg " + (recording ? "bg-red-700" : "bg-[#263b2a]") + (!canTalk ? " opacity-40" : "")}>
                 {recording ? "🔴 STO REGISTRANDO · RILASCIA PER TERMINARE" : "🎙️ TIENI PREMUTO PER PARLARE"}
               </button>
               {!canTalk && <p className="mt-3 text-center text-xs text-amber-800">Apri prima una conversazione per preparare un vocale nella chat.</p>}
