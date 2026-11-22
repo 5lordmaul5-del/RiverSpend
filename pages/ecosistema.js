@@ -9,6 +9,7 @@ const aree = [
   ['💳','RiverSpend Pay','Pagamenti e gestione transazioni','/servizi/pay'],
   ['📦','RS Box Shipping & Delivery','Spedizioni, tracking e resi tra privati','/servizi/box'],
   ['🎢','RiverSpend Park','Parco, attrazioni e sicurezza Power Shield','/park'],
+  ['🌌','RiverSpaceGalaxyGames','Universo galattico, esplorazione, astronavi e giochi RiverSpend','/river-space-galaxy-games'],
   ['🤝','RiverSpend Investor','Ricerca investitori e partner per RiverSpend Park','/investor'],
   ['📡','RiverSpend Broadcast','Comunicazione e aggiornamenti','/servizi/broadcast'],
   ['📺','RiverSpend TV','Video e contenuti RiverSpend','/servizi/tv'],
