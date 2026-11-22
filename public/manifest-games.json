@@ -1,0 +1,19 @@
+{
+  "name": "RiverSpend Games",
+  "short_name": "RS Games",
+  "description": "Demo, trailer, guide, magazine e GamesShop RiverSpend.",
+  "start_url": "/games-app",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#071629",
+  "theme_color": "#071629",
+  "lang": "it",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
