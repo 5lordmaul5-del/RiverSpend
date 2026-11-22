@@ -83,6 +83,15 @@ const apps = [
     action: 'Apri Special Park'
   },
   {
+    name: 'RiverSpend Games',
+    subtitle: 'Un nuovo gioco ogni mese',
+    description: 'Il comparto centrale dei videogiochi RiverSpend: catalogo, nuove uscite mensili e accesso ai mondi di gioco.',
+    logo: '/icons/riverspace-galaxy-games.svg',
+    href: '/games',
+    color: '#d6a84f',
+    action: 'Apri RiverSpend Games'
+  },
+  {
     name: 'RiverSpaceGalaxyGames',
     subtitle: 'Universo galattico · App Games',
     description: 'Esplora il primo universo RiverSpend: pianeti, astronavi, droidi, civiltà, agenti AI e catalogo GamesShopS. Il prototipo web è in sviluppo progressivo.',
