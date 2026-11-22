@@ -91,6 +91,35 @@ const immaginiAttrazioni = [
   "/1000186423.png"
 ];
 
+
+const parkArtPalettes = [
+  ['#083b59','#11a9b5','#9af3ed'], ['#12305d','#287bd1','#b7e5ff'],
+  ['#164d4c','#16a58c','#b8f6d7'], ['#3c245f','#9a59d6','#e8c5ff'],
+  ['#5b2c24','#df713b','#ffd59a'], ['#173b56','#5da9c9','#d5f5ff']
+];
+const parkArtIcons = ['🦈','🌊','🐙','🚣','🐉','🐋','🪽','🐬','🦭','🎢','💦','🌋','🚀','🏎️','🕯️','🏛️','🏴‍☠️','🐲','❄️','🏔️','🦖','🤖','🌌','🪐'];
+
+function ParkSceneArt({ name, index = 0, variant = 'land' }) {
+  const colors = parkArtPalettes[index % parkArtPalettes.length];
+  const icon = parkArtIcons[index % parkArtIcons.length];
+  return (
+    <div className="relative isolate flex aspect-[4/3] w-full items-center justify-center overflow-hidden rounded-xl border border-white/20 shadow-inner"
+      style={{background: `radial-gradient(circle at 72% 24%, ${colors[2]}88, transparent 24%), linear-gradient(145deg, ${colors[0]}, ${colors[1]})`}}
+      role="img" aria-label={`Illustrazione concept RiverSpend Park: ${name}`}>
+      <div className="absolute inset-0 opacity-35" style={{backgroundImage:'radial-gradient(#fff 1px,transparent 1px)',backgroundSize:'23px 23px'}} />
+      <div className="absolute -bottom-10 left-[-8%] h-28 w-[116%] rounded-[50%] border-t border-white/30 bg-black/15" />
+      <div className="absolute bottom-5 left-[8%] h-16 w-8 rounded-t-lg border border-white/20 bg-white/10" />
+      <div className="absolute bottom-5 right-[12%] h-24 w-10 rounded-t-xl border border-white/20 bg-white/10" />
+      <div className="absolute right-[29%] bottom-5 h-12 w-7 rounded-t-lg border border-white/20 bg-white/10" />
+      <div className="relative z-10 flex flex-col items-center gap-2 drop-shadow-[0_8px_18px_rgba(0,0,0,.45)]">
+        <span className="text-6xl sm:text-7xl" aria-hidden="true">{icon}</span>
+        <span className="rounded-full border border-white/35 bg-black/25 px-4 py-1 text-center text-xs font-black uppercase tracking-[.18em] text-white">{name}</span>
+      </div>
+      <span className="absolute left-3 top-3 rounded-full border border-white/30 bg-black/25 px-2 py-1 text-[9px] font-bold tracking-widest text-white/90">RIVERSPEND PARK · CONCEPT</span>
+    </div>
+  );
+}
+
 export default function RiverSpendPark() {
   return (
     <main className="min-h-screen bg-cyan-50 px-4 py-8 text-slate-800">
@@ -192,7 +221,7 @@ export default function RiverSpendPark() {
                   <span className="text-xs font-semibold text-cyan-200">{tema}</span>
                 </div>
                 <h3 className="mt-3 text-lg font-extrabold">{nome}</h3>
-                <div className="mt-3 flex aspect-[4/3] items-center justify-center rounded-xl border-2 border-dashed border-cyan-700 bg-slate-900 p-4 text-center text-sm font-semibold text-cyan-200" role="img" aria-label={`Immagine dedicata da inserire per ${nome}`}>Immagine dedicata da associare a<br />{nome}</div>
+                <div className="mt-3"><ParkSceneArt name={nome} index={i} variant="water" /></div>
                 <p className="mt-3 text-sm leading-6 text-slate-200">{descrizione}</p>
               </article>
             ))}
@@ -211,7 +240,7 @@ export default function RiverSpendPark() {
                 <span className="text-xs text-slate-400">{tema}</span>
               </div>
               <h3 className="mt-4 text-xl font-bold">{nome}</h3>
-              <div className="mt-4 flex aspect-[4/3] w-full items-center justify-center rounded-xl border-2 border-dashed border-cyan-300 bg-cyan-50 p-4 text-center text-sm font-semibold text-teal-800" role="img" aria-label={`Foto da associare correttamente: ${nome}`}>Foto dedicata da inserire per<br />{nome}</div>
+              <div className="mt-4"><ParkSceneArt name={nome} index={i+11} /></div>
               <p className="mt-2 text-sm leading-6 text-slate-600">{descrizione}</p>
               {nome === 'RiverSpeed' && (
                 <div className="mt-4 space-y-3 border-t border-cyan-100 pt-4 text-sm leading-6 text-slate-700">
