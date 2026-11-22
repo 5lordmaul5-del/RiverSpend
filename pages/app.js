@@ -82,6 +82,16 @@ const apps = [
     color: '#0891b2',
     action: 'Apri Special Park'
   }
+  {
+    name: 'RiverSpaceGalaxyGames',
+    subtitle: 'Universo galattico · App Games',
+    description: 'Esplora il primo universo RiverSpend: pianeti, astronavi, droidi, civiltà, agenti AI e catalogo GamesShopS. Il prototipo web è in sviluppo progressivo.',
+    logo: '/icons/riverspace-galaxy-games.svg',
+    href: '/river-space-galaxy-games',
+    color: '#d6a84f',
+    action: 'Entra nell’universo'
+  },
+
 ];
 
 export default function RiverSpendApps() {
