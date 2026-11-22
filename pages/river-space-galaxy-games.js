@@ -26,8 +26,8 @@ export default function RiverSpaceGalaxyGames() {
       <main className="rsgg">
         <nav className="topbar">
           <a href="/" className="brand"><span className="brand-mark">RS</span><span>RIVERSPEND<span className="brand-light"> · GAMES</span></span></a>
-          <div className="navlinks"><a href="#universe">Universo</a><a href="#modules">Compartimenti</a><a href="/river-space-galaxy-games-shop">GamesShopS</a></div>
-          <a className="shop-link" href="/river-space-galaxy-games-shop">🛒 Apri GamesShopS</a>
+          <div className="navlinks"><a href="#universe">Universo</a><a href="#modules">Compartimenti</a><a href="/river-space-galaxy-games-shop">GamesShopS</a><a href="/galaxy-command">Comando CEO</a></div>
+          <div style={{display:"flex",gap:8,alignItems:"center"}}><a className="shop-link" href="/galaxy-command">◈ Comando CEO</a><a className="shop-link" href="/river-space-galaxy-games-shop">🛒 GamesShopS</a></div>
         </nav>
 
         <section className="hero">
@@ -36,7 +36,7 @@ export default function RiverSpaceGalaxyGames() {
             <h1>Il tuo prossimo<br/><em>universo</em> ti aspetta.</h1>
             <p className="lead">Esplora galassie, atterra su nuovi mondi, costruisci il tuo percorso e incontra civiltà sconosciute. Benvenuto in RiverSpaceGalaxyGames.</p>
             <div className="hero-actions">
-              <a className="primary" href="/galaxy-explorer-playtest">✦ Gioca al playtest E-01</a>
+              <a className="primary" href="/galaxy-explorer-playtest">✦ Gioca al playtest E-01</a><a className="secondary" href="/galaxy-command">Apri il centro di comando →</a>
               <a className="secondary" href="/river-space-galaxy-games-shop">Esplora il catalogo <span>↗</span></a>
             </div>
             <div className="hero-meta"><span>◉ Universo condiviso in progettazione</span><span>⌁ Smartphone · PC · VR</span></div>
