@@ -43,7 +43,7 @@ function decodeMorse(value) {
   }).join(" ");
 }
 
-export default function SignalsFieldTools({ open, onClose, canTalk, onVoiceReady }) {
+export default function SignalsFieldTools({ open, onClose, canTalk, onVoiceReady, initialTab = "nato" }) {
   const [tab, setTab] = useState("nato");
   const [text, setText] = useState("");
   const [morseText, setMorseText] = useState("");
@@ -57,6 +57,8 @@ export default function SignalsFieldTools({ open, onClose, canTalk, onVoiceReady
   const chunksRef = useRef([]);
   const pressHeldRef = useRef(false);
   const audioContextRef = useRef(null);
+
+  useEffect(() => { if (open && ["nato", "morse", "ptt"].includes(initialTab)) setTab(initialTab); }, [open, initialTab]);
 
   const natoOutput = encodeNato(text);
   const morseOutput = morseMode === "encode" ? encodeMorse(morseText) : decodeMorse(morseText);
