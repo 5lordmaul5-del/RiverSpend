@@ -136,6 +136,30 @@ export default function RiverSpendPark() {
             <figcaption className="p-3 text-sm font-semibold text-teal-100">Concept panoramico • Progetto in sviluppo — avventura tra preistoria, civiltà antiche, Medioevo, WWII, spazio, futuro e mondo acquatico. Illustrazione generale del parco, non foto di una singola attrazione.</figcaption>
           </figure>
         </section>
+        <section className="my-8 overflow-hidden rounded-3xl border border-cyan-300 bg-gradient-to-br from-slate-950 via-sky-950 to-slate-900 p-5 text-white shadow-xl sm:p-8" aria-labelledby="future-city-title">
+          <div className="grid gap-6 lg:grid-cols-[1.05fr_.95fr] lg:items-center">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[.24em] text-amber-300">RiverSpend Park · Future District</p>
+              <h2 id="future-city-title" className="mt-2 text-3xl font-black sm:text-4xl">Città del futuro & Droidi</h2>
+              <p className="mt-3 max-w-xl text-sm leading-7 text-sky-100">Un quartiere futuristico popolato da droidi originali: guide del parco, assistenti, soccorritori, manutentori, piloti e custodi. Ogni personaggio avrà nome, aspetto, funzione e una propria storia.</p>
+              <div className="mt-5 flex flex-wrap gap-2 text-xs font-bold">
+                {['Droidi guida','Robot soccorso','Trasporti autonomi','Città luminosa','Missioni interattive'].map(x=><span key={x} className="rounded-full border border-cyan-300/40 bg-cyan-200/10 px-3 py-2 text-cyan-100">{x}</span>)}
+              </div>
+            </div>
+            <div className="relative min-h-[260px] overflow-hidden rounded-2xl border border-cyan-200/30 bg-[radial-gradient(ellipse_at_50%_35%,#1d7891,#0b2747_62%,#071629)] p-4">
+              <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-cyan-950 to-transparent"/>
+              <div className="absolute bottom-10 left-[5%] h-28 w-12 rounded-t-lg border border-cyan-200/40 bg-sky-300/10"/>
+              <div className="absolute bottom-10 left-[20%] h-40 w-16 rounded-t-xl border border-cyan-200/40 bg-sky-300/10"/>
+              <div className="absolute bottom-10 right-[18%] h-32 w-14 rounded-t-xl border border-cyan-200/40 bg-sky-300/10"/>
+              <div className="absolute bottom-10 right-[4%] h-24 w-10 rounded-t-lg border border-cyan-200/40 bg-sky-300/10"/>
+              <div className="relative z-10 flex min-h-[220px] items-end justify-center gap-4 pb-1 sm:gap-8">
+                {[
+                  ['🤖','NOVA-01','Guida'],['🦾','RIVER-X','Soccorso'],['🛸','DROID-7','Trasporti']
+                ].map(([emoji,name,role])=><div key={name} className="flex flex-col items-center text-center drop-shadow-lg"><span className="text-5xl sm:text-6xl">{emoji}</span><b className="mt-2 text-[10px] tracking-widest text-amber-200">{name}</b><small className="text-[10px] text-cyan-100">{role}</small></div>)}
+              </div>
+            </div>
+          </div>
+        </section>
           <figure className="overflow-hidden rounded-2xl border border-amber-400 bg-slate-950 shadow-lg ">
             <img src="https://raw.githubusercontent.com/5lordmaul5-del/RiverSpend/main/public/Screenshot_2026-10-20-20-11-58-215_com.openai.chatgpt-edit.jpg" alt="La famiglia ufficiale di RiverSpendPark: Sylver, Scarlett, Simba, Sofia e Stone" className="w-full h-auto object-contain" loading="lazy" />
             <figcaption className="p-4 text-center text-base font-bold text-amber-200">La famiglia ufficiale di RiverSpendPark — Sylver, Scarlett, Simba, Sofia e Stone</figcaption>
