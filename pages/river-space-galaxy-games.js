@@ -36,7 +36,7 @@ export default function RiverSpaceGalaxyGames() {
             <h1>Il tuo prossimo<br/><em>universo</em> ti aspetta.</h1>
             <p className="lead">Esplora galassie, atterra su nuovi mondi, costruisci il tuo percorso e incontra civiltà sconosciute. Benvenuto in RiverSpaceGalaxyGames.</p>
             <div className="hero-actions">
-              <button className="primary" onClick={() => { setMissionOpen(true); setNotice('Missione zero selezionata: Planet E-01.'); }}>✦ Scopri la Missione Zero</button>
+              <a className="primary" href="/galaxy-explorer-playtest">✦ Gioca al playtest E-01</a>
               <a className="secondary" href="/river-space-galaxy-games-shop">Esplora il catalogo <span>↗</span></a>
             </div>
             <div className="hero-meta"><span>◉ Universo condiviso in progettazione</span><span>⌁ Smartphone · PC · VR</span></div>
@@ -55,12 +55,12 @@ export default function RiverSpaceGalaxyGames() {
         </section>
 
         <section className="mission-section">
-          <div className="section-heading"><div><span className="eyebrow">IL PRIMO PASSO</span><h2>Missione Zero <em>· Planet E-01</em></h2></div><span className="tag">PROTOTIPO DA REALIZZARE</span></div>
+          <div className="section-heading"><div><span className="eyebrow">IL PRIMO PASSO</span><h2>Missione Zero <em>· Planet E-01</em></h2></div><span className="tag">PROTOTIPO 2D DISPONIBILE · 3D IN SVILUPPO</span></div>
           <div className="mission-card">
             <div className="mission-art"><div className="planet-small"></div><div className="horizon"></div><span className="mission-coord">E-01 / 04.77.21</span></div>
             <div className="mission-copy"><h3>Un nuovo mondo da esplorare.</h3><p>La prima esperienza sarà un pianeta dimostrativo: il giocatore crea il personaggio, sceglie la visuale, raggiunge la superficie con la propria astronave, raccoglie una risorsa e salva i progressi.</p>
               <div className="mission-checks"><span>✓ Personaggio e telecamera</span><span>✓ Astronave e atterraggio</span><span>✓ Risorse e inventario</span><span>✓ Salvataggio persistente</span></div>
-              <button className="primary small" onClick={() => setMissionOpen(!missionOpen)}>{missionOpen ? 'Chiudi briefing' : 'Apri briefing missione'} →</button>
+              <div style={{display:'flex',gap:10,flexWrap:'wrap'}}><button className="primary small" onClick={() => setMissionOpen(!missionOpen)}>{missionOpen ? 'Chiudi briefing' : 'Apri briefing missione'} →</button><a className="secondary" href="/galaxy-explorer-playtest">Avvia esplorazione 2D ↗</a></div>
             </div>
           </div>
           {missionOpen && <div className="briefing"><b>BRIEFING E-01</b><p>Obiettivo: raggiungere il punto di atterraggio, esplorare l'area iniziale, raccogliere il primo campione e rientrare alla nave. Questa è la scheda della missione: il gameplay 3D e il salvataggio online devono ancora essere sviluppati.</p></div>}
