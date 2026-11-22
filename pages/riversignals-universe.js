@@ -6,7 +6,7 @@ const modules = [
   { icon: '👻', name: 'RiverGhost', group: 'Privacy', description: 'Messaggi con scadenza, contenuti che si eliminano dopo la visualizzazione e indicatori di apertura.', phase: 'Privacy', status: 'Da implementare e verificare' },
   { icon: '🎭', name: 'RiverMask', group: 'Video e identità', description: 'Effetti sul volto applicati al flusso video e ai video-messaggi prima dell’invio: sfocatura, maschere e avatar.', phase: 'Media', status: 'Da implementare e verificare' },
   { icon: '🎙️', name: 'RiverVoice', group: 'Audio e identità', description: 'Filtri vocali per messaggi registrati e, in una fase successiva, chiamate in tempo reale.', phase: 'Media', status: 'Da implementare e verificare' },
-  { icon: '🤖', name: 'RiverSSAI Base', group: 'Intelligenza artificiale', description: 'Assistente essenziale nelle chat: aiuto semplice nella scrittura e risposte di base, solo quando richiesto e con il consenso dell’utente. Non include la versione completa RiverSSAI 10.0, la modalità CEO o i 90 specialisti.', phase: 'AI', status: 'Versione base prevista; collegamento da realizzare' },
+  { icon: '🤖', name: 'RiverSSAI Base', group: 'Intelligenza artificiale', description: 'Assistente essenziale nelle chat: aiuto semplice nella scrittura e risposte di base, solo quando richiesto e con il consenso dell’utente. Non include la versione completa RiverSSAI 10.0, la modalità CEO o i 90 specialisti.', phase: 'AI', status: 'Pannello e endpoint Base autenticato aggiunti; provider e risposta reale da verificare in Preview' },
   { icon: '🌍', name: 'RiverWorld', group: 'Comunicazione globale', description: 'Traduzione di chat e vocali, sottotitoli e supporto multilingue durante le chiamate.', phase: 'AI', status: 'Da implementare e verificare' },
   { icon: '💸', name: 'RiverPay', group: 'Pagamenti', description: 'Invio e richiesta di denaro, divisione spese, acquisti e donazioni tramite prestatore autorizzato.', phase: 'Pagamenti', status: 'Solo intenzioni in chat; pagamenti reali non attivi' },
   { icon: '📡', name: 'RiverLive', group: 'Live e streaming', description: 'Dirette, stanze tematiche, eventi, creator e collegamento con RiverStreaming.', phase: 'Community', status: 'Da implementare e verificare' },
@@ -19,7 +19,7 @@ const modules = [
   { icon: '🏫', name: 'Gruppi Scuola · Lavoro · Sport', group: 'Community', description: 'Gruppi tematici con ruoli, inviti, moderazione, segnalazioni e gestione membri.', phase: 'Community', status: 'Da implementare e verificare' },
   { icon: '🍕', name: 'Ordina da mangiare', group: 'Servizi locali', description: 'Pizza, hamburger, sushi e ristoranti aderenti: menu, carrello, consegna o ritiro e stato ordine.', phase: 'Community', status: 'Da collegare a ristoranti e ordini reali' },
   { icon: '🎨', name: 'Sticker & Effects Studio', group: 'Creatività', description: 'Sticker originali, emoji ampliati, effetti visuali e temi personalizzabili.', phase: 'Creatività', status: 'Catalogo base presente; studio avanzato da realizzare' },
-  { icon: '🔠', name: 'Alfabeto NATO · Mimetica', group: 'Strumenti', description: 'Alfabeto fonetico internazionale ICAO per compitare nomi, codici e messaggi, con una scheda grafica a tema mimetico.', phase: 'Strumenti', status: 'Sezione informativa integrata' }
+  { icon: '🔠', name: 'Alfabeto NATO · Mimetica', group: 'Strumenti', description: 'Alfabeto fonetico internazionale ICAO per compitare nomi, codici e messaggi, con una scheda grafica a tema mimetico.', phase: 'Strumenti', status: 'Strumenti interattivi nella chat: NATO/ICAO, Morse con audio e messaggio vocale PTT; walkie-talkie live WebRTC ancora da realizzare' }
 ];
 
 const phases = [
@@ -44,7 +44,7 @@ export default function RiverSignalsUniverse() {
             <div className="grid h-11 w-11 place-items-center rounded-2xl border border-amber-300/70 bg-white/10 text-2xl">🌊</div>
             <div><div className="font-bold tracking-wide">RiverSignals Universe</div><div className="text-[11px] text-teal-100">YOUR SPACE · YOUR SIGNAL</div></div>
           </div>
-          <Link href="/riverspace-signals" className="rounded-full border border-white/40 px-4 py-2 text-sm font-semibold hover:bg-white/10">← Torna alle chat</Link>
+          <div className="flex flex-wrap gap-2"><Link href="/riverspace-signals?tools=1" className="rounded-full bg-amber-300 px-4 py-2 text-sm font-black text-[#263b2a]">Apri NATO · Morse · Walkie</Link><Link href="/riverspace-signals" className="rounded-full border border-white/40 px-4 py-2 text-sm font-semibold hover:bg-white/10">← Torna alle chat</Link></div>
         </div>
       </header>
       <section className="mx-auto max-w-6xl px-4 pb-8 pt-10 md:pt-14">
@@ -75,7 +75,7 @@ export default function RiverSignalsUniverse() {
             <div className="bg-[linear-gradient(135deg,#263b2a_0%,#65734a_24%,#d0c7a0_25%,#8b9664_42%,#344b35_43%,#344b35_58%,#b0a77b_59%,#65734a_76%,#263b2a_100%)] p-6 text-white md:p-8">
               <div className="inline-flex rounded-full border border-white/40 bg-black/20 px-3 py-1 text-xs font-bold uppercase tracking-widest">Signals Field Tools</div>
               <h2 className="mt-3 text-3xl font-black md:text-4xl">🔠 Alfabeto fonetico NATO · ICAO</h2>
-              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-white/90">Compita lettere, nomi e codici usando le parole standard internazionali. Sezione grafica a tema mimetico.</p>
+              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-white/90">Compita lettere e codici con lo standard ICAO. Gli strumenti operativi NATO, Morse e messaggi vocali PTT sono disponibili direttamente nella schermata chat Signals.</p><Link href="/riverspace-signals?tools=1" className="mt-4 inline-flex rounded-xl bg-amber-300 px-4 py-3 text-sm font-black text-[#263b2a]">Apri gli strumenti interattivi</Link>
             </div>
             <div className="grid grid-cols-2 gap-px bg-emerald-950/15 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
               {[
