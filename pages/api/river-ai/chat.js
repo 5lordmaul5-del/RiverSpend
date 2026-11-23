@@ -4,7 +4,7 @@ const MODEL_DEFAULT = "openai/gpt-oss-20b";
 const MAX_AGENTS = 30;
 const MAX_MESSAGE_CHARS = 4000;
 const MAX_HISTORY = 16;
-const MAX_PARALLEL = 2; // limita i picchi di richieste al provider
+const MAX_PARALLEL = 3; // squadra leggermente più reattiva, con limite prudente del provider
 
 const AGENTS = {
   nova: "Coordinatrice generale: scomponi il problema, assegna priorità, integra i risultati e dichiara le incertezze.",
