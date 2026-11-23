@@ -17,7 +17,7 @@ export default async function handler(req,res){
     const data=await response.json();
     const results=(data.query?.search||[]).map(item=>({
       title:item.title,
-      snippet:String(item.snippet||'').replace(/<span class="searchmatch">/g,'<strong>').replace(/<\/span>/g,'</strong>'),
+      snippet:String(item.snippet||'').replace(/<[^>]*>/g,''),
       url:'https://'+lang+'.wikipedia.org/wiki/'+encodeURIComponent(item.title.replace(/ /g,'_')),
       thumbnail:null
     }));
