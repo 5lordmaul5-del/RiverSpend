@@ -725,15 +725,255 @@
       "logicalRoleSlots": 100,
       "activation": "on-demand",
       "status": "catalogued-role-templates"
+    },
+    {
+      "id": "91",
+      "name": "Identity & Access Governance",
+      "scope": "Identity lifecycle, MFA policy, privileged-access reviews",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "92",
+      "name": "Cloud Security Posture",
+      "scope": "Cloud configuration assessment and hardening",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "93",
+      "name": "Application Security",
+      "scope": "Secure design, dependency review, and application testing",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "94",
+      "name": "Detection Engineering",
+      "scope": "Defensive detection logic, alert quality, and tuning",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "95",
+      "name": "Incident Response",
+      "scope": "Authorized incident triage, containment planning, and recovery",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "96",
+      "name": "Digital Forensics",
+      "scope": "Evidence preservation and forensic workflow support",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "97",
+      "name": "Fraud Intelligence",
+      "scope": "Fraud-pattern analysis from authorized and minimized data",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "98",
+      "name": "Payment Security",
+      "scope": "Payment-flow risk controls and tokenization oversight",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "99",
+      "name": "Privacy Engineering",
+      "scope": "Privacy-by-design reviews and data minimization",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "100",
+      "name": "Data Governance",
+      "scope": "Data lineage, classification, retention, and access policy",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "101",
+      "name": "Backup & Recovery",
+      "scope": "Backup verification and disaster-recovery exercises",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "102",
+      "name": "Business Continuity",
+      "scope": "Continuity planning and operational resilience",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "103",
+      "name": "Network Defense",
+      "scope": "Network segmentation, monitoring, and defensive architecture",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "104",
+      "name": "Endpoint Protection",
+      "scope": "Endpoint hardening, health checks, and response planning",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "105",
+      "name": "Email Security",
+      "scope": "Phishing defense, domain protection, and mail hygiene",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "106",
+      "name": "Threat Hunting",
+      "scope": "Hypothesis-led hunts within authorized telemetry",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "107",
+      "name": "Vulnerability Management",
+      "scope": "Risk-based remediation tracking and validation",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "108",
+      "name": "Security Architecture",
+      "scope": "Threat modeling and secure system architecture",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "109",
+      "name": "Software Supply Chain Security",
+      "scope": "Build provenance, artifact integrity, and dependency risk",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "110",
+      "name": "AI Safety & Evaluation",
+      "scope": "Model evaluation, red-team safety tests, and reliability",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "111",
+      "name": "AI Governance",
+      "scope": "Model inventory, approvals, and lifecycle controls",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "112",
+      "name": "Robotics Safety",
+      "scope": "Non-weaponized robotics safety and reliability research",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "113",
+      "name": "Critical Systems Monitoring",
+      "scope": "Operational telemetry and anomaly triage",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "114",
+      "name": "Industrial Cyber Resilience",
+      "scope": "Defensive OT segmentation and recovery planning",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "115",
+      "name": "Secure Communications",
+      "scope": "Encryption architecture and secure collaboration",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "116",
+      "name": "Public Records Research",
+      "scope": "Lawful public-record research and source validation",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "117",
+      "name": "Digital Risk Protection",
+      "scope": "Brand abuse, impersonation, and exposed-data monitoring",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "118",
+      "name": "Security Awareness",
+      "scope": "Training, simulations, and human-risk reduction",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "119",
+      "name": "Compliance Evidence",
+      "scope": "Control evidence collection and audit readiness",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "120",
+      "name": "Independent Red-Team Governance",
+      "scope": "Authorized test scope, safety controls, and remediation review",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
     }
   ],
   "capacity": {
-    "divisions": 90,
+    "divisions": 120,
     "logicalRoleSlotsPerDivision": 100,
-    "totalLogicalRoleSlots": 9000,
+    "totalLogicalRoleSlots": 12000,
     "runningWorkersNow": 0,
     "maxConcurrency": "must be configured from provider and infrastructure limits",
-    "note": "9,000 role slots are not 9,000 running models or independent AI systems."
+    "note": "12,000 logical role profiles across 120 divisions; not 12,000 running models or independent AI systems."
   },
   "governance": {
     "boundedFanOut": true,
@@ -746,7 +986,7 @@
     "sensitiveDataMinimization": true
   },
   "roadmap": [
-    "registry-and-governance",
+    "120-division-registry-and-governance",
     "bounded-orchestrator-prototype",
     "provider-and-budget-adapters",
     "memory-tools-and-approvals",
