@@ -109,7 +109,7 @@ export default function PowerTronCommandCenter() {
           <div style={{ flex: 1, minWidth: 220 }}>
             <div style={{ color: "#f2d98c", fontSize: 11, letterSpacing: 2, fontWeight: 900 }}>RIVERSSAI SUPERAI · NOVA CORE</div>
             <h1 style={{ margin: "5px 0", fontSize: 27 }}>POWERTRON COMMAND CENTER</h1>
-            <div style={{ color: "#d4edf0", fontSize: 13 }}>Centro di coordinamento · 90 divisioni · 9.000 ruoli specialistici catalogati</div>
+            <div style={{ color: "#d4edf0", fontSize: 13 }}>Centro di coordinamento · catalogo specialistico PowerTron</div>
           </div>
           <a href="/river-ai" style={{ color: "#ffe6a5", fontWeight: 800, textDecoration: "none" }}>← RiverSSAI</a>
           <a href="/river-ai/umpsd" style={{ color: "#b9f4f6", fontWeight: 800, textDecoration: "none" }}>UMPSD 20.0</a>
@@ -149,6 +149,26 @@ export default function PowerTronCommandCenter() {
             </div>
           </section>
 
+          <section style={{ ...card, marginTop: 14, borderColor: "#b9dce1" }}>
+            <div style={{ color: "#b08331", fontSize: 11, fontWeight: 900, letterSpacing: 1.5 }}>INTELLIGENCE STACK · I QUATTRO LIVELLI</div>
+            <h2 style={{ margin: "5px 0 7px" }}>AI · ML · Deep Learning · LLM</h2>
+            <p style={{ color: "#617983", fontSize: 12, lineHeight: 1.55, marginTop: 0 }}>Questi livelli non sono quattro motori in competizione: sono aree collegate. AI è il campo più ampio; ML, Deep Learning e gli LLM sono approcci più specifici che PowerTron potrà combinare secondo il compito.</p>
+            <div style={{ display: "grid", gap: 9 }}>
+              {[
+                ["01","AI — Intelligenza Artificiale","Il livello più ampio: pianificazione, regole, ricerca, ragionamento e decisioni assistite. È il coordinamento generale di PowerTron.","#e8f5f7"],
+                ["02","ML — Machine Learning","Modelli che apprendono schemi dai dati per classificare, stimare rischi e individuare anomalie. Richiedono dati adeguati e valutazioni periodiche.","#edf5ff"],
+                ["03","Deep Learning","Reti neurali con molti strati, adatte a pattern complessi in immagini, audio, video e testo. Sono una famiglia di tecniche all'interno del ML.","#f2efff"],
+                ["04","LLM — Large Language Models","Modelli linguistici basati sul Deep Learning, usati per dialogo, sintesi, estrazione, pianificazione assistita e generazione di testo e codice.","#fff6e5"]
+              ].map(([n,title,desc,tint]) => <article key={n} style={{ display: "grid", gridTemplateColumns: "42px minmax(0,1fr)", gap: 11, padding: 12, borderRadius: 12, border: "1px solid #dce9ed", background: tint }}>
+                <div style={{ width: 38, height: 38, borderRadius: 12, display: "grid", placeItems: "center", background: "#082b40", color: "#f2d98c", fontWeight: 900 }}>{n}</div>
+                <div><b style={{ color: "#173846", fontSize: 13 }}>{title}</b><p style={{ color: "#617983", fontSize: 11, lineHeight: 1.5, margin: "5px 0 0" }}>{desc}</p></div>
+              </article>)}
+            </div>
+            <div style={{ marginTop: 11, padding: 12, borderRadius: 11, background: "#f4f9fa", color: "#526e78", fontSize: 11, lineHeight: 1.55 }}>
+              <b>Come li userà PowerTron:</b> Nova seleziona l'approccio in base all'incarico: logica AI per coordinare, ML per previsioni e anomalie quando esistono dati validi, Deep Learning per media e segnali complessi, LLM per comprendere e produrre linguaggio. La disponibilità effettiva dipenderà dai modelli e dai servizi collegati.
+            </div>
+          </section>
+
           <section style={{ ...card, marginTop: 14, borderColor: "#e4d39a", background: "#fff9e8", fontSize: 13, lineHeight: 1.55 }}>
             <b>Trasparenza operativa:</b> questa prima versione è un Command Center di catalogo e pianificazione locale. Mostra divisioni e ruoli previsti, consente di creare e gestire piani di lavoro ed esportarli. Non avvia ancora agenti AI, non esegue compiti in background e non è collegato a una coda cloud o a provider AI. I piani sono salvati solo in questo browser.
           </section>
@@ -165,7 +185,7 @@ export default function PowerTronCommandCenter() {
 
           <section style={{ ...card, marginTop: 14 }}>
             <div style={{ display: "flex", justifyContent: "space-between", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
-              <div><div style={{ color: "#b08331", fontSize: 11, fontWeight: 900, letterSpacing: 1.5 }}>DIVISION DIRECTORY</div><h2 style={{ margin: "5px 0" }}>Le 90 divisioni PowerTron</h2></div>
+              <div><div style={{ color: "#b08331", fontSize: 11, fontWeight: 900, letterSpacing: 1.5 }}>DIVISION DIRECTORY</div><h2 style={{ margin: "5px 0" }}>Le divisioni PowerTron</h2></div>
               <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Cerca divisione o competenza…" aria-label="Cerca divisione" style={{ ...field, maxWidth: 330 }}/>
             </div>
             {registry && <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(235px,1fr))", gap: 9, marginTop: 14 }}>
