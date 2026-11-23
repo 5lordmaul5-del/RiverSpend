@@ -36,7 +36,7 @@ export default function RiverWorldSchoolHub(){
   async function search(e){
     e?.preventDefault();setLoading(true);setError('');setResults([]);
     try{
-      const params=new URLSearchParams({q:topic.trim()||subject,lang:'it',subject,level,grade});
+      const params=new URLSearchParams({q:[subject,topic.trim()].filter(Boolean).join(' '),lang:'it',subject,level,grade});
       const response=await fetch('/api/riverworld/learning?'+params.toString());
       const data=await response.json();
       if(!response.ok)throw new Error(data.error||'Ricerca didattica non disponibile.');
@@ -60,7 +60,7 @@ export default function RiverWorldSchoolHub(){
       <p className="mt-2 text-xs text-slate-600">Percorso: {selected.name} · {grade} · {subject}</p>
       <button disabled={loading||!topic.trim()} className="mt-3 rounded-xl bg-teal-700 px-5 py-3 text-sm font-bold text-white disabled:opacity-50">{loading?'Ricerca…':'Cerca materiali didattici'}</button>
       {error&&<p className="mt-3 rounded-lg bg-amber-50 p-3 text-sm text-amber-900">{error}</p>}
-      {results.length>0&&<div className="mt-4 grid gap-2">{results.map((item,i)=><article key={item.url||i} className="rounded-xl border border-slate-200 bg-white p-3"><div className="text-xs font-bold uppercase text-teal-700">{item.source}</div><h4 className="mt-1 font-bold text-[#073b4c]">{item.title}</h4><p className="mt-1 text-sm text-slate-600" {item.snippet}/><a href={item.url} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex text-sm font-bold text-teal-800 underline">Apri la risorsa ↗</a></article>)}</div>}
+      {results.length>0&&<div className="mt-4 grid gap-2">{results.map((item,i)=><article key={item.url||i} className="rounded-xl border border-slate-200 bg-white p-3"><div className="text-xs font-bold uppercase text-teal-700">{item.source}</div><h4 className="mt-1 font-bold text-[#073b4c]">{item.title}</h4><p className="mt-1 text-sm text-slate-600">{item.snippet}</p><a href={item.url} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex text-sm font-bold text-teal-800 underline">Apri la risorsa ↗</a></article>)}</div>}
     </form>
     <div className="mt-5"><h3 className="font-extrabold text-[#073b4c]">4. Biblioteche e strumenti educativi</h3><p className="mt-1 text-xs text-slate-500">Risorse esterne: disponibilità, lingua e condizioni d'uso dipendono dai rispettivi enti.</p><div className="mt-3 grid gap-2 sm:grid-cols-2">{SOURCES.map(item=><a key={item.name} href={item.url(searchTerm)} target="_blank" rel="noopener noreferrer" className="rounded-xl border border-slate-200 p-3 hover:border-teal-400 hover:bg-teal-50"><span className="text-xl">{item.icon}</span><span className="ml-2 font-bold text-[#073b4c]">{item.name}</span><p className="mt-1 text-xs text-slate-600">{item.detail}</p></a>)}</div></div>
     <p className="mt-4 text-xs leading-5 text-slate-500">RiverWorld organizza la ricerca e collega materiali esterni; non certifica i programmi scolastici né sostituisce docenti, testi ufficiali o verifiche delle fonti.</p>
