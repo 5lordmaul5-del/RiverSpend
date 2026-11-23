@@ -3,6 +3,7 @@ export default async function handler(req, res) {
     res.setHeader('Allow', 'GET');
     return res.status(405).json({ error: 'Method not allowed' });
   }
+  res.setHeader('Cache-Control', 's-maxage=1800, stale-while-revalidate=3600');
   const place = typeof req.query.place === 'string' ? req.query.place.trim().slice(0, 100) : '';
   if (!place) return res.status(400).json({ error: 'Inserisci una città o una località.' });
 
