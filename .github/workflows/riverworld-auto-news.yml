@@ -1,0 +1,44 @@
+name: RiverWorld automatic news collector
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Collect headlines from GDELT
+        run: |
+          python - <<'PY'
+          import urllib.request, urllib.parse, json, datetime, os
+          q='(world OR international OR politics OR economy OR technology OR climate OR sports)'
+          url='https://api.gdeltproject.org/api/v2/doc/doc?'+urllib.parse.urlencode({
+            'query':q,'mode':'ArtList','format':'json','maxrecords':'100','timespan':'24h','sort':'DateDesc'})
+          req=urllib.request.Request(url,headers={'User-Agent':'RiverWorldLive/1.0'})
+          with urllib.request.urlopen(req,timeout=30) as r: data=json.load(r)
+          articles=[]
+          for a in data.get('articles',[]):
+            u=a.get('url','')
+            if not u.startswith(('http://','https://')): continue
+            articles.append({'title':a.get('title',''),'url':u,'domain':a.get('domain',''),
+              'language':a.get('language',''),'sourceCountry':a.get('sourcecountry',''),
+              'publishedAt':a.get('seendate',''),'image':a.get('socialimage','')})
+          path='data/riverworld/news.json'
+          os.makedirs(os.path.dirname(path),exist_ok=True)
+          with open(path,'w',encoding='utf-8') as f:
+            json.dump({'provider':'GDELT Project','collectedAt':datetime.datetime.now(datetime.timezone.utc).isoformat(),
+              'count':len(articles),'articles':articles},f,ensure_ascii=False,indent=2)
+          PY
+      - name: Commit snapshot
+        run: |
+          git config user.name "RiverWorld News Bot"
+          git config user.email "riverworld-news-bot@users.noreply.github.com"
+          git add data/riverworld/news.json
+          git commit -m "chore: refresh RiverWorld news snapshot" || exit 0
+          git push
