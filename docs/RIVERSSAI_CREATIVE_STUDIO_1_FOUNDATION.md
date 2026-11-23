@@ -24,7 +24,7 @@ Do not call paid inference APIs by default. Do not claim AI generation until a r
 - `POST /api/river-ai/creative/image` submits a fixed 1024×1024 SDXL-compatible ComfyUI graph. The checkpoint name is server-configured.
 - `GET /api/river-ai/creative/image?prompt_id=...` checks ComfyUI history.
 - `GET /api/river-ai/creative/image-file?... ` proxies the generated media through owner authentication; ComfyUI is not exposed to the browser.
-- `POST /api/river-ai/creative/video` accepts a server-configured ComfyUI API workflow JSON and injects the prompt into a configured node/input. The workflow must expose its output as videos, gifs or images.
+- `POST /api/river-ai/creative/video` accepts a server-configured ComfyUI API workflow JSON and injects the text prompt into a configured node/input. The workflow must expose its output as videos, gifs or images. Image-to-video source upload is not yet implemented.
 - Video status uses the same endpoint with `GET ?prompt_id=...`.
 - Image/video generation is available only when the private runtime configuration is present. This repository branch does not configure or host a GPU.
 
