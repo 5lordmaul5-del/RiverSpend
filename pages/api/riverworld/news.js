@@ -39,7 +39,7 @@ export default async function handler(req, res) {
   const sourceKey = typeof req.query.source === 'string' ? req.query.source.toLowerCase() : '';
 
   let search = q ? `"${q.replace(/["\\]/g, ' ').replace(/\s+/g, ' ')}"` : TOPICS[topic];
-  if (countryCode && COUNTRY_NAMES[countryCode]) search += ` sourcecountry:${COUNTRY_NAMES[countryCode]}`;
+  if (countryCode && COUNTRY_CODES.has(countryCode)) search += ` sourcecountry:${countryCode.toUpperCase()}`;
   if (sourceKey && SOURCE_DOMAINS[sourceKey]) {
     const domains = SOURCE_DOMAINS[sourceKey];
     search += domains.length === 1
