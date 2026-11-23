@@ -88,7 +88,8 @@ export default function RiverWorldLive() {
         {selected === 'cinema' && <RiverWorldTopicFeed section="cinema" />}
         {selected === 'moda' && <RiverWorldTopicFeed section="moda" />}
         {selected === 'musica' && <RiverWorldTopicFeed section="spettacolo" />}
-        {selected === 'sport' && <RiverWorldTopicFeed section="sport" />}\n        {selected === 'arti-marziali' && <RiverWorldTopicFeed section="arti-marziali" />}
+        {selected === 'sport' && <RiverWorldTopicFeed section="sport" />}
+        {selected === 'arti-marziali' && <RiverWorldTopicFeed section="arti-marziali" />}
         {selected === 'sport' && <section className="mt-5 rounded-2xl bg-white p-5 shadow-sm md:p-6">
           <div className="flex flex-wrap items-center justify-between gap-2"><h2 className="text-xl font-extrabold text-[#073b4c]">🏆 RiverSport Live</h2><span className="text-xs text-slate-500">Multisport mondiale · tutte le discipline</span></div>
           <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">{sportFiltered.map(s => <button key={s.id} onClick={() => setSportSelected(s.id)} className={`rounded-xl border p-3 text-left ${sportSelected === s.id ? 'border-teal-600 bg-teal-50' : 'border-slate-200 hover:bg-slate-50'}`}><span className="text-xl">{s.icon}</span><span className="mt-1 block text-sm font-bold">{s.name}</span></button>)}</div>
