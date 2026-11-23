@@ -77,6 +77,25 @@
         "Nessuna promessa di consegna immediata o illimitata"
       ],
       "purchasable": false
+    },
+    {
+      "id": "viva-ultra-annual",
+      "name": "VIVA ULTRA",
+      "price": 100,
+      "billing": "annual",
+      "durationDays": 365,
+      "tier": 6,
+      "benefits": [
+        "Tutti i vantaggi VIVA SUPER RAPIDO",
+        "Priorità Ultra nelle fasce e zone abilitate",
+        "Accesso alle opzioni express disponibili"
+      ],
+      "limits": [
+        "Disponibilità territoriale e operativa",
+        "Limiti di peso, dimensioni, distanza e fasce orarie",
+        "Nessuna promessa di consegna immediata o illimitata"
+      ],
+      "purchasable": false
     }
   ],
   "microPurchases": [
@@ -162,7 +181,7 @@
       "purchasable": false
     }
   ],
-  "pricingStatus": "five_delivery_passes_defined_activation_pending",
+  "pricingStatus": "six_delivery_passes_defined_activation_pending",
   "productScope": "delivery_and_shipping_only",
   "separateFrom": [
     "RiverSSAI Bronze",
