@@ -54,7 +54,7 @@ export default function RiverSpendElectronics() {
       <header className="nav"><Link href="/" className="brand"><span className="brand-mark">R</span><span>RIVERSPEND <em>ELECTRONICS</em></span></Link><Link href="/" className="back">← RiverSpendShop</Link></header>
       <section className="hero">
         <div className="hero-copy"><p className="kicker">RIVERSPEND · CONNECTED LIVING</p><h1>La tecnologia<br/><i>che unisce tutto.</i></h1><p>Dispositivi, gaming e audio progettati per entrare nell’ecosistema RiverSpend.</p><div className="hero-actions"><button onClick={()=>{setTab('prodotti');document.getElementById('catalogo')?.scrollIntoView({behavior:'smooth'});}}>Esplora i prodotti</button><button className="outline" onClick={()=>{setTab('giochi');document.getElementById('catalogo')?.scrollIntoView({behavior:'smooth'});}}>Scopri i giochi</button></div></div>
-        <div className="hero-art" aria-label="Lineup concettuale dei dispositivi RiverSpend"><div className="hero-device hero-phone"><b>R</b><small>ULTRAPHONE</small></div><div className="hero-device hero-watch"><b>RS</b><small>WATCH</small></div><div className="hero-device hero-console"><b>RS</b><small>NEXTGEN</small></div><div className="hero-device hero-audio"><b>ISSA</b><small>SOUND</small></div><span className="orbit orbit-one"/><span className="orbit orbit-two"/></div>
+        <div className="hero-art hero-image-art"><img src="/river-spend-electronics-hero.jpg" alt="RiverSpend Electronics — lineup dispositivi, gaming e audio"/></div>
         <div className="hero-bottom"><span>DESIGN STUDIES · 2026</span><span>WHITE / AQUA / BRUSHED GOLD</span></div>
       </section>
       <section className="catalog" id="catalogo">
@@ -83,7 +83,7 @@ export default function RiverSpendElectronics() {
       h1{font-size:clamp(43px,7vw,78px);line-height:.97;letter-spacing:-.065em;margin:0 0 20px;color:#14343b}h1 i{font-style:normal;color:#18858a}
       .hero-copy>p:not(.kicker){max-width:430px;font-size:15px;line-height:1.7;color:#4d666b}
       .hero-actions{display:flex;gap:10px;margin-top:26px;flex-wrap:wrap}.hero-actions button{border:0;border-radius:30px;padding:13px 19px;background:#0b6870;color:#fff;font-weight:800;font-size:12px}.hero-actions .outline{background:transparent;border:1px solid #8bb9b9;color:#195b62}
-      .hero-art{position:absolute;right:5%;top:60px;width:44%;height:350px;display:flex;align-items:center;justify-content:center;gap:18px;perspective:800px}
+      .hero-art{position:absolute;right:5%;top:60px;width:44%;height:350px;display:flex;align-items:center;justify-content:center;gap:18px;perspective:800px}.hero-image-art img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 18px 28px #143b3b25)}
       .hero-device{position:relative;z-index:2;display:flex;align-items:center;justify-content:center;flex-direction:column;color:#e6d29b;background:linear-gradient(145deg,#4c5558,#111b20 70%);border:1px solid #c7aa65;box-shadow:0 28px 55px #183a3d30,inset 0 0 18px #ffffff16}
       .hero-device b{font-size:25px}.hero-device small{font-size:7px;letter-spacing:.15em;color:#fff;margin-top:9px}
       .hero-phone{width:74px;height:148px;border-radius:18px;transform:rotate(-8deg)}.hero-watch{width:84px;height:100px;border-radius:26px;transform:translateY(18px)}.hero-console{width:124px;height:48px;border-radius:10px;transform:translateY(70px) rotate(4deg)}.hero-audio{width:95px;height:122px;border-radius:14px;transform:rotate(6deg)}
