@@ -175,6 +175,7 @@ export default function Home() {
     ['RiverSpend Box','/servizi/box'],
     ['RiverSpend Park','/park'],
     ['🌌 RS FutureWorld · FutureCity & Droid','/rs-future-world'],
+    ['⚡ PowerTron · RiverCloud + SuperAI Control Center','/river-ai/powertron'],
     ['RiverSpend Broadcast','/servizi/broadcast'],
     ['RiverSpend Music','/servizi/music'],
     ['RiverSpend sPrint','/riverspend-sprint'],
@@ -1077,6 +1078,11 @@ export default function Home() {
               <span className="shrink-0 text-[10px] font-bold text-cyan-800">← SCORRI →</span>
             </div>
             <div className="rs-apps-download-strip flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain pb-3">
+              <a href="/river-ai/powertron" className="flex w-[136px] shrink-0 snap-start flex-col items-center gap-1 text-center" aria-label="PowerTron Control Center">
+                <span className="flex h-24 w-24 items-center justify-center rounded-2xl bg-gradient-to-br from-slate-950 via-cyan-900 to-amber-500 text-4xl font-black text-amber-200 shadow-md ring-2 ring-amber-300 sm:h-28 sm:w-28">⚡</span>
+                <span className="w-full break-words text-xs font-extrabold leading-tight text-slate-900">PowerTron</span>
+                <span className="text-[10px] font-bold text-amber-700">CLOUD + AI · CONTROL</span>
+              </a>
               <a href="/river-ai" className="flex w-[136px] shrink-0 snap-start flex-col items-center gap-1 text-center" aria-label="RiverSSAI 10.0">
                 <img src="/icons/river-ssai.svg" alt="RiverSSAI 10.0" className="h-24 w-24 rounded-2xl object-contain shadow-md ring-2 ring-amber-300 sm:h-28 sm:w-28" loading="lazy" />
                 <span className="w-full break-words text-xs font-extrabold leading-tight text-slate-900">RiverSSAI 10.0</span>
@@ -1118,6 +1124,25 @@ export default function Home() {
 
             </div>
             <a href="/app" className="mt-2 block text-center text-[10px] font-semibold text-teal-800 underline underline-offset-2">Istruzioni per installarle da Google Chrome · App Store non ancora disponibile</a>
+          </section>
+
+          <section aria-label="PowerTron RiverCloud e SuperAI Control Center" className="mx-auto mb-5 w-full max-w-6xl px-3">
+            <a href="/river-ai/powertron" className="group block overflow-hidden rounded-2xl border border-cyan-300 bg-gradient-to-r from-slate-950 via-slate-900 to-cyan-950 p-4 text-white shadow-xl transition hover:border-amber-300 sm:p-5">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex items-center gap-3">
+                  <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border border-amber-300/70 bg-cyan-950 text-3xl text-amber-300 shadow-lg">⚡</span>
+                  <div>
+                    <p className="text-[10px] font-black uppercase tracking-[.2em] text-cyan-200">RiverSpend · Command Center</p>
+                    <h2 className="text-xl font-black tracking-wide sm:text-2xl">POWERTRON</h2>
+                    <p className="text-xs font-semibold text-cyan-100 sm:text-sm">RiverCloud + RiverSSAI SuperAI 20.0</p>
+                  </div>
+                </div>
+                <div className="sm:max-w-md">
+                  <p className="text-sm leading-relaxed text-slate-100">Il centro di comando progettato per coordinare Cloud, intelligenze artificiali, applicazioni e gestione dell’ecosistema RiverSpend.</p>
+                  <span className="mt-3 inline-flex rounded-full border border-amber-300 bg-amber-300 px-4 py-2 text-xs font-black text-slate-950">APRI POWERTRON →</span>
+                </div>
+              </div>
+            </a>
           </section>
 
           <section aria-label="Scarica le app RiverSpend con QR code" style={{backgroundColor:"#10243a",color:"#ffffff",borderColor:"#22d3ee"}} className="mb-4 flex items-center gap-3 rounded-xl border p-2 shadow-md">
