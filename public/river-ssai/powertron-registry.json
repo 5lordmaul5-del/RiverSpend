@@ -1,0 +1,756 @@
+{
+  "product": "PowerTron — RiverSSAI SuperAI",
+  "version": "20.0-foundation",
+  "status": "architecture-foundation",
+  "coordinator": "Nova Core",
+  "model": "90 specialist divisions × 100 logical role slots = 9,000 catalogued roles",
+  "executionModel": "on-demand bounded workers; role slots are not independent model instances",
+  "divisions": [
+    {
+      "id": "01",
+      "name": "Core Orchestration",
+      "scope": "Planning, routing, coordination, synthesis",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "02",
+      "name": "Research & Knowledge",
+      "scope": "Research design, literature review, knowledge synthesis",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "03",
+      "name": "Public Intelligence",
+      "scope": "Lawful OSINT, source verification, public-record analysis",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "04",
+      "name": "Investigations",
+      "scope": "Authorized case management, chronology, evidence review",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "05",
+      "name": "Cyber Defense",
+      "scope": "Defensive security, incident triage, hardening",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "06",
+      "name": "Threat Analysis",
+      "scope": "Defensive threat intelligence and risk assessment",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "07",
+      "name": "Fraud Prevention",
+      "scope": "Anomaly triage, fraud controls, synthetic testing",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "08",
+      "name": "Financial Integrity",
+      "scope": "Accounting controls, transaction-risk analysis",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "09",
+      "name": "Privacy Engineering",
+      "scope": "Data minimization, privacy impact analysis",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "10",
+      "name": "Data Protection",
+      "scope": "Classification, retention, access governance",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "11",
+      "name": "Critical Infrastructure",
+      "scope": "Resilience planning for essential services",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "12",
+      "name": "Cloud Engineering",
+      "scope": "Cloud architecture, reliability, cost governance",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "13",
+      "name": "Software Engineering",
+      "scope": "Application design, implementation support",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "14",
+      "name": "Secure Code Review",
+      "scope": "Authorized source review and remediation",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "15",
+      "name": "Quality Engineering",
+      "scope": "Test design, regression, acceptance criteria",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "16",
+      "name": "DevOps & Delivery",
+      "scope": "Build, deployment, rollback planning",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "17",
+      "name": "Database Engineering",
+      "scope": "Data modeling, query and backup design",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "18",
+      "name": "AI Engineering",
+      "scope": "Model integration, evaluation, orchestration",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "19",
+      "name": "Machine Learning Research",
+      "scope": "Model evaluation and responsible experimentation",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "20",
+      "name": "Robotics & Automation",
+      "scope": "Safe automation and non-weaponized robotics",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "21",
+      "name": "Rescue Robotics",
+      "scope": "Search-and-rescue and hazard-response robotics",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "22",
+      "name": "Industrial Engineering",
+      "scope": "Process and equipment reliability",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "23",
+      "name": "Mechanical Engineering",
+      "scope": "Mechanical design and safety analysis",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "24",
+      "name": "Electrical Engineering",
+      "scope": "Electrical systems and safety",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "25",
+      "name": "Electronics",
+      "scope": "Embedded systems and consumer electronics",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "26",
+      "name": "Telecommunications",
+      "scope": "Network reliability and communications planning",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "27",
+      "name": "Energy Systems",
+      "scope": "Energy efficiency and resilience",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "28",
+      "name": "Environmental Science",
+      "scope": "Environmental assessment and monitoring",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "29",
+      "name": "Climate & Weather Research",
+      "scope": "Climate data interpretation and preparedness",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "30",
+      "name": "Materials Science",
+      "scope": "Material properties and protective applications",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "31",
+      "name": "Medical Research Support",
+      "scope": "Evidence summaries and research organization; not diagnosis",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "32",
+      "name": "Public Health Research",
+      "scope": "Population-level evidence and preparedness",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "33",
+      "name": "Biotechnology Research",
+      "scope": "Responsible, non-operational research support",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "34",
+      "name": "Pharmaceutical Research Support",
+      "scope": "Literature and trial-data organization; no prescribing",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "35",
+      "name": "Education",
+      "scope": "Curriculum, tutoring, and learning assessment",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "36",
+      "name": "Mathematics",
+      "scope": "Mathematical reasoning and verification",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "37",
+      "name": "Physics",
+      "scope": "Scientific modeling and explanation",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "38",
+      "name": "Chemistry Safety",
+      "scope": "Chemical safety information and compliance",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "39",
+      "name": "Biology",
+      "scope": "Biological research summaries and education",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "40",
+      "name": "Astronomy & Space",
+      "scope": "Space science and mission research",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "41",
+      "name": "Economics",
+      "scope": "Economic analysis and scenario modeling",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "42",
+      "name": "Business Strategy",
+      "scope": "Business planning and decision support",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "43",
+      "name": "Market Research",
+      "scope": "Market sizing and customer research",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "44",
+      "name": "Retail & Commerce",
+      "scope": "Commerce operations and catalog intelligence",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "45",
+      "name": "Supply Chain",
+      "scope": "Logistics, sourcing risk, and resilience",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "46",
+      "name": "Procurement",
+      "scope": "Vendor assessment and purchasing controls",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "47",
+      "name": "Manufacturing",
+      "scope": "Production planning and quality",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "48",
+      "name": "Agriculture",
+      "scope": "Agricultural research and precision-farming support",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "49",
+      "name": "Food Systems",
+      "scope": "Food safety, supply, and sustainability",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "50",
+      "name": "Transport & Mobility",
+      "scope": "Mobility planning and fleet efficiency",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "51",
+      "name": "Automotive Engineering",
+      "scope": "Vehicle systems and safety engineering",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "52",
+      "name": "Aerospace Research",
+      "scope": "Civil aerospace research and safety",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "53",
+      "name": "Maritime Systems",
+      "scope": "Maritime logistics and safety",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "54",
+      "name": "Architecture",
+      "scope": "Building design and performance",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "55",
+      "name": "Civil Engineering",
+      "scope": "Infrastructure design and maintenance",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "56",
+      "name": "Construction Safety",
+      "scope": "Site safety and compliance",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "57",
+      "name": "Urban Planning",
+      "scope": "Cities, mobility, and public services",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "58",
+      "name": "Geospatial Analysis",
+      "scope": "Mapping and geographic data analysis",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "59",
+      "name": "Disaster Preparedness",
+      "scope": "Emergency planning and recovery",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "60",
+      "name": "Crisis Simulation",
+      "scope": "Defensive tabletop exercises and continuity",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "61",
+      "name": "Legal Research Support",
+      "scope": "Legal-source research; not legal representation",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "62",
+      "name": "Regulatory Compliance",
+      "scope": "Control mapping and compliance workflows",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "63",
+      "name": "Audit & Assurance",
+      "scope": "Evidence-based control testing",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "64",
+      "name": "Governance & Risk",
+      "scope": "Enterprise risk and governance",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "65",
+      "name": "Human Resources",
+      "scope": "Workforce planning and HR process support",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "66",
+      "name": "Workplace Safety",
+      "scope": "Occupational safety and prevention",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "67",
+      "name": "Accessibility",
+      "scope": "Accessible design and inclusion engineering",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "68",
+      "name": "Translation & Languages",
+      "scope": "Translation, localization, terminology",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "69",
+      "name": "Writing & Communication",
+      "scope": "Technical writing and communication",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "70",
+      "name": "Media Production",
+      "scope": "Authorized media planning and production",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "71",
+      "name": "Visual Design",
+      "scope": "Brand, interface, and visual design",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "72",
+      "name": "Product Design",
+      "scope": "Product discovery and user experience",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "73",
+      "name": "Game Development",
+      "scope": "Game design, systems, and QA",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "74",
+      "name": "Entertainment Research",
+      "scope": "Media analysis and production research",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "75",
+      "name": "History & Archives",
+      "scope": "Historical research and archival organization",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "76",
+      "name": "Culture & Humanities",
+      "scope": "Humanities research and education",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "77",
+      "name": "Psychology Research Support",
+      "scope": "Research summaries; not therapy or diagnosis",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "78",
+      "name": "Sociology",
+      "scope": "Social research and policy analysis",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "79",
+      "name": "Political Science Research",
+      "scope": "Neutral public-policy and institutional research",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "80",
+      "name": "Ethics & AI Governance",
+      "scope": "Impact assessment and responsible AI",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "81",
+      "name": "Open Data Analysis",
+      "scope": "Public datasets, statistics, and reproducibility",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "82",
+      "name": "Statistics",
+      "scope": "Statistical modeling and uncertainty analysis",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "83",
+      "name": "Forecasting",
+      "scope": "Scenario forecasts with calibrated uncertainty",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "84",
+      "name": "Decision Science",
+      "scope": "Decision frameworks and trade-off analysis",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "85",
+      "name": "Customer Support",
+      "scope": "Support triage and knowledge assistance",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "86",
+      "name": "Personal Productivity",
+      "scope": "Planning and workflow assistance",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "87",
+      "name": "Project Management",
+      "scope": "Milestones, dependencies, and delivery",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "88",
+      "name": "Documentation",
+      "scope": "Technical documentation and knowledge management",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "89",
+      "name": "Independent Verification",
+      "scope": "Cross-checking, contradiction detection, fact review",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    },
+    {
+      "id": "90",
+      "name": "SuperAI Quality Council",
+      "scope": "Final quality, safety, privacy, and reliability review",
+      "logicalRoleSlots": 100,
+      "activation": "on-demand",
+      "status": "catalogued-role-templates"
+    }
+  ],
+  "capacity": {
+    "divisions": 90,
+    "logicalRoleSlotsPerDivision": 100,
+    "totalLogicalRoleSlots": 9000,
+    "runningWorkersNow": 0,
+    "maxConcurrency": "must be configured from provider and infrastructure limits",
+    "note": "9,000 role slots are not 9,000 running models or independent AI systems."
+  },
+  "governance": {
+    "boundedFanOut": true,
+    "recursiveSpawning": false,
+    "leastPrivilege": true,
+    "readOnlyByDefault": true,
+    "humanApprovalForExternalWrites": true,
+    "auditRequired": true,
+    "sourceProvenanceRequired": true,
+    "sensitiveDataMinimization": true
+  },
+  "roadmap": [
+    "registry-and-governance",
+    "bounded-orchestrator-prototype",
+    "provider-and-budget-adapters",
+    "memory-tools-and-approvals",
+    "load-testing-and-evaluation"
+  ],
+  "implemented": false
+}
