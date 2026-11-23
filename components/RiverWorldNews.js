@@ -55,7 +55,7 @@ export default function RiverWorldNews() {
 
   const formatDate = value => {
     if (!value) return 'Orario non disponibile';
-    const normalized = value.replace(/^(\\d{4})(\\d{2})(\\d{2})T/, '$1-$2-$3T');
+    const normalized = value.replace(/^(\d{4})(\d{2})(\d{2})T/, '$1-$2-$3T');
     const date = new Date(normalized);
     return Number.isNaN(date.getTime()) ? value : date.toLocaleString('it-IT', { dateStyle: 'short', timeStyle: 'short' });
   };
