@@ -13,14 +13,14 @@
     {
       "id": "image-engine",
       "name": "Image Engine",
-      "status": "provider-pending",
-      "description": "Prompt brief preparation and local image import; no generative model connected."
+      "status": "optional-comfyui-adapter-present-runtime-not-configured",
+      "description": "Owner-authenticated server adapter for a private ComfyUI runtime; uses an SDXL-compatible checkpoint workflow when configured. No runtime is currently configured."
     },
     {
       "id": "video-engine",
       "name": "Video Engine",
-      "status": "provider-pending",
-      "description": "Integration target for open-weight text-to-video and image-to-video runtimes."
+      "status": "configurable-comfyui-workflow-adapter-runtime-not-configured",
+      "description": "Owner-authenticated adapter for a server-configured ComfyUI API workflow; requires a compatible video model, custom nodes and private GPU runtime."
     },
     {
       "id": "motion-lab",
@@ -32,7 +32,7 @@
       "id": "media-vault",
       "name": "Media Vault",
       "status": "local-indexeddb",
-      "description": "Stores user-selected media in browser IndexedDB on this device; not cloud-synced."
+      "description": "Stores user-selected and generated media in browser IndexedDB on this device; not cloud-synced."
     }
   ],
   "safety": {
@@ -42,9 +42,9 @@
     "requiresOwnerAuth": true
   },
   "nextSteps": [
-    "Add a server-side provider adapter for image generation with explicit environment configuration.",
-    "Add a GPU/runtime adapter for open-weight video models.",
-    "Add authenticated cloud object storage and per-user access controls.",
-    "Add export, quota, and file-size validation before enabling remote jobs."
+    "Measure available laptop GPU, VRAM, RAM and free disk before choosing local model sizes.",
+    "Configure a private ComfyUI image runtime and SDXL-compatible checkpoint on a trusted GPU host.",
+    "Configure and validate a ComfyUI API-format video workflow for a compatible open-weight model.",
+    "Add authenticated cloud object storage, job queue, quotas and retention controls."
   ]
 }
