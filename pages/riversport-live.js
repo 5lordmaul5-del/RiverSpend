@@ -52,11 +52,11 @@ const channels = [
 export default function RiverWorldLive() {
   const [selected, setSelected] = useState('meteo');
   const [query, setQuery] = useState('');
-  const [sportSelected, setSportSelected] = useState('football');
+  const [sportSelected, setSportSelected] = useState('martial-arts');
   const current = channels.find(c => c.id === selected) || channels[0];
   const currentSport = sports.find(s => s.id === sportSelected) || sports[0];
   const filtered = useMemo(() => channels.filter(c => (c.name + ' ' + c.description + ' ' + c.coverage).toLowerCase().includes(query.toLowerCase())), [query]);
-  const sportFiltered = useMemo(() => sports.filter(s => (s.name + ' ' + s.regions).toLowerCase().includes(query.toLowerCase())), [query]);
+  const sportFiltered = useMemo(() => sports.filter(s => (s.name + ' ' + s.regions + ' ' + s.leagues).toLowerCase().includes(query.toLowerCase())), [query]);
 
   return <>
     <Head><title>RiverWorld Live · RiverSpend</title><meta name="description" content="Meteo, notizie, sport, cinema, TV, cartoni, moda, eventi e informazioni dal mondo: RiverWorld Live." /><meta name="theme-color" content="#073b4c" /></Head>
