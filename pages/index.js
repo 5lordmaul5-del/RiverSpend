@@ -919,11 +919,8 @@ export default function Home() {
 
   return (
     <main className="rs-site min-h-screen bg-slate-950 text-white">
-      <section role="status" aria-label="Avviso versione di test" className="border-b border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-950">
-        <div className="mx-auto max-w-6xl">
-          <p className="font-extrabold">⚠️ RiverSpend è online in versione di test</p>
-          <p className="mt-1">Il sito è in fase di sviluppo e verifica: funzioni, pagine, procedure di acquisto, pagamenti e disponibilità possono cambiare, essere temporaneamente limitati o non essere ancora attivi. Non considerare attive le funzioni di trattenuta e svincolo dei fondi finché non saranno confermate da RiverSpend. Grazie per la pazienza.</p>
-        </div>
+      <section role="status" aria-label="Avviso versione di test" className="border-b border-amber-300 bg-amber-50 px-3 py-1 text-xs text-amber-950 text-center">
+        <p className="font-bold">Sito in fase di test</p>
       </section>
       {mostraGate18 && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4" role="dialog" aria-modal="true" aria-labelledby="gate18-title">
@@ -2338,13 +2335,16 @@ export default function Home() {
           gap:12px !important; overscroll-behavior-x:contain;
         }
         .rs-apps-download-strip::-webkit-scrollbar { display:none !important; }
+        .rs-apps-download-strip { gap:8px !important; padding-bottom:8px !important; }
         .rs-apps-download-strip > a {
-          box-sizing:border-box; flex:0 0 152px !important; width:152px !important;
-          min-width:152px !important; max-width:152px !important; scroll-snap-align:none !important;
+          box-sizing:border-box; flex:0 0 120px !important; width:120px !important;
+          min-width:120px !important; max-width:120px !important; scroll-snap-align:none !important;
         }
-        .rs-apps-download-strip img,
+        .rs-apps-download-strip > a img,
         .rs-apps-download-strip > a > span:first-child {
-          flex-shrink:0;
+          flex-shrink:0; width:76px !important; height:76px !important;
+          min-width:76px !important; min-height:76px !important;
+          max-width:76px !important; max-height:76px !important;
         }
       `}</style>
     </main>
