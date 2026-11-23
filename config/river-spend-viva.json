@@ -1,11 +1,11 @@
 {
-  "brand": "RiverSpend VIVA",
+  "brand": "RS VIVA",
   "currency": "EUR",
   "status": "catalog_only_payment_activation_pending",
   "plans": [
     {
       "id": "delivery-fast-annual",
-      "name": "RiverSpend VIVA Delivery Fast",
+      "name": "RS VIVA Delivery Fast",
       "price": 29.9,
       "billing": "annual",
       "durationDays": 365,
