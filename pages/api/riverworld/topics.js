@@ -2,7 +2,7 @@ const TOPICS = {
   cinema: '(film OR cinema OR movie OR movies OR actor OR actress OR director OR filmfestival OR boxoffice)',
   moda: '(fashion OR fashionweek OR runway OR designer OR couture OR streetwear OR beauty)',
   sport: '(sports OR football OR soccer OR basketball OR tennis OR formula1 OR motogp OR rugby OR olympics OR baseball OR softball OR swimming OR diving OR cycling OR mountainbike OR climbing OR athletics OR volleyball OR badminton OR gymnastics OR skiing OR rowing OR sailing)',
-  'arti-marziali': '(taekwondo OR taekwon-do OR judo OR karate OR kickboxing OR muaythai OR muay-thai OR mixedmartialarts OR MMA OR sumo OR wrestling OR kungfu OR wushu OR aikido OR kendo OR samurai OR martialarts)',
+  'arti-marziali': '(taekwondo OR taekwon-do OR judo OR karate OR kickboxing OR muaythai OR muay-thai OR mixedmartialarts OR MMA OR sumo OR savate OR wrestling OR kungfu OR wushu OR aikido OR kendo OR samurai OR martialarts)',
   spettacolo: '(entertainment OR celebrity OR television OR tvshow OR music OR awards OR showbusiness)',
 };
 export default async function handler(req, res) {
