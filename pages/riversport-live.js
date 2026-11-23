@@ -1,6 +1,8 @@
 import Head from 'next/head';
 import Link from 'next/link';
 import RiverWorldNews from '../components/RiverWorldNews';
+import RiverWorldWeather from '../components/RiverWorldWeather';
+import RiverWorldAlerts from '../components/RiverWorldAlerts';
 import { useMemo, useState } from 'react';
 
 const sports = [
@@ -19,11 +21,11 @@ const sports = [
 ];
 
 const channels = [
-  { id:'meteo', name:'Meteo', icon:'🌦️', description:'Previsioni, temperature, mappe, allerte meteo e condizioni in tempo reale.', coverage:'Italia e mondo', status:'Dati da collegare a servizi meteorologici affidabili' },
-  { id:'news', name:'Notizie', icon:'📰', description:'Attualità, politica, economia, cronaca, esteri e aggiornamenti verificati.', coverage:'Italia · Europa · Asia · Americhe · Africa · Mondo', status:'Feed editoriali e fonti giornalistiche da configurare' },
+  { id:'meteo', name:'Meteo', icon:'🌦️', description:'Previsioni, temperature, mappe, allerte meteo e condizioni in tempo reale.', coverage:'Italia e mondo', status:'Previsioni globali collegate a MET Norway; allerte ufficiali da ampliare per Paese' },
+  { id:'news', name:'Notizie', icon:'📰', description:'Attualità, politica, economia, cronaca, esteri e aggiornamenti verificati.', coverage:'Italia · Europa · Asia · Americhe · Africa · Mondo', status:'Ricerca internazionale collegata; copertura dipendente dalle fonti indicizzate' },
   { id:'sport', name:'Sport Live', icon:'🏆', description:'Risultati, calendari, classifiche e statistiche. Calcio come prima priorità, poi gli altri sport.', coverage:'Competizioni nazionali e internazionali', status:'Catalogo sportivo predisposto; collegamento dati live da attivare' },
   { id:'traffico', name:'Traffico e viaggi', icon:'🚦', description:'Traffico, trasporti pubblici, treni, voli, viabilità e condizioni stradali.', coverage:'Italia e destinazioni internazionali', status:'Servizi di mobilità e mappe da collegare' },
-  { id:'allerte', name:'Allerte e sicurezza', icon:'🚨', description:'Avvisi ufficiali su meteo estremo, terremoti, incendi, emergenze e protezione civile.', coverage:'Avvisi locali, nazionali e internazionali', status:'Priorità alle fonti ufficiali e agli avvisi verificati' },
+  { id:'allerte', name:'Allerte e sicurezza', icon:'🚨', description:'Avvisi ufficiali su meteo estremo, terremoti, incendi, emergenze e protezione civile.', coverage:'Avvisi locali, nazionali e internazionali', status:'Feed sismico USGS collegato; allerte meteo e protezione civile da integrare per area' },
   { id:'eventi', name:'Eventi e concerti', icon:'🎟️', description:'Concerti, festival, fiere, mostre, spettacoli, manifestazioni e appuntamenti locali.', coverage:'Città e Paesi di tutto il mondo', status:'Calendari eventi e biglietterie autorizzate da collegare' },
   { id:'cinema', name:'Cinema', icon:'🎬', description:'Uscite, trailer, recensioni, festival, premi e programmazione nelle sale.', coverage:'Cinema italiano e internazionale', status:'Cataloghi e contenuti video con licenze appropriate' },
   { id:'tv', name:'TV e programmi', icon:'📺', description:'Palinsesti, guide TV, programmi, serie, documentari e notizie dal mondo televisivo.', coverage:'Canali e palinsesti disponibili per Paese', status:'Guide TV e collegamenti ufficiali da configurare' },
@@ -69,7 +71,9 @@ export default function RiverWorldLive() {
           <div className="rounded-2xl bg-white p-5 shadow-sm md:p-6"><div className="text-4xl">{current.icon}</div><h2 className="mt-2 text-2xl font-extrabold text-[#073b4c]">{current.name}</h2><p className="mt-2 text-sm leading-6 text-slate-600">{current.description}</p><div className="mt-4 border-t border-slate-100 pt-3"><div className="text-xs font-bold uppercase tracking-wide text-slate-400">Copertura</div><p className="mt-1 text-sm text-slate-700">{current.coverage}</p></div></div>
           <aside className="rounded-2xl border border-amber-200 bg-amber-50 p-5"><div className="font-bold text-amber-950">📡 Stato dei collegamenti</div><p className="mt-2 text-sm text-amber-900">{current.status}. I contenuti in diretta saranno mostrati solo quando collegati a fonti affidabili e autorizzate.</p><div className="mt-4 rounded-xl bg-white/70 p-3 text-xs text-amber-950">Nessun dato inventato, nessuna diretta simulata e nessun contenuto protetto trasmesso senza licenza.</div></aside>
         </section>
+        {selected === 'meteo' && <RiverWorldWeather />}
         {selected === 'news' && <RiverWorldNews />}
+        {selected === 'allerte' && <RiverWorldAlerts />}
         {selected === 'sport' && <section className="mt-5 rounded-2xl bg-white p-5 shadow-sm md:p-6">
           <div className="flex flex-wrap items-center justify-between gap-2"><h2 className="text-xl font-extrabold text-[#073b4c]">🏆 RiverSport Live</h2><span className="text-xs text-slate-500">Calcio: prima priorità</span></div>
           <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">{sportFiltered.map(s => <button key={s.id} onClick={() => setSportSelected(s.id)} className={`rounded-xl border p-3 text-left ${sportSelected === s.id ? 'border-teal-600 bg-teal-50' : 'border-slate-200 hover:bg-slate-50'}`}><span className="text-xl">{s.icon}</span><span className="mt-1 block text-sm font-bold">{s.name}</span></button>)}</div>
