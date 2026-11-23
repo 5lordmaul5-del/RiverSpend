@@ -171,6 +171,26 @@ export default function RiverAI() {
           <div style={{textAlign:"center",fontSize:12,color:"#d7e9f5",marginTop:4}}>Una regia. Tre unità speciali. 30 specialisti.</div>
         </section>
 
+        <section aria-label="Nova e agenti speciali" style={{padding:"16px 14px 18px",background:"linear-gradient(180deg,#071b2c,#0b2c40)",borderBottom:"1px solid #16475a"}}>
+          <div style={{textAlign:"center",marginBottom:12}}>
+            <div style={{fontSize:11,fontWeight:900,letterSpacing:2,color:"#f1cf77"}}>SQUADRA DI COMANDO RIVERSSAI</div>
+            <h2 style={{margin:"5px 0",fontSize:20,color:"#fff"}}>I tre agenti di Nova</h2>
+            <p style={{margin:0,fontSize:12,color:"#c5e2eb"}}>Seleziona un agente per impostarlo nella chat. Le immagini sono ritratti illustrati dei ruoli.</p>
+          </div>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(3,minmax(0,1fr))",gap:10,maxWidth:760,margin:"0 auto"}}>
+            {[
+              {id:"business",name:"River A1B2",role:"Strategia · Coordinamento",src:"/images/river-agent-a1b2.svg",accent:"#43d9f2"},
+              {id:"research",name:"River A2C4",role:"Ricerca · Creatività",src:"/images/river-agent-a2c4.svg",accent:"#e7bd62"},
+              {id:"tech",name:"River B2D5",role:"Tecnologia · Controllo",src:"/images/river-agent-b2d5.svg",accent:"#9bd8b1"}
+            ].map(agent=><button key={agent.id} type="button" onClick={()=>{setSelectedAgent(agent.id);document.getElementById("river-agent")?.scrollIntoView({behavior:"smooth",block:"center"});}} style={{minWidth:0,padding:7,borderRadius:14,border:selectedAgent===agent.id?"2px solid "+agent.accent:"1px solid #326071",background:selectedAgent===agent.id?"#123c50":"#0b2638",color:"#fff",textAlign:"left",cursor:"pointer",boxShadow:selectedAgent===agent.id?"0 0 0 2px #ffffff20":"none"}}>
+                <img src={agent.src} alt={"Ritratto illustrato "+agent.name} loading="lazy" style={{display:"block",width:"100%",aspectRatio:"1.15 / 1",objectFit:"cover",borderRadius:9,background:"#06172b"}}/>
+                <div style={{fontWeight:900,fontSize:13,marginTop:8,overflowWrap:"anywhere"}}>{agent.name}</div>
+                <div style={{fontSize:10,lineHeight:1.35,color:agent.accent,marginTop:3}}>{agent.role}</div>
+                <div style={{fontSize:10,color:"#d5e8ef",marginTop:6}}>{selectedAgent===agent.id?"✓ Selezionato":"Seleziona agente →"}</div>
+              </button>)}
+          </div>
+        </section>
+
         {installMessage && <div role="status" style={{padding:"10px 18px",background:"#fff8df",color:"#72510a",fontSize:13}}>{installMessage}</div>}
         {access === "checking" ? <div style={{padding:24}}>Verifica accesso amministratore…</div> :
          access === "login" ? <div style={{padding:24}}>
