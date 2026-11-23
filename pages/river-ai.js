@@ -18,7 +18,7 @@ export default function RiverAI() {
   const [installPrompt, setInstallPrompt] = useState(null);
   const [installMessage, setInstallMessage] = useState("");
   const [selectedAgent, setSelectedAgent] = useState("nova");
-  const [teamSize, setTeamSize] = useState(4);
+  const [teamSize, setTeamSize] = useState(2);
   const endRef = useRef(null);
   const sendLock = useRef(false);
 
@@ -186,7 +186,7 @@ export default function RiverAI() {
          access === "error" ? <div role="alert" style={{padding:24}}><h2>Verifica temporaneamente non disponibile</h2><p>Non posso confermare i permessi in questo momento. Riprova tra poco.</p></div> :
          <>
           <div style={{padding:"12px 18px",background:"#f0fbfa",borderBottom:"1px solid #dceeee",fontSize:12,lineHeight:1.5,color:"#42636a"}}>
-            Scegli il collaboratore specializzato. Gli agenti condividono la regia di Nova e la memoria privata. La rete dispone di 30 specialisti. Quando scegli la Squadra Ultra, Nova seleziona prima le competenze più pertinenti alla tua richiesta e coordina gruppi da 2, 4, 8, 10, 20 o 30 specialisti; il sistema li elabora a piccoli gruppi e Nova integra i risultati. La capacità effettiva dipende dai limiti del servizio e dalle risorse disponibili. Le azioni esterne restano protette da approvazione.
+            Scegli il collaboratore specializzato. Gli agenti condividono la regia di Nova e la memoria privata. La directory comprende 30 profili specialistici. La Squadra Ultra attiva temporaneamente 2 o 4 specialisti per richiesta, per rispettare i limiti del provider; Nova integra i risultati. Gli altri profili restano disponibili come competenze selezionabili singolarmente. La capacità effettiva dipende dai limiti del servizio e dalle risorse disponibili. Le azioni esterne restano protette da approvazione.
           </div>
           <div style={{padding:"12px 18px",borderBottom:"1px solid #e3eeee",display:"flex",alignItems:"center",gap:10,flexWrap:"wrap"}}>
             <label htmlFor="river-agent" style={{fontWeight:800,color:"#075766"}}>Agente operativo</label>
@@ -225,12 +225,8 @@ export default function RiverAI() {
               <option value="documentation">📚 River Docs · Documentazione</option>
             </select>
             {selectedAgent === "team" && <select aria-label="Numero di agenti" value={teamSize} onChange={e=>setTeamSize(Number(e.target.value))} style={{border:"1px solid #c7dfe1",borderRadius:11,padding:10,background:"#fff",color:"#173b42",fontSize:14}}>
-              <option value={2}>2 agenti + Nova</option>
-              <option value={4}>4 agenti + Nova</option>
-              <option value={8}>8 agenti + Nova</option>
-              <option value={10}>10 specialisti + Nova</option>
-              <option value={20}>20 specialisti + Nova</option>
-              <option value={30}>30 specialisti + Nova</option>
+              <option value={2}>2 specialisti + Nova</option>
+              <option value={4}>4 specialisti + Nova</option>
             </select>}
           </div>
           <div style={{flex:1,padding:18,overflowY:"auto",minHeight:300}}>
