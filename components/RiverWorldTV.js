@@ -18,6 +18,10 @@ const channels = [
   { country: 'Internazionale', language: 'Multilingue', name: 'UN Web TV', category: 'Istituzioni / Documentari', url: 'https://webtv.un.org/', note: 'Riunioni, conferenze e contenuti audiovisivi delle Nazioni Unite.' },
   { country: 'Francia', language: 'Francese / Inglese', name: 'ARTE · Direct', category: 'Cultura / Documentari', url: 'https://www.arte.tv/', note: 'Documentari, cultura e programmi; catalogo e dirette secondo diritti territoriali.' },
   { country: 'Spagna', language: 'Spagnolo', name: 'RTVE Play · Directo', category: 'Pubblica / Intrattenimento', url: 'https://www.rtve.es/play/', note: 'Canali e programmi del servizio pubblico spagnolo; alcuni contenuti possono essere geobloccati.' },
+  { country: 'Brasile', language: 'Portoghese', name: 'TV Brasil · Ao vivo', category: 'Pubblica / Cultura', url: 'https://tvbrasil.ebc.com.br/webtv/', note: 'Web TV ufficiale EBC; parte della programmazione è disponibile online secondo i diritti.' },
+  { country: 'India', language: 'Inglese', name: 'NDTV · Live TV', category: 'Notizie', url: 'https://www.ndtv.com/livetv-ndtv24x7', note: 'Diretta ufficiale NDTV, con disponibilità gratuita dichiarata dall’emittente.' },
+  { country: 'Corea del Sud', language: 'Inglese / Coreano', name: 'Arirang TV · Live', category: 'Notizie / Cultura', url: 'https://www.arirang.com/', note: 'Emittente internazionale coreana con canale live sul sito ufficiale.' },
+  { country: 'Sudafrica', language: 'Inglese', name: 'eNCA · Live', category: 'Notizie', url: 'https://www.enca.com/streaming', note: 'Servizio ufficiale di notizie 24 ore; disponibilità dello streaming secondo area.' },
 ];
 
 const filmSources = [
