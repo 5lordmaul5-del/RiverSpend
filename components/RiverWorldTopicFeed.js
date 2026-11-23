@@ -5,11 +5,11 @@ const CONFIG = {
   scuola: { title:'Risorse didattiche e universitarie', subtitle:'Materiali e approfondimenti per il percorso e la materia selezionati.', icon:'🎓', tags:['Storia','Geografia','Matematica','Geometria','Scienze','Biologia','Chimica','Fisica','Italiano','Inglese','Filosofia','Informatica'] },
   cinema: { title:'Cinema e Film', subtitle:'Uscite, festival, registi, attori, premi e industria cinematografica.', icon:'🎬', tags:['Cinema mondiale','Festival','Film in uscita','Premi e box office'] },
   moda: { title:'Moda & Fashion', subtitle:'Sfilate, collezioni, designer, streetwear, beauty e tendenze internazionali.', icon:'👗', tags:['Milano Fashion Week','Paris Fashion Week','London Fashion Week','New York Fashion Week','Designer','Streetwear'] },
-  sport: { title:'Tutti gli sport del mondo', subtitle:'Copertura multisport: dalle discipline più seguite agli sport meno raccontati.', icon:'🏆', tags:['Arti marziali','Taekwondo','Tennis','Nuoto e tuffi','Ciclismo MTB','Arrampicata','Baseball','Atletica','Basket','Sport invernali'] },
+  sport: { title:'Tutti gli sport del mondo', subtitle:'Copertura multisport: dalle discipline più seguite agli sport meno raccontati.', icon:'🏆', tags:['Arti marziali','Taekwondo','Judo','Karate','Tennis','Tennis tavolo','Nuoto e tuffi','Pallanuoto','Ciclismo MTB','BMX','Arrampicata','Baseball','Softball','Atletica','Basket','Pallavolo','Pallamano','Rugby','Cricket','Golf','Badminton','Scherma','Tiro con arco','Triathlon','Surf','Squash','Sport paralimpici','Sport invernali','Formula 1','MotoGP'] },
   'arti-marziali': { title:'Arti marziali · Taekwondo in primo piano', subtitle:'Taekwondo, Judo e Karate in evidenza, insieme alle discipline da combattimento e alle arti tradizionali di tutto il mondo.', icon:'🥋', tags:['Taekwondo','Judo','Karate','Kickboxing','Muay Thai','MMA','Sumo','Lotta','Kung Fu','Aikido','Kendo','Arti samurai'] },
   spettacolo: { title:'Spettacolo & Celebrities', subtitle:'Televisione, artisti, premi, musica, personaggi e intrattenimento.', icon:'✨', tags:['Televisione','Celebrities','Musica','Premi','Show business'] },
 };
-const COUNTRY_OPTIONS = [['','Tutti i Paesi'],['IT','Italia'],['GB','Regno Unito'],['US','Stati Uniti'],['FR','Francia'],['DE','Germania'],['NO','Norvegia'],['ES','Spagna'],['JP','Giappone'],['KR','Corea del Sud'],['IN','India'],['BR','Brasile']];
+const COUNTRY_OPTIONS = [['','Tutti i Paesi'],['IT','Italia'],['GB','Regno Unito'],['US','Stati Uniti'],['CA','Canada'],['MX','Messico'],['BR','Brasile'],['AR','Argentina'],['FR','Francia'],['DE','Germania'],['ES','Spagna'],['PT','Portogallo'],['NL','Paesi Bassi'],['BE','Belgio'],['CH','Svizzera'],['AT','Austria'],['NO','Norvegia'],['SE','Svezia'],['FI','Finlandia'],['PL','Polonia'],['UA','Ucraina'],['TR','Turchia'],['EG','Egitto'],['ZA','Sudafrica'],['NG','Nigeria'],['KE','Kenya'],['MA','Marocco'],['JP','Giappone'],['KR','Corea del Sud'],['CN','Cina'],['IN','India'],['PK','Pakistan'],['ID','Indonesia'],['TH','Thailandia'],['AU','Australia'],['NZ','Nuova Zelanda']];
 const fmt = value => { if(!value) return 'Data non disponibile'; const s=value.replace(/^(\\d{4})(\\d{2})(\\d{2})T/,'$1-$2-$3T'); const d=new Date(s); return Number.isNaN(d.getTime())?value:d.toLocaleString('it-IT',{dateStyle:'short',timeStyle:'short'}); };
 
 export default function RiverWorldTopicFeed({ section='cinema', initialQuery='' }) {
@@ -37,7 +37,7 @@ export default function RiverWorldTopicFeed({ section='cinema', initialQuery='' 
       }catch(err){if(err.name!=='AbortError')setError(err.message||'Errore di caricamento.');}
       finally{if(!controller.signal.aborted)setLoading(false);}
     }
-    load();return()=>controller.abort();
+    const timer=setTimeout(load,350);return()=>{clearTimeout(timer);controller.abort();};
   },[section,query,country,refresh]);
   return <section className="mt-5 rounded-2xl bg-white p-4 shadow-sm md:p-6">
     <div className="flex flex-wrap items-start justify-between gap-3">
