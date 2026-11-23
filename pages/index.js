@@ -983,8 +983,8 @@ export default function Home() {
               <LanguageSelector />
               <button type="button" onClick={() => { setMenuRiverSpend(!menuRiverSpend); setMenuCategorie(false); }} aria-expanded={menuRiverSpend} className="rounded-full px-3 py-1 text-xs font-bold text-teal-800 hover:bg-teal-50">Esplora RiverSpend ▾</button>
             </div>
-            <div className="mt-2 flex justify-center">
-              <a href="/riverworld-live" aria-label="Apri RiverWorld Live" title="RiverWorld Live" className="inline-flex min-h-9 items-center justify-center rounded-full border-2 border-emerald-400 bg-gradient-to-r from-emerald-50 to-cyan-50 px-5 py-1.5 text-xs font-black tracking-wide text-emerald-950 shadow-sm hover:from-emerald-100 hover:to-cyan-100">🌍 RIVERWORLD LIVE · APRI →</a>
+            <div className="mt-2 w-full">
+              <a href="/riverworld-live" aria-label="Apri RiverWorld Live" title="RiverWorld Live" className="flex min-h-12 w-full items-center justify-center rounded-xl border-2 border-emerald-400 bg-gradient-to-r from-emerald-50 to-cyan-50 px-5 py-3 text-sm font-black tracking-wide text-emerald-950 shadow-sm hover:from-emerald-100 hover:to-cyan-100">🌍 RIVERWORLD LIVE · APRI →</a>
             </div>
             <div className={ricercaAperta || ricerca ? "mx-auto mt-2 flex max-w-6xl gap-2" : "hidden"}>
               <input
@@ -2325,6 +2325,78 @@ export default function Home() {
           margin:0 6px 4px !important; padding:4px !important; font-size:10px !important; line-height:1.2 !important;
         }
         @media (prefers-reduced-motion: reduce) { .rs-apps-grid { scroll-behavior:auto !important; } }
+
+        /* Banner promozionali: dimensioni allineate alle schede prodotto del catalogo.
+           2 colonne su mobile, 3 su tablet, 4 su desktop; immagine con lo stesso rapporto 4:3. */
+        .rs-apps-grid > .rs-feature-card,
+        .rs-apps-grid > #rs-seller-card,
+        .rs-apps-grid > .rs-park-banner,
+        .rs-apps-grid > .rs-banner-slide:not(#rs-force-card),
+        .rs-apps-grid > .rs-world-card,
+        .rs-apps-grid > .rs-ecology-banner,
+        .rs-apps-grid > #rs-force-card {
+          box-sizing:border-box !important;
+          flex:0 0 calc((100vw - 24px) / 2) !important;
+          width:calc((100vw - 24px) / 2) !important;
+          min-width:calc((100vw - 24px) / 2) !important;
+          max-width:calc((100vw - 24px) / 2) !important;
+          height:calc((100vw - 24px) * .375 + 174px) !important;
+          min-height:calc((100vw - 24px) * .375 + 174px) !important;
+          max-height:calc((100vw - 24px) * .375 + 174px) !important;
+        }
+        @media (min-width:640px) {
+          .rs-apps-grid > .rs-feature-card,
+          .rs-apps-grid > #rs-seller-card,
+          .rs-apps-grid > .rs-park-banner,
+          .rs-apps-grid > .rs-banner-slide:not(#rs-force-card),
+          .rs-apps-grid > .rs-world-card,
+          .rs-apps-grid > .rs-ecology-banner,
+          .rs-apps-grid > #rs-force-card {
+            flex-basis:calc((100vw - 64px) / 3) !important;
+            width:calc((100vw - 64px) / 3) !important;
+            min-width:calc((100vw - 64px) / 3) !important;
+            max-width:calc((100vw - 64px) / 3) !important;
+            height:calc((100vw - 64px) * .25 + 174px) !important;
+            min-height:calc((100vw - 64px) * .25 + 174px) !important;
+            max-height:calc((100vw - 64px) * .25 + 174px) !important;
+          }
+        }
+        @media (min-width:1024px) {
+          .rs-apps-grid > .rs-feature-card,
+          .rs-apps-grid > #rs-seller-card,
+          .rs-apps-grid > .rs-park-banner,
+          .rs-apps-grid > .rs-banner-slide:not(#rs-force-card),
+          .rs-apps-grid > .rs-world-card,
+          .rs-apps-grid > .rs-ecology-banner,
+          .rs-apps-grid > #rs-force-card {
+            flex-basis:calc((min(100vw, 1152px) - 80px) / 4) !important;
+            width:calc((min(100vw, 1152px) - 80px) / 4) !important;
+            min-width:calc((min(100vw, 1152px) - 80px) / 4) !important;
+            max-width:calc((min(100vw, 1152px) - 80px) / 4) !important;
+            height:calc((min(100vw, 1152px) - 80px) * .1875 + 174px) !important;
+            min-height:calc((min(100vw, 1152px) - 80px) * .1875 + 174px) !important;
+            max-height:calc((min(100vw, 1152px) - 80px) * .1875 + 174px) !important;
+          }
+        }
+        #rs-force-card .rs-force-stage {
+          flex:0 0 75% !important;
+          width:100% !important;
+          height:auto !important;
+          min-height:0 !important;
+          max-height:none !important;
+          aspect-ratio:4 / 3 !important;
+        }
+        #rs-force-card .rs-force-stage .rs-palantir {
+          width:clamp(72px, 34%, 116px) !important;
+          height:auto !important;
+          aspect-ratio:1 !important;
+          flex-basis:auto !important;
+        }
+        /* RiverWorld Live: fascia a tutta larghezza utile della pagina. */
+        header a[href="/riverworld-live"] {
+          width:100% !important;
+          box-sizing:border-box !important;
+        }
 
         /* Carosello dedicato alle APP SCARICABILI, separato dai banner promozionali e da RS FORCE. */
         .rs-apps-download-strip {
