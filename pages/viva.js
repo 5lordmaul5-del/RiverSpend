@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 const plans = [
   {
-    name: 'VIVA Delivery Fast',
+    name: 'RS VIVA Delivery Fast',
     price: '29,90 €',
     period: '/anno',
     label: 'Piano lancio',
@@ -20,19 +20,19 @@ const plans = [
   }
 ];
 
-export default function RiverSpendViva() {
+export default function RSVIVA() {
   return (
     <>
       <Head>
-        <title>RiverSpend VIVA · Membership e pagamenti</title>
-        <meta name="description" content="RiverSpend VIVA: servizi, membership e pagamenti RiverSpend." />
+        <title>RS VIVA · Membership e pagamenti</title>
+        <meta name="description" content="RS VIVA: servizi, membership e pagamenti RiverSpend." />
       </Head>
       <main className="min-h-screen bg-gradient-to-b from-white via-cyan-50 to-white px-4 py-8 text-slate-900">
         <div className="mx-auto max-w-5xl">
           <Link href="/" className="text-sm font-bold text-teal-700 underline">← RiverSpendShop</Link>
           <header className="mt-6 rounded-[2rem] bg-slate-950 p-7 text-white shadow-xl sm:p-10">
             <p className="text-sm font-black uppercase tracking-[0.3em] text-amber-300">RIVERSPEND</p>
-            <h1 className="mt-3 text-4xl font-black sm:text-6xl">VIVA<span className="text-amber-300">.</span></h1>
+            <h1 className="mt-3 text-4xl font-black tracking-tight sm:text-6xl">RS<span className="text-amber-300">VIVA</span><span className="text-amber-300">⚡</span></h1>
             <p className="mt-3 max-w-2xl text-lg leading-7 text-slate-200">Un solo pass per vivere i servizi RiverSpend. Membership, consegne locali e servizi digitali in un ecosistema unico.</p>
           </header>
 
@@ -86,7 +86,7 @@ export default function RiverSpendViva() {
           </section>
 
           <footer className="mt-8 rounded-2xl bg-slate-100 p-4 text-xs leading-5 text-slate-600">
-            RiverSpend VIVA è il nome commerciale proposto per membership e vantaggi dell'ecosistema. Prezzi e condizioni sono un listino di sviluppo; nessun abbonamento viene attivato e nessun pagamento viene incassato da questa pagina. Prima del lancio saranno completati verifica fiscale, termini di vendita, privacy e integrazione con il prestatore di servizi di pagamento.
+            RS VIVA è il nome commerciale proposto per membership e vantaggi dell'ecosistema. Prezzi e condizioni sono un listino di sviluppo; nessun abbonamento viene attivato e nessun pagamento viene incassato da questa pagina. Prima del lancio saranno completati verifica fiscale, termini di vendita, privacy e integrazione con il prestatore di servizi di pagamento.
           </footer>
         </div>
       </main>
