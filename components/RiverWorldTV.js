@@ -10,6 +10,14 @@ const channels = [
   { country: 'Qatar', language: 'Inglese / Arabo', name: 'Al Jazeera · Live', category: 'Notizie', url: 'https://www.aljazeera.com/live', note: 'Canale internazionale; disponibilità secondo area.' },
   { country: 'Europa', language: 'Multilingue', name: 'Euronews · Live', category: 'Notizie', url: 'https://www.euronews.com/live', note: 'Notizie europee e internazionali.' },
   { country: 'Stati Uniti', language: 'Inglese', name: 'NASA+', category: 'Scienza / Spazio', url: 'https://plus.nasa.gov/', note: 'Programmi e dirette NASA gratuiti.' },
+  { country: 'Australia', language: 'Inglese', name: 'ABC News Australia · Live', category: 'Notizie', url: 'https://www.abc.net.au/news/newschannel', note: 'Canale di notizie australiano con diretta ufficiale sul sito ABC.' },
+  { country: 'Stati Uniti', language: 'Inglese', name: 'CBS News · 24/7', category: 'Notizie', url: 'https://www.cbsnews.com/live/', note: 'Flusso gratuito CBS News 24/7 e canali locali; disponibilità secondo area.' },
+  { country: 'Stati Uniti', language: 'Inglese', name: 'PBS NewsHour', category: 'Informazione / Cultura', url: 'https://www.pbs.org/newshour/', note: 'Edizioni trasmesse in diretta sul sito secondo il palinsesto.' },
+  { country: 'Cina', language: 'Inglese / Spagnolo / Francese / Arabo / Russo', name: 'CGTN · Canali live', category: 'Notizie / Documentari', url: 'https://www.cgtn.com/tv', note: 'Canali internazionali CGTN, incluso CGTN Documentary; disponibilità secondo area.' },
+  { country: 'Regno Unito', language: 'Inglese', name: 'Sky News · Live', category: 'Notizie', url: 'https://news.sky.com/watch-live', note: 'Diretta ufficiale Sky News; eventuali limitazioni geografiche.' },
+  { country: 'Internazionale', language: 'Multilingue', name: 'UN Web TV', category: 'Istituzioni / Documentari', url: 'https://webtv.un.org/', note: 'Riunioni, conferenze e contenuti audiovisivi delle Nazioni Unite.' },
+  { country: 'Francia', language: 'Francese / Inglese', name: 'ARTE · Direct', category: 'Cultura / Documentari', url: 'https://www.arte.tv/', note: 'Documentari, cultura e programmi; catalogo e dirette secondo diritti territoriali.' },
+  { country: 'Spagna', language: 'Spagnolo', name: 'RTVE Play · Directo', category: 'Pubblica / Intrattenimento', url: 'https://www.rtve.es/play/', note: 'Canali e programmi del servizio pubblico spagnolo; alcuni contenuti possono essere geobloccati.' },
 ];
 
 const filmSources = [
