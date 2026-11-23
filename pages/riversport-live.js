@@ -31,6 +31,15 @@ const sports = [
   { id: 'winter', name: 'Sport invernali', icon: '⛷️', regions: 'Mondo', leagues: 'Sci alpino, fondo, biathlon, snowboard, pattinaggio e hockey' },
   { id: 'rowing', name: 'Canottaggio e vela', icon: '🚣', regions: 'Mondo', leagues: 'Canottaggio, canoa, kayak, vela e surf' },
   { id: 'equestrian', name: 'Sport equestri', icon: '🐎', regions: 'Mondo', leagues: 'Salto ostacoli, dressage, completo e endurance' },
+  { id: 'handball', name: 'Pallamano', icon: '🤾', regions: 'Europa · Africa · Asia · Mondo', leagues: 'Campionati nazionali, EHF Champions League e tornei internazionali' },
+  { id: 'fencing', name: 'Scherma', icon: '🤺', regions: 'Mondo', leagues: 'Fioretto, spada, sciabola, Coppa del Mondo e campionati' },
+  { id: 'archery', name: 'Tiro con l’arco', icon: '🏹', regions: 'Mondo', leagues: 'Ricorso, compound, indoor, outdoor e para-archery' },
+  { id: 'triathlon', name: 'Triathlon', icon: '🏊', regions: 'Mondo', leagues: 'Triathlon, duathlon, aquathlon, PTO e World Triathlon' },
+  { id: 'surf', name: 'Surf e sport d’onda', icon: '🏄', regions: 'Oceania · Americhe · Europa · Asia · Mondo', leagues: 'Surf, bodyboard, windsurf, kitesurf e SUP' },
+  { id: 'squash', name: 'Squash', icon: '🎾', regions: 'Mondo', leagues: 'PSA World Tour e campionati internazionali' },
+  { id: 'hockey', name: 'Hockey', icon: '🏑', regions: 'Mondo', leagues: 'Hockey su prato, hockey su ghiaccio e inline' },
+  { id: 'water-polo', name: 'Pallanuoto', icon: '🤽', regions: 'Mondo', leagues: 'Campionati nazionali, Champions League e tornei internazionali' },
+  { id: 'paralympic', name: 'Sport paralimpici', icon: '♿', regions: 'Mondo', leagues: 'Atletica, nuoto, basket in carrozzina, sitting volley e altre discipline' },
   { id: 'other', name: 'Altri sport', icon: '🌍', regions: 'Mondo', leagues: 'Hockey, scherma, tiro con l’arco, pattinaggio, triathlon, squash e sport paralimpici' },
 ];
 
@@ -99,7 +108,7 @@ export default function RiverWorldLive() {
         {selected === 'tv' && <RiverWorldTV />}
         {selected === 'moda' && <RiverWorldTopicFeed section="moda" />}
         {selected === 'musica' && <RiverWorldTopicFeed section="spettacolo" />}
-        {selected === 'sport' && <RiverWorldTopicFeed section="sport" />}
+        {selected === 'sport' && <RiverWorldTopicFeed section="sport" initialQuery={currentSport.name} />}
         {selected === 'arti-marziali' && <RiverWorldTopicFeed section="arti-marziali" />}
         {selected === 'sport' && <section className="mt-5 rounded-2xl bg-white p-5 shadow-sm md:p-6">
           <div className="flex flex-wrap items-center justify-between gap-2"><h2 className="text-xl font-extrabold text-[#073b4c]">🏆 RiverSport Live</h2><span className="text-xs text-slate-500">Multisport mondiale · tutte le discipline</span></div>
