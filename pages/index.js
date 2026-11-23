@@ -1083,7 +1083,7 @@ export default function Home() {
                 <span className="text-[10px] font-bold text-amber-700">APRI / INSTALLA</span>
               </a>
               <a href="/electronics" className="flex w-[136px] shrink-0 snap-start flex-col items-center gap-1 text-center" aria-label="RiverSpend Electronics">
-                <span className="flex h-24 w-24 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-300 via-sky-700 to-slate-950 text-4xl shadow-md ring-2 ring-cyan-300 sm:h-28 sm:w-28">📱⌚</span>
+                <img src="/icons/rs-electronics.svg" alt="RS Electronics" className="h-24 w-24 rounded-2xl object-cover shadow-md ring-2 ring-cyan-300 sm:h-28 sm:w-28" loading="lazy" />
                 <span className="w-full break-words text-xs font-extrabold leading-tight text-slate-900">RS Electronics</span>
                 <span className="text-[10px] font-bold text-cyan-800">APRI / INSTALLA</span>
               </a>
