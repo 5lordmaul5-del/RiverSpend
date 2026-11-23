@@ -4,12 +4,6 @@ const TOPICS = {
   sport: '(sports OR football OR soccer OR basketball OR tennis OR formula1 OR motogp OR rugby OR olympics)',
   spettacolo: '(entertainment OR celebrity OR television OR tvshow OR music OR awards OR showbusiness)',
 };
-const SOURCES = {
-  cinema: ['variety.com','hollywoodreporter.com','deadline.com','cineuropa.org','screenDaily.com','comingsoon.it','cinematografo.it'],
-  moda: ['vogue.com','vogue.it','wwd.com','businessoffashion.com','elle.com','harpersbazaar.com','gq.com'],
-  sport: ['espn.com','bbc.com/sport','skysports.com','gazzetta.it','sportmediaset.mediaset.it','eurosport.com','theathletic.com'],
-  spettacolo: ['variety.com','hollywoodreporter.com','billboard.com','rollingstone.com','people.com','ansa.it'],
-};
 export default async function handler(req, res) {
   if (req.method !== 'GET') { res.setHeader('Allow','GET'); return res.status(405).json({error:'Method not allowed'}); }
   const section = typeof req.query.section === 'string' ? req.query.section.toLowerCase() : '';
