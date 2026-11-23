@@ -121,6 +121,34 @@ export default function PowerTronCommandCenter() {
          access === "denied" ? <section style={{ ...card, marginTop: 14 }}><h2>Accesso non autorizzato</h2><p>PowerTron è riservato all'account proprietario autorizzato.</p></section> :
          access === "error" ? <section style={{ ...card, marginTop: 14 }}><h2>Verifica non disponibile</h2><p>Non posso confermare i permessi. Riprova più tardi.</p></section> :
          <>
+          <section style={{ ...card, marginTop: 14, padding: 0, overflow: "hidden", background: "#061d32", borderColor: "#b58d3f" }}>
+            <img src="/river-ssai/powertron-neurocore.svg" alt="PowerTron NeuroCore: nucleo centrale e divisioni specialistiche" style={{ display: "block", width: "100%", height: "auto" }}/>
+            <div style={{ padding: "12px 16px", color: "#d5f5f7", fontSize: 12, lineHeight: 1.5 }}>
+              <b style={{ color: "#f2d98c" }}>NEUROCORE · CENTRO DI COMANDO</b> — visualizzazione architetturale della fortezza digitale. I nodi rappresentano divisioni e profili specialistici, non agenti autonomi già in esecuzione.
+            </div>
+          </section>
+
+          <section style={{ ...card, marginTop: 14 }}>
+            <div style={{ color: "#b08331", fontSize: 11, fontWeight: 900, letterSpacing: 1.5 }}>AGENT NETWORK · PROFILI SPECIALISTICI</div>
+            <h2 style={{ margin: "5px 0 6px" }}>La squadra di PowerTron</h2>
+            <p style={{ color: "#617983", fontSize: 12, lineHeight: 1.5, marginTop: 0 }}>Sei nodi di coordinamento mostrati come profili logici iniziali. Le divisioni del catalogo possono essere ampliate e collegate a worker reali in una fase successiva.</p>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(185px,1fr))", gap: 9 }}>
+              {[
+                ["NOVA CORE","Coordinamento, priorità e controllo dei compiti","#eaf7fa"],
+                ["INTELDESK","Ricerca OSINT da fonti pubbliche e autorizzate","#edf5ff"],
+                ["SHIELDOPS","Rilevamento e risposta difensiva agli incidenti","#e9f8f1"],
+                ["FRAUDLAB","Analisi di anomalie e indicatori antifrode","#fff6e5"],
+                ["PRIVACYVAULT","Minimizzazione, accessi e protezione dei dati","#f2efff"],
+                ["EVIDENCE LEDGER","Fonti, verifiche, cronologia e tracciabilità","#f4f7f8"]
+              ].map(([name,desc,tint]) => <article key={name} style={{ padding: 13, borderRadius: 13, border: "1px solid #dce9ed", background: tint }}>
+                <div style={{ width: 34, height: 34, borderRadius: 11, display: "grid", placeItems: "center", background: "#082b40", color: "#f2d98c", fontWeight: 900, marginBottom: 8 }}>{name.slice(0,1)}</div>
+                <b style={{ fontSize: 12, color: "#173846" }}>{name}</b>
+                <p style={{ fontSize: 11, lineHeight: 1.45, color: "#617983", marginBottom: 0 }}>{desc}</p>
+                <div style={{ marginTop: 9, fontSize: 10, fontWeight: 800, color: "#946f2c" }}>PROFILO LOGICO · NON ATTIVO</div>
+              </article>)}
+            </div>
+          </section>
+
           <section style={{ ...card, marginTop: 14, borderColor: "#e4d39a", background: "#fff9e8", fontSize: 13, lineHeight: 1.55 }}>
             <b>Trasparenza operativa:</b> questa prima versione è un Command Center di catalogo e pianificazione locale. Mostra divisioni e ruoli previsti, consente di creare e gestire piani di lavoro ed esportarli. Non avvia ancora agenti AI, non esegue compiti in background e non è collegato a una coda cloud o a provider AI. I piani sono salvati solo in questo browser.
           </section>
