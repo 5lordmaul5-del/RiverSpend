@@ -102,13 +102,17 @@ export default function Home() {
     let paused = false;
     const pause = () => { paused = true; };
     const resume = () => { paused = false; };
+    let elapsed = 0;
     const timer = window.setInterval(() => {
       if (paused) return;
       const maxScroll = track.scrollWidth - track.clientWidth;
       if (maxScroll <= 2) return;
-      if (track.scrollLeft >= maxScroll - 1) track.scrollTo({ left: 0, behavior: 'auto' });
-      else track.scrollLeft = Math.min(maxScroll, Math.round(track.scrollLeft) + 1);
-    }, 40);
+      elapsed += 1;
+      if (elapsed % 1 === 0) {
+        if (track.scrollLeft >= maxScroll - 1) track.scrollTo({ left: 0, behavior: 'auto' });
+        else track.scrollLeft = Math.min(maxScroll, track.scrollLeft + 1);
+      }
+    }, 16);
     track.addEventListener('pointerenter', pause);
     track.addEventListener('pointerleave', resume);
     track.addEventListener('touchstart', pause, { passive: true });
@@ -980,8 +984,10 @@ export default function Home() {
             {riverVoiceStatus && <p role="status" aria-live="polite" className="mx-auto mt-2 max-w-6xl rounded-lg bg-teal-50 px-3 py-2 text-center text-xs font-medium text-teal-900">{riverVoiceStatus}</p>}
             <div className="mt-2 flex items-center justify-between gap-2">
               <LanguageSelector />
-              <a href="/riverworld-live" aria-label="Apri RiverWorld Live" title="RiverWorld Live" className="rounded-full border border-emerald-300 bg-emerald-50 px-3 py-1 text-xs font-extrabold text-emerald-900 hover:bg-emerald-100">🌍 World Live</a>
               <button type="button" onClick={() => { setMenuRiverSpend(!menuRiverSpend); setMenuCategorie(false); }} aria-expanded={menuRiverSpend} className="rounded-full px-3 py-1 text-xs font-bold text-teal-800 hover:bg-teal-50">Esplora RiverSpend ▾</button>
+            </div>
+            <div className="mt-2 flex justify-center">
+              <a href="/riverworld-live" aria-label="Apri RiverWorld Live" title="RiverWorld Live" className="inline-flex min-h-9 items-center justify-center rounded-full border-2 border-emerald-400 bg-gradient-to-r from-emerald-50 to-cyan-50 px-5 py-1.5 text-xs font-black tracking-wide text-emerald-950 shadow-sm hover:from-emerald-100 hover:to-cyan-100">🌍 RIVERWORLD LIVE · APRI →</a>
             </div>
             <div className={ricercaAperta || ricerca ? "mx-auto mt-2 flex max-w-6xl gap-2" : "hidden"}>
               <input
@@ -2327,13 +2333,14 @@ export default function Home() {
         .rs-apps-download-strip {
           display:flex !important; flex-direction:row !important; flex-wrap:nowrap !important;
           width:100%; overflow-x:auto !important; overflow-y:hidden !important;
-          scroll-snap-type:x mandatory !important; -webkit-overflow-scrolling:touch !important;
-          scrollbar-width:none !important; gap:12px !important;
+          scroll-snap-type:none !important; scroll-behavior:auto !important;
+          -webkit-overflow-scrolling:touch !important; scrollbar-width:none !important;
+          gap:12px !important; overscroll-behavior-x:contain;
         }
         .rs-apps-download-strip::-webkit-scrollbar { display:none !important; }
         .rs-apps-download-strip > a {
-          box-sizing:border-box; flex:0 0 136px !important; width:136px !important;
-          min-width:136px !important; max-width:136px !important; scroll-snap-align:start !important;
+          box-sizing:border-box; flex:0 0 152px !important; width:152px !important;
+          min-width:152px !important; max-width:152px !important; scroll-snap-align:none !important;
         }
         .rs-apps-download-strip img,
         .rs-apps-download-strip > a > span:first-child {
