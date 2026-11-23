@@ -1,0 +1,50 @@
+{
+  "name": "RiverSSAI Creative Studio",
+  "version": "1.0.0",
+  "status": "foundation",
+  "access": "owner-session-required",
+  "modules": [
+    {
+      "id": "nova-core",
+      "name": "Nova Core",
+      "status": "orchestration-ui",
+      "description": "Creative workflow coordination and brief preparation."
+    },
+    {
+      "id": "image-engine",
+      "name": "Image Engine",
+      "status": "provider-pending",
+      "description": "Prompt brief preparation and local image import; no generative model connected."
+    },
+    {
+      "id": "video-engine",
+      "name": "Video Engine",
+      "status": "provider-pending",
+      "description": "Integration target for open-weight text-to-video and image-to-video runtimes."
+    },
+    {
+      "id": "motion-lab",
+      "name": "Motion Lab",
+      "status": "local-browser-export",
+      "description": "Creates WEBM slideshow animations from images using Canvas and MediaRecorder; not AI video generation."
+    },
+    {
+      "id": "media-vault",
+      "name": "Media Vault",
+      "status": "local-indexeddb",
+      "description": "Stores user-selected media in browser IndexedDB on this device; not cloud-synced."
+    }
+  ],
+  "safety": {
+    "noApiKeysInBrowser": true,
+    "externalProvidersDisabled": true,
+    "cloudSync": false,
+    "requiresOwnerAuth": true
+  },
+  "nextSteps": [
+    "Add a server-side provider adapter for image generation with explicit environment configuration.",
+    "Add a GPU/runtime adapter for open-weight video models.",
+    "Add authenticated cloud object storage and per-user access controls.",
+    "Add export, quota, and file-size validation before enabling remote jobs."
+  ]
+}
