@@ -7,24 +7,40 @@ const plans = [
     price: '9,90 €',
     period: '/anno',
     label: 'Essenziale',
-    description: 'Il pass d'ingresso per offerte e vantaggi nei servizi RiverSpend aderenti.',
+    description: 'Il pass d’ingresso per offerte e vantaggi nei servizi RiverSpend aderenti.',
     features: ['Offerte riservate agli iscritti', 'Promozioni su RS SHOP', 'Accesso alle iniziative dell’ecosistema']
+  },
+  {
+    name: 'RSVIVA PLUS',
+    price: '19,90 €',
+    period: '/anno',
+    label: 'Più vantaggi',
+    description: 'Più occasioni e vantaggi digitali rispetto al piano d’ingresso.',
+    features: ['Tutti i vantaggi GO GO', 'Promozioni ampliate sui servizi digitali aderenti', 'Offerte dedicate su prodotti e iniziative selezionate', 'Accesso anticipato a campagne promozionali selezionate']
   },
   {
     name: 'RSVIVA FAST',
     price: '29,90 €',
     period: '/anno',
-    label: 'Più scelto',
-    description: 'Più convenienza e priorità, con consegne locali idonee incluse nelle zone abilitate.',
-    features: ['Tutti i vantaggi GO GO', 'Consegne locali idonee incluse secondo zona e condizioni', 'Priorità nella gestione degli ordini', 'Promozioni sui servizi digitali aderenti']
+    label: 'Consegne',
+    description: 'Vantaggi PLUS e priorità, con consegne locali idonee incluse nelle zone abilitate.',
+    features: ['Tutti i vantaggi PLUS', 'Consegne locali idonee incluse secondo zona e condizioni', 'Priorità nella gestione degli ordini', 'Promozioni sui servizi digitali aderenti']
   },
   {
     name: 'RSVIVA SUPERFAST',
     price: '49,90 €',
     period: '/anno',
     label: 'Premium',
-    description: 'Il livello più completo di vantaggi e priorità nell’ecosistema RiverSpend.',
+    description: 'Un livello superiore di priorità e vantaggi nell’ecosistema RiverSpend.',
     features: ['Tutti i vantaggi FAST', 'Priorità superiore nelle consegne disponibili', 'Promozioni premium sui prodotti aderenti', 'Assistenza prioritaria secondo disponibilità']
+  },
+  {
+    name: 'RSVIVA ULTRA',
+    price: '89,00 €',
+    period: '/anno',
+    label: 'Massimo livello',
+    description: 'Il pass annuale di fascia più alta, con il massimo livello di vantaggi previsti dai servizi aderenti.',
+    features: ['Tutti i vantaggi SUPERFAST', 'Migliore livello di priorità disponibile nei servizi aderenti', 'Accesso a offerte ed esperienze premium selezionate', 'Assistenza con priorità massima secondo disponibilità']
   }
 ];
 
@@ -60,7 +76,7 @@ export default function RSVIVA() {
               <p className="text-sm font-black uppercase tracking-widest text-teal-700">Membership</p>
               <h2 className="text-2xl font-black">Scegli il tuo RSVIVA Pass</h2>
             </div>
-            <div className="grid gap-5 md:grid-cols-3">
+            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
               {plans.map((plan) => (
                 <article key={plan.name} className="rounded-3xl border border-teal-200 bg-white p-6 shadow-sm">
                   <span className="inline-flex rounded-full bg-amber-100 px-3 py-1 text-xs font-black text-amber-900">{plan.label}</span>
