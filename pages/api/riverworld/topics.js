@@ -13,7 +13,7 @@ export default async function handler(req, res) {
   if (!TOPICS[section]) return res.status(400).json({error:'Sezione non valida.'});
   const q = typeof req.query.q === 'string' ? req.query.q.trim().slice(0,100) : '';
   const country = typeof req.query.country === 'string' ? req.query.country.toUpperCase() : '';
-  let query = q ? `"${q.replace(/["\\]/g,' ').replace(/\s+/g,' ')}"` : TOPICS[section];
+  let query = q ? `(${TOPICS[section]}) "${q.replace(/["\\]/g,' ').replace(/\s+/g,' ')}"` : TOPICS[section];
   if (country && /^[A-Z]{2}$/.test(country)) query += ` sourcecountry:${country}`;
   const endpoint = new URL('https://api.gdeltproject.org/api/v2/doc/doc');
   endpoint.searchParams.set('query',query);
