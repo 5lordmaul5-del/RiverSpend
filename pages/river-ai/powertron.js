@@ -116,6 +116,11 @@ export default function PowerTronCommandCenter() {
           <button onClick={exportTasks} disabled={access !== "ready"} style={{ ...button, background: "#e8cb78", color: "#203846" }}>Esporta registro</button>
         </header>
 
+        {access === "ready" && <div role="status" style={{ ...card, marginTop: 10, borderColor: "#c9a24e", background: "#fff9e8", display: "flex", alignItems: "center", gap: 10 }}>
+          <span style={{ fontSize: 22 }}>♛</span>
+          <div><b style={{ color: "#8a6422", letterSpacing: 1 }}>ORACOLO · OWNER</b><div style={{ color: "#617983", fontSize: 12 }}>Identità amministrativa verificata dal backend per questo account.</div></div>
+        </div>}
+
         {access === "checking" ? <section style={{ ...card, marginTop: 14 }}>Verifica autorizzazione del proprietario…</section> :
          access === "login" ? <section style={{ ...card, marginTop: 14 }}><h2>Accesso richiesto</h2><p>Accedi prima a RiverSSAI per aprire il centro di comando privato.</p><a href="/river-ai">Apri RiverSSAI</a></section> :
          access === "denied" ? <section style={{ ...card, marginTop: 14 }}><h2>Accesso non autorizzato</h2><p>PowerTron è riservato all'account proprietario autorizzato.</p></section> :
