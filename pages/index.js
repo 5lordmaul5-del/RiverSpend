@@ -96,7 +96,7 @@ export default function Home() {
     return () => window.removeEventListener('riverspend:language-change', sync);
   }, []);
   useEffect(() => {
-    const track = document.querySelector('.rs-apps-grid');
+    const track = document.querySelector('.rs-apps-download-strip');
     if (!track) return;
     if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
     let frame = 0;
@@ -1051,9 +1051,22 @@ export default function Home() {
           </div>
         </header>
 
-          <section aria-label="App RiverSpend" className="mb-4 rounded-2xl border border-cyan-200/70 bg-white/90 px-2 py-3 shadow-md">
-            <div className="mb-2 text-center text-[11px] font-extrabold uppercase tracking-[.16em] text-slate-700">Le app RiverSpend</div>
-            <div className="grid grid-cols-3 gap-x-2 gap-y-4 sm:grid-cols-3">
+          <section aria-label="Reparto app RiverSpend da scaricare" className="mb-4 rounded-2xl border-2 border-cyan-300/80 bg-gradient-to-r from-white via-cyan-50 to-white px-3 py-3 shadow-lg">
+            <div className="mb-2 flex items-center justify-between gap-2">
+              <div className="text-[11px] font-extrabold uppercase tracking-[.16em] text-slate-800">📲 Le app RiverSpend · scorri e installa</div>
+              <span className="shrink-0 text-[10px] font-bold text-cyan-800">← SCORRI →</span>
+            </div>
+            <div className="rs-apps-download-strip flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain pb-3">
+              <a href="/river-ai" className="flex w-[112px] shrink-0 snap-start flex-col items-center gap-1 text-center" aria-label="RiverSSAI 10.0">
+                <img src="/icons/river-ssai.svg" alt="RiverSSAI 10.0" className="h-20 w-20 rounded-2xl object-contain shadow-md ring-2 ring-amber-300 sm:h-24 sm:w-24" loading="lazy" />
+                <span className="w-full break-words text-xs font-extrabold leading-tight text-slate-900">RiverSSAI 10.0</span>
+                <span className="text-[10px] font-bold text-amber-700">APRI / INSTALLA</span>
+              </a>
+              <a href="/electronics" className="flex w-[112px] shrink-0 snap-start flex-col items-center gap-1 text-center" aria-label="RiverSpend Electronics">
+                <span className="flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-300 via-sky-700 to-slate-950 text-4xl shadow-md ring-2 ring-cyan-300 sm:h-24 sm:w-24">📱⌚</span>
+                <span className="w-full break-words text-xs font-extrabold leading-tight text-slate-900">RS Electronics</span>
+                <span className="text-[10px] font-bold text-cyan-800">APRI / INSTALLA</span>
+              </a>
               <a href="/app" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RSShop">
                 <img src="/icons/riverspendshop-app.jpg" alt="RSShop" className="h-20 w-20 rounded-2xl object-cover shadow-md ring-2 ring-cyan-200 sm:h-24 sm:w-24" loading="lazy" />
                 <span className="w-full break-words text-xs font-extrabold leading-tight text-slate-900">RSShop</span>
@@ -1099,22 +1112,6 @@ export default function Home() {
           </section>
 
           <div className="rs-apps-grid mb-5 flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain px-1 pb-3" aria-label="Scopri le iniziative RiverSpend: scorri orizzontalmente">
-            <a id="rs-riverssai-app-card" href="/river-ai" aria-label="Apri RiverSSAI 10.0" className="rs-feature-card relative flex shrink-0 w-[220px] snap-start flex-col items-center justify-between overflow-hidden rounded-2xl border-2 border-amber-300 bg-gradient-to-br from-slate-950 via-cyan-950 to-slate-900 p-3 text-center shadow-lg shadow-cyan-950/40 focus:outline-none focus:ring-4 focus:ring-amber-300/70">
-              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-200">APP UFFICIALE</span>
-              <img src="/icons/river-ssai.svg" alt="Icona RiverSSAI 10.0" className="my-2 h-24 w-24 rounded-2xl border border-amber-300/70 object-cover shadow-xl" />
-              <span className="text-lg font-black leading-tight text-white">RiverSSAI 10.0</span>
-              <span className="text-xs text-cyan-100">Nova · System Assistant Intelligence</span>
-              <span className="mt-2 inline-flex w-full justify-center rounded-full bg-amber-300 px-3 py-2 text-xs font-black text-slate-950">APRI RIVERSSAI →</span>
-            </a>
-
-            <a id="rs-electronics-app-card" href="/electronics" aria-label="Apri RiverSpend Electronics" className="rs-feature-card relative flex shrink-0 w-[220px] snap-start flex-col items-center justify-between overflow-hidden rounded-2xl border-2 border-cyan-300 bg-gradient-to-br from-slate-950 via-cyan-950 to-slate-900 p-3 text-center shadow-lg shadow-cyan-950/40 focus:outline-none focus:ring-4 focus:ring-cyan-200/70">
-              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-200">APP UFFICIALE</span>
-              <div className="my-2 flex h-24 w-24 items-center justify-center rounded-2xl border border-cyan-200/70 bg-gradient-to-br from-cyan-300 via-sky-700 to-slate-950 text-5xl shadow-xl" role="img" aria-label="Illustrazione grafica RiverSpend Electronics">📱⌚</div>
-              <span className="text-lg font-black leading-tight text-white">RiverSpend Electronics</span>
-              <span className="text-xs text-cyan-100">Phone · Watch · Console · Audio</span>
-              <span className="mt-2 inline-flex w-full justify-center rounded-full bg-cyan-200 px-3 py-2 text-xs font-black text-slate-950">APRI ELECTRONICS →</span>
-            </a>
-
             <section id="rs-force-card" className="rs-feature-card relative h-[400px] shrink-0 w-[280px] snap-start rs-force-card overflow-hidden rounded-2xl border-2 border-cyan-300 bg-gradient-to-b from-slate-950 via-cyan-950 to-indigo-950 p-0 text-center shadow-lg shadow-cyan-950/40">
               <button type="button" onClick={() => apriRsForce()} className="relative flex h-full w-full flex-col items-center overflow-hidden rounded-xl bg-slate-950 text-center">
                 <div className="rs-force-stage rs-feature-media absolute inset-0 z-0 flex h-full min-h-full w-full items-center justify-center overflow-hidden rounded-xl border-0 bg-gradient-to-br from-cyan-500 via-cyan-950 to-indigo-950">
@@ -2327,6 +2324,19 @@ export default function Home() {
           max-height:370px !important;
         }
         @media (prefers-reduced-motion: reduce) { .rs-apps-grid { scroll-behavior:auto !important; } }
+
+        /* Carosello dedicato alle APP SCARICABILI, separato dai banner promozionali e da RS FORCE. */
+        .rs-apps-download-strip {
+          display:flex !important; flex-direction:row !important; flex-wrap:nowrap !important;
+          width:100%; overflow-x:auto !important; overflow-y:hidden !important;
+          scroll-snap-type:x mandatory !important; -webkit-overflow-scrolling:touch !important;
+          scrollbar-width:none !important; gap:12px !important;
+        }
+        .rs-apps-download-strip::-webkit-scrollbar { display:none !important; }
+        .rs-apps-download-strip > a {
+          box-sizing:border-box; flex:0 0 112px !important; width:112px !important;
+          min-width:112px !important; scroll-snap-align:start !important;
+        }
       `}</style>
     </main>
   );
