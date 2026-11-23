@@ -953,6 +953,12 @@ export default function Home() {
       <section role="status" aria-label="Avviso versione di test" className="border-b border-amber-300 bg-amber-50 px-3 py-1 text-xs text-amber-950 text-center">
         <p className="font-bold">Sito in fase di test</p>
       </section>
+      <section aria-label="VIVA Delivery tariffe e abbonamenti" className="border-b border-teal-200 bg-gradient-to-r from-teal-50 via-white to-amber-50 px-3 py-3 text-slate-900">
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 text-center sm:flex-row sm:text-left">
+          <div><p className="text-sm font-black tracking-wide text-teal-800">⚡ VIVA DELIVERY</p><p className="text-xs text-slate-600">Tariffe e pass annuali per spedizioni e consegne · da 9,90 € a 100,00 €</p></div>
+          <a href="/viva" className="inline-flex items-center justify-center rounded-full bg-teal-700 px-5 py-2 text-sm font-bold text-white shadow-sm hover:bg-teal-800">Scopri le tariffe VIVA →</a>
+        </div>
+      </section>
       {mostraGate18 && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4" role="dialog" aria-modal="true" aria-labelledby="gate18-title">
           <div className="w-full max-w-md rounded-3xl bg-white p-6 text-center shadow-2xl">
