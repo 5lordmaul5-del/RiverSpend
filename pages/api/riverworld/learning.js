@@ -1,4 +1,7 @@
 const LANGS = new Set(['it','en','fr','de','es','pt']);
+function plainSnippet(value) {
+  return String(value || '').replace(/<[^>]*>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#0?39;|&#x27;/gi, "'").replace(/&nbsp;/g, ' ');
+}
 export default async function handler(req,res){
   if(req.method!=='GET'){res.setHeader('Allow','GET');return res.status(405).json({error:'Method not allowed'});}
   const q=typeof req.query.q==='string'?req.query.q.trim().slice(0,140):'';
@@ -18,7 +21,7 @@ export default async function handler(req,res){
       const response=await fetch(url.toString(),{headers:{Accept:'application/json','User-Agent':'RiverWorldSchool/1.0 (https://www.riverspend.com/)'}});
       if(!response.ok)return [];
       const data=await response.json();
-      return (data.query?.search||[]).map(item=>({source,title:item.title,snippet:String(item.snippet||'').replace(/<[^>]*>/g,''),url:'https://'+host+'/wiki/'+encodeURIComponent(item.title.replace(/ /g,'_'))}));
+      return (data.query?.search||[]).map(item=>({source,title:item.title,snippet:plainSnippet(item.snippet),url:'https://'+host+'/wiki/'+encodeURIComponent(item.title.replace(/ /g,'_'))}));
     }));
     const results=responses.flat().slice(0,10);
     return res.status(200).json({provider:'Wikipedia + Wikibooks',subject,level,grade,updatedAt:new Date().toISOString(),count:results.length,results});
