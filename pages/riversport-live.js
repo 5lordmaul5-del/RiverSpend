@@ -4,6 +4,7 @@ import RiverWorldNews from '../components/RiverWorldNews';
 import RiverWorldWeather from '../components/RiverWorldWeather';
 import RiverWorldAlerts from '../components/RiverWorldAlerts';
 import RiverWorldTopicFeed from '../components/RiverWorldTopicFeed';
+import RiverWorldSchoolHub from '../components/RiverWorldSchoolHub';
 import { useMemo, useState } from 'react';
 
 const sports = [
@@ -39,6 +40,8 @@ const channels = [
   { id:'traffico', name:'Traffico e viaggi', icon:'🚦', description:'Traffico, trasporti pubblici, treni, voli, viabilità e condizioni stradali.', coverage:'Italia e destinazioni internazionali', status:'Servizi di mobilità e mappe da collegare' },
   { id:'allerte', name:'Allerte e sicurezza', icon:'🚨', description:'Avvisi ufficiali su meteo estremo, terremoti, incendi, emergenze e protezione civile.', coverage:'Avvisi locali, nazionali e internazionali', status:'Feed sismico USGS collegato; allerte meteo e protezione civile da integrare per area' },
   { id:'eventi', name:'Eventi e concerti', icon:'🎟️', description:'Concerti, festival, fiere, mostre, spettacoli, manifestazioni e appuntamenti locali.', coverage:'Città e Paesi di tutto il mondo', status:'Calendari eventi e biglietterie autorizzate da collegare' },
+  { id:'documentari', name:'Documentari', icon:'🎥', description:'Storia delle civiltà, Egitto antico, Asia orientale, archeologia, natura, scienza, spazio e culture del mondo.', coverage:'Egitto · Africa · Asia · Europa · Americhe · Oceania · Mondo', status:'Ricerca internazionale di documentari e produzioni editoriali; riproduzione video solo da cataloghi autorizzati' },
+  { id:'scuola', name:'Scuola e formazione', icon:'🎓', description:'Percorsi dalla scuola primaria alle medie, superiori e università: materie, spiegazioni, esercizi e approfondimenti.', coverage:'Scuola primaria · Secondaria di primo e secondo grado · Università', status:'Hub didattico in costruzione: materiali e percorsi da verificare con programmi e fonti educative affidabili' },
   { id:'cinema', name:'Cinema', icon:'🎬', description:'Uscite, trailer, recensioni, festival, premi e programmazione nelle sale.', coverage:'Cinema italiano e internazionale', status:'Ricerca di notizie su cinema e film collegata; streaming e cataloghi video richiedono licenze' },
   { id:'tv', name:'TV e programmi', icon:'📺', description:'Palinsesti, guide TV, programmi, serie, documentari e notizie dal mondo televisivo.', coverage:'Canali e palinsesti disponibili per Paese', status:'Guide TV e collegamenti ufficiali da configurare' },
   { id:'cartoni', name:'Cartoni e animazione', icon:'🧸', description:'Cartoni animati, anime, animazione per bambini, novità e programmazione per famiglie.', coverage:'Produzioni italiane, europee, giapponesi e internazionali', status:'Streaming solo con cataloghi e diritti autorizzati' },
@@ -87,6 +90,8 @@ export default function RiverWorldLive() {
         {selected === 'news' && <RiverWorldNews />}
         {selected === 'allerte' && <RiverWorldAlerts />}
         {selected === 'cinema' && <RiverWorldTopicFeed section="cinema" />}
+        {selected === 'documentari' && <RiverWorldTopicFeed section="documentari" />}
+        {selected === 'scuola' && <RiverWorldSchoolHub />}
         {selected === 'moda' && <RiverWorldTopicFeed section="moda" />}
         {selected === 'musica' && <RiverWorldTopicFeed section="spettacolo" />}
         {selected === 'sport' && <RiverWorldTopicFeed section="sport" />}
