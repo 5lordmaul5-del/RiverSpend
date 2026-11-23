@@ -6,6 +6,7 @@ import RiverWorldAlerts from '../components/RiverWorldAlerts';
 import RiverWorldTopicFeed from '../components/RiverWorldTopicFeed';
 import RiverWorldSchoolHub from '../components/RiverWorldSchoolHub';
 import RSEncyclopedia from '../components/RSEncyclopedia';
+import RiverWorldTV from '../components/RiverWorldTV';
 import { useMemo, useState } from 'react';
 
 const sports = [
@@ -45,7 +46,7 @@ const channels = [
   { id:'scuola', name:'Scuola e formazione', icon:'🎓', description:'Percorsi dalla scuola primaria alle medie, superiori e università: materie, spiegazioni, esercizi e approfondimenti.', coverage:'Scuola primaria · Secondaria di primo e secondo grado · Università', status:'Hub didattico in costruzione: materiali e percorsi da verificare con programmi e fonti educative affidabili' },
   { id:'enciclopedia', name:'RS Encyclopedia', icon:'🌐', description:'Enciclopedia mondiale, ricerca multidisciplinare, conoscenza, formule e calcolo scientifico.', coverage:'Lingue e argomenti internazionali', status:'Ricerca enciclopedica Wikipedia multilingue e laboratorio matematico integrato' },
   { id:'cinema', name:'Cinema', icon:'🎬', description:'Uscite, trailer, recensioni, festival, premi e programmazione nelle sale.', coverage:'Cinema italiano e internazionale', status:'Ricerca di notizie su cinema e film collegata; streaming e cataloghi video richiedono licenze' },
-  { id:'tv', name:'TV e programmi', icon:'📺', description:'Palinsesti, guide TV, programmi, serie, documentari e notizie dal mondo televisivo.', coverage:'Canali e palinsesti disponibili per Paese', status:'Guide TV e collegamenti ufficiali da configurare' },
+  { id:'tv', name:'TV e programmi', icon:'📺', description:'Palinsesti, guide TV, programmi, serie, documentari e notizie dal mondo televisivo.', coverage:'Canali e palinsesti disponibili per Paese', status:'Directory iniziale di emittenti ufficiali e archivi cinematografici gratuiti; catalogo da ampliare e verificare' },
   { id:'cartoni', name:'Cartoni e animazione', icon:'🧸', description:'Cartoni animati, anime, animazione per bambini, novità e programmazione per famiglie.', coverage:'Produzioni italiane, europee, giapponesi e internazionali', status:'Streaming solo con cataloghi e diritti autorizzati' },
   { id:'moda', name:'Moda e tendenze', icon:'👗', description:'Sfilate, collezioni, stilisti, streetwear, beauty, accessori e tendenze.', coverage:'Milano · Parigi · Londra · New York · Asia · Mondo', status:'Ricerca internazionale di moda e fashion collegata; calendari e immagini editoriali da ampliare' },
   { id:'musica', name:'Musica', icon:'🎵', description:'Novità musicali, classifiche, artisti, concerti, festival e sessioni dal vivo.', coverage:'Scene musicali di tutto il mondo', status:'Audio e video tramite servizi e diritti autorizzati' },
@@ -95,6 +96,7 @@ export default function RiverWorldLive() {
         {selected === 'documentari' && <RiverWorldTopicFeed section="documentari" />}
         {selected === 'scuola' && <RiverWorldSchoolHub />}
         {selected === 'enciclopedia' && <RSEncyclopedia />}
+        {selected === 'tv' && <RiverWorldTV />}
         {selected === 'moda' && <RiverWorldTopicFeed section="moda" />}
         {selected === 'musica' && <RiverWorldTopicFeed section="spettacolo" />}
         {selected === 'sport' && <RiverWorldTopicFeed section="sport" />}
