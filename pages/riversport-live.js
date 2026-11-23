@@ -1,5 +1,6 @@
 import Head from 'next/head';
 import Link from 'next/link';
+import RiverWorldNews from '../components/RiverWorldNews';
 import { useMemo, useState } from 'react';
 
 const sports = [
@@ -68,6 +69,7 @@ export default function RiverWorldLive() {
           <div className="rounded-2xl bg-white p-5 shadow-sm md:p-6"><div className="text-4xl">{current.icon}</div><h2 className="mt-2 text-2xl font-extrabold text-[#073b4c]">{current.name}</h2><p className="mt-2 text-sm leading-6 text-slate-600">{current.description}</p><div className="mt-4 border-t border-slate-100 pt-3"><div className="text-xs font-bold uppercase tracking-wide text-slate-400">Copertura</div><p className="mt-1 text-sm text-slate-700">{current.coverage}</p></div></div>
           <aside className="rounded-2xl border border-amber-200 bg-amber-50 p-5"><div className="font-bold text-amber-950">📡 Stato dei collegamenti</div><p className="mt-2 text-sm text-amber-900">{current.status}. I contenuti in diretta saranno mostrati solo quando collegati a fonti affidabili e autorizzate.</p><div className="mt-4 rounded-xl bg-white/70 p-3 text-xs text-amber-950">Nessun dato inventato, nessuna diretta simulata e nessun contenuto protetto trasmesso senza licenza.</div></aside>
         </section>
+        {selected === 'news' && <RiverWorldNews />}
         {selected === 'sport' && <section className="mt-5 rounded-2xl bg-white p-5 shadow-sm md:p-6">
           <div className="flex flex-wrap items-center justify-between gap-2"><h2 className="text-xl font-extrabold text-[#073b4c]">🏆 RiverSport Live</h2><span className="text-xs text-slate-500">Calcio: prima priorità</span></div>
           <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">{sportFiltered.map(s => <button key={s.id} onClick={() => setSportSelected(s.id)} className={`rounded-xl border p-3 text-left ${sportSelected === s.id ? 'border-teal-600 bg-teal-50' : 'border-slate-200 hover:bg-slate-50'}`}><span className="text-xl">{s.icon}</span><span className="mt-1 block text-sm font-bold">{s.name}</span></button>)}</div>
