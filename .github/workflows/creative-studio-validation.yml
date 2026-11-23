@@ -4,7 +4,10 @@ on:
   pull_request:
     branches: [main]
     paths:
+      - "pages/river-ai.js"
       - "pages/river-ai/creative-studio.js"
+      - "pages/index.js"
+      - "public/images/river-agent-*.svg"
       - "pages/api/river-ai/creative/**"
       - "public/river-ssai/creative-studio-registry.json"
       - "package.json"
