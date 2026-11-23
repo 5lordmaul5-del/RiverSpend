@@ -95,6 +95,42 @@ export default function Home() {
     window.addEventListener('riverspend:language-change', sync);
     return () => window.removeEventListener('riverspend:language-change', sync);
   }, []);
+  useEffect(() => {
+    const track = document.querySelector('.rs-apps-grid');
+    if (!track) return;
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+    let frame = 0;
+    let paused = false;
+    const pause = () => { paused = true; };
+    const resume = () => { paused = false; };
+    const move = () => {
+      if (!paused) {
+        const maxScroll = track.scrollWidth - track.clientWidth;
+        if (maxScroll > 2) {
+          if (track.scrollLeft >= maxScroll - 1) track.scrollLeft = 0;
+          else track.scrollLeft += 0.45;
+        }
+      }
+      frame = window.requestAnimationFrame(move);
+    };
+    track.addEventListener('pointerenter', pause);
+    track.addEventListener('pointerleave', resume);
+    track.addEventListener('touchstart', pause, { passive: true });
+    track.addEventListener('touchend', resume, { passive: true });
+    track.addEventListener('focusin', pause);
+    track.addEventListener('focusout', resume);
+    frame = window.requestAnimationFrame(move);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      track.removeEventListener('pointerenter', pause);
+      track.removeEventListener('pointerleave', resume);
+      track.removeEventListener('touchstart', pause);
+      track.removeEventListener('touchend', resume);
+      track.removeEventListener('focusin', pause);
+      track.removeEventListener('focusout', resume);
+    };
+  }, []);
+
   const [prodotti, setProdotti] = useState([]);
   const [errore, setErrore] = useState('');
   const [menuCategorie, setMenuCategorie] = useState(false);
@@ -2263,6 +2299,34 @@ export default function Home() {
           #rs-force-card > button > h2 { font-size:16px !important; }
         }
 
+
+        /* Ripristino del carosello app: schede uniformi e scorrimento automatico da destra verso sinistra. */
+        .rs-apps-grid {
+          display:flex !important; flex-direction:row !important; flex-wrap:nowrap !important;
+          align-items:stretch !important; justify-content:flex-start !important;
+          overflow-x:auto !important; overflow-y:hidden !important;
+          scroll-snap-type:x mandatory !important; scroll-behavior:auto !important;
+          -webkit-overflow-scrolling:touch !important; scrollbar-width:none !important;
+          touch-action:pan-x pan-y;
+        }
+        .rs-apps-grid::-webkit-scrollbar { display:none !important; }
+        .rs-apps-grid > .rs-feature-card,
+        .rs-apps-grid > #rs-seller-card,
+        .rs-apps-grid > .rs-park-banner,
+        .rs-apps-grid > .rs-banner-slide:not(#rs-force-card),
+        .rs-apps-grid > .rs-world-card,
+        .rs-apps-grid > .rs-ecology-banner {
+          box-sizing:border-box !important; flex:0 0 220px !important;
+          width:220px !important; min-width:220px !important; max-width:220px !important;
+          height:260px !important; min-height:260px !important; max-height:260px !important;
+          scroll-snap-align:start !important;
+        }
+        .rs-apps-grid > #rs-force-card {
+          flex:0 0 280px !important; width:280px !important; min-width:280px !important;
+          max-width:280px !important; height:370px !important; min-height:370px !important;
+          max-height:370px !important;
+        }
+        @media (prefers-reduced-motion: reduce) { .rs-apps-grid { scroll-behavior:auto !important; } }
       `}</style>
     </main>
   );
