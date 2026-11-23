@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 const CONFIG = {
+  documentari: { title:'Documentari · Storia e civiltà del mondo', subtitle:'Egitto antico, civiltà asiatiche orientali, archeologia, storia, natura, scienza e spazio.', icon:'🎥', tags:['Antico Egitto','Piramidi e faraoni','Mesopotamia','Grecia e Roma','Cina antica','Giappone e Corea','India','Africa e civiltà africane','Maya e Aztechi','Archeologia','Natura','Spazio e universo'] },
   cinema: { title:'Cinema e Film', subtitle:'Uscite, festival, registi, attori, premi e industria cinematografica.', icon:'🎬', tags:['Cinema mondiale','Festival','Film in uscita','Premi e box office'] },
   moda: { title:'Moda & Fashion', subtitle:'Sfilate, collezioni, designer, streetwear, beauty e tendenze internazionali.', icon:'👗', tags:['Milano Fashion Week','Paris Fashion Week','London Fashion Week','New York Fashion Week','Designer','Streetwear'] },
   sport: { title:'Tutti gli sport del mondo', subtitle:'Copertura multisport: dalle discipline più seguite agli sport meno raccontati.', icon:'🏆', tags:['Arti marziali','Taekwondo','Tennis','Nuoto e tuffi','Ciclismo MTB','Arrampicata','Baseball','Atletica','Basket','Sport invernali'] },
