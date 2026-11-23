@@ -1,0 +1,34 @@
+{
+  "module": "RiverSSAI Ultra Intelligence & Defense",
+  "version": "20.0",
+  "status": "design-spec",
+  "capabilities": [
+    "cyber-threat-intelligence",
+    "defensive-osint",
+    "public-source-investigations",
+    "fraud-pattern-analysis",
+    "phishing-and-brand-abuse-detection",
+    "authorized-attack-surface-monitoring",
+    "incident-response-planning",
+    "secure-architecture-review",
+    "secure-code-and-dependency-review",
+    "identity-and-access-governance",
+    "sensitive-data-classification",
+    "privacy-and-data-minimization",
+    "data-loss-prevention-design",
+    "breach-triage",
+    "security-tabletop-exercises",
+    "isolated-red-team-training",
+    "strategic-risk-analysis",
+    "non-operational-military-scenarios",
+    "evidence-provenance-and-audit",
+    "human-review-for-high-impact-decisions"
+  ],
+  "principles": {
+    "authorized_scope_only": true,
+    "read_only_default": true,
+    "human_approval_for_high_impact": true,
+    "confidence_and_source_provenance": true,
+    "data_minimization": true
+  }
+}
