@@ -2,54 +2,20 @@ import Head from 'next/head';
 import Link from 'next/link';
 
 const plans = [
-  {
-    name: 'RSVIVA GO GO',
-    price: '9,90 €',
-    period: '/anno',
-    label: 'Essenziale',
-    description: 'Il pass d’ingresso per offerte e vantaggi nei servizi RiverSpend aderenti.',
-    features: ['Offerte riservate agli iscritti', 'Promozioni su RS SHOP', 'Accesso alle iniziative dell’ecosistema']
-  },
-  {
-    name: 'RSVIVA PLUS',
-    price: '19,90 €',
-    period: '/anno',
-    label: 'Più vantaggi',
-    description: 'Più occasioni e vantaggi digitali rispetto al piano d’ingresso.',
-    features: ['Tutti i vantaggi GO GO', 'Promozioni ampliate sui servizi digitali aderenti', 'Offerte dedicate su prodotti e iniziative selezionate', 'Accesso anticipato a campagne promozionali selezionate']
-  },
-  {
-    name: 'RSVIVA FAST',
-    price: '29,90 €',
-    period: '/anno',
-    label: 'Consegne',
-    description: 'Vantaggi PLUS e priorità, con consegne locali idonee incluse nelle zone abilitate.',
-    features: ['Tutti i vantaggi PLUS', 'Consegne locali idonee incluse secondo zona e condizioni', 'Priorità nella gestione degli ordini', 'Promozioni sui servizi digitali aderenti']
-  },
-  {
-    name: 'RSVIVA SUPERFAST',
-    price: '49,90 €',
-    period: '/anno',
-    label: 'Premium',
-    description: 'Un livello superiore di priorità e vantaggi nell’ecosistema RiverSpend.',
-    features: ['Tutti i vantaggi FAST', 'Priorità superiore nelle consegne disponibili', 'Promozioni premium sui prodotti aderenti', 'Assistenza prioritaria secondo disponibilità']
-  },
-  {
-    name: 'RSVIVA ULTRA',
-    price: '89,00 €',
-    period: '/anno',
-    label: 'Massimo livello',
-    description: 'Il pass annuale di fascia più alta, con il massimo livello di vantaggi previsti dai servizi aderenti.',
-    features: ['Tutti i vantaggi SUPERFAST', 'Migliore livello di priorità disponibile nei servizi aderenti', 'Accesso a offerte ed esperienze premium selezionate', 'Assistenza con priorità massima secondo disponibilità']
-  }
+  { name: 'VIVA GO', price: '9,90 €', period: '/anno', label: 'Consegne', description: 'Il pass base per accedere alle iniziative e alle tariffe dedicate RiverSpend Delivery.', features: ['Accesso alle offerte di consegna dedicate', 'Tracciamento degli ordini quando disponibile', 'Tariffe e condizioni mostrate prima della conferma'] },
+  { name: 'VIVA GOGÒ', price: '19,90 €', period: '/anno', label: 'Risparmio', description: 'Un livello aggiuntivo di risparmio sulle consegne idonee.', features: ['Tutti i vantaggi VIVA GO', 'Promozioni dedicate sui costi di consegna', 'Accesso a offerte di spedizione selezionate'] },
+  { name: 'VIVA FAST', price: '29,90 €', period: '/anno', label: 'Consegna veloce', description: 'Priorità nella preparazione e gestione delle consegne idonee.', features: ['Tutti i vantaggi VIVA GOGÒ', 'Priorità di gestione degli ordini', 'Consegna veloce nelle zone e fasce orarie abilitate'] },
+  { name: 'VIVA SUPER FAST', price: '49,90 €', period: '/anno', label: 'Priorità superiore', description: 'Un livello superiore di priorità per le consegne disponibili.', features: ['Tutti i vantaggi VIVA FAST', 'Priorità superiore nelle fasce disponibili', 'Accesso a opzioni rapide selezionate'] },
+  { name: 'VIVA SUPER RAPIDO', price: '89,00 €', period: '/anno', label: 'Massima priorità', description: 'Priorità elevata per le consegne compatibili con il servizio.', features: ['Tutti i vantaggi VIVA SUPER FAST', 'Massima priorità operativa disponibile', 'Accesso prioritario alle opzioni express abilitate'] },
+  { name: 'VIVA ULTRA', price: '100,00 €', period: '/anno', label: 'Livello Ultra', description: 'Il livello premium più alto di VIVA Delivery, con priorità massima sulle consegne compatibili.', features: ['Tutti i vantaggi VIVA SUPER RAPIDO', 'Priorità Ultra nelle fasce e zone abilitate', 'Accesso alle opzioni express disponibili'] }
 ];
 
 export default function RSVIVA() {
   return (
     <>
       <Head>
-        <title>RS VIVA · Membership e pagamenti</title>
-        <meta name="description" content="RS VIVA: servizi, membership e pagamenti RiverSpend." />
+        <title>VIVA Delivery · Tariffe e piani consegna RiverSpend</title>
+        <meta name="description" content="VIVA: cinque piani annuali dedicati alle consegne RiverSpend." />
       </Head>
       <main className="min-h-screen bg-gradient-to-b from-white via-cyan-50 to-white px-4 py-8 text-slate-900">
         <div className="mx-auto max-w-5xl">
@@ -57,24 +23,24 @@ export default function RSVIVA() {
           <header className="mt-6 rounded-[2rem] bg-slate-950 p-7 text-white shadow-xl sm:p-10">
             <p className="text-sm font-black uppercase tracking-[0.3em] text-amber-300">RIVERSPEND</p>
             <h1 className="mt-3 text-4xl font-black tracking-tight sm:text-6xl">RS<span className="text-amber-300">VIVA</span><span className="ml-2 inline-block text-amber-300 drop-shadow-[0_0_12px_rgba(252,211,77,0.8)]">⚡⚡</span></h1>
-            <p className="mt-3 max-w-2xl text-lg leading-7 text-slate-200">Un solo pass per vivere i servizi RiverSpend. Membership, consegne locali e servizi digitali in un ecosistema unico.</p>
+            <p className="mt-3 max-w-2xl text-lg leading-7 text-slate-200">Sei pass annuali dedicati esclusivamente alle consegne RiverSpend.</p>
           </header>
 
 
           <section className="mt-8 rounded-3xl border border-amber-200 bg-gradient-to-br from-slate-950 via-slate-900 to-teal-950 p-6 text-white shadow-lg">
-            <p className="text-xs font-black uppercase tracking-[0.25em] text-amber-300">Un pass · tutto l'ecosistema</p>
-            <h2 className="mt-2 text-2xl font-black">RS VIVA accompagna ogni servizio RiverSpend</h2>
-            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-200">L'obiettivo è un unico account e un'unica membership riconosciuta nei prodotti aderenti, con vantaggi e prezzi mostrati in modo trasparente in ogni app.</p>
+            <p className="text-xs font-black uppercase tracking-[0.25em] text-amber-300">Solo consegne · sei livelli</p>
+            <h2 className="mt-2 text-2xl font-black">VIVA è dedicato a RiverSpend Delivery</h2>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-200">Questi piani riguardano esclusivamente spedizioni e consegne. Sono separati dagli abbonamenti e dai livelli di RiverSSAI (Bronze, Silver, Gold e Diamond).</p>
             <div className="mt-5 grid grid-cols-2 gap-3 text-sm font-bold sm:grid-cols-3">
-              {['RS SHOP', 'RS STREAM', 'RS TV', 'RS MUSIC', 'RiverSignals', 'RiverSSAI', 'RS PLAY', 'RS PRINT', 'RS PARK'].map((item) => <div key={item} className="rounded-xl border border-white/15 bg-white/10 px-3 py-3">{item}</div>)}
+              {['Consegne locali', 'Spedizioni', 'Consegne rapide'].map((item) => <div key={item} className="rounded-xl border border-white/15 bg-white/10 px-3 py-3">{item}</div>)}
             </div>
-            <p className="mt-4 text-xs leading-5 text-amber-100">Copertura prevista a livello di catalogo. Attivazione reale dei vantaggi in tutte le app subordinata all'integrazione dell'identità condivisa, del sistema pagamenti e alla verifica dell'abbonamento.</p>
+            <p className="mt-4 text-xs leading-5 text-amber-100">I vantaggi si applicano soltanto alle consegne compatibili, nelle zone abilitate e secondo disponibilità, peso, dimensioni e condizioni mostrate prima dell'ordine.</p>
           </section>
 
           <section className="mt-8">
             <div className="mb-4">
-              <p className="text-sm font-black uppercase tracking-widest text-teal-700">Membership</p>
-              <h2 className="text-2xl font-black">Scegli il tuo RSVIVA Pass</h2>
+              <p className="text-sm font-black uppercase tracking-widest text-teal-700">Piani consegna</p>
+              <h2 className="text-2xl font-black">Scegli il tuo VIVA Delivery Pass</h2>
             </div>
             <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
               {plans.map((plan) => (
@@ -121,7 +87,7 @@ export default function RSVIVA() {
           </section>
 
           <footer className="mt-8 rounded-2xl bg-slate-100 p-4 text-xs leading-5 text-slate-600">
-            RS VIVA è il nome commerciale proposto per membership e vantaggi dell'ecosistema. Prezzi e condizioni sono un listino di sviluppo; nessun abbonamento viene attivato e nessun pagamento viene incassato da questa pagina. Prima del lancio saranno completati verifica fiscale, termini di vendita, privacy e integrazione con il prestatore di servizi di pagamento.
+            VIVA Delivery è una linea di pass annuali dedicata esclusivamente a spedizioni e consegne. Non modifica né sostituisce i piani Bronze, Silver, Gold e Diamond di RiverSSAI. Prezzi e condizioni sono un listino di sviluppo; nessun piano viene attivato e nessun pagamento viene incassato da questa pagina. Prima del lancio saranno completati verifica fiscale, termini di vendita, privacy e integrazione con il prestatore di servizi di pagamento.
           </footer>
         </div>
       </main>
