@@ -2,9 +2,9 @@ import { createClient } from "@supabase/supabase-js";
 
 const MODEL_DEFAULT = "openai/gpt-oss-20b";
 const MAX_AGENTS = 30;
-const MAX_MESSAGE_CHARS = 4000;
-const MAX_HISTORY = 16;
-const MAX_PARALLEL = 3; // squadra leggermente più reattiva, con limite prudente del provider
+const MAX_MESSAGE_CHARS = 2500;
+const MAX_HISTORY = 8;
+const MAX_PARALLEL = 1; // una richiesta alla volta per rispettare il limite TPM del provider
 
 const AGENTS = {
   nova: "Coordinatrice generale: scomponi il problema, assegna priorità, integra i risultati e dichiara le incertezze.",
@@ -94,7 +94,7 @@ const AGENT_SIGNALS = {
 
 function chooseTeam(agent, requestedSize, prompt = "") {
   if (agent !== "team") return [normalizeAgent(agent)];
-  const size = [2, 4, 8, 10, 20, 30].includes(Number(requestedSize)) ? Number(requestedSize) : 4;
+  const size = [2, 4].includes(Number(requestedSize)) ? Number(requestedSize) : 2;
   const roster = Object.keys(AGENT_SIGNALS);
   const normalizedPrompt = String(prompt).toLocaleLowerCase("it");
   const ranked = roster.map((name, index) => {
