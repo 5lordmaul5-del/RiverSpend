@@ -1655,8 +1655,8 @@ export default function Home() {
         /* Banner venditore: stessa larghezza delle altre schede nel carosello mobile. */
         #rs-seller-card { box-sizing:border-box; min-width:160px !important; width:160px !important; max-width:160px !important; flex:0 0 160px !important; }
         /* Contrasto leggibile e stato visivo coerente per i pulsanti della Rete. */
-        .rs-product-card button[aria-pressed="true"] { background-color:#6ee7b7 !important; color:#064e3b !important; border-color:#34d399 !important; }
-        .rs-product-card button[aria-pressed="false"] { background-color:#14b8a6 !important; color:#042f2e !important; border-color:#2dd4bf !important; }
+        .rs-product-card button[aria-pressed="true"] { background-color:#facc15 !important; color:#713f12 !important; border-color:#eab308 !important; }
+        .rs-product-card button[aria-pressed="false"] { background-color:#facc15 !important; color:#713f12 !important; border-color:#eab308 !important; }
         .rs-feature-card > a, .rs-feature-card > button { display:flex; flex-direction:column; flex:1; min-height:0; }
         .rs-feature-card .rs-feature-media { box-sizing:border-box; height:72px !important; min-height:72px !important; max-height:72px; flex:0 0 72px; }
         .rs-feature-action { margin-top:auto !important; min-height:28px; flex-shrink:0; justify-content:center; }
