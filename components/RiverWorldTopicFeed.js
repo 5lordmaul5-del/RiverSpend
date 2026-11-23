@@ -21,6 +21,7 @@ export default function RiverWorldTopicFeed({ section='cinema', initialQuery='' 
   const [error,setError]=useState('');
   const [updated,setUpdated]=useState('');
   const [refresh,setRefresh]=useState(0);
+  useEffect(()=>{ setQuery(initialQuery); },[initialQuery]);
   useEffect(()=>{
     const controller=new AbortController();
     async function load(){
