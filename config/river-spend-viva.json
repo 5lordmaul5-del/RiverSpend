@@ -1,5 +1,5 @@
 {
-  "brand": "RS VIVA",
+  "brand": "RSVIVA",
   "currency": "EUR",
   "status": "catalog_only_payment_activation_pending",
   "plans": [
@@ -93,5 +93,55 @@
     "neverMarkPaymentPaidFromCustomerSelfDeclaration": true,
     "neverStoreCardData": true,
     "noThirdPartyFundsCustodyWithoutAuthorizedProvider": true
+  },
+  "logo": {
+    "wordmark": "RSVIVA",
+    "lightning": "⚡⚡",
+    "accent": "gold"
+  },
+  "ecosystemCoverage": {
+    "status": "planned_shared_membership_integration_pending",
+    "description": "Un unico account e una membership RS VIVA per i prodotti aderenti. I vantaggi si attivano solo dopo verifica del pagamento e integrazione tecnica di ogni prodotto.",
+    "products": [
+      {
+        "id": "shop",
+        "name": "RS SHOP"
+      },
+      {
+        "id": "stream",
+        "name": "RS STREAM"
+      },
+      {
+        "id": "tv",
+        "name": "RS TV"
+      },
+      {
+        "id": "music",
+        "name": "RS MUSIC"
+      },
+      {
+        "id": "signals",
+        "name": "RiverSignals"
+      },
+      {
+        "id": "riverssai",
+        "name": "RiverSSAI"
+      },
+      {
+        "id": "play",
+        "name": "RS PLAY"
+      },
+      {
+        "id": "print",
+        "name": "RS PRINT"
+      },
+      {
+        "id": "park",
+        "name": "RS PARK"
+      }
+    ],
+    "sharedAccountRequired": true,
+    "verifiedPaymentRequired": true,
+    "perProductIntegrationRequired": true
   }
 }
