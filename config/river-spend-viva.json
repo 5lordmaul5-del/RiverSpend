@@ -1,0 +1,178 @@
+{
+  "brand": "VIVA Delivery",
+  "currency": "EUR",
+  "status": "delivery_pass_catalog_only_payment_activation_pending",
+  "plans": [
+    {
+      "id": "viva-go-annual",
+      "name": "VIVA GO",
+      "price": 9.9,
+      "billing": "annual",
+      "durationDays": 365,
+      "tier": 1,
+      "benefits": [
+        "Accesso alle offerte di consegna dedicate",
+        "Tracciamento degli ordini quando disponibile",
+        "Tariffe e condizioni mostrate prima della conferma"
+      ],
+      "purchasable": false
+    },
+    {
+      "id": "viva-gogo-annual",
+      "name": "VIVA GOGÒ",
+      "price": 19.9,
+      "billing": "annual",
+      "durationDays": 365,
+      "tier": 2,
+      "benefits": [
+        "Tutti i vantaggi VIVA GO",
+        "Promozioni dedicate sui costi di consegna",
+        "Accesso a offerte di spedizione selezionate"
+      ],
+      "purchasable": false
+    },
+    {
+      "id": "viva-fast-annual",
+      "name": "VIVA FAST",
+      "price": 29.9,
+      "billing": "annual",
+      "durationDays": 365,
+      "tier": 3,
+      "benefits": [
+        "Tutti i vantaggi VIVA GOGÒ",
+        "Priorità di gestione degli ordini",
+        "Consegna veloce nelle zone e fasce orarie abilitate"
+      ],
+      "purchasable": false
+    },
+    {
+      "id": "viva-super-fast-annual",
+      "name": "VIVA SUPER FAST",
+      "price": 49.9,
+      "billing": "annual",
+      "durationDays": 365,
+      "tier": 4,
+      "benefits": [
+        "Tutti i vantaggi VIVA FAST",
+        "Priorità superiore nelle fasce disponibili",
+        "Accesso a opzioni rapide selezionate"
+      ],
+      "purchasable": false
+    },
+    {
+      "id": "viva-super-rapido-annual",
+      "name": "VIVA SUPER RAPIDO",
+      "price": 89,
+      "billing": "annual",
+      "durationDays": 365,
+      "tier": 5,
+      "benefits": [
+        "Tutti i vantaggi VIVA SUPER FAST",
+        "Massima priorità operativa disponibile",
+        "Accesso prioritario alle opzioni express abilitate"
+      ],
+      "limits": [
+        "Disponibilità territoriale e operativa",
+        "Limiti di peso, dimensioni, distanza e fasce orarie",
+        "Nessuna promessa di consegna immediata o illimitata"
+      ],
+      "purchasable": false
+    }
+  ],
+  "microPurchases": [
+    {
+      "amount": 1,
+      "currency": "EUR"
+    },
+    {
+      "amount": 2,
+      "currency": "EUR"
+    },
+    {
+      "amount": 5,
+      "currency": "EUR"
+    },
+    {
+      "amount": 10,
+      "currency": "EUR"
+    }
+  ],
+  "marketplace": {
+    "proposedCommissionRate": 0.1,
+    "settlementSchedules": [
+      "7 giorni",
+      "30 giorni",
+      "60 giorni",
+      "90 giorni"
+    ],
+    "status": "accounting_rules_only",
+    "note": "La commissione è un calcolo gestionale. Incasso centralizzato e liquidazione di fondi di terzi richiedono un prestatore autorizzato e un modello contrattuale conforme."
+  },
+  "paymentMethods": [
+    {
+      "id": "cash_on_delivery",
+      "label": "Contanti alla consegna",
+      "status": "manual_verification"
+    },
+    {
+      "id": "bank_transfer",
+      "label": "Bonifico istantaneo",
+      "status": "manual_verification"
+    },
+    {
+      "id": "postepay",
+      "label": "PostePay",
+      "status": "manual_verification"
+    },
+    {
+      "id": "paypal",
+      "label": "PayPal",
+      "status": "requires_configured_provider_credentials"
+    },
+    {
+      "id": "cards_wallets",
+      "label": "Carte e wallet",
+      "status": "not_enabled"
+    }
+  ],
+  "rules": {
+    "activateEntitlementOnlyAfterVerifiedPayment": true,
+    "neverMarkPaymentPaidFromCustomerSelfDeclaration": true,
+    "neverStoreCardData": true,
+    "noThirdPartyFundsCustodyWithoutAuthorizedProvider": true
+  },
+  "logo": {
+    "wordmark": "RSVIVA",
+    "lightning": "⚡⚡",
+    "accent": "gold"
+  },
+  "ecosystemCoverage": {
+    "status": "not_applicable",
+    "description": "I pass VIVA sono esclusivamente per spedizioni e consegne; non integrano né modificano gli abbonamenti RiverSSAI Bronze, Silver, Gold e Diamond."
+  },
+  "addOns": [
+    {
+      "id": "signals-lifetime",
+      "name": "RiverSignals Lifetime",
+      "price": 1,
+      "billing": "one_time",
+      "benefits": [
+        "Accesso lifetime secondo le condizioni del servizio"
+      ],
+      "purchasable": false
+    }
+  ],
+  "pricingStatus": "five_delivery_passes_defined_activation_pending",
+  "productScope": "delivery_and_shipping_only",
+  "separateFrom": [
+    "RiverSSAI Bronze",
+    "RiverSSAI Silver",
+    "RiverSSAI Gold",
+    "RiverSSAI Diamond"
+  ],
+  "deliveryRules": {
+    "appliesTo": "eligible_shipping_and_delivery_orders_only",
+    "notAnAiSubscription": true,
+    "availabilityAndFeesMustBeShownBeforeCheckout": true
+  }
+}
