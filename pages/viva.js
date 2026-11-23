@@ -3,20 +3,28 @@ import Link from 'next/link';
 
 const plans = [
   {
-    name: 'RS VIVA Delivery Fast',
-    price: '29,90 €',
+    name: 'RSVIVA GO GO',
+    price: '9,90 €',
     period: '/anno',
-    label: 'Piano lancio',
-    description: 'Consegne locali incluse nelle zone abilitate, con condizioni e limiti chiari.',
-    features: ['Consegne locali idonee incluse', 'Priorità di gestione', 'Offerte riservate agli iscritti']
+    label: 'Essenziale',
+    description: 'Il pass d'ingresso per offerte e vantaggi nei servizi RiverSpend aderenti.',
+    features: ['Offerte riservate agli iscritti', 'Promozioni su RS SHOP', 'Accesso alle iniziative dell’ecosistema']
   },
   {
-    name: 'RiverSignals Lifetime',
-    price: '1,00 €',
-    period: 'una tantum',
-    label: 'Accesso lifetime',
-    description: 'Prezzo commerciale approvato; attivazione subordinata alla verifica del pagamento.',
-    features: ['Pagamento una tantum', 'Nessun rinnovo ricorrente']
+    name: 'RSVIVA FAST',
+    price: '29,90 €',
+    period: '/anno',
+    label: 'Più scelto',
+    description: 'Più convenienza e priorità, con consegne locali idonee incluse nelle zone abilitate.',
+    features: ['Tutti i vantaggi GO GO', 'Consegne locali idonee incluse secondo zona e condizioni', 'Priorità nella gestione degli ordini', 'Promozioni sui servizi digitali aderenti']
+  },
+  {
+    name: 'RSVIVA SUPERFAST',
+    price: '49,90 €',
+    period: '/anno',
+    label: 'Premium',
+    description: 'Il livello più completo di vantaggi e priorità nell’ecosistema RiverSpend.',
+    features: ['Tutti i vantaggi FAST', 'Priorità superiore nelle consegne disponibili', 'Promozioni premium sui prodotti aderenti', 'Assistenza prioritaria secondo disponibilità']
   }
 ];
 
@@ -50,9 +58,9 @@ export default function RSVIVA() {
           <section className="mt-8">
             <div className="mb-4">
               <p className="text-sm font-black uppercase tracking-widest text-teal-700">Membership</p>
-              <h2 className="text-2xl font-black">Scegli il tuo VIVA Pass</h2>
+              <h2 className="text-2xl font-black">Scegli il tuo RSVIVA Pass</h2>
             </div>
-            <div className="grid gap-5 md:grid-cols-2">
+            <div className="grid gap-5 md:grid-cols-3">
               {plans.map((plan) => (
                 <article key={plan.name} className="rounded-3xl border border-teal-200 bg-white p-6 shadow-sm">
                   <span className="inline-flex rounded-full bg-amber-100 px-3 py-1 text-xs font-black text-amber-900">{plan.label}</span>
