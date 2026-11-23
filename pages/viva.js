@@ -6,14 +6,15 @@ const plans = [
   { name: 'VIVA GOGÒ', price: '19,90 €', period: '/anno', label: 'Risparmio', description: 'Un livello aggiuntivo di risparmio sulle consegne idonee.', features: ['Tutti i vantaggi VIVA GO', 'Promozioni dedicate sui costi di consegna', 'Accesso a offerte di spedizione selezionate'] },
   { name: 'VIVA FAST', price: '29,90 €', period: '/anno', label: 'Consegna veloce', description: 'Priorità nella preparazione e gestione delle consegne idonee.', features: ['Tutti i vantaggi VIVA GOGÒ', 'Priorità di gestione degli ordini', 'Consegna veloce nelle zone e fasce orarie abilitate'] },
   { name: 'VIVA SUPER FAST', price: '49,90 €', period: '/anno', label: 'Priorità superiore', description: 'Un livello superiore di priorità per le consegne disponibili.', features: ['Tutti i vantaggi VIVA FAST', 'Priorità superiore nelle fasce disponibili', 'Accesso a opzioni rapide selezionate'] },
-  { name: 'VIVA SUPER RAPIDO', price: '89,00 €', period: '/anno', label: 'Massima priorità', description: 'Il livello più alto di priorità per le consegne compatibili con il servizio.', features: ['Tutti i vantaggi VIVA SUPER FAST', 'Massima priorità operativa disponibile', 'Accesso prioritario alle opzioni express abilitate'] }
+  { name: 'VIVA SUPER RAPIDO', price: '89,00 €', period: '/anno', label: 'Massima priorità', description: 'Priorità elevata per le consegne compatibili con il servizio.', features: ['Tutti i vantaggi VIVA SUPER FAST', 'Massima priorità operativa disponibile', 'Accesso prioritario alle opzioni express abilitate'] },
+  { name: 'VIVA ULTRA', price: '100,00 €', period: '/anno', label: 'Livello Ultra', description: 'Il livello premium più alto di VIVA Delivery, con priorità massima sulle consegne compatibili.', features: ['Tutti i vantaggi VIVA SUPER RAPIDO', 'Priorità Ultra nelle fasce e zone abilitate', 'Accesso alle opzioni express disponibili'] }
 ];
 
 export default function RSVIVA() {
   return (
     <>
       <Head>
-        <title>VIVA Delivery · Piani consegna RiverSpend</title>
+        <title>VIVA Delivery · Tariffe e piani consegna RiverSpend</title>
         <meta name="description" content="VIVA: cinque piani annuali dedicati alle consegne RiverSpend." />
       </Head>
       <main className="min-h-screen bg-gradient-to-b from-white via-cyan-50 to-white px-4 py-8 text-slate-900">
@@ -22,12 +23,12 @@ export default function RSVIVA() {
           <header className="mt-6 rounded-[2rem] bg-slate-950 p-7 text-white shadow-xl sm:p-10">
             <p className="text-sm font-black uppercase tracking-[0.3em] text-amber-300">RIVERSPEND</p>
             <h1 className="mt-3 text-4xl font-black tracking-tight sm:text-6xl">RS<span className="text-amber-300">VIVA</span><span className="ml-2 inline-block text-amber-300 drop-shadow-[0_0_12px_rgba(252,211,77,0.8)]">⚡⚡</span></h1>
-            <p className="mt-3 max-w-2xl text-lg leading-7 text-slate-200">Cinque pass annuali dedicati esclusivamente alle consegne RiverSpend.</p>
+            <p className="mt-3 max-w-2xl text-lg leading-7 text-slate-200">Sei pass annuali dedicati esclusivamente alle consegne RiverSpend.</p>
           </header>
 
 
           <section className="mt-8 rounded-3xl border border-amber-200 bg-gradient-to-br from-slate-950 via-slate-900 to-teal-950 p-6 text-white shadow-lg">
-            <p className="text-xs font-black uppercase tracking-[0.25em] text-amber-300">Solo consegne · cinque livelli</p>
+            <p className="text-xs font-black uppercase tracking-[0.25em] text-amber-300">Solo consegne · sei livelli</p>
             <h2 className="mt-2 text-2xl font-black">VIVA è dedicato a RiverSpend Delivery</h2>
             <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-200">Questi piani riguardano esclusivamente spedizioni e consegne. Sono separati dagli abbonamenti e dai livelli di RiverSSAI (Bronze, Silver, Gold e Diamond).</p>
             <div className="mt-5 grid grid-cols-2 gap-3 text-sm font-bold sm:grid-cols-3">
