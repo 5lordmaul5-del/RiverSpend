@@ -4,15 +4,31 @@
   "status": "catalog_only_payment_activation_pending",
   "plans": [
     {
-      "id": "delivery-fast-annual",
-      "name": "RS VIVA Delivery Fast",
+      "id": "go-go-annual",
+      "name": "RSVIVA GO GO",
+      "price": 9.9,
+      "billing": "annual",
+      "durationDays": 365,
+      "tier": 1,
+      "benefits": [
+        "Offerte riservate agli iscritti",
+        "Promozioni su RS SHOP",
+        "Accesso alle iniziative dei servizi aderenti"
+      ],
+      "purchasable": false
+    },
+    {
+      "id": "fast-annual",
+      "name": "RSVIVA FAST",
       "price": 29.9,
       "billing": "annual",
       "durationDays": 365,
+      "tier": 2,
       "benefits": [
-        "Consegne locali incluse nelle zone abilitate e nei limiti pubblicati",
-        "Priorità di gestione delle consegne",
-        "Offerte riservate agli iscritti"
+        "Tutti i vantaggi GO GO",
+        "Consegne locali idonee incluse nelle zone abilitate e nei limiti pubblicati",
+        "Priorità nella gestione degli ordini",
+        "Promozioni sui servizi digitali aderenti"
       ],
       "limits": [
         "Disponibilità territoriale",
@@ -22,12 +38,21 @@
       "purchasable": false
     },
     {
-      "id": "signals-lifetime",
-      "name": "RiverSignals Lifetime",
-      "price": 1,
-      "billing": "one_time",
+      "id": "superfast-annual",
+      "name": "RSVIVA SUPERFAST",
+      "price": 49.9,
+      "billing": "annual",
+      "durationDays": 365,
+      "tier": 3,
       "benefits": [
-        "Accesso lifetime secondo le condizioni del servizio"
+        "Tutti i vantaggi FAST",
+        "Priorità superiore nelle consegne disponibili",
+        "Promozioni premium sui prodotti aderenti",
+        "Assistenza prioritaria secondo disponibilità"
+      ],
+      "limits": [
+        "Vantaggi soggetti a disponibilità e condizioni pubblicate",
+        "Consegne incluse solo nelle zone e nei limiti abilitati"
       ],
       "purchasable": false
     }
@@ -143,5 +168,18 @@
     "sharedAccountRequired": true,
     "verifiedPaymentRequired": true,
     "perProductIntegrationRequired": true
-  }
+  },
+  "addOns": [
+    {
+      "id": "signals-lifetime",
+      "name": "RiverSignals Lifetime",
+      "price": 1,
+      "billing": "one_time",
+      "benefits": [
+        "Accesso lifetime secondo le condizioni del servizio"
+      ],
+      "purchasable": false
+    }
+  ],
+  "pricingStatus": "commercial_prices_approved_activation_pending"
 }
