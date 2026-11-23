@@ -3,7 +3,8 @@ import { useEffect, useState } from 'react';
 const CONFIG = {
   cinema: { title:'Cinema e Film', subtitle:'Uscite, festival, registi, attori, premi e industria cinematografica.', icon:'🎬', tags:['Cinema mondiale','Festival','Film in uscita','Premi e box office'] },
   moda: { title:'Moda & Fashion', subtitle:'Sfilate, collezioni, designer, streetwear, beauty e tendenze internazionali.', icon:'👗', tags:['Milano Fashion Week','Paris Fashion Week','London Fashion Week','New York Fashion Week','Designer','Streetwear'] },
-  sport: { title:'Sport internazionale', subtitle:'Notizie e aggiornamenti dai campionati e dalle discipline di tutto il mondo.', icon:'🏆', tags:['Calcio','Basket','Tennis','Motori','Rugby','Altri sport'] },
+  sport: { title:'Tutti gli sport del mondo', subtitle:'Copertura multisport: dalle discipline più seguite agli sport meno raccontati.', icon:'🏆', tags:['Arti marziali','Taekwondo','Tennis','Nuoto e tuffi','Ciclismo MTB','Arrampicata','Baseball','Atletica','Basket','Sport invernali'] },
+  'arti-marziali': { title:'Arti marziali · Taekwondo in primo piano', subtitle:'Taekwondo, Judo e Karate in evidenza, insieme alle discipline da combattimento e alle arti tradizionali di tutto il mondo.', icon:'🥋', tags:['Taekwondo','Judo','Karate','Kickboxing','Muay Thai','MMA','Sumo','Lotta','Kung Fu','Aikido','Kendo','Arti samurai'] },
   spettacolo: { title:'Spettacolo & Celebrities', subtitle:'Televisione, artisti, premi, musica, personaggi e intrattenimento.', icon:'✨', tags:['Televisione','Celebrities','Musica','Premi','Show business'] },
 };
 const COUNTRY_OPTIONS = [['','Tutti i Paesi'],['IT','Italia'],['GB','Regno Unito'],['US','Stati Uniti'],['FR','Francia'],['DE','Germania'],['NO','Norvegia'],['ES','Spagna'],['JP','Giappone'],['KR','Corea del Sud'],['IN','India'],['BR','Brasile']];
