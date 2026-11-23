@@ -1,0 +1,25 @@
+{
+  "product":"RiverSSAI 20.0 UMPSD UltraMegaPowerSelDefence",
+  "version":"20.0-UMPSD",
+  "status":"blueprint",
+  "coordinator":"Nova",
+  "purpose":"Lawful intelligence analysis, investigative support, cyber defense, fraud prevention, privacy, resilience and non-weaponized defense research",
+  "modules":[
+    {"id":"inteldesk","name":"IntelDesk OSINT","state":"blueprint","scope":"Public-source analysis, attribution, corroboration, confidence, reporting"},
+    {"id":"investigation","name":"Investigation Workspace","state":"blueprint","scope":"Case intake, scope, chronology, evidence register, chain of custody, redaction"},
+    {"id":"cybershield","name":"CyberShield Counter-Terror Cyber Defense","state":"blueprint","scope":"Defensive triage, phishing analysis, incident response, hardening, tabletop simulation"},
+    {"id":"fraud","name":"Fraud & Financial Integrity","state":"blueprint","scope":"Fraud patterns, anomaly triage, prevention controls, synthetic cases"},
+    {"id":"privacy","name":"Sensitive Data Protection","state":"blueprint","scope":"Classification, redaction, least privilege, encryption and retention guidance"},
+    {"id":"critical","name":"Critical Infrastructure Resilience","state":"blueprint","scope":"Risk mapping, recovery readiness, defensive playbooks"},
+    {"id":"research","name":"Defense Research & Robotics","state":"blueprint","scope":"Protective materials, rescue robotics, logistics and safety engineering"},
+    {"id":"simulation","name":"Strategic Simulation","state":"blueprint","scope":"Non-operational crisis and defensive tabletop scenarios"},
+    {"id":"ledger","name":"Evidence Ledger","state":"blueprint","scope":"Provenance, approvals, audit, versions and export"},
+    {"id":"code-review","name":"Secure Code Review","state":"blueprint","scope":"User-provided code analysis and patch guidance for authorized systems"}
+  ],
+  "workflow":["scope_and_authorization","collect_permitted_evidence","source_and_confidence_review","analysis","human_approval","defensive_action","audit_and_report"],
+  "guardrails":["no_unauthorized_intrusion","no_credential_theft","no_stealth_or_persistence","no_exfiltration","no_weapon_design_or_targeting","human_review_for_high_impact_actions"],
+  "roadmap":["specification","dashboard_and_case_lifecycle","read_only_osint","defensive_cyber_workflows","privacy_and_acceptance_tests"],
+  "registryTarget":90,
+  "registryImplemented":30,
+  "operationalToolsImplemented":false
+}
