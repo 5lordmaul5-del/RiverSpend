@@ -48,6 +48,7 @@ export default function CreativeStudio() {
   const [access, setAccess] = useState("checking");
   const [token, setToken] = useState("");
   const [imageConfigured, setImageConfigured] = useState(false);
+  const [videoConfigured, setVideoConfigured] = useState(false);
   const [media, setMedia] = useState([]);
   const [prompt, setPrompt] = useState("");
   const [title, setTitle] = useState("River Motion");
@@ -70,8 +71,10 @@ export default function CreativeStudio() {
         if (!response.ok) throw new Error("Verifica non disponibile");
         const capabilityResponse = await fetch("/api/river-ai/creative/image?capabilities=1", { headers: { Authorization: `Bearer ${session.access_token}` } });
         const capabilityData = capabilityResponse.ok ? await capabilityResponse.json() : { configured: false };
+        const videoCapabilityResponse = await fetch("/api/river-ai/creative/video?capabilities=1", { headers: { Authorization: `Bearer ${session.access_token}` } });
+        const videoCapabilityData = videoCapabilityResponse.ok ? await videoCapabilityResponse.json() : { configured: false };
         const items = await vaultAll();
-        if (alive) { setToken(session.access_token); setImageConfigured(Boolean(capabilityData.configured)); setMedia(items.sort((a,b) => b.createdAt - a.createdAt)); setAccess("ready"); }
+        if (alive) { setToken(session.access_token); setImageConfigured(Boolean(capabilityData.configured)); setVideoConfigured(Boolean(videoCapabilityData.configured)); setMedia(items.sort((a,b) => b.createdAt - a.createdAt)); setAccess("ready"); }
       } catch { if (alive) setAccess("error"); }
     }
     check();
@@ -191,6 +194,35 @@ export default function CreativeStudio() {
     finally { setBusy(false); }
   }
 
+  async function generateVideo() {
+    if (!prompt.trim() || busy || !videoConfigured) return;
+    setBusy(true); setStatus("Nova sta inviando il progetto al motore video locale…");
+    try {
+      const started = await fetch("/api/river-ai/creative/video", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ prompt: prompt.trim() }) });
+      const job = await started.json();
+      if (!started.ok) throw new Error(job.error || "Il motore video non ha accettato la richiesta.");
+      let result = null;
+      for (let attempt = 0; attempt < 150; attempt++) {
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+        const check = await fetch(`/api/river-ai/creative/video?prompt_id=${encodeURIComponent(job.prompt_id)}`, { headers: { Authorization: `Bearer ${token}` } });
+        const data = await check.json();
+        if (!check.ok) throw new Error(data.error || "Errore durante la generazione video.");
+        if (data.status === "completed") { result = data; break; }
+        setStatus(`Video Engine sta elaborando… controllo ${attempt + 1}/150`);
+      }
+      if (!result?.media_url) throw new Error("Il video è ancora in elaborazione o il tempo di attesa è scaduto.");
+      const mediaResponse = await fetch(result.media_url, { headers: { Authorization: `Bearer ${token}` } });
+      if (!mediaResponse.ok) throw new Error("Il video è stato elaborato ma non è recuperabile dal runtime.");
+      const blob = await mediaResponse.blob();
+      const item = { id: makeId(), name: result.filename || "RiverSSAI-generated-video", type: blob.type || "video/mp4", size: blob.size, blob, createdAt: Date.now() };
+      await vaultPut(item);
+      setMedia((items) => [item, ...items]);
+      setStatus("Video generato dal workflow ComfyUI e salvato nel Media Vault locale.");
+      setTab("vault");
+    } catch (error) { setStatus(error.message || "Generazione video non riuscita."); }
+    finally { setBusy(false); }
+  }
+
   async function prepareImageBrief() {
     if (!prompt.trim()) { setStatus("Scrivi prima una descrizione dell'immagine."); return; }
     await navigator.clipboard?.writeText(`RiverSSAI Image Engine brief\n\n${prompt.trim()}\n\nFormato: definire in base all'uso. Qualità: alta. Verificare diritti e contenuti.`).catch(() => {});
@@ -221,8 +253,8 @@ export default function CreativeStudio() {
             <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>{["Image Engine · pronto per provider","Video Engine · provider da collegare","Motion Lab · esportazione locale","Media Vault · archivio dispositivo"].map(x=><span key={x} style={{padding:"7px 10px",borderRadius:9,background:"#ffffff18",fontSize:12}}>{x}</span>)}</div>
           </section>
           <nav style={{display:"flex",gap:8,flexWrap:"wrap",marginBottom:14}}>{[["image","Image Engine"],["video","Video Engine"],["motion","Motion Lab"],["vault","Media Vault"]].map(([id,label])=><button key={id} onClick={()=>setTab(id)} style={{...button,background:tab===id?"#087f89":"#dceff0",color:tab===id?"#fff":"#24565d"}}>{label}</button>)}</nav>
-          {tab==="image" && <section style={card}><h2>🎨 Image Engine</h2><p style={{color:"#58767b",fontSize:14}}>Scrivi il concept, definisci stile e destinazione. In questa prima versione Nova prepara il brief; il generatore AI non è ancora collegato.</p><textarea value={prompt} onChange={e=>setPrompt(e.target.value)} rows={5} placeholder="Descrivi l'immagine: soggetto, ambiente, stile, luce, formato…" style={{width:"100%",boxSizing:"border-box",padding:13,border:"1px solid #c9dfe0",borderRadius:12,fontSize:15}}/><div style={{display:"flex",gap:10,flexWrap:"wrap",marginTop:10}}><button style={button} disabled={busy} onClick={prepareImageBrief}>Prepara brief creativo</button>{imageConfigured && <button style={{...button,background:"#9b7627"}} disabled={busy || !prompt.trim()} onClick={generateImage}>Genera immagine con motore locale</button>}<label style={{...button,background:"#dceff0",color:"#24565d"}}>Importa immagini<input type="file" accept="image/*" multiple onChange={addFiles} style={{display:"none"}}/></label></div></section>}
-          {tab==="video" && <section style={card}><h2>🎬 Video Engine</h2><p style={{color:"#58767b",fontSize:14}}>Area predisposta per modelli text-to-video e image-to-video (ad esempio modelli open-weight compatibili). Richiede un runtime con GPU adeguata o un provider configurato: al momento non è collegato e non consuma API.</p><ul style={{lineHeight:1.8}}><li>Text-to-video: motore da integrare</li><li>Image-to-video: motore da integrare</li><li>Controllo durata, formato e risoluzione: da collegare al runtime</li><li>Salvataggio risultati: Media Vault locale già disponibile</li></ul><label style={{...button,display:"inline-block",background:"#dceff0",color:"#24565d"}}>Importa clip video<input type="file" accept="video/*" multiple onChange={addFiles} style={{display:"none"}}/></label></section>}
+          {tab==="image" && <section style={card}><h2>🎨 Image Engine</h2><p style={{color:"#58767b",fontSize:14}}>Scrivi il concept e definisci stile e destinazione. {imageConfigured ? "Motore ComfyUI locale rilevato." : "Motore AI non configurato: puoi preparare il brief e importare immagini."}</p><textarea value={prompt} onChange={e=>setPrompt(e.target.value)} rows={5} placeholder="Descrivi l'immagine: soggetto, ambiente, stile, luce, formato…" style={{width:"100%",boxSizing:"border-box",padding:13,border:"1px solid #c9dfe0",borderRadius:12,fontSize:15}}/><div style={{display:"flex",gap:10,flexWrap:"wrap",marginTop:10}}><button style={button} disabled={busy} onClick={prepareImageBrief}>Prepara brief creativo</button>{imageConfigured && <button style={{...button,background:"#9b7627"}} disabled={busy || !prompt.trim()} onClick={generateImage}>Genera immagine con motore locale</button>}<label style={{...button,background:"#dceff0",color:"#24565d"}}>Importa immagini<input type="file" accept="image/*" multiple onChange={addFiles} style={{display:"none"}}/></label></div></section>}
+          {tab==="video" && <section style={card}><h2>🎬 Video Engine</h2><p style={{color:"#58767b",fontSize:14}}>{videoConfigured ? "Workflow video ComfyUI privato rilevato. Il risultato dipende dal modello e dai nodi installati." : "Nessun workflow video configurato. Serve un workflow ComfyUI API-format compatibile con un modello video e una GPU adeguata."}</p><ul style={{lineHeight:1.8}}><li>Text-to-video: supportato tramite workflow configurato</li><li>Image-to-video: dipende dal workflow e dai nodi installati</li><li>Il prompt viene inserito nel nodo configurato lato server</li><li>Risultati archiviati nel Media Vault locale</li></ul>{videoConfigured && <button style={button} disabled={busy || !prompt.trim()} onClick={generateVideo}>Genera video con motore locale</button>}<label style={{...button,display:"inline-block",background:"#dceff0",color:"#24565d"}}>Importa clip video<input type="file" accept="video/*" multiple onChange={addFiles} style={{display:"none"}}/></label></section>}
           {tab==="motion" && <section style={card}><h2>✨ Motion Lab</h2><p style={{color:"#58767b",fontSize:14}}>Crea un video slideshow animato dalle immagini presenti nel vault, con movimento panoramico/zoom leggero. L'elaborazione avviene nel browser e non usa un servizio AI.</p><label style={{display:"block",fontWeight:700,margin:"12px 0 6px"}}>Nome progetto</label><input value={title} onChange={e=>setTitle(e.target.value)} style={{width:"100%",maxWidth:420,padding:11,border:"1px solid #c9dfe0",borderRadius:10}}/><label style={{display:"block",fontWeight:700,margin:"12px 0 6px"}}>Secondi per immagine: {duration}</label><input type="range" min="2" max="6" value={duration} onChange={e=>setDuration(Number(e.target.value))}/><div style={{marginTop:12}}><button style={button} disabled={busy} onClick={exportMotion}>{busy?"Elaborazione…":"Crea video animato (WEBM)"}</button></div><canvas ref={canvasRef} width="1280" height="720" style={{display:"none"}}/></section>}
           {tab==="vault" && <section style={card}><h2>🗂️ Media Vault</h2><p style={{color:"#58767b",fontSize:13}}>Archivio locale IndexedDB: i file restano su questo browser/dispositivo. Non è ancora un archivio cloud condiviso.</p><label style={{...button,display:"inline-block",background:"#dceff0",color:"#24565d"}}>Aggiungi foto o video<input type="file" accept="image/*,video/*" multiple onChange={addFiles} style={{display:"none"}}/></label><div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(190px,1fr))",gap:12,marginTop:16}}>{media.map(item=><article key={item.id} style={{border:"1px solid #dceaea",borderRadius:12,padding:10,minWidth:0}}>{item.type.startsWith("image/")?<img src={URL.createObjectURL(item.blob)} alt={item.name} style={{width:"100%",height:125,objectFit:"cover",borderRadius:8}}/>:<div style={{height:125,display:"grid",placeItems:"center",background:"#eaf5f5",borderRadius:8,fontSize:36}}>▶</div>}<div style={{fontWeight:700,fontSize:13,marginTop:8,overflowWrap:"anywhere"}}>{item.name}</div><div style={{fontSize:11,color:"#668187",margin:"4px 0 8px"}}>{(item.size/1024/1024).toFixed(2)} MB · {item.type}</div><div style={{display:"flex",gap:6}}><button onClick={()=>downloadItem(item)} style={{...button,padding:"7px 9px",fontSize:12}}>Scarica</button><button onClick={()=>removeItem(item.id)} style={{...button,padding:"7px 9px",fontSize:12,background:"#f8e9e7",color:"#9b3428"}}>Elimina</button></div></article>)}</div>{media.length===0&&<p style={{color:"#718b90"}}>Il vault è vuoto. Importa immagini o video per iniziare.</p>}</section>}
           {status&&<div role="status" style={{...card,marginTop:12,background:"#f2fbf8",color:"#24604f",fontSize:13}}>{status}</div>}
