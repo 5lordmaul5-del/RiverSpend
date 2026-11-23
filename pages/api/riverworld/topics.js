@@ -1,4 +1,6 @@
 const TOPICS = {
+  documentari: '(documentary OR documentaries OR ancient Egypt OR pharaohs OR pyramids OR archaeology OR ancient civilizations OR East Asia OR China history OR Japanese history OR Korean history OR India history OR African history OR Maya OR Aztec OR nature documentary OR science documentary OR space documentary)',
+  scuola: '(education OR school OR learning OR mathematics OR geometry OR history OR geography OR science OR biology OR chemistry OR physics OR university OR education research)',
   cinema: '(film OR cinema OR movie OR movies OR actor OR actress OR director OR filmfestival OR boxoffice)',
   moda: '(fashion OR fashionweek OR runway OR designer OR couture OR streetwear OR beauty)',
   sport: '(sports OR football OR soccer OR basketball OR tennis OR formula1 OR motogp OR rugby OR olympics OR baseball OR softball OR swimming OR diving OR cycling OR mountainbike OR climbing OR athletics OR volleyball OR badminton OR gymnastics OR skiing OR rowing OR sailing)',
