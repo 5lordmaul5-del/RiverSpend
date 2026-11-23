@@ -14,14 +14,7 @@ const SOURCE_DOMAINS = {
   guardian: ['theguardian.com'],
 };
 
-const COUNTRY_NAMES = {
-  it: 'italy', no: 'norway', gb: 'unitedkingdom', us: 'unitedstates',
-  fr: 'france', de: 'germany', es: 'spain', pt: 'portugal',
-  se: 'sweden', fi: 'finland', nl: 'netherlands', ch: 'switzerland',
-  pl: 'poland', ua: 'ukraine', ru: 'russia', cn: 'china',
-  jp: 'japan', in: 'india', au: 'australia', ca: 'canada',
-  br: 'brazil', za: 'southafrica', eg: 'egypt', il: 'israel',
-};
+const COUNTRY_CODES = new Set(['it','no','gb','us','fr','de','es','pt','se','fi','nl','ch','pl','ua','ru','cn','jp','in','au','ca','br','za','eg','il']);
 
 const TOPICS = {
   all: '(world OR international OR politics OR economy OR technology OR climate OR sports)',
