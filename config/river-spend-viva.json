@@ -1,92 +1,80 @@
 {
-  "brand": "RSVIVA",
+  "brand": "VIVA Delivery",
   "currency": "EUR",
-  "status": "catalog_only_payment_activation_pending",
+  "status": "delivery_pass_catalog_only_payment_activation_pending",
   "plans": [
     {
-      "id": "go-go-annual",
-      "name": "RSVIVA GO GO",
+      "id": "viva-go-annual",
+      "name": "VIVA GO",
       "price": 9.9,
       "billing": "annual",
       "durationDays": 365,
       "tier": 1,
       "benefits": [
-        "Offerte riservate agli iscritti",
-        "Promozioni su RS SHOP",
-        "Accesso alle iniziative dei servizi aderenti"
+        "Accesso alle offerte di consegna dedicate",
+        "Tracciamento degli ordini quando disponibile",
+        "Tariffe e condizioni mostrate prima della conferma"
       ],
       "purchasable": false
     },
     {
-      "id": "plus-annual",
-      "name": "RSVIVA PLUS",
+      "id": "viva-gogo-annual",
+      "name": "VIVA GOGÒ",
       "price": 19.9,
       "billing": "annual",
       "durationDays": 365,
       "tier": 2,
       "benefits": [
-        "Tutti i vantaggi GO GO",
-        "Promozioni ampliate sui servizi digitali aderenti",
-        "Offerte dedicate su prodotti e iniziative selezionate",
-        "Accesso anticipato a campagne promozionali selezionate"
+        "Tutti i vantaggi VIVA GO",
+        "Promozioni dedicate sui costi di consegna",
+        "Accesso a offerte di spedizione selezionate"
       ],
       "purchasable": false
     },
     {
-      "id": "fast-annual",
-      "name": "RSVIVA FAST",
+      "id": "viva-fast-annual",
+      "name": "VIVA FAST",
       "price": 29.9,
       "billing": "annual",
       "durationDays": 365,
       "tier": 3,
       "benefits": [
-        "Tutti i vantaggi PLUS",
-        "Consegne locali idonee incluse nelle zone abilitate e nei limiti pubblicati",
-        "Priorità nella gestione degli ordini",
-        "Promozioni sui servizi digitali aderenti"
-      ],
-      "limits": [
-        "Disponibilità territoriale",
-        "Limiti di peso, dimensioni e distanza",
-        "Esclusioni e condizioni mostrate prima dell'acquisto"
+        "Tutti i vantaggi VIVA GOGÒ",
+        "Priorità di gestione degli ordini",
+        "Consegna veloce nelle zone e fasce orarie abilitate"
       ],
       "purchasable": false
     },
     {
-      "id": "superfast-annual",
-      "name": "RSVIVA SUPERFAST",
+      "id": "viva-super-fast-annual",
+      "name": "VIVA SUPER FAST",
       "price": 49.9,
       "billing": "annual",
       "durationDays": 365,
       "tier": 4,
       "benefits": [
-        "Tutti i vantaggi FAST",
-        "Priorità superiore nelle consegne disponibili",
-        "Promozioni premium sui prodotti aderenti",
-        "Assistenza prioritaria secondo disponibilità"
-      ],
-      "limits": [
-        "Vantaggi soggetti a disponibilità e condizioni pubblicate",
-        "Consegne incluse solo nelle zone e nei limiti abilitati"
+        "Tutti i vantaggi VIVA FAST",
+        "Priorità superiore nelle fasce disponibili",
+        "Accesso a opzioni rapide selezionate"
       ],
       "purchasable": false
     },
     {
-      "id": "ultra-annual",
-      "name": "RSVIVA ULTRA",
+      "id": "viva-super-rapido-annual",
+      "name": "VIVA SUPER RAPIDO",
       "price": 89,
       "billing": "annual",
       "durationDays": 365,
       "tier": 5,
       "benefits": [
-        "Tutti i vantaggi SUPERFAST",
-        "Migliore livello di priorità disponibile nei servizi aderenti",
-        "Accesso a offerte ed esperienze premium selezionate",
-        "Assistenza con priorità massima secondo disponibilità"
+        "Tutti i vantaggi VIVA SUPER FAST",
+        "Massima priorità operativa disponibile",
+        "Accesso prioritario alle opzioni express abilitate"
       ],
       "limits": [
-        "Vantaggi soggetti a disponibilità e condizioni pubblicate",
-        "Nessuna consegna illimitata: valgono zone, limiti e condizioni del servizio"
+        "Disponibilità territoriale e operativa",
+        "Limiti di peso, dimensioni, distanza e fasce orarie",
+        "Nessuna promessa di consegna immediata o illimitata"
       ],
       "purchasable": false
     },
@@ -178,49 +166,8 @@
     "accent": "gold"
   },
   "ecosystemCoverage": {
-    "status": "planned_shared_membership_integration_pending",
-    "description": "Un unico account e una membership RS VIVA per i prodotti aderenti. I vantaggi si attivano solo dopo verifica del pagamento e integrazione tecnica di ogni prodotto.",
-    "products": [
-      {
-        "id": "shop",
-        "name": "RS SHOP"
-      },
-      {
-        "id": "stream",
-        "name": "RS STREAM"
-      },
-      {
-        "id": "tv",
-        "name": "RS TV"
-      },
-      {
-        "id": "music",
-        "name": "RS MUSIC"
-      },
-      {
-        "id": "signals",
-        "name": "RiverSignals"
-      },
-      {
-        "id": "riverssai",
-        "name": "RiverSSAI"
-      },
-      {
-        "id": "play",
-        "name": "RS PLAY"
-      },
-      {
-        "id": "print",
-        "name": "RS PRINT"
-      },
-      {
-        "id": "park",
-        "name": "RS PARK"
-      }
-    ],
-    "sharedAccountRequired": true,
-    "verifiedPaymentRequired": true,
-    "perProductIntegrationRequired": true
+    "status": "not_applicable",
+    "description": "I pass VIVA sono esclusivamente per spedizioni e consegne; non integrano né modificano gli abbonamenti RiverSSAI Bronze, Silver, Gold e Diamond."
   },
   "addOns": [
     {
@@ -234,5 +181,17 @@
       "purchasable": false
     }
   ],
-  "pricingStatus": "six_delivery_passes_defined_activation_pending"
+  "pricingStatus": "six_delivery_passes_defined_activation_pending",
+  "productScope": "delivery_and_shipping_only",
+  "separateFrom": [
+    "RiverSSAI Bronze",
+    "RiverSSAI Silver",
+    "RiverSSAI Gold",
+    "RiverSSAI Diamond"
+  ],
+  "deliveryRules": {
+    "appliesTo": "eligible_shipping_and_delivery_orders_only",
+    "notAnAiSubscription": true,
+    "availabilityAndFeesMustBeShownBeforeCheckout": true
+  }
 }
