@@ -18,14 +18,29 @@
       "purchasable": false
     },
     {
-      "id": "fast-annual",
-      "name": "RSVIVA FAST",
-      "price": 29.9,
+      "id": "plus-annual",
+      "name": "RSVIVA PLUS",
+      "price": 19.9,
       "billing": "annual",
       "durationDays": 365,
       "tier": 2,
       "benefits": [
         "Tutti i vantaggi GO GO",
+        "Promozioni ampliate sui servizi digitali aderenti",
+        "Offerte dedicate su prodotti e iniziative selezionate",
+        "Accesso anticipato a campagne promozionali selezionate"
+      ],
+      "purchasable": false
+    },
+    {
+      "id": "fast-annual",
+      "name": "RSVIVA FAST",
+      "price": 29.9,
+      "billing": "annual",
+      "durationDays": 365,
+      "tier": 3,
+      "benefits": [
+        "Tutti i vantaggi PLUS",
         "Consegne locali idonee incluse nelle zone abilitate e nei limiti pubblicati",
         "Priorità nella gestione degli ordini",
         "Promozioni sui servizi digitali aderenti"
@@ -43,7 +58,7 @@
       "price": 49.9,
       "billing": "annual",
       "durationDays": 365,
-      "tier": 3,
+      "tier": 4,
       "benefits": [
         "Tutti i vantaggi FAST",
         "Priorità superiore nelle consegne disponibili",
@@ -53,6 +68,25 @@
       "limits": [
         "Vantaggi soggetti a disponibilità e condizioni pubblicate",
         "Consegne incluse solo nelle zone e nei limiti abilitati"
+      ],
+      "purchasable": false
+    },
+    {
+      "id": "ultra-annual",
+      "name": "RSVIVA ULTRA",
+      "price": 89,
+      "billing": "annual",
+      "durationDays": 365,
+      "tier": 5,
+      "benefits": [
+        "Tutti i vantaggi SUPERFAST",
+        "Migliore livello di priorità disponibile nei servizi aderenti",
+        "Accesso a offerte ed esperienze premium selezionate",
+        "Assistenza con priorità massima secondo disponibilità"
+      ],
+      "limits": [
+        "Vantaggi soggetti a disponibilità e condizioni pubblicate",
+        "Nessuna consegna illimitata: valgono zone, limiti e condizioni del servizio"
       ],
       "purchasable": false
     }
@@ -181,5 +215,5 @@
       "purchasable": false
     }
   ],
-  "pricingStatus": "commercial_prices_approved_activation_pending"
+  "pricingStatus": "five_annual_tiers_approved_activation_pending"
 }
