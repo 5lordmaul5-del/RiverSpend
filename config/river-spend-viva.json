@@ -1,0 +1,97 @@
+{
+  "brand": "RS VIVA",
+  "currency": "EUR",
+  "status": "catalog_only_payment_activation_pending",
+  "plans": [
+    {
+      "id": "delivery-fast-annual",
+      "name": "RS VIVA Delivery Fast",
+      "price": 29.9,
+      "billing": "annual",
+      "durationDays": 365,
+      "benefits": [
+        "Consegne locali incluse nelle zone abilitate e nei limiti pubblicati",
+        "Priorità di gestione delle consegne",
+        "Offerte riservate agli iscritti"
+      ],
+      "limits": [
+        "Disponibilità territoriale",
+        "Limiti di peso, dimensioni e distanza",
+        "Esclusioni e condizioni mostrate prima dell'acquisto"
+      ],
+      "purchasable": false
+    },
+    {
+      "id": "signals-lifetime",
+      "name": "RiverSignals Lifetime",
+      "price": 1,
+      "billing": "one_time",
+      "benefits": [
+        "Accesso lifetime secondo le condizioni del servizio"
+      ],
+      "purchasable": false
+    }
+  ],
+  "microPurchases": [
+    {
+      "amount": 1,
+      "currency": "EUR"
+    },
+    {
+      "amount": 2,
+      "currency": "EUR"
+    },
+    {
+      "amount": 5,
+      "currency": "EUR"
+    },
+    {
+      "amount": 10,
+      "currency": "EUR"
+    }
+  ],
+  "marketplace": {
+    "proposedCommissionRate": 0.1,
+    "settlementSchedules": [
+      "7 giorni",
+      "30 giorni",
+      "60 giorni",
+      "90 giorni"
+    ],
+    "status": "accounting_rules_only",
+    "note": "La commissione è un calcolo gestionale. Incasso centralizzato e liquidazione di fondi di terzi richiedono un prestatore autorizzato e un modello contrattuale conforme."
+  },
+  "paymentMethods": [
+    {
+      "id": "cash_on_delivery",
+      "label": "Contanti alla consegna",
+      "status": "manual_verification"
+    },
+    {
+      "id": "bank_transfer",
+      "label": "Bonifico istantaneo",
+      "status": "manual_verification"
+    },
+    {
+      "id": "postepay",
+      "label": "PostePay",
+      "status": "manual_verification"
+    },
+    {
+      "id": "paypal",
+      "label": "PayPal",
+      "status": "requires_configured_provider_credentials"
+    },
+    {
+      "id": "cards_wallets",
+      "label": "Carte e wallet",
+      "status": "not_enabled"
+    }
+  ],
+  "rules": {
+    "activateEntitlementOnlyAfterVerifiedPayment": true,
+    "neverMarkPaymentPaidFromCustomerSelfDeclaration": true,
+    "neverStoreCardData": true,
+    "noThirdPartyFundsCustodyWithoutAuthorizedProvider": true
+  }
+}
