@@ -42,6 +42,7 @@ export default function Prodotto() {
   const [errore, setErrore] = useState('');
   const [fotoAttiva, setFotoAttiva] = useState(0);
   const [inRete, setInRete] = useState(false);
+  const [inCarrello, setInCarrello] = useState(false);
   const [varianteScelta, setVarianteScelta] = useState('');
   const [quantitaScelta, setQuantitaScelta] = useState(1);
   const [wishlist, setWishlist] = useState(false);
@@ -92,9 +93,11 @@ export default function Prodotto() {
         if (disponibili.length) setVarianteScelta(disponibili[0].name);
         try {
           const rete = JSON.parse(localStorage.getItem('riverspend-rete') || '[]');
+          const carrello = JSON.parse(localStorage.getItem('riverspend-cart') || '[]');
           const desideri = JSON.parse(localStorage.getItem('riverspend-wishlist') || '[]');
           const seguiti = JSON.parse(localStorage.getItem('riverspend-following') || '[]');
           setInRete(Array.isArray(rete) && rete.some((x) => String(x.id) === String(item.id)));
+          setInCarrello(Array.isArray(carrello) && carrello.some((x) => String(x.id) === String(item.id)));
           setWishlist(Array.isArray(desideri) && desideri.some((x) => String(x.id) === String(item.id)));
           setFollowing(Array.isArray(seguiti) && seguiti.some((x) => String(x.id) === String(item.id)));
           supabase.auth.getUser().then(async ({ data: { user } }) => {
@@ -145,9 +148,12 @@ export default function Prodotto() {
     deliveryOptions: Array.isArray(prodotto.modalitaConsegna) ? prodotto.modalitaConsegna : ['home_delivery', 'seller_pickup', 'rs_local']
   }) : null, [prodotto]);
 
-  async function aggiungiVarianteAllaRete() {
+  function aggiungiVarianteAlCarrello() {
     if (!record) return;
-    if (prodotto?.venduto || prodotto?.statoAnnuncio === 'sold') { setFeedback('Questo annuncio è stato venduto e non può essere aggiunto alla Rete.'); return; }
+    if (prodotto?.venduto || prodotto?.statoAnnuncio === 'sold') {
+      setFeedback('Questo annuncio è stato venduto e non può essere aggiunto al carrello.');
+      return;
+    }
     const varianti = Array.isArray(prodotto.varianti) ? prodotto.varianti : [];
     const variante = varianti.length ? varianti.find((v) => v.name === varianteScelta) : null;
     const stockDisponibile = varianti.length ? Number(variante?.stock || 0) : Number(prodotto.quantita ?? prodotto.stock ?? 0);
@@ -155,39 +161,28 @@ export default function Prodotto() {
       setFeedback('Scegli una variante disponibile e una quantità compatibile con le scorte.');
       return;
     }
-    const item = { ...record, stock: Number(variante?.stock ?? record.stock), quantity: quantitaScelta, variantName: variante?.name || null };
+    const item = {
+      ...record,
+      quantity: quantitaScelta,
+      variantName: variante?.name || null
+    };
     try {
-      const current = JSON.parse(localStorage.getItem('riverspend-rete') || '[]');
+      const current = JSON.parse(localStorage.getItem('riverspend-cart') || '[]');
       const safe = Array.isArray(current) ? current : [];
       const key = (x) => String(x.id) + '::' + String(x.variantName || '');
       const found = safe.find((x) => key(x) === key(item));
       const limiteScorte = Number(variante?.stock ?? prodotto.quantita ?? prodotto.stock ?? 999999);
       const next = found
         ? safe.map((x) => key(x) === key(item) ? { ...x, quantity: Math.min(limiteScorte, Number(x.quantity || 1) + quantitaScelta) } : x)
-        : [item, ...safe];
-      localStorage.setItem('riverspend-rete', JSON.stringify(next));
-      sessionStorage.setItem('riverspend-rete', JSON.stringify(next));
-      document.cookie = 'riverspend-rete-ids=' + encodeURIComponent([...new Set(next.map((x) => x.id))].join(',')) + '; path=/; max-age=31536000; SameSite=Lax';
-      // Sincronizza anche la Rete cloud: la pagina /rete legge prima l'account autenticato.
-      let cloudSyncOk = true;
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (user) {
-          const { error: cloudError } = await supabase
-            .from('river_net_items')
-            .upsert({ user_id: user.id, product_id: String(item.id) }, { onConflict: 'user_id,product_id' });
-          if (cloudError) {
-            cloudSyncOk = false;
-            console.error('RiverSpend Rete cloud add:', cloudError);
-          }
-        }
-      } catch (cloudError) {
-        cloudSyncOk = false;
-        console.error('RiverSpend Rete cloud sync:', cloudError);
-      }
-      setInRete(true);
-      setFeedback((variante ? '🕸️ Aggiunto alla Rete: ' + variante.name + ' × ' + quantitaScelta + '.' : '🕸️ Articolo aggiunto alla tua Rete.') + (cloudSyncOk ? '' : ' Salvato su questo dispositivo; sincronizzazione account non riuscita.'));
-    } catch { setFeedback('Impossibile salvare su questo dispositivo.'); }
+        : [...safe, item];
+      const serialized = JSON.stringify(next);
+      localStorage.setItem('riverspend-cart', serialized);
+      sessionStorage.setItem('riverspend-cart', serialized);
+      setInCarrello(true);
+      setFeedback((variante ? '🛒 Aggiunto al carrello: ' + variante.name + ' × ' + quantitaScelta + '.' : '🛒 Articolo aggiunto al carrello.') + ' Salvato su questo dispositivo.');
+    } catch {
+      setFeedback('Impossibile salvare il prodotto nel carrello su questo dispositivo.');
+    }
   }
 
   async function toggleLista(key, active, setter, added, removed) {
@@ -363,8 +358,12 @@ export default function Prodotto() {
               </div>
 
               <div className="mt-5 grid gap-3">
-                <button type="button" disabled={Boolean(prodotto.venduto || prodotto.statoAnnuncio === 'sold')} onClick={aggiungiVarianteAllaRete} className="flex min-h-12 w-full items-center justify-center whitespace-normal rounded-xl border border-teal-700 bg-teal-500 px-3 py-3 text-center text-sm font-extrabold leading-tight text-slate-950 shadow-sm transition-colors hover:bg-teal-400 active:bg-teal-500 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700 sm:px-5 sm:py-4 sm:text-base">
-                  {prodotto.venduto || prodotto.statoAnnuncio === 'sold' ? 'Annuncio venduto' : inRete ? '✓ Nella mia Rete' : '🕸️ Aggiungi alla Rete'}
+                <button type="button" disabled={Boolean(prodotto.venduto || prodotto.statoAnnuncio === 'sold')} onClick={aggiungiVarianteAlCarrello} className="flex min-h-12 w-full items-center justify-center gap-2 whitespace-normal rounded-xl border-2 border-amber-400 bg-amber-300 px-3 py-3 text-center text-sm font-extrabold leading-tight text-amber-950 shadow-sm transition-colors hover:bg-yellow-200 active:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 sm:px-5 sm:py-4 sm:text-base">
+                  <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="9" cy="20" r="1" /><circle cx="19" cy="20" r="1" />
+                    <path d="M2 3h2l2.4 11.4a2 2 0 0 0 2 1.6h9.8a2 2 0 0 0 2-1.6L22 7H5" />
+                  </svg>
+                  {prodotto.venduto || prodotto.statoAnnuncio === 'sold' ? 'Annuncio venduto' : inCarrello ? 'Aggiungi ancora al carrello' : 'Aggiungi al carrello'}
                 </button>
                 <button type="button" onClick={() => toggleLista('riverspend-wishlist', wishlist, setWishlist, '♡ Aggiunto ai tuoi desideri.', 'Rimosso dai desideri.')} className="rounded-xl border border-slate-200 bg-white px-5 py-3 font-bold text-slate-800">
                   {wishlist ? '♥ Nei miei desideri' : '♡ Aggiungi ai desideri'}
