@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 
 const CONFIG = {
   documentari: { title:'Documentari · Storia e civiltà del mondo', subtitle:'Egitto antico, civiltà asiatiche orientali, archeologia, storia, natura, scienza e spazio.', icon:'🎥', tags:['Antico Egitto','Piramidi e faraoni','Mesopotamia','Grecia e Roma','Cina antica','Giappone e Corea','India','Africa e civiltà africane','Maya e Aztechi','Archeologia','Natura','Spazio e universo'] },
+  scuola: { title:'Risorse didattiche e universitarie', subtitle:'Materiali e approfondimenti per il percorso e la materia selezionati.', icon:'🎓', tags:['Storia','Geografia','Matematica','Geometria','Scienze','Biologia','Chimica','Fisica','Italiano','Inglese','Filosofia','Informatica'] },
   cinema: { title:'Cinema e Film', subtitle:'Uscite, festival, registi, attori, premi e industria cinematografica.', icon:'🎬', tags:['Cinema mondiale','Festival','Film in uscita','Premi e box office'] },
   moda: { title:'Moda & Fashion', subtitle:'Sfilate, collezioni, designer, streetwear, beauty e tendenze internazionali.', icon:'👗', tags:['Milano Fashion Week','Paris Fashion Week','London Fashion Week','New York Fashion Week','Designer','Streetwear'] },
   sport: { title:'Tutti gli sport del mondo', subtitle:'Copertura multisport: dalle discipline più seguite agli sport meno raccontati.', icon:'🏆', tags:['Arti marziali','Taekwondo','Tennis','Nuoto e tuffi','Ciclismo MTB','Arrampicata','Baseball','Atletica','Basket','Sport invernali'] },
@@ -11,9 +12,9 @@ const CONFIG = {
 const COUNTRY_OPTIONS = [['','Tutti i Paesi'],['IT','Italia'],['GB','Regno Unito'],['US','Stati Uniti'],['FR','Francia'],['DE','Germania'],['NO','Norvegia'],['ES','Spagna'],['JP','Giappone'],['KR','Corea del Sud'],['IN','India'],['BR','Brasile']];
 const fmt = value => { if(!value) return 'Data non disponibile'; const s=value.replace(/^(\\d{4})(\\d{2})(\\d{2})T/,'$1-$2-$3T'); const d=new Date(s); return Number.isNaN(d.getTime())?value:d.toLocaleString('it-IT',{dateStyle:'short',timeStyle:'short'}); };
 
-export default function RiverWorldTopicFeed({ section='cinema' }) {
+export default function RiverWorldTopicFeed({ section='cinema', initialQuery='' }) {
   const config = CONFIG[section] || CONFIG.cinema;
-  const [query,setQuery]=useState('');
+  const [query,setQuery]=useState(initialQuery);
   const [country,setCountry]=useState('');
   const [articles,setArticles]=useState([]);
   const [loading,setLoading]=useState(true);
