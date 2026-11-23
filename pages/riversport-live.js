@@ -3,6 +3,7 @@ import Link from 'next/link';
 import RiverWorldNews from '../components/RiverWorldNews';
 import RiverWorldWeather from '../components/RiverWorldWeather';
 import RiverWorldAlerts from '../components/RiverWorldAlerts';
+import RiverWorldTopicFeed from '../components/RiverWorldTopicFeed';
 import { useMemo, useState } from 'react';
 
 const sports = [
@@ -23,14 +24,14 @@ const sports = [
 const channels = [
   { id:'meteo', name:'Meteo', icon:'🌦️', description:'Previsioni, temperature, mappe, allerte meteo e condizioni in tempo reale.', coverage:'Italia e mondo', status:'Previsioni globali collegate a MET Norway; allerte ufficiali da ampliare per Paese' },
   { id:'news', name:'Notizie', icon:'📰', description:'Attualità, politica, economia, cronaca, esteri e aggiornamenti verificati.', coverage:'Italia · Europa · Asia · Americhe · Africa · Mondo', status:'Ricerca internazionale collegata; copertura dipendente dalle fonti indicizzate' },
-  { id:'sport', name:'Sport Live', icon:'🏆', description:'Risultati, calendari, classifiche e statistiche. Calcio come prima priorità, poi gli altri sport.', coverage:'Competizioni nazionali e internazionali', status:'Catalogo sportivo predisposto; collegamento dati live da attivare' },
+  { id:'sport', name:'Sport Live', icon:'🏆', description:'Risultati, calendari, classifiche e statistiche. Calcio come prima priorità, poi gli altri sport.', coverage:'Competizioni nazionali e internazionali', status:'Notizie sportive internazionali collegate; risultati e classifiche live richiedono un provider sportivo' },
   { id:'traffico', name:'Traffico e viaggi', icon:'🚦', description:'Traffico, trasporti pubblici, treni, voli, viabilità e condizioni stradali.', coverage:'Italia e destinazioni internazionali', status:'Servizi di mobilità e mappe da collegare' },
   { id:'allerte', name:'Allerte e sicurezza', icon:'🚨', description:'Avvisi ufficiali su meteo estremo, terremoti, incendi, emergenze e protezione civile.', coverage:'Avvisi locali, nazionali e internazionali', status:'Feed sismico USGS collegato; allerte meteo e protezione civile da integrare per area' },
   { id:'eventi', name:'Eventi e concerti', icon:'🎟️', description:'Concerti, festival, fiere, mostre, spettacoli, manifestazioni e appuntamenti locali.', coverage:'Città e Paesi di tutto il mondo', status:'Calendari eventi e biglietterie autorizzate da collegare' },
-  { id:'cinema', name:'Cinema', icon:'🎬', description:'Uscite, trailer, recensioni, festival, premi e programmazione nelle sale.', coverage:'Cinema italiano e internazionale', status:'Cataloghi e contenuti video con licenze appropriate' },
+  { id:'cinema', name:'Cinema', icon:'🎬', description:'Uscite, trailer, recensioni, festival, premi e programmazione nelle sale.', coverage:'Cinema italiano e internazionale', status:'Ricerca di notizie su cinema e film collegata; streaming e cataloghi video richiedono licenze' },
   { id:'tv', name:'TV e programmi', icon:'📺', description:'Palinsesti, guide TV, programmi, serie, documentari e notizie dal mondo televisivo.', coverage:'Canali e palinsesti disponibili per Paese', status:'Guide TV e collegamenti ufficiali da configurare' },
   { id:'cartoni', name:'Cartoni e animazione', icon:'🧸', description:'Cartoni animati, anime, animazione per bambini, novità e programmazione per famiglie.', coverage:'Produzioni italiane, europee, giapponesi e internazionali', status:'Streaming solo con cataloghi e diritti autorizzati' },
-  { id:'moda', name:'Moda e tendenze', icon:'👗', description:'Sfilate, collezioni, stilisti, streetwear, beauty, accessori e tendenze.', coverage:'Milano · Parigi · Londra · New York · Asia · Mondo', status:'Notizie, calendari e contenuti moda da collegare' },
+  { id:'moda', name:'Moda e tendenze', icon:'👗', description:'Sfilate, collezioni, stilisti, streetwear, beauty, accessori e tendenze.', coverage:'Milano · Parigi · Londra · New York · Asia · Mondo', status:'Ricerca internazionale di moda e fashion collegata; calendari e immagini editoriali da ampliare' },
   { id:'musica', name:'Musica', icon:'🎵', description:'Novità musicali, classifiche, artisti, concerti, festival e sessioni dal vivo.', coverage:'Scene musicali di tutto il mondo', status:'Audio e video tramite servizi e diritti autorizzati' },
   { id:'tecnologia', name:'Tecnologia e scienza', icon:'🔬', description:'Innovazione, intelligenza artificiale, spazio, ricerca, ambiente e nuove tecnologie.', coverage:'Ricerca e innovazione internazionali', status:'Fonti scientifiche e tecnologiche da selezionare' },
   { id:'cultura', name:'Cultura e libri', icon:'📚', description:'Libri, arte, musei, mostre, storia, teatro e divulgazione.', coverage:'Italia e mondo', status:'Guide culturali e calendari da collegare' },
@@ -74,6 +75,10 @@ export default function RiverWorldLive() {
         {selected === 'meteo' && <RiverWorldWeather />}
         {selected === 'news' && <RiverWorldNews />}
         {selected === 'allerte' && <RiverWorldAlerts />}
+        {selected === 'cinema' && <RiverWorldTopicFeed section="cinema" />}
+        {selected === 'moda' && <RiverWorldTopicFeed section="moda" />}
+        {selected === 'musica' && <RiverWorldTopicFeed section="spettacolo" />}
+        {selected === 'sport' && <RiverWorldTopicFeed section="sport" />}
         {selected === 'sport' && <section className="mt-5 rounded-2xl bg-white p-5 shadow-sm md:p-6">
           <div className="flex flex-wrap items-center justify-between gap-2"><h2 className="text-xl font-extrabold text-[#073b4c]">🏆 RiverSport Live</h2><span className="text-xs text-slate-500">Calcio: prima priorità</span></div>
           <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">{sportFiltered.map(s => <button key={s.id} onClick={() => setSportSelected(s.id)} className={`rounded-xl border p-3 text-left ${sportSelected === s.id ? 'border-teal-600 bg-teal-50' : 'border-slate-200 hover:bg-slate-50'}`}><span className="text-xl">{s.icon}</span><span className="mt-1 block text-sm font-bold">{s.name}</span></button>)}</div>
