@@ -1063,6 +1063,22 @@ export default function Home() {
           </section>
 
           <div className="rs-apps-grid mb-5 flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain px-1 pb-3" aria-label="Scopri le iniziative RiverSpend: scorri orizzontalmente">
+            <a id="rs-riverssai-app-card" href="/river-ai" aria-label="Apri RiverSSAI 10.0" className="rs-feature-card relative flex shrink-0 w-[220px] snap-start flex-col items-center justify-between overflow-hidden rounded-2xl border-2 border-amber-300 bg-gradient-to-br from-slate-950 via-cyan-950 to-slate-900 p-3 text-center shadow-lg shadow-cyan-950/40 focus:outline-none focus:ring-4 focus:ring-amber-300/70">
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-200">APP UFFICIALE</span>
+              <img src="/icons/river-ssai.svg" alt="Icona RiverSSAI 10.0" className="my-2 h-24 w-24 rounded-2xl border border-amber-300/70 object-cover shadow-xl" />
+              <span className="text-lg font-black leading-tight text-white">RiverSSAI 10.0</span>
+              <span className="text-xs text-cyan-100">Nova · System Assistant Intelligence</span>
+              <span className="mt-2 inline-flex w-full justify-center rounded-full bg-amber-300 px-3 py-2 text-xs font-black text-slate-950">APRI RIVERSSAI →</span>
+            </a>
+
+            <a id="rs-electronics-app-card" href="/electronics" aria-label="Apri RiverSpend Electronics" className="rs-feature-card relative flex shrink-0 w-[220px] snap-start flex-col items-center justify-between overflow-hidden rounded-2xl border-2 border-cyan-300 bg-gradient-to-br from-slate-950 via-cyan-950 to-slate-900 p-3 text-center shadow-lg shadow-cyan-950/40 focus:outline-none focus:ring-4 focus:ring-cyan-200/70">
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-200">APP UFFICIALE</span>
+              <div className="my-2 flex h-24 w-24 items-center justify-center rounded-2xl border border-cyan-200/70 bg-gradient-to-br from-cyan-300 via-sky-700 to-slate-950 text-5xl shadow-xl" role="img" aria-label="Illustrazione grafica RiverSpend Electronics">📱⌚</div>
+              <span className="text-lg font-black leading-tight text-white">RiverSpend Electronics</span>
+              <span className="text-xs text-cyan-100">Phone · Watch · Console · Audio</span>
+              <span className="mt-2 inline-flex w-full justify-center rounded-full bg-cyan-200 px-3 py-2 text-xs font-black text-slate-950">APRI ELECTRONICS →</span>
+            </a>
+
             <section id="rs-force-card" className="rs-feature-card relative h-[400px] shrink-0 w-[280px] snap-start rs-force-card overflow-hidden rounded-2xl border-2 border-cyan-300 bg-gradient-to-b from-slate-950 via-cyan-950 to-indigo-950 p-0 text-center shadow-lg shadow-cyan-950/40">
               <button type="button" onClick={() => apriRsForce()} className="relative flex h-full w-full flex-col items-center overflow-hidden rounded-xl bg-slate-950 text-center">
                 <div className="rs-force-stage rs-feature-media absolute inset-0 z-0 flex h-full min-h-full w-full items-center justify-center overflow-hidden rounded-xl border-0 bg-gradient-to-br from-cyan-500 via-cyan-950 to-indigo-950">
