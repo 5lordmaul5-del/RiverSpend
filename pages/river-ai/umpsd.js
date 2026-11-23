@@ -23,6 +23,9 @@ function makeId() { return "UM-" + Date.now().toString(36).toUpperCase(); }
 export default function UMPSDWorkspace() {
   const [access, setAccess] = useState("checking");
   const [cases, setCases] = useState([]);
+  const [storageKey, setStorageKey] = useState("");
+  const [analysisText, setAnalysisText] = useState("");
+  const [analysisResult, setAnalysisResult] = useState(null);
   const [active, setActive] = useState("");
   const [title, setTitle] = useState("");
   const [kind, setKind] = useState("CyberShield");
@@ -42,9 +45,11 @@ export default function UMPSDWorkspace() {
         if (!alive) return;
         if (r.status === 401 || r.status === 403) { setAccess("denied"); return; }
         if (!r.ok) { setAccess("error"); return; }
+        const userStore = `${STORE}:${session.user.id}`;
+        setStorageKey(userStore);
         setAccess("ready");
         try {
-          const parsed = JSON.parse(localStorage.getItem(STORE) || "[]");
+          const parsed = JSON.parse(localStorage.getItem(userStore) || "[]");
           if (Array.isArray(parsed)) setCases(parsed);
         } catch {}
       } catch { if (alive) setAccess("error"); }
@@ -53,8 +58,8 @@ export default function UMPSDWorkspace() {
   }, []);
 
   useEffect(() => {
-    if (access === "ready") {
-      try { localStorage.setItem(STORE, JSON.stringify(cases)); }
+    if (access === "ready" && storageKey) {
+      try { localStorage.setItem(storageKey, JSON.stringify(cases)); }
       catch { setNotice("Memoria locale piena: esporta i fascicoli per conservarne una copia."); }
     }
   }, [cases, access]);
@@ -99,6 +104,38 @@ export default function UMPSDWorkspace() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a"); a.href = url; a.download = "riverssai-umpsd-backup.json"; a.click();
     URL.revokeObjectURL(url);
+  }
+
+  function analyzeCase(e) {
+    e.preventDefault();
+    const source = analysisText.trim();
+    if (!source) return;
+    const lines = source.split(/(?<=[.!?])\\s+|\\n+/).map(x => x.trim()).filter(Boolean);
+    const factHints = /\\b(alle\\s+ore|in\\s+data|ricevut[oa]|registrat[oa]|documentat[oa]|log|timestamp|screenshot|email|messaggio|transazione|confermato|verificato)\\b/i;
+    const hypothesisHints = /\\b(probabilmente|forse|potrebbe|sospetto|presunto|sembra|ipotizzo|possibile)\\b/i;
+    const facts = lines.filter(x => factHints.test(x) && !hypothesisHints.test(x));
+    const hypotheses = lines.filter(x => hypothesisHints.test(x));
+    const other = lines.filter(x => !facts.includes(x) && !hypotheses.includes(x));
+    const checks = [
+      "Confermare data, ora e fuso orario di ogni elemento.",
+      "Verificare la fonte originale e conservarne una copia integra.",
+      "Cercare riscontri indipendenti prima di attribuire responsabilità.",
+      "Registrare gli elementi contrari e le spiegazioni alternative.",
+      "Limitare i dati personali raccolti a quelli strettamente necessari."
+    ];
+    setAnalysisResult({ facts, hypotheses, other, checks, createdAt: stamp() });
+  }
+  function addAnalysisToNotes() {
+    if (!selected || !analysisResult) return;
+    const report = [
+      "SCHEDA DI ANALISI PRELIMINARE",
+      "FATTI DA VERIFICARE:", ...(analysisResult.facts.length ? analysisResult.facts : ["Nessun fatto individuato automaticamente."]),
+      "IPOTESI:", ...(analysisResult.hypotheses.length ? analysisResult.hypotheses : ["Nessuna ipotesi esplicita individuata."]),
+      "ALTRI ELEMENTI:", ...(analysisResult.other.length ? analysisResult.other : ["Nessun altro elemento."]),
+      "VERIFICHE CONSIGLIATE:", ...analysisResult.checks
+    ].join("\\n");
+    updateCase({ notes: [...selected.notes, { at: stamp(), text: report }] }, "Scheda analisi aggiunta", "Analisi preliminare locale; revisione umana necessaria");
+    setNotice("Scheda aggiunta alle note. Le classificazioni automatiche sono indicative e vanno verificate.");
   }
 
   const card = { background: "#fff", border: "1px solid #d6e8e9", borderRadius: 14, padding: 14 };
@@ -150,6 +187,20 @@ export default function UMPSDWorkspace() {
           {selected && <section style={{...card,marginTop:12}}>
             <div style={{display:"flex",justifyContent:"space-between",gap:10,flexWrap:"wrap",alignItems:"center"}}><div><div style={{fontSize:11,color:"#678087"}}>{selected.id} · {selected.kind}</div><h3 style={{margin:"4px 0"}}>{selected.title}</h3></div><select aria-label="Stato fascicolo" value={selected.status} onChange={e=>updateCase({status:e.target.value},"Stato modificato",e.target.value)} style={{...input,width:"auto"}}>{STATUSES.map(s=><option key={s}>{s}</option>)}</select></div>
             <p style={{fontSize:13,lineHeight:1.5}}><b>Ambito dichiarato:</b> {selected.scope}</p>
+            <section style={{...card,background:"#f3fbfc",margin:"12px 0"}}>
+              <h4 style={{margin:"0 0 8px"}}>Analisi preliminare locale</h4>
+              <p style={{fontSize:12,color:"#557078",lineHeight:1.5}}>Incolla una descrizione non sensibile. Il sistema individua parole-indizio per organizzare il testo in categorie: non verifica la veridicità, non identifica persone e non formula attribuzioni.</p>
+              <form onSubmit={analyzeCase} style={{display:"grid",gap:8}}>
+                <textarea value={analysisText} onChange={e=>{setAnalysisText(e.target.value);setAnalysisResult(null);}} maxLength={6000} style={{...input,minHeight:110}} placeholder="Descrivi l'evento distinguendo ciò che hai osservato da ciò che ritieni possa essere accaduto…"/>
+                <button style={button} type="submit" disabled={!analysisText.trim()}>Organizza il testo</button>
+              </form>
+              {analysisResult && <div style={{marginTop:12,display:"grid",gap:8}}>
+                {[["Fatti/elementi documentali da verificare",analysisResult.facts],["Ipotesi esplicite",analysisResult.hypotheses],["Altri elementi",analysisResult.other]].map(([label,items])=><div key={label} style={{background:"#fff",border:"1px solid #d6e8e9",borderRadius:10,padding:10}}><b style={{fontSize:13}}>{label}</b>{items.length ? <ul style={{fontSize:12,lineHeight:1.5,paddingLeft:18}}>{items.map((x,i)=><li key={i}>{x}</li>)}</ul> : <p style={{fontSize:12,color:"#71878b"}}>Nessun elemento individuato automaticamente.</p>}</div>)}
+                <div style={{background:"#fff",border:"1px solid #d6e8e9",borderRadius:10,padding:10}}><b style={{fontSize:13}}>Verifiche consigliate</b><ul style={{fontSize:12,lineHeight:1.5,paddingLeft:18}}>{analysisResult.checks.map((x,i)=><li key={i}>{x}</li>)}</ul></div>
+                <button type="button" style={button} onClick={addAnalysisToNotes}>Aggiungi scheda alle note del fascicolo</button>
+                <small style={{color:"#71878b"}}>Risultato euristico, non prova e non parere investigativo o legale.</small>
+              </div>}
+            </section>
             <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(240px,1fr))",gap:12}}>
               <form onSubmit={addNote} style={{display:"grid",gap:8}}><b>Note di analisi</b><textarea style={{...input,minHeight:75}} value={note} onChange={e=>setNote(e.target.value)} placeholder="Fatti verificati, ipotesi, dubbi…"/><button style={button}>Aggiungi nota</button></form>
               <form onSubmit={addEvidence} style={{display:"grid",gap:8}}><b>Registro evidenze</b><textarea style={{...input,minHeight:75}} value={evidence} onChange={e=>setEvidence(e.target.value)} placeholder="Descrizione e provenienza (non caricare dati riservati)…"/><button style={button}>Registra evidenza</button></form>
