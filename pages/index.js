@@ -142,6 +142,7 @@ export default function Home() {
   const [novaOpen, setNovaOpen] = useState(false);
   const [categoriaAttiva, setCategoriaAttiva] = useState('');
   const [reteIds, setReteIds] = useState([]);
+  const [carrelloIds, setCarrelloIds] = useState([]);
   const [desideriIds, setDesideriIds] = useState([]);
   const [accesso18, setAccesso18] = useState(false);
   const [mostraGate18, setMostraGate18] = useState(false);
@@ -729,6 +730,36 @@ export default function Home() {
       console.warn('RS FOLGORE audio unavailable:', error);
     }
   }
+
+  function aggiungiAlCarrello(p) {
+    const key = 'riverspend-cart';
+    let current = [];
+    try { current = JSON.parse(localStorage.getItem(key) || '[]'); } catch {}
+    if (!Array.isArray(current)) current = [];
+    const exists = current.some((item) => String(item.id) === String(p.id));
+    const record = {
+      id: p.id,
+      title: p.titolo || p.title || 'Prodotto',
+      price: Number(p.prezzo ?? p.price ?? 0),
+      image: p.immagini?.[0] || p.image || '',
+      quantity: 1
+    };
+    const next = exists
+      ? current.map((item) => String(item.id) === String(p.id) ? { ...item, quantity: Number(item.quantity || 1) + 1 } : item)
+      : [...current, record];
+    try {
+      localStorage.setItem(key, JSON.stringify(next));
+      sessionStorage.setItem(key, JSON.stringify(next));
+    } catch {}
+    setCarrelloIds(next.map((item) => String(item.id)));
+  }
+
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem('riverspend-cart') || '[]');
+      if (Array.isArray(saved)) setCarrelloIds(saved.map((item) => String(item.id)));
+    } catch {}
+  }, []);
 
   function toggleDesideriFromCatalog(p) {
     const key = 'riverspend-wishlist';
@@ -1469,13 +1500,16 @@ export default function Home() {
                 <div className="px-2 pb-2 sm:px-3 sm:pb-3">
                   <button
                     type="button"
-                    aria-pressed={reteIds.includes(String(p.id))}
-                    onClick={() => toggleReteFromCatalog(p)}
-                    className={reteIds.includes(String(p.id))
-                      ? "flex min-h-12 w-full items-center justify-center rounded-xl border-2 border-emerald-400 bg-emerald-300 px-2 py-2 text-center text-sm font-extrabold leading-tight text-emerald-950 shadow-sm transition-colors"
-                      : "flex min-h-12 w-full items-center justify-center rounded-xl border-2 border-teal-400 bg-teal-500 px-2 py-2 text-center text-sm font-extrabold leading-tight text-slate-950 shadow-sm transition-colors hover:bg-teal-300"}
+                    aria-label={carrelloIds.includes(String(p.id)) ? "Aggiungi un'altra unità al carrello" : "Aggiungi al carrello"}
+                    aria-pressed={carrelloIds.includes(String(p.id))}
+                    onClick={() => aggiungiAlCarrello(p)}
+                    className="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl border-2 border-amber-400 bg-amber-300 px-2 py-2 text-center text-sm font-extrabold leading-tight text-amber-950 shadow-sm transition-colors hover:bg-yellow-200"
                   >
-                    {reteIds.includes(String(p.id)) ? "✓ Aggiunto alla mia Rete" : "🕸️ Aggiungi alla Rete"}
+                    <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="9" cy="20" r="1" /><circle cx="19" cy="20" r="1" />
+                      <path d="M2 3h2l2.4 11.4a2 2 0 0 0 2 1.6h9.8a2 2 0 0 0 2-1.6L22 7H5" />
+                    </svg>
+                    <span>{carrelloIds.includes(String(p.id)) ? "Aggiungi ancora" : "Aggiungi al carrello"}</span>
                   </button>
                 </div>
               </article>
