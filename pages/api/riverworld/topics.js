@@ -25,10 +25,15 @@ export default async function handler(req, res) {
   endpoint.searchParams.set('sort','DateDesc');
   res.setHeader('Cache-Control','s-maxage=300, stale-while-revalidate=900');
   try {
-    let response = await fetch(endpoint.toString(),{headers:{Accept:'application/json','User-Agent':'RiverWorldLive/1.0 (https://www.riverspend.com/)'}});
+    let response;
     let searchFallback = false;
-    if (!response.ok && q) {
-      endpoint.searchParams.set('query', TOPICS[section]);
+    try {
+      response = await fetch(endpoint.toString(),{headers:{Accept:'application/json','User-Agent':'RiverWorldLive/1.0 (https://www.riverspend.com/)'}});
+      if (!response.ok && q) throw new Error('Retry topic search without exact phrase');
+    } catch (error) {
+      if (!q) throw error;
+      const fallbackQuery = TOPICS[section] + (country && /^[A-Z]{2}$/.test(country) ? ' sourcecountry:' + country : '');
+      endpoint.searchParams.set('query', fallbackQuery);
       response = await fetch(endpoint.toString(),{headers:{Accept:'application/json','User-Agent':'RiverWorldLive/1.0 (https://www.riverspend.com/)'}});
       searchFallback = true;
     }
