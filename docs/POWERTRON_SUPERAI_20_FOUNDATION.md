@@ -3,14 +3,14 @@
 **Product name:** PowerTron  
 **Parent platform:** RiverSSAI SuperAI 20.0  
 **Coordinator:** Nova Core  
-**Status:** architecture foundation / not yet an operational 9,000-agent system
+**Status:** architecture foundation / not yet an operational 12,000-agent system
 
 ## Mission
-PowerTron is the orchestration layer for a family of specialist AI workspaces. It coordinates task planning, bounded delegation, evidence-aware synthesis, quality review, and human approvals. It does not create 9,000 independent model instances by default.
+PowerTron is the orchestration layer for a family of specialist AI workspaces. It coordinates task planning, bounded delegation, evidence-aware synthesis, quality review, and human approvals. It does not create 12,000 independent model instances by default.
 
 ## Capacity model
-- 90 specialist divisions (catalogued in `public/river-ssai/powertron-registry.json`).
-- Up to 100 logical specialist roles per division: 9,000 role slots.
+- 120 specialist divisions (catalogued in `public/river-ssai/powertron-registry.json`).
+- Up to 100 logical specialist roles per division: 12,000 role slots.
 - A role is a versioned profile (instructions, skills, permitted tools, evaluation criteria), not a separate model, consciousness, process, or guaranteed running agent.
 - Runtime concurrency is bounded by provider quotas, available compute, budgets, latency, and safety policy.
 - Specialists are activated on demand; compatible tasks may share a model runtime while retaining separate scoped instructions and context.
@@ -43,10 +43,10 @@ PowerTron is the orchestration layer for a family of specialist AI workspaces. I
 
 ## Delivery stages
 ### Stage 1 — Registry and governance
-Version the 90-division catalog, 9,000 logical role slots, policy schema, and capacity reporting. This repository change establishes the catalog only.
+Version the 90-division catalog, 12,000 logical role slots, policy schema, and capacity reporting. This repository change establishes the catalog only.
 
 ### Stage 2 — Orchestrator prototype
-Implement task schema, deterministic role selection, bounded fan-out, cancellation, and mock-provider tests. Start with 3–5 concurrent workers, not 9,000.
+Implement task schema, deterministic role selection, bounded fan-out, cancellation, and mock-provider tests. Start with 3–5 concurrent workers, not 12,000.
 
 ### Stage 3 — Provider and budget adapters
 Connect configured model providers through server-side secrets; add quotas, rate limits, fallback rules, and transparent usage reporting.
@@ -58,4 +58,9 @@ Add tenant-isolated retrieval, read-only tools, audit records, and explicit appr
 Load-test gradually (5 → 10 → 25 → 50 → 100 concurrent tasks), measure cost/latency/error rates, then set production limits from evidence.
 
 ## Truthful status
-This foundation document and registry are configuration/design artifacts. They do not by themselves provide model access, durable queues, 9,000 running agents, unlimited compute, or a production PowerTron interface. Those require implementation, provider credentials, infrastructure, tests, and deployment verification.
+This foundation document and registry are configuration/design artifacts. They do not by themselves provide model access, durable queues, 12,000 running agents, unlimited compute, or a production PowerTron interface. Those require implementation, provider credentials, infrastructure, tests, and deployment verification.
+
+
+## Expanded specialist directory — 23 November 2026
+
+The catalog now contains 120 divisions with 100 logical role profiles each (12,000 catalogued profiles). This is a registry expansion only: it does not mean 12,000 models or workers are running. Worker concurrency remains constrained by configured provider capacity, infrastructure, budgets, and approval policy. The added divisions deepen identity and access governance, cloud/application/network defense, incident response, digital forensics, payment security, privacy engineering, backup/recovery, OT resilience, AI safety, and authorized testing governance.
