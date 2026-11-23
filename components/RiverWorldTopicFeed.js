@@ -10,7 +10,7 @@ const CONFIG = {
   spettacolo: { title:'Spettacolo & Celebrities', subtitle:'Televisione, artisti, premi, musica, personaggi e intrattenimento.', icon:'✨', tags:['Televisione','Celebrities','Musica','Premi','Show business'] },
 };
 const COUNTRY_OPTIONS = [['','Tutti i Paesi'],['IT','Italia'],['GB','Regno Unito'],['US','Stati Uniti'],['CA','Canada'],['MX','Messico'],['BR','Brasile'],['AR','Argentina'],['FR','Francia'],['DE','Germania'],['ES','Spagna'],['PT','Portogallo'],['NL','Paesi Bassi'],['BE','Belgio'],['CH','Svizzera'],['AT','Austria'],['NO','Norvegia'],['SE','Svezia'],['FI','Finlandia'],['PL','Polonia'],['UA','Ucraina'],['TR','Turchia'],['EG','Egitto'],['ZA','Sudafrica'],['NG','Nigeria'],['KE','Kenya'],['MA','Marocco'],['JP','Giappone'],['KR','Corea del Sud'],['CN','Cina'],['IN','India'],['PK','Pakistan'],['ID','Indonesia'],['TH','Thailandia'],['AU','Australia'],['NZ','Nuova Zelanda']];
-const fmt = value => { if(!value) return 'Data non disponibile'; const s=value.replace(/^(\\d{4})(\\d{2})(\\d{2})T/,'$1-$2-$3T'); const d=new Date(s); return Number.isNaN(d.getTime())?value:d.toLocaleString('it-IT',{dateStyle:'short',timeStyle:'short'}); };
+const fmt = value => { if(!value) return 'Data non disponibile'; const s=value.replace(/^(\d{4})(\d{2})(\d{2})T/,'$1-$2-$3T'); const d=new Date(s); return Number.isNaN(d.getTime())?value:d.toLocaleString('it-IT',{dateStyle:'short',timeStyle:'short'}); };
 
 export default function RiverWorldTopicFeed({ section='cinema', initialQuery='' }) {
   const config = CONFIG[section] || CONFIG.cinema;
