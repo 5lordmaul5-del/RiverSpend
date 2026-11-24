@@ -1477,8 +1477,21 @@ export default function Home() {
                 <div><p className="text-xs font-black uppercase tracking-widest text-cyan-800">🌊 RiverSpend River</p><h2 className="text-lg font-black text-slate-900">Prodotti in evidenza</h2><p className="text-xs text-slate-700">Il fiume promozionale: inserzioni sponsorizzate in movimento.</p></div>
                 <a href="/vendi" className="rounded-full bg-slate-900 px-3 py-2 text-xs font-bold text-white">Promuovi un prodotto →</a>
               </div>
-              <div className="rs-featured-river-flow" aria-label="Flusso dimostrativo di schede promozionali">
-                {[["border-red-500","ROSSO","Vetrina premium"],["border-blue-500","BLU","In evidenza"],["border-yellow-400","ORO","Promozione speciale"],["border-red-500","ROSSO","Vetrina premium"],["border-blue-500","BLU","In evidenza"],["border-yellow-400","ORO","Promozione speciale"]].map((slot,i)=><article key={i} className={"rs-featured-river-card "+slot[0]}><div className="rs-featured-river-placeholder">🌊<span>SPAZIO SPONSORIZZATO</span></div><b>{slot[1]} · {slot[2]}</b><small>Slot promozionale · esempio grafico</small></article>)}
+              <div className="rs-featured-river-window" aria-label="Flusso continuo dei pacchetti RSSpons">
+                <div className="rs-featured-river-flow">
+                  {[0,1].map(copy => <div className="rs-featured-river-track" key={copy} aria-hidden={copy === 1 ? 'true' : undefined}>
+                    {[
+                      { color: 'rosso', label: 'RSSPONS ROSSO', detail: 'Visibilità essenziale', price: '€ 9,90' },
+                      { color: 'blu', label: 'RSSPONS BLU', detail: 'Maggiore evidenza', price: '€ 19,90' },
+                      { color: 'giallo', label: 'RSSPONS GIALLO', detail: 'Posizionamento premium', price: '€ 39,90' },
+                      { color: 'album', label: 'RSSPONS ALBUM', detail: 'Promozione estesa', price: '€ 69,90' }
+                    ].map((slot,i) => <article key={slot.color} className={'rs-featured-river-card rs-sponsored-' + slot.color}>
+                      <div className="rs-featured-river-placeholder"><span className="rs-sponsored-mark">SPONSORIZZATO</span><span className="rs-sponsored-wave">🌊</span></div>
+                      <b>{slot.label}</b><small>{slot.detail}</small><strong className="rs-sponsored-price">{slot.price}</strong>
+                    </article>)}
+                  </div>)}
+                </div>
+              </div><b>{slot[1]} · {slot[2]}</b><small>Slot promozionale · esempio grafico</small></article>)}
               </div>
               <p className="mt-2 text-[10px] text-slate-600">Le schede mostrate sono esempi grafici, non inserzioni acquistate. Gli annunci reali compariranno dopo l'attivazione del servizio e la verifica del pagamento.</p>
             </section>
@@ -2260,14 +2273,22 @@ export default function Home() {
 
         /* RiverSpend River: corrente pubblicitaria da sinistra verso destra. */
         .rs-featured-river { background:linear-gradient(115deg,#c6f7f7,#8ce4e9,#d7ffff,#a3eaf0); color:#082f3b; isolation:isolate; }
-        .rs-featured-river-flow { display:flex; width:max-content; gap:14px; animation:rs-featured-flow 32s linear infinite; }
-        .rs-featured-river-flow:hover { animation-play-state:paused; }
-        .rs-featured-river-card { width:180px; min-width:180px; border:4px solid; border-radius:16px; background:#fff; padding:9px; display:flex; flex-direction:column; gap:6px; box-shadow:0 5px 15px #06374725; }
+        .rs-featured-river-window { width:100%; overflow:hidden; padding:4px 0 8px; }
+        .rs-featured-river-flow { display:flex; width:max-content; animation:rs-featured-flow 38s linear infinite; will-change:transform; }
+        .rs-featured-river-window:hover .rs-featured-river-flow { animation-play-state:paused; }
+        .rs-featured-river-track { display:flex; flex:0 0 auto; align-items:stretch; gap:14px; padding-right:14px; }
+        .rs-featured-river-card { box-sizing:border-box; width:180px; min-width:180px; border:4px solid #64748b; border-radius:16px; background:#fff; padding:9px; display:flex; flex-direction:column; gap:6px; box-shadow:0 5px 15px #06374725; }
+        .rs-sponsored-rosso { border-color:#e11d48; }
+        .rs-sponsored-blu { border-color:#2563eb; }
+        .rs-sponsored-giallo { border-color:#eab308; }
+        .rs-sponsored-album { border-color:#d97706; }
         .rs-featured-river-card b {font-size:12px;color:#103b48}.rs-featured-river-card small{font-size:10px;color:#46616b}
-        .rs-featured-river-placeholder { height:104px; border-radius:10px; background:linear-gradient(140deg,#e4fbff,#90dce9,#f2ffff); display:flex; flex-direction:column; align-items:center;justify-content:center;font-size:28px;color:#067e98; }
-        .rs-featured-river-placeholder span {font-size:9px;font-weight:900;letter-spacing:.08em}
-        @keyframes rs-featured-flow { from{transform:translateX(-10%)} to{transform:translateX(calc(100vw - 10%))} }
-        @media(prefers-reduced-motion:reduce){.rs-featured-river-flow{animation:none;overflow-x:auto;width:100%;}}
+        .rs-featured-river-placeholder { height:104px; border-radius:10px; background:linear-gradient(140deg,#e4fbff,#90dce9,#f2ffff); display:flex; flex-direction:column; align-items:center;justify-content:center;color:#067e98; }
+        .rs-sponsored-mark { font-size:9px;font-weight:900;letter-spacing:.08em }
+        .rs-sponsored-wave { font-size:28px;line-height:1.1 }
+        .rs-sponsored-price { color:#082f3b;font-size:17px;font-weight:900; }
+        @keyframes rs-featured-flow { from{transform:translateX(-50%)} to{transform:translateX(0)} }
+        @media(prefers-reduced-motion:reduce){.rs-featured-river-flow{animation:none;}}
       `}</style>
 
 
