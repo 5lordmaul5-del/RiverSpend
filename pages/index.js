@@ -157,6 +157,7 @@ export default function Home() {
   const [rsLotteryAperta, setRsLotteryAperta] = useState(false);
   const [rsFolgoreAperta, setRsFolgoreAperta] = useState(false);
   const [rsAdmin, setRsAdmin] = useState(false);
+  const [rssponsUserAds, setRssponsUserAds] = useState([]);
 
   const areeRiverSpend = [
     ['Profilo','/profilo'],
@@ -187,6 +188,17 @@ export default function Home() {
     ['RiverSpend Fortress','/servizi/fortress'],
     ['RiverSpend SurroundSpaceAroundExperience','/servizi/experience']
   ];
+
+  useEffect(() => {
+    const readAds = () => {
+      try { const saved = JSON.parse(localStorage.getItem('riverspend-rsspons-demo-ads') || '[]'); setRssponsUserAds(Array.isArray(saved) ? saved.filter(item => item && item.id && item.title) : []); }
+      catch { setRssponsUserAds([]); }
+    };
+    readAds();
+    window.addEventListener('riverspend:rsspons-demo-change', readAds);
+    window.addEventListener('storage', readAds);
+    return () => { window.removeEventListener('riverspend:rsspons-demo-change', readAds); window.removeEventListener('storage', readAds); };
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -1482,18 +1494,19 @@ export default function Home() {
                 <div className="rs-featured-river-flow">
                   {[0,1].map(copy => <div className="rs-featured-river-track" key={copy} aria-hidden={copy === 1 ? 'true' : undefined}>
                     {[
-                      { color: 'rosso', label: 'RSSPONS ROSSO', detail: 'Visibilità essenziale', price: '€ 2,99' },
-                      { color: 'blu', label: 'RSSPONS BLU', detail: 'Maggiore evidenza', price: '€ 4,99' },
-                      { color: 'giallo', label: 'RSSPONS GIALLO', detail: 'Posizionamento premium', price: '€ 9,99' },
-                      { color: 'album', label: 'RSSPONS ALBUM', detail: 'Promozione estesa', price: '€ 14,99' }
-                    ].map((slot,i) => <article key={slot.color} className={'rs-featured-river-card rs-sponsored-' + slot.color}>
-                      <div className="rs-featured-river-placeholder"><span className="rs-sponsored-mark">SPONSORIZZATO</span><span className="rs-sponsored-wave">🌊</span></div>
-                      <b>{slot.label}</b><small>{slot.detail}</small><strong className="rs-sponsored-price">{slot.price}</strong>
+                      { id: 'demo-bike', color: 'blu', title: 'Bicicletta urbana', detail: 'Mobilità e tempo libero', price: '€ 189,00', image: '🚲', sponsor: 'Demo Sport' },
+                      { id: 'demo-coffee', color: 'rosso', title: 'Caffè artigianale', detail: 'Selezione torrefazione', price: '€ 12,90', image: '☕', sponsor: 'Demo Caffè' },
+                      { id: 'demo-watch', color: 'giallo', title: 'Orologio elegante', detail: 'Accessori e stile', price: '€ 49,90', image: '⌚', sponsor: 'Demo Time' },
+                      { id: 'demo-home', color: 'album', title: 'Casa & Design', detail: 'Idee per la casa', price: '€ 34,90', image: '🪴', sponsor: 'Demo Living' },
+                      ...rssponsUserAds
+                    ].map((ad) => <article key={ad.id} className={'rs-featured-river-card rs-sponsored-' + (ad.color || 'blu')}>
+                      <div className="rs-featured-river-placeholder"><span className="rs-sponsored-mark">{ad.demo ? 'LA TUA PROVA' : 'DEMO'}</span><span className="rs-sponsored-wave">{ad.image || '📦'}</span></div>
+                      <b>{ad.title}</b><small>{ad.sponsor || 'Sponsor dimostrativo'} · {ad.detail || 'Prodotto sponsorizzato'}</small><strong className="rs-sponsored-price">{ad.price || 'Prezzo da definire'}</strong>
                     </article>)}
                   </div>)}
                 </div>
               </div>
-              <p className="mt-2 text-[10px] text-slate-600">Le schede mostrate sono esempi grafici, non inserzioni acquistate. Gli annunci reali compariranno dopo l'attivazione del servizio e la verifica del pagamento.</p>
+              <p className="mt-2 text-[10px] text-slate-600">Le schede DEMO e le tue prove sono anteprime locali: non sono ordini, pagamenti o campagne pubblicate.</p>
             </section>
 
 
