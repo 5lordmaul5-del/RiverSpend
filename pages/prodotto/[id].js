@@ -401,6 +401,27 @@ export default function Prodotto() {
                 <p className="text-xs font-bold uppercase tracking-[.2em] text-[#9b762e]">Storia dell’articolo</p>
                 <h2 className="mt-2 text-xl font-bold">Descrizione</h2>
                 <p className="mt-3 whitespace-pre-wrap leading-7 text-slate-700">{prodotto.descrizione || 'Il venditore non ha ancora inserito una descrizione.'}</p>
+                {prodotto.trustStatus === 'approved' && prodotto.tracciabilita && (
+                  <div className="mt-5 rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
+                    <div className="flex flex-wrap items-center justify-between gap-2"><h3 className="font-bold text-emerald-900">✓ Informazioni di conformità verificate</h3><span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-800">RiverSpend Trust</span></div>
+                    <p className="mt-1 text-xs text-emerald-900">La documentazione indicata è stata sottoposta a verifica documentale RiverSpend. Questo non sostituisce certificazioni, prove di laboratorio o responsabilità del fabbricante.</p>
+                    <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-2">
+                      {prodotto.tracciabilita.manufacturerName && <div><dt className="text-emerald-700">Produttore</dt><dd className="font-semibold">{prodotto.tracciabilita.manufacturerName}</dd></div>}
+                      {prodotto.tracciabilita.manufacturerCountry && <div><dt className="text-emerald-700">Paese produttore</dt><dd className="font-semibold">{prodotto.tracciabilita.manufacturerCountry}</dd></div>}
+                      {prodotto.tracciabilita.gtin && <div><dt className="text-emerald-700">GTIN</dt><dd className="font-semibold">{prodotto.tracciabilita.gtin}</dd></div>}
+                      {prodotto.tracciabilita.batchNumber && <div><dt className="text-emerald-700">Lotto</dt><dd className="font-semibold">{prodotto.tracciabilita.batchNumber}</dd></div>}
+                      {prodotto.tracciabilita.serialNumber && <div><dt className="text-emerald-700">Numero seriale</dt><dd className="font-semibold">{prodotto.tracciabilita.serialNumber}</dd></div>}
+                      {prodotto.tracciabilita.expiryDate && <div><dt className="text-emerald-700">Scadenza</dt><dd className="font-semibold">{new Date(prodotto.tracciabilita.expiryDate+'T00:00:00').toLocaleDateString('it-IT')}</dd></div>}
+                      {prodotto.tracciabilita.responsiblePersonName && <div><dt className="text-emerald-700">Responsabile UE</dt><dd className="font-semibold">{prodotto.tracciabilita.responsiblePersonName}</dd></div>}
+                      {prodotto.tracciabilita.responsiblePersonAddress && <div className="sm:col-span-2"><dt className="text-emerald-700">Indirizzo responsabile UE</dt><dd className="font-semibold">{prodotto.tracciabilita.responsiblePersonAddress}</dd></div>}
+                      {prodotto.tracciabilita.safetySummary && <div className="sm:col-span-2"><dt className="text-emerald-700">Sicurezza e avvertenze</dt><dd className="whitespace-pre-wrap">{prodotto.tracciabilita.safetySummary}</dd></div>}
+                      {prodotto.tracciabilita.recyclingInstructions && <div className="sm:col-span-2"><dt className="text-emerald-700">Riciclo e smaltimento</dt><dd className="whitespace-pre-wrap">{prodotto.tracciabilita.recyclingInstructions}</dd></div>}
+                      {prodotto.tracciabilita.warrantyInformation && <div className="sm:col-span-2"><dt className="text-emerald-700">Garanzia</dt><dd className="whitespace-pre-wrap">{prodotto.tracciabilita.warrantyInformation}</dd></div>}
+                    </dl>
+                    {prodotto.tracciabilita.digitalProductPassportUrl && <a href={prodotto.tracciabilita.digitalProductPassportUrl} target="_blank" rel="noreferrer" className="mt-3 inline-block font-semibold text-emerald-900 underline">Apri passaporto digitale del prodotto</a>}
+                  </div>
+                )}
+                {prodotto.trustStatus !== 'approved' && <p className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900">Le informazioni di conformità e tracciabilità di questo articolo non risultano ancora approvate da RiverSpend. Non viene mostrato alcun bollino di certificazione.</p>}
               </div>
               <aside className="rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-white p-4">
                 <p className="font-bold text-[#8a692b]">Dettagli del fiume</p>
