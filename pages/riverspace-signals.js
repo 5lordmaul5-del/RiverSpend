@@ -57,6 +57,7 @@ export default function RiverSpaceSignals() {
   const recorderRef = useRef(null);
   const messagesEndRef = useRef(null);
   const mediaUrlsRef = useRef({});
+  const messagesRequestRef = useRef(0);
 
   const activeConversation = conversations.find(c => c.id === active);
   const otherId = activeConversation
@@ -132,6 +133,7 @@ export default function RiverSpaceSignals() {
   }, []);
 
   const loadMessages = useCallback(async (conversationId) => {
+    const requestId = ++messagesRequestRef.current;
     if (!conversationId) return setMessages([]);
     const { data, error: e } = await supabase.from('rs_chat_messages')
       .select('id,conversation_id,sender_id,body,created_at,read_at,message_type,attachment_path,attachment_name,attachment_mime,attachment_size,metadata')
@@ -168,6 +170,12 @@ export default function RiverSpaceSignals() {
       }
       return row;
     }));
+    if (requestId !== messagesRequestRef.current) {
+      Object.values(media).forEach(url => {
+        if (typeof url === 'string' && url.startsWith('blob:')) URL.revokeObjectURL(url);
+      });
+      return;
+    }
     const nextMediaValues = Object.values(media);
     Object.values(mediaUrlsRef.current).forEach(url => {
       if (typeof url === 'string' && url.startsWith('blob:') && !nextMediaValues.includes(url)) URL.revokeObjectURL(url);
@@ -297,6 +305,8 @@ export default function RiverSpaceSignals() {
 
   useEffect(() => {
     if (!active) { setMessages([]); setEnigmaConsents([]); return; }
+    // Non mostrare per un istante i messaggi della chat precedente.
+    setMessages([]);
     supabase.from('rs_chat_enigma_consents').select('conversation_id,user_id,accepted_at,revoked_at').eq('conversation_id', active)
       .then(({ data, error: consentError }) => { if (consentError) setError(consentError.message); else setEnigmaConsents(data || []); });
     const consentChannel = supabase.channel('signals-enigma-consent-' + active)
@@ -309,7 +319,16 @@ export default function RiverSpaceSignals() {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'rs_chat_messages', filter: 'conversation_id=eq.' + active }, () => {
         loadMessages(active).catch(e => setError(e.message));
       }).subscribe();
-    return () => { supabase.removeChannel(channel); supabase.removeChannel(consentChannel); };
+    return () => {
+      messagesRequestRef.current += 1;
+      Object.values(mediaUrlsRef.current).forEach(url => {
+        if (typeof url === 'string' && url.startsWith('blob:')) URL.revokeObjectURL(url);
+      });
+      mediaUrlsRef.current = {};
+      setMediaUrls({});
+      supabase.removeChannel(channel);
+      supabase.removeChannel(consentChannel);
+    };
   }, [active, loadMessages]);
 
   useEffect(() => {
