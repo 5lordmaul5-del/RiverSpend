@@ -16,10 +16,10 @@ const AREAS = [
 ];
 const DURATIONS = [1, 2, 3, 7, 15, 30];
 const SPONS_PACKAGES = [
-  { id: 'rosso', name: 'RSSpons Rosso', price: 9.90, color: 'border-red-500 bg-red-50 text-red-800', description: 'Visibilità sponsorizzata essenziale.' },
-  { id: 'blu', name: 'RSSpons Blu', price: 19.90, color: 'border-blue-500 bg-blue-50 text-blue-800', description: 'Maggiore evidenza nel flusso promozionale.' },
-  { id: 'giallo', name: 'RSSpons Giallo', price: 39.90, color: 'border-yellow-400 bg-yellow-50 text-yellow-900', description: 'Posizionamento premium nel RiverSpend River.' },
-  { id: 'album', name: 'RSSpons Album', price: 69.90, color: 'border-amber-500 bg-amber-50 text-amber-900', description: 'Pacchetto esteso per più contenuti promozionali.' },
+  { id: 'rosso', name: 'RSSpons Rosso', price: 2.99, color: 'border-red-500 bg-red-50 text-red-800', description: 'Visibilità sponsorizzata essenziale.' },
+  { id: 'blu', name: 'RSSpons Blu', price: 4.99, color: 'border-blue-500 bg-blue-50 text-blue-800', description: 'Maggiore evidenza nel flusso promozionale.' },
+  { id: 'giallo', name: 'RSSpons Giallo', price: 9.99, color: 'border-yellow-400 bg-yellow-50 text-yellow-900', description: 'Posizionamento premium nel RiverSpend River.' },
+  { id: 'album', name: 'RSSpons Album', price: 14.99, color: 'border-amber-500 bg-amber-50 text-amber-900', description: 'Pacchetto esteso per più contenuti promozionali.' },
 ];
 const DAILY_BASE = { local: 2.9, regional: 4.3, national: 11.42, international: 14.28, world: 42.85 };
 
@@ -77,7 +77,7 @@ export default function RsSponsCampaign() {
                   <span className="block text-base font-black">{item.name}</span><span className="mt-1 block text-2xl font-black">{money(item.price)}</span><span className="mt-1 block text-xs">{item.description}</span>
                 </button>)}
               </div>
-              <p className="mt-2 text-xs text-slate-500">Pacchetti proposti: Rosso €9,90 · Blu €19,90 · Giallo €39,90 · Album €69,90. La durata e gli spazi effettivi saranno indicati nella conferma della campagna.</p>
+              <p className="mt-2 text-xs text-slate-500">Pacchetti proposti: Rosso €2,99 · Blu €4,99 · Giallo €9,99 · Album €14,99. La durata e gli spazi effettivi saranno indicati nella conferma della campagna.</p>
               <div className="mt-4 grid gap-3 sm:grid-cols-2">
                 {PLACEMENTS.map(item => <button key={item.id} type="button" onClick={() => { setPlacement(item.id); setPreview(false); }} className={'rounded-2xl border p-4 text-left transition ' + (placement === item.id ? 'border-cyan-600 bg-cyan-50 ring-2 ring-cyan-100' : 'border-slate-200 bg-white')}>
                   <strong>{item.label}</strong><p className="mt-2 text-sm leading-5 text-slate-600">{item.description}</p>
