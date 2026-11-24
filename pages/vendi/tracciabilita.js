@@ -72,7 +72,8 @@ export default function TracciabilitaProdotto() {
       recycling_instructions:profile.recycling_instructions.trim()||null,
       warranty_information:profile.warranty_information.trim()||null
     };
-    const {error:productError}=await supabase.from('products').update(payload).eq('id',productId).eq('seller_id',user.id);
+    payload.trust_status='submitted';
+    const {error:productError}=await supabase.from('products').update({...payload,trust_status:'submitted'}).eq('id',productId).eq('seller_id',user.id);
     const {error:profileError}=await supabase.from('product_compliance_profiles').upsert({
       product_id:productId,seller_id:user.id,intended_use:profile.intended_use.trim()||null,
       destination_markets:profile.destination_markets.split(',').map(x=>x.trim().toUpperCase()).filter(Boolean)
@@ -150,7 +151,7 @@ export default function TracciabilitaProdotto() {
             <label className={labelClass}>Garanzia / condizioni<textarea className={inputClass} rows="2" value={profile.warranty_information} onChange={e=>setProfile({...profile,warranty_information:e.target.value})}/></label>
             <label className={labelClass+' sm:col-span-2'}>Uso previsto e descrizione<textarea className={inputClass} rows="2" value={profile.intended_use} onChange={e=>setProfile({...profile,intended_use:e.target.value})}/></label>
             <label className={labelClass+' sm:col-span-2'}>Informazioni e avvertenze di sicurezza<textarea className={inputClass} rows="3" value={profile.safety_summary} onChange={e=>setProfile({...profile,safety_summary:e.target.value})}/></label>
-            <label className={labelClass+' sm:col-span-2'}>Istruzioni di riciclo / smaltimento<textarea className={inputClass} rows="2" value={profile.recycling_instructions} onChange={e=>setProfile({...profile,recycling_instructions,e.target.value})}/></label>
+            <label className={labelClass+' sm:col-span-2'}>Istruzioni di riciclo / smaltimento<textarea className={inputClass} rows="2" value={profile.recycling_instructions} onChange={e=>setProfile({...profile,recycling_instructions:e.target.value})}/></label>
           </div>
           <button disabled={busy} className="mt-4 rounded-xl bg-teal-700 px-5 py-3 font-bold text-white disabled:opacity-50">Salva informazioni</button>
         </form>
