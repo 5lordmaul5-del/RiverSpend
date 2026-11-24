@@ -2233,7 +2233,6 @@ export default function Home() {
           background:rgba(2,12,24,.9) !important;
         }
 
-      `}
         /* Fondo acqua viva sotto la striscia delle app: riflessi e correnti leggere. */
         .rs-apps-download-strip {
           position:relative !important; isolation:isolate !important;
@@ -2269,7 +2268,7 @@ export default function Home() {
         .rs-featured-river-placeholder span {font-size:9px;font-weight:900;letter-spacing:.08em}
         @keyframes rs-featured-flow { from{transform:translateX(-10%)} to{transform:translateX(calc(100vw - 10%))} }
         @media(prefers-reduced-motion:reduce){.rs-featured-river-flow{animation:none;overflow-x:auto;width:100%;}}
-</style>
+      `}</style>
 
 
       <style jsx>{`
