@@ -174,6 +174,17 @@ export default function RiverSpaceSignals() {
     });
     mediaUrlsRef.current = media;
     setMessages(decoded); setMediaUrls(media);
+
+    // Segna come letti i messaggi ricevuti quando la conversazione viene aperta.
+    if (user?.id) {
+      const { error: readError } = await supabase.from('rs_chat_messages')
+        .update({ read_at: new Date().toISOString() })
+        .eq('conversation_id', conversationId)
+        .neq('sender_id', user.id)
+        .is('read_at', null);
+      if (readError) console.warn('Signals read receipt:', readError.message);
+      else await refreshUnreadCounts(user.id);
+    }
   }, [user, otherId, refreshUnreadCounts]);
 
   useEffect(() => {
@@ -566,7 +577,7 @@ export default function RiverSpaceSignals() {
     const amount = Number(String(moneyAmount).replace(',', '.'));
     if (!active || !user || busy || !Number.isFinite(amount) || amount <= 0 || amount > 10000) return;
     const labels = { send: '💸 Proposta di invio denaro', request: '💰 Richiesta di denaro', donate: '🎁 Proposta di donazione', receive_donation: '🙏 Richiesta di donazione' };
-    let body = labels[moneyAction] + '\\nImporto: € ' + amount.toFixed(2) + (moneyReason.trim() ? '\\nCausale: ' + moneyReason.trim() : '') + '\\n\\nStato: da concordare. Nessun pagamento è stato eseguito.';
+    let body = labels[moneyAction] + '\nImporto: € ' + amount.toFixed(2) + (moneyReason.trim() ? '\nCausale: ' + moneyReason.trim() : '') + '\n\nStato: da concordare. Nessun pagamento è stato eseguito.';
     let metadata = { kind: 'money_intent', action: moneyAction, amount, currency: 'EUR', reason: moneyReason.trim(), status: 'awaiting_provider' };
     if (enigmaActive) {
       try {
@@ -633,7 +644,7 @@ export default function RiverSpaceSignals() {
       <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
       <meta name="theme-color" content="#063b4b" />
       <link rel="manifest" href="/manifest-signals.json?v=20261124" />
-      <link rel="icon" href="/icons/riverspace-signals-192.svg?v=20261124" type="image/jpeg" />
+      <link rel="icon" href="/icons/riverspace-signals-192.svg?v=20261124" type="image/svg+xml" />
       <link rel="apple-touch-icon" href="/icons/riverspace-signals-192.svg?v=20261124" />
     </Head>
     {installPanelOpen && !isInstalled && <div className="fixed inset-0 z-[100] grid place-items-center bg-slate-950/75 p-4" role="dialog" aria-modal="true" aria-labelledby="signals-install-title">
@@ -798,7 +809,7 @@ export default function RiverSpaceSignals() {
             <form onSubmit={sendMessage} className="relative flex items-end gap-1.5 border-t border-slate-200 bg-white p-2 md:gap-2 md:p-3">
               <button type="button" onClick={() => { setAttachMenuOpen(v => !v); setEmojiOpen(false); }} className="rounded-xl bg-slate-100 px-2 py-2 text-lg md:px-3 md:py-3 md:text-xl" title="Apri allegati e condivisione" aria-label="Apri menu allegati">📎</button>
               {attachMenuOpen && <div className="absolute bottom-16 left-2 z-20 grid w-[min(310px,calc(100vw-24px))] grid-cols-2 gap-2 rounded-2xl border border-slate-200 bg-white p-3 shadow-2xl">
-                <label className="flex cursor-pointer items-center gap-2 rounded-xl p-3 text-left text-sm hover:bg-teal-50">🖼️ <span>Foto e immagini<input type="file" accept="image/jpeg,image/png,image/webp,image/gif" className="hidden" onChange={e => { setAttachment(e.target.files?.[0] || null); setAttachMenuOpen(false); }} /></span></label>
+                <label className="flex cursor-pointer items-center gap-2 rounded-xl p-3 text-left text-sm hover:bg-teal-50">🖼️ <span>Foto, video e audio<input type="file" accept="image/*,video/*,audio/*" className="hidden" onChange={e => { setAttachment(e.target.files?.[0] || null); setAttachMenuOpen(false); }} /></span></label>
                 <label className="flex cursor-pointer items-center gap-2 rounded-xl p-3 text-left text-sm hover:bg-teal-50">📄 <span>Documenti<input type="file" accept=".pdf,.txt,.doc,.docx,.xls,.xlsx" className="hidden" onChange={e => { setAttachment(e.target.files?.[0] || null); setAttachMenuOpen(false); }} /></span></label>
                 <button type="button" onClick={() => { setAttachMenuOpen(false); setStickerOpen(true); }} className="rounded-xl p-3 text-left text-sm hover:bg-teal-50">🎨 Sticker</button>
                 <button type="button" onClick={() => { setAttachMenuOpen(false); setEmojiOpen(true); }} className="rounded-xl p-3 text-left text-sm hover:bg-teal-50">😊 Emoji</button>
