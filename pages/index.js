@@ -1484,28 +1484,33 @@ export default function Home() {
 
           </div>
 
-            {/* RiverSpend River: stream of paid featured listings. Initial demo cards are clearly labeled. */}
-            <section id="rs-featured-river" aria-label="RiverSpend River prodotti in evidenza" className="rs-featured-river my-5 w-full overflow-hidden rounded-2xl border border-cyan-200/70 p-3 shadow-lg">
-              <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-                <div><p className="text-xs font-black uppercase tracking-widest text-cyan-800">🌊 RiverSpend River</p><h2 className="text-lg font-black text-slate-900">Prodotti in evidenza</h2><p className="text-xs text-slate-700">Il fiume promozionale: inserzioni sponsorizzate in movimento.</p></div>
+            {/* RSSpons: three independent horizontal rivers, separated from the vertical shop catalog. */}
+            <section id="rs-featured-river" aria-label="RSSpons: tre fiumi pubblicitari orizzontali" className="rs-featured-river my-5 w-full overflow-hidden rounded-2xl border border-cyan-200/70 p-3 shadow-lg">
+              <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+                <div><p className="text-xs font-black uppercase tracking-widest text-cyan-800">🌊 RSSpons · Fiumi pubblicitari</p><h2 className="text-lg font-black text-slate-900">Tre correnti, tre colori</h2><p className="text-xs text-slate-700">Ogni pacchetto scorre nella propria corsia orizzontale.</p></div>
                 <a href="/rs-spons/campagna" className="rounded-full bg-slate-900 px-3 py-2 text-xs font-bold text-white">Sponsorizza un prodotto →</a>
               </div>
-              <div className="rs-featured-river-window" aria-label="Flusso continuo dei pacchetti RSSpons">
-                <div className="rs-featured-river-flow">
-                  {[0,1].map(copy => <div className="rs-featured-river-track" key={copy} aria-hidden={copy === 1 ? 'true' : undefined}>
-                    {[
-                      { id: 'demo-bike', color: 'blu', title: 'Bicicletta urbana', detail: 'Mobilità e tempo libero', price: '€ 189,00', image: '🚲', sponsor: 'Demo Sport' },
-                      { id: 'demo-coffee', color: 'rosso', title: 'Caffè artigianale', detail: 'Selezione torrefazione', price: '€ 12,90', image: '☕', sponsor: 'Demo Caffè' },
-                      { id: 'demo-watch', color: 'giallo', title: 'Orologio elegante', detail: 'Accessori e stile', price: '€ 49,90', image: '⌚', sponsor: 'Demo Time' },
-                      { id: 'demo-home', color: 'album', title: 'Casa & Design', detail: 'Idee per la casa', price: '€ 34,90', image: '🪴', sponsor: 'Demo Living' },
-                      ...rssponsUserAds
-                    ].map((ad) => <article key={ad.id} className={'rs-featured-river-card rs-sponsored-' + (ad.color || 'blu')}>
-                      <div className="rs-featured-river-placeholder"><span className="rs-sponsored-mark">{ad.demo ? 'LA TUA PROVA' : 'DEMO'}</span><span className="rs-sponsored-wave">{ad.image || '📦'}</span></div>
-                      <b>{ad.title}</b><small>{ad.sponsor || 'Sponsor dimostrativo'} · {ad.detail || 'Prodotto sponsorizzato'}</small><strong className="rs-sponsored-price">{ad.price || 'Prezzo da definire'}</strong>
-                    </article>)}
-                  </div>)}
-                </div>
-              </div>
+              {[
+                { id:'rosso', label:'ROSSO · €2,99', direction:'reverse', demos:[{id:'demo-coffee',color:'rosso',title:'Caffè artigianale',detail:'Selezione torrefazione',price:'€ 12,90',image:'☕',sponsor:'Demo Caffè'}] },
+                { id:'giallo', label:'GIALLO · €9,99', direction:'forward', demos:[{id:'demo-watch',color:'giallo',title:'Orologio elegante',detail:'Accessori e stile',price:'€ 49,90',image:'⌚',sponsor:'Demo Time'},{id:'demo-home',color:'album',title:'Casa & Design',detail:'Idee per la casa',price:'€ 34,90',image:'🪴',sponsor:'Demo Living'}] },
+                { id:'blu', label:'BLU · €4,99', direction:'forward', demos:[{id:'demo-bike',color:'blu',title:'Bicicletta urbana',detail:'Mobilità e tempo libero',price:'€ 189,00',image:'🚲',sponsor:'Demo Sport'}] }
+              ].map(lane => {
+                const laneAds = [...lane.demos, ...rssponsUserAds.filter(ad => ad.color === lane.id || (lane.id === 'giallo' && ad.color === 'album'))];
+                const cards = laneAds.length ? laneAds : lane.demos;
+                return <div key={lane.id} className={'rs-spons-lane rs-spons-lane-' + lane.id}>
+                  <div className="mb-1 flex items-center justify-between"><strong className="text-[11px] font-black tracking-wider">{lane.label}</strong><span className="text-[10px] opacity-70">Tocca o passa il dito per esplorare</span></div>
+                  <div className="rs-featured-river-window" aria-label={'Fiume ' + lane.id}>
+                    <div className={'rs-featured-river-flow ' + (lane.direction === 'reverse' ? 'rs-flow-reverse' : 'rs-flow-forward')}>
+                      {[0,1].map(copy => <div className="rs-featured-river-track" key={copy} aria-hidden={copy === 1 ? 'true' : undefined}>
+                        {cards.map(ad => <article key={ad.id} className={'rs-featured-river-card rs-sponsored-' + (ad.color || lane.id)}>
+                          <div className="rs-featured-river-placeholder"><span className="rs-sponsored-mark">{ad.demo ? 'LA TUA PROVA' : 'DEMO'}</span><span className="rs-sponsored-wave">{ad.image || '📦'}</span></div>
+                          <b>{ad.title}</b><small>{ad.sponsor || 'Sponsor dimostrativo'} · {ad.detail || 'Prodotto sponsorizzato'}</small><strong className="rs-sponsored-price">{ad.price || 'Prezzo da definire'}</strong>
+                        </article>)}
+                      </div>)}
+                    </div>
+                  </div>
+                </div>;
+              })}
               <p className="mt-2 text-[10px] text-slate-600">Le schede DEMO e le tue prove sono anteprime locali: non sono ordini, pagamenti o campagne pubblicate.</p>
             </section>
 
@@ -1529,9 +1534,9 @@ export default function Home() {
               {prodotti.length === 0 ? <a href="/vendi" className="inline-block rounded-xl bg-teal-500 px-6 py-3 font-bold text-slate-950">{t('goUpload')}</a> : <button type="button" onClick={() => { setRicerca(''); setCategoriaAttiva(''); window.history.replaceState({}, '', '/'); }} className="rounded-xl border border-teal-800 px-5 py-3 font-semibold text-teal-200">{t('reset')}</button>}
             </div>
           ) : (
-            <div className="grid grid-cols-2 gap-2 sm:gap-4 sm:grid-cols-3 lg:grid-cols-4">
+            <div className="rs-product-waterfall columns-2 gap-2 sm:columns-3 sm:gap-4 lg:columns-4">
               {prodottiVisibili.map((p) => (
-                <article key={p.id} style={{ borderColor: rsProductBorderColor(p), borderWidth: "2px" }} className="rs-product-card group overflow-hidden rounded-2xl border bg-slate-900 transition hover:shadow-md"><a href={`/prodotto/${encodeURIComponent(p.id)}`} className="block focus:outline-none focus:ring-2 focus:ring-teal-400">
+                <article key={p.id} style={{ borderColor: rsProductBorderColor(p), borderWidth: "2px" }} className="rs-product-card rs-waterfall-item group mb-2 inline-block w-full break-inside-avoid overflow-hidden rounded-2xl border bg-slate-900 align-top transition hover:shadow-md sm:mb-4"><a href={`/prodotto/${encodeURIComponent(p.id)}`} className="block focus:outline-none focus:ring-2 focus:ring-teal-400">
                   <div className="relative">{p.immagini?.[0] ? <div className="rs-product-media flex aspect-[4/3] w-full items-center justify-center overflow-hidden bg-white p-0"><img src={p.immagini[0]} alt={p.titolo || 'Prodotto'} className="h-full w-full scale-[1.3] object-contain transition-transform duration-300 group-hover:scale-[1.35]" /></div> : <div className="flex aspect-[4/3] items-center justify-center bg-white text-xs text-slate-500">Foto non disponibile</div>}
                   {(() => { const tipo = rsProductType(p); const label = tipo === "local" ? "RS LOCAL" : tipo === "river" ? "RIVERSPEND" : tipo === "company" ? "AZIENDA" : "PRIVATO"; const color = tipo === "local" ? "border-red-300 bg-red-100 text-red-950" : tipo === "river" ? "border-blue-300 bg-blue-100 text-blue-950" : tipo === "company" ? "border-amber-300 bg-amber-100 text-amber-950" : "border-green-300 bg-green-100 text-green-950"; return <span className={`absolute left-2 top-2 z-10 rounded-md border px-2.5 py-1 text-[11px] font-extrabold shadow-sm ${color}`}>{label}</span>; })()} {countryFlag(p.paeseOrigine || p.paeseVenditore) && <span className="absolute right-2 top-2 z-10 flex h-8 w-8 items-center justify-center rounded-full border border-slate-300 bg-white/95 text-lg shadow-sm" title={"Paese: " + (p.paeseOrigine || p.paeseVenditore)} aria-label={"Paese: " + (p.paeseOrigine || p.paeseVenditore)}>{countryFlag(p.paeseOrigine || p.paeseVenditore)}</span>}{p.sponsorizzatoFino && new Date(p.sponsorizzatoFino) > new Date() && <span className="absolute right-2 top-11 rounded-md border border-purple-300 bg-purple-100 px-2 py-1 text-[10px] font-bold text-purple-950">RS Spons</span>}</div>
                   <div className="p-2 sm:p-3">
@@ -1699,6 +1704,11 @@ export default function Home() {
         /* Banner venditore: stessa larghezza delle altre schede nel carosello mobile. */
         #rs-seller-card { box-sizing:border-box; min-width:160px !important; width:160px !important; max-width:160px !important; flex:0 0 160px !important; }
         /* Contrasto leggibile e stato visivo coerente per i pulsanti della Rete. */
+        .rs-product-waterfall { column-fill:balance; }
+        .rs-waterfall-item { animation:rs-product-drop .65s both; }
+        .rs-waterfall-item:nth-child(3n+2) { animation-delay:.08s; }
+        .rs-waterfall-item:nth-child(3n) { animation-delay:.16s; }
+        @keyframes rs-product-drop { from{opacity:0;transform:translateY(-22px)} to{opacity:1;transform:translateY(0)} }
         .rs-product-card button[aria-pressed="true"] { background-color:#facc15 !important; color:#713f12 !important; border-color:#eab308 !important; }
         .rs-product-card button[aria-pressed="false"] { background-color:#facc15 !important; color:#713f12 !important; border-color:#eab308 !important; }
         .rs-feature-card > a, .rs-feature-card > button { display:flex; flex-direction:column; flex:1; min-height:0; }
@@ -2286,21 +2296,28 @@ export default function Home() {
 
         /* RiverSpend River: corrente pubblicitaria da sinistra verso destra. */
         .rs-featured-river { background:linear-gradient(115deg,#c6f7f7,#8ce4e9,#d7ffff,#a3eaf0); color:#082f3b; isolation:isolate; }
-        .rs-featured-river-window { width:100%; overflow:hidden; padding:4px 0 8px; }
-        .rs-featured-river-flow { display:flex; width:max-content; animation:rs-featured-flow 38s linear infinite; will-change:transform; }
-        .rs-featured-river-window:hover .rs-featured-river-flow { animation-play-state:paused; }
-        .rs-featured-river-track { display:flex; flex:0 0 auto; align-items:stretch; gap:14px; padding-right:14px; }
-        .rs-featured-river-card { box-sizing:border-box; width:180px; min-width:180px; border:4px solid #64748b; border-radius:16px; background:#fff; padding:9px; display:flex; flex-direction:column; gap:6px; box-shadow:0 5px 15px #06374725; }
+        .rs-spons-lane { margin-top:9px; padding:8px; border-radius:14px; overflow:hidden; }
+        .rs-spons-lane-rosso { background:linear-gradient(90deg,#ffe4e6,#fff1f2); color:#9f1239; }
+        .rs-spons-lane-giallo { background:linear-gradient(90deg,#fef9c3,#fffbeb); color:#854d0e; }
+        .rs-spons-lane-blu { background:linear-gradient(90deg,#dbeafe,#eff6ff); color:#1e40af; }
+        .rs-featured-river-window { width:100%; overflow-x:auto; overflow-y:hidden; padding:4px 0 8px; scrollbar-width:thin; }
+        .rs-featured-river-flow { display:flex; width:max-content; will-change:transform; }
+        .rs-flow-forward { animation:rs-featured-flow-forward 34s linear infinite; }
+        .rs-flow-reverse { animation:rs-featured-flow-reverse 34s linear infinite; }
+        .rs-featured-river-window:hover .rs-featured-river-flow,.rs-featured-river-window:active .rs-featured-river-flow,.rs-featured-river-window:focus-within .rs-featured-river-flow { animation-play-state:paused; }
+        .rs-featured-river-track { display:flex; flex:0 0 auto; align-items:stretch; gap:10px; padding-right:10px; }
+        .rs-featured-river-card { box-sizing:border-box; width:164px; min-width:164px; border:4px solid #64748b; border-radius:16px; background:#fff; padding:8px; display:flex; flex-direction:column; gap:6px; box-shadow:0 5px 15px #06374725; }
         .rs-sponsored-rosso { border-color:#e11d48; }
         .rs-sponsored-blu { border-color:#2563eb; }
         .rs-sponsored-giallo { border-color:#eab308; }
         .rs-sponsored-album { border-color:#d97706; }
         .rs-featured-river-card b {font-size:12px;color:#103b48}.rs-featured-river-card small{font-size:10px;color:#46616b}
-        .rs-featured-river-placeholder { height:104px; border-radius:10px; background:linear-gradient(140deg,#e4fbff,#90dce9,#f2ffff); display:flex; flex-direction:column; align-items:center;justify-content:center;color:#067e98; }
+        .rs-featured-river-placeholder { height:88px; border-radius:10px; background:linear-gradient(140deg,#e4fbff,#90dce9,#f2ffff); display:flex; flex-direction:column; align-items:center;justify-content:center;color:#067e98; }
         .rs-sponsored-mark { font-size:9px;font-weight:900;letter-spacing:.08em }
         .rs-sponsored-wave { font-size:28px;line-height:1.1 }
         .rs-sponsored-price { color:#082f3b;font-size:17px;font-weight:900; }
-        @keyframes rs-featured-flow { from{transform:translateX(-50%)} to{transform:translateX(0)} }
+        @keyframes rs-featured-flow-forward { from{transform:translateX(-50%)} to{transform:translateX(0)} }
+        @keyframes rs-featured-flow-reverse { from{transform:translateX(0)} to{transform:translateX(-50%)} }
         @media(prefers-reduced-motion:reduce){.rs-featured-river-flow{animation:none;}}
       `}</style>
 
