@@ -224,18 +224,4 @@ create trigger products_enforce_trust_publication
 before insert or update of status,trust_status on public.products
 for each row execute function public.rs_enforce_product_trust_publication();
 
--- Expose only safe, intentionally public fields from an approved product.
-create or replace view public.product_trust_public
-with (security_invoker=true) as
-select p.id as product_id, p.trust_status, p.gtin, p.manufacturer_name,
-       p.manufacturer_country, p.responsible_person_name,
-       p.responsible_person_address, p.batch_number, p.expiry_date,
-       p.safety_summary, p.recycling_instructions, p.warranty_information,
-       p.digital_product_passport_url, c.public_safety_information,
-       c.regulatory_categories, c.destination_markets
-from public.products p
-left join public.product_compliance_profiles c on c.product_id=p.id
-where p.status='published' and p.trust_status='approved';
-
-grant select on public.product_trust_public to anon, authenticated;
 grant select, insert, update, delete on public.product_compliance_profiles, public.product_supply_chain_parties, public.product_supply_chain_events, public.product_compliance_documents, public.product_quality_checks, public.product_safety_recalls, public.product_safety_reports to authenticated;
