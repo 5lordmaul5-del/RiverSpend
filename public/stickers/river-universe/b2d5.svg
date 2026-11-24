@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" role="img" aria-label="B2D5">
+<defs>
+ <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f8fbff"/><stop offset=".45" stop-color="#65d9f4"/><stop offset="1" stop-color="#164c83"/></linearGradient>
+ <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff4a8"/><stop offset=".5" stop-color="#f7bd35"/><stop offset="1" stop-color="#9b5a0b"/></linearGradient>
+ <radialGradient id="space"><stop stop-color="#164b79"/><stop offset="1" stop-color="#07142e"/></radialGradient>
+ <filter id="glow"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<circle cx="120" cy="120" r="108" fill="url(#space)" stroke="url(#gold)" stroke-width="5"/>
+<g stroke-linecap="round" stroke-linejoin="round"><path d="M120 42 171 76 184 132 151 184 89 184 56 132 69 76Z" fill="url(#metal)" stroke="url(#gold)" stroke-width="6"/><path d="M78 98 120 76 162 98 154 145 120 164 86 145Z" fill="#07172d" stroke="#a9efff" stroke-width="4"/><path d="M99 112h12v18H99zM129 112h12v18h-12z" fill="#53f5ff" filter="url(#glow)"/><path d="M104 148h32M60 105l-22-12M180 105l22-12" stroke="url(#gold)" stroke-width="7"/></g>
+<text x="120" y="218" text-anchor="middle" fill="#fff4c7" font-family="Arial,sans-serif" font-size="17" font-weight="900" letter-spacing="1">B2D5</text>
+</svg>
