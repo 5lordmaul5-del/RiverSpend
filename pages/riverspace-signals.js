@@ -340,7 +340,7 @@ export default function RiverSpaceSignals() {
         refreshUnreadCounts(user.id);
         setIncomingToast('Nuovo messaggio ricevuto');
         if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
-          try { new Notification('RiverSignals', { body: 'Hai ricevuto un nuovo messaggio', icon: '/icons/riverspace-signals-app.jpg' }); } catch {}
+          try { new Notification('RiverSignals', { body: 'Hai ricevuto un nuovo messaggio', icon: '/icons/riverspace-signals-192.svg?v=20261124' }); } catch {}
         }
       }).subscribe();
     return () => { supabase.removeChannel(channel); };
@@ -632,12 +632,12 @@ export default function RiverSpaceSignals() {
       <meta name="description" content="Messaggi privati RiverSpaceSignals" />
       <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
       <meta name="theme-color" content="#063b4b" />
-      <link rel="icon" href="/icons/riverspace-signals-app.jpg" type="image/jpeg" />
-      <link rel="apple-touch-icon" href="/icons/riverspace-signals-app.jpg" />
+      <link rel="icon" href="/icons/riverspace-signals-192.svg?v=20261124" type="image/jpeg" />
+      <link rel="apple-touch-icon" href="/icons/riverspace-signals-192.svg?v=20261124" />
     </Head>
     {installPanelOpen && !isInstalled && <div className="fixed inset-0 z-[100] grid place-items-center bg-slate-950/75 p-4" role="dialog" aria-modal="true" aria-labelledby="signals-install-title">
       <section className="w-full max-w-sm rounded-3xl border border-amber-300/70 bg-white p-6 text-center shadow-2xl">
-        <div className="mx-auto mb-3 grid h-20 w-20 place-items-center overflow-hidden rounded-2xl bg-teal-50"><img src="/icons/riverspace-signals-app.jpg" alt="RiverSignals" className="h-full w-full object-contain" /></div>
+        <div className="mx-auto mb-3 grid h-20 w-20 place-items-center overflow-hidden rounded-2xl bg-teal-50"><img src="/icons/riverspace-signals-192.svg?v=20261124" alt="RiverSignals" className="h-full w-full object-contain" /></div>
         <h2 id="signals-install-title" className="text-2xl font-black text-[#073b4c]">Installa RiverSignals</h2>
         <p className="mt-2 text-sm leading-relaxed text-slate-600">Aggiungi Signals al telefono e aprilo dalla sua icona, come una normale app.</p>
         <button type="button" onClick={installApp} className="mt-5 w-full rounded-xl bg-[#087e8b] px-4 py-3 font-extrabold text-white shadow-lg">{installPrompt ? 'INSTALLA RIVERSIGNALS' : 'VERIFICA INSTALLAZIONE'}</button>
@@ -655,7 +655,7 @@ export default function RiverSpaceSignals() {
     <main translate="no" className="flex h-[100dvh] flex-col overflow-hidden bg-[#eaf7f7] text-slate-800">
       <header className="shrink-0 bg-[#073b4c] px-3 py-2 text-white shadow md:px-4 md:py-3">
         <div className="flex min-w-0 items-center gap-2">
-          <img src="/icons/riverspace-signals-app.jpg" alt="RiverSpaceSignals" className="h-8 w-8 shrink-0 rounded-full bg-white p-1 md:h-10 md:w-10" />
+          <img src="/icons/riverspace-signals-192.svg?v=20261124" alt="RiverSpaceSignals" className="h-8 w-8 shrink-0 rounded-full bg-white p-1 md:h-10 md:w-10" />
           <div className="min-w-0"><div className="truncate text-base font-bold tracking-wide md:text-lg">RiverSpaceSignals</div><div className="truncate text-[10px] text-teal-100 md:text-xs">YOUR SPACE · YOUR SIGNAL</div></div>
         </div>
         <nav className="mt-2 flex items-center gap-2 overflow-x-auto whitespace-nowrap pb-0.5 md:justify-end"><button type="button" onClick={() => setArea51Open(true)} className="shrink-0 rounded-full border-2 border-amber-300 bg-[#263b2a] px-3 py-1.5 text-xs font-black text-amber-100 shadow-[0_0_12px_#d4b34f44]">🚨 AREA51 · TOP SECRET</button><button type="button" onClick={() => { setFieldToolsTab('nato'); setFieldToolsOpen(true); }} className="shrink-0 rounded-full bg-[#dce5d3] px-3 py-1.5 text-xs font-black text-[#263b2a]">🔠 Morse · Walkie</button><Link href="/riverworld-live" className="shrink-0 rounded-full bg-emerald-300 px-3 py-1.5 text-xs font-bold text-slate-900 hover:bg-emerald-200">🌍 Mondo in diretta</Link><Link href="/riversignals-universe" className="shrink-0 rounded-full border border-amber-300/70 bg-white/10 px-3 py-1.5 text-xs font-bold text-amber-100 hover:bg-white/20">✨ Esplora Signals</Link><button type="button" onClick={installApp} className="shrink-0 rounded-full bg-amber-300 px-3 py-1.5 text-xs font-bold text-slate-900 hover:bg-amber-200">📲 Installa Signals</button><Link href="/" className="shrink-0 rounded-full border border-white/40 px-3 py-1.5 text-xs hover:bg-white/10">RiverSpendShop</Link><Link href="/riverspend-social-network" className="shrink-0 rounded-full border border-white/40 px-3 py-1.5 text-xs hover:bg-white/10">Comunità</Link></nav>
