@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" role="img" aria-label="A2B2">
+<defs>
+ <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f8fbff"/><stop offset=".45" stop-color="#65d9f4"/><stop offset="1" stop-color="#164c83"/></linearGradient>
+ <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff4a8"/><stop offset=".5" stop-color="#f7bd35"/><stop offset="1" stop-color="#9b5a0b"/></linearGradient>
+ <radialGradient id="space"><stop stop-color="#164b79"/><stop offset="1" stop-color="#07142e"/></radialGradient>
+ <filter id="glow"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<circle cx="120" cy="120" r="108" fill="url(#space)" stroke="url(#gold)" stroke-width="5"/>
+<g stroke-linecap="round" stroke-linejoin="round"><path d="M65 85 86 51 154 51 175 85 166 171 145 190 95 190 74 171Z" fill="url(#metal)" stroke="#dffaff" stroke-width="5"/><path d="M77 100Q120 73 163 100v38q-43 30-86 0Z" fill="#08182d" stroke="url(#gold)" stroke-width="5"/><circle cx="101" cy="119" r="10" fill="#38e8ff" filter="url(#glow)"/><circle cx="139" cy="119" r="10" fill="#38e8ff" filter="url(#glow)"/><path d="M105 151q15 12 30 0M89 67l-12-22M151 67l12-22" stroke="url(#gold)" stroke-width="7"/></g>
+<text x="120" y="218" text-anchor="middle" fill="#fff4c7" font-family="Arial,sans-serif" font-size="17" font-weight="900" letter-spacing="1">A2B2</text>
+</svg>

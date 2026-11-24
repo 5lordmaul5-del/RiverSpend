@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" role="img" aria-label="ALIEN">
+<defs>
+ <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f8fbff"/><stop offset=".45" stop-color="#65d9f4"/><stop offset="1" stop-color="#164c83"/></linearGradient>
+ <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff4a8"/><stop offset=".5" stop-color="#f7bd35"/><stop offset="1" stop-color="#9b5a0b"/></linearGradient>
+ <radialGradient id="space"><stop stop-color="#164b79"/><stop offset="1" stop-color="#07142e"/></radialGradient>
+ <filter id="glow"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<circle cx="120" cy="120" r="108" fill="url(#space)" stroke="url(#gold)" stroke-width="5"/>
+<g stroke-linecap="round" stroke-linejoin="round"><path d="M120 47Q66 47 65 112q-2 67 55 81 57-14 55-81-1-65-55-65Z" fill="#8bdc63" stroke="#efffc7" stroke-width="5"/><ellipse cx="94" cy="117" rx="17" ry="26" fill="#07172d"/><ellipse cx="146" cy="117" rx="17" ry="26" fill="#07172d"/><ellipse cx="98" cy="110" rx="6" ry="10" fill="#6ff4ff"/><ellipse cx="142" cy="110" rx="6" ry="10" fill="#6ff4ff"/><path d="M103 155q17 13 34 0M92 56 76 35M148 56l16-21" stroke="url(#gold)" stroke-width="7"/></g>
+<text x="120" y="218" text-anchor="middle" fill="#fff4c7" font-family="Arial,sans-serif" font-size="17" font-weight="900" letter-spacing="1">ALIEN</text>
+</svg>

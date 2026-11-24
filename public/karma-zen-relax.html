@@ -101,6 +101,12 @@ function addBell(frequency,when,token){
  gain.gain.exponentialRampToValueAtTime(0.0001,when+4.2);
  osc.connect(gain);gain.connect(master);osc.start(when);osc.stop(when+4.3);
  voices.push(osc,gain);
+ // Libera i nodi terminati per evitare accumuli durante ascolti lunghi.
+ osc.addEventListener('ended',()=>{
+  voices=voices.filter(node=>node!==osc&&node!==gain);
+  try{osc.disconnect()}catch{}
+  try{gain.disconnect()}catch{}
+ },{once:true});
 }
 function scheduleBells(index,token){
  if(!playing||token!==generation||!context)return;

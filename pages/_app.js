@@ -20,7 +20,7 @@ const APP_MANIFESTS = [
 export default function App({ Component, pageProps }) {
   const router = useRouter();
   const selectedApp = APP_MANIFESTS.find((app) => router.pathname === app.match || router.pathname.startsWith(app.match + '/'));
-  const manifestHref = selectedApp ? selectedApp.href : '/manifest-shop.json?v=5';
+  const manifestHref = selectedApp ? selectedApp.href : '/manifest-shop.json?v=6';
   const themeColor = selectedApp ? selectedApp.color : '#06b6d4';
 
   useEffect(() => {
@@ -31,13 +31,59 @@ export default function App({ Component, pageProps }) {
       window.dispatchEvent(new Event('riverspend:install-ready'));
     };
     window.addEventListener('beforeinstallprompt', captureInstall);
-    // Keep the existing notification service worker active and make the site install-friendly.
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch((error) => {
-        console.warn('RiverSpend service worker registration failed:', error);
-      });
+
+    if (!('serviceWorker' in navigator)) {
+      return () => window.removeEventListener('beforeinstallprompt', captureInstall);
     }
-    return () => window.removeEventListener('beforeinstallprompt', captureInstall);
+
+    let disposed = false;
+    let refreshing = false;
+    let registration;
+
+    // Reload exactly once when an already-installed PWA is taken over by the new worker.
+    const handleControllerChange = () => {
+      if (refreshing) return;
+      refreshing = true;
+      window.location.reload();
+    };
+    const hadController = Boolean(navigator.serviceWorker.controller);
+    if (hadController) {
+      navigator.serviceWorker.addEventListener('controllerchange', handleControllerChange);
+    }
+
+    const checkForUpdate = async () => {
+      try {
+        if (registration && document.visibilityState === 'visible') {
+          await registration.update();
+        }
+      } catch (error) {
+        console.warn('RiverSpend PWA update check failed:', error);
+      }
+    };
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') checkForUpdate();
+    };
+
+    navigator.serviceWorker.register('/sw.js', {
+      scope: '/',
+      updateViaCache: 'none',
+    }).then((value) => {
+      registration = value;
+      if (!disposed) checkForUpdate();
+    }).catch((error) => {
+      console.warn('RiverSpend service worker registration failed:', error);
+    });
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      disposed = true;
+      window.removeEventListener('beforeinstallprompt', captureInstall);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      if (hadController) {
+        navigator.serviceWorker.removeEventListener('controllerchange', handleControllerChange);
+      }
+    };
   }, []);
 
   return (
