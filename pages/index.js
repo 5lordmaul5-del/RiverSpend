@@ -1481,10 +1481,10 @@ export default function Home() {
                 <div className="rs-featured-river-flow">
                   {[0,1].map(copy => <div className="rs-featured-river-track" key={copy} aria-hidden={copy === 1 ? 'true' : undefined}>
                     {[
-                      { color: 'rosso', label: 'RSSPONS ROSSO', detail: 'Visibilità essenziale', price: '€ 9,90' },
-                      { color: 'blu', label: 'RSSPONS BLU', detail: 'Maggiore evidenza', price: '€ 19,90' },
-                      { color: 'giallo', label: 'RSSPONS GIALLO', detail: 'Posizionamento premium', price: '€ 39,90' },
-                      { color: 'album', label: 'RSSPONS ALBUM', detail: 'Promozione estesa', price: '€ 69,90' }
+                      { color: 'rosso', label: 'RSSPONS ROSSO', detail: 'Visibilità essenziale', price: '€ 2,99' },
+                      { color: 'blu', label: 'RSSPONS BLU', detail: 'Maggiore evidenza', price: '€ 4,99' },
+                      { color: 'giallo', label: 'RSSPONS GIALLO', detail: 'Posizionamento premium', price: '€ 9,99' },
+                      { color: 'album', label: 'RSSPONS ALBUM', detail: 'Promozione estesa', price: '€ 14,99' }
                     ].map((slot,i) => <article key={slot.color} className={'rs-featured-river-card rs-sponsored-' + slot.color}>
                       <div className="rs-featured-river-placeholder"><span className="rs-sponsored-mark">SPONSORIZZATO</span><span className="rs-sponsored-wave">🌊</span></div>
                       <b>{slot.label}</b><small>{slot.detail}</small><strong className="rs-sponsored-price">{slot.price}</strong>
