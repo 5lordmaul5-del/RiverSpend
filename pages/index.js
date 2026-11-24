@@ -981,7 +981,7 @@ export default function Home() {
       )}
 
       <div>
-        <header className="rs-header sticky top-0 z-30 border-b border-amber-200 bg-white/95 px-3 py-2 shadow-sm backdrop-blur">
+        <div className="rs-mini-header sticky top-0 z-40 border-b border-amber-200 bg-white/95 px-3 py-2 shadow-sm backdrop-blur">
           <div className="mx-auto max-w-6xl">
             <div className="relative grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2">
               <div className="flex items-center gap-1">
@@ -1004,6 +1004,10 @@ export default function Home() {
                 <a href="/profilo" aria-label={t('profile')} className="flex h-10 w-8 items-center justify-center text-2xl hover:text-teal-700">♙</a>
               </div>
             </div>
+          </div>
+        </div>
+        <header className="rs-header border-b border-amber-200 bg-white/95 px-3 py-2 shadow-sm">
+          <div className="mx-auto max-w-6xl">
             <div className="mx-auto mt-2 flex max-w-[380px] items-center justify-center gap-2 rounded-full border border-blue-200 bg-gradient-to-r from-blue-50 via-white to-sky-50 px-3 py-1 shadow-[0_2px_8px_rgba(3,105,161,.10)]">
               <span className="shrink-0 text-xs font-black tracking-tight text-blue-900">Hey River</span>
               <button type="button" onClick={avviaRiverVoice} aria-label="Chiedi a River AI con la voce" title="Tocca per parlare con Hey River" className={`relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-cyan-300 bg-gradient-to-br from-blue-950 via-blue-800 to-cyan-700 text-cyan-100 shadow-[0_0_12px_rgba(2,132,199,.4)] transition ${riverVoiceActive ? 'scale-110 shadow-[0_0_20px_rgba(14,165,233,.9)]' : 'hover:scale-105'}`}>
