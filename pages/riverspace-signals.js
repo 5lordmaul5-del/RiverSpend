@@ -8,14 +8,34 @@ import { ensureEnigmaDevice, encryptEnigmaText, decryptEnigmaText, encryptEnigma
 
 
 const RIVERSPEND_STICKERS = [
-  { id: 'a1a1', name: 'A1A1', src: '/stickers/river-universe/a1a1.svg' },
-  { id: 'a2b2', name: 'A2B2', src: '/stickers/river-universe/a2b2.svg' },
-  { id: 'b2d5', name: 'B2D5', src: '/stickers/river-universe/b2d5.svg' },
-  { id: 'rocket', name: 'Razzo', src: '/stickers/river-universe/rocket.svg' },
-  { id: 'ufo', name: 'UFO', src: '/stickers/river-universe/ufo.svg' },
-  { id: 'planet', name: 'Pianeta', src: '/stickers/river-universe/planet.svg' },
-  { id: 'alien', name: 'Alieno', src: '/stickers/river-universe/alien.svg' },
-  { id: 'galaxy', name: 'Galassia', src: '/stickers/river-universe/galaxy.svg' }
+  { id: 'a1a1', name: 'A1A1', category: 'droid', src: '/stickers/river-universe/a1a1.svg' },
+  { id: 'a2b2', name: 'A2B2', category: 'droid', src: '/stickers/river-universe/a2b2.svg' },
+  { id: 'b2d5', name: 'B2D5', category: 'droid', src: '/stickers/river-universe/b2d5.svg' },
+  { id: 'rocket', name: 'Razzo', category: 'space', src: '/stickers/river-universe/rocket.svg' },
+  { id: 'ufo', name: 'UFO', category: 'space', src: '/stickers/river-universe/ufo.svg' },
+  { id: 'planet', name: 'Pianeta', category: 'space', src: '/stickers/river-universe/planet.svg' },
+  { id: 'alien', name: 'Alieno', category: 'space', src: '/stickers/river-universe/alien.svg' },
+  { id: 'galaxy', name: 'Galassia', category: 'space', src: '/stickers/river-universe/galaxy.svg' },
+  { id: 'ciao', name: 'Ciao', category: 'chat', src: '/stickers/river-universe/ciao.svg' },
+  { id: 'ciao-ciao', name: 'Ciao ciao', category: 'chat', src: '/stickers/river-universe/ciao-ciao.svg' },
+  { id: 'ok', name: 'OK', category: 'chat', src: '/stickers/river-universe/ok.svg' },
+  { id: 'va-bene', name: 'Va bene', category: 'chat', src: '/stickers/river-universe/va-bene.svg' },
+  { id: 'bella', name: 'Bella!', category: 'chat', src: '/stickers/river-universe/bella.svg' },
+  { id: 'grande', name: 'Grande!', category: 'chat', src: '/stickers/river-universe/grande.svg' },
+  { id: 'cool', name: 'Cool', category: 'chat', src: '/stickers/river-universe/cool.svg' },
+  { id: 'yes', name: 'Yes!', category: 'chat', src: '/stickers/river-universe/yes.svg' },
+  { id: 'no', name: 'No', category: 'chat', src: '/stickers/river-universe/no.svg' },
+  { id: 'si', name: 'Sì', category: 'chat', src: '/stickers/river-universe/si.svg' },
+  { id: 'grazie', name: 'Grazie', category: 'chat', src: '/stickers/river-universe/grazie.svg' },
+  { id: 'prego', name: 'Prego', category: 'chat', src: '/stickers/river-universe/prego.svg' },
+  { id: 'perfetto', name: 'Perfetto', category: 'chat', src: '/stickers/river-universe/perfetto.svg' },
+  { id: 'wow', name: 'Wow!', category: 'chat', src: '/stickers/river-universe/wow.svg' },
+  { id: 'lol', name: 'LOL', category: 'chat', src: '/stickers/river-universe/lol.svg' },
+  { id: 'arrivo', name: 'Arrivo', category: 'chat', src: '/stickers/river-universe/arrivo.svg' },
+  { id: 'buongiorno', name: 'Buongiorno', category: 'chat', src: '/stickers/river-universe/buongiorno.svg' },
+  { id: 'buonanotte', name: 'Buonanotte', category: 'chat', src: '/stickers/river-universe/buonanotte.svg' },
+  { id: 'scusa', name: 'Scusa', category: 'chat', src: '/stickers/river-universe/scusa.svg' },
+  { id: 'forza', name: 'Forza!', category: 'chat', src: '/stickers/river-universe/forza.svg' }
 ];
 
 export default function RiverSpaceSignals() {
@@ -160,7 +180,8 @@ export default function RiverSpaceSignals() {
         try {
           const peerId = message.sender_id === user?.id ? otherId : message.sender_id;
           const peerDeviceId = message.sender_id === user?.id ? message.metadata?.enigma_recipient_device_id : message.metadata?.enigma_sender_device_id;
-          row.displayBody = await decryptEnigmaText(supabase, user.id, conversationId, peerId, peerDeviceId, message.body);
+          const decrypted = await decryptEnigmaText(supabase, user.id, conversationId, peerId, peerDeviceId, message.body);
+          row.displayBody = message.message_type === 'sticker' ? 'rs-sticker:' + decrypted : decrypted;
         } catch { row.displayBody = '🔒 Messaggio ENIGMA: impossibile decifrare su questo dispositivo.'; }
       }
       if (message.attachment_path) {
@@ -852,7 +873,7 @@ export default function RiverSpaceSignals() {
                 <button type="button" onClick={() => startMediaRecording("audio")} className="rounded-xl p-3 text-left text-sm hover:bg-teal-50">🎙️ Registra vocale</button>
                 <button type="button" onClick={() => startMediaRecording("video")} className="rounded-xl p-3 text-left text-sm hover:bg-teal-50">🎥 Registra video</button>
               </div>}
-              {stickerOpen && <div className="absolute bottom-16 left-2 z-20 grid w-[min(340px,calc(100vw-24px))] grid-cols-3 gap-2 rounded-2xl border border-amber-200 bg-[#07172d] p-3 shadow-2xl"><div className="col-span-3 flex items-center justify-between text-sm font-bold text-amber-100"><span>🌌 RiverSpend Sticker Universe</span><button type="button" onClick={() => setStickerOpen(false)} aria-label="Chiudi sticker" className="rounded-full px-2 text-lg">✕</button></div>{RIVERSPEND_STICKERS.map(sticker => <button key={sticker.id} type="button" onClick={() => sendSticker(sticker.id)} aria-label={'Invia sticker ' + sticker.name} className="rounded-xl border border-cyan-900 bg-[#102d4b] p-1 transition hover:border-amber-300 hover:bg-[#17446a]"><img src={sticker.src} alt={sticker.name} loading="lazy" className="mx-auto aspect-square w-full object-contain" /><span className="block pb-1 text-center text-[11px] font-semibold text-amber-100">{sticker.name}</span></button>)}</div>}
+              <div className="absolute bottom-16 left-2 z-20 max-h-[min(70dvh,560px)] w-[min(360px,calc(100vw-24px))] overflow-y-auto rounded-2xl border border-amber-200 bg-[#07172d] p-3 shadow-2xl"><div className="sticky top-0 z-10 flex items-center justify-between bg-[#07172d] pb-2 text-sm font-bold text-amber-100"><span>🌌 Sticker Universe · 28 adesivi</span><button type="button" onClick={() => setStickerOpen(false)} aria-label="Chiudi sticker" className="rounded-full px-2 text-lg">✕</button></div><div className="grid grid-cols-3 gap-2">{RIVERSPEND_STICKERS.map(sticker => <button key={sticker.id} type="button" onClick={() => sendSticker(sticker.id)} aria-label={'Invia sticker ' + sticker.name} className="rounded-xl border border-cyan-900 bg-[#102d4b] p-1 transition hover:border-amber-300 hover:bg-[#17446a]"><img src={sticker.src} alt={sticker.name} loading="lazy" className="mx-auto aspect-square w-full object-contain" /><span className="block pb-1 text-center text-[11px] font-semibold text-amber-100">{sticker.name}</span></button>)}</div></div>}
               {emojiOpen && <div className="absolute bottom-16 left-3 z-10 grid max-h-64 grid-cols-5 gap-1 overflow-y-auto rounded-2xl border bg-white p-3 shadow-xl">{['😀','😃','😄','😁','😆','😅','😂','🤣','🥹','😊','😇','🙂','😉','😍','🥰','😘','😋','😎','🤩','🥳','🤗','🤔','🙄','😴','😭','😡','🤯','😱','😌','🤝','🙏','👏','👍','👎','👌','✌️','🤞','💪','👋','❤️','🧡','💛','💚','💙','💜','🖤','🤍','💔','💕','💞','💖','💘','💝','🔥','✨','⭐','🌟','🎉','🎊','🎁','🌈','☀️','🌙','🌊','🪷','🌺','🌸','🌻','🍀','🐠','🐬','🦋','🚀','💎','💬','📍','🎵'].map(x => <button key={x} type="button" onClick={() => addEmoji(x)} className="rounded-lg p-1.5 text-3xl hover:bg-slate-100">{x}</button>)}</div>}
               {recording && <button type="button" onClick={stopMediaRecording} className="rounded-lg bg-red-100 px-2 py-2 text-xs font-semibold text-red-800">⏹ Ferma {recording === 'video' ? 'video' : 'vocale'}</button>}
               {attachment && <span className="max-w-28 truncate rounded-lg bg-teal-50 px-2 py-2 text-xs text-teal-900">{attachment.name} <button type="button" onClick={() => setAttachment(null)} aria-label="Rimuovi allegato">×</button></span>}
