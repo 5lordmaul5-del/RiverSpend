@@ -23,12 +23,58 @@ export default function App({ Component, pageProps }) {
   const themeColor = selectedApp ? selectedApp.color : '#06b6d4';
 
   useEffect(() => {
-    // Keep the existing notification service worker active and make the site install-friendly.
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch((error) => {
-        console.warn('RiverSpend service worker registration failed:', error);
-      });
+    if (!('serviceWorker' in navigator)) return undefined;
+
+    let disposed = false;
+    let refreshing = false;
+    let registration;
+
+    // Reload exactly once when an already-installed PWA takes control from a newer worker.
+    const handleControllerChange = () => {
+      if (refreshing) return;
+      refreshing = true;
+      window.location.reload();
+    };
+
+    // Do not reload on the very first installation; only handle an update to an existing app.
+    const hadController = Boolean(navigator.serviceWorker.controller);
+    if (hadController) {
+      navigator.serviceWorker.addEventListener('controllerchange', handleControllerChange);
     }
+
+    const checkForUpdate = async () => {
+      try {
+        if (registration && document.visibilityState === 'visible') {
+          await registration.update();
+        }
+      } catch (error) {
+        console.warn('RiverSpend PWA update check failed:', error);
+      }
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') checkForUpdate();
+    };
+
+    navigator.serviceWorker.register('/sw.js', {
+      scope: '/',
+      updateViaCache: 'none',
+    }).then((value) => {
+      registration = value;
+      if (!disposed) checkForUpdate();
+    }).catch((error) => {
+      console.warn('RiverSpend service worker registration failed:', error);
+    });
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      disposed = true;
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      if (hadController) {
+        navigator.serviceWorker.removeEventListener('controllerchange', handleControllerChange);
+      }
+    };
   }, []);
 
   return (
