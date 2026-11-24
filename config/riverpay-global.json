@@ -1,0 +1,41 @@
+{
+  "product": "RiverPay Global",
+  "version": "1.0.0",
+  "mode": "design_only",
+  "realPaymentsEnabled": false,
+  "sellerPayoutsEnabled": false,
+  "carrierPayoutsEnabled": false,
+  "riverSpendSettlementsEnabled": false,
+  "providerSelection": {
+    "status": "pending_due_diligence",
+    "primaryCandidate": "stripe_connect",
+    "alternativeCandidate": "adyen_for_platforms",
+    "singleSellerFallbacks": ["paypal", "sumup"],
+    "rule": "Do not enable a provider until merchant eligibility, platform terms, supported countries, currencies, KYC, fees, chargebacks, settlement and payout capabilities have been verified."
+  },
+  "fundsFlow": {
+    "customerPayment": "authorized_provider_checkout",
+    "ledger": "server_side_double_entry",
+    "sellerSettlement": "after_fulfilment_and_eligible_release",
+    "carrierSettlement": "after_delivery_confirmation_and_invoice_or_contract_validation",
+    "platformSettlement": "net_platform_fees_and_commissions_to_verified_business_account",
+    "refundsAndDisputes": "provider_managed_with_internal_reconciliation"
+  },
+  "payoutSchedule": {
+    "seller": "provider_supported_schedule_after_release_conditions",
+    "carrier": "contractual_schedule_after_delivery_validation",
+    "riverSpend": "weekly_or_monthly_sweep_if_supported_by_provider",
+    "note": "No payout timing is guaranteed until the selected provider contract and account configuration confirm it."
+  },
+  "controls": {
+    "providerWebhookSignatureRequired": true,
+    "idempotencyRequired": true,
+    "immutableLedgerEvents": true,
+    "separatePaymentAndPayoutStates": true,
+    "kycAndBusinessVerificationRequired": true,
+    "noCardPanOrCvvStorage": true,
+    "noClientSideProviderSecrets": true,
+    "manualApprovalForLiveActivation": true
+  },
+  "supportedCurrencies": "Only currencies enabled for the selected merchant account, country, payment method and payout destination."
+}
