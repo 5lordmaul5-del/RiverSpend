@@ -1491,9 +1491,9 @@ export default function Home() {
                 <a href="/rs-spons/campagna" className="rounded-full border-2 border-amber-500 bg-yellow-300 px-3 py-2 text-xs font-black text-slate-950 shadow-sm hover:bg-yellow-200">Sponsorizza un prodotto →</a>
               </div>
               {[
-                { id:'rosso', label:'ROSSO · €2,99', direction:'reverse', demos:[{id:'demo-coffee',color:'rosso',title:'Caffè artigianale',detail:'Selezione torrefazione',price:'€ 12,90',image:'☕',sponsor:'Demo Caffè'}] },
+                { id:'rosso', label:'ROSSO · €2,99', direction:'forward', demos:[{id:'demo-coffee',color:'rosso',title:'Caffè artigianale',detail:'Selezione torrefazione',price:'€ 12,90',image:'☕',sponsor:'Demo Caffè'}] },
                 { id:'giallo', label:'GIALLO · €9,99', direction:'forward', demos:[{id:'demo-watch',color:'giallo',title:'Orologio elegante',detail:'Accessori e stile',price:'€ 49,90',image:'⌚',sponsor:'Demo Time'},{id:'demo-home',color:'album',title:'Casa & Design',detail:'Idee per la casa',price:'€ 34,90',image:'🪴',sponsor:'Demo Living'}] },
-                { id:'blu', label:'BLU · €4,99', direction:'reverse', demos:[{id:'demo-bike',color:'blu',title:'Bicicletta urbana',detail:'Mobilità e tempo libero',price:'€ 189,00',image:'🚲',sponsor:'Demo Sport'}] },
+                { id:'blu', label:'BLU · €4,99', direction:'forward', demos:[{id:'demo-bike',color:'blu',title:'Bicicletta urbana',detail:'Mobilità e tempo libero',price:'€ 189,00',image:'🚲',sponsor:'Demo Sport'}] },
                 { id:'verde', label:'VERDE · NUOVA FASCIA', direction:'forward', demos:[{id:'demo-plant',color:'verde',title:'Orto & Giardino',detail:'Prodotti green e sostenibili',price:'€ 24,90',image:'🌱',sponsor:'Demo Green'}] }
               ].map(lane => {
                 const laneAds = [...lane.demos, ...rssponsUserAds.filter(ad => ad.color === lane.id || (lane.id === 'giallo' && ad.color === 'album'))];
@@ -2320,11 +2320,14 @@ export default function Home() {
         .rs-spons-lane { margin-top:9px; padding:8px; border-radius:14px; overflow:hidden; }
         .rs-spons-lane-rosso { background:linear-gradient(90deg,#ffe4e6,#fff1f2); color:#9f1239; }
         .rs-spons-lane-giallo { background:linear-gradient(90deg,#fef9c3,#fffbeb); color:#854d0e; }
-        .rs-spons-lane-blu { background:linear-gradient(90deg,#dbeafe,#eff6ff); color:#1e40af; }\n        .rs-spons-lane-verde { background:linear-gradient(90deg,#dcfce7,#f0fdf4); color:#166534; }
+        .rs-spons-lane-blu { background:linear-gradient(90deg,#dbeafe,#eff6ff); color:#1e40af; }
+        .rs-spons-lane-verde { background:linear-gradient(90deg,#dcfce7,#f0fdf4); color:#166534; }
         .rs-featured-river-window { width:100%; overflow:hidden; padding:4px 0 8px; touch-action:pan-y; }
         .rs-featured-river-flow { display:flex; width:max-content; will-change:transform; }
         .rs-flow-forward { animation:rs-featured-flow-forward 5s linear infinite; }
         .rs-flow-reverse { animation:rs-featured-flow-reverse 5s linear infinite; }
+        #rs-featured-river .rs-featured-river-flow { display:flex !important; width:max-content !important; animation:rs-featured-flow-forward 4s linear infinite !important; animation-play-state:running !important; }
+        #rs-featured-river .rs-spons-lane-rosso .rs-featured-river-flow, #rs-featured-river .rs-spons-lane-giallo .rs-featured-river-flow, #rs-featured-river .rs-spons-lane-blu .rs-featured-river-flow, #rs-featured-river .rs-spons-lane-verde .rs-featured-river-flow { animation:rs-featured-flow-forward 4s linear infinite !important; }
         
         .rs-featured-river-track { display:flex; flex:0 0 auto; align-items:stretch; gap:10px; padding-right:10px; }
         .rs-featured-river-card { box-sizing:border-box; width:164px; min-width:164px; border:4px solid #64748b; border-radius:16px; background:#fff; padding:8px; display:flex; flex-direction:column; gap:6px; box-shadow:0 5px 15px #06374725; }
