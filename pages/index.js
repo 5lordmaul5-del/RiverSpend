@@ -1475,7 +1475,7 @@ export default function Home() {
             <section id="rs-featured-river" aria-label="RiverSpend River prodotti in evidenza" className="rs-featured-river my-5 w-full overflow-hidden rounded-2xl border border-cyan-200/70 p-3 shadow-lg">
               <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
                 <div><p className="text-xs font-black uppercase tracking-widest text-cyan-800">🌊 RiverSpend River</p><h2 className="text-lg font-black text-slate-900">Prodotti in evidenza</h2><p className="text-xs text-slate-700">Il fiume promozionale: inserzioni sponsorizzate in movimento.</p></div>
-                <a href="/vendi" className="rounded-full bg-slate-900 px-3 py-2 text-xs font-bold text-white">Promuovi un prodotto →</a>
+                <a href="/rs-spons/campagna" className="rounded-full bg-slate-900 px-3 py-2 text-xs font-bold text-white">Sponsorizza un prodotto →</a>
               </div>
               <div className="rs-featured-river-window" aria-label="Flusso continuo dei pacchetti RSSpons">
                 <div className="rs-featured-river-flow">
