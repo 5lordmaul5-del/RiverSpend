@@ -1,3 +1,30 @@
+const RIVERSPEND_WORKER_VERSION = '2026-11-24-unified-pwa-1';
+
+// Activate the new worker immediately instead of waiting for every old tab to close.
+self.addEventListener('install', (event) => {
+  event.waitUntil(self.skipWaiting());
+});
+
+// Take control of open browser/PWA windows after an update.
+self.addEventListener('activate', (event) => {
+  event.waitUntil((async () => {
+    await self.clients.claim();
+    const windows = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+    for (const client of windows) {
+      client.postMessage({
+        type: 'RIVERSPEND_APP_UPDATED',
+        version: RIVERSPEND_WORKER_VERSION,
+      });
+    }
+  })());
+});
+
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'RIVERSPEND_SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
+
 self.addEventListener('push', (event) => {
   let data = {};
   try { data = event.data ? event.data.json() : {}; } catch (_) {
