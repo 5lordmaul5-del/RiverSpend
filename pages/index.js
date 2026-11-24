@@ -1484,16 +1484,17 @@ export default function Home() {
 
           </div>
 
-            {/* RSSpons: three independent horizontal rivers, separated from the vertical shop catalog. */}
-            <section id="rs-featured-river" aria-label="RSSpons: tre fiumi pubblicitari orizzontali" className="rs-featured-river my-5 w-full overflow-hidden rounded-2xl border border-cyan-200/70 p-3 shadow-lg">
+            {/* RSSpons: quattro corsie pubblicitarie indipendenti. */}
+            <section id="rs-featured-river" aria-label="RSSpons: quattro fiumi pubblicitari" className="rs-featured-river my-5 w-full overflow-hidden rounded-2xl border border-cyan-200/70 p-3 shadow-lg">
               <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-                <div><p className="text-xs font-black uppercase tracking-widest text-cyan-800">🌊 RSSpons · Fiumi pubblicitari</p><h2 className="text-lg font-black text-slate-900">Tre correnti, tre colori</h2><p className="text-xs text-slate-700">Ogni pacchetto scorre nella propria corsia orizzontale.</p></div>
+                <div><p className="text-xs font-black uppercase tracking-widest text-cyan-800">🌊 RSSpons · Fiumi pubblicitari</p><h2 className="text-lg font-black text-slate-900">Quattro correnti, quattro colori</h2><p className="text-xs text-slate-700">Corsie indipendenti, più veloci, con direzioni alternate.</p></div>
                 <a href="/rs-spons/campagna" className="rounded-full bg-slate-900 px-3 py-2 text-xs font-bold text-white">Sponsorizza un prodotto →</a>
               </div>
               {[
                 { id:'rosso', label:'ROSSO · €2,99', direction:'reverse', demos:[{id:'demo-coffee',color:'rosso',title:'Caffè artigianale',detail:'Selezione torrefazione',price:'€ 12,90',image:'☕',sponsor:'Demo Caffè'}] },
                 { id:'giallo', label:'GIALLO · €9,99', direction:'forward', demos:[{id:'demo-watch',color:'giallo',title:'Orologio elegante',detail:'Accessori e stile',price:'€ 49,90',image:'⌚',sponsor:'Demo Time'},{id:'demo-home',color:'album',title:'Casa & Design',detail:'Idee per la casa',price:'€ 34,90',image:'🪴',sponsor:'Demo Living'}] },
-                { id:'blu', label:'BLU · €4,99', direction:'forward', demos:[{id:'demo-bike',color:'blu',title:'Bicicletta urbana',detail:'Mobilità e tempo libero',price:'€ 189,00',image:'🚲',sponsor:'Demo Sport'}] }
+                { id:'blu', label:'BLU · €4,99', direction:'reverse', demos:[{id:'demo-bike',color:'blu',title:'Bicicletta urbana',detail:'Mobilità e tempo libero',price:'€ 189,00',image:'🚲',sponsor:'Demo Sport'}] },
+                { id:'verde', label:'VERDE · NUOVA FASCIA', direction:'forward', demos:[{id:'demo-plant',color:'verde',title:'Orto & Giardino',detail:'Prodotti green e sostenibili',price:'€ 24,90',image:'🌱',sponsor:'Demo Green'}] }
               ].map(lane => {
                 const laneAds = [...lane.demos, ...rssponsUserAds.filter(ad => ad.color === lane.id || (lane.id === 'giallo' && ad.color === 'album'))];
                 const cards = laneAds.length ? laneAds : lane.demos;
@@ -1513,8 +1514,6 @@ export default function Home() {
               })}
               <p className="mt-2 text-[10px] text-slate-600">Le schede DEMO e le tue prove sono anteprime locali: non sono ordini, pagamenti o campagne pubblicate.</p>
             </section>
-
-
 
         <section className="mx-auto max-w-6xl px-2 py-4 sm:px-4">
           <div id="rs-products-section" className="mb-5 scroll-mt-40 flex items-end justify-between gap-3">
@@ -2299,17 +2298,17 @@ export default function Home() {
         .rs-spons-lane { margin-top:9px; padding:8px; border-radius:14px; overflow:hidden; }
         .rs-spons-lane-rosso { background:linear-gradient(90deg,#ffe4e6,#fff1f2); color:#9f1239; }
         .rs-spons-lane-giallo { background:linear-gradient(90deg,#fef9c3,#fffbeb); color:#854d0e; }
-        .rs-spons-lane-blu { background:linear-gradient(90deg,#dbeafe,#eff6ff); color:#1e40af; }
+        .rs-spons-lane-blu { background:linear-gradient(90deg,#dbeafe,#eff6ff); color:#1e40af; }\n        .rs-spons-lane-verde { background:linear-gradient(90deg,#dcfce7,#f0fdf4); color:#166534; }
         .rs-featured-river-window { width:100%; overflow-x:auto; overflow-y:hidden; padding:4px 0 8px; scrollbar-width:thin; }
         .rs-featured-river-flow { display:flex; width:max-content; will-change:transform; }
-        .rs-flow-forward { animation:rs-featured-flow-forward 34s linear infinite; }
-        .rs-flow-reverse { animation:rs-featured-flow-reverse 34s linear infinite; }
+        .rs-flow-forward { animation:rs-featured-flow-forward 19s linear infinite; }
+        .rs-flow-reverse { animation:rs-featured-flow-reverse 19s linear infinite; }
         .rs-featured-river-window:hover .rs-featured-river-flow,.rs-featured-river-window:active .rs-featured-river-flow,.rs-featured-river-window:focus-within .rs-featured-river-flow { animation-play-state:paused; }
         .rs-featured-river-track { display:flex; flex:0 0 auto; align-items:stretch; gap:10px; padding-right:10px; }
         .rs-featured-river-card { box-sizing:border-box; width:164px; min-width:164px; border:4px solid #64748b; border-radius:16px; background:#fff; padding:8px; display:flex; flex-direction:column; gap:6px; box-shadow:0 5px 15px #06374725; }
         .rs-sponsored-rosso { border-color:#e11d48; }
         .rs-sponsored-blu { border-color:#2563eb; }
-        .rs-sponsored-giallo { border-color:#eab308; }
+        .rs-sponsored-giallo { border-color:#eab308; }\n        .rs-sponsored-verde { border-color:#16a34a; }
         .rs-sponsored-album { border-color:#d97706; }
         .rs-featured-river-card b {font-size:12px;color:#103b48}.rs-featured-river-card small{font-size:10px;color:#46616b}
         .rs-featured-river-placeholder { height:88px; border-radius:10px; background:linear-gradient(140deg,#e4fbff,#90dce9,#f2ffff); display:flex; flex-direction:column; align-items:center;justify-content:center;color:#067e98; }
