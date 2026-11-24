@@ -1488,7 +1488,7 @@ export default function Home() {
             <section id="rs-featured-river" aria-label="RSSpons: quattro fiumi pubblicitari" className="rs-featured-river my-5 w-full overflow-hidden rounded-2xl border border-cyan-200/70 p-3 shadow-lg">
               <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
                 <div><p className="text-xs font-black uppercase tracking-widest text-cyan-800">🌊 RSSpons · Fiumi pubblicitari</p><h2 className="text-lg font-black text-slate-900">Quattro correnti, quattro colori</h2><p className="text-xs text-slate-700">Corsie indipendenti, più veloci, con direzioni alternate.</p></div>
-                <a href="/rs-spons/campagna" className="rounded-full bg-slate-900 px-3 py-2 text-xs font-bold text-white">Sponsorizza un prodotto →</a>
+                <a href="/rs-spons/campagna" className="rounded-full border-2 border-amber-500 bg-yellow-300 px-3 py-2 text-xs font-black text-slate-950 shadow-sm hover:bg-yellow-200">Sponsorizza un prodotto →</a>
               </div>
               {[
                 { id:'rosso', label:'ROSSO · €2,99', direction:'reverse', demos:[{id:'demo-coffee',color:'rosso',title:'Caffè artigianale',detail:'Selezione torrefazione',price:'€ 12,90',image:'☕',sponsor:'Demo Caffè'}] },
@@ -2308,7 +2308,7 @@ export default function Home() {
 
                 .rs-spons-vertical {background:linear-gradient(140deg,#d1fae5,#a7f3d0,#ecfdf5);color:#064e3b;}
         .rs-spons-vertical-window{height:310px;overflow:hidden;position:relative;touch-action:pan-x;}
-        .rs-spons-vertical-flow{display:flex;flex-direction:column;will-change:transform;animation:rs-spons-fall 14s linear infinite;}
+        .rs-spons-vertical-flow{display:flex;flex-direction:column;will-change:transform;animation:rs-spons-fall 8s linear infinite;}
         .rs-spons-vertical-track{display:flex;flex-direction:column;gap:10px;padding-bottom:10px;}
         .rs-spons-vertical-card{display:flex;flex-direction:row;align-items:center;gap:10px;min-height:94px;padding:8px;border-radius:14px;border:2px solid #16a34a;background:white;box-shadow:0 5px 15px #064e3b20;}
         .rs-spons-vertical-image{width:72px;height:72px;flex:0 0 72px;border-radius:10px;background:linear-gradient(140deg,#dcfce7,#d1fae5);display:flex;align-items:center;justify-content:center;font-size:30px;position:relative;}
@@ -2323,8 +2323,8 @@ export default function Home() {
         .rs-spons-lane-blu { background:linear-gradient(90deg,#dbeafe,#eff6ff); color:#1e40af; }\n        .rs-spons-lane-verde { background:linear-gradient(90deg,#dcfce7,#f0fdf4); color:#166534; }
         .rs-featured-river-window { width:100%; overflow:hidden; padding:4px 0 8px; touch-action:pan-y; }
         .rs-featured-river-flow { display:flex; width:max-content; will-change:transform; }
-        .rs-flow-forward { animation:rs-featured-flow-forward 10s linear infinite; }
-        .rs-flow-reverse { animation:rs-featured-flow-reverse 10s linear infinite; }
+        .rs-flow-forward { animation:rs-featured-flow-forward 5s linear infinite; }
+        .rs-flow-reverse { animation:rs-featured-flow-reverse 5s linear infinite; }
         
         .rs-featured-river-track { display:flex; flex:0 0 auto; align-items:stretch; gap:10px; padding-right:10px; }
         .rs-featured-river-card { box-sizing:border-box; width:164px; min-width:164px; border:4px solid #64748b; border-radius:16px; background:#fff; padding:8px; display:flex; flex-direction:column; gap:6px; box-shadow:0 5px 15px #06374725; }
