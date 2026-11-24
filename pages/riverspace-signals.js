@@ -632,6 +632,7 @@ export default function RiverSpaceSignals() {
       <meta name="description" content="Messaggi privati RiverSpaceSignals" />
       <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
       <meta name="theme-color" content="#063b4b" />
+      <link rel="manifest" href="/manifest-signals.json?v=20261124" />
       <link rel="icon" href="/icons/riverspace-signals-192.svg?v=20261124" type="image/jpeg" />
       <link rel="apple-touch-icon" href="/icons/riverspace-signals-192.svg?v=20261124" />
     </Head>
