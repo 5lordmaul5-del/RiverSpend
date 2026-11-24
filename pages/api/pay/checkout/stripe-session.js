@@ -109,7 +109,6 @@ export default async function handler(req, res) {
     if (tx.status === "paid") return fail(res, 409, "Questa transazione risulta già pagata.", "already_paid");
 
     const stripe = new Stripe(stripeKey);
-    let attempt = Number(tx.metadata?.checkout_attempt || 0) + 1;
     if (tx.provider_payment_id) {
       const previous = await stripe.checkout.sessions.retrieve(tx.provider_payment_id);
       if (previous.status === "open" && previous.url) {
@@ -118,17 +117,10 @@ export default async function handler(req, res) {
       if (previous.status === "complete") {
         return fail(res, 409, "Checkout già completato: attendi la conferma webhook.", "checkout_completed");
       }
-      // Expired sessions need a new Stripe idempotency key. Persist the attempt
-      // before calling Stripe so concurrent retries converge on the same key.
+      if (previous.status === "expired") {
+        return fail(res, 409, "La sessione di test è scaduta. Serve riaprire il checkout con una nuova intenzione RiverPay.", "checkout_expired");
+      }
     }
-
-    const attemptMetadata = { ...(tx.metadata || {}), source: "riverpay_checkout_engine", mode: "test", test_only: true, checkout_attempt: attempt };
-    const { error: attemptError } = await db
-      .from("riverpay_transactions")
-      .update({ metadata: attemptMetadata })
-      .eq("id", tx.id)
-      .eq("status", "pending");
-    if (attemptError) throw attemptError;
 
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.riverspend.com";
     const session = await stripe.checkout.sessions.create({
@@ -151,13 +143,13 @@ export default async function handler(req, res) {
       },
       success_url: siteUrl + "/checkout?riverpay=stripe-test-return",
       cancel_url: siteUrl + "/checkout?riverpay=stripe-test-cancel"
-    }, { idempotencyKey: "riverpay-session:" + tx.id + ":" + attempt });
+    }, { idempotencyKey: "riverpay-session:" + tx.id });
 
     const { error: updateError } = await db
       .from("riverpay_transactions")
       .update({
         provider_payment_id: session.id,
-        metadata: { ...attemptMetadata, checkout_session_id: session.id }
+        metadata: { ...(tx.metadata || {}), source: "riverpay_checkout_engine", mode: "test", test_only: true, checkout_session_id: session.id }
       })
       .eq("id", tx.id)
       .eq("status", "pending");
