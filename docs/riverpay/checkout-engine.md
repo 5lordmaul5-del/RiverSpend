@@ -42,3 +42,21 @@ This is the checkout-intent preparation layer, not a working payment checkout. T
 ## Production gate
 
 Keep live payments disabled. Before production, complete provider merchant onboarding and agreements, signed webhooks with replay protection, reconciliation, refund/dispute handling, security review, tax/accounting review, and legal/regulatory review for the chosen marketplace model.
+
+## Stripe hosted checkout — test-only adapter
+
+Two additional endpoints now provide the first sandbox adapter:
+
+- `POST /api/pay/checkout/stripe-session`: authenticates the buyer, reloads the order and total server-side, checks ownership and pending status, creates/reuses the RiverPay transaction idempotently, then creates a Stripe-hosted Checkout Session.
+- `POST /api/pay/checkout/stripe-webhook`: verifies the Stripe signature against the raw request body, checks session metadata/amount/currency against the RiverPay transaction, deduplicates the provider event, and marks only the RiverPay transaction as `paid`.
+
+Required server-only environment variables for the sandbox:
+- `RIVERPAY_STRIPE_TEST_MODE=true`
+- `RIVERPAY_STRIPE_SECRET_KEY=sk_test_...`
+- `RIVERPAY_STRIPE_WEBHOOK_SECRET=whsec_...`
+
+Never put these in `NEXT_PUBLIC_*`, source files, browser storage, screenshots, or chat messages. Configure them only in the deployment environment's server-side secret settings. Use Stripe test-mode credentials and a test webhook endpoint only.
+
+The sandbox webhook deliberately does **not** update `orders`, confirm fulfillment, allocate treasury movements, or initiate seller payouts. It records a test result only in RiverPay's internal transaction/event tables. This prevents a simulated payment from triggering Shop fulfillment or accounting workflows.
+
+The older routes under `/api/pay/stripe/*` are legacy routes and are not called by this adapter. They need a separate security review and must not be assumed to inherit the new test-only restrictions.
