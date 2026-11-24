@@ -19,7 +19,7 @@ export default async function handler(req, res) {
     // declared foreign key to products, so PostgREST cannot reliably embed it.
     const { data: products, error: productsError } = await supabase
       .from('products')
-      .select('id, name, description, price, condition, category, image, created_at, origin_country, seller_country, seller_type, locality, province, region, stock, variants, delivery_options, promo, homepage_expires_at, sponsored_until, sponsored_label, status, sold_at')
+      .select('id, name, description, price, condition, category, image, created_at, origin_country, seller_country, seller_type, locality, province, region, stock, variants, delivery_options, promo, homepage_expires_at, sponsored_until, sponsored_label, status, sold_at, trust_status, gtin, manufacturer_name, manufacturer_country, responsible_person_name, responsible_person_address, batch_number, serial_number, expiry_date, recycling_instructions, safety_summary, warranty_information, digital_product_passport_url')
       .in('status', ['published', 'sold'])
       .order('created_at', { ascending: false });
 
@@ -104,7 +104,16 @@ export default async function handler(req, res) {
         sponsorizzatoFino: product.sponsored_until || null,
         statoAnnuncio: product.status || 'published',
         venduto: product.status === 'sold',
-        vendutoAlle: product.sold_at || null
+        vendutoAlle: product.sold_at || null,
+        trustStatus: product.trust_status || 'legacy_unverified',
+        tracciabilita: product.trust_status === 'approved' ? {
+          gtin: product.gtin || '', manufacturerName: product.manufacturer_name || '',
+          manufacturerCountry: product.manufacturer_country || '', responsiblePersonName: product.responsible_person_name || '',
+          responsiblePersonAddress: product.responsible_person_address || '', batchNumber: product.batch_number || '',
+          serialNumber: product.serial_number || '', expiryDate: product.expiry_date || '',
+          safetySummary: product.safety_summary || '', recyclingInstructions: product.recycling_instructions || '',
+          warrantyInformation: product.warranty_information || '', digitalProductPassportUrl: product.digital_product_passport_url || ''
+        } : null
       };
     }));
   } catch (error) {

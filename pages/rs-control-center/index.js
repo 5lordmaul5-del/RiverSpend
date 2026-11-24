@@ -252,6 +252,9 @@ export default function RSControlCenter() {
           <p style={{ color: "#63818a", marginTop: 0 }}>
             RSPC · Area amministrativa · Accesso verificato per {email}
           </p>
+          <a href="/rs-control-center/product-trust" style={{display:"inline-flex",marginBottom:18,padding:"10px 15px",borderRadius:999,background:"#e0f7fa",border:"1px solid #8bd9e5",color:"#075985",fontWeight:700,textDecoration:"none"}}>
+            🛡️ Verifica conformità, sicurezza e filiera prodotti
+          </a>
 
           <div
             style={{
