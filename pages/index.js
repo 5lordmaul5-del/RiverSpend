@@ -2221,7 +2221,32 @@ export default function Home() {
           background:rgba(2,12,24,.9) !important;
         }
 
-      `}</style>
+      `}
+        /* Fondo acqua viva sotto la striscia delle app: riflessi e correnti leggere. */
+        .rs-apps-download-strip {
+          position:relative !important; isolation:isolate !important;
+          background:linear-gradient(115deg,#b8f3f3,#71dce5,#d2fbfa,#8be3e9,#b8f3f3) !important;
+          background-size:300% 300% !important;
+          animation:rs-water-flow 18s ease-in-out infinite !important;
+          border-radius:18px !important; padding:12px 8px 8px !important;
+          box-shadow:inset 0 0 24px rgba(255,255,255,.45) !important;
+        }
+        .rs-apps-download-strip::before {
+          content:""; position:absolute; inset:0; z-index:-1; pointer-events:none;
+          border-radius:inherit; opacity:.72;
+          background:
+            radial-gradient(ellipse at 18% 25%,rgba(255,255,255,.75),transparent 38%),
+            radial-gradient(ellipse at 75% 75%,rgba(27,167,194,.20),transparent 42%),
+            repeating-linear-gradient(165deg,transparent 0 20px,rgba(255,255,255,.15) 21px 23px,transparent 24px 44px);
+          animation:rs-water-ripple 9s ease-in-out infinite alternate;
+        }
+        @keyframes rs-water-flow { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+        @keyframes rs-water-ripple { from{transform:translateX(-1%) scale(1)} to{transform:translateX(1%) scale(1.015)} }
+        .rs-apps-download-strip > a { position:relative; z-index:1; }
+        @media (prefers-reduced-motion:reduce) {
+          .rs-apps-download-strip,.rs-apps-download-strip::before { animation:none !important; }
+        }
+</style>
 
 
       <style jsx>{`
