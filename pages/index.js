@@ -1491,7 +1491,6 @@ export default function Home() {
                     </article>)}
                   </div>)}
                 </div>
-              </div><b>{slot[1]} · {slot[2]}</b><small>Slot promozionale · esempio grafico</small></article>)}
               </div>
               <p className="mt-2 text-[10px] text-slate-600">Le schede mostrate sono esempi grafici, non inserzioni acquistate. Gli annunci reali compariranno dopo l'attivazione del servizio e la verifica del pagamento.</p>
             </section>
