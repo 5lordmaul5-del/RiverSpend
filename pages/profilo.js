@@ -9,7 +9,7 @@ export default function Profilo() {
   const [sending, setSending] = useState(false);
   const [editingProfile, setEditingProfile] = useState(false);
   const [savingProfile, setSavingProfile] = useState(false);
-  const [profile, setProfile] = useState({ nome: '', cognome: '', telefono: '', indirizzo: '', tipoAccount: 'Privato' });
+  const [profile, setProfile] = useState({ nome: '', cognome: '', telefono: '', indirizzo: '', tipoAccount: 'Privato', rssponsTipo: 'Privato', rssponsNome: '', rssponsDescrizione: '', rssponsSettore: '', rssponsSito: '', rssponsPiva: '' });
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -22,7 +22,13 @@ export default function Profilo() {
           cognome: metadata.cognome || '',
           telefono: metadata.telefono || '',
           indirizzo: metadata.indirizzo || '',
-          tipoAccount: metadata.tipoAccount || 'Privato'
+          tipoAccount: metadata.tipoAccount || 'Privato',
+          rssponsTipo: metadata.rssponsTipo || metadata.tipoAccount || 'Privato',
+          rssponsNome: metadata.rssponsNome || '',
+          rssponsDescrizione: metadata.rssponsDescrizione || '',
+          rssponsSettore: metadata.rssponsSettore || '',
+          rssponsSito: metadata.rssponsSito || '',
+          rssponsPiva: metadata.rssponsPiva || ''
         });
       }
     });
@@ -122,6 +128,18 @@ export default function Profilo() {
                   <label className="text-sm font-medium">Telefono<input className="mt-1 w-full rounded-xl border border-slate-300 bg-white p-3" type="tel" value={profile.telefono} onChange={event => setProfile(value => ({ ...value, telefono: event.target.value }))} autoComplete="tel" /></label>
                   <label className="text-sm font-medium">Indirizzo<input className="mt-1 w-full rounded-xl border border-slate-300 bg-white p-3" value={profile.indirizzo} onChange={event => setProfile(value => ({ ...value, indirizzo: event.target.value }))} autoComplete="street-address" /></label>
                   <label className="text-sm font-medium sm:col-span-2">Tipo di account<select className="mt-1 w-full rounded-xl border border-slate-300 bg-white p-3" value={profile.tipoAccount} onChange={event => setProfile(value => ({ ...value, tipoAccount: event.target.value }))}><option>Privato</option><option>Azienda</option><option>Professionista</option><option>Venditore</option><option>Acquirente</option><option>Associazione/Ente</option><option>Negozio</option></select></label>
+                  <div className="sm:col-span-2 mt-3 rounded-2xl border border-amber-300 bg-amber-50 p-4">
+                    <p className="text-xs font-black uppercase tracking-widest text-amber-800">RSSpons · Profilo sponsor</p>
+                    <p className="mt-1 text-sm text-slate-700">Presenta chi promuove i prodotti: privato, azienda, professionista, negozio o associazione. Queste informazioni vengono salvate nei metadati del tuo account.</p>
+                    <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                      <label className="text-sm font-medium">Tipo sponsor<select className="mt-1 w-full rounded-xl border border-slate-300 bg-white p-3" value={profile.rssponsTipo} onChange={event => setProfile(value => ({ ...value, rssponsTipo: event.target.value }))}><option>Privato</option><option>Azienda</option><option>Professionista</option><option>Negozio</option><option>Associazione/Ente</option><option>Brand</option></select></label>
+                      <label className="text-sm font-medium">Nome pubblico / attività<input className="mt-1 w-full rounded-xl border border-slate-300 bg-white p-3" value={profile.rssponsNome} onChange={event => setProfile(value => ({ ...value, rssponsNome: event.target.value }))} placeholder="Nome da mostrare come sponsor" /></label>
+                      <label className="text-sm font-medium">Settore<input className="mt-1 w-full rounded-xl border border-slate-300 bg-white p-3" value={profile.rssponsSettore} onChange={event => setProfile(value => ({ ...value, rssponsSettore: event.target.value }))} placeholder="Es. abbigliamento, alimentari, servizi" /></label>
+                      <label className="text-sm font-medium">Sito web<input className="mt-1 w-full rounded-xl border border-slate-300 bg-white p-3" value={profile.rssponsSito} onChange={event => setProfile(value => ({ ...value, rssponsSito: event.target.value }))} placeholder="https://" /></label>
+                      <label className="text-sm font-medium sm:col-span-2">Descrizione sponsor<textarea className="mt-1 min-h-24 w-full rounded-xl border border-slate-300 bg-white p-3" value={profile.rssponsDescrizione} onChange={event => setProfile(value => ({ ...value, rssponsDescrizione: event.target.value }))} placeholder="Descrivi te stesso, la tua azienda o la tua attività." /></label>
+                      <label className="text-sm font-medium sm:col-span-2">Partita IVA (facoltativa per il profilo)<input className="mt-1 w-full rounded-xl border border-slate-300 bg-white p-3" value={profile.rssponsPiva} onChange={event => setProfile(value => ({ ...value, rssponsPiva: event.target.value }))} placeholder="Solo se applicabile" /></label>
+                    </div>
+                  </div>
                   <button disabled={savingProfile} type="submit" className="rounded-xl bg-teal-700 p-3 font-bold text-white disabled:opacity-60 sm:col-span-2">{savingProfile ? 'Salvataggio…' : 'Salva modifiche'}</button>
                 </form>}
               </section>
