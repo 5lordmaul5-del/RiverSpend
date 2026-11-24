@@ -953,12 +953,6 @@ export default function Home() {
       <section role="status" aria-label="Avviso versione di test" className="border-b border-amber-300 bg-amber-50 px-3 py-1 text-xs text-amber-950 text-center">
         <p className="font-bold">Sito in fase di test</p>
       </section>
-      <section aria-label="VIVA Delivery tariffe e abbonamenti" className="border-b border-teal-200 bg-gradient-to-r from-teal-50 via-white to-amber-50 px-3 py-3 text-slate-900">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 text-center sm:flex-row sm:text-left">
-          <div><p className="text-sm font-black tracking-wide text-teal-800">⚡ VIVA DELIVERY</p><p className="text-xs text-slate-600">Tariffe e pass annuali per spedizioni e consegne · da 9,90 € a 100,00 €</p></div>
-          <a href="/viva" className="inline-flex items-center justify-center rounded-full bg-teal-700 px-5 py-2 text-sm font-bold text-white shadow-sm hover:bg-teal-800">Scopri le tariffe VIVA →</a>
-        </div>
-      </section>
       {mostraGate18 && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4" role="dialog" aria-modal="true" aria-labelledby="gate18-title">
           <div className="w-full max-w-md rounded-3xl bg-white p-6 text-center shadow-2xl">
@@ -1022,6 +1016,13 @@ export default function Home() {
             </div>
             <div className="mt-2 w-full">
               <a href="/riverworld-live" aria-label="Apri RiverWorld Live" title="RiverWorld Live" className="flex min-h-12 w-full items-center justify-center rounded-xl border-2 border-emerald-400 bg-gradient-to-r from-emerald-50 to-cyan-50 px-5 py-3 text-sm font-black tracking-wide text-emerald-950 shadow-sm hover:from-emerald-100 hover:to-cyan-100">🌍 RIVERWORLD LIVE · APRI →</a>
+            </div>
+            <div className="mt-2 w-full">
+              <a href="/viva" aria-label="Scopri VIVA Delivery" title="VIVA Delivery" className="flex min-h-12 w-full flex-col items-center justify-center gap-1 rounded-xl border-2 border-amber-400 bg-gradient-to-r from-amber-50 via-white to-teal-50 px-4 py-2 text-center text-slate-900 shadow-sm hover:from-amber-100 hover:to-teal-100 sm:flex-row sm:justify-between sm:px-5">
+                <span className="text-sm font-black tracking-wide text-teal-900">⚡ VIVA DELIVERY</span>
+                <span className="text-xs font-semibold text-slate-700">Spedizioni e consegne · piani da 9,90 € a 100,00 €</span>
+                <span className="rounded-full bg-teal-700 px-4 py-2 text-xs font-bold text-white">SCOPRI VIVA →</span>
+              </a>
             </div>
             <div className={ricercaAperta || ricerca ? "mx-auto mt-2 flex max-w-6xl gap-2" : "hidden"}>
               <input
