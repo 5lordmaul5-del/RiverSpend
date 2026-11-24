@@ -12,6 +12,17 @@ const statusNames = {
   failed: "Fallito", cancelled: "Annullato", reversed: "Stornato"
 };
 
+function SandboxSimulator(){
+ const [subtotal,setSubtotal]=useState("100"),[shipping,setShipping]=useState("5"),[seller,setSeller]=useState("85"),[river,setRiver]=useState("10"),[reserve,setReserve]=useState("5"),[runs,setRuns]=useState([]),[msg,setMsg]=useState("");
+ async function call(method,body){const {data}=await supabase.auth.getSession();const token=data?.session?.access_token;if(!token){setMsg("Accedi come amministratore.");return;}const r=await fetch("/api/pay/admin/sandbox",{method,headers:{"Content-Type":"application/json",Authorization:"Bearer "+token},...(body?{body:JSON.stringify(body)}:{})});const j=await r.json();if(!r.ok){setMsg(j.error||"Errore");return;}if(method==="POST"){setMsg("Simulazione salvata · TEST ONLY");load();}else setRuns(j.runs||[]);}
+ async function load(){call("GET");} useEffect(()=>{load();},[]);
+ return <div className="mt-4"><div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+ {[[subtotal,setSubtotal,"Subtotale €"],[shipping,setShipping,"Spedizione €"],[seller,setSeller,"% Venditore"],[river,setRiver,"% RiverSpend"],[reserve,setReserve,"% Riserva"]].map(([v,s,l])=><label key={l} className="text-sm font-semibold">{l}<input type="number" min="0" step="0.01" value={v} onChange={e=>s(e.target.value)} className="mt-1 w-full rounded-xl border p-3"/></label>)}
+ </div><p className="mt-3 text-sm">Totale simulato: <b>{(Number(subtotal||0)+Number(shipping||0)).toFixed(2)} €</b> · Percentuali: {Number(seller)+Number(river)+Number(reserve)}%</p>
+ <button onClick={()=>call("POST",{itemSubtotal:subtotal,shipping,sellerPercent:seller,riverPercent:river,reservePercent:reserve})} className="mt-3 rounded-xl bg-teal-700 px-5 py-3 font-bold text-white">Esegui simulazione TEST</button>{msg&&<p className="mt-3 text-sm">{msg}</p>}
+ <h3 className="mt-5 font-bold">Registro test recente</h3><ul className="mt-2 space-y-2">{runs.map(x=><li key={x.id} className="rounded-xl bg-slate-50 p-3 text-sm"><b>TEST ONLY · {Number(x.gross_amount).toFixed(2)} €</b><div>Venditore {x.seller_amount} · RiverSpend {x.river_amount} · Riserva {x.reserve_amount} · spedizione {x.shipping_total}</div><div className="text-xs text-slate-500">{new Date(x.created_at).toLocaleString("it-IT")}</div></li>)}</ul></div>;
+}
+
 export default function RiverPayControl() {
   const [data, setData] = useState(null);
   const [error, setError] = useState("");
@@ -54,6 +65,7 @@ export default function RiverPayControl() {
           <span className="mt-4 inline-flex rounded-full border border-amber-300 bg-amber-50 px-3 py-1.5 text-sm font-black text-amber-900">MODALITÀ PREPARAZIONE · TRASFERIMENTI DISATTIVATI</span>
         </header>
 
+        <section className="mt-6 rounded-2xl border border-teal-200 bg-white p-5"><h2 className="text-xl font-black">Simulatore isolato · TEST ONLY</h2><p className="mt-2 text-sm text-slate-600">Calcola ripartizioni senza modificare ordini reali, pagamenti, payout o bonifici.</p><SandboxSimulator /></section>
         {loading && <p className="mt-6 rounded-2xl bg-white p-5">Caricamento del registro finanziario…</p>}
         {error && <div className="mt-6 rounded-2xl border border-amber-300 bg-amber-50 p-5 text-amber-950"><strong>Accesso non completato</strong><p className="mt-1 text-sm">{error}</p></div>}
 
