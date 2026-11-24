@@ -15,7 +15,7 @@ export default function RSVIVA() {
     <>
       <Head>
         <title>VIVA Delivery · Tariffe e piani consegna RiverSpend</title>
-        <meta name="description" content="VIVA: cinque piani annuali dedicati alle consegne RiverSpend." />
+        <meta name="description" content="VIVA: sei piani annuali dedicati alle consegne RiverSpend." />
       </Head>
       <main className="min-h-screen bg-gradient-to-b from-white via-cyan-50 to-white px-4 py-8 text-slate-900">
         <div className="mx-auto max-w-5xl">
