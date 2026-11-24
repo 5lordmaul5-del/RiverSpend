@@ -988,11 +988,8 @@ export default function Home() {
                 <button type="button" onClick={() => { setMenuCategorie(!menuCategorie); setMenuRiverSpend(false); }} aria-label={t('categories')} aria-expanded={menuCategorie} className="flex h-11 w-10 shrink-0 items-center justify-center rounded-xl text-3xl leading-none text-slate-900 hover:bg-amber-50">☰</button>
                 <button type="button" onClick={() => setRicercaAperta(!ricercaAperta)} aria-label="Apri ricerca" aria-expanded={ricercaAperta} title="Cerca prodotti" className="flex h-10 min-w-10 shrink-0 items-center justify-center rounded-xl border border-teal-200 bg-teal-50 px-2 text-xl text-teal-800 shadow-sm hover:bg-teal-100">🔍</button>
               </div>
-              <a href="/" aria-label="RiverSpendShop, pagina iniziale" className="flex w-max max-w-[min(66vw,440px)] flex-col items-center justify-center justify-self-center text-center leading-none">
-                <h1 className="rs-brand whitespace-nowrap text-[1.95rem] font-extrabold leading-none tracking-[-.045em] sm:text-5xl" style={{ color: '#111827', WebkitTextStroke: '1.15px #c69a3b', paintOrder: 'stroke fill', textShadow: '0 1px 2px rgba(198,154,59,.22)' }}>RiverSpend</h1>
-                <span className="rs-river-wave" aria-hidden="true">〰</span>
-                <span className="rs-shop-word text-sm font-extrabold uppercase tracking-[.2em] sm:text-base" style={{ color: '#111827', WebkitTextStroke: '.7px #c69a3b', paintOrder: 'stroke fill' }}>Shop</span>
-                <span className="mt-0.5 whitespace-nowrap text-[7px] font-bold tracking-[.08em] sm:text-[9px] sm:tracking-[.14em]" style={{ color: '#9a762b', WebkitTextStroke: '.25px #c69a3b', paintOrder: 'stroke fill' }}>YOUR SHOP • YOUR FLOW</span>
+              <a href="/" aria-label="RiverSpendShop, pagina iniziale" className="flex w-max max-w-[min(72vw,520px)] items-center justify-center justify-self-center text-center leading-none">
+                <h1 className="rs-brand whitespace-nowrap text-[2.35rem] font-extrabold leading-none tracking-[-.055em] sm:text-6xl" style={{ color: '#111827', WebkitTextStroke: '1.25px #c69a3b', paintOrder: 'stroke fill', textShadow: '0 1px 2px rgba(198,154,59,.22)' }}>RiverSpend</h1>
               </a>
               <div className="flex min-w-0 items-center justify-end gap-2 text-slate-900 sm:gap-4">
                 
