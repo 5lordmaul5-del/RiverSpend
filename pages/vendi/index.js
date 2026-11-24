@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';\nimport Link from 'next/link';
 import { supabase } from '../../lib/supabase';
 import { riverSpendCategories } from '../../lib/riverSpendCategories';
 
@@ -611,6 +611,7 @@ export default function Vendi() {
           <p className="text-slate-600">
             Vendi i tuoi prodotti
           </p>
+          <Link href="/vendi/tracciabilita" className="mt-3 inline-flex items-center rounded-full border border-cyan-300 bg-cyan-50 px-4 py-2 text-sm font-bold text-cyan-900 hover:bg-cyan-100">🛡️ Gestisci conformità, documenti e tracciabilità</Link>
         </header>
 
         <section role="status" className="mb-6 rounded-2xl border border-amber-300 bg-amber-50 p-4 text-amber-950">
