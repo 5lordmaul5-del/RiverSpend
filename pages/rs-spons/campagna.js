@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 const PLACEMENTS = [
   { id: 'local', label: '📍 RS Local', description: 'Negozi, servizi e attività vicino al pubblico.' },
@@ -38,6 +38,37 @@ export default function RsSponsCampaign() {
   const [goal, setGoal] = useState('visibilità');
   const [rightsConfirmed, setRightsConfirmed] = useState(false);
   const [preview, setPreview] = useState(false);
+  const [productTitle, setProductTitle] = useState('');
+  const [productDetail, setProductDetail] = useState('');
+  const [productPrice, setProductPrice] = useState('');
+  const [productImage, setProductImage] = useState('📦');
+  const [savedAds, setSavedAds] = useState([]);
+  const [demoMessage, setDemoMessage] = useState('');
+
+  useEffect(() => {
+    try { const saved = JSON.parse(localStorage.getItem('riverspend-rsspons-demo-ads') || '[]'); if (Array.isArray(saved)) setSavedAds(saved); }
+    catch { setSavedAds([]); }
+  }, []);
+
+  function saveDemoProduct(event) {
+    event.preventDefault();
+    const title = productTitle.trim();
+    if (!title) { setDemoMessage('Inserisci il nome del prodotto.'); return; }
+    const next = [...savedAds, { id: 'test-' + Date.now(), title, detail: productDetail.trim() || 'Prodotto inserito in prova', price: productPrice.trim() ? '€ ' + productPrice.trim() : 'Prezzo da definire', image: productImage || '📦', sponsor: sponsorName.trim() || 'La tua attività', color: sponsorTier, demo: true }];
+    try { localStorage.setItem('riverspend-rsspons-demo-ads', JSON.stringify(next)); setSavedAds(next); window.dispatchEvent(new Event('riverspend:rsspons-demo-change')); setProductTitle(''); setProductDetail(''); setProductPrice(''); setDemoMessage('Prodotto aggiunto al fiume dimostrativo su questo browser.'); }
+    catch { setDemoMessage('Salvataggio non riuscito: controlla lo spazio disponibile nel browser.'); }
+  }
+
+  function removeDemoProduct(id) {
+    const next = savedAds.filter(item => item.id !== id);
+    try { localStorage.setItem('riverspend-rsspons-demo-ads', JSON.stringify(next)); setSavedAds(next); window.dispatchEvent(new Event('riverspend:rsspons-demo-change')); setDemoMessage('Prodotto di prova rimosso.'); }
+    catch { setDemoMessage('Non è stato possibile aggiornare le prove salvate.'); }
+  }
+
+  function clearDemoProducts() {
+    try { localStorage.removeItem('riverspend-rsspons-demo-ads'); setSavedAds([]); window.dispatchEvent(new Event('riverspend:rsspons-demo-change')); setDemoMessage('Tutte le tue prove sono state rimosse. Le schede DEMO restano visibili.'); }
+    catch { setDemoMessage('Non è stato possibile cancellare le prove.'); }
+  }
 
   const estimate = useMemo(() => {
     const base = (DAILY_BASE[area] || DAILY_BASE.local) * Number(duration);
@@ -93,6 +124,22 @@ export default function RsSponsCampaign() {
               </label>
             </section>
 
+            <section className="rounded-3xl border-2 border-cyan-200 bg-white p-5 shadow-sm sm:p-6">
+              <h2 className="text-xl font-black">Anteprima prodotti nel RiverSpend River</h2>
+              <p className="mt-1 text-sm leading-6 text-slate-600">Aggiungi prodotti fittizi per provare il flusso. Le modifiche si vedono sulla homepage dello stesso browser e non comportano pagamenti.</p>
+              <form onSubmit={saveDemoProduct} className="mt-4 grid gap-3 sm:grid-cols-2">
+                <label className="text-sm font-bold sm:col-span-2">Nome prodotto<input value={productTitle} onChange={e => setProductTitle(e.target.value)} maxLength={70} required placeholder="Es. Scarpe sportive" className="mt-2 w-full rounded-xl border border-slate-300 px-4 py-3 font-normal" /></label>
+                <label className="text-sm font-bold">Descrizione breve<input value={productDetail} onChange={e => setProductDetail(e.target.value)} maxLength={90} placeholder="Es. Nuova collezione" className="mt-2 w-full rounded-xl border border-slate-300 px-4 py-3 font-normal" /></label>
+                <label className="text-sm font-bold">Prezzo da mostrare<input value={productPrice} onChange={e => setProductPrice(e.target.value)} maxLength={20} placeholder="Es. 39,90" className="mt-2 w-full rounded-xl border border-slate-300 px-4 py-3 font-normal" /></label>
+                <label className="text-sm font-bold">Icona provvisoria<select value={productImage} onChange={e => setProductImage(e.target.value)} className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 font-normal"><option value="📦">📦 Pacco</option><option value="👟">👟 Scarpe</option><option value="📱">📱 Tecnologia</option><option value="👜">👜 Moda</option><option value="🪴">🪴 Casa</option><option value="🚲">🚲 Sport</option><option value="☕">☕ Alimentari</option></select></label>
+                <button type="submit" className="self-end rounded-xl bg-cyan-700 px-4 py-3 font-black text-white">＋ Aggiungi al fiume di prova</button>
+              </form>
+              {demoMessage && <p role="status" className="mt-3 rounded-xl bg-cyan-50 p-3 text-sm text-cyan-900">{demoMessage}</p>}
+              <div className="mt-5 space-y-2">
+                <div className="flex flex-wrap items-center justify-between gap-2"><strong>Le tue inserzioni di prova ({savedAds.length})</strong><button type="button" onClick={clearDemoProducts} disabled={!savedAds.length} className="rounded-lg border border-red-200 px-3 py-2 text-xs font-bold text-red-700 disabled:opacity-40">Svuota le mie prove</button></div>
+                {savedAds.length === 0 ? <p className="text-sm text-slate-500">Non hai ancora aggiunto prodotti personali di prova.</p> : savedAds.map(ad => <div key={ad.id} className="flex items-center justify-between gap-3 rounded-xl border border-slate-200 p-3"><div className="min-w-0"><strong className="block truncate">{ad.image} {ad.title}</strong><span className="text-xs text-slate-500">{ad.sponsor} · {ad.price}</span></div><button type="button" onClick={() => removeDemoProduct(ad.id)} className="shrink-0 rounded-lg border border-red-200 px-3 py-2 text-xs font-bold text-red-700">Rimuovi</button></div>)}
+              </div>
+            </section>
             <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
               <h2 className="text-xl font-black">2 · Dove vuoi raggiungere il pubblico?</h2>
               <label className="mt-4 block text-sm font-bold">Area geografica
