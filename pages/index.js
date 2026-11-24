@@ -982,20 +982,19 @@ export default function Home() {
 
       <div>
         <div className="rs-mini-header sticky top-0 z-40 border-b border-amber-200 bg-white/95 px-3 py-2 shadow-sm backdrop-blur">
-          <div className="mx-auto max-w-6xl">
-            <div className="relative grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2">
-              <div className="flex items-center gap-1">
-                <button type="button" onClick={() => { setMenuCategorie(!menuCategorie); setMenuRiverSpend(false); }} aria-label={t('categories')} aria-expanded={menuCategorie} className="flex h-11 w-10 items-center justify-center rounded-xl text-3xl leading-none text-slate-900 hover:bg-amber-50">☰</button>
-                <button type="button" onClick={() => setRicercaAperta(!ricercaAperta)} aria-label="Apri ricerca" aria-expanded={ricercaAperta} title="Cerca prodotti" className="flex h-10 min-w-10 items-center justify-center rounded-xl border border-teal-200 bg-teal-50 px-2 text-xl text-teal-800 shadow-sm hover:bg-teal-100">🔍</button>
-                
+          <div className="mx-auto w-full max-w-6xl">
+            <div className="grid w-full grid-cols-[1fr_auto_1fr] items-center gap-1">
+              <div className="flex min-w-0 items-center justify-start gap-1">
+                <button type="button" onClick={() => { setMenuCategorie(!menuCategorie); setMenuRiverSpend(false); }} aria-label={t('categories')} aria-expanded={menuCategorie} className="flex h-11 w-10 shrink-0 items-center justify-center rounded-xl text-3xl leading-none text-slate-900 hover:bg-amber-50">☰</button>
+                <button type="button" onClick={() => setRicercaAperta(!ricercaAperta)} aria-label="Apri ricerca" aria-expanded={ricercaAperta} title="Cerca prodotti" className="flex h-10 min-w-10 shrink-0 items-center justify-center rounded-xl border border-teal-200 bg-teal-50 px-2 text-xl text-teal-800 shadow-sm hover:bg-teal-100">🔍</button>
               </div>
-              <a href="/" aria-label="RiverSpendShop, pagina iniziale" className="absolute left-1/2 top-1/2 flex w-max max-w-[58%] -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center text-center">
-                <h1 className="rs-brand text-[1.7rem] font-extrabold leading-none tracking-tight sm:text-4xl" style={{ color: '#111827', WebkitTextStroke: '1px #c69a3b', paintOrder: 'stroke fill', textShadow: '0 1px 2px rgba(198,154,59,.22)' }}>RiverSpend</h1>
+              <a href="/" aria-label="RiverSpendShop, pagina iniziale" className="flex w-max max-w-[min(66vw,440px)] flex-col items-center justify-center justify-self-center text-center leading-none">
+                <h1 className="rs-brand whitespace-nowrap text-[1.95rem] font-extrabold leading-none tracking-[-.045em] sm:text-5xl" style={{ color: '#111827', WebkitTextStroke: '1.15px #c69a3b', paintOrder: 'stroke fill', textShadow: '0 1px 2px rgba(198,154,59,.22)' }}>RiverSpend</h1>
                 <span className="rs-river-wave" aria-hidden="true">〰</span>
                 <span className="rs-shop-word text-sm font-extrabold uppercase tracking-[.2em] sm:text-base" style={{ color: '#111827', WebkitTextStroke: '.7px #c69a3b', paintOrder: 'stroke fill' }}>Shop</span>
                 <span className="mt-0.5 whitespace-nowrap text-[7px] font-bold tracking-[.08em] sm:text-[9px] sm:tracking-[.14em]" style={{ color: '#9a762b', WebkitTextStroke: '.25px #c69a3b', paintOrder: 'stroke fill' }}>YOUR SHOP • YOUR FLOW</span>
               </a>
-              <div className="flex items-center justify-end gap-2 text-slate-900 sm:gap-4">
+              <div className="flex min-w-0 items-center justify-end gap-2 text-slate-900 sm:gap-4">
                 
                 <a href="/rete" aria-label="Apri la Rete e gli articoli salvati" className="relative flex h-10 w-10 items-center justify-center text-2xl hover:text-teal-700">
                   🛒
