@@ -84,3 +84,27 @@ The allocation formula is configured by contract and market, not hard-coded as o
 ## Current status
 
 This file and `config/riverpay-global.json` define the target architecture only. They do not create a PSP account, establish a bank relationship, enable marketplace payouts, activate live checkout or move money. The next engineering step is a careful inventory of the current database migrations and payment routes, followed by a sandbox-only adapter and ledger tests.
+
+
+## Implemented database foundation (2026-11-24)
+
+The existing database already contained the RiverSpend treasury ledger and payment backbone:
+- `payment_orders`, `payment_transactions`, `payment_refunds`, `payment_events`;
+- `rs_treasury_movements`, `rs_treasury_allocations`, `rs_treasury_accounts`, `rs_treasury_allocation_rules`;
+- `seller_payouts`, `rs_payment_providers`, `rs_revenue_sources`.
+
+Do not recreate these objects. The new migration `20261124100910_riverpay_global_payouts_and_settlement_control.sql` adds:
+- `rs_financial_payouts`: provider-neutral seller, carrier and RiverSpend settlement records, delivery release gate for carrier payouts, provider references, schedule and idempotency;
+- `rs_financial_settlement_batches`: weekly/monthly/manual settlement batches and provider reconciliation references;
+- `rs_financial_payout_events`: deduplicated payout event history.
+
+All three new tables have RLS and administrator-only policies. Browser roles cannot call the treasury allocation RPC; only the server-side `service_role` can execute it. No bank account number, card data or provider secret is stored in these tables.
+
+The migration was applied to the active Supabase project and verified: all three tables exist, their admin policies are present, and the treasury RPC is denied to `anon` and `authenticated` while remaining available to `service_role`.
+
+## Remaining work before sandbox and live activation
+
+- Add the owner-only RiverPay control panel/API for payout queues, settlement batches and reconciliation.
+- Review and harden existing legacy treasury table policies; current Supabase security advisors still report several older treasury tables with RLS enabled but no policies.
+- Implement provider adapter and signed webhook handlers only after sandbox account setup.
+- Keep live mode, outgoing transfers and automated settlement disabled until business onboarding, provider approval, legal/accounting review and explicit owner approval.
