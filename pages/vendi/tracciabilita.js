@@ -31,14 +31,31 @@ export default function TracciabilitaProdotto() {
 
   async function refresh(product) {
     if (!product) return;
-    const [p,e,d,q] = await Promise.all([
+    const [p,e,d,q,productRow,compliance] = await Promise.all([
       supabase.from('product_supply_chain_parties').select('*').eq('product_id',product).order('created_at',{ascending:true}),
       supabase.from('product_supply_chain_events').select('*').eq('product_id',product).order('event_time',{ascending:false}).limit(50),
       supabase.from('product_compliance_documents').select('id,document_type,document_title,issuer_name,reference_number,expires_at,verification_status,created_at').eq('product_id',product).order('created_at',{ascending:false}),
-      supabase.from('product_quality_checks').select('*').eq('product_id',product).order('checked_at',{ascending:false}).limit(30)
+      supabase.from('product_quality_checks').select('*').eq('product_id',product).order('checked_at',{ascending:false}).limit(30),
+      supabase.from('products').select('gtin,manufacturer_name,manufacturer_country,responsible_person_name,responsible_person_address,batch_number,serial_number,expiry_date,safety_summary,recycling_instructions,warranty_information').eq('id',product).maybeSingle(),
+      supabase.from('product_compliance_profiles').select('intended_use,destination_markets').eq('product_id',product).maybeSingle()
     ]);
-    if(p.error || e.error || d.error || q.error) { setMessage('Alcuni registri non sono disponibili: '+(p.error||e.error||d.error||q.error).message); return; }
+    if(p.error || e.error || d.error || q.error || productRow.error || compliance.error) { setMessage('Alcuni registri non sono disponibili: '+(p.error||e.error||d.error||q.error||productRow.error||compliance.error).message); return; }
     setParties(p.data||[]); setEvents(e.data||[]); setDocuments(d.data||[]); setChecks(q.data||[]);
+    const productData=productRow.data||{};
+    const complianceData=compliance.data||{};
+    setProfile(current=>({
+      ...current,
+      gtin:productData.gtin||'', manufacturer_name:productData.manufacturer_name||'',
+      manufacturer_country:productData.manufacturer_country||'',
+      responsible_person_name:productData.responsible_person_name||'',
+      responsible_person_address:productData.responsible_person_address||'',
+      batch_number:productData.batch_number||'', serial_number:productData.serial_number||'',
+      expiry_date:productData.expiry_date||'', safety_summary:productData.safety_summary||'',
+      recycling_instructions:productData.recycling_instructions||'',
+      warranty_information:productData.warranty_information||'',
+      intended_use:complianceData.intended_use||'',
+      destination_markets:Array.isArray(complianceData.destination_markets)?complianceData.destination_markets.join(','):'IT,EU'
+    }));
   }
 
   useEffect(() => {
