@@ -44,6 +44,9 @@ export default function ProductTrustReview() {
   }
   async function decide(outcome){
     if(!selected||!user)return;
+    if(outcome==='approved'&&!queue.find(p=>p.id===selected)?.seller_id){setMessage('Impossibile approvare: manca un venditore identificabile.');return;}
+    if(outcome==='approved'&&!profile){setMessage('Impossibile approvare: il venditore non ha ancora inviato il profilo di conformità.');return;}
+    if(outcome==='approved'&&docs.length===0){setMessage('Impossibile approvare: non è stato caricato alcun documento o evidenza.');return;}
     if(outcome==='approved'&&docs.some(d=>d.verification_status!=='verified')){setMessage('Prima di approvare, verifica ogni documento caricato oppure registra perché non è applicabile.');return;}
     setBusy(true);setMessage('');
     const now=new Date().toISOString();
