@@ -15,10 +15,20 @@ const AREAS = [
   { id: 'world', label: 'Mondiale · tutti i Paesi raggiungibili', factor: 8 },
 ];
 const DURATIONS = [1, 2, 3, 7, 15, 30];
+const SPONS_PACKAGES = [
+  { id: 'rosso', name: 'RSSpons Rosso', price: 9.90, color: 'border-red-500 bg-red-50 text-red-800', description: 'Visibilità sponsorizzata essenziale.' },
+  { id: 'blu', name: 'RSSpons Blu', price: 19.90, color: 'border-blue-500 bg-blue-50 text-blue-800', description: 'Maggiore evidenza nel flusso promozionale.' },
+  { id: 'giallo', name: 'RSSpons Giallo', price: 39.90, color: 'border-yellow-400 bg-yellow-50 text-yellow-900', description: 'Posizionamento premium nel RiverSpend River.' },
+  { id: 'album', name: 'RSSpons Album', price: 69.90, color: 'border-amber-500 bg-amber-50 text-amber-900', description: 'Pacchetto esteso per più contenuti promozionali.' },
+];
 const DAILY_BASE = { local: 2.9, regional: 4.3, national: 11.42, international: 14.28, world: 42.85 };
 
 export default function RsSponsCampaign() {
-  const [placement, setPlacement] = useState('local');
+  const [placement, setPlacement] = useState('shop');
+  const [sponsorTier, setSponsorTier] = useState('rosso');
+  const [sponsorType, setSponsorType] = useState('Privato');
+  const [sponsorName, setSponsorName] = useState('');
+  const [sponsorDescription, setSponsorDescription] = useState('');
   const [area, setArea] = useState('local');
   const [duration, setDuration] = useState(1);
   const [radius, setRadius] = useState(10);
@@ -55,7 +65,19 @@ export default function RsSponsCampaign() {
         <form onSubmit={createPreview} className="mt-5 grid gap-5 lg:grid-cols-[1.15fr_.85fr]">
           <div className="space-y-5">
             <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
-              <h2 className="text-xl font-black">1 · Che cosa vuoi promuovere?</h2>
+              <h2 className="text-xl font-black">1 · Chi sponsorizza e che cosa vuoi promuovere?</h2>
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                <label className="text-sm font-bold">Tipo sponsor<select value={sponsorType} onChange={e => { setSponsorType(e.target.value); setPreview(false); }} className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 font-normal"><option>Privato</option><option>Azienda</option><option>Professionista</option><option>Negozio</option><option>Associazione/Ente</option><option>Brand</option></select></label>
+                <label className="text-sm font-bold">Nome pubblico sponsor<input value={sponsorName} onChange={e => { setSponsorName(e.target.value); setPreview(false); }} placeholder="Nome persona, azienda o negozio" className="mt-2 w-full rounded-xl border border-slate-300 px-4 py-3 font-normal" /></label>
+                <label className="text-sm font-bold sm:col-span-2">Descrizione sponsor<textarea value={sponsorDescription} onChange={e => { setSponsorDescription(e.target.value); setPreview(false); }} placeholder="Breve descrizione da mostrare accanto al prodotto sponsorizzato" className="mt-2 min-h-20 w-full rounded-xl border border-slate-300 px-4 py-3 font-normal" /></label>
+              </div>
+              <h3 className="mt-6 text-lg font-black">Scegli il colore e il pacchetto RSSpons</h3>
+              <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                {SPONS_PACKAGES.map(item => <button key={item.id} type="button" onClick={() => { setSponsorTier(item.id); setPreview(false); }} className={'rounded-2xl border-2 p-4 text-left ' + item.color + (sponsorTier === item.id ? ' ring-4 ring-slate-200' : '')}>
+                  <span className="block text-base font-black">{item.name}</span><span className="mt-1 block text-2xl font-black">{money(item.price)}</span><span className="mt-1 block text-xs">{item.description}</span>
+                </button>)}
+              </div>
+              <p className="mt-2 text-xs text-slate-500">Pacchetti proposti: Rosso €9,90 · Blu €19,90 · Giallo €39,90 · Album €69,90. La durata e gli spazi effettivi saranno indicati nella conferma della campagna.</p>
               <div className="mt-4 grid gap-3 sm:grid-cols-2">
                 {PLACEMENTS.map(item => <button key={item.id} type="button" onClick={() => { setPlacement(item.id); setPreview(false); }} className={'rounded-2xl border p-4 text-left transition ' + (placement === item.id ? 'border-cyan-600 bg-cyan-50 ring-2 ring-cyan-100' : 'border-slate-200 bg-white')}>
                   <strong>{item.label}</strong><p className="mt-2 text-sm leading-5 text-slate-600">{item.description}</p>
@@ -111,6 +133,8 @@ export default function RsSponsCampaign() {
             <p className="text-xs font-black uppercase tracking-[.2em] text-amber-700">Riepilogo RSSpons</p>
             <h2 className="mt-2 text-2xl font-black">La tua campagna</h2>
             <div className="mt-4 space-y-3 text-sm">
+              <div className="flex justify-between gap-3 border-b border-slate-100 pb-3"><span className="text-slate-500">Sponsor</span><strong className="text-right">{sponsorName.trim() || sponsorType}</strong></div>
+              <div className="flex justify-between gap-3 border-b border-slate-100 pb-3"><span className="text-slate-500">Pacchetto</span><strong className="text-right">{SPONS_PACKAGES.find(x => x.id === sponsorTier)?.name} · {money(SPONS_PACKAGES.find(x => x.id === sponsorTier)?.price || 0)}</strong></div>
               <div className="flex justify-between gap-3 border-b border-slate-100 pb-3"><span className="text-slate-500">Servizio</span><strong className="text-right">{PLACEMENTS.find(x => x.id === placement)?.label}</strong></div>
               <div className="flex justify-between gap-3 border-b border-slate-100 pb-3"><span className="text-slate-500">Area</span><strong className="text-right">{AREAS.find(x => x.id === area)?.label}</strong></div>
               {area === 'local' && <div className="flex justify-between gap-3 border-b border-slate-100 pb-3"><span className="text-slate-500">Raggio</span><strong>{radius} km</strong></div>}
@@ -120,7 +144,7 @@ export default function RsSponsCampaign() {
             </div>
             {preview && <div className="mt-4 rounded-2xl border border-emerald-300 bg-emerald-50 p-4 text-sm text-emerald-900">
               <strong>✅ Riepilogo pronto</strong>
-              <p className="mt-2">Campagna: {campaignName.trim() || 'Senza nome'} · Obiettivo: {goal}.</p>
+              <p className="mt-2">Sponsor: {sponsorName.trim() || sponsorType} ({sponsorType}) · Campagna: {campaignName.trim() || 'Senza nome'} · Obiettivo: {goal}.<br />Pacchetto: {SPONS_PACKAGES.find(x => x.id === sponsorTier)?.name}.</p>
               <p className="mt-1">{rightsConfirmed ? 'Dichiarazione sui diritti confermata.' : 'Prima della pubblicazione devi confermare la dichiarazione sui diritti.'}</p>
               <p className="mt-2 font-bold">Questa è una simulazione: non è stato effettuato alcun ordine o pagamento e la campagna non è stata pubblicata.</p>
             </div>}
