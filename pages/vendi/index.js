@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';\nimport Link from 'next/link';
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { supabase } from '../../lib/supabase';
 import { riverSpendCategories } from '../../lib/riverSpendCategories';
 
