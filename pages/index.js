@@ -1538,17 +1538,22 @@ export default function Home() {
               <p className="mt-2 text-[10px] text-slate-600">Le schede DEMO e le tue prove sono anteprime locali: non sono ordini, pagamenti o campagne pubblicate.</p>
             </section>
 
-            {/* RSspons verticale: cascata continua di prodotti promozionali. */}
-            <section id="rs-spons-vertical" className="rs-spons-vertical my-5 overflow-hidden rounded-2xl border p-3 shadow-lg" aria-label="RSspons verticale, fiume a cascata">
-              <div className="mb-3"><p className="text-xs font-black uppercase tracking-widest">🌊 RSspons · Cascata verticale</p><h2 className="text-lg font-black">Il fiume dei prodotti</h2><p className="text-xs">Una cascata continua: le schede scendono e ricompaiono dall'alto.</p></div>
-              <div className="rs-spons-vertical-window">
-                <div className="rs-spons-vertical-flow">
-                  {[0,1].map(copy=><div className="rs-spons-vertical-track" key={copy} aria-hidden={copy===1?true:undefined}>
-                    {[{title:'Sneakers',detail:'Demo moda',price:'€ 59,90',image:'👟'},{title:'Smartwatch',detail:'Demo tecnologia',price:'€ 89,90',image:'⌚'},{title:'Casa & Design',detail:'Demo casa',price:'€ 34,90',image:'🪴'},{title:'Orto Green',detail:'Demo sostenibile',price:'€ 24,90',image:'🌱'},{title:'Bicicletta',detail:'Demo sport',price:'€ 189,00',image:'🚲'}].map((ad,i)=><article className="rs-spons-vertical-card" key={i}><div className="rs-spons-vertical-image">{ad.image}<small>DEMO</small></div><b>{ad.title}</b><small>{ad.detail}</small><strong>{ad.price}</strong></article>)}
-                  </div>)}
+            {/* Fiume verticale: usa il catalogo reale già caricato, senza prodotti dimostrativi. */}
+            <section id="rs-spons-vertical" className="rs-spons-vertical my-5 overflow-hidden rounded-2xl border p-3 shadow-lg" aria-label="Fiume verticale dei prodotti RiverSpend">
+              <div className="mb-3"><p className="text-xs font-black uppercase tracking-widest">🌊 RiverSpend · Fiume verticale</p><h2 className="text-lg font-black">Il fiume dei prodotti</h2><p className="text-xs">I prodotti già presenti nel negozio scorrono dall'alto verso il basso. Tocca una scheda per aprire il prodotto.</p></div>
+              {prodotti.length > 0 ? (
+                <div className="rs-spons-vertical-window">
+                  <div className="rs-spons-vertical-flow">
+                    {[0,1].map(copy=><div className="rs-spons-vertical-track" key={copy} aria-hidden={copy===1?true:undefined}>
+                      {prodotti.map((p)=><a className="rs-spons-vertical-card" key={String(p.id) + '-' + copy} href={`/prodotto/${encodeURIComponent(p.id)}`} tabIndex={copy===1?-1:undefined}>
+                        <div className="rs-spons-vertical-image">{p.immagini?.[0] ? <img src={p.immagini[0]} alt={copy===1 ? '' : (p.titolo || 'Prodotto')} loading="lazy" /> : <span aria-hidden="true">📦</span>}</div>
+                        <span className="rs-spons-vertical-info"><b>{p.titolo || 'Prodotto'}</b><small>{p.categoria || 'Altro'}{p.condizione ? ' · ' + p.condizione : ''}</small></span>
+                        <strong>€ {Number(p.prezzo || 0).toFixed(2)}</strong>
+                      </a>)}
+                    </div>)}
+                  </div>
                 </div>
-              </div>
-              <p className="mt-2 text-[10px]">Anteprima grafica dimostrativa; non costituisce campagna o vendita attiva.</p>
+              ) : <p className="rounded-xl border border-dashed border-emerald-700 bg-white/70 p-4 text-sm">I prodotti del catalogo appariranno qui appena il negozio li avrà caricati.</p>}
             </section>
 
         <section className="mx-auto max-w-6xl px-2 py-4 sm:px-4">
@@ -2333,10 +2338,11 @@ export default function Home() {
         .rs-spons-vertical-window{height:310px;overflow:hidden;position:relative;touch-action:pan-x;}
         .rs-spons-vertical-flow{display:flex;flex-direction:column;will-change:transform;animation:rs-spons-fall 8s linear infinite;}
         .rs-spons-vertical-track{display:flex;flex-direction:column;gap:10px;padding-bottom:10px;}
-        .rs-spons-vertical-card{display:flex;flex-direction:row;align-items:center;gap:10px;min-height:94px;padding:8px;border-radius:14px;border:2px solid #16a34a;background:white;box-shadow:0 5px 15px #064e3b20;}
-        .rs-spons-vertical-image{width:72px;height:72px;flex:0 0 72px;border-radius:10px;background:linear-gradient(140deg,#dcfce7,#d1fae5);display:flex;align-items:center;justify-content:center;font-size:30px;position:relative;}
-        .rs-spons-vertical-image small{position:absolute;bottom:2px;font-size:8px;font-weight:900;}
-        .rs-spons-vertical-card b{font-size:12px;color:#103b48}.rs-spons-vertical-card small{font-size:10px;color:#46616b}.rs-spons-vertical-card strong{margin-left:auto;font-size:14px;color:#064e3b;white-space:nowrap;}
+        .rs-spons-vertical-card{display:flex;flex-direction:row;align-items:center;gap:10px;min-height:94px;padding:8px;border-radius:14px;border:2px solid #16a34a;background:white;box-shadow:0 5px 15px #064e3b20;text-decoration:none;box-sizing:border-box;}
+        .rs-spons-vertical-image{width:72px;height:72px;flex:0 0 72px;border-radius:10px;background:linear-gradient(140deg,#dcfce7,#d1fae5);display:flex;align-items:center;justify-content:center;font-size:30px;overflow:hidden;}
+        .rs-spons-vertical-image img{width:100%;height:100%;object-fit:contain;background:#fff;}
+        .rs-spons-vertical-info{display:flex;min-width:0;flex:1;flex-direction:column;gap:4px;}
+        .rs-spons-vertical-card b{font-size:12px;line-height:1.25;color:#103b48}.rs-spons-vertical-card small{font-size:10px;line-height:1.25;color:#46616b}.rs-spons-vertical-card strong{margin-left:auto;font-size:14px;color:#064e3b;white-space:nowrap;}
         @keyframes rs-spons-fall{from{transform:translateY(-50%)}to{transform:translateY(0)}}
         /* RiverSpend River: corrente pubblicitaria da sinistra verso destra. */
         .rs-featured-river { background:linear-gradient(115deg,#c6f7f7,#8ce4e9,#d7ffff,#a3eaf0); color:#082f3b; isolation:isolate; }
