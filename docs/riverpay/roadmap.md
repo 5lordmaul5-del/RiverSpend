@@ -1,7 +1,7 @@
 # RiverPay build roadmap
 
 1. Core ledger and event records — draft schema (current PR).
-2. Secure server-side provider configuration — secret environment variables, no secret UI exposure.
+2. Secure server-side provider configuration — secret environment variables, no secret UI exposure. (API Manager readiness monitor now drafted.)
 3. Hosted checkout adapter in test mode for one PSP; no card data on RiverSpend servers.
 4. Signed webhook verification, replay protection and idempotent status updates.
 5. Balanced atomic journal posting via trusted database function and tests.
