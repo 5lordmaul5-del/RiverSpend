@@ -2335,8 +2335,13 @@ export default function Home() {
         }
 
                 .rs-spons-vertical {background:linear-gradient(140deg,#d1fae5,#a7f3d0,#ecfdf5);color:#064e3b;}
-        .rs-spons-vertical-window{height:310px;overflow:hidden;position:relative;touch-action:pan-x;}
-        .rs-spons-vertical-flow{display:flex;flex-direction:column;will-change:transform;animation:rs-spons-fall 8s linear infinite;}
+        .rs-spons-vertical-window{height:310px;overflow:hidden;position:relative;touch-action:pan-y;}
+        .rs-spons-vertical-flow{display:flex;flex-direction:column;will-change:transform;animation:rs-spons-fall 36s linear infinite;}
+        /* Rallenta e lascia il tempo di selezionare: pausa durante puntamento, focus e pressione/tocco. */
+        .rs-spons-vertical-window:hover .rs-spons-vertical-flow,
+        .rs-spons-vertical-window:focus-within .rs-spons-vertical-flow,
+        .rs-spons-vertical-window:active .rs-spons-vertical-flow{animation-play-state:paused;}
+        .rs-spons-vertical-card{position:relative;z-index:1;cursor:pointer;touch-action:manipulation;}
         .rs-spons-vertical-track{display:flex;flex-direction:column;gap:10px;padding-bottom:10px;}
         .rs-spons-vertical-card{display:flex;flex-direction:row;align-items:center;gap:10px;min-height:94px;padding:8px;border-radius:14px;border:2px solid #16a34a;background:white;box-shadow:0 5px 15px #064e3b20;text-decoration:none;box-sizing:border-box;}
         .rs-spons-vertical-image{width:72px;height:72px;flex:0 0 72px;border-radius:10px;background:linear-gradient(140deg,#dcfce7,#d1fae5);display:flex;align-items:center;justify-content:center;font-size:30px;overflow:hidden;}
