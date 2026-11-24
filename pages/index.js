@@ -1170,18 +1170,6 @@ export default function Home() {
               </button>
             </section>
 
-            {/* RiverSpend River: stream of paid featured listings. Initial demo cards are clearly labeled. */}
-            <section id="rs-featured-river" aria-label="RiverSpend River prodotti in evidenza" className="rs-featured-river my-5 w-full overflow-hidden rounded-2xl border border-cyan-200/70 p-3 shadow-lg">
-              <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-                <div><p className="text-xs font-black uppercase tracking-widest text-cyan-800">🌊 RiverSpend River</p><h2 className="text-lg font-black text-slate-900">Prodotti in evidenza</h2><p className="text-xs text-slate-700">Il fiume promozionale: inserzioni sponsorizzate in movimento.</p></div>
-                <a href="/vendi" className="rounded-full bg-slate-900 px-3 py-2 text-xs font-bold text-white">Promuovi un prodotto →</a>
-              </div>
-              <div className="rs-featured-river-flow" aria-label="Flusso dimostrativo di schede promozionali">
-                {[["border-red-500","ROSSO","Vetrina premium"],["border-blue-500","BLU","In evidenza"],["border-yellow-400","ORO","Promozione speciale"],["border-red-500","ROSSO","Vetrina premium"],["border-blue-500","BLU","In evidenza"],["border-yellow-400","ORO","Promozione speciale"]].map((slot,i)=><article key={i} className={"rs-featured-river-card "+slot[0]}><div className="rs-featured-river-placeholder">🌊<span>SPAZIO SPONSORIZZATO</span></div><b>{slot[1]} · {slot[2]}</b><small>Slot promozionale · esempio grafico</small></article>)}
-              </div>
-              <p className="mt-2 text-[10px] text-slate-600">Le schede mostrate sono esempi grafici, non inserzioni acquistate. Gli annunci reali compariranno dopo l'attivazione del servizio e la verifica del pagamento.</p>
-            </section>
-
             <a id="rs-seller-card" href="/vendi" aria-label="Hai prodotti da vendere? Caricali qui e apri la tua vetrina su RiverSpendShop" className="rs-feature-card relative flex shrink-0 w-[220px] snap-start flex-col items-center justify-end overflow-hidden rounded-2xl border-2 border-emerald-300 bg-slate-950 p-2 text-center shadow-lg shadow-emerald-950/30 focus:outline-none focus:ring-4 focus:ring-emerald-300/70">
               <img src="/rs-vendi-prodotti-banner-640.jpg" alt="Borsa, cuffie, smartphone e smartwatch in vendita su RiverSpend" className="absolute inset-0 h-full w-full object-cover" />
               <span aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-slate-950/95 via-slate-950/45 to-slate-950/10" />
@@ -1482,6 +1470,18 @@ export default function Home() {
 
 
           </div>
+
+            {/* RiverSpend River: stream of paid featured listings. Initial demo cards are clearly labeled. */}
+            <section id="rs-featured-river" aria-label="RiverSpend River prodotti in evidenza" className="rs-featured-river my-5 w-full overflow-hidden rounded-2xl border border-cyan-200/70 p-3 shadow-lg">
+              <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+                <div><p className="text-xs font-black uppercase tracking-widest text-cyan-800">🌊 RiverSpend River</p><h2 className="text-lg font-black text-slate-900">Prodotti in evidenza</h2><p className="text-xs text-slate-700">Il fiume promozionale: inserzioni sponsorizzate in movimento.</p></div>
+                <a href="/vendi" className="rounded-full bg-slate-900 px-3 py-2 text-xs font-bold text-white">Promuovi un prodotto →</a>
+              </div>
+              <div className="rs-featured-river-flow" aria-label="Flusso dimostrativo di schede promozionali">
+                {[["border-red-500","ROSSO","Vetrina premium"],["border-blue-500","BLU","In evidenza"],["border-yellow-400","ORO","Promozione speciale"],["border-red-500","ROSSO","Vetrina premium"],["border-blue-500","BLU","In evidenza"],["border-yellow-400","ORO","Promozione speciale"]].map((slot,i)=><article key={i} className={"rs-featured-river-card "+slot[0]}><div className="rs-featured-river-placeholder">🌊<span>SPAZIO SPONSORIZZATO</span></div><b>{slot[1]} · {slot[2]}</b><small>Slot promozionale · esempio grafico</small></article>)}
+              </div>
+              <p className="mt-2 text-[10px] text-slate-600">Le schede mostrate sono esempi grafici, non inserzioni acquistate. Gli annunci reali compariranno dopo l'attivazione del servizio e la verifica del pagamento.</p>
+            </section>
 
 
 
