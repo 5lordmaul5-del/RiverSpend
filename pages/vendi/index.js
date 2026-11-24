@@ -584,7 +584,7 @@ export default function Vendi() {
       setFoto([]);
 
       await loadMieInserzioni(session.user.id);
-      setMessaggio('✅ Prodotto pubblicato nel RiverSpendShop!');
+      setMessaggio('✅ Prodotto ricevuto: è in attesa dei controlli RiverSpend prima della pubblicazione. Completa documenti e tracciabilità nell’area Product Trust.');
     } catch (error) {
       console.error('Pubblicazione prodotto:', error);
 
