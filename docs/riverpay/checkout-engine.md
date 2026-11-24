@@ -60,3 +60,5 @@ Never put these in `NEXT_PUBLIC_*`, source files, browser storage, screenshots, 
 The sandbox webhook deliberately does **not** update `orders`, confirm fulfillment, allocate treasury movements, or initiate seller payouts. It records a test result only in RiverPay's internal transaction/event tables. This prevents a simulated payment from triggering Shop fulfillment or accounting workflows.
 
 The older routes under `/api/pay/stripe/*` are legacy routes and are not called by this adapter. They need a separate security review and must not be assumed to inherit the new test-only restrictions.
+
+If Stripe reports the existing hosted session as expired, the endpoint returns HTTP 409 rather than creating another session with a different idempotency key. A controlled retry/new-intent mechanism is deferred until an atomic database operation is available; this avoids accidental duplicate sessions under concurrent requests.
