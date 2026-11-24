@@ -2336,7 +2336,7 @@ export default function Home() {
 
                 .rs-spons-vertical {background:linear-gradient(140deg,#d1fae5,#a7f3d0,#ecfdf5);color:#064e3b;}
         .rs-spons-vertical-window{height:310px;overflow:hidden;position:relative;touch-action:pan-y;}
-        .rs-spons-vertical-flow{display:flex;flex-direction:column;will-change:transform;animation:rs-spons-fall 36s linear infinite;}
+        .rs-spons-vertical-flow{display:flex;flex-direction:column;will-change:transform;animation:rs-spons-fall 150s linear infinite;}
         /* Rallenta e lascia il tempo di selezionare: pausa durante puntamento, focus e pressione/tocco. */
         .rs-spons-vertical-window:hover .rs-spons-vertical-flow,
         .rs-spons-vertical-window:focus-within .rs-spons-vertical-flow,
