@@ -1515,6 +1515,19 @@ export default function Home() {
               <p className="mt-2 text-[10px] text-slate-600">Le schede DEMO e le tue prove sono anteprime locali: non sono ordini, pagamenti o campagne pubblicate.</p>
             </section>
 
+            {/* RSspons verticale: cascata continua di prodotti promozionali. */}
+            <section id="rs-spons-vertical" className="rs-spons-vertical my-5 overflow-hidden rounded-2xl border p-3 shadow-lg" aria-label="RSspons verticale, fiume a cascata">
+              <div className="mb-3"><p className="text-xs font-black uppercase tracking-widest">🌊 RSspons · Cascata verticale</p><h2 className="text-lg font-black">Il fiume dei prodotti</h2><p className="text-xs">Una cascata continua: le schede scendono e ricompaiono dall'alto.</p></div>
+              <div className="rs-spons-vertical-window">
+                <div className="rs-spons-vertical-flow">
+                  {[0,1].map(copy=><div className="rs-spons-vertical-track" key={copy} aria-hidden={copy===1?true:undefined}>
+                    {[{title:'Sneakers',detail:'Demo moda',price:'€ 59,90',image:'👟'},{title:'Smartwatch',detail:'Demo tecnologia',price:'€ 89,90',image:'⌚'},{title:'Casa & Design',detail:'Demo casa',price:'€ 34,90',image:'🪴'},{title:'Orto Green',detail:'Demo sostenibile',price:'€ 24,90',image:'🌱'},{title:'Bicicletta',detail:'Demo sport',price:'€ 189,00',image:'🚲'}].map((ad,i)=><article className="rs-spons-vertical-card" key={i}><div className="rs-spons-vertical-image">{ad.image}<small>DEMO</small></div><b>{ad.title}</b><small>{ad.detail}</small><strong>{ad.price}</strong></article>)}
+                  </div>)}
+                </div>
+              </div>
+              <p className="mt-2 text-[10px]">Anteprima grafica dimostrativa; non costituisce campagna o vendita attiva.</p>
+            </section>
+
         <section className="mx-auto max-w-6xl px-2 py-4 sm:px-4">
           <div id="rs-products-section" className="mb-5 scroll-mt-40 flex items-end justify-between gap-3">
             <div>
@@ -2293,17 +2306,26 @@ export default function Home() {
           .rs-apps-download-strip,.rs-apps-download-strip::before { animation:none !important; }
         }
 
+                .rs-spons-vertical {background:linear-gradient(140deg,#d1fae5,#a7f3d0,#ecfdf5);color:#064e3b;}
+        .rs-spons-vertical-window{height:310px;overflow:hidden;position:relative;touch-action:pan-x;}
+        .rs-spons-vertical-flow{display:flex;flex-direction:column;will-change:transform;animation:rs-spons-fall 14s linear infinite;}
+        .rs-spons-vertical-track{display:flex;flex-direction:column;gap:10px;padding-bottom:10px;}
+        .rs-spons-vertical-card{display:flex;flex-direction:row;align-items:center;gap:10px;min-height:94px;padding:8px;border-radius:14px;border:2px solid #16a34a;background:white;box-shadow:0 5px 15px #064e3b20;}
+        .rs-spons-vertical-image{width:72px;height:72px;flex:0 0 72px;border-radius:10px;background:linear-gradient(140deg,#dcfce7,#d1fae5);display:flex;align-items:center;justify-content:center;font-size:30px;position:relative;}
+        .rs-spons-vertical-image small{position:absolute;bottom:2px;font-size:8px;font-weight:900;}
+        .rs-spons-vertical-card b{font-size:12px;color:#103b48}.rs-spons-vertical-card small{font-size:10px;color:#46616b}.rs-spons-vertical-card strong{margin-left:auto;font-size:14px;color:#064e3b;white-space:nowrap;}
+        @keyframes rs-spons-fall{from{transform:translateY(-50%)}to{transform:translateY(0)}}
         /* RiverSpend River: corrente pubblicitaria da sinistra verso destra. */
         .rs-featured-river { background:linear-gradient(115deg,#c6f7f7,#8ce4e9,#d7ffff,#a3eaf0); color:#082f3b; isolation:isolate; }
         .rs-spons-lane { margin-top:9px; padding:8px; border-radius:14px; overflow:hidden; }
         .rs-spons-lane-rosso { background:linear-gradient(90deg,#ffe4e6,#fff1f2); color:#9f1239; }
         .rs-spons-lane-giallo { background:linear-gradient(90deg,#fef9c3,#fffbeb); color:#854d0e; }
         .rs-spons-lane-blu { background:linear-gradient(90deg,#dbeafe,#eff6ff); color:#1e40af; }\n        .rs-spons-lane-verde { background:linear-gradient(90deg,#dcfce7,#f0fdf4); color:#166534; }
-        .rs-featured-river-window { width:100%; overflow-x:auto; overflow-y:hidden; padding:4px 0 8px; scrollbar-width:thin; }
+        .rs-featured-river-window { width:100%; overflow:hidden; padding:4px 0 8px; touch-action:pan-y; }
         .rs-featured-river-flow { display:flex; width:max-content; will-change:transform; }
-        .rs-flow-forward { animation:rs-featured-flow-forward 19s linear infinite; }
-        .rs-flow-reverse { animation:rs-featured-flow-reverse 19s linear infinite; }
-        .rs-featured-river-window:hover .rs-featured-river-flow,.rs-featured-river-window:active .rs-featured-river-flow,.rs-featured-river-window:focus-within .rs-featured-river-flow { animation-play-state:paused; }
+        .rs-flow-forward { animation:rs-featured-flow-forward 10s linear infinite; }
+        .rs-flow-reverse { animation:rs-featured-flow-reverse 10s linear infinite; }
+        
         .rs-featured-river-track { display:flex; flex:0 0 auto; align-items:stretch; gap:10px; padding-right:10px; }
         .rs-featured-river-card { box-sizing:border-box; width:164px; min-width:164px; border:4px solid #64748b; border-radius:16px; background:#fff; padding:8px; display:flex; flex-direction:column; gap:6px; box-shadow:0 5px 15px #06374725; }
         .rs-sponsored-rosso { border-color:#e11d48; }
@@ -2317,7 +2339,7 @@ export default function Home() {
         .rs-sponsored-price { color:#082f3b;font-size:17px;font-weight:900; }
         @keyframes rs-featured-flow-forward { from{transform:translateX(-50%)} to{transform:translateX(0)} }
         @keyframes rs-featured-flow-reverse { from{transform:translateX(0)} to{transform:translateX(-50%)} }
-        @media(prefers-reduced-motion:reduce){.rs-featured-river-flow{animation:none;}}
+        @media(prefers-reduced-motion:reduce){.rs-featured-river-flow,.rs-spons-vertical-flow{animation:none;}}
       `}</style>
 
 
