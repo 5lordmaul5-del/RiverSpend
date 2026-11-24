@@ -41,7 +41,13 @@ export default function Profilo() {
           cognome: metadata.cognome || '',
           telefono: metadata.telefono || '',
           indirizzo: metadata.indirizzo || '',
-          tipoAccount: metadata.tipoAccount || 'Privato'
+          tipoAccount: metadata.tipoAccount || 'Privato',
+          rssponsTipo: metadata.rssponsTipo || metadata.tipoAccount || 'Privato',
+          rssponsNome: metadata.rssponsNome || '',
+          rssponsDescrizione: metadata.rssponsDescrizione || '',
+          rssponsSettore: metadata.rssponsSettore || '',
+          rssponsSito: metadata.rssponsSito || '',
+          rssponsPiva: metadata.rssponsPiva || ''
         });
       }
     });
