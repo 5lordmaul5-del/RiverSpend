@@ -6,6 +6,18 @@ import SignalsFieldTools from '../components/SignalsFieldTools';
 import SignalsArea51 from '../components/SignalsArea51';
 import { ensureEnigmaDevice, encryptEnigmaText, decryptEnigmaText, encryptEnigmaFile, decryptEnigmaFile, isEnigmaCiphertext } from '../lib/signals-enigma';
 
+
+const RIVERSPEND_STICKERS = [
+  { id: 'a1a1', name: 'A1A1', src: '/stickers/river-universe/a1a1.svg' },
+  { id: 'a2b2', name: 'A2B2', src: '/stickers/river-universe/a2b2.svg' },
+  { id: 'b2d5', name: 'B2D5', src: '/stickers/river-universe/b2d5.svg' },
+  { id: 'rocket', name: 'Razzo', src: '/stickers/river-universe/rocket.svg' },
+  { id: 'ufo', name: 'UFO', src: '/stickers/river-universe/ufo.svg' },
+  { id: 'planet', name: 'Pianeta', src: '/stickers/river-universe/planet.svg' },
+  { id: 'alien', name: 'Alieno', src: '/stickers/river-universe/alien.svg' },
+  { id: 'galaxy', name: 'Galassia', src: '/stickers/river-universe/galaxy.svg' }
+];
+
 export default function RiverSpaceSignals() {
   const [user, setUser] = useState(null);
   const [authReady, setAuthReady] = useState(false);
@@ -576,8 +588,8 @@ export default function RiverSpaceSignals() {
   async function sendSticker(sticker) {
     if (!active || !user || busy) return;
     setBusy(true); setError('');
-    let body = sticker;
-    let metadata = { sticker };
+    let body = 'rs-sticker:' + sticker;
+    let metadata = { sticker_id: sticker };
     if (enigmaActive) {
       try {
         const { data: peerKeys, error: keyError } = await supabase.from('rs_chat_device_keys').select('device_id').eq('user_id', otherId).order('updated_at', { ascending: false });
@@ -819,7 +831,7 @@ export default function RiverSpaceSignals() {
                 <div className={`max-w-[85%] rounded-2xl px-4 py-2 shadow-sm md:max-w-[70%] ${m.sender_id === user.id ? 'rounded-br-sm bg-[#087e8b] text-white' : 'rounded-bl-sm bg-white text-slate-800'}`}>
                   {m.metadata?.upload_status === 'uploading' && <div className="mb-2 text-xs opacity-80">⏳ Invio del file in corso…</div>}
                   {m.metadata?.upload_status === 'failed' && <div className="mb-2 text-xs text-red-600">⚠️ Invio del file non riuscito</div>}
-                  {m.message_type === 'sticker' && <div className="py-1 text-center text-6xl">{m.displayBody || m.body}</div>}
+                  {m.message_type === 'sticker' && <div className="py-1 text-center">{String(m.displayBody || m.body || '').startsWith('rs-sticker:') ? <img src={RIVERSPEND_STICKERS.find(s => s.id === String(m.displayBody || m.body).slice(10))?.src || ''} alt="Sticker RiverSpend" className="mx-auto h-32 w-32 object-contain" /> : <span className="text-6xl">{m.displayBody || m.body}</span>}</div>}
                   {m.message_type === 'image' && mediaUrls[m.id] && <a href={mediaUrls[m.id]} target="_blank" rel="noreferrer"><img src={mediaUrls[m.id]} alt={m.attachment_name || 'Immagine condivisa'} className="mb-2 max-h-64 max-w-full rounded-xl object-contain" /></a>}
                   {m.message_type === 'audio' && mediaUrls[m.id] && <audio controls preload="metadata" src={mediaUrls[m.id]} className="mb-2 max-w-full" />}
                   {m.message_type === 'video' && mediaUrls[m.id] && <video controls playsInline preload="metadata" src={mediaUrls[m.id]} className="mb-2 max-h-64 max-w-full rounded-xl" />}
@@ -840,7 +852,7 @@ export default function RiverSpaceSignals() {
                 <button type="button" onClick={() => startMediaRecording("audio")} className="rounded-xl p-3 text-left text-sm hover:bg-teal-50">🎙️ Registra vocale</button>
                 <button type="button" onClick={() => startMediaRecording("video")} className="rounded-xl p-3 text-left text-sm hover:bg-teal-50">🎥 Registra video</button>
               </div>}
-              {stickerOpen && <div className="absolute bottom-16 left-2 z-20 grid w-[min(320px,calc(100vw-24px))] grid-cols-3 gap-2 rounded-2xl border bg-white p-3 shadow-xl"><div className="col-span-3 flex items-center justify-between text-sm font-semibold"><span>Sticker RiverSpace</span><button type="button" onClick={() => setStickerOpen(false)}>✕</button></div>{['🌊','🐠','🪷','💎','🚀','💚','🌟','🎁','🤗','❤️','🔥','👏','🥳','🦋','🐬'].map((x,i) => <button key={i} type="button" onClick={() => sendSticker(x)} className="grid aspect-square place-items-center rounded-xl bg-teal-50 text-5xl">{x}</button>)}</div>}
+              {stickerOpen && <div className="absolute bottom-16 left-2 z-20 grid w-[min(340px,calc(100vw-24px))] grid-cols-3 gap-2 rounded-2xl border border-amber-200 bg-[#07172d] p-3 shadow-2xl"><div className="col-span-3 flex items-center justify-between text-sm font-bold text-amber-100"><span>🌌 RiverSpend Sticker Universe</span><button type="button" onClick={() => setStickerOpen(false)} aria-label="Chiudi sticker" className="rounded-full px-2 text-lg">✕</button></div>{RIVERSPEND_STICKERS.map(sticker => <button key={sticker.id} type="button" onClick={() => sendSticker(sticker.id)} aria-label={'Invia sticker ' + sticker.name} className="rounded-xl border border-cyan-900 bg-[#102d4b] p-1 transition hover:border-amber-300 hover:bg-[#17446a]"><img src={sticker.src} alt={sticker.name} loading="lazy" className="mx-auto aspect-square w-full object-contain" /><span className="block pb-1 text-center text-[11px] font-semibold text-amber-100">{sticker.name}</span></button>)}</div>}
               {emojiOpen && <div className="absolute bottom-16 left-3 z-10 grid max-h-64 grid-cols-5 gap-1 overflow-y-auto rounded-2xl border bg-white p-3 shadow-xl">{['😀','😃','😄','😁','😆','😅','😂','🤣','🥹','😊','😇','🙂','😉','😍','🥰','😘','😋','😎','🤩','🥳','🤗','🤔','🙄','😴','😭','😡','🤯','😱','😌','🤝','🙏','👏','👍','👎','👌','✌️','🤞','💪','👋','❤️','🧡','💛','💚','💙','💜','🖤','🤍','💔','💕','💞','💖','💘','💝','🔥','✨','⭐','🌟','🎉','🎊','🎁','🌈','☀️','🌙','🌊','🪷','🌺','🌸','🌻','🍀','🐠','🐬','🦋','🚀','💎','💬','📍','🎵'].map(x => <button key={x} type="button" onClick={() => addEmoji(x)} className="rounded-lg p-1.5 text-3xl hover:bg-slate-100">{x}</button>)}</div>}
               {recording && <button type="button" onClick={stopMediaRecording} className="rounded-lg bg-red-100 px-2 py-2 text-xs font-semibold text-red-800">⏹ Ferma {recording === 'video' ? 'video' : 'vocale'}</button>}
               {attachment && <span className="max-w-28 truncate rounded-lg bg-teal-50 px-2 py-2 text-xs text-teal-900">{attachment.name} <button type="button" onClick={() => setAttachment(null)} aria-label="Rimuovi allegato">×</button></span>}
