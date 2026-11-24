@@ -989,11 +989,11 @@ export default function Home() {
                 <button type="button" onClick={() => setRicercaAperta(!ricercaAperta)} aria-label="Apri ricerca" aria-expanded={ricercaAperta} title="Cerca prodotti" className="flex h-10 min-w-10 items-center justify-center rounded-xl border border-teal-200 bg-teal-50 px-2 text-xl text-teal-800 shadow-sm hover:bg-teal-100">🔍</button>
                 
               </div>
-              <a href="/" aria-label="RiverSpendShop, pagina iniziale" className="absolute left-1/2 top-1/2 flex w-max max-w-[48%] -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center text-center">
-                <h1 className="rs-brand text-[1.45rem] font-extrabold leading-none tracking-tight text-black sm:text-4xl">RiverSpend</h1>
+              <a href="/" aria-label="RiverSpendShop, pagina iniziale" className="absolute left-1/2 top-1/2 flex w-max max-w-[58%] -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center text-center">
+                <h1 className="rs-brand text-[1.7rem] font-extrabold leading-none tracking-tight sm:text-4xl" style={{ color: '#111827', WebkitTextStroke: '1px #c69a3b', paintOrder: 'stroke fill', textShadow: '0 1px 2px rgba(198,154,59,.22)' }}>RiverSpend</h1>
                 <span className="rs-river-wave" aria-hidden="true">〰</span>
-                <span className="rs-shop-word text-sm font-extrabold uppercase tracking-[.2em] sm:text-base">Shop</span>
-                <span className="mt-0.5 whitespace-nowrap text-[7px] font-semibold tracking-[.08em] text-slate-500 sm:text-[9px] sm:tracking-[.14em]">YOUR SHOP • YOUR FLOW</span>
+                <span className="rs-shop-word text-sm font-extrabold uppercase tracking-[.2em] sm:text-base" style={{ color: '#111827', WebkitTextStroke: '.7px #c69a3b', paintOrder: 'stroke fill' }}>Shop</span>
+                <span className="mt-0.5 whitespace-nowrap text-[7px] font-bold tracking-[.08em] sm:text-[9px] sm:tracking-[.14em]" style={{ color: '#9a762b', WebkitTextStroke: '.25px #c69a3b', paintOrder: 'stroke fill' }}>YOUR SHOP • YOUR FLOW</span>
               </a>
               <div className="flex items-center justify-end gap-2 text-slate-900 sm:gap-4">
                 
