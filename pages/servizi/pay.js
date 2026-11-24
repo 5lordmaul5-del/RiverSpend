@@ -64,6 +64,11 @@ export default function RiverSpendPay() {
           <p className="mt-4 text-sm text-slate-500">La scelta non è ancora approvata: dipende da società, Paesi, KYC, condizioni contrattuali, costi e disponibilità effettiva dei payout. PayPal e SumUp restano separati per i flussi compatibili, non sostituiscono da soli un sistema marketplace di ripartizione.</p>
         </section>
 
+        <section className="mt-6 rounded-3xl border border-teal-200 bg-white p-6">
+          <h2 className="text-xl font-black">Area amministratore</h2>
+          <p className="mt-2 text-sm leading-6 text-slate-600">Controllo riservato dei registri Treasury, delle quote venditori e corrieri e dei futuri lotti di regolamento.</p>
+          <Link href="/servizi/pay/controllo" className="mt-4 inline-flex rounded-full bg-teal-700 px-5 py-3 font-black text-white">Apri RiverPay Control →</Link>
+        </section>
         <section className="mt-6 rounded-3xl border border-amber-200 bg-amber-50 p-6">
           <h2 className="text-xl font-black text-amber-950">Sicurezza e stato operativo</h2>
           <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-6 text-amber-950">
