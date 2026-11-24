@@ -130,6 +130,29 @@ export default function Home() {
     };
   }, []);
 
+  // Scorrimento automatico del carosello dei banner RiverSpend (RSForce, RSPark e sezioni collegate).
+  // Non si arresta al tocco o al passaggio del puntatore: i link restano normalmente cliccabili.
+  useEffect(() => {
+    const track = document.querySelector('.rs-apps-grid');
+    if (!track || window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+    let frame = 0;
+    let previous = 0;
+    const pixelsPerSecond = 44;
+    const move = (now) => {
+      if (previous) {
+        const maxScroll = track.scrollWidth - track.clientWidth;
+        if (maxScroll > 2) {
+          track.scrollLeft += ((now - previous) / 1000) * pixelsPerSecond;
+          if (track.scrollLeft >= maxScroll - 1) track.scrollLeft = 0;
+        }
+      }
+      previous = now;
+      frame = window.requestAnimationFrame(move);
+    };
+    frame = window.requestAnimationFrame(move);
+    return () => window.cancelAnimationFrame(frame);
+  }, []);
+
   const [prodotti, setProdotti] = useState([]);
   const [errore, setErrore] = useState('');
   const [menuCategorie, setMenuCategorie] = useState(false);
@@ -2453,9 +2476,9 @@ export default function Home() {
           display:flex !important; flex-direction:row !important; flex-wrap:nowrap !important;
           align-items:stretch !important; justify-content:flex-start !important;
           overflow-x:auto !important; overflow-y:hidden !important;
-          scroll-snap-type:x mandatory !important; scroll-behavior:auto !important;
+          scroll-snap-type:none !important; scroll-behavior:auto !important;
           -webkit-overflow-scrolling:touch !important; scrollbar-width:none !important;
-          touch-action:pan-x pan-y;
+          touch-action:pan-y;
         }
         .rs-apps-grid::-webkit-scrollbar { display:none !important; }
         .rs-apps-grid > .rs-feature-card,
