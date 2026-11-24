@@ -158,6 +158,10 @@ export default function Profilo() {
                     <span className="block text-lg font-bold">📦 I miei annunci</span>
                     <span className="mt-1 block text-sm">Consulta gli annunci pubblicati e gestisci le disponibilità. La modifica del prezzo compare qui dopo la pubblicazione dell’aggiornamento.</span>
                   </Link>
+                  <Link href="/rs-spons/campagna" className="rounded-2xl border-2 border-yellow-400 bg-yellow-50 p-4 text-left text-yellow-950">
+                    <span className="block text-lg font-bold">📢 RSSpons · Area sponsor</span>
+                    <span className="mt-1 block text-sm">Completa la scheda di privato, azienda o attività e crea una campagna Rosso, Blu o Giallo.</span>
+                  </Link>
                   <Link href="/notifiche" className="rounded-2xl border border-slate-200 bg-white p-4 text-left text-slate-900">
                     <span className="block text-lg font-bold">🔔 Notifiche</span>
                     <span className="mt-1 block text-sm text-slate-600">Apri le notifiche del tuo account.</span>
