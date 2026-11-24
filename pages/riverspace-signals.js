@@ -307,6 +307,11 @@ export default function RiverSpaceSignals() {
     if (!active) { setMessages([]); setEnigmaConsents([]); return; }
     // Non mostrare per un istante i messaggi della chat precedente.
     setMessages([]);
+    Object.values(mediaUrlsRef.current).forEach(url => {
+      if (typeof url === 'string' && url.startsWith('blob:')) URL.revokeObjectURL(url);
+    });
+    mediaUrlsRef.current = {};
+    setMediaUrls({});
     supabase.from('rs_chat_enigma_consents').select('conversation_id,user_id,accepted_at,revoked_at').eq('conversation_id', active)
       .then(({ data, error: consentError }) => { if (consentError) setError(consentError.message); else setEnigmaConsents(data || []); });
     const consentChannel = supabase.channel('signals-enigma-consent-' + active)
@@ -325,7 +330,6 @@ export default function RiverSpaceSignals() {
         if (typeof url === 'string' && url.startsWith('blob:')) URL.revokeObjectURL(url);
       });
       mediaUrlsRef.current = {};
-      setMediaUrls({});
       supabase.removeChannel(channel);
       supabase.removeChannel(consentChannel);
     };
