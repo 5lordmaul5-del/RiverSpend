@@ -102,9 +102,24 @@ All three new tables have RLS and administrator-only policies. Browser roles can
 
 The migration was applied to the active Supabase project and verified: all three tables exist, their admin policies are present, and the treasury RPC is denied to `anon` and `authenticated` while remaining available to `service_role`.
 
-## Remaining work before sandbox and live activation
+## Implemented control panel and remaining work (2026-11-24)
 
-- Add the owner-only RiverPay control panel/API for payout queues, settlement batches and reconciliation.
-- Review and harden existing legacy treasury table policies; current Supabase security advisors still report several older treasury tables with RLS enabled but no policies.
-- Implement provider adapter and signed webhook handlers only after sandbox account setup.
-- Keep live mode, outgoing transfers and automated settlement disabled until business onboarding, provider approval, legal/accounting review and explicit owner approval.
+The owner-only RiverPay control panel/API is implemented:
+- Page: `/servizi/pay/controllo`.
+- API: `GET /api/pay/admin/overview`.
+- The API validates the Supabase access token, checks the `admin` role in `rs_admin_roles`, and reads financial records server-side.
+- The response is marked `preparation_only` with `liveTransfersEnabled: false`; it exposes no bank account details, card numbers, CVV or provider credentials.
+- The public RiverPay page links to the control panel.
+- Legacy treasury access policies were hardened in `20261124101030_riverpay_secure_legacy_treasury_admin_access.sql`; authenticated reads are admin-only and browser roles cannot execute the treasury allocation RPC.
+
+Deployment verification on 2026-11-24:
+- Production deployment for commit `2de5af4907ce03810dd2fb12ffec6ddd8bdc031e` reached `READY`.
+- `https://www.riverspend.com/servizi/pay` and `https://www.riverspend.com/servizi/pay/controllo` both returned HTTP 200.
+- Vercel reported no runtime error clusters in the last 24 hours.
+- The page shell was fetched successfully, but an authenticated administrator session and the API's 401/403 behavior have not yet been end-to-end tested. Do not treat this as a completed authorization test.
+
+Next engineering steps:
+- Add automated tests for missing/invalid tokens, non-admin users, admin access, and missing server configuration.
+- Build a provider-neutral sandbox adapter and signed webhook handler after a marketplace PSP sandbox is selected and provisioned.
+- Test duplicate and out-of-order webhooks, idempotent checkout/refunds, partial refunds, failed transfers, delivery release gates and settlement reconciliation.
+- Keep live charges, refunds, transfers and payouts disabled until company/bank onboarding, provider approval, legal/accounting review, end-to-end sandbox verification and explicit owner approval.
