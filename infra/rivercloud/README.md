@@ -1,4 +1,4 @@
-# RiverCloud Core — RC-1/RC-8 scaffold
+# RiverCloud Core — RC-1/RC-11 scaffold
 
 Independent hosting foundation, kept separate from production.
 
@@ -9,6 +9,7 @@ Independent hosting foundation, kept separate from production.
 - Runner boundary and fixed worker profile specification
 - RC-7 execution envelope (execution disabled)
 - RC-8 local hash-linked audit ledger prototype and approval/rollback design\n- RC-9 bounded job lifecycle and audit-event integration prototype\n- RC-10 approval-bound token prototype (fixed staging profile, commit and digest binding, expiry, one-use marking)
+- RC-11 single-file transaction/lock prototype for queue, lifecycle and approval-use state
 
 ## Setup scaffold
 1. Point DNS A/AAAA records at a VPS.
@@ -26,4 +27,4 @@ The demo route is not RiverSpend hosting.
 - Prototype tests have not been run in the target environment.
 
 ## Next
-RC-11: transactional queue/lifecycle/approval integration and authenticated approver identity; hardening review before any execution.
+RC-12: authenticated approver identity, crash-durability/stale-lock recovery, external protected audit sink and security review before any execution.
