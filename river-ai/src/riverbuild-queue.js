@@ -21,7 +21,7 @@ export class RiverBuildQueue {
   approve(id){const j=this.#jobs.find(x=>x.id===id);if(!j)throw new Error('Job not found');if(j.status!=='queued')throw new Error('Only queued jobs can be approved');if(j.approved)throw new Error('Job already approved');j.approved=true;j.updatedAt=new Date().toISOString();return {...j} ;}
   cancel(id){const j=this.#jobs.find(x=>x.id===id);if(!j)throw new Error('Job not found');if(j.status!=='queued')throw new Error('Only queued jobs can be cancelled');j.status='cancelled';j.updatedAt=new Date().toISOString();this.#trim();return {...j};}
   claimNext(){if(this.#jobs.filter(j=>j.status==='running').length>=this.maxConcurrent)return null;
-    const j=this.#jobs.filter(x=>x.status==='queued'&&x.approved).sort((a,b)=>({high:0,normal:1,low:2}[a.priority]-({high:0,normal:1,low:2}[b.priority])||a.createdAt.localeCompare(b.createdAt))[0];
+    const rank={high:0,normal:1,low:2}; const j=this.#jobs.filter(x=>x.status==='queued'&&x.approved).sort((a,b)=>rank[a.priority]-rank[b.priority]||a.createdAt.localeCompare(b.createdAt))[0];
     if(!j)return null;j.status='running';j.updatedAt=new Date().toISOString();return {...j};
   }
   finish(id,status){if(!terminal.has(status)||status==='cancelled')throw new Error('Invalid completion status');const j=this.#jobs.find(x=>x.id===id);if(!j)throw new Error('Job not found');if(j.status!=='running')throw new Error('Only running jobs can finish');j.status=status;j.updatedAt=new Date().toISOString();this.#trim();return {...j};}
