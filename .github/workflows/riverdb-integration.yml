@@ -43,6 +43,34 @@ jobs:
           RIVERDB_MIGRATION_URL: postgresql://postgres:test-only-password@localhost:5432/riverdb_test
         run: bash ./scripts/migrate.sh
 
+      - name: Verify checksum tampering is rejected
+        working-directory: infra/riverdb
+        env:
+          RIVERDB_MIGRATION_URL: postgresql://postgres:test-only-password@localhost:5432/riverdb_test
+        run: |
+          set -eu
+          FILE=./migrations/001_core.sql
+          cp "$FILE" /tmp/riverdb-001-core-original.sql
+          trap 'cp /tmp/riverdb-001-core-original.sql "$FILE"' EXIT
+          printf '\\n-- tamper probe (CI only)\\n' >> "$FILE"
+          if ./scripts/migrate.sh; then
+            echo 'ERROR: checksum tampering was not rejected' >&2
+            exit 1
+          fi
+          echo 'Checksum tampering correctly rejected.'
+      - name: Verify concurrent migration invocations serialize
+        working-directory: infra/riverdb
+        run: |
+          set -eu
+          psql "postgresql://postgres:test-only-password@localhost:5432/postgres" -v ON_ERROR_STOP=1 -c "DROP DATABASE IF EXISTS riverdb_race_test;"
+          psql "postgresql://postgres:test-only-password@localhost:5432/postgres" -v ON_ERROR_STOP=1 -c "CREATE DATABASE riverdb_race_test;"
+          export RIVERDB_MIGRATION_URL=postgresql://postgres:test-only-password@localhost:5432/riverdb_race_test
+          ./scripts/migrate.sh & P1=$!
+          ./scripts/migrate.sh & P2=$!
+          wait "$P1"
+          wait "$P2"
+          test "$(psql "$RIVERDB_MIGRATION_URL" -tAc "SELECT count(*) FROM riverdb.schema_migrations")" -eq 2
+          echo 'Concurrent migration runs serialized and ledger verified.'
       - name: Run integration tests
         working-directory: infra/riverdb
         env:
