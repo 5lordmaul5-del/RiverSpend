@@ -10,7 +10,7 @@ test('enqueue, claim, finish and summary states',()=>{
  assert.equal(q.finish(j.id,'passed').status,'passed');assert.equal(q.summary().passed,1);
 });
 test('priority ordering and concurrency cap',()=>{
- const q=new RiverBuildQueue({maxConcurrent:1});q.enqueue(req('low'),{priority:'low'});q.enqueue(req('high'),{priority:'high'});
+ const q=new RiverBuildQueue({maxConcurrent:1});const low=q.enqueue(req('low'),{priority:'low'});const high=q.enqueue(req('high'),{priority:'high'});q.approve(low.id);q.approve(high.id);
  assert.equal(q.claimNext().project,'high');assert.equal(q.claimNext(),null);
 });
 test('queue cap and queued cancellation',()=>{
