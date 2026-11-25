@@ -211,3 +211,14 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 - Added an HTTP regression test for the misleading content-type. Reconstructed workspace: **3/3 server tests passed** using fetched source/test copies, not a repository checkout.
 - GitHub Actions run **45647746438 (#170) — SUCCESS: 105/105 tests** verified the server change along with the prior RC-17 audit replay hardening and Compose/security checks. This run also completed bootstrap, backup/restore shell and Python syntax, Compose configuration, and Caddy validation.
 - No RiverCloud stack was started; Caddy validation used a temporary validation container only.
+
+
+## RC-10 cross-process approval consumption and RC-15 staging plan validation (25 November 2026)
+
+- Added a six-process race against one approval token using the existing RC-11 transaction lock. Exactly one process consumes the token; five receive the used/missing rejection. State is checked after the race: the approval is marked used and exactly one `approval_consumed` event exists.
+- GitHub Actions run **45657318087 (#173) — SUCCESS: 106/106 tests** and PR run **45657341865 (#174) — SUCCESS: 106/106 tests** verify the process-level approval race and existing suite, plus shell/Python, Compose and Caddy validation.
+- RC-15 staging plan validator now rejects projects outside the explicit `riverspend` allowlist and rejects forged profile limits (network, read-only flag, timeout) rather than trusting values supplied in the worker specification.
+- Intermediate CI runs **45657406044 (#175), 45657417788 (#176), and 45657431302 (#177) — FAILURE** caught an invalid regular-expression escape in the first staging-path validation change. The failing test suite reported a syntax error (`Invalid regular expression flags`); this was a validator code defect, not an environment failure.
+- Corrected the staging path regular-expression escaping. GitHub Actions run **45657470568 (#178) — SUCCESS: 108/108 tests**, and PR run **45657482972 (#179) — SUCCESS: 108/108 tests** verified the corrected validator and new tests, plus bootstrap, backup/restore shell and Python syntax, Compose configuration, and Caddy validation.
+- Caddy validation used a temporary container only. The RiverCloud stack and runner were not started.
+- These validations remain prototypes: staging plans are not executable, OIDC/RBAC are not integrated into the API, the approver label is not authenticated, and external audit delivery remains unconnected.
