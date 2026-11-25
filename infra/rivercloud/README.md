@@ -6,7 +6,7 @@ Independent hosting foundation, kept separate from production.
 - Docker Compose orchestration
 - Caddy proxy with automatic TLS for a configured domain
 - Demo container routed through Caddy
-- Bootstrap script and install notes\n- RiverCloud Fortress static panel scaffold (disconnected; controls disabled)\n- RC-3/RC-4 security contract and implementation plan
+- Bootstrap script and install notes\n- RiverCloud Fortress static panel scaffold (disconnected; controls disabled)\n- Policy-only deployment engine prototype (validation; no runner or deploy)\n- RC-3/RC-4 security contract and implementation plan
 
 ## Start on a Linux VPS
 1. Point the domain's DNS A/AAAA records at the server.
