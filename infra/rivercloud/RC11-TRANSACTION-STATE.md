@@ -1,4 +1,12 @@
 # RC-11 transactional state prototype — hardening update
-A single local JSON state file combines jobs, approval records and event history. Mutations use a lock file with bounded timeout and lock metadata, schema validation, unique temporary file, file sync, atomic rename, best-effort directory sync, and cleanup of temporary files on failure. Inputs for jobs and approval records are validated. Added regression tests for invalid state and approval input.
 
-This remains a prototype. Stale-lock recovery is deliberately not automatic (to avoid unsafe lock deletion); lock behavior, crash durability and directory sync need target-platform testing. Lock files can still remain after a crash and require manual recovery. Identity authentication is absent; events are not cryptographically chained in this store; JSON is not suitable for scale; no runner or deployment execution exists. Do not expose or use in production.
+The state store serializes mutations with a lock file, validates the state envelope, writes a unique temporary file, synchronizes it, atomically renames it, attempts a directory sync, and cleans temporary files on failure. Queue submissions now use this transaction rather than independent read/write operations.
+
+The queue fails closed when the lock cannot be acquired within its bounded timeout. Duplicate plan digests are checked and inserted in the same transaction, and queue state/events are persisted together.
+
+## Limits
+
+- Stale lock recovery is not automatic. A crash may leave a lock that requires careful manual review; do not blindly delete it.
+- PID/lock behavior, crash durability, and directory sync need target-platform tests.
+- JSON storage is local prototype storage, not a distributed or scalable database.
+- Identity authentication, runner execution and deployment remain disabled.

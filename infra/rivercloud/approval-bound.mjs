@@ -1,11 +1,36 @@
-// RC-10 approval binding prototype: HMAC signed, digest-bound, expiring, single-use tokens.
-import {createHmac,timingSafeEqual,createHash} from "node:crypto";
-import {mkdir,readFile,writeFile} from "node:fs/promises";import path from "node:path";
-const canonical=x=>JSON.stringify({jobId:x.jobId,projectId:x.projectId,profile:x.profile,target:x.target,commit:x.commit,digest:x.digest});
-const valid=x=>x&&/^[a-zA-Z0-9_-]{1,64}$/.test(x.jobId)&&x.projectId==="RiverSpend"&&["node-static","node-tests"].includes(x.profile)&&x.target==="staging"&&/^[a-f0-9]{40}$/.test(x.commit)&&typeof x.digest==="string"&&x.digest.length>=16&&x.digest.length<=128;
-const signature=(secret,payload)=>createHmac("sha256",secret).update(payload).digest("hex");
-async function read(file){try{return JSON.parse(await readFile(file,"utf8"));}catch(e){if(e.code==="ENOENT")return [];throw e;}}
-async function write(file,data){await mkdir(path.dirname(file),{recursive:true,mode:0o700});await writeFile(file,JSON.stringify(data,null,2),{mode:0o600});}
-export function approvalPayload(binding,expiresAt,nonce){return canonical(binding)+"|"+expiresAt+"|"+nonce;}
-export async function issueApproval({storeDir,binding,secret,ttlMs=300000,approver}){if(!valid(binding)||typeof secret!=="string"||secret.length<32||typeof approver!=="string"||approver.length>100||!Number.isSafeInteger(ttlMs)||ttlMs<1000||ttlMs>3600000)throw new Error("invalid_approval_request");const expiresAt=Date.now()+ttlMs,nonce=createHash("sha256").update(String(Math.random())+String(Date.now())+binding.jobId).digest("hex");const payload=approvalPayload(binding,expiresAt,nonce);const token=signature(secret,payload);const file=path.join(storeDir,"approvals.json");const approvals=await read(file);approvals.push({jobId:binding.jobId,binding,expiresAt,nonce,token,approver,used:false});await write(file,approvals);return {token,expiresAt,binding,approver};}
-export async function consumeApproval({storeDir,binding,secret,token}){if(!valid(binding)||typeof secret!=="string"||secret.length<32||typeof token!=="string")throw new Error("invalid_approval");const file=path.join(storeDir,"approvals.json"),approvals=await read(file);const record=approvals.find(x=>x.jobId===binding.jobId&&x.token===token);if(!record||record.used)throw new Error("approval_missing_or_used");if(record.expiresAt<Date.now())throw new Error("approval_expired");if(canonical(record.binding)!==canonical(binding))throw new Error("approval_binding_mismatch");const payload=approvalPayload(record.binding,record.expiresAt,record.nonce),expected=signature(secret,payload);const a=Buffer.from(token),b=Buffer.from(expected);if(a.length!==b.length||!timingSafeEqual(a,b))throw new Error("approval_signature_invalid");record.used=true;await write(file,approvals);return {approved:true,jobId:binding.jobId,approver:record.approver};}
+// Prototype: HMAC-bound approvals with random nonce and atomic one-use consumption.
+// Approver remains an unverified label until a real OIDC/authentication layer is integrated.
+import { createHmac, timingSafeEqual, createHash, randomBytes } from "node:crypto";
+import path from "node:path";
+import { storeApproval, consumeStoredApproval } from "./rc11-state.mjs";
+
+const normalize = x => ({ jobId: x.jobId, projectId: x.projectId, profile: x.profile, target: x.target, commit: String(x.commit || "").toLowerCase(), digest: String(x.digest || "").toLowerCase() });
+const canonical = x => JSON.stringify(normalize(x));
+const valid = x => x && /^[a-zA-Z0-9_-]{1,64}$/.test(x.jobId) && x.projectId === "riverspend" && ["node-static", "node-tests"].includes(x.profile) && x.target === "staging" && /^[a-f0-9]{40}$/i.test(String(x.commit || "")) && /^[a-f0-9]{64}$/i.test(String(x.digest || ""));
+const signature = (secret, payload) => createHmac("sha256", secret).update(payload).digest("hex");
+const tokenId = token => createHash("sha256").update(token).digest("hex");
+
+export function approvalPayload(binding, expiresAt, nonce) { return canonical(binding) + "|" + expiresAt + "|" + nonce; }
+
+export async function issueApproval({ storeDir, binding, secret, ttlMs = 300000, approver }) {
+  if (!valid(binding) || typeof secret !== "string" || secret.length < 32 || typeof approver !== "string" || !approver.trim() || approver.length > 100 || !Number.isSafeInteger(ttlMs) || ttlMs < 1000 || ttlMs > 3600000) throw new Error("invalid_approval_request");
+  const normalized = normalize(binding), expiresAt = Date.now() + ttlMs, nonce = randomBytes(32).toString("hex");
+  const token = signature(secret, approvalPayload(normalized, expiresAt, nonce));
+  await storeApproval(path.join(storeDir, "state.json"), { tokenId: tokenId(token), jobId: normalized.jobId, binding: normalized, expiresAt, nonce, approver });
+  return { token, expiresAt, binding: normalized, approver };
+}
+
+export async function consumeApproval({ storeDir, binding, secret, token }) {
+  if (!valid(binding) || typeof secret !== "string" || secret.length < 32 || typeof token !== "string") throw new Error("invalid_approval");
+  const normalized = normalize(binding), id = tokenId(token);
+  let actorLabel;
+  await consumeStoredApproval(path.join(storeDir, "state.json"), id, record => {
+    if (canonical(record.binding) !== canonical(normalized)) return false;
+    const expected = signature(secret, approvalPayload(record.binding, record.expiresAt, record.nonce));
+    const a = Buffer.from(token), b = Buffer.from(expected);
+    const ok = a.length === b.length && timingSafeEqual(a, b);
+    if (ok) actorLabel = record.approver;
+    return ok;
+  });
+  return { approved: true, jobId: normalized.jobId, approver: actorLabel };
+}
