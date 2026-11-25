@@ -3,7 +3,7 @@ import {constants as fsConstants} from "node:fs";
 import {mkdir,rename,open,unlink,lstat} from "node:fs/promises";
 import path from "node:path";
 import {randomUUID} from "node:crypto";
-const init={schema:1,jobs:[],approvals:[],events:[]};
+const init={schema:1,jobs:[],approvals:[],events:[]};\nasync function syncDirectoryHandle(dir){const d=await open(dir,"r");try{await d.sync();}finally{await d.close();}}
 function validateState(s){if(!s||s.schema!==1||!Array.isArray(s.jobs)||!Array.isArray(s.approvals)||!Array.isArray(s.events))throw new Error("invalid_state_schema");}
 async function unlinkOwnedLock(lock,identity){
  if(!identity)return false;
@@ -34,7 +34,7 @@ export async function transactState(file,mutator,{lockTimeoutMs=3000}={}){
  const dir=path.dirname(file);await mkdir(dir,{recursive:true,mode:0o700});const lock=file+".lock";let handle,lockStat;
  const start=Date.now();while(!handle){try{handle=await open(lock,"wx",0o600);lockStat=await handle.stat();await handle.writeFile(JSON.stringify({pid:process.pid,createdAt:new Date().toISOString()}));await handle.sync();}catch(e){if(handle){await unlinkOwnedLock(lock,lockStat).catch(()=>{});await handle.close().catch(()=>{});handle=null;lockStat=null;}if(e.code!=="EEXIST")throw e;if(Date.now()-start>lockTimeoutMs)throw new Error("state_lock_timeout");await new Promise(r=>setTimeout(r,25));}}
  let temp;
- try{const state=await readState(file);validateState(state);const result=await mutator(state);temp=file+".tmp-"+process.pid+"-"+randomUUID();const t=await open(temp,"wx",0o600);try{await t.writeFile(JSON.stringify(state,null,2));await t.sync();}finally{await t.close();}await rename(temp,file);temp=null;try{const d=await open(dir,"r");try{await d.sync();}finally{await d.close();}}catch{}return result;}
+ try{const state=await readState(file);validateState(state);const result=await mutator(state);temp=file+".tmp-"+process.pid+"-"+randomUUID();const t=await open(temp,"wx",0o600);try{await t.writeFile(JSON.stringify(state,null,2));await t.sync();}finally{await t.close();}await rename(temp,file);temp=null;try{await syncDirectory(dir);}catch(cause){const error=new Error("state_commit_durability_uncertain",{cause});error.code="state_commit_durability_uncertain";error.commitApplied=true;throw error;}return result;}
  finally{if(temp)await unlink(temp).catch(()=>{});try{await unlinkOwnedLock(lock,lockStat);}finally{await handle.close();}}
 }
 export async function addJob(file,job){if(!job||typeof job.id!=="string"||!job.id)throw new Error("invalid_job");return transactState(file,state=>{if(state.jobs.some(j=>j.id===job.id))throw new Error("job_exists");state.jobs.push({...job,state:"pending"});state.events.push({event:"job_created",jobId:job.id,at:new Date().toISOString()});return job.id;});}
