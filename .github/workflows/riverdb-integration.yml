@@ -42,6 +42,13 @@ jobs:
         env:
           RIVERDB_TEST_URL: postgresql://postgres:test-only-password@localhost:5432/riverdb_test
         run: npm test
+      - name: Validate runtime permissions
+        env:
+          RIVERDB_MIGRATION_URL: postgresql://postgres:test-only-password@localhost:5432/riverdb_test
+          RIVERDB_RUNTIME_TEST_URL: postgresql://riverdb_runtime:riverdb-ci-only-password@localhost:5432/riverdb_test
+        run: |
+          psql "$RIVERDB_MIGRATION_URL" -v ON_ERROR_STOP=1 -c "ALTER ROLE riverdb_runtime WITH PASSWORD 'riverdb-ci-only-password';"
+          node infra/riverdb/tests/runtime-permissions.test.mjs
       - name: Compose and shell checks
         run: |
           sh -n infra/riverdb/scripts/backup.sh
