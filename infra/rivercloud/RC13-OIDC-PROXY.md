@@ -33,8 +33,8 @@ No services have been started by this change.
 - Provider-specific MFA/conditional access and session revocation policies.
 - Route-level RBAC in the RiverCloud API; proxy group allowlisting only gates the placeholder upstream.
 - Authenticated actor binding in job approvals/audit.
-- Cookie/session behavior, logout, CSRF, rate-limit, header-spoofing and provider integration tests.
-- Image digest pinning and image scan/SBOM.
+- Cookie/session behavior, logout, CSRF, rate-limit, header-spoofing and provider integration tests. Static config tests now verify trusted-proxy IP, secure cookies and the absence of skip-auth rules.
+- OAuth2 Proxy v7.15.6 is above the versions affected by the reported 7.15.2–7.15.4 forwarded-URI bypass; this configuration also restricts trusted proxy IPs and contains no skip-auth rules. This is a version/configuration check, not a full image scan. Image digest pinning and image scan/SBOM remain pending.
 - Staging rehearsal and threat review.
 
 OAuth2 Proxy image is version-tag pinned to `v7.15.6`; digest pinning remains pending.
