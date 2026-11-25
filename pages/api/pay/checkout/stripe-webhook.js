@@ -96,7 +96,7 @@ export default async function handler(req, res) {
     }
 
     if (tx.status !== "paid") {
-      const { error: updateError } = await db
+      const { data: updatedTx, error: updateError } = await db
         .from("riverpay_transactions")
         .update({
           status: "paid",
@@ -104,8 +104,26 @@ export default async function handler(req, res) {
           metadata: { ...(tx.metadata || {}), test_only: true, stripe_payment_intent: session.payment_intent || null, stripe_event_id: event.id }
         })
         .eq("id", tx.id)
-        .eq("status", "pending");
+        .eq("status", "pending")
+        .select("id,status,provider_payment_id")
+        .maybeSingle();
       if (updateError) throw updateError;
+
+      // A concurrent webhook may have changed the transaction after the initial read.
+      // Verify the persisted state before marking this provider event processed.
+      if (!updatedTx) {
+        const { data: confirmedTx, error: confirmError } = await db
+          .from("riverpay_transactions")
+          .select("id,status,provider_payment_id")
+          .eq("id", tx.id)
+          .maybeSingle();
+        if (confirmError) throw confirmError;
+        if (!confirmedTx || confirmedTx.status !== "paid" || confirmedTx.provider_payment_id !== session.id) {
+          throw new Error("Transaction state not confirmed after conditional update.");
+        }
+      }
+    } else if (tx.provider_payment_id !== session.id) {
+      return fail(res, 409, "Transazione già pagata da una sessione differente.");
     }
 
     const { error: markEventError } = await db
