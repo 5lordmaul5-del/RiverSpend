@@ -276,4 +276,4 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 
 - Audited the RC-13 permission helper and found that the owner wildcard returned true for arbitrary, unrecognized permission names. Unknown actions should fail closed even for privileged roles.
 - Added an explicit permission catalog; `hasPermission` now rejects unknown permission names before role evaluation. Added a regression assertion for owner/unknown-permission denial.
-- Added `RC23-RBAC-PERMISSION-CATALOG.md`. GitHub Actions evidence for this increment is pending; no result is claimed yet.
+- Added `RC23-RBAC-PERMISSION-CATALOG.md`. GitHub Actions run **45685524487 (#226) — SUCCESS: 117/117 Node tests**, 0 failures, plus bootstrap shell, backup/restore and Python syntax, Compose configuration, and Caddy validation. Caddy validation used a temporary container only. This verifies head `80d2ff5a560fb57cecbf1cb1dbd4f8bb02aec3b2`; no RiverCloud service or runner was started.
