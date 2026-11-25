@@ -1,30 +1,33 @@
-# RiverCloud Core — bootstrap scaffold
+# RiverCloud Core — RC-1/RC-2 scaffold
 
-This is the first, intentionally small foundation for RiverSpend's independent hosting platform.
+Independent hosting foundation, kept separate from production.
 
 ## Current scope
 - Docker Compose orchestration
-- Caddy proxy container and persistent TLS/config volumes
-- Bootstrap script to install Docker (Linux VPS) and launch the scaffold
-- A placeholder HTTP response, **not yet a deployment/control panel**
+- Caddy proxy with automatic TLS for a configured domain
+- Demo container routed through Caddy
+- Bootstrap script and install notes
 
-## Install on a fresh Ubuntu/Debian VPS
-1. Point your domain's DNS A (and optionally AAAA) record at the VPS.
+## Start on a Linux VPS
+1. Point the domain's DNS A/AAAA records at the server.
 2. Copy this folder to the VPS.
-3. `cp .env.example .env` and set `RIVERCLOUD_DOMAIN`.
+3. Copy `.env.example` to `.env` and set `RIVERCLOUD_DOMAIN` to the domain.
 4. Run `sudo ./bootstrap.sh`.
-5. This initial scaffold only serves the placeholder on port 80; HTTPS and app routing are the next milestone. Do not expose admin interfaces.
+5. Allow inbound TCP 80/443; secure SSH separately.
 
-## Safety notes
+Once DNS propagates and ports are reachable, Caddy requests TLS certificates and routes traffic to the demo container.
+
+## Important
+- This scaffold does not provision a VPS, migrate RiverSpend, or provide a control panel yet.
 - Do not put secrets in Git.
-- Restrict SSH and firewall to required ports.
-- Use SSH keys, updates, backups, and monitoring.
-- This scaffold does not migrate RiverSpend or replace Vercel yet.
-- Never use this bootstrap on a production server without reviewing it.
+- Never expose a Docker socket or arbitrary command endpoint to the internet.
+- Configure firewall, SSH keys, OS updates, backups and monitoring.
+- Review before production use.
 
 ## Roadmap
-1. Core bootstrap and proxy (this scaffold)
-2. HTTPS domain configuration and app routing
-3. Secure deployment agent/API (authentication, allow-listed projects, audit logs)
-4. RiverCloud Panel: status, logs, deploy, rollback
-5. Backups, monitoring, capacity management, multi-node expansion
+1. Core bootstrap and proxy scaffold
+2. Domain routing and HTTPS (Caddy)
+3. Secure deployment pipeline: allowlisted projects/branches, webhook verification, isolated builds, audit logs, health checks, rollback
+4. RiverCloud Panel: authenticated status/logs/deploy/rollback UI
+5. Backups, monitoring and capacity controls
+6. Staging migration and cutover readiness
