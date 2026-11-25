@@ -309,3 +309,10 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 - Updated the six-process approval race and RC-22 identity tests. The RC-22 regression now creates a lifecycle job, consumes its approval, and verifies the approval-used event and lifecycle/audit record in the same snapshot.
 - **Remaining atomicity gap:** consuming the approval and transitioning the lifecycle job still occur in separate transactions. The test confirms the job remains pending after the approval is consumed; a future RC increment must implement a single transaction for consume + approved-state transition before execution is possible.
 - RC-25 changes are awaiting fresh GitHub Actions verification. No services or runner were started.
+
+
+### RC-25 targeted reconstructed-workspace verification
+
+- Reconstructed a temporary workspace from the exact fetched branch sources for RC-11, RC-13, RC-17, RC-22, the approval-bound module and their targeted tests; this is not a full repository checkout.
+- Node 22 run: **8/8 tests passed** (approval binding/replay, process-level one-use race, RC-22 identity gate and co-location with the lifecycle snapshot). The full repository CI run for code head `874ab71163f879a58cf2d6a345bb02bd9e213c2a` has not yet been surfaced; do not treat the targeted workspace result as full-suite CI.
+- The test explicitly confirms the remaining gap: the approval is consumed in the shared snapshot while the lifecycle job stays `pending`; consume + transition still need a single transaction.
