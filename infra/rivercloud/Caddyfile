@@ -1,0 +1,4 @@
+# Configure domain in .env. This initial proxy scaffold intentionally has no app route yet.
+:80 {
+  respond "RiverCloud Core is online. Configure an application route to publish services." 200
+}
