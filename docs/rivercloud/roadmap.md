@@ -1,19 +1,19 @@
 # RiverCloud roadmap
 
-## RC-1 — Core bootstrap (initial scaffold)
-Docker Compose, proxy placeholder, installation documentation.
+## RC-1 — Core scaffold
+Docker Compose, proxy and bootstrap.
 
-## RC-2 — Routing and HTTPS
-Caddy automatic TLS, app route configuration, domain validation.
+## RC-2 — Domain routing and HTTPS
+Caddy routing to an example service, automatic TLS for configured domain.
 
 ## RC-3 — Secure deployment pipeline
-Git webhook or deploy token, allow-listed repositories/branches, signed webhook validation, job queue, audit log, isolated builds, rollback and health checks. No arbitrary shell commands exposed through web API.
+Allow-listed repositories/branches, authenticated triggers, webhook signature verification, isolated builds, audit logs, health checks and rollback. Avoid arbitrary shell execution through public APIs and never expose Docker socket.
 
-## RC-4 — Panel
-Authentication, server metrics, application status, logs, deploy/rollback actions and resource limits.
+## RC-4 — RiverCloud Panel
+Authenticated server metrics, application status, logs, deployment and rollback controls.
 
 ## RC-5 — Operations
-Backup/restore verification, monitoring/alerts, firewall policy, update strategy, capacity planning.
+Backup/restore testing, monitoring/alerts, firewall, update strategy, capacity planning.
 
 ## RC-6 — Migration readiness
-Run RiverSpend in staging on RiverCloud; compare reliability, backups, traffic, secrets and rollback. Only then consider production cutover.
+Run RiverSpend in staging on RiverCloud, validate reliability, backups, secrets, performance and rollback. Only then consider production cutover.
