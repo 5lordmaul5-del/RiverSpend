@@ -494,3 +494,11 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 - Added a regression test for a symlinked archive path after checksum verification; it must fail and leave the restore target absent.
 - Added `RC31-RESTORE-SOURCE.md`. CI evidence for the new code/test is pending; no pass is claimed yet.
 - No real backup or restore, production data access, deployment, server provisioning or spending was performed.
+
+
+### RC-31 CI closeout — verified
+
+- GitHub Actions **45717374680 (#314) — SUCCESS: 131/131 Node tests, 0 failures**, plus bootstrap shell syntax, backup/restore and Python extractor syntax, Compose config, and Caddy validation.
+- Run #314 verified commit **`dd90f8b3e0772275cfb7266c3d1db6a38c143cde`**, including the single-descriptor restore correction and the symlink archive regression.
+- The Caddy check used a temporary validation container; no RiverCloud service or runner was started. No production backup/restore, merge, deployment or spending occurred.
+- RC-31 documentation closeout is committed separately and requires fresh CI verification before latest branch head is considered verified.
