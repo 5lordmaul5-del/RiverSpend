@@ -18,7 +18,7 @@ export class RiverBuildQueue {
   }
   list(){return this.#jobs.map(j=>({...j}));}
   get(id){const j=this.#jobs.find(x=>x.id===id);return j?({...j}):null;}
-  approve(id){const j=this.#jobs.find(x=>x.id===id);if(!j)throw new Error('Job not found');if(j.status!=='queued')throw new Error('Only queued jobs can be approved');if(j.approved)throw new Error('Job already approved');j.approved=true;j.updatedAt=new Date().toISOString();return {...j};}\n  cancel(id){const j=this.#jobs.find(x=>x.id===id);if(!j)throw new Error('Job not found');if(j.status!=='queued')throw new Error('Only queued jobs can be cancelled');j.status='cancelled';j.updatedAt=new Date().toISOString();this.#trim();return {...j};}
+  approve(id){const j=this.#jobs.find(x=>x.id===id);if(!j)throw new Error('Job not found');if(j.status!=='queued')throw new Error('Only queued jobs can be approved');if(j.approved)throw new Error('Job already approved');j.approved=true;j.updatedAt=new Date().toISOString();return {...j} ;}\n  cancel(id){const j=this.#jobs.find(x=>x.id===id);if(!j)throw new Error('Job not found');if(j.status!=='queued')throw new Error('Only queued jobs can be cancelled');j.status='cancelled';j.updatedAt=new Date().toISOString();this.#trim();return {...j};}
   claimNext(){if(this.#jobs.filter(j=>j.status==='running').length>=this.maxConcurrent)return null;
     const j=this.#jobs.filter(x=>x.status==='queued'&&x.approved).sort((a,b)=>({high:0,normal:1,low:2}[a.priority]-({high:0,normal:1,low:2}[b.priority])||a.createdAt.localeCompare(b.createdAt))[0];
     if(!j)return null;j.status='running';j.updatedAt=new Date().toISOString();return {...j};
