@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 const root = path.dirname(fileURLToPath(import.meta.url));
 const compose = await readFile(path.join(root, "docker-compose.yml"), "utf8");
 const env = await readFile(path.join(root, ".env.example"), "utf8");
-const serviceBlocks = [...compose.matchAll(/^  ([a-z0-9-]+):\n([\s\S]*?)(?=^  [a-z0-9-]+:\n|^networks:\n|^volumes:\n|$)/gm)]
+const serviceBlocks = [...compose.matchAll(/^  ([a-z0-9-]+):\n([\s\S]*?)(?=^  [a-z0-9-]+:\n|^networks:\n|^volumes:\n)/gm)]
   .map(match => ({ name: match[1], body: match[2] }));
 
 test("every Compose image is immutable digest-pinned", () => {
