@@ -15,6 +15,8 @@
 ## Monitoring and agent architecture
 
 - Admin-only transaction/event monitor drafted (read-only).
+- PiggyBank goal dashboard and authenticated goal API drafted; progress only counts provider-confirmed contributions.
+- Server-priced service purchase intents drafted for Signals, Streaming, Zen and Fidelity; checkout and entitlement activation remain disabled.
 - RiverSSAI agent architecture proposed with bounded read-only roles; autonomous money-moving actions excluded.
 
 Do not implement an independent wallet, custody, or money-transfer functionality absent the appropriate regulatory authorization and agreements.
