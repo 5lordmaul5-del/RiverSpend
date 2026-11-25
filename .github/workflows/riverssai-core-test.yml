@@ -1,0 +1,28 @@
+name: RiverSSAI Core Tests
+on:
+  pull_request:
+    paths:
+      - 'river-ai/**'
+      - '.github/workflows/riverssai-core-test.yml'
+  push:
+    branches:
+      - 'feat/riverssai-10-runnable-core-2026-11-25'
+    paths:
+      - 'river-ai/**'
+      - '.github/workflows/riverssai-core-test.yml'
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Run RiverSSAI tests
+        working-directory: river-ai
+        run: npm test
