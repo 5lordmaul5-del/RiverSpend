@@ -29,6 +29,8 @@ jobs:
         run: node --test infra/rivercloud/*.test.mjs
       - name: Validate bootstrap shell syntax
         run: sh -n infra/rivercloud/bootstrap.sh
+      - name: Validate backup/restore shell syntax
+        run: sh -n infra/rivercloud/scripts/backup.sh infra/rivercloud/scripts/restore.sh
       - name: Validate Compose configuration without starting services
         run: docker compose -f infra/rivercloud/docker-compose.yml --env-file infra/rivercloud/.env.example config
       - name: Validate Caddyfile with pinned Caddy image
