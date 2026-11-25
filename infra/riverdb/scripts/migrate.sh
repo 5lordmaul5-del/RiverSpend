@@ -19,7 +19,7 @@ SQL
 for FILE in "$MIGRATIONS"/001_core.sql "$MIGRATIONS"/002_runtime_permissions.sql; do
   VERSION="$(basename "$FILE" .sql)"
   CHECKSUM="$(sha256sum "$FILE" | awk '{print $1}')"
-  APPLIED="$(psql "$RIVERDB_MIGRATION_URL" -At -v ON_ERROR_STOP=1 -v version="$VERSION" -c "SELECT checksum FROM riverdb.schema_migrations WHERE version = :'version'")"
+  APPLIED="$(psql "$RIVERDB_MIGRATION_URL" -At -v ON_ERROR_STOP=1 -c "SELECT checksum FROM riverdb.schema_migrations WHERE version = '$VERSION'")"
   if [ -n "$APPLIED" ]; then
     if [ "$APPLIED" != "$CHECKSUM" ]; then
       echo "ERROR: checksum mismatch for applied migration $VERSION" >&2
