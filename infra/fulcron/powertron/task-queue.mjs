@@ -1,0 +1,3 @@
+/** Task queue backed by durable local TaskStore. */
+import crypto from 'node:crypto';import {routeTask} from './coordinator.mjs';import {TaskStore} from './task-store.mjs';
+export class TaskQueue{constructor(storageDir){this.store=new TaskStore(storageDir);}enqueue(input){const routed=routeTask(input);const id=routed.task_id||crypto.randomUUID();const task={...routed,task_id:id,created_at:new Date().toISOString(),updated_at:new Date().toISOString()};return this.store.create(task);}get(id){return this.store.get(id);}list(){return this.store.list();}updateStatus(id,status,actor='operator'){return this.store.transition(id,status,actor);}}

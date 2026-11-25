@@ -1,0 +1,35 @@
+{
+  "name": "Fulcron",
+  "version": "0.1.0-scaffold",
+  "mode": "design-only",
+  "coordinator": "PowerTron",
+  "engine": "RiverSSAI 20.0",
+  "systems": [
+    {"id":"rivercloud","purpose":"hosting and runtime infrastructure","status":"foundation-pr"},
+    {"id":"riverdb","purpose":"database, memory and audit persistence","status":"planned"},
+    {"id":"rivergit","purpose":"source control and reviewed change flow","status":"planned"},
+    {"id":"riverbuild","purpose":"isolated builds and tests","status":"planned"},
+    {"id":"river-recovery","purpose":"backup and restoration","status":"planned"},
+    {"id":"riverfortress","purpose":"operator console, approval and monitoring","status":"planned"},
+    {"id":"riverspendshop","purpose":"marketplace","status":"existing-project-integration-planned"},
+    {"id":"riverpay","purpose":"payments via compliant providers and approved integrations","status":"planned"},
+    {"id":"rivershield","purpose":"buyer protection and trust","status":"planned"},
+    {"id":"riverbox","purpose":"logistics and tracking","status":"planned"},
+    {"id":"riverspaceSignals","purpose":"messaging and social communication","status":"existing-project-integration-planned"},
+    {"id":"river-video","purpose":"streaming/video","status":"existing-project-integration-planned"},
+    {"id":"riverpark","purpose":"experiences and entertainment","status":"planned"},
+    {"id":"riverfidelity","purpose":"loyalty and rewards","status":"planned"},
+    {"id":"riverecology","purpose":"sustainability services","status":"planned"},
+    {"id":"rivertv","purpose":"media and streaming","status":"planned"},
+    {"id":"rivergames","purpose":"games ecosystem","status":"planned"}
+  ],
+  "policy": {
+    "production_mutation_requires_approval": true,
+    "financial_actions_require_approval": true,
+    "destructive_actions_require_approval": true,
+    "secret_access_disabled_by_default": true,
+    "external_network_disabled_by_default": true,
+    "agent_shell_disabled_by_default": true,
+    "agent_roles_on_demand": true
+  }
+}
