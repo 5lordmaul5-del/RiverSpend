@@ -32,7 +32,9 @@ jobs:
       - name: Validate backup/restore and Python extractor syntax
         run: |
           sh -n infra/rivercloud/scripts/backup.sh infra/rivercloud/scripts/restore.sh
-          python3 -m py_compile infra/rivercloud/scripts/restore-safe.py
+          python3 -m py_compile infra/rivercloud/scripts/restore-safe.py infra/rivercloud/scripts/restore-safe-race-test.py
+      - name: Test restore extraction against directory replacement race
+        run: python3 infra/rivercloud/scripts/restore-safe-race-test.py
       - name: Validate Compose configuration without starting services
         run: docker compose -f infra/rivercloud/docker-compose.yml --env-file infra/rivercloud/.env.example config
       - name: Validate Caddyfile with pinned Caddy image

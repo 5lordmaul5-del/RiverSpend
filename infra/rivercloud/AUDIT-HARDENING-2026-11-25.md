@@ -508,3 +508,14 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 
 - GitHub Actions **45717458639 (#318) — SUCCESS: 131/131 Node tests, 0 failures**, plus bootstrap shell, backup/restore and Python extractor syntax, Compose configuration and Caddy validation.
 - Run #318 verified report commit **`26f58738b2fc740cc30e31e5c665f817160e51bb`**, including RC-31 report/doc closeout. No RiverCloud services were started.
+
+
+## RC-32 — restore target directory-descriptor isolation (26 November 2026)
+
+- Audit found a path-based intermediate-directory TOCTOU in the restricted restore extractor: a directory checked before file creation could be replaced with a symlink before the subsequent pathname open.
+- The extractor now requires directory-descriptor support, traverses nested directories using mkdir/open relative to open descriptors with O_DIRECTORY|O_NOFOLLOW, creates files relative to the verified parent descriptor with O_EXCL|O_NOFOLLOW, and syncs the relevant directory descriptors.
+- Failure cleanup checks the target directory's device/inode before deleting it, avoiding cleanup of a replaced target pathname.
+- Added a deterministic race-injection test that replaces the nested directory with a symlink immediately before the second file open. The descriptor-based code writes into the already-open directory, not the outside symlink target.
+- Reconstructed local workspace: 1/1 regression passed. A negative-control run against the reconstructed legacy path-based extractor failed because it wrote through the replacement symlink. This is not a full repository checkout.
+- GitHub Actions verification is pending. A clone/check-out attempt was blocked by DNS resolution of github.com; no test pass is claimed for a full checkout.
+- No live services, runner, staging host, real backup/restore, merge, production deployment or spending occurred.

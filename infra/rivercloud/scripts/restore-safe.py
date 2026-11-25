@@ -31,16 +31,50 @@ def validate_member(member):
         return clean
     fail("unsupported archive entry type (links and special files are denied)")
 
-def mkdirs(root, parts):
-    current = root
-    for part in parts:
-        current = current / part
-        if current.exists():
-            if not current.is_dir() or current.is_symlink():
-                fail("archive path conflicts with non-directory")
-        else:
-            current.mkdir(mode=0o700)
-    return current
+_DIR_FLAGS = os.O_RDONLY | getattr(os, "O_DIRECTORY", 0) | getattr(os, "O_NOFOLLOW", 0)
+_FILE_FLAGS = os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, "O_NOFOLLOW", 0)
+
+
+def require_dirfd_support():
+    if (not hasattr(os, "O_DIRECTORY") or not hasattr(os, "O_NOFOLLOW")
+            or os.open not in os.supports_dir_fd or os.mkdir not in os.supports_dir_fd):
+        fail("safe directory-descriptor extraction unavailable")
+
+
+def open_child_directory(parent_fd, name):
+    created = False
+    try:
+        os.mkdir(name, mode=0o700, dir_fd=parent_fd)
+        created = True
+    except FileExistsError:
+        pass
+    child_fd = os.open(name, _DIR_FLAGS, dir_fd=parent_fd)
+    if created:
+        os.fsync(parent_fd)
+    return child_fd
+
+
+def open_directory_chain(root_fd, parts):
+    current_fd = os.dup(root_fd)
+    try:
+        for part in parts:
+            next_fd = open_child_directory(current_fd, part)
+            os.close(current_fd)
+            current_fd = next_fd
+        return current_fd
+    except Exception:
+        os.close(current_fd)
+        raise
+
+
+def cleanup_owned_target(target, root_identity):
+    try:
+        current = target.lstat()
+        if (stat.S_ISDIR(current.st_mode) and not stat.S_ISLNK(current.st_mode)
+                and current.st_dev == root_identity.st_dev and current.st_ino == root_identity.st_ino):
+            shutil.rmtree(target, ignore_errors=True)
+    except OSError:
+        pass
 
 def main(archive_path, target_path):
     archive_path = Path(archive_path)
@@ -51,6 +85,7 @@ def main(archive_path, target_path):
         fail("restore parent directory must exist")
     if not hasattr(os, "O_NOFOLLOW"):
         fail("safe archive open unavailable")
+    require_dirfd_support()
 
     fd = os.open(str(archive_path), os.O_RDONLY | os.O_NOFOLLOW)
     try:
@@ -88,26 +123,39 @@ def main(archive_path, target_path):
                             fail("file entry conflicts with child path")
 
                 target.mkdir(mode=0o700)
+                root_fd = os.open(target, _DIR_FLAGS)
+                root_identity = os.fstat(root_fd)
                 try:
-                    for member, parts in entries:
-                        dest = target.joinpath(*parts)
-                        if member.isdir():
-                            mkdirs(target, parts)
-                            continue
-                        mkdirs(target, parts[:-1])
-                        file_fd = os.open(dest, os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, "O_NOFOLLOW", 0), 0o600)
-                        try:
-                            src = archive.extractfile(member)
-                            if src is None:
-                                fail("missing file stream")
-                            with src, os.fdopen(file_fd, "wb", closefd=False) as out:
-                                shutil.copyfileobj(src, out, length=1024*1024)
-                            os.fsync(file_fd)
-                        finally:
-                            os.close(file_fd)
-                except Exception:
-                    shutil.rmtree(target, ignore_errors=True)
-                    raise
+                    try:
+                        for member, parts in entries:
+                            if member.isdir():
+                                dir_fd = open_directory_chain(root_fd, parts)
+                                try:
+                                    os.fsync(dir_fd)
+                                finally:
+                                    os.close(dir_fd)
+                                continue
+                            parent_fd = open_directory_chain(root_fd, parts[:-1])
+                            try:
+                                file_fd = os.open(parts[-1], _FILE_FLAGS, 0o600, dir_fd=parent_fd)
+                                try:
+                                    src = archive.extractfile(member)
+                                    if src is None:
+                                        fail("missing file stream")
+                                    with src, os.fdopen(file_fd, "wb", closefd=False) as out:
+                                        shutil.copyfileobj(src, out, length=1024*1024)
+                                    os.fsync(file_fd)
+                                    os.fsync(parent_fd)
+                                finally:
+                                    os.close(file_fd)
+                            finally:
+                                os.close(parent_fd)
+                        os.fsync(root_fd)
+                    except Exception:
+                        cleanup_owned_target(target, root_identity)
+                        raise
+                finally:
+                    os.close(root_fd)
         finally:
             raw.close()
     finally:
