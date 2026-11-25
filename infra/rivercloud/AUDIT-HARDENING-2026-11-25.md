@@ -35,7 +35,7 @@ Inspected the control-plane and core prototype files, including server.mjs, rc11
 - RiverCloud source modules use Node built-ins only; there is no package manifest in `infra/rivercloud`, so a Node package audit is not applicable to this scaffold.
 - GitHub Actions checkout and setup-node are pinned to verified commit SHAs for v7.0.1 and v7.1.0. Runs 45609326685 (push) and 45609337469 (pull request) completed successfully with 66/66 tests and the shell/Compose validations.
 - Caddy and whoami images remain version-tag pinned, not digest-pinned; an image-level scanner/SBOM was not run. Public package advisory lookups show Caddy package findings for some Minimos/Wolfi builds below 2.11.9-r0, but the exact layers in the selected image were not inspected, so this is not an image vulnerability verdict. See [Snyk Minimos](https://security.snyk.io/package/linux/minimos%3Alatest/caddy) and [Snyk Wolfi](https://security.snyk.io/package/linux/wolfi%3Alatest/caddy).
-- A Caddyfile syntax validation step is being added to CI; validation is pending.
+- The first CI Caddyfile validation attempt failed because the image required the explicit binary command (`caddy validate`); the command was corrected and verification is pending. This test starts only a short-lived validation container, not a RiverCloud service.
 
 ## Remaining blockers — not production eligible
 
