@@ -48,3 +48,11 @@ Structured local event log foundation (JSON Lines) with bounded fields and a sma
 
 ## RiverControl (read-only status snapshot)
 `src/control.js` exposes a descriptive, read-only snapshot of the foundation modules. It reports local policy and capability status; it does not probe services, authenticate users, execute tasks, or connect to a live provider. Tests are in `test/control.test.js`.
+
+
+## RiverWatch (local event observation)
+- Records normalized local events in a bounded in-memory buffer (up to 200).
+- Creates warning/critical alert records; supports acknowledgement and summary counts.
+- Inputs are bounded and component names are allowlisted.
+- It does not probe processes/services, send notifications, persist events, or remediate automatically. This foundation must be integrated and reviewed before operational use.
+Tests: `test/watch.test.js`.
