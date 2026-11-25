@@ -29,3 +29,7 @@ A deterministic task planner creates a reviewable four-step plan, flags keywords
 - Creates explicit pending approval records and supports approve/reject decisions.
 - Approval records never enable execution; execution is not implemented.
 - Classification is a conservative heuristic, not a security boundary. Production use requires identity, permission enforcement, audit storage, sandboxing, and independent tests.
+
+
+## RiverKnowledge
+A local file-based knowledge store for explicit user-provided notes. Entries require title/content, size limits, and are not automatically ingested from network sources or learned implicitly. This foundation is not yet integrated into the HTTP runtime or task engine.
