@@ -96,6 +96,25 @@ jobs:
         run: |
           psql "$RIVERDB_MIGRATION_URL" -v ON_ERROR_STOP=1 -c "ALTER ROLE riverdb_runtime WITH PASSWORD 'riverdb-ci-only-password';"
           node infra/riverdb/tests/runtime-permissions.test.mjs
+      - name: Verify audit records are immutable and restore requires confirmation
+        env:
+          RIVERDB_TEST_URL: postgresql://postgres:test-only-password@localhost:5432/riverdb_test
+        run: |
+          set -eu
+          psql "$RIVERDB_TEST_URL" -v ON_ERROR_STOP=1 -c "INSERT INTO audit.records(actor,action) VALUES ('ci-probe','immutability-test');"
+          if psql "$RIVERDB_TEST_URL" -v ON_ERROR_STOP=1 -c "UPDATE audit.records SET action='tampered' WHERE actor='ci-probe' AND action='immutability-test';"; then
+            echo 'ERROR: audit update unexpectedly succeeded' >&2
+            exit 1
+          fi
+          if psql "$RIVERDB_TEST_URL" -v ON_ERROR_STOP=1 -c "DELETE FROM audit.records WHERE actor='ci-probe';"; then
+            echo 'ERROR: audit delete unexpectedly succeeded' >&2
+            exit 1
+          fi
+          if RIVERDB_URL="$RIVERDB_TEST_URL" sh infra/riverdb/scripts/restore.sh /tmp/nonexistent.dump; then
+            echo 'ERROR: restore without explicit confirmation unexpectedly succeeded' >&2
+            exit 1
+          fi
+          echo 'Audit immutability and restore confirmation guard verified.'
       - name: Compose and shell checks
         run: |
           sh -n infra/riverdb/scripts/backup.sh
