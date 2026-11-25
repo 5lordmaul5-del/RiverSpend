@@ -5,6 +5,7 @@ import os from "node:os";
 import path from "node:path";
 import { queuePlan, listQueue } from "./queue.mjs";
 import { readState, transactState } from "./rc11-state.mjs";
+import { planDigest } from "./engine.mjs";
 
 const base = { projectId: "riverspend", branch: "main", target: "staging", commit: "a".repeat(40) };
 
@@ -44,5 +45,30 @@ test("queue fails closed at the configured item cap", async () => {
     await transactState(file, state => { state.jobs = Array.from({ length: 5000 }, (_, i) => ({ id: "cap-" + i, digest: "cap-" + i })); });
     await assert.rejects(() => queuePlan(file, base), /queue_capacity_exceeded/);
     assert.equal((await listQueue(file)).length, 5000);
+  } finally { await rm(root, { recursive: true, force: true }); }
+});
+
+test("queue fails closed at the configured event cap", async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), "rcq-event-cap-"));
+  try {
+    const file = path.join(root, "state.json");
+    await transactState(file, state => { state.events = Array.from({ length: 10000 }, (_, i) => ({ event: "cap-" + i })); });
+    await assert.rejects(() => queuePlan(file, base), /queue_capacity_exceeded/);
+    assert.equal((await readState(file)).events.length, 10000);
+  } finally { await rm(root, { recursive: true, force: true }); }
+});
+
+test("idempotent retry remains accepted when both queue and event caps are reached", async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), "rcq-idempotent-cap-"));
+  try {
+    const file = path.join(root, "state.json"), digest = planDigest(base);
+    await transactState(file, state => {
+      state.jobs = Array.from({ length: 5000 }, (_, i) => ({ id: "cap-" + i, digest: i === 0 ? digest : "cap-" + i }));
+      state.events = Array.from({ length: 10000 }, (_, i) => ({ event: "cap-" + i }));
+    });
+    const result = await queuePlan(file, base);
+    assert.equal(result.duplicate, true);
+    assert.equal((await listQueue(file)).length, 5000);
+    assert.equal((await readState(file)).events.length, 10000);
   } finally { await rm(root, { recursive: true, force: true }); }
 });
