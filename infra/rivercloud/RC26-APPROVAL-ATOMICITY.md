@@ -28,3 +28,11 @@ Approval issuance and consumption now appear as explicit records in the same lif
 ### RC-29 correction note
 
 The first RC-29 CI run (#271) exposed a literal escaped newline in the module constant insertion. The corrected branch commit replaces it with a source newline; test verification remains pending.
+
+
+### RC-29 CI closeout — verified
+
+- The initial RC-29 code commit `e0cb76806328bc0528116f9de31abd8abb214a4a` failed runs **45715459971 (#271)** and **45715470523 (#272)**: 97/102 Node tests passed, with five import/syntax failures caused by a literal escaped newline in the module insertion.
+- The intermediate correction commit `a886d64c58cd0be6d787d20671ac0b2fd67cb17c` also failed runs **45715556448 (#273)** and **45715569522 (#274)** because additional escaped newline artifacts remained.
+- Corrected code commit `da9a0f7941c39afb1907267e797648fa45f6b7da` was verified by GitHub Actions **45715617333 (#275) — SUCCESS: 124/124 Node tests** and PR run **45715626427 (#276) — SUCCESS: 124/124 Node tests**. Both passed bootstrap shell syntax, backup/restore and Python extractor syntax, Compose validation, and Caddy validation.
+- These failures are documented and not counted as passing. No RiverCloud services or runner were started. The Caddy validation used the workflow's temporary container only.

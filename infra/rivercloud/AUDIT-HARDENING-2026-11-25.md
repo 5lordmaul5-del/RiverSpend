@@ -428,3 +428,11 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 
 - Run **45715459971 (#271)** failed the Node-test step: 97/102 passed, 5 test-file imports failed because the new hash constant was inserted with a literal escaped newline. Shell/Python, Compose and Caddy validation were skipped after the test step failed. This failure is retained and not counted as passing.
 - Corrected the source separator on the isolated branch. Fresh CI is required to verify the correction; no pass is claimed yet.
+
+
+### RC-29 CI closeout — verified
+
+- The initial RC-29 code commit `e0cb76806328bc0528116f9de31abd8abb214a4a` failed runs **45715459971 (#271)** and **45715470523 (#272)**: 97/102 Node tests passed, with five import/syntax failures caused by a literal escaped newline in the module insertion.
+- The intermediate correction commit `a886d64c58cd0be6d787d20671ac0b2fd67cb17c` also failed runs **45715556448 (#273)** and **45715569522 (#274)** because additional escaped newline artifacts remained.
+- Corrected code commit `da9a0f7941c39afb1907267e797648fa45f6b7da` was verified by GitHub Actions **45715617333 (#275) — SUCCESS: 124/124 Node tests** and PR run **45715626427 (#276) — SUCCESS: 124/124 Node tests**. Both passed bootstrap shell syntax, backup/restore and Python extractor syntax, Compose validation, and Caddy validation.
+- These failures are documented and not counted as passing. No RiverCloud services or runner were started. The Caddy validation used the workflow's temporary container only.
