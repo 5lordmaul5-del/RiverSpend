@@ -81,3 +81,8 @@ The isolated local module `src/rivergit-local.js` introduces safe name validatio
 ### RiverGit Phase 3 — loopback service
 
 `src/rivergit-service.js` starts a dedicated service on loopback only (127.0.0.1/::1), with configurable port and optional bearer token, using the API handler. Public binding is rejected. It remains standalone and is not launched automatically by the main application. Tests are written but not yet executed.
+
+
+### RiverBuild Phase 0 — build planner
+
+`src/riverbuild.js` validates a project/build request and produces a constrained plan for a future isolated runner. It currently supports planning only for node-test and syntax-check types. It does not execute scripts, access the network, or spawn processes. Workspace path confinement is checked at planning time. Tests are written but not yet run.
