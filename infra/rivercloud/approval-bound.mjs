@@ -20,17 +20,18 @@ export async function issueApproval({ storeDir, binding, secret, ttlMs = 300000,
   return { token, expiresAt, binding: normalized, approver };
 }
 
-export async function consumeApproval({ storeDir, binding, secret, token }) {
-  if (!valid(binding) || typeof secret !== "string" || secret.length < 32 || typeof token !== "string") throw new Error("invalid_approval");
+export async function consumeApproval({ storeDir, binding, secret, token, consumerIdentity }) {
+  if (!valid(binding) || typeof secret !== "string" || secret.length < 32 || typeof token !== "string" || (consumerIdentity !== undefined && (typeof consumerIdentity !== "string" || !consumerIdentity.trim() || consumerIdentity.length > 100))) throw new Error("invalid_approval");
   const normalized = normalize(binding), id = tokenId(token);
   let actorLabel;
   await consumeStoredApproval(path.join(storeDir, "state.json"), id, record => {
     if (canonical(record.binding) !== canonical(normalized)) return false;
+    if (consumerIdentity !== undefined && record.approver === consumerIdentity) throw new Error("self_approval_not_allowed");
     const expected = signature(secret, approvalPayload(record.binding, record.expiresAt, record.nonce));
     const a = Buffer.from(token), b = Buffer.from(expected);
     const ok = a.length === b.length && timingSafeEqual(a, b);
     if (ok) actorLabel = record.approver;
     return ok;
   });
-  return { approved: true, jobId: normalized.jobId, approver: actorLabel };
+  return { approved: true, jobId: normalized.jobId, approver: actorLabel, ...(consumerIdentity !== undefined ? { consumerIdentity } : {}) };
 }
