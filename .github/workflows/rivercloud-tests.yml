@@ -27,3 +27,7 @@ jobs:
           node-version: "22"
       - name: Run RiverCloud Node tests
         run: node --test infra/rivercloud/*.test.mjs
+      - name: Validate bootstrap shell syntax
+        run: sh -n infra/rivercloud/bootstrap.sh
+      - name: Validate Compose configuration without starting services
+        run: docker compose -f infra/rivercloud/docker-compose.yml --env-file infra/rivercloud/.env.example config
