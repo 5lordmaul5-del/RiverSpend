@@ -22,3 +22,9 @@ The test injects a directory rename and symlink replacement immediately before t
 - Negative-control run against a reconstructed version of the former path-based helper failed the regression because it wrote through the replacement symlink. This is a test-sensitivity check, not a repository checkout.
 - GitHub Actions verification is pending. A shallow clone/check-out attempt was blocked by DNS resolution of github.com; do not treat reconstructed testing as full checkout evidence.
 - No backup or restore was run against RiverSpend data, no service was started, and no production operation was performed.
+
+
+## CI closeout — verified
+
+- GitHub Actions run **45723627763 (#322)** passed **131/131 Node tests**, Python syntax and **1/1 directory-replacement race regression**, bootstrap/backup/restore syntax, Compose configuration and Caddy validation.
+- Run #322 verified commit **245707bc0a0f869404d7aaa57b6b1467ec71bcb1**. No RiverCloud service or runner was started. The Caddy check used a temporary validation container.

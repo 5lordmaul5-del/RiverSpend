@@ -519,3 +519,10 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 - Reconstructed local workspace: 1/1 regression passed. A negative-control run against the reconstructed legacy path-based extractor failed because it wrote through the replacement symlink. This is not a full repository checkout.
 - GitHub Actions verification is pending. A clone/check-out attempt was blocked by DNS resolution of github.com; no test pass is claimed for a full checkout.
 - No live services, runner, staging host, real backup/restore, merge, production deployment or spending occurred.
+
+
+### RC-32 CI closeout — verified
+
+- GitHub Actions run **45723627763 (#322) — SUCCESS: 131/131 Node tests, 0 failures**, plus shell/Python syntax, the new **1/1 directory-replacement race test**, Compose configuration and Caddy validation.
+- Run #322 verified commit **245707bc0a0f869404d7aaa57b6b1467ec71bcb1**. The race regression is explicitly present as step 7 and passed. The Caddy validation used a temporary container; no RiverCloud service or runner was started.
+- The report-only closeout commit requires a fresh CI verification before the latest branch head is considered verified.
