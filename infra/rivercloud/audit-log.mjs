@@ -2,7 +2,7 @@
 import {createHash} from "node:crypto";
 import {readFile,writeFile,mkdir} from "node:fs/promises";
 import path from "node:path";
-const allowed=new Set(["plan_created","job_queued","approval_requested","approval_granted","approval_denied","worker_prepared","build_started","build_finished","health_check","rollback_requested","rollback_completed","failure"]);
+const allowed=new Set(["plan_created","job_queued","approval_requested","approval_granted","approval_denied","worker_prepared","build_started","build_finished","health_check","rollback_requested","rollback_completed","failure","job_transition"]);
 function hashRecord(r){return createHash("sha256").update(JSON.stringify(r)).digest("hex");}
 export async function readLedger(file){try{return JSON.parse(await readFile(file,"utf8"));}catch(e){if(e.code==="ENOENT")return [];throw e;}}
 export function verifyLedger(records){let previous="GENESIS";for(const record of records){if(record.previousHash!==previous)return {valid:false,reason:"chain_mismatch"};const {hash,...payload}=record;if(hashRecord(payload)!==hash)return {valid:false,reason:"record_hash_mismatch"};previous=hash;}return {valid:true,count:records.length};}
