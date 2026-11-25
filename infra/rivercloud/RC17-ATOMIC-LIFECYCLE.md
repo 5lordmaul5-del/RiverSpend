@@ -5,6 +5,8 @@ This increment adds a separate experimental lifecycle API that commits job state
 - lifecycle job records are stored under `lifecycleJobs`
 - audit records are stored under `auditRecords` in the same state snapshot
 - hash chain is sequence-checked and verified before every append
+- reads replay the audit transition sequence and cross-check current job state/digest against the replay
+- missing audit history, mismatched state, duplicate job IDs and invalid transition replay are reported as integrity failures
 - invalid transitions and duplicate jobs fail without changing state
 - audit details are bounded and key-redacted
 - concurrent transition and create tests exercise the RC-11 lock/rename transaction
