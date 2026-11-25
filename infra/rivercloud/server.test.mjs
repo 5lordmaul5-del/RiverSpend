@@ -48,3 +48,17 @@ test("server rejects oversized JSON", async () => {
     await rm(root, { recursive: true, force: true });
   }
 });
+
+test("server rejects misleading JSON media types", async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), "rcs-"));
+  const server = createServer({ port: 0, token, storeFile: path.join(root, "state.json") });
+  try {
+    await new Promise((resolve, reject) => { server.once("error", reject); server.listen(0, "127.0.0.1", resolve); });
+    const url = "http://127.0.0.1:" + server.address().port;
+    const r = await fetch(url + "/deploy", { method: "POST", headers: { authorization: "Bearer " + token, "content-type": "application/jsonp" }, body: JSON.stringify(base) });
+    assert.equal(r.status, 415);
+  } finally {
+    await new Promise(resolve => server.close(resolve));
+    await rm(root, { recursive: true, force: true });
+  }
+});
