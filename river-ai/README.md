@@ -62,3 +62,7 @@ Tests: `test/watch.test.js`.
 `src/automa.js` provides a descriptive catalog of planned and in-development services, distinguishing owned/self-hostable components from optional external adapters such as GitHub and Vercel. It is a roadmap manifest only: no installation, provisioning, integration or orchestration is implemented, and execution remains disabled. Tests: `test/automa.test.js`.
 
 **Autonomy target:** progressively replace external source-control, hosting, cloud and deployment dependencies with software that RiverSpend can self-host on infrastructure under its control. External providers remain optional adapters, not falsely represented as already replaced.
+
+
+## RiverGit (Phase 0 foundation)
+A Git-compatible repository manifest and name validator. Git is selected as the underlying version-control engine instead of reinventing its data model. This module does not create repositories, host remotes, authenticate users, push/pull, or back up data yet. Those capabilities require a separately reviewed service implementation and infrastructure. Tests: `test/rivergit.test.js`.
