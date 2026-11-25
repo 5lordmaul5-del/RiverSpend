@@ -56,3 +56,9 @@ Structured local event log foundation (JSON Lines) with bounded fields and a sma
 - Inputs are bounded and component names are allowlisted.
 - It does not probe processes/services, send notifications, persist events, or remediate automatically. This foundation must be integrated and reviewed before operational use.
 Tests: `test/watch.test.js`.
+
+
+## RiverAutoma (ecosystem manifest)
+`src/automa.js` provides a descriptive catalog of planned and in-development services, distinguishing owned/self-hostable components from optional external adapters such as GitHub and Vercel. It is a roadmap manifest only: no installation, provisioning, integration or orchestration is implemented, and execution remains disabled. Tests: `test/automa.test.js`.
+
+**Autonomy target:** progressively replace external source-control, hosting, cloud and deployment dependencies with software that RiverSpend can self-host on infrastructure under its control. External providers remain optional adapters, not falsely represented as already replaced.
