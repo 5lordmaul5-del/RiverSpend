@@ -1,7 +1,7 @@
 const MAX_FINDINGS=80;
 const SAFE_STATUSES=new Set(['queued']);
 const SAFE_KINDS=new Set(['node-test','syntax-check','unit-test','lint','build-check']);
-const forbidden=new Set(['--privileged','--network=host','--pid=host','--ipc=host','--device','--mount','--volume','-v','--env','-e','--publish','-p']);
+const forbidden=new Set(['--privileged','--network=host','--pid=host','--ipc=host','--device','--mount','--env','-e','--publish','-p']);
 const required=['--network','none','--read-only','--cap-drop','ALL','--security-opt','no-new-privileges'];
 function add(findings,code,severity,message){findings.push({code,severity,message});}
 function planCheck(plan,findings){
@@ -10,7 +10,7 @@ function planCheck(plan,findings){
  const a=plan.args;
  if(!Array.isArray(a)||a.length<2||a[0]!=='run'){add(findings,'PLAN_ARGS','deny','Docker run argument list is missing or malformed');return;}
  for(let i=0;i<required.length;i+=2){const ix=a.indexOf(required[i]);if(ix<0||a[ix+1]!==required[i+1])add(findings,'DOCKER_RESTRICTION','deny','Required Docker isolation option is absent or weakened');}
- for(const token of a){if(forbidden.has(token)||token.startsWith('--network=host')||token.startsWith('--volume=')||token.startsWith('--mount='))add(findings,'DOCKER_OPTION','deny','Forbidden or unreviewed Docker option detected');}
+ for(const token of a){if(forbidden.has(token)||token.startsWith('--network=host')||token.startsWith('--mount=')||token.startsWith('--volume=')||token.startsWith('-v='))add(findings,'DOCKER_OPTION','deny','Forbidden or unreviewed Docker option detected');}
  if(!a.includes('--rm')||!a.includes('--memory')||!a.includes('--cpus')||!a.includes('--pids-limit')||!a.includes('--user'))add(findings,'RESOURCE_LIMITS','deny','Container resource limits and non-root user must be explicit');
  const mounts=a.filter(x=>x==='-v'||x==='--volume'||x.startsWith('--volume=')||x==='--mount'||x.startsWith('--mount='));
  if(mounts.length!==1)add(findings,'MOUNT_POLICY','deny','Exactly one workspace mount is required');
