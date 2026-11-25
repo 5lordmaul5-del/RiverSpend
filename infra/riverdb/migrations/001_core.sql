@@ -77,8 +77,4 @@ INSERT INTO riverdb.modules(module_id,display_name) VALUES
  ('fulcron','Fulcron'),('powertron','PowerTron'),('rivercloud','RiverCloud')
 ON CONFLICT(module_id) DO NOTHING;
 
-INSERT INTO riverdb.schema_migrations(version,checksum)
-VALUES ('001_core','riverdb-core-baseline-v1')
-ON CONFLICT(version) DO NOTHING;
-
 COMMIT;
