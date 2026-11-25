@@ -66,3 +66,8 @@ Tests: `test/watch.test.js`.
 
 ## RiverGit (Phase 0 foundation)
 A Git-compatible repository manifest and name validator. Git is selected as the underlying version-control engine instead of reinventing its data model. This module does not create repositories, host remotes, authenticate users, push/pull, or back up data yet. Those capabilities require a separately reviewed service implementation and infrastructure. Tests: `test/rivergit.test.js`.
+
+
+### RiverGit Phase 1 — local bare repository manager
+
+The isolated local module `src/rivergit-local.js` introduces safe name validation, confined storage paths, local bare repository creation via Git (without shell invocation), and listing. Tests use temporary directories. This is a local filesystem foundation only: no HTTP endpoints, authentication, remote hosting, backup, or deployment are wired in.
