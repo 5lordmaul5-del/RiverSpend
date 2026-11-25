@@ -25,3 +25,8 @@ The queue fails closed when the lock cannot be acquired within its bounded timeo
 ### RC-28 report-only CI closeout
 
 - Report/doc commit `8fe5ca2c8af182d8876758c61934d32c400b6f16` was verified by **45709047882 (#261) and 45709056422 (#262) — SUCCESS: 123/123 Node tests** each, plus bootstrap, backup/restore and Python syntax, Compose configuration and Caddy validation. Code is unchanged from the corrected RC-28 source commit.
+
+
+### RC-28 report-only CI closeout
+
+- Report-only commit `2b98632c5c587ac58c18c224e1a8be62ca97f8d8` was verified by **45709159040 (#263) and 45709171430 (#264) — SUCCESS: 123/123 Node tests** each, plus bootstrap, backup/restore and Python syntax, Compose configuration and Caddy validation. Code is unchanged from the corrected RC-28 source commit.
