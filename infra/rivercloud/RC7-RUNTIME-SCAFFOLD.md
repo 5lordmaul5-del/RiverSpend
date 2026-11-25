@@ -21,4 +21,4 @@ This milestone introduces a reviewable execution envelope, not a working build e
 ## Tests
 `node --test infra/rivercloud/rc7-worker.test.mjs infra/rivercloud/worker-spec.test.mjs`
 
-Tests have not been run against a local runtime in this environment. No build or deployment is executed.
+The runtime-scaffold tests are included in verified CI #275/#276 and #277/#278 (124/124). No build or deployment is executed.

@@ -37,4 +37,4 @@ No services have been started by this change.
 - OAuth2 Proxy v7.15.6 is above the versions affected by the reported 7.15.2–7.15.4 forwarded-URI bypass; this configuration also restricts trusted proxy IPs and contains no skip-auth rules. This is a version/configuration check, not a full image scan. Image digest pinning and image scan/SBOM remain pending.
 - Staging rehearsal and threat review.
 
-OAuth2 Proxy image is version-tag pinned to `v7.15.6`; digest pinning remains pending.
+OAuth2 Proxy image is pinned to tag `v7.15.6` and a SHA-256 digest in Compose. SBOM, image signature verification and a full vulnerability scan remain pending.

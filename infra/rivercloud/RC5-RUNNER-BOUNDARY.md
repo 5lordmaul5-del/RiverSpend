@@ -19,4 +19,4 @@ This milestone introduces a deliberate boundary between accepted deployment plan
 ## Test
 `node --test infra/rivercloud/runner.test.mjs infra/rivercloud/engine.test.mjs`
 
-Tests have not been executed in the remote branch environment. No worker is connected.
+The runner-boundary tests are included in verified CI #275/#276 and report-only #277/#278 (124/124). This verifies the preparation/verification prototype only; no worker is connected and execution remains disabled.

@@ -15,4 +15,4 @@
 6. Review privacy, logging, retention and incident response.
 
 ## Limitations
-This is an isolated validator prototype and tests are authored, not runtime-verified. It is not an authentication system, does not verify cryptographic tokens by itself, and must not be wired to production. Deployment/execution remains disabled.
+This is an isolated validator prototype; its tests are included in the verified RiverCloud CI suite (runs #275/#276 and report-only #277/#278, 124/124). It is not an authentication system, does not verify cryptographic tokens by itself, and is not wired to production routes. Deployment/execution remains disabled.

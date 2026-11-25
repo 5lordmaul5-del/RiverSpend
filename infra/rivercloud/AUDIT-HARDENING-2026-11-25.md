@@ -436,3 +436,10 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 - The intermediate correction commit `a886d64c58cd0be6d787d20671ac0b2fd67cb17c` also failed runs **45715556448 (#273)** and **45715569522 (#274)** because additional escaped newline artifacts remained.
 - Corrected code commit `da9a0f7941c39afb1907267e797648fa45f6b7da` was verified by GitHub Actions **45715617333 (#275) — SUCCESS: 124/124 Node tests** and PR run **45715626427 (#276) — SUCCESS: 124/124 Node tests**. Both passed bootstrap shell syntax, backup/restore and Python extractor syntax, Compose validation, and Caddy validation.
 - These failures are documented and not counted as passing. No RiverCloud services or runner were started. The Caddy validation used the workflow's temporary container only.
+
+
+### RC-29 documentation accuracy follow-up
+
+- Corrected the RC-13 OIDC proxy document: the OAuth2 Proxy image is already digest-pinned in Compose; signature verification, SBOM and full CVE scan remain outstanding.
+- Corrected test-status notes in RC-13 identity, RC-5 runner boundary, RC-6 worker specification and RC-7 runtime scaffold to reflect verified CI #275/#276 and report-only #277/#278, without implying a runtime worker or authentication integration.
+- Documentation-only update; fresh CI is pending.

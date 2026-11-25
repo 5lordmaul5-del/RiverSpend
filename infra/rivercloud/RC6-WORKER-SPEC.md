@@ -17,3 +17,8 @@ This milestone defines fixed, allowlisted job profiles. It does not clone reposi
 A dedicated isolated worker host/runtime, resource quotas, network egress enforcement, immutable workspace, safe checkout, fixed command mapping, secrets policy, audit logging, approval gate, integration tests and verified rollback. This module is specification-only.
 
 Test: `node --test infra/rivercloud/worker-spec.test.mjs`
+
+
+## CI evidence
+
+The worker-spec tests are included in the verified RiverCloud CI suite (#275/#276 and #277/#278, 124/124). This is still a specification-only module; no checkout, build or deployment is executed by it.
