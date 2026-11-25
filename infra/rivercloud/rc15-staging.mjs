@@ -1,7 +1,7 @@
 const PROJECTS = new Set(["riverspend"]);
 const PROFILES = Object.freeze({ "node-static": Object.freeze({ network: false, readOnly: true, timeoutMs: 30000 }), "node-tests": Object.freeze({ network: false, readOnly: false, timeoutMs: 120000 }) });
 const SAFE = /^[a-f0-9]{40}$/i;
-const SAFE_PATH = /^\\/staging\\/[A-Za-z0-9][A-Za-z0-9_-]*(?:\\/[A-Za-z0-9][A-Za-z0-9_-]*)*$/;
+const SAFE_PATH = /^\/staging\/[A-Za-z0-9][A-Za-z0-9_-]*(?:\/[A-Za-z0-9][A-Za-z0-9_-]*)*$/;
 
 export function createStagingPlan({ project, commit, profile, stagingPath, approved = false } = {}) {
   if (typeof project !== "string" || !PROJECTS.has(project)) throw Error("project_not_allowlisted");
