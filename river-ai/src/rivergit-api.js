@@ -20,3 +20,10 @@ export function createRiverGitApi({storageDir, token}={}){
   return json(res,404,{error:'not_found'});
  };
 }
+
+// Safe integration helper: mount explicitly by the host server. Keep bind address local unless secured.
+export function mountRiverGitApi(server,{storageDir,token}={}){
+ const handler=createRiverGitApi({storageDir,token});
+ server.on('request',(req,res)=>{if((req.url||'').startsWith('/api/rivergit/')) handler(req,res);});
+ return {mounted:true, routes:['GET /api/rivergit/repos','POST /api/rivergit/repos'], localOnlyRecommended:true};
+}
