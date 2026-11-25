@@ -11,3 +11,8 @@ This remains local tamper-evidence: the chain is unkeyed, the store is local, an
 ```sh
 node --test infra/rivercloud/rc17-atomic-lifecycle.test.mjs infra/rivercloud/approval-bound.test.mjs infra/rivercloud/approval-process.test.mjs infra/rivercloud/rc22-approval-identity.test.mjs
 ```
+
+
+### CI feedback
+
+- Run **45715459971 (#271)** failed: 97/102 Node tests passed; five test-file imports failed at the module syntax error caused by a literal escaped newline in the inserted constant. Subsequent validation steps were skipped. The syntax correction is committed separately and awaits fresh CI.

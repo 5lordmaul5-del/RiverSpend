@@ -422,3 +422,9 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 - The redactor now uses a null-prototype object to avoid special-key assignment behavior.
 - Tests added/updated for approval issuance/consumption chain ordering, concurrent one-use, and detection of unlogged approval state. CI evidence is pending; no result is claimed until the workflow completes.
 - No OIDC route integration, external WORM audit sink or runner execution was connected.
+
+
+### RC-29 CI feedback — syntax correction required
+
+- Run **45715459971 (#271)** failed the Node-test step: 97/102 passed, 5 test-file imports failed because the new hash constant was inserted with a literal escaped newline. Shell/Python, Compose and Caddy validation were skipped after the test step failed. This failure is retained and not counted as passing.
+- Corrected the source separator on the isolated branch. Fresh CI is required to verify the correction; no pass is claimed yet.

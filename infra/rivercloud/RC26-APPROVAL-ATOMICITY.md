@@ -23,3 +23,8 @@ The process-race test must leave exactly one approved job, one used token, and a
 ## RC-29 — approval issuance and consumption are hash-chained
 
 Approval issuance and consumption now appear as explicit records in the same lifecycle hash-chain, in addition to the job-transition records. The verifier requires a consumed-approval record to be followed immediately by its matching pending-to-approved transition. Lifecycle reads cross-check each stored approval against the verified chain. This is local tamper-evidence, not a keyed signature or remote immutable ledger.
+
+
+### RC-29 correction note
+
+The first RC-29 CI run (#271) exposed a literal escaped newline in the module constant insertion. The corrected branch commit replaces it with a source newline; test verification remains pending.
