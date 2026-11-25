@@ -1,6 +1,6 @@
-# RC-2: replace the placeholder domain in .env and DNS must point to this VPS.
-# Caddy will provision HTTPS automatically for a real domain.
+# Placeholder domain and OIDC provider must be configured before any deployment.
+# Caddy is the only public entrypoint; the OIDC proxy and demo upstream are internal.
 {$RIVERCLOUD_DOMAIN} {
   encode gzip
-  reverse_proxy rivercloud-demo:8080
+  reverse_proxy oauth2-proxy:4180
 }
