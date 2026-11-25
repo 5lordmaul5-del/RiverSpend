@@ -30,7 +30,7 @@ for FILE in "$MIGRATIONS"/001_core.sql "$MIGRATIONS"/002_runtime_permissions.sql
     echo "\\if :checksum_ok"
     echo "SELECT 'Already applied and checksum verified: $VERSION';"
     echo "\\else"
-    echo "\\quit 1"
+    echo "SELECT 1/0;"
     echo "\\endif"
     echo "\\else"
     echo "SELECT 'Applying migration: $VERSION';"
