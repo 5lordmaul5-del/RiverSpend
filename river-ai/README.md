@@ -44,3 +44,7 @@ Structured local event log foundation (JSON Lines) with bounded fields and a sma
 - Owner alone has policy/identity management permissions; Admin has operational write permissions but cannot manage policy or identities; Operator can read and plan; Viewer is read-only.
 - `src/identity.js` is a static permission registry/check helper, with tests in `test/identity.test.js`.
 - This is not authentication, credential management, or a security boundary; it must be integrated and reviewed before real access control is relied on.
+
+
+## RiverControl (read-only status snapshot)
+`src/control.js` exposes a descriptive, read-only snapshot of the foundation modules. It reports local policy and capability status; it does not probe services, authenticate users, execute tasks, or connect to a live provider. Tests are in `test/control.test.js`.
