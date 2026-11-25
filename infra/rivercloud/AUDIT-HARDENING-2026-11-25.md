@@ -458,3 +458,14 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 
 - Push run **45716181629 (#281)** and PR run **45716190031 (#282)** failed the Node-test step: 72/83 tests passed, 11 test-file imports failed due literal escaped newline artifacts in the inserted constants/imports. Subsequent shell/Python, Compose and Caddy validations were skipped.
 - The correction replaces the literal escape sequences with actual source line breaks. The next CI run is required before RC-30 is considered verified.
+
+
+### RC-30 — capacity guards: correction and verification status
+
+- Retrieved CI run **45716334299 (#284)** for the pre-correction head. The Node test step failed at queue capacity and oversized state-file checks; the limits were documented but were not wired into the queue and state reader. The failure is not counted as passing.
+- Implemented the queue item/event limits inside the state transaction, after the duplicate-digest check, so idempotent retries remain accepted even at capacity. New non-duplicate insertions fail with `queue_capacity_exceeded` when either 5,000 jobs or 10,000 events is reached.
+- RC-11 now prechecks descriptor size and reads state in bounded chunks (8 MiB maximum); the transaction also checks serialized snapshot size before writing/renaming. Oversized read/write failures use `state_file_too_large`.
+- Run **45716893463 (#292)** on commit `57828559ea8169915b76dbf494e31a1cdedb9894` failed one added idempotent-at-cap test because its fixture calculated the digest from the raw request instead of the canonical validated plan. This test defect was corrected to use `planDigest(validateDeployRequest(base))`; the failure remains documented and is not counted as passing.
+- Correction commit **`e51f7d8c8f0a3e0dfd724faaaeff36a38e08a34c`** adds the corrected fixture and regressions for queue/event limits, duplicate retry at both limits, bounded state reads, and write-side size rejection. The RC-30 doc was updated in `73472949d0f2aa0b87b33ad12d950cc8ece3a2bd`.
+- **Fresh CI evidence for the correction is pending.** No pass is claimed. The next verification must include the entire Node suite, shell/Python, Compose and Caddy checks.
+- No production service, runner, staging host or live deployment was started. The work remains confined to PR #75's isolated branch.
