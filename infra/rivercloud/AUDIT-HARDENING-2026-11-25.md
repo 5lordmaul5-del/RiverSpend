@@ -2,7 +2,7 @@
 
 ## Snapshot
 
-PR #75 remains isolated on feat/rivercloud-core-2026-11-25. No merge, production deploy, server provisioning or paid operation was performed. The pull request has **63 changed files**; this report records a focused code audit and corrections, not a completed certification of all changed files.
+PR #75 remains isolated on feat/rivercloud-core-2026-11-25. No merge, production deploy, server provisioning or paid operation was performed. The pull request has **64 changed files**; this report records a focused code audit and corrections, not a completed certification of all changed files.
 
 ## Detailed source review
 
@@ -35,6 +35,7 @@ Inspected the control-plane and core files, including server.mjs, rc11-state.mjs
 
 - `server.mjs` sets request timeout 15 s, headers timeout 10 s, socket inactivity timeout 15 s, keep-alive timeout 5 s and maximum 100 requests per socket. The JSON body remains bounded to 8 KiB.
 - Local reconstructed isolated workspace: **2/2** server tests passed using copies of the reviewed state-store/server/queue/engine sources and the updated server test. This was not a checkout of the repository. Latest GitHub Actions evidence remains pending/unavailable.
+- The workflow-run lookup for head **75b740c24a1febcbb97e2fbd544fd727b01bc00** returned no associated PR-triggered runs; the available lookup does not confirm push-triggered run status.
 
 ## Supply-chain and image review
 
