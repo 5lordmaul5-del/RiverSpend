@@ -22,13 +22,13 @@ Inspected the control-plane and core prototype files, including server.mjs, rc11
 - Focused local tests against an isolated reconstructed copy of affected modules: 16/16 passed. This is not a checkout of the repository.
 - GitHub Actions full RiverCloud test suite: initial run 58/59; after correction, run 45597555182 passed 59/59 tests, shell syntax validation and Docker Compose configuration validation. No containers/services were started.
 
-## New hardening increment (local validation; GitHub CI pending)
+## New hardening increment (local validation and initial branch CI evidence)
 
 - RC-11 lock creation now cleans up a lock file it created if metadata write/sync fails, instead of leaving an orphaned lock on that path.
 - Audit append now uses serialized state transactions, verifies the existing chain before appending, sequence-checks records, and redacts sensitive keys and bounds nested detail values.
 - Lifecycle create/transition operations now serialize updates, reject concurrent duplicate job creation and record audit entries; separate-file crash consistency remains a known limitation.
 - RC-13 adds a tested least-privilege permission helper for the prototype role map. This is not authentication or route-level enforcement.
-- Focused test run in an isolated reconstructed workspace: 29/29 passed. The repository could not be cloned locally because the environment could not resolve github.com; this run is not a checkout-based full suite. GitHub Actions will provide branch-level evidence after commit.
+- Focused test run in an isolated reconstructed workspace: 29/29 passed. The repository could not be cloned locally because the environment could not resolve github.com; this run is not a checkout-based full suite. GitHub Actions run 45609163400 for commit 7f7772ff93f3e99a4f2c6b8ce05898191c455a0c completed successfully: 66/66 Node tests, bootstrap shell syntax and Docker Compose config validation. No containers/services were started. The local Git clone remained blocked by DNS, so the 29 focused tests were run in an isolated reconstructed workspace.
 
 ## Remaining blockers — not production eligible
 
