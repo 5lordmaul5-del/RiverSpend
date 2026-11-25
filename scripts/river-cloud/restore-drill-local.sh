@@ -69,6 +69,11 @@ for _ in $(seq 1 60); do
 done
 [[ "$READY" -eq 1 ]] || { echo "Disposable PostgreSQL did not become ready." >&2; exit 1; }
 
+# The restored RLS policies reference this role. Create a restricted placeholder
+# role in the disposable database before pg_restore; it is not used for login.
+docker exec "$CONTAINER_NAME" psql -U postgres -d rivercloud_restore -v ON_ERROR_STOP=1 \
+  -c "CREATE ROLE rivercloud_api NOLOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT;"
+
 age --decrypt --identity "$RIVER_CLOUD_AGE_IDENTITY_FILE" "$BACKUP_FILE" \
   | docker exec -i "$CONTAINER_NAME" pg_restore \
       --username=postgres \
@@ -79,6 +84,12 @@ age --decrypt --identity "$RIVER_CLOUD_AGE_IDENTITY_FILE" "$BACKUP_FILE" \
 
 TABLE_COUNT="$(docker exec "$CONTAINER_NAME" psql -U postgres -d rivercloud_restore -At \
   -c "SELECT count(*) FROM pg_tables WHERE schemaname NOT IN ('pg_catalog', 'information_schema');")"
+RESTORE_MARKER="$(docker exec "$CONTAINER_NAME" psql -U postgres -d rivercloud_restore -At \
+  -c "SELECT marker FROM public.restore_probe WHERE id = 1;")"
+[[ "$RESTORE_MARKER" == "rivercloud-ci" ]] || {
+  echo "Restore data verification failed: expected restore_probe marker rivercloud-ci." >&2
+  exit 1
+}
 
 echo "Restore drill passed in disposable isolated PostgreSQL."
 echo "Restored application tables: $TABLE_COUNT"
