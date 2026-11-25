@@ -1,4 +1,6 @@
-# Configure domain in .env. This initial proxy scaffold intentionally has no app route yet.
-:80 {
-  respond "RiverCloud Core is online. Configure an application route to publish services." 200
+# RC-2: replace the placeholder domain in .env and DNS must point to this VPS.
+# Caddy will provision HTTPS automatically for a real domain.
+${RIVERCLOUD_DOMAIN} {
+  encode gzip
+  reverse_proxy rivercloud-demo:8080
 }
