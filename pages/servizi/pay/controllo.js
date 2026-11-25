@@ -58,7 +58,7 @@ export default function RiverPayControl() {
     <main className="min-h-screen bg-slate-50 px-4 py-8 text-slate-900">
       <div className="mx-auto max-w-6xl">
         <Link href="/servizi/pay" className="font-bold text-teal-700 underline">← RiverPay Global</Link>
-        <Link href="/servizi/pay/api-manager" className="ml-4 inline-flex rounded-full border border-teal-300 bg-white px-4 py-2 text-sm font-bold text-teal-800 shadow-sm">Apri API Manager →</Link><Link href="/servizi/pay/monitor" className="ml-2 inline-flex rounded-full border border-cyan-300 bg-white px-4 py-2 text-sm font-bold text-cyan-800 shadow-sm">RiverPay Monitor →</Link>
+        <Link href="/servizi/pay/api-manager" className="ml-4 inline-flex rounded-full border border-teal-300 bg-white px-4 py-2 text-sm font-bold text-teal-800 shadow-sm">Apri API Manager →</Link><Link href="/servizi/pay/monitor" className="ml-2 inline-flex rounded-full border border-cyan-300 bg-white px-4 py-2 text-sm font-bold text-cyan-800 shadow-sm">RiverPay Monitor →</Link><Link href="/servizi/pay/piggybank" className="ml-2 inline-flex rounded-full border border-amber-300 bg-white px-4 py-2 text-sm font-bold text-amber-800 shadow-sm">PiggyBank →</Link>
         <header className="mt-6 rounded-3xl border border-teal-200 bg-gradient-to-br from-white to-cyan-50 p-6 sm:p-9">
           <p className="text-sm font-black uppercase tracking-[.2em] text-teal-700">RSPC · Area riservata</p>
           <h1 className="mt-2 text-3xl font-black sm:text-4xl">RiverPay Control</h1>
