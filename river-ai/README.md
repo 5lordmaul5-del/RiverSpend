@@ -33,3 +33,7 @@ A deterministic task planner creates a reviewable four-step plan, flags keywords
 
 ## RiverKnowledge
 A local file-based knowledge store for explicit user-provided notes. Entries require title/content, size limits, and are not automatically ingested from network sources or learned implicitly. This foundation is not yet integrated into the HTTP runtime or task engine.
+
+
+## RiverAudit
+Structured local event log foundation (JSON Lines) with bounded fields and a small event-type allowlist. It is append-oriented but not tamper-proof; production requires protected storage, integrity controls and review. It is not wired to other modules yet.
