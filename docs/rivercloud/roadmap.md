@@ -10,7 +10,7 @@ Caddy routing to an example service, automatic TLS for configured domain.
 Allow-listed repositories/branches, authenticated triggers, webhook signature verification, isolated builds, audit logs, health checks and rollback. Avoid arbitrary shell execution through public APIs and never expose Docker socket.
 
 ## RC-4 — RiverCloud Panel
-Authenticated server metrics, application status, logs, deployment and rollback controls.
+Static panel scaffold delivered; authenticated control plane, API, deployment actions and real metrics remain unimplemented.
 
 ## RC-5 — Operations
 Backup/restore testing, monitoring/alerts, firewall, update strategy, capacity planning.
