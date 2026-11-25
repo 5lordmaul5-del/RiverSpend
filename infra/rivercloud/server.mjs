@@ -36,7 +36,7 @@ export function createServer({ host = "127.0.0.1", port = 8787, token = process.
   if (!["127.0.0.1", "::1"].includes(host)) throw new Error("Prototype must bind loopback only");
   if (!Number.isInteger(port) || port < 0 || port > 65535) throw new Error("invalid_port");
   if (typeof token !== "string" || token.length < 32) throw new Error("Set RIVERCLOUD_ENGINE_TOKEN to at least 32 characters");
-  return http.createServer(async (req, res) => {
+  const server = http.createServer(async (req, res) => {
     try {
       if (!authorized(req, token)) return respond(res, 401, { error: "unauthorized" });
       const url = new URL(req.url || "/", "http://localhost");
@@ -53,6 +53,13 @@ export function createServer({ host = "127.0.0.1", port = 8787, token = process.
       return respond(res, status, { error: status >= 500 ? (e.message === "state_lock_timeout" ? e.message : "internal_error") : (e.message || "request_failed") });
     }
   });
+  // Bounded request/headers/socket inactivity to reduce slow-client resource exhaustion.
+  server.requestTimeout = 15_000;
+  server.headersTimeout = 10_000;
+  server.timeout = 15_000;
+  server.keepAliveTimeout = 5_000;
+  server.maxRequestsPerSocket = 100;
+  return server;
 }
 
 export function startServer(options = {}) {
