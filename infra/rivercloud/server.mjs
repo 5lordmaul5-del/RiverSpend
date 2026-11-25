@@ -16,7 +16,7 @@ function authorized(req, token) {
 
 async function readBody(req) {
   const ct = String(req.headers["content-type"] || "").toLowerCase();
-  if (!ct.startsWith("application/json")) throw Object.assign(new Error("json_required"), { status: 415 });
+  if (ct.split(";")[0].trim() !== "application/json") throw Object.assign(new Error("json_required"), { status: 415 });
   let size = 0, chunks = [];
   for await (const chunk of req) {
     size += chunk.length;
