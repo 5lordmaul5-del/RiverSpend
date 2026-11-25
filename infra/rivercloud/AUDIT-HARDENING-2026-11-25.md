@@ -2,7 +2,7 @@
 
 ## Snapshot
 
-PR #75 remains isolated on feat/rivercloud-core-2026-11-25. No merge, production deploy, server provisioning or paid operation was performed. The pull request has **68 changed files**; this report records a focused code audit and corrections, not a completed certification of all changed files.
+PR #75 remains isolated on feat/rivercloud-core-2026-11-25. No merge, production deploy, server provisioning or paid operation was performed. The pull request has **73 changed files**; this report records a focused code audit and corrections, not a completed certification of all changed files.
 
 ## Detailed source review
 
@@ -24,7 +24,10 @@ Inspected the control-plane and core files, including server.mjs, rc11-state.mjs
 - Runs **45609326685**, **45609337469**, **45609679828** and **45609697534** also passed 66/66 tests and relevant shell/Compose/Caddyfile validations.
 - Run **45617853040 — SUCCESS: 74/74** Node tests, bootstrap shell syntax, Compose config and Caddyfile validation. It checked PR merge commit **053b7ed1da4e61e8c0c55f4ab0e29a908ea6521f**, corresponding to branch head **68b35757fa48244237401245d9f14482fa3bc368** at the time.
 - Run **45618332297 — SUCCESS: 77/77** Node tests, bootstrap and backup/restore shell syntax, Compose config and Caddyfile validation. It checked merge commit **dfc51e822fff837d85a1b38a538c99e7199b80a9**, corresponding to branch head **a0028168a34db04effab6045fae091982300a0a6**.
-- **Latest run 45618630901 — SUCCESS: 78/78 Node tests**, bootstrap and backup/restore shell syntax, Compose config and Caddyfile validation. It checked merge commit **d7ab35a8b76aadf4b0ed90ef59760df9b269b96c**, corresponding to branch head **ea2e5de59cf27a392d2d0691deeb09ac3b8fe303**. The Caddy validation used a short-lived container only; no RiverCloud services were started.
+- Run **45618630901 — SUCCESS: 78/78 Node tests**, bootstrap and backup/restore shell syntax, Compose config and Caddyfile validation. It checked merge commit **d7ab35a8b76aadf4b0ed90ef59760df9b269b96c**, corresponding to branch head **ea2e5de59cf27a392d2d0691deeb09ac3b8fe303**. The Caddy validation used a short-lived container only; no RiverCloud services were started.
+- Run **45622097974 — SUCCESS: 87/87 Node tests**, plus shell/Python, Compose and Caddy validations.
+- Run **45622204547 — SUCCESS: 87/87 Node tests**, plus shell/Python, Compose and Caddy validations; checked branch head **e42613e8f3c4750469fe7c0296c895fc4890986d**.
+- Run **45636789810 (run #106) — SUCCESS: 90/90 Node tests**, bootstrap shell, backup/restore shell and Python syntax, Compose config, and Caddy validation. It checked PR merge commit **1d7c30075d40007e5448017f49d22fae43b8049f**, corresponding to branch head **7682aa079f1916c2b7968610dc4c1624cf64a97b**. No RiverCloud services were started.
 
 ## RC-17 — same-file lifecycle/audit migration path
 
@@ -119,3 +122,11 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 5. Build an isolated worker and staging environment after review and approval.
 6. Execute secure backup/restore and security review; preserve evidence.
 7. Do not consider production or migration until every gate is independently verified and explicitly approved.
+
+
+## RC-19 backup-source compatibility hardening
+
+- Backup creation now refuses the filesystem root as a source, symlink/special entries (anything other than regular files or directories), and hardlinked files. This prevents creating archives that the restricted restore path would refuse or that could cause unintended broad snapshots.
+- Added regression tests for hardlinked files, FIFOs, and root-source rejection; updated the symlink-source assertion.
+- GitHub Actions run **45636789810 — SUCCESS: 90/90 Node tests**. The four validation steps (bootstrap, backup/restore shell + Python, Compose configuration, Caddy validation) also completed successfully.
+- Tests used temporary directories and a root-source refusal check; no real data backup or restore was performed.
