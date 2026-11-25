@@ -8,7 +8,7 @@ PR #75 remains isolated on feat/rivercloud-core-2026-11-25. No merge, production
 
 Inspected the control-plane and core prototype files, including server.mjs, rc11-state.mjs, approval-bound.mjs, rc12-hardening.mjs, audit-log.mjs, engine.mjs, lifecycle.mjs, rc13-identity.mjs, rc14-audit-sink.mjs, rc15-staging.mjs, rc16-readiness.mjs, rc7-worker.mjs, runner.mjs, worker-spec.mjs, Docker Compose, bootstrap and the RiverCloud documentation. The complete file-by-file review remains open.
 
-## Corrections in this increment
+## Corrections in the first increment
 
 - Queue persistence: replaced independent queue read/write operations with the RC-11 transaction store. Digest duplicate detection and insertion occur inside one transaction; the queue is idempotent under concurrent requests.
 - Queue API: retained loopback-only binding and token authentication; added explicit JSON content-type, bounded body size, no-store response headers, safe internal error handling and tests.
@@ -17,27 +17,35 @@ Inspected the control-plane and core prototype files, including server.mjs, rc11
 - Test-quality correction: the initial CI run found an incorrect assertion in lifecycle.test.mjs (the helper returns false for an invalid transition; the test incorrectly expected an exception). The assertion was corrected.
 - Compose/bootstrap: pinned Caddy and whoami to exact version tags; removed a healthcheck that depended on wget absent from the minimal whoami image. Bootstrap no longer pipes a remote installer into a shell and requires Docker to be installed and reviewed manually.
 
-## Test evidence
+## Test evidence from the first increment
 
 - Focused local tests against an isolated reconstructed copy of affected modules: 16/16 passed. This is not a checkout of the repository.
-- GitHub Actions full RiverCloud test suite: the initial run exposed one incorrect assertion (58/59); after correction, latest run 45597555182 passed 59/59 tests, shell syntax validation, and Docker Compose configuration validation. No containers/services were started.
+- GitHub Actions full RiverCloud test suite: initial run 58/59; after correction, run 45597555182 passed 59/59 tests, shell syntax validation and Docker Compose configuration validation. No containers/services were started.
+
+## New hardening increment (local validation; GitHub CI pending)
+
+- RC-11 lock creation now cleans up a lock file it created if metadata write/sync fails, instead of leaving an orphaned lock on that path.
+- Audit append now uses serialized state transactions, verifies the existing chain before appending, sequence-checks records, and redacts sensitive keys and bounds nested detail values.
+- Lifecycle create/transition operations now serialize updates, reject concurrent duplicate job creation and record audit entries; separate-file crash consistency remains a known limitation.
+- RC-13 adds a tested least-privilege permission helper for the prototype role map. This is not authentication or route-level enforcement.
+- Focused test run in an isolated reconstructed workspace: 29/29 passed. The repository could not be cloned locally because the environment could not resolve github.com; this run is not a checkout-based full suite. GitHub Actions will provide branch-level evidence after commit.
 
 ## Remaining blockers — not production eligible
 
-- No OIDC authentication provider, MFA, authenticated approver, session revocation or fully enforced RBAC.
+- No OIDC authentication provider, MFA, authenticated approver, session revocation or route-level RBAC enforcement.
 - No actual worker/runtime, build sandbox, network enforcement or staging host.
-- Local lock files may remain after a crash; manual review/recovery is required.
-- The existing local audit ledger and lifecycle persistence are not yet a unified transactional store and need concurrency/crash tests.
+- Local lock files may remain after a crash; stale recovery remains manual and fail-closed.
+- Lifecycle and audit records are separately persisted; a crash between writes can cause mismatch.
 - No external protected audit delivery, retries, receiver, or immutable retention.
 - Image tags are version-pinned but not pinned by digest; update/provenance policy remains.
 - Backup/restore, dependency/supply-chain scan, staging rehearsal, performance tests and migration/cutover remain unperformed.
 
 ## Next gates
 
-1. Run the full branch test workflow including shell and Compose checks; fix evidence-backed failures.
+1. Await branch CI evidence for this increment and fix any failures.
 2. Continue file-by-file review of the remaining documentation, panel, configuration and test files.
-3. Design and integrate an actual OIDC/RBAC layer, without homemade token verification.
-4. Harden audit/lifecycle persistence and lock/crash recovery.
+3. Integrate a real OIDC provider and MFA, with route-level RBAC, without homemade token verification.
+4. Test lock/crash recovery on supported target platforms; retain fail-closed behavior.
 5. Build an isolated worker and staging environment only after review and approval.
 6. Execute backup/restore and security review; retain evidence.
 7. Do not consider production or migration until every gate is independently verified and explicitly approved.
