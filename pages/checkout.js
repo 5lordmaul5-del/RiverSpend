@@ -52,8 +52,12 @@ export default function Checkout() {
       if (active) setUser(session?.user || null);
     });
     try {
-      const saved = JSON.parse(localStorage.getItem('riverspend-rete') || '[]');
-      if (Array.isArray(saved)) setItems(saved);
+      const rete = JSON.parse(localStorage.getItem('riverspend-rete') || '[]');
+      const legacy = JSON.parse(localStorage.getItem('riverspend-cart') || '[]');
+      const saved = Array.isArray(rete) ? rete : [];
+      if (Array.isArray(legacy)) legacy.forEach(item => { if (!saved.some(entry => String(entry.id) === String(item.id) && String(entry.variantName || '') === String(item.variantName || ''))) saved.push(item); });
+      setItems(saved);
+      localStorage.setItem('riverspend-rete',JSON.stringify(saved)); sessionStorage.setItem('riverspend-rete',JSON.stringify(saved));
     } catch {}
     return () => {
       active = false;
