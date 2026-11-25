@@ -36,7 +36,7 @@ test("RC-22 blocks self-consumption and allows one distinct authorized consumer"
     const consumed = await consumeApprovalForIdentity({ claims: claims("executor-2"), identityOptions: options, storeDir: root, binding, secret, token: issued.token });
     assert.equal(consumed.approved, true); assert.equal(consumed.consumer.subject, "executor-2");
     const state = await readState(lifecycleFile); assert.equal(state.approvals.filter(a => a.used).length, 1); assert.equal(state.events.filter(e => e.event === "approval_consumed").length, 1);
-    const lifecycle = await readAtomicLifecycle(lifecycleFile); assert.equal(lifecycle.jobs.length, 1); assert.equal(lifecycle.jobs[0].state, "approved"); assert.equal(lifecycle.auditRecords.length, 2); assert.equal(lifecycle.integrity.valid, true); assert.equal(lifecycle.auditRecords[1].details.note, "approval_consumed");
+    const lifecycle = await readAtomicLifecycle(lifecycleFile); assert.equal(lifecycle.jobs.length, 1); assert.equal(lifecycle.jobs[0].state, "approved"); assert.equal(lifecycle.auditRecords.length, 4); assert.equal(lifecycle.integrity.valid, true); assert.equal(lifecycle.auditRecords[3].details.note, "approval_consumed");
     await assert.rejects(() => consumeApprovalForIdentity({ claims: claims("executor-3"), identityOptions: options, storeDir: root, binding, secret, token: issued.token }), /used/);
   } finally { await rm(root, { recursive: true, force: true }); }
 });

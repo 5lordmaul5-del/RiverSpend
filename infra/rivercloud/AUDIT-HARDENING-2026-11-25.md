@@ -411,3 +411,14 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 ### RC-28 report-only CI closeout
 
 - Report-only commit `c0902aef1d22b92fe5ef4906a775841d26c59ba0` was verified by **45709331820 (#267) and 45709342429 (#268) — SUCCESS: 123/123 Node tests** each, plus bootstrap, backup/restore and Python syntax, Compose configuration and Caddy validation. Code is unchanged from the corrected RC-28 source commit.
+
+
+
+## RC-29 — approval audit events bound to lifecycle hash-chain (25 November 2026)
+
+- Code review found that RC-26 persisted approval issuance and consumption in the RC-11 `events` list, but did not include explicit approval event records in the RC-17 hash-chain. The chain only showed the resulting job transition, leaving issuance and one-use consumption less directly auditable.
+- Added explicit `approval_issued` and `approval_consumed` chain events using a hashed approval identifier (no raw token). The verifier validates job/digest binding, issuer label, expiry, one-use semantics, and requires consumption to be immediately followed by the matching `pending` → `approved` transition.
+- Lifecycle reads now cross-check the persisted approval records against the verified chain, including used-state, expiry, digest, approver and job ID. Unmatched approval records fail closed in the integrity result.
+- The redactor now uses a null-prototype object to avoid special-key assignment behavior.
+- Tests added/updated for approval issuance/consumption chain ordering, concurrent one-use, and detection of unlogged approval state. CI evidence is pending; no result is claimed until the workflow completes.
+- No OIDC route integration, external WORM audit sink or runner execution was connected.

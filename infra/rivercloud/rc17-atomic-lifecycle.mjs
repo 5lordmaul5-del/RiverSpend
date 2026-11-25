@@ -10,13 +10,13 @@ const transitions = {
   running: new Set(["completed", "failed"]), completed: new Set(),
   failed: new Set(["prepared"]), cancelled: new Set()
 };
-const safeId = /^[A-Za-z0-9_-]{1,64}$/;
+const safeId = /^[A-Za-z0-9_-]{1,64}$/;\nconst HASH = /^[a-f0-9]{64}$/i;
 const sensitive = /password|secret|token|authorization|cookie|private.?key|credential|api.?key/i;
 function redact(value, depth = 0) {
   if (depth > 8) return "[depth-limit]";
   if (Array.isArray(value)) return value.slice(0, 100).map(v => redact(v, depth + 1));
   if (value && typeof value === "object") {
-    const out = {};
+    const out = Object.create(null);
     for (const [key, v] of Object.entries(value).slice(0, 100)) out[key] = sensitive.test(key) ? "[redacted]" : redact(v, depth + 1);
     return out;
   }
@@ -27,37 +27,56 @@ function redact(value, depth = 0) {
 function digestPayload(payload) { return createHash("sha256").update(JSON.stringify(payload)).digest("hex"); }
 export function verifyAtomicAudit(records) {
   if (!Array.isArray(records)) return { valid: false, reason: "ledger_not_array" };
-  let previous = "GENESIS";
-  const states = new Map(), digests = new Map();
+  let previous = "GENESIS", pendingApprovalTransition = null;
+  const states = new Map(), digests = new Map(), approvals = new Map();
   for (let i = 0; i < records.length; i++) {
-    const r = records[i];
-    const d = r?.details;
-    if (!r || r.sequence !== i + 1 || r.event !== "job_transition" || r.previousHash !== previous || typeof r.at !== "string" || !d || typeof d !== "object" || Array.isArray(d)) return { valid: false, reason: "record_schema_invalid" };
-    if (!safeId.test(String(d.jobId ?? "")) || !STATES.includes(d.to) || (d.from !== null && !STATES.includes(d.from))) return { valid: false, reason: "transition_details_invalid" };
-    if (d.from === null) {
-      if (d.to !== "pending" || states.has(d.jobId) || !/^[a-f0-9]{64}$/i.test(String(d.digest ?? ""))) return { valid: false, reason: "creation_record_invalid" };
-      states.set(d.jobId, "pending");
-      digests.set(d.jobId, String(d.digest).toLowerCase());
-    } else {
-      if (states.get(d.jobId) !== d.from || !transitions[d.from]?.has(d.to)) return { valid: false, reason: "transition_sequence_invalid" };
-      states.set(d.jobId, d.to);
-    }
+    const r = records[i], d = r?.details;
+    if (!r || r.sequence !== i + 1 || typeof r.at !== "string" || !Number.isFinite(Date.parse(r.at)) || !d || typeof d !== "object" || Array.isArray(d) || r.previousHash !== previous) return { valid: false, reason: "record_schema_invalid" };
+    if (pendingApprovalTransition && r.event !== "job_transition") return { valid: false, reason: "approval_transition_not_adjacent" };
+    if (r.event === "job_transition") {
+      if (!safeId.test(String(d.jobId ?? "")) || !STATES.includes(d.to) || (d.from !== null && !STATES.includes(d.from)) || typeof d.actor !== "string" || !d.actor.trim() || typeof d.note !== "string") return { valid: false, reason: "transition_details_invalid" };
+      if (d.from === null) {
+        if (d.to !== "pending" || states.has(d.jobId) || !HASH.test(String(d.digest ?? ""))) return { valid: false, reason: "creation_record_invalid" };
+        states.set(d.jobId, "pending"); digests.set(d.jobId, String(d.digest).toLowerCase());
+      } else {
+        if (states.get(d.jobId) !== d.from || !transitions[d.from]?.has(d.to)) return { valid: false, reason: "transition_sequence_invalid" };
+        if (d.digest !== undefined && String(d.digest).toLowerCase() !== digests.get(d.jobId)) return { valid: false, reason: "transition_digest_mismatch" };
+        states.set(d.jobId, d.to);
+      }
+      if (pendingApprovalTransition) {
+        const expected = pendingApprovalTransition;
+        if (d.jobId !== expected.jobId || d.from !== "pending" || d.to !== "approved" || d.actor !== expected.consumer || d.note !== "approval_consumed") return { valid: false, reason: "approval_transition_mismatch" };
+        pendingApprovalTransition = null;
+      }
+    } else if (r.event === "approval_issued") {
+      if (!HASH.test(String(d.approvalId ?? "")) || !safeId.test(String(d.jobId ?? "")) || !HASH.test(String(d.digest ?? "")) || typeof d.approver !== "string" || !d.approver.trim() || !Number.isSafeInteger(d.expiresAt) || d.expiresAt <= Date.parse(r.at) || states.get(d.jobId) !== "pending" || digests.get(d.jobId) !== String(d.digest).toLowerCase() || approvals.has(d.approvalId)) return { valid: false, reason: "approval_issue_invalid" };
+      approvals.set(d.approvalId, { jobId: d.jobId, digest: String(d.digest).toLowerCase(), approver: d.approver, expiresAt: d.expiresAt, used: false });
+    } else if (r.event === "approval_consumed") {
+      const approval = approvals.get(d.approvalId);
+      if (!HASH.test(String(d.approvalId ?? "")) || !safeId.test(String(d.jobId ?? "")) || !HASH.test(String(d.digest ?? "")) || typeof d.consumer !== "string" || !d.consumer.trim() || !approval || approval.used || approval.jobId !== d.jobId || approval.digest !== String(d.digest).toLowerCase() || approval.expiresAt <= Date.parse(r.at) || approval.approver === d.consumer || states.get(d.jobId) !== "pending" || digests.get(d.jobId) !== String(d.digest).toLowerCase()) return { valid: false, reason: "approval_consume_invalid" };
+      approval.used = true;
+      pendingApprovalTransition = { jobId: d.jobId, consumer: d.consumer };
+    } else return { valid: false, reason: "event_type_invalid" };
     const { hash, ...payload } = r;
     if (typeof hash !== "string" || digestPayload(payload) !== hash) return { valid: false, reason: "record_hash_mismatch" };
     previous = hash;
   }
-  return { valid: true, count: records.length, states: Object.fromEntries(states), digests: Object.fromEntries(digests) };
+  if (pendingApprovalTransition) return { valid: false, reason: "approval_transition_missing" };
+  return { valid: true, count: records.length, states: Object.fromEntries(states), digests: Object.fromEntries(digests), approvals: Object.fromEntries(approvals) };
 }
-function appendAtomicAudit(state, details) {
+function appendAtomicAuditBatch(state, detailsList) {
   if (!Array.isArray(state.auditRecords)) state.auditRecords = [];
-  const records = state.auditRecords;
-  const checked = verifyAtomicAudit(records);
+  const records = state.auditRecords, checked = verifyAtomicAudit(records);
   if (!checked.valid) throw new Error("audit_integrity_failure");
-  const payload = { sequence: records.length + 1, event: "job_transition", details: redact(details), at: new Date().toISOString(), previousHash: records.at(-1)?.hash || "GENESIS" };
-  const record = { ...payload, hash: digestPayload(payload) };
-  records.push(record);
-  return record;
+  for (const details of detailsList) {
+    const payload = { sequence: records.length + 1, event: details.event, details: redact(details.details), at: new Date().toISOString(), previousHash: records.at(-1)?.hash || "GENESIS" };
+    const record = { ...payload, hash: digestPayload(payload) };
+    records.push(record);
+  }
+  if (!verifyAtomicAudit(records).valid) throw new Error("audit_integrity_failure");
+  return detailsList.map((_, i) => records[records.length - detailsList.length + i]);
 }
+function appendAtomicAudit(state, details) { return appendAtomicAuditBatch(state, [{ event: "job_transition", details }])[0]; }
 export async function createLifecycleJobAtomic(file, { jobId, digest, plan, actor = "system" } = {}) {
   if (!safeId.test(jobId ?? "") || !/^[a-f0-9]{64}$/i.test(String(digest ?? "")) || !plan || typeof plan !== "object" || Array.isArray(plan) || typeof actor !== "string" || !actor.trim() || actor.length > 100) throw new Error("invalid_job");
   // Never persist raw secrets from caller-supplied plan data.
@@ -112,7 +131,7 @@ export async function storeApprovalForLifecycleAtomic(file, record) {
       throw new Error("approval_already_issued");
     }
     state.approvals.push({ ...record, used: false });
-    state.events.push({ event: "approval_issued", jobId: job.id, at: new Date().toISOString() });
+    state.events.push({ event: "approval_issued", jobId: job.id, at: new Date().toISOString() });\n    appendAtomicAuditBatch(state, [{ event: "approval_issued", details: { approvalId: record.tokenId, jobId: job.id, digest: job.digest, approver: record.approver, expiresAt: record.expiresAt } }]);
     return record.tokenId;
   });
 }
@@ -153,28 +172,32 @@ export async function consumeApprovalAndTransitionAtomic(file, {
     state.events.push({ event: "approval_consumed", jobId: job.id, at });
     job.state = "approved";
     job.updatedAt = at;
-    appendAtomicAudit(state, { jobId: job.id, from, to: "approved", actor: consumerIdentity, note: "approval_consumed", digest: job.digest });
+    appendAtomicAuditBatch(state, [
+      { event: "approval_consumed", details: { approvalId: tokenId, jobId: job.id, digest: job.digest, consumer: consumerIdentity } },
+      { event: "job_transition", details: { jobId: job.id, from, to: "approved", actor: consumerIdentity, note: "approval_consumed", digest: job.digest } }
+    ]);
     return { approved: true, jobId: job.id, jobState: job.state, approver: approval.approver, consumerIdentity };
   });
 }
 
 export async function readAtomicLifecycle(file) {
-  const state = await readState(file);
-  const jobs = Array.isArray(state.lifecycleJobs) ? state.lifecycleJobs : [];
-  const auditRecords = Array.isArray(state.auditRecords) ? state.auditRecords : [];
+  const state = await readState(file), jobs = Array.isArray(state.lifecycleJobs) ? state.lifecycleJobs : [], auditRecords = Array.isArray(state.auditRecords) ? state.auditRecords : [];
   let integrity = verifyAtomicAudit(auditRecords);
   if (integrity.valid) {
     const jobIds = new Set();
     if (jobs.length !== Object.keys(integrity.states).length) integrity = { valid: false, reason: "job_audit_count_mismatch" };
-    else {
-      for (const job of jobs) {
-        if (!job || !safeId.test(String(job.id ?? "")) || jobIds.has(job.id) || integrity.states[job.id] !== job.state || integrity.digests[job.id] !== String(job.digest ?? "").toLowerCase()) {
-          integrity = { valid: false, reason: "job_audit_state_mismatch" };
-          break;
-        }
-        jobIds.add(job.id);
+    else for (const job of jobs) {
+      if (!job || !safeId.test(String(job.id ?? "")) || jobIds.has(job.id) || integrity.states[job.id] !== job.state || integrity.digests[job.id] !== String(job.digest ?? "").toLowerCase()) { integrity = { valid: false, reason: "job_audit_state_mismatch" }; break; }
+      jobIds.add(job.id);
+    }
+    if (integrity.valid) {
+      const approvals = Array.isArray(state.approvals) ? state.approvals : [];
+      if (approvals.length !== Object.keys(integrity.approvals).length) integrity = { valid: false, reason: "approval_audit_count_mismatch" };
+      else for (const stored of approvals) {
+        const audited = integrity.approvals[stored?.tokenId];
+        if (!stored || !HASH.test(String(stored.tokenId ?? "")) || !audited || stored.jobId !== audited.jobId || String(stored.binding?.digest ?? "").toLowerCase() !== audited.digest || stored.approver !== audited.approver || stored.expiresAt !== audited.expiresAt || stored.used !== audited.used) { integrity = { valid: false, reason: "approval_audit_mismatch" }; break; }
       }
     }
   }
   return { jobs, auditRecords, integrity };
-}
+}\n

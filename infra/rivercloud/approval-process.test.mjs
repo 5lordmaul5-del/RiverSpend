@@ -38,6 +38,6 @@ test("separate processes race one approval and only one consumes it", async () =
     const state = await readState(path.join(root, "lifecycle.json"));
     assert.equal(state.approvals.length, 1); assert.equal(state.approvals[0].used, true); assert.equal(state.events.filter(e => e.event === "approval_consumed").length, 1);
     const lifecycle = await readAtomicLifecycle(path.join(root, "lifecycle.json"));
-    assert.equal(lifecycle.jobs[0].state, "approved"); assert.equal(lifecycle.auditRecords.length, 2); assert.equal(lifecycle.integrity.valid, true);
+    assert.equal(lifecycle.jobs[0].state, "approved"); assert.equal(lifecycle.auditRecords.length, 4); assert.equal(lifecycle.integrity.valid, true); assert.equal(Object.values(lifecycle.integrity.approvals).filter(a => a.used).length, 1);
   } finally { await rm(root, { recursive: true, force: true }); }
 });

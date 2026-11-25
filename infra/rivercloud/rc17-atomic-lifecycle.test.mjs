@@ -19,3 +19,12 @@ test("concurrent distinct jobs persist with audit sequence", async () => sandbox
 test("read detects a job state change without a matching audit transition", async () => sandbox(async file => { await createLifecycleJobAtomic(file, { jobId: "J8", digest, plan: {} }); const { transactState } = await import("./rc11-state.mjs"); await transactState(file, state => { state.lifecycleJobs[0].state = "approved"; }); const s = await readAtomicLifecycle(file); assert.equal(s.integrity.valid, false); assert.equal(s.integrity.reason, "job_audit_state_mismatch"); }));
 test("read detects deleted audit history while jobs remain", async () => sandbox(async file => { await createLifecycleJobAtomic(file, { jobId: "J9", digest, plan: {} }); const { transactState } = await import("./rc11-state.mjs"); await transactState(file, state => { state.auditRecords = []; }); const s = await readAtomicLifecycle(file); assert.equal(s.integrity.valid, false); assert.equal(s.integrity.reason, "job_audit_count_mismatch"); }));
 test("audit replay rejects an illegal transition even with a recomputed hash", async () => sandbox(async file => { await createLifecycleJobAtomic(file, { jobId: "J10", digest, plan: {} }); await transitionLifecycleJobAtomic(file, { jobId: "J10", to: "approved" }); const s = await readAtomicLifecycle(file); const records = structuredClone(s.auditRecords); records[1].details.to = "running"; for (let i = 0; i < records.length; i++) { const { hash, ...payload } = records[i]; records[i].hash = createHash("sha256").update(JSON.stringify(payload)).digest("hex"); } assert.equal(verifyAtomicAudit(records).valid, false); assert.equal(verifyAtomicAudit(records).reason, "transition_sequence_invalid"); }));
+
+test("read rejects approval state without matching hash-chain issuance record", async () => sandbox(async file => {
+  await createLifecycleJobAtomic(file, { jobId: "J11", digest, plan: {} });
+  const { transactState } = await import("./rc11-state.mjs");
+  await transactState(file, state => { state.approvals.push({ tokenId: "c".repeat(64), jobId: "J11", binding: { jobId: "J11", digest }, approver: "reviewer", expiresAt: Date.now()+10000, used: false }); });
+  const s = await readAtomicLifecycle(file);
+  assert.equal(s.integrity.valid, false);
+  assert.equal(s.integrity.reason, "approval_audit_count_mismatch");
+}));

@@ -20,7 +20,7 @@ test("approval bound to exact plan and single use", async () => {
     const result = await consumeApproval({ storeDir: root, binding, secret, token: issued.token, consumerIdentity: "executor-1" });
     assert.equal(result.approved, true); assert.equal(result.jobState, "approved");
     const lifecycle = await readAtomicLifecycle(path.join(root, "lifecycle.json"));
-    assert.equal(lifecycle.jobs[0].state, "approved"); assert.equal(lifecycle.auditRecords.length, 2); assert.equal(lifecycle.auditRecords[1].details.note, "approval_consumed");
+    assert.equal(lifecycle.jobs[0].state, "approved"); assert.deepEqual(lifecycle.auditRecords.map(r => r.event), ["job_transition", "approval_issued", "approval_consumed", "job_transition"]); assert.equal(lifecycle.auditRecords[3].details.note, "approval_consumed"); assert.equal(Object.values(lifecycle.integrity.approvals).filter(a => a.used).length, 1);
     await assert.rejects(() => consumeApproval({ storeDir: root, binding, secret, token: issued.token, consumerIdentity: "executor-1" }), /used/);
   } finally { await rm(root, { recursive: true, force: true }); }
 });
@@ -32,7 +32,7 @@ test("approval cannot be applied to changed commit", async () => {
     const secret = "s".repeat(40), issued = await issueApproval({ storeDir: root, binding, secret, approver: "reviewer" }), changed = { ...binding, commit: "c".repeat(40) };
     await assert.rejects(() => consumeApproval({ storeDir: root, binding: changed, secret, token: issued.token, consumerIdentity: "executor-1" }), /binding_mismatch/);
     const state = await readState(path.join(root, "lifecycle.json")); assert.equal(state.approvals[0].used, false);
-    const lifecycle = await readAtomicLifecycle(path.join(root, "lifecycle.json")); assert.equal(lifecycle.jobs[0].state, "pending"); assert.equal(lifecycle.auditRecords.length, 1);
+    const lifecycle = await readAtomicLifecycle(path.join(root, "lifecycle.json")); assert.equal(lifecycle.jobs[0].state, "pending"); assert.equal(lifecycle.auditRecords.length, 2); assert.equal(lifecycle.integrity.valid, true);
   } finally { await rm(root, { recursive: true, force: true }); }
 });
 
@@ -43,7 +43,7 @@ test("two concurrent consume attempts can succeed only once", async () => {
     const secret = "s".repeat(40), issued = await issueApproval({ storeDir: root, binding, secret, approver: "reviewer" });
     const results = await Promise.allSettled([consumeApproval({ storeDir: root, binding, secret, token: issued.token, consumerIdentity: "executor-1" }), consumeApproval({ storeDir: root, binding, secret, token: issued.token, consumerIdentity: "executor-1" })]);
     assert.equal(results.filter(x => x.status === "fulfilled").length, 1); assert.equal(results.filter(x => x.status === "rejected").length, 1);
-    const lifecycle = await readAtomicLifecycle(path.join(root, "lifecycle.json")); assert.equal(lifecycle.jobs[0].state, "approved"); assert.equal(lifecycle.auditRecords.length, 2); assert.equal(lifecycle.integrity.valid, true);
+    const lifecycle = await readAtomicLifecycle(path.join(root, "lifecycle.json")); assert.equal(lifecycle.jobs[0].state, "approved"); assert.equal(lifecycle.auditRecords.length, 4); assert.equal(lifecycle.integrity.valid, true);
   } finally { await rm(root, { recursive: true, force: true }); }
 });
 

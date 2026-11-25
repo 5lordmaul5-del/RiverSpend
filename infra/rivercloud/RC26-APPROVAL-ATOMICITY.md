@@ -18,3 +18,8 @@ The process-race test must leave exactly one approved job, one used token, and a
 ## CI closeout
 
 - GitHub Actions **run 45708072045 (#243) — SUCCESS: 119/119 Node tests** and PR run **45708081331 (#244) — SUCCESS: 119/119** verify code/test commit `96ce2ce439a31cd453ab41862a88d1f323e5d426`. Both also passed bootstrap, backup/restore and Python syntax, Compose validation, and Caddy validation. The earlier fixture-failure runs #241/#242 were corrected and retained in the report.
+
+
+## RC-29 — approval issuance and consumption are hash-chained
+
+Approval issuance and consumption now appear as explicit records in the same lifecycle hash-chain, in addition to the job-transition records. The verifier requires a consumed-approval record to be followed immediately by its matching pending-to-approved transition. Lifecycle reads cross-check each stored approval against the verified chain. This is local tamper-evidence, not a keyed signature or remote immutable ledger.
