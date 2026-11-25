@@ -2,64 +2,64 @@
 
 ## Snapshot
 
-PR #75 remains isolated on feat/rivercloud-core-2026-11-25. No merge, production deploy, server provisioning or paid operation was performed. The pull request has 60 changed files; this report records a focused code audit and corrections, not a completed certification of all changed files.
+PR #75 remains isolated on feat/rivercloud-core-2026-11-25. No merge, production deploy, server provisioning or paid operation was performed. The pull request has **63 changed files**; this report records a focused code audit and corrections, not a completed certification of all changed files.
 
 ## Detailed source review
 
-Inspected the control-plane and core prototype files, including server.mjs, rc11-state.mjs, approval-bound.mjs, rc12-hardening.mjs, audit-log.mjs, engine.mjs, lifecycle.mjs, rc13-identity.mjs, rc14-audit-sink.mjs, rc15-staging.mjs, rc16-readiness.mjs, rc7-worker.mjs, runner.mjs, worker-spec.mjs, Docker Compose, bootstrap and the RiverCloud documentation. The complete file-by-file review remains open.
+Inspected the control-plane and core files, including server.mjs, rc11-state.mjs, approval-bound.mjs, rc12-hardening.mjs, audit-log.mjs, engine.mjs, lifecycle.mjs, rc13-identity.mjs, rc14-audit-sink.mjs, rc15-staging.mjs, rc16-readiness.mjs, rc7-worker.mjs, runner.mjs, worker-spec.mjs, Docker Compose, Caddyfile, bootstrap, static panel, policy tests and the RiverCloud documentation. The complete file-by-file review remains open.
 
 ## Corrections in the first increment
 
-- Queue persistence: replaced independent queue read/write operations with the RC-11 transaction store. Digest duplicate detection and insertion occur inside one transaction; the queue is idempotent under concurrent requests.
-- Queue API: retained loopback-only binding and token authentication; added explicit JSON content-type, bounded body size, no-store response headers, safe internal error handling and tests.
-- Approval prototype: replaced Math.random nonce generation and separate read/modify/write with cryptographic random nonce and transaction-backed one-use consumption. Binding now requires a canonical project ID and 64-hex plan digest.
-- Staging path: added safe-segment validation and rejection of traversal paths.
-- Test-quality correction: the initial CI run found an incorrect assertion in lifecycle.test.mjs (the helper returns false for an invalid transition; the test incorrectly expected an exception). The assertion was corrected.
-- Compose/bootstrap: pinned Caddy and whoami to exact version tags; removed a healthcheck that depended on wget absent from the minimal whoami image. Bootstrap no longer pipes a remote installer into a shell and requires Docker to be installed and reviewed manually.
+- Queue persistence: digest duplicate detection and insertion occur inside one transaction; queue submissions are idempotent under concurrent requests.
+- Queue API: loopback-only binding and bearer token; explicit JSON content-type, 8 KiB bounded body, no-store response headers, safe internal errors and tests.
+- Approval prototype: cryptographic nonce and transaction-backed one-use consumption; binding includes canonical project, profile, staging target, immutable commit and plan digest.
+- Staging path: safe-segment validation and rejection of traversal paths.
+- Test-quality correction: CI found an incorrect lifecycle assertion (the helper returns false for invalid transitions); the assertion was corrected.
+- Compose/bootstrap: exact version tags, removed a healthcheck requiring wget from a minimal image, and bootstrap no longer executes a remote installer piped to shell.
 
-## Test evidence from the first increment
+## CI evidence from earlier increments
 
-- Focused local tests against an isolated reconstructed copy of affected modules: 16/16 passed. This is not a checkout of the repository.
-- GitHub Actions full RiverCloud test suite: initial run 58/59; after correction, run 45597555182 passed 59/59 tests, shell syntax validation and Docker Compose configuration validation. No containers/services were started.
+- GitHub Actions run **45597555182** passed **59/59** tests, shell syntax and Compose validation.
+- Later run **45609163400** passed **66/66** Node tests plus shell and Compose validation. No RiverCloud services were started.
+- Runs **45609326685**, **45609337469**, **45609679828** and **45609697534** also passed 66/66 tests and relevant shell/Compose/Caddyfile validations. Caddy validation used a short-lived validation container only.
+- These are evidence for the commits associated with those runs, not proof that the latest RC-17/RC-18 commits passed CI.
 
-## New hardening increment (local validation and initial branch CI evidence)
+## RC-17 — same-file lifecycle/audit migration path
 
-- RC-11 lock creation now cleans up a lock file it created if metadata write/sync fails, instead of leaving an orphaned lock on that path.
-- Audit append now uses serialized state transactions, verifies the existing chain before appending, sequence-checks records, and redacts sensitive keys and bounds nested detail values.
-- Lifecycle create/transition operations now serialize updates, reject concurrent duplicate job creation and record audit entries; separate-file crash consistency remains a known limitation.
-- RC-13 adds a tested least-privilege permission helper for the prototype role map. This is not authentication or route-level enforcement.
-- Focused test run in an isolated reconstructed workspace: 29/29 passed. The repository could not be cloned locally because the environment could not resolve github.com; this run is not a checkout-based full suite. GitHub Actions run 45609163400 for commit 7f7772ff93f3e99a4f2c6b8ce05898191c455a0c completed successfully: 66/66 Node tests, bootstrap shell syntax and Docker Compose config validation. No containers/services were started. The local Git clone remained blocked by DNS, so the 29 focused tests were run in an isolated reconstructed workspace.
+- Added `rc17-atomic-lifecycle.mjs` and tests as a migration path that keeps lifecycle jobs and their hash-chained audit records in the same RC-11 atomic snapshot, avoiding the cross-file commit window for this new API.
+- Sequence/hash verification, sensitive-detail redaction, duplicate and transition checks.
+- Local isolated reconstructed workspace: **8/8 passed**, using a copy of the reviewed RC-11 state-store source and new RC-17 module/tests. This was not a repository checkout. GitHub Actions evidence for RC-17 remains unavailable.
+- Actor labels are not authenticated. Existing `lifecycle.mjs` callers have not yet been migrated.
+
+## RC-18 — request resource bounds
+
+- `server.mjs` sets request timeout 15 s, headers timeout 10 s, socket inactivity timeout 15 s, keep-alive timeout 5 s and maximum 100 requests per socket. The JSON body remains bounded to 8 KiB.
+- Local reconstructed isolated workspace: **2/2** server tests passed using copies of the reviewed state-store/server/queue/engine sources and the updated server test. This was not a checkout of the repository. Latest GitHub Actions evidence remains pending/unavailable.
 
 ## Supply-chain and image review
 
-- RiverCloud source modules use Node built-ins only; there is no package manifest in `infra/rivercloud`, so a Node package audit is not applicable to this scaffold.
-- GitHub Actions checkout and setup-node are pinned to verified commit SHAs for v7.0.1 and v7.1.0. Runs 45609326685 (push) and 45609337469 (pull request) completed successfully with 66/66 tests and the shell/Compose validations.
-- Caddy and whoami images remain version-tag pinned, not digest-pinned; an image-level scanner/SBOM was not run. Public package advisory lookups show Caddy package findings for some Minimos/Wolfi builds below 2.11.9-r0, but the exact layers in the selected image were not inspected, so this is not an image vulnerability verdict. See [Snyk Minimos](https://security.snyk.io/package/linux/minimos%3Alatest/caddy) and [Snyk Wolfi](https://security.snyk.io/package/linux/wolfi%3Alatest/caddy).
-- The first CI Caddyfile validation attempt failed because the image required the explicit binary command (`caddy validate`); the command was corrected and then passed in runs 45609679828 (push) and 45609697534 (pull request). Those runs also passed 66/66 tests, shell syntax and Compose config validation. The Caddy check starts only a short-lived validation container, not a RiverCloud service.
-
-## RC-17 incremental review — same-file lifecycle/audit path
-
-- Added `rc17-atomic-lifecycle.mjs` and `rc17-atomic-lifecycle.test.mjs` as a migration path that keeps lifecycle jobs and their hash-chained audit records in the same RC-11 atomic snapshot. This addresses the cross-file commit window for the new API, rather than claiming to fix the existing `lifecycle.mjs` implementation.
-- New records are sequence-checked and verified before append; invalid transitions and duplicate jobs fail without committing a state/audit change. Audit detail values are bounded and sensitive-key redacted.
-- Local isolated reconstructed workspace test evidence: **8/8 passed** using a copy of the reviewed RC-11 state-store source and the new RC-17 module/tests. This workspace was not a checkout of the repository; GitHub Actions branch CI has not yet confirmed this increment.
-- Actor labels remain unverified. OIDC, route-level RBAC, runner isolation, target-platform crash durability, backup/restore and staging are still blockers.
+- RiverCloud source modules use Node built-ins only; no package manifest exists under `infra/rivercloud`, so a Node package audit is not applicable to this scaffold.
+- GitHub Actions checkout and setup-node are pinned to verified SHA references.
+- Caddy and whoami images remain version-tag pinned, not digest-pinned; an image-level scanner/SBOM was not run. Public advisory lookup was inconclusive for the exact image layers; it is not an image vulnerability verdict.
+- Caddyfile validation was run in earlier workflow evidence, not for the latest commit.
 
 ## Remaining blockers — not production eligible
 
-- No OIDC authentication provider, MFA, authenticated approver, session revocation or route-level RBAC enforcement.
-- No actual worker/runtime, build sandbox, network enforcement or staging host.
-- Local lock files may remain after a crash; stale recovery remains manual and fail-closed.
-- The existing lifecycle API and its external audit file remain separately persisted. RC-17 adds an isolated same-file migration path, not a completed migration.
-- No external protected audit delivery, retries, receiver, or immutable retention.
-- Image tags are version-pinned but not pinned by digest; an image-level scanner/SBOM was not run.
-- Backup/restore, dependency/supply-chain scan, staging rehearsal, performance tests and migration/cutover remain unperformed.
+- No OIDC provider, MFA, authenticated approver, session revocation or route-level RBAC enforcement.
+- No actual worker/runtime, build sandbox, enforced network isolation or staging host.
+- Lock behavior and crash durability have not been tested on supported target platforms; stale recovery is fail-closed/manual for the RC-11 store.
+- The existing lifecycle API and external audit file remain separate. RC-17 is an isolated migration path, not a completed migration.
+- No independent protected audit delivery, retries, receiver or immutable retention.
+- Image digest pinning, image scan/SBOM and dependency/supply-chain scan remain outstanding.
+- Backup/restore, staging rehearsal, performance tests and migration/cutover remain unperformed.
 
 ## Next gates
 
-1. Verify CI for RC-17 and fix any failures.
-2. Continue file-by-file review of the remaining documentation, panel, configuration and test files.
-3. Integrate a real OIDC provider and MFA, with route-level RBAC, without homemade token verification.
-4. Test lock/crash recovery on supported target platforms; retain fail-closed behavior.
-5. Build an isolated worker and staging environment only after review and approval.
-6. Execute backup/restore and security review; retain evidence.
-7. Do not consider production or migration until every gate is independently verified and explicitly approved.
+1. Obtain CI evidence for the latest RC-17/RC-18 commit and fix any failure.
+2. Continue the remaining file-by-file review.
+3. Integrate OIDC/MFA via a standard provider; do not implement custom token cryptography.
+4. Migrate existing lifecycle callers to the same-file store only after tests and review.
+5. Test lock/crash durability on target platforms.
+6. Build an isolated worker and staging environment after review and approval.
+7. Execute backup/restore and security review; preserve evidence.
+8. Do not consider production or migration until every gate is independently verified and explicitly approved.
