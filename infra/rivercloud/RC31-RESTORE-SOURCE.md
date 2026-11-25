@@ -17,4 +17,4 @@ A new test creates a valid archive, exposes it through a symlink, verifies the c
 
 ## Verification status
 
-The code and test were committed on the isolated PR branch. GitHub Actions evidence is pending; no pass is claimed until the complete workflow is retrieved. No production backup or restore was performed.
+The code and test were committed on the isolated PR branch. GitHub Actions **45717374680 (#314) — SUCCESS: 131/131 Node tests, 0 failures**, plus bootstrap shell syntax, backup/restore and Python extractor syntax, Compose configuration and Caddy validation. The run verified commit `dd90f8b3e0772275cfb7266c3d1db6a38c143cde`. The Caddy check used a temporary validation container; no RiverCloud services were started. No production backup or restore was performed.
