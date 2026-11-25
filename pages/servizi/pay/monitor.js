@@ -1,7 +1,7 @@
 import {useEffect,useState} from "react";
 import Link from "next/link";
 import {supabase} from "../../lib/supabase";
-const money=(n,c)=>{try{return new Intl.NumberFormat("it-IT",{style:"currency",currency:c||"EUR"}).format(Number(n||0)/100)}catch{return String(n)}};
+const money=(n,c)=>{try{const currency=c||"EUR";const digits=new Intl.NumberFormat("it-IT",{style:"currency",currency}).resolvedOptions().maximumFractionDigits;return new Intl.NumberFormat("it-IT",{style:"currency",currency}).format(Number(n||0)/Math.pow(10,digits))}catch{return String(n)}};
 export default function RiverPayMonitor(){
  const [data,setData]=useState(null),[error,setError]=useState(""),[loading,setLoading]=useState(true);
  useEffect(()=>{let live=true;(async()=>{try{const {data:s,error:e}=await supabase.auth.getSession();if(e||!s?.session?.access_token)throw new Error("Accedi come amministratore.");const r=await fetch("/api/pay/admin/transactions",{headers:{Authorization:"Bearer "+s.session.access_token},cache:"no-store"});const j=await r.json();if(!r.ok)throw new Error(j.error||"Accesso negato.");if(live)setData(j);}catch(e){if(live)setError(e.message);}finally{if(live)setLoading(false);}})();return()=>{live=false}},[]);
