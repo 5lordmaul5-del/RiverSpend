@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {mkdtemp,rm,writeFile,symlink,lstat,mkdir} from "node:fs/promises";
+import {mkdtemp,rm,writeFile,symlink,lstat,mkdir,unlink} from "node:fs/promises";
 import {readFile} from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
@@ -15,3 +15,5 @@ test("failed transaction releases lock and allows a later mutation",async()=>{co
 test("concurrent transactions preserve every inserted job",async()=>{const root=await mkdtemp(path.join(os.tmpdir(),"rc11-"));try{const file=path.join(root,"state.json");await Promise.all(Array.from({length:16},(_,i)=>addJob(file,{id:"J"+i})));const state=await readState(file);assert.equal(state.jobs.length,16);assert.equal(state.events.length,16);}finally{await rm(root,{recursive:true,force:true});}});
 test("reject state-file symlink without following or replacing target",async()=>{const root=await mkdtemp(path.join(os.tmpdir(),"rc11-"));try{const target=path.join(root,"target.json"),file=path.join(root,"state.json");const initial={schema:1,jobs:[],approvals:[],events:[]};await writeFile(target,JSON.stringify(initial));await symlink(target,file);await assert.rejects(()=>readState(file),/state_file_symlink_rejected/);await assert.rejects(()=>transactState(file,()=>true),/state_file_symlink_rejected/);assert.deepEqual(JSON.parse(await readFile(target,"utf8")),initial);assert.equal((await lstat(file)).isSymbolicLink(),true);}finally{await rm(root,{recursive:true,force:true});}});
 test("reject directory as state file",async()=>{const root=await mkdtemp(path.join(os.tmpdir(),"rc11-"));try{const file=path.join(root,"state-dir");await mkdir(file);await assert.rejects(()=>readState(file),/state_file_not_regular/);}finally{await rm(root,{recursive:true,force:true});}});
+
+test("lock release preserves a replacement symlink instead of unlinking it",async()=>{const root=await mkdtemp(path.join(os.tmpdir(),"rc11-"));try{const file=path.join(root,"state.json"),lock=file+".lock",target=path.join(root,"replacement");await writeFile(target,"replacement-lock");await transactState(file,async state=>{await unlink(lock);await symlink(target,lock);await assert.rejects(()=>transactState(file,()=>true,{lockTimeoutMs:100}),/state_lock_timeout/);state.jobs.push({id:"J5",state:"pending"});});assert.equal((await lstat(lock)).isSymbolicLink(),true);assert.equal(await readFile(lock,"utf8"),"replacement-lock");assert.equal((await readState(file)).jobs.length,1);}finally{await rm(root,{recursive:true,force:true});}});
