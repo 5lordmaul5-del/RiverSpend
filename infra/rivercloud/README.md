@@ -1,4 +1,4 @@
-# RiverCloud Core — RC-1/RC-5 scaffold
+# RiverCloud Core — RC-1/RC-6 scaffold
 
 Independent hosting foundation, kept separate from production.
 
@@ -9,6 +9,7 @@ Independent hosting foundation, kept separate from production.
 - Policy validation and deployment-plan digest
 - Loopback-only local queue API (plan records only; no execution)
 - Runner boundary prototype: prepared run record, execution disabled
+- RC-6 fixed, allowlisted worker job-profile specification (specification-only)
 - Security requirements and roadmap documentation
 
 ## Start on a Linux VPS
@@ -22,10 +23,11 @@ The demo route is only a scaffold. It is not RiverSpend hosting.
 
 ## Safety
 - No VPS has been provisioned and no production deployment or migration has occurred.
+- Worker profiles are declarative only; they do not execute builds.
 - Do not commit secrets.
 - Never expose Docker socket or arbitrary command execution to the public internet.
 - Configure firewall, SSH keys, OS updates, backups and monitoring.
 - Review and test before production use.
 
 ## Next milestone
-RC-6: isolated worker runtime, fixed build profiles, audit records, approvals, health-check and rollback design.
+RC-7: isolated runtime implementation, auditable build logs, approvals, health-check and rollback design.
