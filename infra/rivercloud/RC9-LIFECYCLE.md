@@ -1,9 +1,12 @@
-# RC-9 lifecycle prototype
+# RC-9 lifecycle prototype — migrated to RC-17 atomic storage
 
 States: pending -> approved/rejected/cancelled; approved -> prepared; prepared -> running/failed/cancelled; running -> completed/failed; failed -> prepared (retry); terminal states reject further transitions.
 
-Lifecycle job mutations now serialize through the RC-11 state transaction, and the local hash-chain ledger serializes concurrent append operations through its own transaction file. The ledger is redacted at append time and verified before a new record is appended.
+The `lifecycle.mjs` facade now delegates to RC-17. Lifecycle job and hash-chained audit records commit together in the RC-11 atomic file snapshot, replacing the earlier separate-file ledger path for this facade.
 
-**Persistence caveat:** lifecycle state and its audit ledger are separate files. Each file is serialized independently, but a crash between the two file commits can leave a mismatch; this is not a cross-file atomic transaction. The audit file now uses the RC-11 state envelope rather than the former raw-array format. Prototype files should be migrated manually only after a verified backup; no deployed data is known to exist.
+- The tests verify integrity after successful transitions and concurrent attempts.
+- Illegal transitions and duplicate creation do not add audit records.
+- The audit chain remains hash-chain tamper-evidence within the same local snapshot, not independent immutable storage.
+- The underlying store remains a local single-host file store; crash durability and target-platform lock behavior are not fully verified.
 
-Actor labels are not authenticated. No OIDC integration, worker, build or deployment is connected. Do not expose or use this prototype in production.
+Actor labels remain unauthenticated. No OIDC integration, runner, build or deployment is connected. Do not expose or use this prototype in production.
