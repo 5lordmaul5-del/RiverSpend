@@ -51,7 +51,7 @@ Inspected the control-plane and core files, including server.mjs, rc11-state.mjs
 - Added a separate-process test where six Node processes submit the same deployment plan simultaneously through `queuePlan`.
 - Exactly one insertion is expected; five requests must return duplicate. The state snapshot and event list remain one record each.
 - Reconstructed workspace: **1/1** passed (not a repository checkout).
-- GitHub Actions **run 45621995788 — SUCCESS: 87/87 tests**, plus bootstrap, backup/restore and Python syntax, Compose and Caddy validation.
+- GitHub Actions **run 45622097974 — SUCCESS: 87/87 tests** (latest verified branch-head run), plus bootstrap, backup/restore and Python syntax, Compose and Caddy validation.
 
 ## RC-11/RC-12 — cross-process concurrency and crash lock evidence
 
