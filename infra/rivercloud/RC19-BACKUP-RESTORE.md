@@ -1,18 +1,30 @@
-# RC-19 — local queue/data backup and restore scripts
+# RiverCloud local backup and restricted restore (RC-19)
 
-This increment adds portable shell scripts for a local data directory snapshot and restore rehearsal.
+These scripts are for isolated local data directories only. They are not database-aware and do not guarantee a consistent snapshot while a writer is active.
 
-- Backups are written outside the source data directory and use restrictive permissions.
-- Symlinked source entries are refused.
-- Temporary lock files and write-in-progress files are excluded.
-- A SHA-256 checksum file is created and verified before restore.
-- Restore requires `CONFIRM_RIVERCLOUD_RESTORE=YES` and a new, non-existing target directory; it never overwrites an existing target.
-- Restore extraction is staged into that new directory. No production restore or live data operation was performed.
+## Backup
 
-## Limits
+Stop or quiesce the RiverCloud writer first. Set:
 
-This is a local snapshot/checksum facility, not encrypted, off-site, immutable or monitored backup storage. It does not provide database-aware consistency if a process is writing during snapshot; use a stopped or otherwise quiesced store for important snapshots. A checksum detects accidental corruption, not a maliciously replaced archive/checksum pair. A real backup plan must add encryption, separated credentials, retention, monitoring and restore drills.
+```sh
+export RIVERCLOUD_DATA_DIR=/path/to/quiesced/data
+export RIVERCLOUD_BACKUP_DIR=/path/to/separate/backups
+sh infra/rivercloud/scripts/backup.sh
+```
 
-## Test evidence
+The script refuses source symlinks and a backup destination inside the source directory, excludes lock/temp files, creates a compressed archive and SHA-256 checksum, and uses restrictive umask.
 
-The scripts and tests run only in temporary directories in the local test suite. No production files are touched.
+## Restore to a new isolated directory
+
+Requires Python 3, `sha256sum`, and an archive plus its checksum:
+
+```sh
+export RIVERCLOUD_BACKUP_ARCHIVE=/path/to/backups/archive.tar.gz
+export RIVERCLOUD_RESTORE_TARGET=/path/to/new-restore-directory
+export CONFIRM_RIVERCLOUD_RESTORE=YES
+sh infra/rivercloud/scripts/restore.sh
+```
+
+The target must not already exist. The checksum is verified before extraction. The restricted extractor permits only regular files and directories, rejects path traversal, absolute/backslash paths, links and special files, duplicate paths and conflicting file/child paths. It limits archive entries to 100,000 and total extracted file bytes to 20 GiB by default. The limit may be changed via `RIVERCLOUD_RESTORE_MAX_BYTES`.
+
+Extraction uses restrictive permissions and cleans up the target if extraction fails. This is still a local recovery utility, not a production recovery system: encryption, off-site storage, retention, immutable storage, monitoring, and recovery-point/recovery-time testing remain to be implemented.
