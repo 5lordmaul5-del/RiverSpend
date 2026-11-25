@@ -1,0 +1,10 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {RiverBuildIntegrationPreflight} from '../src/riverbuild-integration-preflight.js';
+const input={job:{id:'job-1'},approvalId:'approval-1',jobHash:'a'.repeat(64),authorizationId:'auth-1',now:'2026-11-25T21:10:00Z'};
+const review={decision:'ready-for-human-review',readyForHumanReview:true,blockers:[],executionTriggered:false,workerInvoked:false};
+const validAuth={valid:true,issues:[],authorization:{approvalId:'approval-1'},executionTriggered:false};
+test('requires controller and authorization dependencies',()=>{assert.throws(()=>new RiverBuildIntegrationPreflight());});
+test('clear review and scoped authorization produce preflight-clear only',()=>{const p=new RiverBuildIntegrationPreflight({controller:{evaluate:()=>review},authorization:{validate:()=>validAuth}});const r=p.evaluate(input);assert.equal(r.preflightClear,true);assert.equal(r.executionTriggered,false);assert.equal(r.workerInvoked,false);});
+test('authorization failure blocks',()=>{const p=new RiverBuildIntegrationPreflight({controller:{evaluate:()=>review},authorization:{validate:()=>({valid:false,issues:['expired']})}});assert.equal(p.evaluate(input).decision,'blocked');});
+test('approval linkage mismatch blocks',()=>{const p=new RiverBuildIntegrationPreflight({controller:{evaluate:()=>review},authorization:{validate:()=>({...validAuth,authorization:{approvalId:'other'}})}});assert.equal(p.evaluate(input).preflightClear,false);});
+test('controller blockers remain blocking',()=>{const p=new RiverBuildIntegrationPreflight({controller:{evaluate:()=>({...review,decision:'blocked',readyForHumanReview:false,blockers:[{stage:'audit'}]})},authorization:{validate:()=>validAuth}});assert.equal(p.evaluate(input).decision,'blocked');});
+test('never triggers execution',()=>{const p=new RiverBuildIntegrationPreflight({controller:{evaluate:()=>review},authorization:{validate:()=>validAuth}});const r=p.evaluate(input);assert.equal(r.workerInvoked,false);assert.equal(r.executionTriggered,false);assert.equal(r.approvalGranted,false);});
