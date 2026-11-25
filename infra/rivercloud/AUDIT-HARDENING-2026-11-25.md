@@ -316,3 +316,16 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 - Reconstructed a temporary workspace from the exact fetched branch sources for RC-11, RC-13, RC-17, RC-22, the approval-bound module and their targeted tests; this is not a full repository checkout.
 - Node 22 run: **8/8 tests passed** (approval binding/replay, process-level one-use race, RC-22 identity gate and co-location with the lifecycle snapshot). The full repository CI run for code head `874ab71163f879a58cf2d6a345bb02bd9e213c2a` has not yet been surfaced; do not treat the targeted workspace result as full-suite CI.
 - The test explicitly confirms the remaining gap: the approval is consumed in the shared snapshot while the lifecycle job stays `pending`; consume + transition still need a single transaction.
+
+
+### RC-25 CI closeout — verified
+
+- GitHub Actions run **45692378410 (#235) — SUCCESS: 117/117 tests** and PR run **45692390510 (#236) — SUCCESS: 117/117 tests** verify code commit `874ab71163f879a58cf2d6a345bb02bd9e213c2a`. Both also passed bootstrap shell syntax, backup/restore and Python extractor syntax, Compose config, and Caddy validation. No RiverCloud services were started.
+- The reconstructed targeted workspace result **8/8** remains supplemental evidence; the repository CI results above are the full 117-test suite.
+
+### Targeted dependency-advisory review (25 November 2026)
+
+- **OAuth2 Proxy v7.15.6:** release page identifies v7.15.6 as the latest release dated 5 November 2026 and lists vulnerabilities addressed. Targeted advisory review found several configuration-dependent authentication bypasses fixed at v7.15.2 or later; the scaffold is v7.15.6 and has no skip-auth route/regex rules. This is not a complete image scan or SBOM.
+- **Caddy 2.11.9:** targeted review of GHSA-r766-rf9f-588h (fixed in 2.11.8) and CVE-2026-55458 (fixed in 2.11.5) indicates the pinned version is newer than those fixes. The current Caddyfile contains only `encode` and `reverse_proxy`; it does not use host-derived roots, `file_server`, `php_fastcgi`, or rewrite/file-matcher rules cited in those advisories. This is a configuration/precondition review, not proof that the image is free of CVEs.
+- **Outstanding:** full SBOM/image CVE scan, image-signature verification, and exact whoami image scan remain unperformed.
+- References: https://github.com/oauth2-proxy/oauth2-proxy/releases ; https://github.com/advisories/GHSA-7x63-xv5r-3p2x ; https://github.com/advisories/GHSA-c5c4-8r6x-56w3 ; https://github.com/advisories/GHSA-pxq7-h93f-9jrg ; https://github.com/caddyserver/caddy/security/advisories/GHSA-r766-rf9f-588h ; https://github.com/advisories/GHSA-8qx7-j2v2-x6q5
