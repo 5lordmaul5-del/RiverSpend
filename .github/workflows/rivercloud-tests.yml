@@ -36,4 +36,4 @@ jobs:
       - name: Validate Compose configuration without starting services
         run: docker compose -f infra/rivercloud/docker-compose.yml --env-file infra/rivercloud/.env.example config
       - name: Validate Caddyfile with pinned Caddy image
-        run: docker run --rm -e RIVERCLOUD_DOMAIN=cloud.example.com -v "$PWD/infra/rivercloud/Caddyfile:/etc/caddy/Caddyfile:ro" caddy:2.11.9 caddy validate --config /etc/caddy/Caddyfile
+        run: docker run --rm -e RIVERCLOUD_DOMAIN=cloud.example.com -v "$PWD/infra/rivercloud/Caddyfile:/etc/caddy/Caddyfile:ro" caddy:2.11.9@sha256:4851e54a46b206517c574821bb5cc67f170d2156041e9fbc4c9193b45e84a75b caddy validate --config /etc/caddy/Caddyfile
