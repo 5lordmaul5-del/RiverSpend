@@ -258,3 +258,15 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 - GitHub Actions **45673921124 (#199) and 45673939583 (#200) — SUCCESS** for the intermediate lock-owner implementation, 113/113 tests each. Final regression commit **45673941409 (#201) and 45673954788 (#202) — SUCCESS: 114/114 tests each**, including shell/Python, Compose and Caddy validation. Logs confirm test 51, lock replacement preservation, and **0 failures**.
 - Added `RC21-LOCK-RELEASE.md`. This reduces release-path risk but does not prevent a hostile process with write access to the private state directory from unlinking the lock during an active transaction; directory permissions and a stronger database/OS locking model remain required.
 - No RiverCloud service or runner was started; no live deployment, merge, server, spending, or production data/credential change occurred.
+
+
+
+## RC-22 — verified-identity approval helper and separation of duties (25 November 2026)
+
+- Added opt-in `rc22-approval-identity.mjs`: it gates approval issuance/consumption through RC-13 claim validation (configured issuer/audience, bounded time window, known roles) and the `approve_jobs` permission. The identity verifier callback must be supplied by a trusted caller; this helper does not itself verify JWT/OIDC signatures, fetch JWKS, or authenticate sessions.
+- Approval records use a stable SHA-256 label derived from issuer and subject rather than a free-form caller label.
+- Identity-gated consumption rejects the same identity that issued the approval (separation of duties); a different authorized identity may consume it once via the existing atomic store guard.
+- Added regression tests for permission denial, rejected verification callback, issuer/audience rejection, self-consumption rejection, distinct-identity consumption and one-use replay.
+- This module is opt-in; no server route, OIDC provider or runner is wired to it. Legacy approval interfaces remain prototype paths. The test verifier is a stub, not a cryptographic provider integration.
+- CI status for this increment is pending at the time of report update. No test result is claimed until a fresh GitHub Actions run completes.
+- Documentation: `RC22-APPROVAL-IDENTITY.md`.
