@@ -452,3 +452,9 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 - The API maps capacity/oversized-store errors to HTTP 503 with explicit safe error codes. No automatic pruning is introduced because deletion of audit/state history requires a retention design.
 - Regression tests cover queue cap, HTTP 503 and oversized state file. CI evidence is pending.
 - This is a prototype capacity guard; limits and retention must be revisited before real deployment.
+
+
+### RC-30 CI feedback — syntax correction required
+
+- Push run **45716181629 (#281)** and PR run **45716190031 (#282)** failed the Node-test step: 72/83 tests passed, 11 test-file imports failed due literal escaped newline artifacts in the inserted constants/imports. Subsequent shell/Python, Compose and Caddy validations were skipped.
+- The correction replaces the literal escape sequences with actual source line breaks. The next CI run is required before RC-30 is considered verified.

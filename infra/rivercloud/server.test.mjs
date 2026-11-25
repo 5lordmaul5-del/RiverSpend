@@ -3,7 +3,8 @@ import assert from "node:assert/strict";
 import { mkdtemp, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { createServer } from "./server.mjs";\nimport { transactState } from "./rc11-state.mjs";
+import { createServer } from "./server.mjs";
+import { transactState } from "./rc11-state.mjs";
 
 const token = "t".repeat(40), base = { projectId: "riverspend", branch: "main", target: "staging", commit: "b".repeat(40) };
 

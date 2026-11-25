@@ -9,3 +9,8 @@ No automatic pruning or deletion is performed. A real retention/archival design 
 ```sh
 node --test infra/rivercloud/queue.test.mjs infra/rivercloud/server.test.mjs infra/rivercloud/rc11-state.test.mjs
 ```
+
+
+### CI feedback
+
+- Runs #281/#282 failed before the full suite due literal escaped newline artifacts in the source insertion. The correction is committed separately; capacity guard verification remains pending.

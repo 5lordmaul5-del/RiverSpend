@@ -5,7 +5,8 @@ import { fileURLToPath } from "node:url";
 import { queuePlan, listQueue } from "./queue.mjs";
 
 const MAX_BODY = 8192;
-const POLICY_ERRORS = new Set(["invalid_request", "project_not_allowlisted", "target_not_allowed", "immutable_commit_sha_required", "branch_not_allowlisted"]);\nconst CAPACITY_ERRORS = new Set(["queue_capacity_exceeded", "state_file_too_large"]);
+const POLICY_ERRORS = new Set(["invalid_request", "project_not_allowlisted", "target_not_allowed", "immutable_commit_sha_required", "branch_not_allowlisted"]);
+const CAPACITY_ERRORS = new Set(["queue_capacity_exceeded", "state_file_too_large"]);
 
 function authorized(req, token) {
   const header = req.headers.authorization;
