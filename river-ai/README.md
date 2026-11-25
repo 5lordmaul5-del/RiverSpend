@@ -106,3 +106,8 @@ The isolated local module `src/rivergit-local.js` introduces safe name validatio
 ### RiverBuild Phase 4 — explicit approval gate
 
 Queue jobs now start unapproved. A job must be explicitly approved before `claimNext()` can return it for a worker. This is an in-memory workflow guard, not authentication or an execution authorization boundary. It does not start builds or persist approvals. Tests updated but not executed.
+
+
+### RiverBuild Phase 5 — coordinator (plan-only)
+
+`src/riverbuild-coordinator.js` claims one approved queue job and prepares a restricted Docker command plan using the runner module. It never executes Docker. It requires a separate worker to perform execution; errors while planning mark the claimed job blocked. Tests are written but not run.
