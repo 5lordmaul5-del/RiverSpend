@@ -46,6 +46,13 @@ Inspected the control-plane and core files, including server.mjs, rc11-state.mjs
 - Runs 45618332297 and 45618630901 included the backup/restore tests and shell syntax validation. No production backup or restore was performed.
 - This is not encrypted/off-site/immutable backup storage, and it does not ensure database-aware consistency while files are being written. A critical store should be stopped/quiesced for snapshots.
 
+## RC-11/RC-12 — cross-process concurrency and crash lock evidence
+
+- Added a dedicated process-level test file. Six separate Node processes concurrently add distinct jobs and preserve every event; six separate processes race the same job ID and only one succeeds; an orphan lock created by a simulated process exit is preserved and causes fail-closed timeout.
+- Local reconstructed workspace: **3/3** passed using copies of the state store and test module (not a repository checkout).
+- GitHub Actions run **45621273380 — SUCCESS: 84/84 tests**, including these process-level tests and shell/Python, Compose and Caddy validation.
+- Crash recovery remains intentionally manual: orphan locks are not reclaimed. This test verifies fail-closed behavior, not automatic recovery or target-filesystem crash durability.
+
 ## RC-12 — fail-closed lock handling
 
 - Disabled automatic stale-lock reclamation in the RC-12 helper. PID/rename-based recovery can race or be confused by PID reuse and namespaces.
