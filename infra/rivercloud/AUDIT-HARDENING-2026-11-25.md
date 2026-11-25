@@ -56,7 +56,7 @@ Inspected the control-plane and core files, including server.mjs, rc11-state.mjs
 - Added a separate-process test where six Node processes submit the same deployment plan simultaneously through `queuePlan`.
 - Exactly one insertion is expected; five requests must return duplicate. The state snapshot and event list remain one record each.
 - Reconstructed workspace: **1/1** passed (not a repository checkout).
-- GitHub Actions **run 45622097974 — SUCCESS: 87/87 tests** (latest verified branch-head run), plus bootstrap, backup/restore and Python syntax, Compose and Caddy validation.
+- GitHub Actions **run 45622097974 — SUCCESS: 87/87 tests**, evidence for an earlier queue-idempotency commit, plus bootstrap, backup/restore and Python syntax, Compose and Caddy validation.
 
 ## RC-11/RC-12 — cross-process concurrency and crash lock evidence
 
@@ -142,3 +142,11 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 - Corrected two test assertions found during local validation.
 - Isolated local workspace: **9/9 RC-14 tests passed** using the exact source/test contents (not a full repository checkout).
 - GitHub Actions **run 45637386491 — SUCCESS: 94/94 Node tests**, plus shell/Python, Compose and Caddy validation.
+
+
+## RC-20 — container image digest pinning
+
+- Pinned Caddy 2.11.9 to multi-platform index digest `sha256:4851e54a46b206517c574821bb5cc67f170d2156041e9fbc4c9193b45e84a75b`; this digest was also pulled and validated in CI.
+- Pinned the demo whoami v1.12.0 image to multi-platform index digest `sha256:c4717a8d1f0134a7444e24f881160e033991f23027c6c5a9a3f8fd22e70d1d44`, sourced from the official Docker Hub tag page.
+- CI Caddy validation now uses the same digest as Compose. GitHub Actions **run 45637690981 (run #119) — SUCCESS: 94/94 tests**, Compose config and Caddy validation.
+- OAuth2 Proxy remains version-tag pinned, not digest-pinned. No SBOM or vulnerability scan has yet been run. Docker is unavailable in this local workspace; the validation evidence is from CI. No RiverCloud services were started.
