@@ -1,33 +1,31 @@
-# RiverCloud Core — RC-1/RC-4 scaffold
+# RiverCloud Core — RC-1/RC-5 scaffold
 
 Independent hosting foundation, kept separate from production.
 
 ## Current scope
-- Docker Compose orchestration
-- Caddy proxy with automatic TLS for a configured domain
-- Demo container routed through Caddy
-- Bootstrap script and install notes\n- RiverCloud Fortress static panel scaffold (disconnected; controls disabled)\n- Policy-only deployment engine prototype (validation; no runner or deploy)\n- Loopback-only local queue API prototype (persisted plan queue; no execution)\n- RC-3/RC-4 security contract and implementation plan
+- Docker Compose orchestration and Caddy proxy/TLS scaffold
+- Demo container and bootstrap/install notes
+- RiverCloud Fortress static panel preview (disconnected)
+- Policy validation and deployment-plan digest
+- Loopback-only local queue API (plan records only; no execution)
+- Runner boundary prototype: prepared run record, execution disabled
+- Security requirements and roadmap documentation
 
 ## Start on a Linux VPS
-1. Point the domain's DNS A/AAAA records at the server.
-2. Copy this folder to the VPS.
-3. Copy `.env.example` to `.env` and set `RIVERCLOUD_DOMAIN` to the domain.
+1. Point DNS A/AAAA records at the server.
+2. Copy this folder to a VPS.
+3. Copy `.env.example` to `.env` and set `RIVERCLOUD_DOMAIN`.
 4. Run `sudo ./bootstrap.sh`.
 5. Allow inbound TCP 80/443; secure SSH separately.
 
-Once DNS propagates and ports are reachable, Caddy requests TLS certificates and routes traffic to the demo container.
+The demo route is only a scaffold. It is not RiverSpend hosting.
 
-## Important
-- This scaffold does not provision a VPS, migrate RiverSpend, or provide a connected control plane. Panel is a static preview.
-- Do not put secrets in Git.
-- Never expose a Docker socket or arbitrary command endpoint to the internet.
+## Safety
+- No VPS has been provisioned and no production deployment or migration has occurred.
+- Do not commit secrets.
+- Never expose Docker socket or arbitrary command execution to the public internet.
 - Configure firewall, SSH keys, OS updates, backups and monitoring.
-- Review before production use.
+- Review and test before production use.
 
-## Roadmap
-1. Core bootstrap and proxy scaffold
-2. Domain routing and HTTPS (Caddy)
-3. Secure deployment pipeline: allowlisted projects/branches, webhook verification, isolated builds, audit logs, health checks, rollback
-4. RiverCloud Panel: authenticated status/logs/deploy/rollback UI
-5. Backups, monitoring and capacity controls
-6. Staging migration and cutover readiness
+## Next milestone
+RC-6: isolated worker runtime, fixed build profiles, audit records, approvals, health-check and rollback design.
