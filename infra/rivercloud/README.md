@@ -12,11 +12,12 @@ Independent hosting foundation, kept separate from RiverSpend production.
 - Fixed worker-profile validator and staging-path validation
 - Runner boundary and execution envelope; execution remains disabled
 - Local hash-linked audit ledger, lifecycle and readiness prototypes
-- Identity claim validator and role policy; no authentication provider integration
+- Identity claim validator and role policy; generic OIDC proxy scaffold gates the demo upstream, but API authentication/RBAC is not integrated
 - External audit-sink contract; no outbound delivery
 - RC-17 same-file lifecycle/audit transaction path (isolated migration API; not yet wired into existing callers)
 - RC-18 bounded HTTP request, header and socket timeouts
-- RC-19 local data backup/restore scripts with checksum, explicit restore confirmation and temporary-directory tests
+- RC-19 local data backup/restore scripts with checksum, restricted extraction, explicit restore confirmation and temporary-directory tests
+- RC-13 OIDC proxy configuration scaffold using oauth2-proxy; no provider credentials or services started
 - RC-12 fail-closed lock handling: automatic stale-lock reclamation disabled
 - Backup/restore and migration checklists only
 
