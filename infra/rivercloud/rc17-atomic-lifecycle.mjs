@@ -28,14 +28,25 @@ function digestPayload(payload) { return createHash("sha256").update(JSON.string
 export function verifyAtomicAudit(records) {
   if (!Array.isArray(records)) return { valid: false, reason: "ledger_not_array" };
   let previous = "GENESIS";
+  const states = new Map(), digests = new Map();
   for (let i = 0; i < records.length; i++) {
     const r = records[i];
-    if (!r || r.sequence !== i + 1 || r.event !== "job_transition" || r.previousHash !== previous || typeof r.at !== "string" || !r.details || typeof r.details !== "object") return { valid: false, reason: "record_schema_invalid" };
+    const d = r?.details;
+    if (!r || r.sequence !== i + 1 || r.event !== "job_transition" || r.previousHash !== previous || typeof r.at !== "string" || !d || typeof d !== "object" || Array.isArray(d)) return { valid: false, reason: "record_schema_invalid" };
+    if (!safeId.test(String(d.jobId ?? "")) || !STATES.includes(d.to) || (d.from !== null && !STATES.includes(d.from))) return { valid: false, reason: "transition_details_invalid" };
+    if (d.from === null) {
+      if (d.to !== "pending" || states.has(d.jobId) || !/^[a-f0-9]{64}$/i.test(String(d.digest ?? ""))) return { valid: false, reason: "creation_record_invalid" };
+      states.set(d.jobId, "pending");
+      digests.set(d.jobId, String(d.digest).toLowerCase());
+    } else {
+      if (states.get(d.jobId) !== d.from || !transitions[d.from]?.has(d.to)) return { valid: false, reason: "transition_sequence_invalid" };
+      states.set(d.jobId, d.to);
+    }
     const { hash, ...payload } = r;
     if (typeof hash !== "string" || digestPayload(payload) !== hash) return { valid: false, reason: "record_hash_mismatch" };
     previous = hash;
   }
-  return { valid: true, count: records.length };
+  return { valid: true, count: records.length, states: Object.fromEntries(states), digests: Object.fromEntries(digests) };
 }
 function appendAtomicAudit(state, details) {
   if (!Array.isArray(state.auditRecords)) state.auditRecords = [];
@@ -78,6 +89,19 @@ export async function readAtomicLifecycle(file) {
   const state = await readState(file);
   const jobs = Array.isArray(state.lifecycleJobs) ? state.lifecycleJobs : [];
   const auditRecords = Array.isArray(state.auditRecords) ? state.auditRecords : [];
-  const integrity = verifyAtomicAudit(auditRecords);
+  let integrity = verifyAtomicAudit(auditRecords);
+  if (integrity.valid) {
+    const jobIds = new Set();
+    if (jobs.length !== Object.keys(integrity.states).length) integrity = { valid: false, reason: "job_audit_count_mismatch" };
+    else {
+      for (const job of jobs) {
+        if (!job || !safeId.test(String(job.id ?? "")) || jobIds.has(job.id) || integrity.states[job.id] !== job.state || integrity.digests[job.id] !== String(job.digest ?? "").toLowerCase()) {
+          integrity = { valid: false, reason: "job_audit_state_mismatch" };
+          break;
+        }
+        jobIds.add(job.id);
+      }
+    }
+  }
   return { jobs, auditRecords, integrity };
 }
