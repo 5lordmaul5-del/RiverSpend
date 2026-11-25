@@ -28,7 +28,7 @@ test("separate processes race one approval and only one consumes it", async () =
   const root = await mkdtemp(path.join(os.tmpdir(), "rc10-approval-process-"));
   try {
     const issued = await issueApproval({ storeDir: root, binding, secret, approver: "unverified-test-label" });
-    const code = `import { consumeApproval } from ${JSON.stringify(approvalModuleUrl)}; try { await consumeApproval({storeDir:process.argv[1],binding:JSON.parse(process.argv[2]),secret:process.argv[3],token:process.argv[4]}); } catch(e) { if(e.message==="approval_missing_or_used") process.exit(2); throw e; }`;
+    const code = `import { consumeApproval } from ${JSON.stringify(approvalModuleUrl)}; try { await consumeApproval({storeDir:process.argv[1],binding:JSON.parse(process.argv[2]),secret:process.argv[3],token:process.argv[4],consumerIdentity:"worker-"+process.pid}); } catch(e) { if(e.message==="approval_missing_or_used") process.exit(2); throw e; }`;
     const args = [root, JSON.stringify(binding), secret, issued.token];
     const runs = await Promise.all(Array.from({ length: 6 }, () => child(code, args)));
     assert.equal(runs.filter(r => r.status === 0).length, 1, runs.map(r => r.err).join("\\n"));

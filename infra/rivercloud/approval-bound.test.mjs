@@ -11,8 +11,10 @@ test("approval bound to exact plan and single use", async () => {
   const root = await mkdtemp(path.join(os.tmpdir(), "rc10-"));
   try {
     const secret = "s".repeat(40), issued = await issueApproval({ storeDir: root, binding, secret, approver: "reviewer" });
-    assert.equal((await consumeApproval({ storeDir: root, binding, secret, token: issued.token })).approved, true);
-    await assert.rejects(() => consumeApproval({ storeDir: root, binding, secret, token: issued.token }), /used/);
+    await assert.rejects(() => consumeApproval({ storeDir: root, binding, secret, token: issued.token }), /consumer_identity_required/);
+    await assert.rejects(() => consumeApproval({ storeDir: root, binding, secret, token: issued.token, consumerIdentity: "reviewer" }), /self_approval_not_allowed/);
+    assert.equal((await consumeApproval({ storeDir: root, binding, secret, token: issued.token, consumerIdentity: "executor-1" })).approved, true);
+    await assert.rejects(() => consumeApproval({ storeDir: root, binding, secret, token: issued.token, consumerIdentity: "executor-1" }), /used/);
   } finally { await rm(root, { recursive: true, force: true }); }
 });
 
@@ -28,7 +30,7 @@ test("two concurrent consume attempts can succeed only once", async () => {
   const root = await mkdtemp(path.join(os.tmpdir(), "rc10-"));
   try {
     const secret = "s".repeat(40), issued = await issueApproval({ storeDir: root, binding, secret, approver: "reviewer" });
-    const results = await Promise.allSettled([consumeApproval({ storeDir: root, binding, secret, token: issued.token }), consumeApproval({ storeDir: root, binding, secret, token: issued.token })]);
+    const results = await Promise.allSettled([consumeApproval({ storeDir: root, binding, secret, token: issued.token, consumerIdentity: "executor-1" }), consumeApproval({ storeDir: root, binding, secret, token: issued.token, consumerIdentity: "executor-1" })]);
     assert.equal(results.filter(x => x.status === "fulfilled").length, 1);
     assert.equal(results.filter(x => x.status === "rejected").length, 1);
   } finally { await rm(root, { recursive: true, force: true }); }

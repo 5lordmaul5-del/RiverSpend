@@ -9,3 +9,7 @@ The prototype now uses a 32-byte cryptographically random nonce, HMAC-SHA256 bin
 - The state lock can remain after a crash; recovery is manual and must be reviewed.
 - No runner or deployment execution is connected.
 - Never wire this prototype to production or treat its approval as a real security authorization.
+
+## RC-24 consumer identity requirement
+
+Direct prototype consumption now requires a non-empty `consumerIdentity` label and rejects a label equal to the stored approver. The legacy label is still caller-supplied and unverified; it is not a substitute for authenticated RC-22/OIDC integration.

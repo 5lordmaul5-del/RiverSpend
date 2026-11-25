@@ -277,3 +277,11 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 - Audited the RC-13 permission helper and found that the owner wildcard returned true for arbitrary, unrecognized permission names. Unknown actions should fail closed even for privileged roles.
 - Added an explicit permission catalog; `hasPermission` now rejects unknown permission names before role evaluation. Added a regression assertion for owner/unknown-permission denial.
 - Added `RC23-RBAC-PERMISSION-CATALOG.md`. GitHub Actions run **45685524487 (#226) — SUCCESS: 117/117 Node tests**, 0 failures, plus bootstrap shell, backup/restore and Python syntax, Compose configuration, and Caddy validation. Caddy validation used a temporary container only. This verifies head `80d2ff5a560fb57cecbf1cb1dbd4f8bb02aec3b2`; no RiverCloud service or runner was started.
+
+
+## RC-24 — mandatory approval-consumer identity label (25 November 2026)
+
+- Code review found that the legacy approval-consumption API allowed callers to omit `consumerIdentity`, bypassing its self-consumption comparison. The identity-gated RC-22 wrapper always supplied a value, but the lower-level helper remained permissive.
+- Direct consumption now rejects missing/blank/oversized identity labels and rejects a label equal to the stored approver before consuming the token. The one-use transaction remains unchanged.
+- Updated the legacy approval tests and six-process race test to pass an explicit consumer label; added regressions for missing label and self-consumption. Labels remain unverified and caller-supplied in this low-level helper; this does not complete OIDC/RBAC route integration.
+- Starting-head CI evidence: run **45685641423 (#228) — SUCCESS**, 117/117 Node tests and the bootstrap, backup/restore/Python, Compose and Caddy validations. This validates the previous head `4bb7cebe3baabe6b0874af28823aeddf8825c068`, not the RC-24 changes. RC-24 changes require a fresh CI run before being considered tested.

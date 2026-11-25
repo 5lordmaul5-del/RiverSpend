@@ -6,7 +6,8 @@ RC-22 adds an opt-in approval helper that accepts identity claims only through t
 - The caller must supply a verification callback that returns `true` only after verifying trusted provenance/signature. The module does not implement JWT/OIDC cryptographic verification, fetch JWKS, or authenticate an HTTP session.
 - Approval records store a stable, non-reversible label derived from issuer and subject, rather than a caller-supplied free-form approver name.
 - When the identity-gated consumption helper is used, the same identity that issued the approval cannot consume it (separation of duties). A different authorized identity may consume it once, with the existing transactional one-use guard.
-- Legacy `issueApproval` and `consumeApproval` interfaces remain prototypes and do not enforce verified identity unless used through RC-22. No server route is wired to RC-22 yet.
+- Direct legacy `consumeApproval` now requires a non-empty `consumerIdentity` label and rejects matching approver/consumer labels, preventing silent omission of the separation-of-duties check. This label is still caller-supplied and unverified; the direct helper is not an authentication boundary.
+- No server route is wired to RC-22 yet.
 
 Reproducible command:
 
