@@ -21,3 +21,8 @@
 
 ## Limitations
 This remains a sender/verifier contract prototype. Verification is not a receiver, replay store, delivery queue, or immutable storage. No external sink has been provisioned or connected. No production deployment or execution.
+
+
+### RC-27 replay guard contract
+
+Signed delivery descriptors now include a 128-bit random nonce, and the HMAC covers timestamp, nonce, and exact body. Verification is asynchronous and fails closed unless a `consumeReplay` callback is supplied; the callback must atomically persist/reject the nonce in a durable receiver-side replay store. This prototype does not implement or provision that store and performs no network delivery.

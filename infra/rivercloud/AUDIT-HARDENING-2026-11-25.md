@@ -353,3 +353,10 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 - Corrected commit **96ce2ce439a31cd453ab41862a88d1f323e5d426** was verified by GitHub Actions **45708072045 (#243) — SUCCESS: 119/119 Node tests**, and PR run **45708081331 (#244) — SUCCESS: 119/119 Node tests**. Both runs also passed bootstrap shell syntax, backup/restore and Python extractor syntax, Compose config, and Caddy validation. No RiverCloud service or runner was started.
 - Atomic approval consumption now transitions the lifecycle job to `approved` and writes the approval-used event and hash-chain transition in the same RC-11 snapshot. The six-process approval race asserts one successful consumer, five rejections, approved job state and valid audit replay.
 - The next report-only commit requires its own CI result before it is considered verified.
+
+
+## RC-27 — signed audit-delivery replay guard contract (25 November 2026)
+
+- Added a random 128-bit nonce to the signed delivery descriptor; HMAC covers timestamp, nonce and exact body.
+- Verification now requires a caller-supplied asynchronous replay-store callback and fails closed when it is absent, rejects duplicates, or reports storage errors. The callback must atomically persist the nonce; no receiver storage or network delivery is implemented here.
+- Added tests for nonce generation, missing replay store, replay rejection and fail-closed storage errors. **CI evidence pending** for this increment and report-only closeout.
