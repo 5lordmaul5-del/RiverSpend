@@ -15,6 +15,7 @@ Independent hosting foundation, kept separate from RiverSpend production.
 - Identity claim validator and role policy; no authentication provider integration
 - External audit-sink contract; no outbound delivery
 - RC-17 same-file lifecycle/audit transaction path (isolated migration API; not yet wired into existing callers)
+- RC-18 bounded HTTP request, header and socket timeouts
 - Backup/restore and migration checklists only
 
 ## Safety and status
