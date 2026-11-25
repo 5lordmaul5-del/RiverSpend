@@ -17,6 +17,7 @@ Independent hosting foundation, kept separate from RiverSpend production.
 - RC-17 same-file lifecycle/audit transaction path (isolated migration API; not yet wired into existing callers)
 - RC-18 bounded HTTP request, header and socket timeouts
 - RC-19 local data backup/restore scripts with checksum, explicit restore confirmation and temporary-directory tests
+- RC-12 fail-closed lock handling: automatic stale-lock reclamation disabled
 - Backup/restore and migration checklists only
 
 ## Safety and status
