@@ -1,4 +1,4 @@
-# RiverCloud Core — RC-1/RC-2 scaffold
+# RiverCloud Core — RC-1/RC-4 scaffold
 
 Independent hosting foundation, kept separate from production.
 
@@ -6,7 +6,7 @@ Independent hosting foundation, kept separate from production.
 - Docker Compose orchestration
 - Caddy proxy with automatic TLS for a configured domain
 - Demo container routed through Caddy
-- Bootstrap script and install notes
+- Bootstrap script and install notes\n- RiverCloud Fortress static panel scaffold (disconnected; controls disabled)\n- RC-3/RC-4 security contract and implementation plan
 
 ## Start on a Linux VPS
 1. Point the domain's DNS A/AAAA records at the server.
@@ -18,7 +18,7 @@ Independent hosting foundation, kept separate from production.
 Once DNS propagates and ports are reachable, Caddy requests TLS certificates and routes traffic to the demo container.
 
 ## Important
-- This scaffold does not provision a VPS, migrate RiverSpend, or provide a control panel yet.
+- This scaffold does not provision a VPS, migrate RiverSpend, or provide a connected control plane. Panel is a static preview.
 - Do not put secrets in Git.
 - Never expose a Docker socket or arbitrary command endpoint to the internet.
 - Configure firewall, SSH keys, OS updates, backups and monitoring.
