@@ -22,3 +22,10 @@ A provider-neutral interface and mock adapter exist for tests only. They do not 
 
 ## Task Engine (planning only)
 A deterministic task planner creates a reviewable four-step plan, flags keywords associated with sensitive actions, and always sets execution disabled and approval required. It does not run commands, use tools, contact external services, deploy, or modify project state. This is planning groundwork, not agent autonomy.
+
+
+## RiverGuard (policy foundation)
+- Classifies requests into low/medium/high/invalid risk.
+- Creates explicit pending approval records and supports approve/reject decisions.
+- Approval records never enable execution; execution is not implemented.
+- Classification is a conservative heuristic, not a security boundary. Production use requires identity, permission enforcement, audit storage, sandboxing, and independent tests.
