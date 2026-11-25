@@ -16,3 +16,8 @@ node --test infra/rivercloud/rc14-audit-sink.test.mjs
 ## CI closeout
 
 - GitHub Actions run **45708327208 (#247) — SUCCESS: 122/122 Node tests**, and PR run **45708344831 (#248) — SUCCESS: 122/122** verify code commit `92cadbb4218cb37f730c00c72dfb5b54c16084e3`. Both also passed bootstrap, backup/restore/Python syntax, Compose validation and Caddy validation. No network delivery or services were started.
+
+
+### RC-27 report-only CI closeout
+
+- Report/doc commit `09cbd6bccc8e6dd7581a8b923f58f4769c3a7dbe` was verified by **45708424593 (#249) and 45708437672 (#250) — SUCCESS: 122/122 tests** each, plus bootstrap, backup/restore and Python syntax, Compose configuration, and Caddy validation. The source code is unchanged from the verified RC-27 code commit.

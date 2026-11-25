@@ -368,3 +368,8 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 - Both runs also passed bootstrap shell syntax, backup/restore and Python extractor syntax, Compose configuration, and Caddy validation. No network delivery or RiverCloud services were started.
 - Tests verify signed nonce generation, mandatory replay-store callback, repeated nonce rejection, and fail-closed callback errors. The durable receiver-side replay store remains unimplemented.
 - The next report-only commit requires its own CI verification.
+
+
+### RC-27 report-only CI closeout
+
+- Report/doc commit `09cbd6bccc8e6dd7581a8b923f58f4769c3a7dbe` was verified by **45708424593 (#249) and 45708437672 (#250) — SUCCESS: 122/122 tests** each, plus bootstrap, backup/restore and Python syntax, Compose configuration, and Caddy validation. The source code is unchanged from the verified RC-27 code commit.

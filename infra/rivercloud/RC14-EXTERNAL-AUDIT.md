@@ -31,3 +31,8 @@ Signed delivery descriptors now include a 128-bit random nonce, and the HMAC cov
 ### RC-27 verification evidence
 
 - Runs #247/#248 verified the replay-guard contract and all 122 Node tests, plus bootstrap, backup/restore/Python, Compose and Caddy validation. No receiver or network delivery was implemented or started.
+
+
+### RC-27 report-only CI closeout
+
+- Report/doc commit `09cbd6bccc8e6dd7581a8b923f58f4769c3a7dbe` was verified by **45708424593 (#249) and 45708437672 (#250) — SUCCESS: 122/122 tests** each, plus bootstrap, backup/restore and Python syntax, Compose configuration, and Caddy validation. The source code is unchanged from the verified RC-27 code commit.
