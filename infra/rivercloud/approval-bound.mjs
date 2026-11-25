@@ -2,7 +2,7 @@
 // Approver remains an unverified label until a real OIDC/authentication layer is integrated.
 import { createHmac, timingSafeEqual, createHash, randomBytes } from "node:crypto";
 import path from "node:path";
-import { storeApproval, consumeStoredApproval } from "./rc11-state.mjs";
+import { storeApprovalForLifecycleAtomic, consumeApprovalAndTransitionAtomic } from "./rc17-atomic-lifecycle.mjs";
 
 const normalize = x => ({ jobId: x.jobId, projectId: x.projectId, profile: x.profile, target: x.target, commit: String(x.commit || "").toLowerCase(), digest: String(x.digest || "").toLowerCase() });
 const canonical = x => JSON.stringify(normalize(x));
@@ -16,7 +16,7 @@ export async function issueApproval({ storeDir, binding, secret, ttlMs = 300000,
   if (!valid(binding) || typeof secret !== "string" || secret.length < 32 || typeof approver !== "string" || !approver.trim() || approver.length > 100 || !Number.isSafeInteger(ttlMs) || ttlMs < 1000 || ttlMs > 3600000) throw new Error("invalid_approval_request");
   const normalized = normalize(binding), expiresAt = Date.now() + ttlMs, nonce = randomBytes(32).toString("hex");
   const token = signature(secret, approvalPayload(normalized, expiresAt, nonce));
-  await storeApproval(path.join(storeDir, "lifecycle.json"), { tokenId: tokenId(token), jobId: normalized.jobId, binding: normalized, expiresAt, nonce, approver });
+  await storeApprovalForLifecycleAtomic(path.join(storeDir, "lifecycle.json"), { tokenId: tokenId(token), jobId: normalized.jobId, binding: normalized, expiresAt, nonce, approver });
   return { token, expiresAt, binding: normalized, approver };
 }
 
@@ -24,15 +24,13 @@ export async function consumeApproval({ storeDir, binding, secret, token, consum
   if (!valid(binding) || typeof secret !== "string" || secret.length < 32 || typeof token !== "string") throw new Error("invalid_approval");
   if (typeof consumerIdentity !== "string" || !consumerIdentity.trim() || consumerIdentity.length > 100) throw new Error("consumer_identity_required");
   const normalized = normalize(binding), id = tokenId(token);
-  let actorLabel;
-  await consumeStoredApproval(path.join(storeDir, "lifecycle.json"), id, record => {
-    if (canonical(record.binding) !== canonical(normalized)) return false;
-    if (record.approver === consumerIdentity) throw new Error("self_approval_not_allowed");
-    const expected = signature(secret, approvalPayload(record.binding, record.expiresAt, record.nonce));
-    const a = Buffer.from(token), b = Buffer.from(expected);
-    const ok = a.length === b.length && timingSafeEqual(a, b);
-    if (ok) actorLabel = record.approver;
-    return ok;
+  return consumeApprovalAndTransitionAtomic(path.join(storeDir, "lifecycle.json"), {
+    tokenId: id, binding: normalized, consumerIdentity,
+    verifyApproval(record) {
+      if (canonical(record.binding) !== canonical(normalized)) return false;
+      const expected = signature(secret, approvalPayload(record.binding, record.expiresAt, record.nonce));
+      const a = Buffer.from(token), b = Buffer.from(expected);
+      return a.length === b.length && timingSafeEqual(a, b);
+    }
   });
-  return { approved: true, jobId: normalized.jobId, approver: actorLabel, consumerIdentity };
 }

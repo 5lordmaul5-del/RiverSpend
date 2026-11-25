@@ -329,3 +329,13 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 - **Caddy 2.11.9:** targeted review of GHSA-r766-rf9f-588h (fixed in 2.11.8) and CVE-2026-55458 (fixed in 2.11.5) indicates the pinned version is newer than those fixes. The current Caddyfile contains only `encode` and `reverse_proxy`; it does not use host-derived roots, `file_server`, `php_fastcgi`, or rewrite/file-matcher rules cited in those advisories. This is a configuration/precondition review, not proof that the image is free of CVEs.
 - **Outstanding:** full SBOM/image CVE scan, image-signature verification, and exact whoami image scan remain unperformed.
 - References: https://github.com/oauth2-proxy/oauth2-proxy/releases ; https://github.com/advisories/GHSA-7x63-xv5r-3p2x ; https://github.com/advisories/GHSA-c5c4-8r6x-56w3 ; https://github.com/advisories/GHSA-pxq7-h93f-9jrg ; https://github.com/caddyserver/caddy/security/advisories/GHSA-r766-rf9f-588h ; https://github.com/advisories/GHSA-8qx7-j2v2-x6q5
+
+
+## RC-26 — atomic approval consumption and job transition (25 November 2026)
+
+- Audited the RC-25 gap: approval consumption and lifecycle approval were previously separate transactions, allowing a token to be consumed while the job remained pending.
+- Added lifecycle-bound approval issuance requiring an existing pending job and matching digest, and refusing a second active token for the same job.
+- Added atomic consume + pending-to-approved transition in RC-17: checks token expiry, binding, distinct consumer, job state/digest and audit replay; marks the token used, appends the consume event, transitions the job, and adds the hash-chain transition in the same RC-11 snapshot.
+- Updated the legacy binding, identity-gated and six-process race tests to assert approved job state and audit-chain integrity. Added regressions for issuance without a pending job and failed consumption rollback.
+- **CI evidence pending:** do not count this increment as verified until the new branch commit and the subsequent report-only commit pass GitHub Actions.
+- Runner remains disabled; no real OIDC authentication or route-level RBAC is connected.

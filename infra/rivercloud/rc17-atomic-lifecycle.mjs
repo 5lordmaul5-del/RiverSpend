@@ -85,6 +85,79 @@ export async function transitionLifecycleJobAtomic(file, { jobId, to, actor = "s
     return job;
   });
 }
+
+export async function storeApprovalForLifecycleAtomic(file, record) {
+  if (!record || !/^[a-f0-9]{64}$/i.test(String(record.tokenId ?? "")) ||
+      !safeId.test(String(record.jobId ?? "")) || record.binding?.jobId !== record.jobId ||
+      !/^[a-f0-9]{64}$/i.test(String(record.binding?.digest ?? "")) ||
+      !Number.isSafeInteger(record.expiresAt) || record.expiresAt <= Date.now() ||
+      typeof record.nonce !== "string" || !record.nonce ||
+      typeof record.approver !== "string" || !record.approver.trim() || record.approver.length > 256) {
+    throw new Error("invalid_approval");
+  }
+  return transactState(file, state => {
+    if (!Array.isArray(state.lifecycleJobs)) state.lifecycleJobs = [];
+    if (!Array.isArray(state.approvals)) state.approvals = [];
+    if (!Array.isArray(state.events)) state.events = [];
+    if (state.approvals.some(a => a.tokenId === record.tokenId)) throw new Error("approval_exists");
+    const job = state.lifecycleJobs.find(j => j.id === record.jobId);
+    if (!job || job.state !== "pending" || String(job.digest).toLowerCase() !== String(record.binding.digest).toLowerCase()) {
+      throw new Error("approval_job_not_pending_or_digest_mismatch");
+    }
+    const audit = verifyAtomicAudit(state.auditRecords || []);
+    if (!audit.valid || audit.states[job.id] !== job.state || audit.digests[job.id] !== String(job.digest).toLowerCase()) {
+      throw new Error("audit_integrity_failure");
+    }
+    if (state.approvals.some(a => a.jobId === job.id && !a.used && a.expiresAt > Date.now())) {
+      throw new Error("approval_already_issued");
+    }
+    state.approvals.push({ ...record, used: false });
+    state.events.push({ event: "approval_issued", jobId: job.id, at: new Date().toISOString() });
+    return record.tokenId;
+  });
+}
+
+export async function consumeApprovalAndTransitionAtomic(file, {
+  tokenId, binding, consumerIdentity, verifyApproval
+} = {}) {
+  if (!/^[a-f0-9]{64}$/i.test(String(tokenId ?? "")) || !binding ||
+      !safeId.test(String(binding.jobId ?? "")) || !/^[a-f0-9]{64}$/i.test(String(binding.digest ?? "")) ||
+      typeof consumerIdentity !== "string" || !consumerIdentity.trim() || consumerIdentity.length > 256 ||
+      typeof verifyApproval !== "function") {
+    throw new Error("invalid_approval_consume_request");
+  }
+  return transactState(file, state => {
+    if (!Array.isArray(state.lifecycleJobs)) state.lifecycleJobs = [];
+    if (!Array.isArray(state.approvals)) state.approvals = [];
+    if (!Array.isArray(state.events)) state.events = [];
+    const approval = state.approvals.find(a => a.tokenId === tokenId);
+    if (!approval || approval.used) throw new Error("approval_missing_or_used");
+    if (!Number.isSafeInteger(approval.expiresAt) || approval.expiresAt <= Date.now()) throw new Error("approval_expired");
+    if (approval.jobId !== binding.jobId || approval.binding?.jobId !== binding.jobId ||
+        String(approval.binding?.digest ?? "").toLowerCase() !== String(binding.digest).toLowerCase()) {
+      throw new Error("approval_binding_mismatch");
+    }
+    if (approval.approver === consumerIdentity) throw new Error("self_approval_not_allowed");
+    if (verifyApproval(approval) !== true) throw new Error("approval_binding_mismatch");
+    const job = state.lifecycleJobs.find(j => j.id === binding.jobId);
+    if (!job) throw new Error("job_not_found");
+    if (job.state !== "pending" || String(job.digest).toLowerCase() !== String(binding.digest).toLowerCase()) {
+      throw new Error("job_not_pending_or_digest_mismatch");
+    }
+    const audit = verifyAtomicAudit(state.auditRecords || []);
+    if (!audit.valid || audit.states[job.id] !== job.state || audit.digests[job.id] !== String(job.digest).toLowerCase()) {
+      throw new Error("audit_integrity_failure");
+    }
+    const from = job.state, at = new Date().toISOString();
+    approval.used = true;
+    state.events.push({ event: "approval_consumed", jobId: job.id, at });
+    job.state = "approved";
+    job.updatedAt = at;
+    appendAtomicAudit(state, { jobId: job.id, from, to: "approved", actor: consumerIdentity, note: "approval_consumed", digest: job.digest });
+    return { approved: true, jobId: job.id, jobState: job.state, approver: approval.approver, consumerIdentity };
+  });
+}
+
 export async function readAtomicLifecycle(file) {
   const state = await readState(file);
   const jobs = Array.isArray(state.lifecycleJobs) ? state.lifecycleJobs : [];
