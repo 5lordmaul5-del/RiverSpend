@@ -86,3 +86,8 @@ The isolated local module `src/rivergit-local.js` introduces safe name validatio
 ### RiverBuild Phase 0 — build planner
 
 `src/riverbuild.js` validates a project/build request and produces a constrained plan for a future isolated runner. It currently supports planning only for node-test and syntax-check types. It does not execute scripts, access the network, or spawn processes. Workspace path confinement is checked at planning time. Tests are written but not yet run.
+
+
+### RiverBuild Phase 1 — constrained container command planner
+
+`src/riverbuild-runner.js` creates Docker argv plans for the supported test/syntax-check operations, requiring an explicit approval flag. The plan uses a fixed Node image, no network, read-only workspace/root filesystem, dropped capabilities, no-new-privileges, resource/PID limits and a temporary filesystem. This module only generates a command plan: it does not execute Docker. Container isolation still depends on host Docker configuration and is not a complete security guarantee. Tests are written but not run.
