@@ -1,0 +1,38 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { mkdtemp, rm } from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
+import { queuePlan, listQueue } from "./queue.mjs";
+import { readState } from "./rc11-state.mjs";
+
+const base = { projectId: "riverspend", branch: "main", target: "staging", commit: "a".repeat(40) };
+
+test("concurrent duplicate submissions persist exactly one queue job", async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), "rcq-"));
+  try {
+    const file = path.join(root, "state.json");
+    const results = await Promise.all(Array.from({ length: 12 }, () => queuePlan(file, base)));
+    assert.equal(results.filter(x => !x.duplicate).length, 1);
+    assert.equal((await listQueue(file)).length, 1);
+    assert.equal((await readState(file)).events.length, 1);
+  } finally { await rm(root, { recursive: true, force: true }); }
+});
+
+test("concurrent distinct plans are not lost", async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), "rcq-"));
+  try {
+    const file = path.join(root, "state.json");
+    const inputs = Array.from({ length: 8 }, (_, i) => ({ ...base, commit: (i + 1).toString(16).padStart(40, "0") }));
+    await Promise.all(inputs.map(x => queuePlan(file, x)));
+    const jobs = await listQueue(file);
+    assert.equal(jobs.length, 8);
+    assert.equal(new Set(jobs.map(x => x.digest)).size, 8);
+  } finally { await rm(root, { recursive: true, force: true }); }
+});
+
+test("queue rejects non-allowlisted plan", async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), "rcq-"));
+  try { await assert.rejects(() => queuePlan(path.join(root, "state.json"), { ...base, target: "production" }), /target_not_allowed/); }
+  finally { await rm(root, { recursive: true, force: true }); }
+});

@@ -1,0 +1,13 @@
+import test from "node:test"; import assert from "node:assert/strict";
+import {createAuditEnvelope,buildSignedDelivery,verifyAuditEnvelope,verifySignedDelivery} from "./rc14-audit-sink.mjs";
+const secret="s".repeat(40),endpoint="https://audit.example/receive",now=1700000000000;
+const envelope=()=>createAuditEnvelope({type:"auth_denied",data:{password:"x",token:"y",reason:"bad"}},{sinkId:"sink-1",actor:"user-1",occurredAt:new Date(now).toISOString()});
+test("redacts sensitive keys in envelope",()=>{const e=envelope();assert.equal(e.data.password,"[redacted]");assert.equal(e.data.token,"[redacted]");assert.equal(e.data.reason,"bad");});
+test("rejects unknown event type",()=>assert.throws(()=>createAuditEnvelope({type:"arbitrary"},{sinkId:"s",actor:"u"})));
+test("rejects invalid envelope context and non-object data",()=>{assert.throws(()=>createAuditEnvelope({type:"system_event",data:"raw"},{sinkId:"s",actor:"u"}));assert.throws(()=>createAuditEnvelope({type:"system_event"},{sinkId:"s",actor:"u",previousHash:"bad"}));});
+test("verifies canonical envelope digest and detects tampering",()=>{const e=envelope();assert.equal(verifyAuditEnvelope(e).valid,true);assert.equal(verifyAuditEnvelope({...e,actor:"changed"}).reason,"hash_mismatch");});
+test("rejects HTTP, URL credentials, query and fragment",()=>{for(const bad of ["http://example.com","https://user:pass@example.com","https://example.com/?token=x","https://example.com/#frag"])assert.throws(()=>buildSignedDelivery(envelope(),{endpoint:bad,secret}));});
+test("rejects short signing secret",()=>assert.throws(()=>buildSignedDelivery(envelope(),{endpoint,secret:"short"})));
+test("creates and verifies signed descriptor without network",()=>{const d=buildSignedDelivery(envelope(),{endpoint,secret,now});assert.equal(d.method,"POST");assert.ok(d.headers["x-rivercloud-audit-signature"].startsWith("sha256="));const v=verifySignedDelivery(d,{secret,now});assert.equal(v.valid,true);assert.equal(v.envelopeHash,envelope().hash);});
+test("rejects altered body and timestamp window",()=>{const d=buildSignedDelivery(envelope(),{endpoint,secret,now});assert.equal(verifySignedDelivery({...d,body:d.body+" "},{secret,now}).reason,"signature_mismatch");assert.equal(verifySignedDelivery(d,{secret,now:now+600000}).reason,"timestamp_out_of_window");});
+test("rejects invalid verifier configuration",()=>{const d=buildSignedDelivery(envelope(),{endpoint,secret,now});assert.equal(verifySignedDelivery(d,{secret,now,maxSkewMs:700000}).reason,"invalid_verifier_config");});
