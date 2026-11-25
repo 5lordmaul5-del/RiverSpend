@@ -7,3 +7,6 @@ test('rejects weakened plan',async()=>assert.rejects(()=>new RiverBuildWorker({e
 test('normalizes success',async()=>assert.equal((await new RiverBuildWorker({enabled:true,executor:async()=>({exitCode:0,stdout:'ok'})}).run(item)).status,'passed'));
 test('normalizes failure',async()=>assert.equal((await new RiverBuildWorker({enabled:true,executor:async()=>({exitCode:3})}).run(item)).status,'failed'));
 test('timeout',async()=>assert.equal((await new RiverBuildWorker({enabled:true,timeoutMs:10,executor:()=>new Promise(()=>{})}).run(item)).status,'timeout'));
+
+test('rejects privileged Docker plan',async()=>assert.rejects(()=>new RiverBuildWorker({enabled:true,executor:async()=>({exitCode:0})}).run({...item,commandPlan:{...item.commandPlan,args:[...item.commandPlan.args,'--privileged']}}),/Unsafe Docker option/));
+test('timeout aborts injected executor signal',async()=>{let signal;const w=new RiverBuildWorker({enabled:true,timeoutMs:10,executor:({signal:s})=>{signal=s;return new Promise(()=>{})}});assert.equal((await w.run(item)).status,'timeout');assert.equal(signal.aborted,true)});
