@@ -14,6 +14,7 @@ Independent hosting foundation, kept separate from RiverSpend production.
 - Local hash-linked audit ledger, lifecycle and readiness prototypes
 - Identity claim validator and role policy; no authentication provider integration
 - External audit-sink contract; no outbound delivery
+- RC-17 same-file lifecycle/audit transaction path (isolated migration API; not yet wired into existing callers)
 - Backup/restore and migration checklists only
 
 ## Safety and status
