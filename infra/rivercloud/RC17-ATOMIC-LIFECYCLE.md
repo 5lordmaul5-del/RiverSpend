@@ -11,4 +11,4 @@ This increment adds a separate experimental lifecycle API that commits job state
 
 ## Important boundary
 
-This is not yet wired into the existing `lifecycle.mjs` callers; it is an isolated migration path pending review and tests. It does not authenticate actor labels or enforce OIDC/RBAC. The underlying RC-11 JSON store remains a local single-host file store, not a multi-node database. Crash durability and supported-platform lock behavior still require target-platform testing.
+The `lifecycle.mjs` facade now delegates job creation and transitions to RC-17, and its regression tests verify state/audit consistency and concurrent one-time transitions. The legacy separate-file lifecycle path is no longer used by this facade. Other modules and external consumers must still be audited before any production use. It does not authenticate actor labels or enforce OIDC/RBAC. The underlying RC-11 JSON store remains a local single-host file store, not a multi-node database. Crash durability and supported-platform lock behavior still require target-platform testing.
