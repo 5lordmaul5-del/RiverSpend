@@ -37,19 +37,26 @@ Inspected the control-plane and core prototype files, including server.mjs, rc11
 - Caddy and whoami images remain version-tag pinned, not digest-pinned; an image-level scanner/SBOM was not run. Public package advisory lookups show Caddy package findings for some Minimos/Wolfi builds below 2.11.9-r0, but the exact layers in the selected image were not inspected, so this is not an image vulnerability verdict. See [Snyk Minimos](https://security.snyk.io/package/linux/minimos%3Alatest/caddy) and [Snyk Wolfi](https://security.snyk.io/package/linux/wolfi%3Alatest/caddy).
 - The first CI Caddyfile validation attempt failed because the image required the explicit binary command (`caddy validate`); the command was corrected and then passed in runs 45609679828 (push) and 45609697534 (pull request). Those runs also passed 66/66 tests, shell syntax and Compose config validation. The Caddy check starts only a short-lived validation container, not a RiverCloud service.
 
+## RC-17 incremental review — same-file lifecycle/audit path
+
+- Added `rc17-atomic-lifecycle.mjs` and `rc17-atomic-lifecycle.test.mjs` as a migration path that keeps lifecycle jobs and their hash-chained audit records in the same RC-11 atomic snapshot. This addresses the cross-file commit window for the new API, rather than claiming to fix the existing `lifecycle.mjs` implementation.
+- New records are sequence-checked and verified before append; invalid transitions and duplicate jobs fail without committing a state/audit change. Audit detail values are bounded and sensitive-key redacted.
+- Local isolated reconstructed workspace test evidence: **8/8 passed** using a copy of the reviewed RC-11 state-store source and the new RC-17 module/tests. This workspace was not a checkout of the repository; GitHub Actions branch CI has not yet confirmed this increment.
+- Actor labels remain unverified. OIDC, route-level RBAC, runner isolation, target-platform crash durability, backup/restore and staging are still blockers.
+
 ## Remaining blockers — not production eligible
 
 - No OIDC authentication provider, MFA, authenticated approver, session revocation or route-level RBAC enforcement.
 - No actual worker/runtime, build sandbox, network enforcement or staging host.
 - Local lock files may remain after a crash; stale recovery remains manual and fail-closed.
-- Lifecycle and audit records are separately persisted; a crash between writes can cause mismatch.
+- The existing lifecycle API and its external audit file remain separately persisted. RC-17 adds an isolated same-file migration path, not a completed migration.
 - No external protected audit delivery, retries, receiver, or immutable retention.
-- Image tags are version-pinned but not pinned by digest; update/provenance policy remains.
+- Image tags are version-pinned but not pinned by digest; an image-level scanner/SBOM was not run.
 - Backup/restore, dependency/supply-chain scan, staging rehearsal, performance tests and migration/cutover remain unperformed.
 
 ## Next gates
 
-1. Await branch CI evidence for this increment and fix any failures.
+1. Verify CI for RC-17 and fix any failures.
 2. Continue file-by-file review of the remaining documentation, panel, configuration and test files.
 3. Integrate a real OIDC provider and MFA, with route-level RBAC, without homemade token verification.
 4. Test lock/crash recovery on supported target platforms; retain fail-closed behavior.
