@@ -1,5 +1,5 @@
 import { validateDeployRequest, planDigest } from "./engine.mjs";
-import { readState, transactState } from "./rc11-state.mjs";
+import { readState, transactState } from "./rc11-state.mjs";\nconst MAX_QUEUE_ITEMS=5000;\nconst MAX_QUEUE_EVENTS=10000;
 
 export async function queuePlan(file, input) {
   const plan = validateDeployRequest(input);

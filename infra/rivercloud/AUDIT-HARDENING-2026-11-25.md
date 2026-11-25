@@ -443,3 +443,12 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 - Corrected the RC-13 OIDC proxy document: the OAuth2 Proxy image is already digest-pinned in Compose; signature verification, SBOM and full CVE scan remain outstanding.
 - Corrected test-status notes in RC-13 identity, RC-5 runner boundary, RC-6 worker specification and RC-7 runtime scaffold to reflect verified CI #275/#276 and report-only #277/#278, without implying a runtime worker or authentication integration.
 - Documentation-only update; fresh CI is pending.
+
+
+## RC-30 — bounded queue and state-store size (25 November 2026)
+
+- Audit found that the local queue and shared state file had no capacity guard; accepted plans and event arrays could grow without bound, and state reads had no file-size precheck.
+- Added a fail-closed queue limit of 5,000 jobs/10,000 events and an 8 MiB state-file read cap. Duplicate submissions are still checked before the queue cap so idempotent retries remain successful.
+- The API maps capacity/oversized-store errors to HTTP 503 with explicit safe error codes. No automatic pruning is introduced because deletion of audit/state history requires a retention design.
+- Regression tests cover queue cap, HTTP 503 and oversized state file. CI evidence is pending.
+- This is a prototype capacity guard; limits and retention must be revisited before real deployment.

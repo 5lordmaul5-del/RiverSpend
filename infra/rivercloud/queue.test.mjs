@@ -4,7 +4,7 @@ import { mkdtemp, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { queuePlan, listQueue } from "./queue.mjs";
-import { readState } from "./rc11-state.mjs";
+import { readState, transactState } from "./rc11-state.mjs";
 
 const base = { projectId: "riverspend", branch: "main", target: "staging", commit: "a".repeat(40) };
 
@@ -35,4 +35,14 @@ test("queue rejects non-allowlisted plan", async () => {
   const root = await mkdtemp(path.join(os.tmpdir(), "rcq-"));
   try { await assert.rejects(() => queuePlan(path.join(root, "state.json"), { ...base, target: "production" }), /target_not_allowed/); }
   finally { await rm(root, { recursive: true, force: true }); }
+});
+
+test("queue fails closed at the configured item cap", async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), "rcq-cap-"));
+  try {
+    const file = path.join(root, "state.json");
+    await transactState(file, state => { state.jobs = Array.from({ length: 5000 }, (_, i) => ({ id: "cap-" + i, digest: "cap-" + i })); });
+    await assert.rejects(() => queuePlan(file, base), /queue_capacity_exceeded/);
+    assert.equal((await listQueue(file)).length, 5000);
+  } finally { await rm(root, { recursive: true, force: true }); }
 });

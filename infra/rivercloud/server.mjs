@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 import { queuePlan, listQueue } from "./queue.mjs";
 
 const MAX_BODY = 8192;
-const POLICY_ERRORS = new Set(["invalid_request", "project_not_allowlisted", "target_not_allowed", "immutable_commit_sha_required", "branch_not_allowlisted"]);
+const POLICY_ERRORS = new Set(["invalid_request", "project_not_allowlisted", "target_not_allowed", "immutable_commit_sha_required", "branch_not_allowlisted"]);\nconst CAPACITY_ERRORS = new Set(["queue_capacity_exceeded", "state_file_too_large"]);
 
 function authorized(req, token) {
   const header = req.headers.authorization;
@@ -49,8 +49,8 @@ export function createServer({ host = "127.0.0.1", port = 8787, token = process.
       }
       return respond(res, 404, { error: "not_found" });
     } catch (e) {
-      const status = e.status || (POLICY_ERRORS.has(e.message) ? 400 : e.message === "state_lock_timeout" ? 503 : 500);
-      return respond(res, status, { error: status >= 500 ? (e.message === "state_lock_timeout" ? e.message : "internal_error") : (e.message || "request_failed") });
+      const status = e.status || (POLICY_ERRORS.has(e.message) ? 400 : e.message === "state_lock_timeout" || CAPACITY_ERRORS.has(e.message) ? 503 : 500);
+      return respond(res, status, { error: status >= 500 ? (e.message === "state_lock_timeout" || CAPACITY_ERRORS.has(e.message) ? e.message : "internal_error") : (e.message || "request_failed") });
     }
   });
   // Bounded request/headers/socket inactivity to reduce slow-client resource exhaustion.

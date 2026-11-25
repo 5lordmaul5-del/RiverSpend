@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { mkdtemp, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { createServer } from "./server.mjs";
+import { createServer } from "./server.mjs";\nimport { transactState } from "./rc11-state.mjs";
 
 const token = "t".repeat(40), base = { projectId: "riverspend", branch: "main", target: "staging", commit: "b".repeat(40) };
 
@@ -61,4 +61,17 @@ test("server rejects misleading JSON media types", async () => {
     await new Promise(resolve => server.close(resolve));
     await rm(root, { recursive: true, force: true });
   }
+});
+
+test("server maps queue capacity to 503", async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), "rcs-cap-"));
+  const file = path.join(root, "state.json");
+  await transactState(file, state => { state.jobs = Array.from({ length: 5000 }, (_, i) => ({ id: "cap-" + i, digest: "cap-" + i })); });
+  const server = createServer({ port: 0, token, storeFile: file });
+  try {
+    await new Promise((resolve, reject) => { server.once("error", reject); server.listen(0, "127.0.0.1", resolve); });
+    const url = "http://127.0.0.1:" + server.address().port;
+    const r = await fetch(url + "/deploy", { method: "POST", headers: { authorization: "Bearer " + token, "content-type": "application/json" }, body: JSON.stringify(base) });
+    assert.equal(r.status, 503); assert.equal((await r.json()).error, "queue_capacity_exceeded");
+  } finally { await new Promise(resolve => server.close(resolve)); await rm(root, { recursive: true, force: true }); }
 });

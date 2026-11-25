@@ -3,7 +3,7 @@ import {constants as fsConstants} from "node:fs";
 import {mkdir,rename,open,unlink,lstat} from "node:fs/promises";
 import path from "node:path";
 import {randomUUID} from "node:crypto";
-const init={schema:1,jobs:[],approvals:[],events:[]};
+const init={schema:1,jobs:[],approvals:[],events:[]};\nconst MAX_STATE_BYTES=8*1024*1024;
 async function syncDirectoryHandle(dir){const d=await open(dir,"r");try{await d.sync();}finally{await d.close();}}
 function validateState(s){if(!s||s.schema!==1||!Array.isArray(s.jobs)||!Array.isArray(s.approvals)||!Array.isArray(s.events))throw new Error("invalid_state_schema");}
 async function unlinkOwnedLock(lock,identity){
