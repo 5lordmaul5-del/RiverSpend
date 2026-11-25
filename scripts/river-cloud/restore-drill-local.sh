@@ -48,6 +48,10 @@ ACTUAL_CHECKSUM="$(sha256sum "$BACKUP_FILE" | awk '{print $1}')"
 CONTAINER_NAME="rivercloud-restore-drill-$$"
 TEMP_PASSWORD="$(openssl rand -hex 32)"
 cleanup() {
+  if docker inspect "$CONTAINER_NAME" >/dev/null 2>&1; then
+    echo "Disposable PostgreSQL diagnostics:" >&2
+    docker logs "$CONTAINER_NAME" >&2 || true
+  fi
   docker rm -f "$CONTAINER_NAME" >/dev/null 2>&1 || true
 }
 trap cleanup EXIT
@@ -56,12 +60,11 @@ docker run --detach \
   --name "$CONTAINER_NAME" \
   --network none \
   --env POSTGRES_PASSWORD="$TEMP_PASSWORD" \
-  --env POSTGRES_DB=rivercloud_restore \
   postgres:17-alpine >/dev/null
 
 READY=0
 for _ in $(seq 1 60); do
-  if docker exec "$CONTAINER_NAME" pg_isready -U postgres -d rivercloud_restore >/dev/null 2>&1; then
+  if docker exec "$CONTAINER_NAME" pg_isready -h 127.0.0.1 -U postgres -d postgres >/dev/null 2>&1; then
     READY=1
     break
   fi
@@ -69,20 +72,29 @@ for _ in $(seq 1 60); do
 done
 [[ "$READY" -eq 1 ]] || { echo "Disposable PostgreSQL did not become ready." >&2; exit 1; }
 
+# pg_isready can report a server ready even when the requested database is missing.
+# Bootstrap the target DB explicitly against the always-present maintenance database.
+if ! docker exec "$CONTAINER_NAME" psql -h 127.0.0.1 -U postgres -d postgres -At \
+  -c "SELECT 1 FROM pg_database WHERE datname = 'rivercloud_restore';" | grep -q '^1$'; then
+  docker exec "$CONTAINER_NAME" psql -h 127.0.0.1 -U postgres -d postgres -v ON_ERROR_STOP=1 \
+    -c "CREATE DATABASE rivercloud_restore;"
+fi
+
 # The restored RLS policies reference this role. Create a restricted placeholder
-# role in the disposable database before pg_restore; it is not used for login.
-docker exec "$CONTAINER_NAME" psql -U postgres -d rivercloud_restore -v ON_ERROR_STOP=1 \
+# role in the disposable cluster before pg_restore; it is not used for login.
+docker exec "$CONTAINER_NAME" psql -U postgres -d postgres -v ON_ERROR_STOP=1 \
   -c "CREATE ROLE rivercloud_api NOLOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT;"
 
 age --decrypt --identity "$RIVER_CLOUD_AGE_IDENTITY_FILE" "$BACKUP_FILE" \
   | docker exec -i "$CONTAINER_NAME" pg_restore \
+      --host=127.0.0.1 \
       --username=postgres \
       --dbname=rivercloud_restore \
       --no-owner \
       --no-acl \
       --exit-on-error
 
-TABLE_COUNT="$(docker exec "$CONTAINER_NAME" psql -U postgres -d rivercloud_restore -At \
+TABLE_COUNT="$(docker exec "$CONTAINER_NAME" psql -h 127.0.0.1 -U postgres -d rivercloud_restore -At \
   -c "SELECT count(*) FROM pg_tables WHERE schemaname NOT IN ('pg_catalog', 'information_schema');")"
 RESTORE_MARKER="$(docker exec "$CONTAINER_NAME" psql -U postgres -d rivercloud_restore -At \
   -c "SELECT marker FROM public.restore_probe WHERE id = 1;")"
