@@ -469,3 +469,12 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 - Correction commit **`e51f7d8c8f0a3e0dfd724faaaeff36a38e08a34c`** adds the corrected fixture and regressions for queue/event limits, duplicate retry at both limits, bounded state reads, and write-side size rejection. The RC-30 doc was updated in `73472949d0f2aa0b87b33ad12d950cc8ece3a2bd`.
 - **Fresh CI evidence for the correction is pending.** No pass is claimed. The next verification must include the entire Node suite, shell/Python, Compose and Caddy checks.
 - No production service, runner, staging host or live deployment was started. The work remains confined to PR #75's isolated branch.
+
+
+### RC-30 CI closeout — verified
+
+- GitHub Actions **45717007464 (#298) — SUCCESS: 130/130 Node tests, 0 failures**, plus bootstrap shell syntax, backup/restore and Python extractor syntax, Docker Compose configuration, and Caddy validation.
+- Run #298 verifies commit **`4a08fa49caf752573a0e73789ab22644bcddebd4`**, which includes the RC-30 correction code `e51f7d8c8f0a3e0dfd724faaaeff36a38e08a34c` and the report update.
+- The test suite verifies queue item/event caps, idempotent duplicate at both caps, bounded state reads, and write-side snapshot rejection. Earlier failures #281/#282, #284 and #292 remain documented and are not counted as passing.
+- The Caddy check used a short-lived validation container only. No RiverCloud services, runner, staging host or production deployment were started.
+- The later RC-30 closeout-doc commit `5391fb79ce231dd9b5f5d9d25dc150a5b7568180` still needs its own CI verification before the latest branch head is considered verified.
