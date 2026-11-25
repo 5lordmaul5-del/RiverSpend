@@ -17,7 +17,7 @@ export default async function handler(req, res) {
     const {data:role,error:roleError}=await db.from("rs_admin_roles").select("role").eq("user_id",data.user.id).maybeSingle();
     if(roleError||role?.role!=="admin")return res.status(403).json({error:"Accesso admin richiesto."});
     const [tx,events]=await Promise.all([
-      db.from("riverpay_transactions").select("id,order_id,provider,provider_payment_id,status,currency,amount_minor,fee_minor,created_at,updated_at,metadata").order("created_at",{ascending:false}).limit(50),
+      db.from("riverpay_transactions").select("id,order_id,provider,provider_payment_id,status,currency,amount_minor,fee_minor,created_at,updated_at").order("created_at",{ascending:false}).limit(50),
       db.from("riverpay_events").select("id,provider,provider_event_id,transaction_id,event_type,processed_at,received_at").order("received_at",{ascending:false}).limit(50)
     ]);
     if(tx.error)throw tx.error;if(events.error)throw events.error;
