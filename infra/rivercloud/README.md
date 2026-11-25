@@ -8,7 +8,7 @@ Independent hosting foundation, kept separate from production.
 - Policy validator, plan digest and loopback-only plan queue
 - Runner boundary and fixed worker profile specification
 - RC-7 execution envelope (execution disabled)
-- RC-8 local hash-linked audit ledger prototype and approval/rollback design
+- RC-8 local hash-linked audit ledger prototype and approval/rollback design\n- RC-9 bounded job lifecycle and audit-event integration prototype
 
 ## Setup scaffold
 1. Point DNS A/AAAA records at a VPS.
@@ -26,4 +26,4 @@ The demo route is not RiverSpend hosting.
 - Prototype tests have not been run in the target environment.
 
 ## Next
-RC-9: review and testing, safe integration of audit records into queue lifecycle, approval-bound job lifecycle, and isolated execution readiness checks.
+RC-10: transactional lifecycle/queue integration, authenticated approval binding, and readiness review before execution.
