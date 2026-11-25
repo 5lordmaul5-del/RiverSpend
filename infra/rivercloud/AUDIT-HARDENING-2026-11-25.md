@@ -25,9 +25,11 @@ Inspected the control-plane and core files, including server.mjs, rc11-state.mjs
 - Run **45617853040 — SUCCESS: 74/74** Node tests, bootstrap shell syntax, Compose config and Caddyfile validation. It checked PR merge commit **053b7ed1da4e61e8c0c55f4ab0e29a908ea6521f**, corresponding to branch head **68b35757fa48244237401245d9f14482fa3bc368** at the time.
 - Run **45618332297 — SUCCESS: 77/77** Node tests, bootstrap and backup/restore shell syntax, Compose config and Caddyfile validation. It checked merge commit **dfc51e822fff837d85a1b38a538c99e7199b80a9**, corresponding to branch head **a0028168a34db04effab6045fae091982300a0a6**.
 - Run **45618630901 — SUCCESS: 78/78 Node tests**, bootstrap and backup/restore shell syntax, Compose config and Caddyfile validation. It checked merge commit **d7ab35a8b76aadf4b0ed90ef59760df9b269b96c**, corresponding to branch head **ea2e5de59cf27a392d2d0691deeb09ac3b8fe303**. The Caddy validation used a short-lived container only; no RiverCloud services were started.
-- Run **45622097974 — SUCCESS: 87/87 Node tests**, plus shell/Python, Compose and Caddy validations.
+- Run **45622097974 — SUCCESS: 87/87 Node tests**, plus shell/Python, Compose and Caddy validations; evidence for that earlier commit.
 - Run **45622204547 — SUCCESS: 87/87 Node tests**, plus shell/Python, Compose and Caddy validations; checked branch head **e42613e8f3c4750469fe7c0296c895fc4890986d**.
 - Run **45636789810 (run #106) — SUCCESS: 90/90 Node tests**, bootstrap shell, backup/restore shell and Python syntax, Compose config, and Caddy validation. It checked PR merge commit **1d7c30075d40007e5448017f49d22fae43b8049f**, corresponding to branch head **7682aa079f1916c2b7968610dc4c1624cf64a97b**. No RiverCloud services were started.
+- Run **45636929135 (run #108) — SUCCESS: 90/90 Node tests** plus the same shell/Python, Compose and Caddy validations; this checked the report-only update.
+- Run **45637386491 (run #114) — SUCCESS: 94/94 Node tests**, shell/Python, Compose and Caddy validation; checked branch head **16f2dafbcd7c2b913a86741cd61e6739f2aa0a86**. No RiverCloud services were started.
 
 ## RC-17 — same-file lifecycle/audit migration path
 
@@ -130,3 +132,13 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 - Added regression tests for hardlinked files, FIFOs, and root-source rejection; updated the symlink-source assertion.
 - GitHub Actions run **45636789810 — SUCCESS: 90/90 Node tests**. The four validation steps (bootstrap, backup/restore shell + Python, Compose configuration, Caddy validation) also completed successfully.
 - Tests used temporary directories and a root-source refusal check; no real data backup or restore was performed.
+
+
+## RC-14 audit-envelope and delivery verification
+
+- Added canonical envelope digest verification, with tamper detection.
+- Added signed-delivery verification using HMAC-SHA256 and a bounded timestamp freshness window; URL descriptors reject non-HTTPS, userinfo, query and fragment.
+- The verifier does not perform network delivery, receiver replay storage, or immutable retention. Replay deduplication remains a receiver responsibility (for example, by envelope hash).
+- Corrected two test assertions found during local validation.
+- Isolated local workspace: **9/9 RC-14 tests passed** using the exact source/test contents (not a full repository checkout).
+- GitHub Actions **run 45637386491 — SUCCESS: 94/94 Node tests**, plus shell/Python, Compose and Caddy validation.
