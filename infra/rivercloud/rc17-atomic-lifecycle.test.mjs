@@ -1,4 +1,5 @@
-import test from "node:test";\nimport { createHash } from "node:crypto";
+import test from "node:test";
+import { createHash } from "node:crypto";
 import assert from "node:assert/strict";
 import { mkdtemp, rm } from "node:fs/promises";
 import os from "node:os";
