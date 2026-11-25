@@ -150,3 +150,12 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 - Pinned the demo whoami v1.12.0 image to multi-platform index digest `sha256:c4717a8d1f0134a7444e24f881160e033991f23027c6c5a9a3f8fd22e70d1d44`, sourced from the official Docker Hub tag page.
 - CI Caddy validation now uses the same digest as Compose. GitHub Actions **run 45637690981 (run #119) — SUCCESS: 94/94 tests**, Compose config and Caddy validation.
 - OAuth2 Proxy remains version-tag pinned, not digest-pinned. No SBOM or vulnerability scan has yet been run. Docker is unavailable in this local workspace; the validation evidence is from CI. No RiverCloud services were started.
+
+
+## RC-13 identity-claim validation hardening
+
+- Claim validator now accepts OIDC-style string or bounded array audiences, but still requires the configured issuer/audience match.
+- Bounds subject/issuer lengths, token lifetime to 12 hours, safe-integer timestamps and 60-second future-issued skew; role arrays are bounded and allowlisted.
+- Isolated local workspace: **9/9 identity tests passed** (not a full repository checkout).
+- GitHub Actions **run 45637987956 (run #124) — SUCCESS: 97/97 Node tests**, shell/Python, Compose and Caddy validation.
+- This remains only a claim-validation helper: it does not verify token cryptography or integrate with the server, provider, routes or authenticated approval records.
