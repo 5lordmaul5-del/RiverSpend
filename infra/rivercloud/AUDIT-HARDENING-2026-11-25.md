@@ -46,6 +46,13 @@ Inspected the control-plane and core files, including server.mjs, rc11-state.mjs
 - Runs 45618332297 and 45618630901 included the backup/restore tests and shell syntax validation. No production backup or restore was performed.
 - This is not encrypted/off-site/immutable backup storage, and it does not ensure database-aware consistency while files are being written. A critical store should be stopped/quiesced for snapshots.
 
+## Queue digest idempotency — cross-process evidence
+
+- Added a separate-process test where six Node processes submit the same deployment plan simultaneously through `queuePlan`.
+- Exactly one insertion is expected; five requests must return duplicate. The state snapshot and event list remain one record each.
+- Reconstructed workspace: **1/1** passed (not a repository checkout).
+- GitHub Actions **run 45621995788 — SUCCESS: 87/87 tests**, plus bootstrap, backup/restore and Python syntax, Compose and Caddy validation.
+
 ## RC-11/RC-12 — cross-process concurrency and crash lock evidence
 
 - Added a dedicated process-level test file. Six separate Node processes concurrently add distinct jobs and preserve every event; six separate processes race the same job ID and only one succeeds; an orphan lock created by a simulated process exit is preserved and causes fail-closed timeout.
