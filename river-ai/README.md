@@ -1,29 +1,18 @@
 # RiverSSAI 10.0 — Runnable Core (F1)
-
-This is a tiny, dependency-free starter runtime, isolated from the marketplace, Supabase and Vercel. It is **not yet an autonomous AI or connected model**.
-
+Small dependency-free localhost runtime, independent of marketplace, Supabase and Vercel. This is a foundation, **not yet an autonomous AI or connected model**.
 ## Requirements
-- Node.js 22+
-
-## Run locally
+Node.js 22+
+## Run
 ```sh
 cd river-ai
-cp .env.example .env
-# Optional: load .env variables with your shell or configure them manually.
 npm test
 npm start
 ```
-
-The server binds to localhost (127.0.0.1) by default:
-- `GET /health` — health check
-- `GET /status` — configuration and safe capability status
-
-No model, credentials, tools, database, external network access, or deployment is enabled in this scaffold. Unknown routes and non-GET methods are rejected.
-
-## Next milestones
-1. Add provider adapters with explicit configuration and secret handling.
-2. Add inspectable opt-in memory.
-3. Implement a tool allowlist, sandbox and approval workflow.
-4. Evaluate safety, reliability, privacy and model quality before enabling actions.
-
-Do not expose this local server publicly without authentication, TLS, rate limiting and security review.
+Default address: 127.0.0.1:3030
+- GET /health — health
+- GET /status — configuration and capability status
+- GET /tools — declared tool registry (write actions disabled)
+- GET /memory — inspect local memory (read-only endpoint)
+Memory module supports local add/delete/clear functions for future integrations; these writes are not exposed through HTTP. Memory stores locally with restrictive permissions where supported. Avoid sensitive data.
+No provider, secrets, database, public network integration or deployment is enabled. Non-GET methods and unknown routes are rejected.
+Next: provider adapters, memory consent/UI, sandboxed tools with approval, evaluation/security testing. Never expose publicly without authentication, TLS, rate limits and review.
