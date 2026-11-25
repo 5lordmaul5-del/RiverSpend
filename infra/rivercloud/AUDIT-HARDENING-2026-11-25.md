@@ -485,3 +485,12 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 - GitHub Actions **45717083964 (#302) — SUCCESS: 130/130 Node tests, 0 failures**, plus bootstrap shell, backup/restore and Python extractor syntax, Compose configuration and Caddy validation.
 - Run #302 verified report commit **`c3cb24593a76bf1dda41bc64a1d4cb0c3fbecbf9`**, including the preceding RC-30 closeout-doc commit. The source correction remains the one verified by #298.
 - No RiverCloud services or runner were started. No merge, live deployment, provisioning or spending occurred.
+
+
+### RC-31 — restore archive source integrity hardening (25 Nov 2026)
+
+- Audited the restricted restore helper and found a preflight/extraction TOCTOU window: the archive path was opened twice, so checksum/preflight and extraction could reference different archive contents if the path changed.
+- Changed the helper to open the archive once with `O_NOFOLLOW`, verify the descriptor is a regular file, and use the same file descriptor/TarFile instance for preflight and extraction. It fails closed if `O_NOFOLLOW` is unavailable.
+- Added a regression test for a symlinked archive path after checksum verification; it must fail and leave the restore target absent.
+- Added `RC31-RESTORE-SOURCE.md`. CI evidence for the new code/test is pending; no pass is claimed yet.
+- No real backup or restore, production data access, deployment, server provisioning or spending was performed.
