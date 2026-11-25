@@ -23,7 +23,7 @@ export async function createLocalBareRepository(baseDir,name){
  validateLocalRepoName(name);
  const dest=confined(baseDir,name+'.git');
  await mkdir(baseDir,{recursive:true});
- try { await access(dest); throw new Error('Repository already exists'); } catch(e){ if(e.message==='Repository already exists') throw e; }
+ try { await access(dest); throw new Error('Repository already exists'); } catch(e){ if(e.message==='Repository already exists'||e.code!=='ENOENT') throw e; }
  await gitInitBare(dest);
  return {name, path:dest, type:'bare', branch:'main', created:true};
 }
