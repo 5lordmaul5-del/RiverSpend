@@ -1,10 +1,15 @@
-# RC-12 — stale lock recovery and chained audit prototype
+# RC-12 — fail-closed lock handling and chained audit helper
 
-This milestone adds an isolated prototype module for two controls:
-- stale lock recovery after an age threshold, only when the lock records a PID that appears not to be alive; quarantine is performed via rename rather than blind unlink;
-- event hash-chain helper and verification routine.
+This milestone provides a local hash-chain helper and lock acquisition helper. Automatic stale-lock reclamation is **disabled**: PID checks and rename-based reclamation can race, and PID reuse/namespaces can make the decision unreliable.
 
-Tests are authored for chain integrity and lock-recovery scenarios, but are not runtime-verified here.
+- Existing lock files are preserved for manual review.
+- Lock acquisition fails with a bounded timeout instead of deleting/reclaiming a lock automatically.
+- The event hash-chain helper detects changes in the stored chain.
+
+## Test evidence
+
+Tests cover chain integrity, preservation of old/recent/active/malformed locks, and bounded timeout. Automatic recovery is not implemented.
 
 ## Limits
-PID checks are inherently imperfect (PID reuse, namespaces, platform differences and races). Lock recovery is not a production distributed-lock mechanism. The event chain is only tamper-evident if its storage is protected; it is not an external audit sink. Identity authentication, external protected audit, execution isolation, deployment, server provisioning and production remain out of scope.
+
+Manual stale-lock review is still required. Lock behavior, crash durability and directory sync need target-platform tests. This is not a distributed-lock mechanism. Identity authentication, external protected audit, execution isolation, deployment and production remain out of scope.
