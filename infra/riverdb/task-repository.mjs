@@ -9,8 +9,8 @@ export class RiverDBTaskRepository {
   if(!task_type)throw new Error('task_type required');
   const client=await this.pool.connect();try{await client.query('BEGIN');
    const q=await client.query('INSERT INTO riverdb.tasks(module_id,task_type,payload,created_by,idempotency_key) VALUES($1,$2,$3,$4,$5) ON CONFLICT(idempotency_key) DO NOTHING RETURNING *',[module_id,task_type,payload,created_by,idempotency_key]);
-   let row=q.rows[0];if(!row&&idempotency_key){const existing=await client.query('SELECT * FROM riverdb.tasks WHERE idempotency_key=$1',[idempotency_key]);row=existing.rows[0];}
-   if(!row)throw new Error('Task insert conflict');await client.query('INSERT INTO audit.records(actor,action,entity_type,entity_id,details) VALUES($1,$2,$3,$4,$5)',[created_by||'system','task.create','task',String(row.task_id),{module_id,task_type}]);await client.query('COMMIT');return row;
+   let row=q.rows[0];const inserted=Boolean(row);if(!row&&idempotency_key){const existing=await client.query('SELECT * FROM riverdb.tasks WHERE idempotency_key=$1',[idempotency_key]);row=existing.rows[0];}
+   if(!row)throw new Error('Task insert conflict');if(inserted)await client.query('INSERT INTO audit.records(actor,action,entity_type,entity_id,details) VALUES($1,$2,$3,$4,$5)',[created_by||'system','task.create','task',String(row.task_id),{module_id,task_type}]);await client.query('COMMIT');return row;
   }catch(e){await client.query('ROLLBACK');throw e;}finally{client.release();}
  }
  async get(taskId){const r=await this.pool.query('SELECT * FROM riverdb.tasks WHERE task_id=$1',[taskId]);return r.rows[0]||null;}
