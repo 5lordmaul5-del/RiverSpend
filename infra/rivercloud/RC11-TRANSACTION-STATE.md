@@ -15,3 +15,8 @@ The queue fails closed when the lock cannot be acquired within its bounded timeo
 ### RC-28 CI evidence
 
 - Runs **#257/#258 — SUCCESS: 123/123 Node tests**, plus bootstrap, backup/restore and Python syntax, Compose and Caddy validation. The corrected commit verified the directory-sync uncertainty handling and deterministic fault-injection test.
+
+
+### RC-28 report-only CI closeout
+
+- The report-only commit `3230670d04de6620c464baefaf7f3cf18ab15fe6` was verified by **45708935211 (#259) and 45708941875 (#260) — SUCCESS: 123/123 Node tests** each, plus bootstrap, backup/restore and Python syntax, Compose configuration and Caddy validation. Code is unchanged from the verified RC-28 source commit.

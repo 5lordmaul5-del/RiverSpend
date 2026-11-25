@@ -386,3 +386,8 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 - The initial commit `199548d0cad48d1d37bc16db630a98830000c1da` failed runs #255/#256 due syntax errors from malformed newline insertion and missing option wiring. The corrected commit is the one counted as verified.
 - The fault-injection test confirms that after rename, directory-sync failure is reported as durability uncertainty, the committed state remains visible, and the lock is released. This does not establish crash durability on every filesystem.
 - Report-only commit verification remains pending.
+
+
+### RC-28 report-only CI closeout
+
+- The report-only commit `3230670d04de6620c464baefaf7f3cf18ab15fe6` was verified by **45708935211 (#259) and 45708941875 (#260) — SUCCESS: 123/123 Node tests** each, plus bootstrap, backup/restore and Python syntax, Compose configuration and Caddy validation. Code is unchanged from the verified RC-28 source commit.
