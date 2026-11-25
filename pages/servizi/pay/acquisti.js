@@ -8,7 +8,7 @@ export default function ServiceCheckout(){
  const requestKey=crypto.randomUUID().replace(/-/g,"");
  const a=await fetch("/api/pay/service-intent",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+session.access_token},body:JSON.stringify({itemCode:item,requestKey})});
  const j=await a.json();if(!a.ok)throw new Error(j.error||"Intento non creato.");
- if(j.paymentCanProceed===false)throw new Error(j.message||"Intento preparato, checkout non ancora disponibile.");
+ if(!j.intent?.id)throw new Error("Intenzione di pagamento non valida.");
  const b=await fetch("/api/pay/service-stripe-session",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+session.access_token},body:JSON.stringify({intentId:j.intent.id})});const k=await b.json();if(!b.ok||!k.url)throw new Error(k.error||"Checkout non disponibile.");
  window.location.assign(k.url);
  }catch(e){setMsg(e.message||"Errore");}finally{setBusy(false);}}
