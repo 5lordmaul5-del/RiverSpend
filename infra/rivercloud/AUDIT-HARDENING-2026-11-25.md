@@ -478,3 +478,10 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 - The test suite verifies queue item/event caps, idempotent duplicate at both caps, bounded state reads, and write-side snapshot rejection. Earlier failures #281/#282, #284 and #292 remain documented and are not counted as passing.
 - The Caddy check used a short-lived validation container only. No RiverCloud services, runner, staging host or production deployment were started.
 - The later RC-30 closeout-doc commit `5391fb79ce231dd9b5f5d9d25dc150a5b7568180` still needs its own CI verification before the latest branch head is considered verified.
+
+
+### RC-30 documentation closeout — verified
+
+- GitHub Actions **45717083964 (#302) — SUCCESS: 130/130 Node tests, 0 failures**, plus bootstrap shell, backup/restore and Python extractor syntax, Compose configuration and Caddy validation.
+- Run #302 verified report commit **`c3cb24593a76bf1dda41bc64a1d4cb0c3fbecbf9`**, including the preceding RC-30 closeout-doc commit. The source correction remains the one verified by #298.
+- No RiverCloud services or runner were started. No merge, live deployment, provisioning or spending occurred.
