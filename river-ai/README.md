@@ -96,3 +96,8 @@ The isolated local module `src/rivergit-local.js` introduces safe name validatio
 ### RiverBuild Phase 2 — build reports
 
 `src/riverbuild-report.js` creates normalized report records with UUID, project/type/status, ISO timestamps, duration, exit code, bounded stdout/stderr and bounded notes. It marks execution as verified only for a report marked passed with exit code 0; this is report logic, not proof unless a trusted runner supplies the results. Tests are written but not run.
+
+
+### RiverBuild Phase 3 — bounded in-memory queue
+
+`src/riverbuild-queue.js` adds an in-memory queue with priority ordering, queue and concurrency limits, queued-job cancellation, manual claim/finish state transitions, bounded history, and summary counts. It validates requests against the Phase 0 planner. It does not execute builds, persist queue state, or automatically claim jobs. Tests are added but not executed.
