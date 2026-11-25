@@ -1,0 +1,3 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {RiverDBTaskRepository} from '../task-repository.mjs';
+const url=process.env.RIVERDB_TEST_URL;
+test('database integration tests (opt-in)', {skip:!url}, async()=>{const db=new RiverDBTaskRepository({connectionString:url});try{const t=await db.create({task_type:'test.integration',payload:{test:true},idempotency_key:'test-'+Date.now()});assert.ok(t.task_id);const fetched=await db.get(t.task_id);assert.equal(fetched.task_type,'test.integration');const claimed=await db.claimNext();assert.ok(claimed);assert.equal(claimed.status,'running');const done=await db.transition(claimed.task_id,'succeeded','test');assert.equal(done.status,'succeeded');}finally{await db.close();}});
