@@ -291,3 +291,12 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 
 - Push/PR runs **45691902249 (#229)** and **45691912666 (#230)** reached the Node suite and failed 1 of 117 tests. The failure was in the changed-commit regression fixture: it omitted the newly mandatory `consumerIdentity`, so the test asserted the old rejection instead of exercising the binding mismatch.
 - The implementation's mandatory identity check and the process-level race test passed in those runs. Corrected the fixture to supply a distinct consumer label. The next CI result is required before declaring RC-24 verified.
+
+
+### RC-24 CI closeout — verified
+
+- Corrected the changed-commit test fixture to pass the required consumer identity label.
+- GitHub Actions run **45692018323 (#231) — SUCCESS: 117/117 tests**, plus bootstrap, backup/restore and Python syntax, Compose configuration, and Caddy validation.
+- PR run **45692028589 (#232) — SUCCESS: 117/117 tests**, with the same validation steps. Both runs verify commit `1bd4d5833f6df767b73acbe452c88626fcdb82de`.
+- The earlier runs #229/#230 failed only at the changed-commit test fixture because the call omitted the now-required consumer identity; the implementation and multi-process race tests passed. The fixture was corrected and verified by #231/#232.
+- Vercel preview checks for this branch remain rate-limited (`Deployment rate limited — retry in 24 hours`) on the `river-spend` and `riverspend-rspc` contexts. This is separate from RiverCloud CI; no production deployment was initiated.
