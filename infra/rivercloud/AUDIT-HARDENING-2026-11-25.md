@@ -168,3 +168,12 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 - GitHub Actions **run 45638333275 (run #132) — SUCCESS: 98/98 Node tests**, plus bootstrap, backup/restore/Python, Compose and Caddy validation.
 - Advisory review: CVE-2026-40575 affects OAuth2 Proxy versions before 7.15.2; CVE-2026-76835 is reported for 7.15.2 through 7.15.4. The scaffold uses v7.15.6, sets the trusted proxy IP, and has no skip-auth rules. References: https://github.com/advisories/GHSA-7x63-xv5r-3p2x and https://euvd.enisa.europa.eu/enisa/EUVD-2026-65061.
 - This was a targeted advisory/configuration review, not a full image vulnerability scan. OIDC provider login, MFA and route-level RBAC remain untested and unintegrated.
+
+
+## RC-20 follow-up — digest pin and Compose boundary regression tests (25 November 2026)
+
+- Pinned OAuth2 Proxy v7.15.6 to image digest `sha256:c3415e8660af553f5e18f5d90db050614c02493c0ac6260ac59442f6d9b12048`, replacing the floating tag-only reference. The digest was cross-checked against a public deployment manifest; this is a reference check, not a formal registry-signature verification.
+- Added `compose-security.test.mjs` regression tests: require all three Compose images to use SHA-256 digest references, verify that only Caddy publishes host ports, and reject Docker/containerd socket mounts, privileged mode, host networking, or non-placeholder secrets in the example environment.
+- These new tests are committed to the isolated branch; their CI execution is pending at the time of this report update.
+- Latest confirmed CI on the previous head `c4d4dc9690d998f63ed28f2f152f27afd356a8b0`: GitHub Actions run **45638454348 (#134) — SUCCESS: 98/98 tests**, shell/Python validation, Compose config, and Caddy validation. The Caddy validation used a temporary validation container only; the RiverCloud stack was not started.
+- Remaining security gates: official registry digest verification/scan, image SBOM/CVE analysis, OIDC integration and route-level RBAC, real runner isolation, external audit storage and staging.
