@@ -194,3 +194,12 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 
 - Run **45647177095 (#154) — SUCCESS: 101/101 tests**, shell syntax for bootstrap and backup/restore, Python extractor syntax, Compose configuration, and Caddy validation. This run verifies the RC-9 facade migration to RC-17, Compose digest pin, and the Compose security regression tests on commit `0c1e359a09c0eb09a8f723b818b7611be325095e`.
 - Caddy validation used a temporary validation container; no RiverCloud services were started. The report-only update following this run is not covered by this CI result and will be treated separately.
+
+
+## RC-17 audit replay and state-consistency guard (25 November 2026)
+
+- Audit verification now replays the permitted lifecycle transitions instead of checking only sequence/hash continuity.
+- Read-time validation cross-checks the replayed state and creation digest against the persisted lifecycle jobs; deleted audit history, mismatched job state, duplicate IDs, and illegal replay sequences return integrity failures.
+- Added regression tests for state/audit divergence, missing audit records and an illegal transition whose hash chain was recomputed, to ensure transition-policy validation is not bypassed by recomputing hashes.
+- Reconstructed temporary workspace: **16/16 lifecycle facade + RC-17 tests passed** using fetched source/test copies, not a repository checkout. GitHub CI for these new changes is pending; this is not yet a repository CI result.
+- Hash-chain integrity is still local tamper-evidence only: a privileged writer can rewrite the entire snapshot and recompute a chain. Independent protected external audit remains a blocker.
