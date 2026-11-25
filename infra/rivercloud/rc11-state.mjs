@@ -3,7 +3,8 @@ import {constants as fsConstants} from "node:fs";
 import {mkdir,rename,open,unlink,lstat} from "node:fs/promises";
 import path from "node:path";
 import {randomUUID} from "node:crypto";
-const init={schema:1,jobs:[],approvals:[],events:[]};\nasync function syncDirectoryHandle(dir){const d=await open(dir,"r");try{await d.sync();}finally{await d.close();}}
+const init={schema:1,jobs:[],approvals:[],events:[]};
+async function syncDirectoryHandle(dir){const d=await open(dir,"r");try{await d.sync();}finally{await d.close();}}
 function validateState(s){if(!s||s.schema!==1||!Array.isArray(s.jobs)||!Array.isArray(s.approvals)||!Array.isArray(s.events))throw new Error("invalid_state_schema");}
 async function unlinkOwnedLock(lock,identity){
  if(!identity)return false;
@@ -29,8 +30,8 @@ export async function readState(file){
   throw e;
  }finally{if(handle)await handle.close().catch(()=>{});}
 }
-export async function transactState(file,mutator,{lockTimeoutMs=3000}={}){
- if(!Number.isSafeInteger(lockTimeoutMs)||lockTimeoutMs<100||lockTimeoutMs>10000)throw new Error("invalid_lock_timeout");
+export async function transactState(file,mutator,{lockTimeoutMs=3000,syncDirectory=syncDirectoryHandle}={}){
+ if(!Number.isSafeInteger(lockTimeoutMs)||lockTimeoutMs<100||lockTimeoutMs>10000)throw new Error("invalid_lock_timeout");if(typeof syncDirectory!=="function")throw new Error("invalid_directory_sync");
  const dir=path.dirname(file);await mkdir(dir,{recursive:true,mode:0o700});const lock=file+".lock";let handle,lockStat;
  const start=Date.now();while(!handle){try{handle=await open(lock,"wx",0o600);lockStat=await handle.stat();await handle.writeFile(JSON.stringify({pid:process.pid,createdAt:new Date().toISOString()}));await handle.sync();}catch(e){if(handle){await unlinkOwnedLock(lock,lockStat).catch(()=>{});await handle.close().catch(()=>{});handle=null;lockStat=null;}if(e.code!=="EEXIST")throw e;if(Date.now()-start>lockTimeoutMs)throw new Error("state_lock_timeout");await new Promise(r=>setTimeout(r,25));}}
  let temp;
