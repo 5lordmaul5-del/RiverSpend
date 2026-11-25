@@ -1,4 +1,4 @@
-# RiverCloud Core — RC-1/RC-12 scaffold
+# RiverCloud Core — RC-1/RC-13 scaffold
 
 Independent hosting foundation, kept separate from production.
 
@@ -9,7 +9,7 @@ Independent hosting foundation, kept separate from production.
 - Runner boundary and fixed worker profile specification
 - RC-7 execution envelope (execution disabled)
 - RC-8 local hash-linked audit ledger prototype and approval/rollback design\n- RC-9 bounded job lifecycle and audit-event integration prototype\n- RC-10 approval-bound token prototype (fixed staging profile, commit and digest binding, expiry, one-use marking)
-- RC-11 hardened single-file transaction/lock prototype: validation, file sync, atomic replace and cleanup\n- RC-12 stale-lock recovery and event hash-chain prototype (isolated helper module; not runtime verified)
+- RC-11 hardened single-file transaction/lock prototype: validation, file sync, atomic replace and cleanup\n- RC-12 stale-lock recovery and event hash-chain prototype (isolated helper module; not runtime verified)\n- RC-13 identity claim validation and role policy prototype (deny-by-default signature verification callback; not runtime verified)
 
 ## Setup scaffold
 1. Point DNS A/AAAA records at a VPS.
@@ -31,4 +31,4 @@ The demo route is not RiverSpend hosting.
 - Added file sync, atomic rename, best-effort directory sync, temp cleanup and lock metadata.
 - Stale locks are not auto-recovered yet; target filesystem/crash testing remains required.
 
-## RC-12 notes\n- Added stale lock recovery helper with PID liveness and quarantine rename, plus hash-chain event helper. Tests authored but not runtime-verified.\n- PID-based recovery has race/PID-reuse/platform limitations and is not a distributed lock. The chain is not an independent protected audit sink.\n\n## Next\nRC-13: authentication/identity integration design and external audit sink prototype; threat-model review. Execution remains disabled.
+## RC-12 notes\n- Added stale lock recovery helper with PID liveness and quarantine rename, plus hash-chain event helper. Tests authored but not runtime-verified.\n- PID-based recovery has race/PID-reuse/platform limitations and is not a distributed lock. The chain is not an independent protected audit sink.\n\n## Next\nRC-14: external protected audit sink and threat-model review. Execution remains disabled.
