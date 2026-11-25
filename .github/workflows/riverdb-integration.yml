@@ -37,6 +37,12 @@ jobs:
         env:
           RIVERDB_MIGRATION_URL: postgresql://postgres:test-only-password@localhost:5432/riverdb_test
         run: bash ./scripts/migrate.sh
+      - name: Re-run migrations and verify idempotency
+        working-directory: infra/riverdb
+        env:
+          RIVERDB_MIGRATION_URL: postgresql://postgres:test-only-password@localhost:5432/riverdb_test
+        run: bash ./scripts/migrate.sh
+
       - name: Run integration tests
         working-directory: infra/riverdb
         env:
