@@ -114,7 +114,16 @@ jobs:
             echo 'ERROR: restore without explicit confirmation unexpectedly succeeded' >&2
             exit 1
           fi
-          echo 'Audit immutability and restore confirmation guard verified.'
+          if CONFIRM_RIVERDB_RESTORE=YES RIVERDB_URL="$RIVERDB_TEST_URL" sh infra/riverdb/scripts/restore.sh /tmp/nonexistent.dump; then
+            echo 'ERROR: restore unexpectedly accepted a missing file' >&2
+            exit 1
+          fi
+          printf 'not a postgres archive\\n' > /tmp/riverdb-invalid.dump
+          if CONFIRM_RIVERDB_RESTORE=YES RIVERDB_URL="$RIVERDB_TEST_URL" sh infra/riverdb/scripts/restore.sh /tmp/riverdb-invalid.dump; then
+            echo 'ERROR: restore unexpectedly accepted a malformed archive' >&2
+            exit 1
+          fi
+          echo 'Audit immutability, restore confirmation, missing-file and malformed-archive guards verified.'
       - name: Compose and shell checks
         run: |
           sh -n infra/riverdb/scripts/backup.sh
