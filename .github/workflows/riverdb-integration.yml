@@ -124,8 +124,15 @@ jobs:
             exit 1
           fi
           echo 'Audit immutability, restore confirmation, missing-file and malformed-archive guards verified.'
+      - name: Run RiverDB health checks
+        env:
+          RIVERDB_URL: postgresql://postgres:test-only-password@localhost:5432/riverdb_test
+        run: |
+          sh -n infra/riverdb/scripts/health-check.sh
+          sh infra/riverdb/scripts/health-check.sh
       - name: Compose and shell checks
         run: |
           sh -n infra/riverdb/scripts/backup.sh
           sh -n infra/riverdb/scripts/restore.sh
           sh -n infra/riverdb/scripts/migrate.sh
+          sh -n infra/riverdb/scripts/health-check.sh
