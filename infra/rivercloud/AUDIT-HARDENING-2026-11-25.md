@@ -345,3 +345,11 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 
 - Run #241 (**45707915332**) reached the Node suite and failed 4 tests. Failures exposed missing lifecycle-job setup in approval fixtures/process race and an RC-22 assertion still expecting `pending` after successful atomic consumption. A process-test insertion also contained a malformed newline.
 - These were test-fixture/integration errors in the increment, not reported as passed. Corrected the fixtures and expected state to `approved`; the next CI run is required before this increment is considered verified.
+
+
+### RC-26 CI closeout — verified
+
+- The initial code commit failed push/PR runs **45707915332 (#241)** and **45707923656 (#242)** with four test-fixture/integration failures. The fixtures were corrected; the failed runs are retained as evidence, not counted as passing.
+- Corrected commit **96ce2ce439a31cd453ab41862a88d1f323e5d426** was verified by GitHub Actions **45708072045 (#243) — SUCCESS: 119/119 Node tests**, and PR run **45708081331 (#244) — SUCCESS: 119/119 Node tests**. Both runs also passed bootstrap shell syntax, backup/restore and Python extractor syntax, Compose config, and Caddy validation. No RiverCloud service or runner was started.
+- Atomic approval consumption now transitions the lifecycle job to `approved` and writes the approval-used event and hash-chain transition in the same RC-11 snapshot. The six-process approval race asserts one successful consumer, five rejections, approved job state and valid audit replay.
+- The next report-only commit requires its own CI result before it is considered verified.

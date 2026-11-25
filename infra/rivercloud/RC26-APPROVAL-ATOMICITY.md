@@ -13,3 +13,8 @@ node --test infra/rivercloud/approval-bound.test.mjs infra/rivercloud/approval-p
 ```
 
 The process-race test must leave exactly one approved job, one used token, and a valid lifecycle/audit snapshot. Any failed transition must leave the token unconsumed.
+
+
+## CI closeout
+
+- GitHub Actions **run 45708072045 (#243) — SUCCESS: 119/119 Node tests** and PR run **45708081331 (#244) — SUCCESS: 119/119** verify code/test commit `96ce2ce439a31cd453ab41862a88d1f323e5d426`. Both also passed bootstrap, backup/restore and Python syntax, Compose validation, and Caddy validation. The earlier fixture-failure runs #241/#242 were corrected and retained in the report.
