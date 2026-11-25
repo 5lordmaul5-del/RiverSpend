@@ -16,6 +16,7 @@ node --test infra/rivercloud/queue.test.mjs infra/rivercloud/server.test.mjs inf
 - Run #284 also exposed that the queue-cap and state-read-cap guards had not actually been wired into the implementation: the queue cap test and oversized snapshot test failed. The report is not considered verified from that run.
 - Run #292 exposed a faulty test fixture in the new idempotent-at-cap regression: it hashed the raw request instead of the canonical validated plan. The failure is documented and the fixture was corrected by computing the digest from `validateDeployRequest(base)`.
 - The latest correction commit is `e51f7d8c8f0a3e0dfd724faaaeff36a38e08a34c`. It adds queue/event caps, bounded state reads, write-side size enforcement, and regression tests for item/event limits, duplicate-at-cap, and oversized writes.
-- Fresh CI for the correction is pending. No test is claimed as passing until a verified run is retrieved.
+- GitHub Actions run **45717007464 (#298) — SUCCESS: 130/130 Node tests, 0 failures**, plus bootstrap shell, backup/restore and Python syntax, Compose config, and Caddy validation. It verifies commit `4a08fa49caf752573a0e73789ab22644bcddebd4`, which includes the correction commit `e51f7d8c8f0a3e0dfd724faaaeff36a38e08a34c` and report updates. The Caddy check used a temporary container; no RiverCloud service or runner was started.
+- Earlier failures #281/#282, #284 and #292 remain documented and are not counted as passing.
 
 This remains a local prototype capacity guard; limits and retention must be revisited before any real deployment.
