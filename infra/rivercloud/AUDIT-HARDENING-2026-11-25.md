@@ -53,6 +53,26 @@ Inspected the control-plane and core files, including server.mjs, rc11-state.mjs
 - Local isolated workspace: **5/5** tests passed for hash-chain integrity, preservation of old/recent/active/malformed locks, and timeout without reclaiming a stale lock. This was not a repository checkout.
 - Run **45618630901** verified the updated RC-12 code and tests as part of the 78-test suite.
 
+## RC-19 follow-up — restricted archive extraction
+
+A focused review of the restore script found that checking only member paths did not adequately constrain archive entry types (for example, symbolic/hard links or special files). The restore path was changed to delegate extraction to a small Python 3 standard-library helper:
+
+- Preflight rejects absolute paths, traversal components, backslash paths, duplicate entries, file/child conflicts, symlinks, hardlinks and special entries.
+- Enforces a 100,000-entry limit and configurable aggregate uncompressed size limit (default 20 GiB).
+- Extracts regular files/directories only, using restrictive permissions and exclusive/no-follow file creation where available.
+- Uses a new target directory and removes it on extraction failure.
+- Requires Python 3 on restore host; CI now checks helper syntax and exercises rejection tests.
+- New regression tests build symlink and traversal archives and test size limits. These tests are pending CI evidence for this commit.
+
+This reduces archive-extraction risk, but does not substitute for a formal threat review, external backup storage, encryption, or restore rehearsal.
+
+## Additional control-plane audit findings
+
+- `server.mjs` uses one static bearer token, not OIDC/MFA, and no route-level RBAC enforcement. The RC-13 claims validator is a helper and is not integrated with the server.
+- The server is loopback-only and currently exposes only a plan/queue API; the runner remains disabled. Do not treat its bearer token as identity proof or expose it through a proxy.
+- RC-17 audit integrity is hash-chain integrity inside the same state file, not independent immutability. A privileged attacker able to rewrite the state file can recalculate hashes; protected external audit remains a blocker.
+- The restore archive parser is now restricted, but backup creation is still a local file snapshot and can be inconsistent while writes are active.
+
 ## Supply-chain and image review
 
 - RiverCloud source modules use Node built-ins only; no package manifest exists under `infra/rivercloud`, so a Node package audit is not applicable to this scaffold.
