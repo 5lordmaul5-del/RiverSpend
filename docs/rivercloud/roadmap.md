@@ -7,7 +7,7 @@ Docker Compose, proxy and bootstrap.
 Caddy routing to an example service, automatic TLS for configured domain.
 
 ## RC-3 — Secure deployment pipeline
-Security requirements and policy-only engine prototype delivered: allowlist validation, immutable SHA checks and plan digest. Authenticated triggers, webhook verification, queue, isolated builds, audit logs, health checks and rollback remain pending.
+Security requirements, policy validator and loopback-only local queue API prototype delivered. Queue persistence exists; runner, webhook, isolated builds, audit logs, health checks and rollback remain pending.
 
 ## RC-4 — RiverCloud Panel
 Static panel scaffold delivered; authenticated control plane, API, deployment actions and real metrics remain unimplemented.
