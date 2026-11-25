@@ -69,7 +69,7 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 ### CI regression and correction evidence
 - PR workflow run **45620539532 — FAILURE**: 77/81 tests passed; the 4 restore-related tests failed because the Python helper contained a syntax error in the backslash-path validation. The logs confirmed that the failure occurred before the restore logic executed.
 - Corrected the validation block on the branch (head **4c470295cd598bb82a367cb40c2c3b0e52dc0f4d**). The exact fetched helper was syntax-checked and the reconstructed restore suite passed **6/6** locally in an isolated temporary workspace.
-- A subsequent GitHub Actions result for the corrected branch head has not yet been independently retrieved. Do not count the correction as repository CI passing until that evidence is available.
+- Corrected branch CI **run 45621031596 — SUCCESS: 81/81 Node tests**, plus bootstrap shell, backup/restore shell and Python syntax, Compose configuration, and Caddy validation. This verified the branch head at the time; no RiverCloud service was started.
 
 ## Additional control-plane audit findings
 
