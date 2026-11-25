@@ -1,13 +1,13 @@
-# Task Queue & Dispatcher — MVP
+# Task Queue & Dispatcher
+The queue uses a durable local JSON snapshot and append-only JSONL audit log.
+- Snapshot replacement uses atomic rename.
+- Duplicate task IDs are rejected.
+- Status transitions are validated and audited.
+- **Single process only:** concurrent process coordination is not implemented.
+- Dispatcher is advisory. No agent execution or deployment.
 
-This layer adds an ephemeral in-memory queue and a dispatcher preview.
-- Queue stores tasks only in process memory (restart loses them).
-- Duplicate IDs are rejected; basic status transitions are validated.
-- Dispatcher returns advisory assignments requiring human approval.
-- No agent execution, shell, external network, secrets, financial activity or production changes.
+Instantiate `new TaskQueue('/absolute/path/to/private/storage')`. Keep storage outside the repository and restrict host access.
 
-Tests:
-```bash
-node --test infra/fulcron/powertron/*.test.mjs
-```
-Next: durable storage, stricter transition graph, audit records, permissions and integration tests.
+Tests: `node --test infra/fulcron/powertron/*.test.mjs`
+
+Before multi-user production: transactional storage/locking, authentication, authorization, backup/restore, audit integrity and worker isolation.
