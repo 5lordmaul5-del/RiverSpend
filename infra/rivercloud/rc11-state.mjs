@@ -1,10 +1,26 @@
 // RC-11 hardened transactional single-file state prototype. No deployment execution.
-import {mkdir,readFile,writeFile,rename,open,unlink} from "node:fs/promises";
+import {constants as fsConstants} from "node:fs";
+import {mkdir,writeFile,rename,open,unlink} from "node:fs/promises";
 import path from "node:path";
 import {randomUUID} from "node:crypto";
 const init={schema:1,jobs:[],approvals:[],events:[]};
 function validateState(s){if(!s||s.schema!==1||!Array.isArray(s.jobs)||!Array.isArray(s.approvals)||!Array.isArray(s.events))throw new Error("invalid_state_schema");}
-export async function readState(file){try{const s=JSON.parse(await readFile(file,"utf8"));validateState(s);return s;}catch(e){if(e.code==="ENOENT")return structuredClone(init);throw e;}}
+export async function readState(file){
+ let handle;
+ try{
+  if(typeof fsConstants.O_NOFOLLOW!=="number"||typeof fsConstants.O_NONBLOCK!=="number")throw new Error("state_file_safe_open_unavailable");
+  handle=await open(file,fsConstants.O_RDONLY|fsConstants.O_NOFOLLOW|fsConstants.O_NONBLOCK);
+  const stat=await handle.stat();
+  if(!stat.isFile())throw new Error("state_file_not_regular");
+  const s=JSON.parse(await handle.readFile("utf8"));
+  validateState(s);
+  return s;
+ }catch(e){
+  if(e.code==="ENOENT")return structuredClone(init);
+  if(e.code==="ELOOP")throw new Error("state_file_symlink_rejected");
+  throw e;
+ }finally{if(handle)await handle.close().catch(()=>{});}
+}
 export async function transactState(file,mutator,{lockTimeoutMs=3000}={}){
  if(!Number.isSafeInteger(lockTimeoutMs)||lockTimeoutMs<100||lockTimeoutMs>10000)throw new Error("invalid_lock_timeout");
  const dir=path.dirname(file);await mkdir(dir,{recursive:true,mode:0o700});const lock=file+".lock";let handle;
