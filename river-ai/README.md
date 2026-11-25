@@ -101,3 +101,8 @@ The isolated local module `src/rivergit-local.js` introduces safe name validatio
 ### RiverBuild Phase 3 — bounded in-memory queue
 
 `src/riverbuild-queue.js` adds an in-memory queue with priority ordering, queue and concurrency limits, queued-job cancellation, manual claim/finish state transitions, bounded history, and summary counts. It validates requests against the Phase 0 planner. It does not execute builds, persist queue state, or automatically claim jobs. Tests are added but not executed.
+
+
+### RiverBuild Phase 4 — explicit approval gate
+
+Queue jobs now start unapproved. A job must be explicitly approved before `claimNext()` can return it for a worker. This is an in-memory workflow guard, not authentication or an execution authorization boundary. It does not start builds or persist approvals. Tests updated but not executed.
