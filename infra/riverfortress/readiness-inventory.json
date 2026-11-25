@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "system": "RiverFortress",
+  "generated": "manual-baseline-2026-11-25",
+  "controls": [
+    {"id":"F0","name":"Foundation","status":"contract","evidence":[]},
+    {"id":"F1","name":"Policy & Identity","status":"contract","evidence":[]},
+    {"id":"F2","name":"RiverVault","status":"prototype-or-contract","evidence":[]},
+    {"id":"F3","name":"Sentinel","status":"prototype-or-contract","evidence":[]},
+    {"id":"F4","name":"ShieldWall","status":"prototype-or-contract","evidence":[]},
+    {"id":"F5","name":"Recovery & Resilience","status":"prototype-or-contract","evidence":[]},
+    {"id":"F6","name":"IntegrityGuard","status":"contract","evidence":[]},
+    {"id":"F7","name":"CommandCore","status":"contract","evidence":[]},
+    {"id":"F8","name":"Defense & Response","status":"contract","evidence":[]},
+    {"id":"F9","name":"Intelligence & Risk Engine","status":"contract","evidence":[]},
+    {"id":"F10","name":"Continuity & Mission Assurance","status":"contract","evidence":[]},
+    {"id":"F11","name":"Governance, Compliance & Assurance","status":"contract","evidence":[]}
+  ],
+  "statusDefinitions": {
+    "contract":"Architecture, policy or documentation only; not proof of operational behavior.",
+    "prototype-or-contract":"Some prototype code may exist; no verified operational evidence is attached.",
+    "ci-tested":"Tests have run successfully on the exact recorded commit.",
+    "operationally-verified":"Independent operational test evidence is recorded."
+  }
+}
