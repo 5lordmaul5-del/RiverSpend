@@ -13,12 +13,15 @@ services:
       - caddy_data:/data
       - caddy_config:/config
     networks: [rivercloud]
-  rivercloud-watch:
-    image: alpine:3.20
+    depends_on: [rivercloud-demo]
+  rivercloud-demo:
+    image: traefik/whoami:v1.11
     restart: unless-stopped
-    command: ["sh","-c","while true; do date -u; sleep 60; done"]
+    command: ["--port=8080"]
+    expose:
+      - "8080"
     networks: [rivercloud]
-    # Placeholder health/monitoring container. Replace with dedicated metrics stack in a later milestone.
+    # Example app only; replace with app services when configuring deployments.
 networks:
   rivercloud:
     name: rivercloud
