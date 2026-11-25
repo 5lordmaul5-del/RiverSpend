@@ -9,7 +9,7 @@ Independent hosting foundation, kept separate from production.
 - Runner boundary and fixed worker profile specification
 - RC-7 execution envelope (execution disabled)
 - RC-8 local hash-linked audit ledger prototype and approval/rollback design\n- RC-9 bounded job lifecycle and audit-event integration prototype\n- RC-10 approval-bound token prototype (fixed staging profile, commit and digest binding, expiry, one-use marking)
-- RC-11 single-file transaction/lock prototype for queue, lifecycle and approval-use state
+- RC-11 hardened single-file transaction/lock prototype: validation, file sync, atomic replace and cleanup
 
 ## Setup scaffold
 1. Point DNS A/AAAA records at a VPS.
@@ -25,6 +25,11 @@ The demo route is not RiverSpend hosting.
 - Approval, webhook, external audit sink, build, health-check integration and rollback are designs, not implemented.
 - Do not commit secrets or expose a Docker socket/public arbitrary-command endpoint.
 - Prototype tests have not been run in the target environment.
+
+## RC-11 hardening notes
+- Added validation for job and approval input and malformed state.
+- Added file sync, atomic rename, best-effort directory sync, temp cleanup and lock metadata.
+- Stale locks are not auto-recovered yet; target filesystem/crash testing remains required.
 
 ## Next
 RC-12: authenticated approver identity, crash-durability/stale-lock recovery, external protected audit sink and security review before any execution.
