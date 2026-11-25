@@ -16,7 +16,7 @@ export async function issueApproval({ storeDir, binding, secret, ttlMs = 300000,
   if (!valid(binding) || typeof secret !== "string" || secret.length < 32 || typeof approver !== "string" || !approver.trim() || approver.length > 100 || !Number.isSafeInteger(ttlMs) || ttlMs < 1000 || ttlMs > 3600000) throw new Error("invalid_approval_request");
   const normalized = normalize(binding), expiresAt = Date.now() + ttlMs, nonce = randomBytes(32).toString("hex");
   const token = signature(secret, approvalPayload(normalized, expiresAt, nonce));
-  await storeApproval(path.join(storeDir, "state.json"), { tokenId: tokenId(token), jobId: normalized.jobId, binding: normalized, expiresAt, nonce, approver });
+  await storeApproval(path.join(storeDir, "lifecycle.json"), { tokenId: tokenId(token), jobId: normalized.jobId, binding: normalized, expiresAt, nonce, approver });
   return { token, expiresAt, binding: normalized, approver };
 }
 
@@ -25,7 +25,7 @@ export async function consumeApproval({ storeDir, binding, secret, token, consum
   if (typeof consumerIdentity !== "string" || !consumerIdentity.trim() || consumerIdentity.length > 100) throw new Error("consumer_identity_required");
   const normalized = normalize(binding), id = tokenId(token);
   let actorLabel;
-  await consumeStoredApproval(path.join(storeDir, "state.json"), id, record => {
+  await consumeStoredApproval(path.join(storeDir, "lifecycle.json"), id, record => {
     if (canonical(record.binding) !== canonical(normalized)) return false;
     if (record.approver === consumerIdentity) throw new Error("self_approval_not_allowed");
     const expected = signature(secret, approvalPayload(record.binding, record.expiresAt, record.nonce));

@@ -13,3 +13,7 @@ The prototype now uses a 32-byte cryptographically random nonce, HMAC-SHA256 bin
 ## RC-24 consumer identity requirement
 
 Direct prototype consumption now requires a non-empty `consumerIdentity` label and rejects a label equal to the stored approver. The legacy label is still caller-supplied and unverified; it is not a substitute for authenticated RC-22/OIDC integration.
+
+## RC-25 approval-store location
+
+Identity-bound approvals now share `lifecycle.json` with the RC-17 lifecycle/audit snapshot. This co-locates the approval record and job/audit state in one transactional file. Consumption and the subsequent lifecycle transition are still separate transactions; the job may remain pending after its approval is consumed. No runner is connected.

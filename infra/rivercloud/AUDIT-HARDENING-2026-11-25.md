@@ -300,3 +300,12 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 - PR run **45692028589 (#232) — SUCCESS: 117/117 tests**, with the same validation steps. Both runs verify commit `1bd4d5833f6df767b73acbe452c88626fcdb82de`.
 - The earlier runs #229/#230 failed only at the changed-commit test fixture because the call omitted the now-required consumer identity; the implementation and multi-process race tests passed. The fixture was corrected and verified by #231/#232.
 - Vercel preview checks for this branch remain rate-limited (`Deployment rate limited — retry in 24 hours`) on the `river-spend` and `riverspend-rspc` contexts. This is separate from RiverCloud CI; no production deployment was initiated.
+
+
+## RC-25 — co-locate approval and lifecycle state (25 November 2026)
+
+- Audited the RC-22 helper and RC-9/RC-17 facade. Approvals were stored in `state.json`, while lifecycle jobs and their hash-chain were in `lifecycle.json`, creating a separate-file boundary between approval and lifecycle records.
+- Moved the approval-bound store path to `lifecycle.json` so approval records/events and RC-17 jobs/audit are co-located within the same RC-11 transaction snapshot.
+- Updated the six-process approval race and RC-22 identity tests. The RC-22 regression now creates a lifecycle job, consumes its approval, and verifies the approval-used event and lifecycle/audit record in the same snapshot.
+- **Remaining atomicity gap:** consuming the approval and transitioning the lifecycle job still occur in separate transactions. The test confirms the job remains pending after the approval is consumed; a future RC increment must implement a single transaction for consume + approved-state transition before execution is possible.
+- RC-25 changes are awaiting fresh GitHub Actions verification. No services or runner were started.

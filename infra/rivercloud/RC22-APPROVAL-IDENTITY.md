@@ -16,3 +16,8 @@ node --test infra/rivercloud/rc22-approval-identity.test.mjs
 ```
 
 This is a helper/test increment only. It is not a real OIDC provider integration or a production authorization boundary.
+
+
+## RC-25 storage co-location
+
+Approval storage now uses `lifecycle.json`, the same RC-11 snapshot file used by the RC-17 lifecycle jobs and audit records. Regression tests confirm that the approval-used event and lifecycle job/audit record are visible in the same snapshot. The approval consume operation and job-state transition are still separate transactions, so this does not yet provide an atomic approve-and-transition operation. The runner remains disabled.

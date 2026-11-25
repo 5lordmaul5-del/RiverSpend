@@ -33,7 +33,7 @@ test("separate processes race one approval and only one consumes it", async () =
     const runs = await Promise.all(Array.from({ length: 6 }, () => child(code, args)));
     assert.equal(runs.filter(r => r.status === 0).length, 1, runs.map(r => r.err).join("\\n"));
     assert.equal(runs.filter(r => r.status === 2).length, 5);
-    const state = await readState(path.join(root, "state.json"));
+    const state = await readState(path.join(root, "lifecycle.json"));
     assert.equal(state.approvals.length, 1);
     assert.equal(state.approvals[0].used, true);
     assert.equal(state.events.filter(e => e.event === "approval_consumed").length, 1);
