@@ -1,0 +1,24 @@
+services:
+  riverdb:
+    image: postgres:17.6
+    container_name: riverdb-local
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-riverdb}
+      POSTGRES_USER: ${POSTGRES_USER:-riverdb_admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in infra/riverdb/.env}
+    ports:
+      - "127.0.0.1:55432:5432"
+    volumes:
+      - riverdb_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-riverdb_admin} -d ${POSTGRES_DB:-riverdb}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    security_opt:
+      - no-new-privileges:true
+
+volumes:
+  riverdb_data:
