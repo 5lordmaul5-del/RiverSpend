@@ -1,0 +1,24 @@
+{
+  "version": "20.0-foundation",
+  "description": "Role registry only; roles are activated on demand, not separate daemons.",
+  "roles": [
+    {"id":"architect","name":"Architect","domain":"system-design","enabled":true},
+    {"id":"developer","name":"Developer","domain":"coding","enabled":true},
+    {"id":"reviewer","name":"Code Reviewer","domain":"quality","enabled":true},
+    {"id":"security","name":"Security Specialist","domain":"security","enabled":true},
+    {"id":"database","name":"Database Specialist","domain":"data","enabled":true},
+    {"id":"tester","name":"Test Engineer","domain":"testing","enabled":true},
+    {"id":"documentation","name":"Documentation Specialist","domain":"docs","enabled":true},
+    {"id":"recovery","name":"Recovery Specialist","domain":"recovery","enabled":true},
+    {"id":"operations","name":"Operations Specialist","domain":"operations","enabled":true},
+    {"id":"research","name":"Research Specialist","domain":"research","enabled":true}
+  ],
+  "policy": {
+    "shell_execution": "disabled",
+    "deployment": "disabled",
+    "external_network_tools": "disabled",
+    "secret_access": "disabled",
+    "financial_actions": "disabled",
+    "production_mutations": "disabled"
+  }
+}

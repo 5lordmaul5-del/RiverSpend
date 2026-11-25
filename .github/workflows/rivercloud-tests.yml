@@ -1,0 +1,33 @@
+name: RiverCloud isolated tests
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "infra/rivercloud/**"
+      - ".github/workflows/rivercloud-tests.yml"
+  push:
+    branches:
+      - "feat/rivercloud-core-2026-11-25"
+    paths:
+      - "infra/rivercloud/**"
+      - ".github/workflows/rivercloud-tests.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  rivercloud-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Run RiverCloud Node tests
+        run: node --test infra/rivercloud/*.test.mjs
+      - name: Validate bootstrap shell syntax
+        run: sh -n infra/rivercloud/bootstrap.sh
+      - name: Validate Compose configuration without starting services
+        run: docker compose -f infra/rivercloud/docker-compose.yml --env-file infra/rivercloud/.env.example config

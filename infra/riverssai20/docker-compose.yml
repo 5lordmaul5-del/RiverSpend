@@ -1,0 +1,16 @@
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: riverssai20-ollama
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:11434:11434"
+    volumes:
+      - riverssai20_models:/root/.ollama
+    environment:
+      OLLAMA_HOST: 0.0.0.0:11434
+    security_opt:
+      - no-new-privileges:true
+
+volumes:
+  riverssai20_models:

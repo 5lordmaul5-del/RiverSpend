@@ -1,0 +1,4 @@
+// RC-16 readiness helpers; these are checklist gates, not live infra checks.
+const REQUIRED=Object.freeze(["unit_tests","security_review","backup_plan","restore_test","secrets_review","dependency_review","resource_limits","monitoring","incident_plan"]);
+export function assessReadiness(items={}){const missing=REQUIRED.filter(k=>items[k]!==true);return {schema:"rivercloud.readiness.v1",required:[...REQUIRED],missing,ready:missing.length===0,productionEligible:false};}
+export function backupPlanChecklist(){return Object.freeze(["Encrypted backups","Separate backup credentials","Retention policy documented","Backup integrity checks","Restore into isolated environment","Document recovery point objective (RPO)","Document recovery time objective (RTO)","Restore test evidence and owner","Monitoring and failure alerting","No secrets stored in repository"]);}

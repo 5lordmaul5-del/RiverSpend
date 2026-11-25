@@ -1,0 +1,6 @@
+# RC-2: replace the placeholder domain in .env and DNS must point to this VPS.
+# Caddy will provision HTTPS automatically for a real domain.
+{$RIVERCLOUD_DOMAIN} {
+  encode gzip
+  reverse_proxy rivercloud-demo:8080
+}
