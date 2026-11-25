@@ -1,0 +1,138 @@
+name: RiverDB Integration
+on:
+  pull_request:
+    paths:
+      - 'infra/riverdb/**'
+      - '.github/workflows/riverdb-integration.yml'
+  push:
+    branches: [feat/riverdb-core-2026-11-25]
+    paths:
+      - 'infra/riverdb/**'
+      - '.github/workflows/riverdb-integration.yml'
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: riverdb_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: test-only-password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d riverdb_test"
+          --health-interval 10s --health-timeout 5s --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install
+        working-directory: infra/riverdb
+        run: npm install
+      - name: Apply migrations
+        working-directory: infra/riverdb
+        env:
+          RIVERDB_MIGRATION_URL: postgresql://postgres:test-only-password@localhost:5432/riverdb_test
+        run: bash ./scripts/migrate.sh
+      - name: Re-run migrations and verify idempotency
+        working-directory: infra/riverdb
+        env:
+          RIVERDB_MIGRATION_URL: postgresql://postgres:test-only-password@localhost:5432/riverdb_test
+        run: bash ./scripts/migrate.sh
+
+      - name: Verify checksum tampering is rejected
+        working-directory: infra/riverdb
+        env:
+          RIVERDB_MIGRATION_URL: postgresql://postgres:test-only-password@localhost:5432/riverdb_test
+        run: |
+          set -eu
+          FILE=./migrations/001_core.sql
+          cp "$FILE" /tmp/riverdb-001-core-original.sql
+          trap 'cp /tmp/riverdb-001-core-original.sql "$FILE"' EXIT
+          printf '\\n-- tamper probe (CI only)\\n' >> "$FILE"
+          if bash ./scripts/migrate.sh; then
+            echo 'ERROR: checksum tampering was not rejected' >&2
+            exit 1
+          fi
+          echo 'Checksum tampering correctly rejected.'
+      - name: Verify concurrent migration invocations serialize
+        working-directory: infra/riverdb
+        run: |
+          set -eu
+          psql "postgresql://postgres:test-only-password@localhost:5432/postgres" -v ON_ERROR_STOP=1 -c "DROP DATABASE IF EXISTS riverdb_race_test;"
+          psql "postgresql://postgres:test-only-password@localhost:5432/postgres" -v ON_ERROR_STOP=1 -c "CREATE DATABASE riverdb_race_test;"
+          export RIVERDB_MIGRATION_URL=postgresql://postgres:test-only-password@localhost:5432/riverdb_race_test
+          bash ./scripts/migrate.sh & P1=$!
+          bash ./scripts/migrate.sh & P2=$!
+          wait "$P1"
+          wait "$P2"
+          test "$(psql "$RIVERDB_MIGRATION_URL" -tAc "SELECT count(*) FROM riverdb.schema_migrations")" -eq 2
+          echo 'Concurrent migration runs serialized and ledger verified.'
+      - name: Run integration tests
+        working-directory: infra/riverdb
+        env:
+          RIVERDB_TEST_URL: postgresql://postgres:test-only-password@localhost:5432/riverdb_test
+        run: npm test
+      - name: Backup and restore verification (isolated CI database)
+        env:
+          RIVERDB_TEST_URL: postgresql://postgres:test-only-password@localhost:5432/riverdb_test
+        run: |
+          set -eu
+          export PGPASSWORD=test-only-password
+          pg_dump --format=custom --no-owner --no-acl "$RIVERDB_TEST_URL" > /tmp/riverdb-ci.dump
+          psql "postgresql://postgres:test-only-password@localhost:5432/postgres" -v ON_ERROR_STOP=1 -c "DROP DATABASE IF EXISTS riverdb_restore_test;"
+          psql "postgresql://postgres:test-only-password@localhost:5432/postgres" -v ON_ERROR_STOP=1 -c "CREATE DATABASE riverdb_restore_test;"
+          pg_restore --no-owner --no-acl --dbname "postgresql://postgres:test-only-password@localhost:5432/riverdb_restore_test" /tmp/riverdb-ci.dump
+          test "$(psql "postgresql://postgres:test-only-password@localhost:5432/riverdb_restore_test" -tAc "SELECT count(*) FROM riverdb.modules")" -ge 3
+          test "$(psql "postgresql://postgres:test-only-password@localhost:5432/riverdb_restore_test" -tAc "SELECT count(*) FROM riverdb.tasks")" -ge 1
+          echo "Backup/restore drill verified: modules and task data restored."
+      - name: Validate runtime permissions
+        env:
+          RIVERDB_MIGRATION_URL: postgresql://postgres:test-only-password@localhost:5432/riverdb_test
+          RIVERDB_RUNTIME_TEST_URL: postgresql://riverdb_runtime:riverdb-ci-only-password@localhost:5432/riverdb_test
+        run: |
+          psql "$RIVERDB_MIGRATION_URL" -v ON_ERROR_STOP=1 -c "ALTER ROLE riverdb_runtime WITH PASSWORD 'riverdb-ci-only-password';"
+          node infra/riverdb/tests/runtime-permissions.test.mjs
+      - name: Verify audit records are immutable and restore requires confirmation
+        env:
+          RIVERDB_TEST_URL: postgresql://postgres:test-only-password@localhost:5432/riverdb_test
+        run: |
+          set -eu
+          psql "$RIVERDB_TEST_URL" -v ON_ERROR_STOP=1 -c "INSERT INTO audit.records(actor,action) VALUES ('ci-probe','immutability-test');"
+          if psql "$RIVERDB_TEST_URL" -v ON_ERROR_STOP=1 -c "UPDATE audit.records SET action='tampered' WHERE actor='ci-probe' AND action='immutability-test';"; then
+            echo 'ERROR: audit update unexpectedly succeeded' >&2
+            exit 1
+          fi
+          if psql "$RIVERDB_TEST_URL" -v ON_ERROR_STOP=1 -c "DELETE FROM audit.records WHERE actor='ci-probe';"; then
+            echo 'ERROR: audit delete unexpectedly succeeded' >&2
+            exit 1
+          fi
+          if RIVERDB_URL="$RIVERDB_TEST_URL" sh infra/riverdb/scripts/restore.sh /tmp/nonexistent.dump; then
+            echo 'ERROR: restore without explicit confirmation unexpectedly succeeded' >&2
+            exit 1
+          fi
+          if CONFIRM_RIVERDB_RESTORE=YES RIVERDB_URL="$RIVERDB_TEST_URL" sh infra/riverdb/scripts/restore.sh /tmp/nonexistent.dump; then
+            echo 'ERROR: restore unexpectedly accepted a missing file' >&2
+            exit 1
+          fi
+          printf 'not a postgres archive\\n' > /tmp/riverdb-invalid.dump
+          if CONFIRM_RIVERDB_RESTORE=YES RIVERDB_URL="$RIVERDB_TEST_URL" sh infra/riverdb/scripts/restore.sh /tmp/riverdb-invalid.dump; then
+            echo 'ERROR: restore unexpectedly accepted a malformed archive' >&2
+            exit 1
+          fi
+          echo 'Audit immutability, restore confirmation, missing-file and malformed-archive guards verified.'
+      - name: Run RiverDB health checks
+        env:
+          RIVERDB_URL: postgresql://postgres:test-only-password@localhost:5432/riverdb_test
+        run: |
+          sh -n infra/riverdb/scripts/health-check.sh
+          sh infra/riverdb/scripts/health-check.sh
+      - name: Compose and shell checks
+        run: |
+          sh -n infra/riverdb/scripts/backup.sh
+          sh -n infra/riverdb/scripts/restore.sh
+          sh -n infra/riverdb/scripts/migrate.sh
+          sh -n infra/riverdb/scripts/health-check.sh
