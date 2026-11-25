@@ -10,5 +10,4 @@
 ## Integration check
 Set `RIVERDB_TEST_URL` to an isolated test DB after migrations and modules seed, then `npm test`. The opt-in test creates a task, reads it, claims it transactionally and completes it. Never point this test at production.
 
-## Limitations
-The migration runner is not yet a versioned/locked migration framework; baseline scripts are idempotent but checksum enforcement and concurrent migration locks need further implementation. Runtime permissions must be validated on a freshly provisioned database. Backup restore testing, retention, remote storage, TLS and monitoring are not complete.
+## Migration safety\n- Migration files are tracked by version and SHA-256 checksum. Re-running the runner skips a migration only when its checksum matches the recorded checksum.\n- A changed file already recorded in the ledger stops the runner; create a new migration instead of editing an applied migration.\n- A PostgreSQL advisory lock serializes migration execution.\n- Keep migration files immutable after application and test against an isolated database first.\n\n## Limitations\nBackup retention, remote storage, TLS, monitoring and production recovery procedures are not complete. Runtime permissions must be validated on a freshly provisioned database. Backup restore testing, retention, remote storage, TLS and monitoring are not complete.
