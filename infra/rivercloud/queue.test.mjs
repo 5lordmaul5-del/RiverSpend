@@ -5,7 +5,7 @@ import os from "node:os";
 import path from "node:path";
 import { queuePlan, listQueue } from "./queue.mjs";
 import { readState, transactState } from "./rc11-state.mjs";
-import { planDigest } from "./engine.mjs";
+import { planDigest, validateDeployRequest } from "./engine.mjs";
 
 const base = { projectId: "riverspend", branch: "main", target: "staging", commit: "a".repeat(40) };
 
@@ -61,7 +61,7 @@ test("queue fails closed at the configured event cap", async () => {
 test("idempotent retry remains accepted when both queue and event caps are reached", async () => {
   const root = await mkdtemp(path.join(os.tmpdir(), "rcq-idempotent-cap-"));
   try {
-    const file = path.join(root, "state.json"), digest = planDigest(base);
+    const file = path.join(root, "state.json"), digest = planDigest(validateDeployRequest(base));
     await transactState(file, state => {
       state.jobs = Array.from({ length: 5000 }, (_, i) => ({ id: "cap-" + i, digest: i === 0 ? digest : "cap-" + i }));
       state.events = Array.from({ length: 10000 }, (_, i) => ({ event: "cap-" + i }));
