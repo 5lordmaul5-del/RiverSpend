@@ -1,0 +1,725 @@
+{
+  "name": "PowerTron",
+  "version": "0.1.0",
+  "mode": "registry-only",
+  "agent_count": 101,
+  "activation": "on-demand",
+  "roles": [
+    {
+      "id": "architect",
+      "group": "core",
+      "description": "On-demand architect specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "planner",
+      "group": "core",
+      "description": "On-demand planner specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "coordinator",
+      "group": "core",
+      "description": "On-demand coordinator specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "dispatcher",
+      "group": "core",
+      "description": "On-demand dispatcher specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "workflow",
+      "group": "core",
+      "description": "On-demand workflow specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "scheduler",
+      "group": "core",
+      "description": "On-demand scheduler specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "task-manager",
+      "group": "core",
+      "description": "On-demand task-manager specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "quality-gate",
+      "group": "core",
+      "description": "On-demand quality-gate specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "decision-support",
+      "group": "core",
+      "description": "On-demand decision-support specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "incident-manager",
+      "group": "core",
+      "description": "On-demand incident-manager specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "frontend",
+      "group": "engineering",
+      "description": "On-demand frontend specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "backend",
+      "group": "engineering",
+      "description": "On-demand backend specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "mobile",
+      "group": "engineering",
+      "description": "On-demand mobile specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "api",
+      "group": "engineering",
+      "description": "On-demand api specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "integration",
+      "group": "engineering",
+      "description": "On-demand integration specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "devops",
+      "group": "engineering",
+      "description": "On-demand devops specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "build",
+      "group": "engineering",
+      "description": "On-demand build specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "release",
+      "group": "engineering",
+      "description": "On-demand release specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "code-review",
+      "group": "engineering",
+      "description": "On-demand code-review specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "refactoring",
+      "group": "engineering",
+      "description": "On-demand refactoring specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "security-audit",
+      "group": "security",
+      "description": "On-demand security-audit specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "threat-model",
+      "group": "security",
+      "description": "On-demand threat-model specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "privacy",
+      "group": "security",
+      "description": "On-demand privacy specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "permissions",
+      "group": "security",
+      "description": "On-demand permissions specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "authentication",
+      "group": "security",
+      "description": "On-demand authentication specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "authorization",
+      "group": "security",
+      "description": "On-demand authorization specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "secrets-review",
+      "group": "security",
+      "description": "On-demand secrets-review specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "dependency-audit",
+      "group": "security",
+      "description": "On-demand dependency-audit specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "compliance",
+      "group": "security",
+      "description": "On-demand compliance specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "fraud-risk",
+      "group": "security",
+      "description": "On-demand fraud-risk specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "database",
+      "group": "data",
+      "description": "On-demand database specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "schema",
+      "group": "data",
+      "description": "On-demand schema specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "migration",
+      "group": "data",
+      "description": "On-demand migration specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "data-quality",
+      "group": "data",
+      "description": "On-demand data-quality specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "analytics",
+      "group": "data",
+      "description": "On-demand analytics specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "reporting",
+      "group": "data",
+      "description": "On-demand reporting specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "search",
+      "group": "data",
+      "description": "On-demand search specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "indexing",
+      "group": "data",
+      "description": "On-demand indexing specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "backup",
+      "group": "data",
+      "description": "On-demand backup specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "recovery",
+      "group": "data",
+      "description": "On-demand recovery specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "marketplace",
+      "group": "market",
+      "description": "On-demand marketplace specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "catalog",
+      "group": "market",
+      "description": "On-demand catalog specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "product-listing",
+      "group": "market",
+      "description": "On-demand product-listing specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "seller-onboarding",
+      "group": "market",
+      "description": "On-demand seller-onboarding specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "buyer-support",
+      "group": "market",
+      "description": "On-demand buyer-support specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "offers",
+      "group": "market",
+      "description": "On-demand offers specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "wishlist",
+      "group": "market",
+      "description": "On-demand wishlist specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "cart-checkout",
+      "group": "market",
+      "description": "On-demand cart-checkout specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "reviews",
+      "group": "market",
+      "description": "On-demand reviews specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "moderation",
+      "group": "market",
+      "description": "On-demand moderation specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "payments-architect",
+      "group": "payments",
+      "description": "On-demand payments-architect specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "payment-integrations",
+      "group": "payments",
+      "description": "On-demand payment-integrations specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "reconciliation",
+      "group": "payments",
+      "description": "On-demand reconciliation specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "ledger-review",
+      "group": "payments",
+      "description": "On-demand ledger-review specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "payment-risk",
+      "group": "payments",
+      "description": "On-demand payment-risk specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "refunds",
+      "group": "payments",
+      "description": "On-demand refunds specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "tax-compliance",
+      "group": "payments",
+      "description": "On-demand tax-compliance specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "finance-ops",
+      "group": "payments",
+      "description": "On-demand finance-ops specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "pricing",
+      "group": "payments",
+      "description": "On-demand pricing specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "billing",
+      "group": "payments",
+      "description": "On-demand billing specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "logistics",
+      "group": "logistics",
+      "description": "On-demand logistics specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "shipping",
+      "group": "logistics",
+      "description": "On-demand shipping specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "tracking",
+      "group": "logistics",
+      "description": "On-demand tracking specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "warehouse",
+      "group": "logistics",
+      "description": "On-demand warehouse specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "returns",
+      "group": "logistics",
+      "description": "On-demand returns specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "delivery-optimization",
+      "group": "logistics",
+      "description": "On-demand delivery-optimization specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "supplier",
+      "group": "logistics",
+      "description": "On-demand supplier specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "supply-chain-traceability",
+      "group": "logistics",
+      "description": "On-demand supply-chain-traceability specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "inventory",
+      "group": "logistics",
+      "description": "On-demand inventory specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "local-services",
+      "group": "logistics",
+      "description": "On-demand local-services specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "customer-care",
+      "group": "logistics",
+      "description": "On-demand customer-care specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "signals-messaging",
+      "group": "media",
+      "description": "On-demand signals-messaging specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "streaming",
+      "group": "media",
+      "description": "On-demand streaming specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "video",
+      "group": "media",
+      "description": "On-demand video specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "audio",
+      "group": "media",
+      "description": "On-demand audio specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "content",
+      "group": "media",
+      "description": "On-demand content specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "media-moderation",
+      "group": "media",
+      "description": "On-demand media-moderation specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "games",
+      "group": "media",
+      "description": "On-demand games specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "events",
+      "group": "media",
+      "description": "On-demand events specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "education",
+      "group": "media",
+      "description": "On-demand education specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "encyclopedia",
+      "group": "media",
+      "description": "On-demand encyclopedia specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "marketing",
+      "group": "growth",
+      "description": "On-demand marketing specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "sponsorship",
+      "group": "growth",
+      "description": "On-demand sponsorship specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "advertising",
+      "group": "growth",
+      "description": "On-demand advertising specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "loyalty",
+      "group": "growth",
+      "description": "On-demand loyalty specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "seo",
+      "group": "growth",
+      "description": "On-demand seo specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "community",
+      "group": "growth",
+      "description": "On-demand community specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "local-discovery",
+      "group": "growth",
+      "description": "On-demand local-discovery specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "growth-analysis",
+      "group": "growth",
+      "description": "On-demand growth-analysis specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "brand",
+      "group": "growth",
+      "description": "On-demand brand specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "market-research",
+      "group": "growth",
+      "description": "On-demand market-research specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "monitoring",
+      "group": "operations",
+      "description": "On-demand monitoring specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "performance",
+      "group": "operations",
+      "description": "On-demand performance specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "cost-optimization",
+      "group": "operations",
+      "description": "On-demand cost-optimization specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "documentation",
+      "group": "operations",
+      "description": "On-demand documentation specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "testing",
+      "group": "operations",
+      "description": "On-demand testing specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "test-automation",
+      "group": "operations",
+      "description": "On-demand test-automation specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "accessibility",
+      "group": "operations",
+      "description": "On-demand accessibility specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "localization",
+      "group": "operations",
+      "description": "On-demand localization specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "product-management",
+      "group": "operations",
+      "description": "On-demand product-management specialist",
+      "enabled": false,
+      "permissions": []
+    },
+    {
+      "id": "sustainability",
+      "group": "operations",
+      "description": "On-demand sustainability specialist",
+      "enabled": false,
+      "permissions": []
+    }
+  ],
+  "policy": {
+    "default_enabled": false,
+    "tools_disabled_by_default": true,
+    "network_disabled_by_default": true,
+    "production_access": false,
+    "financial_actions": false,
+    "secret_access": false,
+    "approval_required_for_high_impact": true
+  }
+}
