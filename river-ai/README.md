@@ -71,3 +71,8 @@ A Git-compatible repository manifest and name validator. Git is selected as the 
 ### RiverGit Phase 1 — local bare repository manager
 
 The isolated local module `src/rivergit-local.js` introduces safe name validation, confined storage paths, local bare repository creation via Git (without shell invocation), and listing. Tests use temporary directories. This is a local filesystem foundation only: no HTTP endpoints, authentication, remote hosting, backup, or deployment are wired in.
+
+
+### RiverGit Phase 2 — minimal local API
+
+`src/rivergit-api.js` provides a small handler for listing and creating local bare repositories at `/api/rivergit/repos`. It supports an optional bearer-token check, GET and POST only, bounded request-body size, validation and JSON responses. It is a module handler, not yet mounted in the main server; do not expose it to the internet. Authentication is a shared token only, not a production identity system. Tests are added but not yet executed.
