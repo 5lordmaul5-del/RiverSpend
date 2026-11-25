@@ -7,9 +7,14 @@ import { createServer } from "./server.mjs";
 
 const token = "t".repeat(40), base = { projectId: "riverspend", branch: "main", target: "staging", commit: "b".repeat(40) };
 
-test("server enforces token and returns queue-only health", async () => {
+test("server enforces bounded timeout settings and token, queue-only health", async () => {
   const root = await mkdtemp(path.join(os.tmpdir(), "rcs-"));
   const server = createServer({ port: 0, token, storeFile: path.join(root, "state.json") });
+  assert.equal(server.requestTimeout, 15_000);
+  assert.equal(server.headersTimeout, 10_000);
+  assert.equal(server.timeout, 15_000);
+  assert.equal(server.keepAliveTimeout, 5_000);
+  assert.equal(server.maxRequestsPerSocket, 100);
   try {
     await new Promise((resolve, reject) => { server.once("error", reject); server.listen(0, "127.0.0.1", resolve); });
     const address = server.address(), url = "http://127.0.0.1:" + address.port;
