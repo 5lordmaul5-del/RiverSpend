@@ -222,3 +222,17 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 - Corrected the staging path regular-expression escaping. GitHub Actions run **45657470568 (#178) — SUCCESS: 108/108 tests**, and PR run **45657482972 (#179) — SUCCESS: 108/108 tests** verified the corrected validator and new tests, plus bootstrap, backup/restore shell and Python syntax, Compose configuration, and Caddy validation.
 - Caddy validation used a temporary container only. The RiverCloud stack and runner were not started.
 - These validations remain prototypes: staging plans are not executable, OIDC/RBAC are not integrated into the API, the approver label is not authenticated, and external audit delivery remains unconnected.
+
+
+## RC-11 state-file read hardening — 25 November 2026
+
+- Audited the shared RC-11 read path used by queue/state consumers. Previously, Node's `readFile` followed a state-file symlink and accepted any filesystem object that could be read.
+- Changed the state read to open with `O_NOFOLLOW` and `O_NONBLOCK`, then verify the opened descriptor is a regular file before parsing. Symlink paths are rejected; non-regular files (including directories) are rejected. The implementation fails closed if the required safe-open flags are unavailable.
+- Added regression tests that ensure a symlink target is neither read nor replaced by a transaction, and that a directory cannot be accepted as a state file.
+- Reconstructed temporary workspace (exact fetched source/test copies, not a repository checkout): **9/9 RC-11 state tests passed**.
+- GitHub Actions **run 45668356543 (#187) — SUCCESS: 110/110 Node tests**, bootstrap shell syntax, backup/restore shell and Python extractor syntax, Compose validation, and Caddy validation. The logs confirm tests **49** and **50** cover symlink and directory rejection respectively.
+- No RiverCloud services were started; Caddy validation used a temporary validation container. No production state or credentials were touched.
+
+### Limitations
+
+- This protection addresses symlink/special-file reads on the Linux CI/runtime path. The state store is still a prototype, not a database; target-platform crash durability, bounded file growth, authenticated API access and production-grade backup remain separate gates.
