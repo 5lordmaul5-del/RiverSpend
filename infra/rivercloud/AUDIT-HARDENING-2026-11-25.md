@@ -23,41 +23,42 @@ Inspected the control-plane and core files, including server.mjs, rc11-state.mjs
 - Run **45609163400** passed **66/66** Node tests plus shell and Compose validation.
 - Runs **45609326685**, **45609337469**, **45609679828** and **45609697534** also passed 66/66 tests and relevant shell/Compose/Caddyfile validations.
 - Run **45617853040 — SUCCESS: 74/74** Node tests, bootstrap shell syntax, Compose config and Caddyfile validation. It checked PR merge commit **053b7ed1da4e61e8c0c55f4ab0e29a908ea6521f**, corresponding to branch head **68b35757fa48244237401245d9f14482fa3bc368** at the time.
-- Run **45618332297 — SUCCESS: 77/77** Node tests, bootstrap and backup/restore shell syntax, Compose config and Caddyfile validation. It checked merge commit **dfc51e822fff837d85a1b38a538c99e7199b80a9**, corresponding to branch head **a0028168a34db04effab6045fae091982300a0a6**. The Caddy check used a short-lived container only; no RiverCloud services were started.
-- The latest RC-12 fail-closed lock change was committed after run 45618332297; CI evidence for that change is still pending.
+- Run **45618332297 — SUCCESS: 77/77** Node tests, bootstrap and backup/restore shell syntax, Compose config and Caddyfile validation. It checked merge commit **dfc51e822fff837d85a1b38a538c99e7199b80a9**, corresponding to branch head **a0028168a34db04effab6045fae091982300a0a6**.
+- **Latest run 45618630901 — SUCCESS: 78/78 Node tests**, bootstrap and backup/restore shell syntax, Compose config and Caddyfile validation. It checked merge commit **d7ab35a8b76aadf4b0ed90ef59760df9b269b96c**, corresponding to branch head **ea2e5de59cf27a392d2d0691deeb09ac3b8fe303**. The Caddy validation used a short-lived container only; no RiverCloud services were started.
 
 ## RC-17 — same-file lifecycle/audit migration path
 
 - Added `rc17-atomic-lifecycle.mjs` and tests as a migration path that keeps lifecycle jobs and their hash-chained audit records in the same RC-11 atomic snapshot, avoiding the cross-file commit window for this new API.
 - Sequence/hash verification, sensitive-detail redaction, duplicate and transition checks.
 - Plans are redacted for sensitive-key values before persistence. Tests cover secret/token key redaction, chain tampering, concurrent transitions and concurrent job creation.
-- Local isolated reconstructed workspace: **8/8 passed**, using a copy of the reviewed RC-11 state-store source and new RC-17 module/tests. This was not a repository checkout. Run 45617853040 also covered the module/tests.
+- Local isolated reconstructed workspace: **8/8 passed**, using a copy of the reviewed RC-11 state-store source and new RC-17 module/tests. This was not a repository checkout. Runs 45617853040 and 45618630901 also covered these module/tests.
 - Actor labels are not authenticated. Existing `lifecycle.mjs` callers have not yet been migrated.
 
 ## RC-18 — request resource bounds
 
 - `server.mjs` sets request timeout 15 s, headers timeout 10 s, socket inactivity timeout 15 s, keep-alive timeout 5 s and maximum 100 requests per socket. The JSON body remains bounded to 8 KiB.
-- Local reconstructed isolated workspace: **2/2** server tests passed using copies of the reviewed state-store/server/queue/engine sources and the updated server test. This was not a checkout of the repository. Runs 45617853040 and 45618332297 verified these tests.
+- Local reconstructed isolated workspace: **2/2** server tests passed using copies of the reviewed state-store/server/queue/engine sources and the updated server test. This was not a checkout of the repository. Runs 45617853040, 45618332297 and 45618630901 verified these tests.
 
 ## RC-19 — backup/restore scripts
 
 - Added local data snapshot and restore scripts, checksum verification, refusal of source symlinks, exclusion of temporary locks/write files, and restore into a new directory only with explicit confirmation.
 - Local isolated workspace: **3/3** tests passed for round-trip, refusal of symlinked sources, and refusal to overwrite an existing restore target. Tests used temporary directories only, not production data or repository checkout.
-- Run **45618332297** included the backup/restore tests and shell syntax validation. No production backup or restore was performed.
+- Runs 45618332297 and 45618630901 included the backup/restore tests and shell syntax validation. No production backup or restore was performed.
 - This is not encrypted/off-site/immutable backup storage, and it does not ensure database-aware consistency while files are being written. A critical store should be stopped/quiesced for snapshots.
 
-## RC-12 — lock recovery safety correction (latest local increment)
+## RC-12 — fail-closed lock handling
 
 - Disabled automatic stale-lock reclamation in the RC-12 helper. PID/rename-based recovery can race or be confused by PID reuse and namespaces.
-- The helper now preserves stale/malformed lock files and acquisition fails with a bounded timeout instead of deleting them automatically.
-- Local isolated workspace: **5/5** tests passed for hash-chain integrity, preservation of old/recent/active/malformed locks, and timeout without reclaiming a stale lock. This was not a repository checkout. GitHub Actions evidence for this latest code change is pending.
+- The helper preserves stale/malformed lock files and acquisition fails with a bounded timeout instead of deleting them automatically.
+- Local isolated workspace: **5/5** tests passed for hash-chain integrity, preservation of old/recent/active/malformed locks, and timeout without reclaiming a stale lock. This was not a repository checkout.
+- Run **45618630901** verified the updated RC-12 code and tests as part of the 78-test suite.
 
 ## Supply-chain and image review
 
 - RiverCloud source modules use Node built-ins only; no package manifest exists under `infra/rivercloud`, so a Node package audit is not applicable to this scaffold.
 - GitHub Actions checkout and setup-node are pinned to verified SHA references.
 - Caddy and whoami images remain version-tag pinned, not digest-pinned; an image-level scanner/SBOM was not run. Public advisory lookup was inconclusive for the exact image layers; it is not an image vulnerability verdict.
-- Caddyfile validation passed in runs 45617853040 and 45618332297, but no SBOM or image vulnerability scan was performed.
+- Caddyfile validation passed in runs 45617853040, 45618332297 and 45618630901, but no SBOM or image vulnerability scan was performed.
 
 ## Remaining blockers — not production eligible
 
@@ -72,11 +73,10 @@ Inspected the control-plane and core files, including server.mjs, rc11-state.mjs
 
 ## Next gates
 
-1. Obtain CI evidence for the latest RC-12 lock change and fix any failures.
-2. Continue the remaining file-by-file review.
-3. Integrate OIDC/MFA via a standard provider; do not implement custom token cryptography.
-4. Migrate existing lifecycle callers to the same-file store only after tests and review.
-5. Test lock/crash durability on target platforms.
-6. Build an isolated worker and staging environment after review and approval.
-7. Execute secure backup/restore and security review; preserve evidence.
-8. Do not consider production or migration until every gate is independently verified and explicitly approved.
+1. Continue the remaining file-by-file review.
+2. Integrate OIDC/MFA via a standard provider; do not implement custom token cryptography.
+3. Migrate existing lifecycle callers to the same-file store only after tests and review.
+4. Test lock/crash durability on target platforms.
+5. Build an isolated worker and staging environment after review and approval.
+6. Execute secure backup/restore and security review; preserve evidence.
+7. Do not consider production or migration until every gate is independently verified and explicitly approved.
