@@ -76,3 +76,8 @@ The isolated local module `src/rivergit-local.js` introduces safe name validatio
 ### RiverGit Phase 2 — minimal local API
 
 `src/rivergit-api.js` provides a small handler for listing and creating local bare repositories at `/api/rivergit/repos`. It supports an optional bearer-token check, GET and POST only, bounded request-body size, validation and JSON responses. It is a module handler, not yet mounted in the main server; do not expose it to the internet. Authentication is a shared token only, not a production identity system. Tests are added but not yet executed.
+
+
+### RiverGit Phase 3 — loopback service
+
+`src/rivergit-service.js` starts a dedicated service on loopback only (127.0.0.1/::1), with configurable port and optional bearer token, using the API handler. Public binding is rejected. It remains standalone and is not launched automatically by the main application. Tests are written but not yet executed.
