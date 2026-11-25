@@ -248,3 +248,13 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 - The new runner code/tests/docs/report commits are awaiting a fresh CI result; no test result is claimed for this increment until GitHub Actions completes.
 
 - CI evidence for the RC-20 increment: GitHub Actions run **45673597279 (#195) — SUCCESS: 113/113 Node tests** and run **45673611842 (#196) — SUCCESS: 113/113 Node tests**, including bootstrap shell, backup/restore and Python syntax, Compose validation and Caddy validation. The logs show runner tests 100–104 passed and **0 failures**. No RiverCloud services were started; Caddy validation used a temporary validation container only.
+
+
+## RC-21 — lock-release ownership hardening (25 November 2026)
+
+- Audited the RC-11 lock release path: previously, cleanup closed the acquired lock handle and then unconditionally unlinked the pathname, so a pathname replacement between acquisition and release could cause cleanup to remove a different object.
+- The store now retains the opened lock's device/inode identity and unlinks only when `lstat` confirms the pathname still refers to the same regular file. The descriptor remains open until after the ownership check/removal. Failed acquisition cleanup uses the same identity check.
+- Added a regression test that replaces the lock path with a symlink during a transaction; a nested transaction must time out and the replacement symlink must remain after cleanup.
+- GitHub Actions **45673921124 (#199) and 45673939583 (#200) — SUCCESS** for the intermediate lock-owner implementation, 113/113 tests each. Final regression commit **45673941409 (#201) and 45673954788 (#202) — SUCCESS: 114/114 tests each**, including shell/Python, Compose and Caddy validation. Logs confirm test 51, lock replacement preservation, and **0 failures**.
+- Added `RC21-LOCK-RELEASE.md`. This reduces release-path risk but does not prevent a hostile process with write access to the private state directory from unlinking the lock during an active transaction; directory permissions and a stronger database/OS locking model remain required.
+- No RiverCloud service or runner was started; no live deployment, merge, server, spending, or production data/credential change occurred.
