@@ -12,3 +12,7 @@
 10. Only after successful reviews and tests, consider production enablement.
 
 Do not implement an independent wallet, custody, or money transfer functionality absent the appropriate regulatory authorization and agreements.
+
+
+11. Admin-only transaction/event monitor (read-only) drafted in the RiverPay branch.
+12. RiverSSAI agent architecture proposal drafted with bounded read-only roles; autonomous money-moving actions excluded.
