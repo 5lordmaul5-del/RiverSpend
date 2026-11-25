@@ -13,8 +13,8 @@ def fail(message):
     raise ValueError(message)
 
 def validate_member(member):
+    name = member.name
     if not name or "\\" in name or name.startswith("/"):
-    if not name or "\\\" in name or name.startswith("/"):
         fail("unsafe archive path")
     parts = PurePosixPath(name).parts
     if any(part in ("..", "") for part in parts):
@@ -29,7 +29,6 @@ def validate_member(member):
     if member.isfile():
         return clean
     fail("unsupported archive entry type (links and special files are denied)")
-
 def mkdirs(root, parts):
     current = root
     for part in parts:
