@@ -339,3 +339,9 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 - Updated the legacy binding, identity-gated and six-process race tests to assert approved job state and audit-chain integrity. Added regressions for issuance without a pending job and failed consumption rollback.
 - **CI evidence pending:** do not count this increment as verified until the new branch commit and the subsequent report-only commit pass GitHub Actions.
 - Runner remains disabled; no real OIDC authentication or route-level RBAC is connected.
+
+
+### RC-26 CI feedback — fixture corrections (25 November 2026)
+
+- Run #241 (**45707915332**) reached the Node suite and failed 4 tests. Failures exposed missing lifecycle-job setup in approval fixtures/process race and an RC-22 assertion still expecting `pending` after successful atomic consumption. A process-test insertion also contained a malformed newline.
+- These were test-fixture/integration errors in the increment, not reported as passed. Corrected the fixtures and expected state to `approved`; the next CI run is required before this increment is considered verified.

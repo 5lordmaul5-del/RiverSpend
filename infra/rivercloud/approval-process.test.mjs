@@ -26,19 +26,18 @@ function child(code, args = []) {
 }
 
 test("separate processes race one approval and only one consumes it", async () => {
-  const root = await mkdtemp(path.join(os.tmpdir(), "rc10-approval-process-"));
+  const root = await mkdtemp(path.join(os.tmpdir(), "rc26-approval-process-"));
   try {
-    await createLifecycleJobAtomic(path.join(root, "lifecycle.json"), { jobId: binding.jobId, digest: binding.digest, plan: binding });\n    const issued = await issueApproval({ storeDir: root, binding, secret, approver: "unverified-test-label" });
+    await createLifecycleJobAtomic(path.join(root, "lifecycle.json"), { jobId: binding.jobId, digest: binding.digest, plan: binding });
+    const issued = await issueApproval({ storeDir: root, binding, secret, approver: "unverified-test-label" });
     const code = `import { consumeApproval } from ${JSON.stringify(approvalModuleUrl)}; try { await consumeApproval({storeDir:process.argv[1],binding:JSON.parse(process.argv[2]),secret:process.argv[3],token:process.argv[4],consumerIdentity:"worker-"+process.pid}); } catch(e) { if(e.message==="approval_missing_or_used") process.exit(2); throw e; }`;
     const args = [root, JSON.stringify(binding), secret, issued.token];
     const runs = await Promise.all(Array.from({ length: 6 }, () => child(code, args)));
-    assert.equal(runs.filter(r => r.status === 0).length, 1, runs.map(r => r.err).join("\\n"));
+    assert.equal(runs.filter(r => r.status === 0).length, 1, runs.map(r => r.err).join("\n"));
     assert.equal(runs.filter(r => r.status === 2).length, 5);
     const state = await readState(path.join(root, "lifecycle.json"));
-    assert.equal(state.approvals.length, 1);
-    assert.equal(state.approvals[0].used, true);
-    assert.equal(state.events.filter(e => e.event === "approval_consumed").length, 1);\n    const lifecycle = await readAtomicLifecycle(path.join(root, "lifecycle.json"));\n    assert.equal(lifecycle.jobs[0].state, "approved");\n    assert.equal(lifecycle.auditRecords.length, 2);\n    assert.equal(lifecycle.integrity.valid, true);
-  } finally {
-    await rm(root, { recursive: true, force: true });
-  }
+    assert.equal(state.approvals.length, 1); assert.equal(state.approvals[0].used, true); assert.equal(state.events.filter(e => e.event === "approval_consumed").length, 1);
+    const lifecycle = await readAtomicLifecycle(path.join(root, "lifecycle.json"));
+    assert.equal(lifecycle.jobs[0].state, "approved"); assert.equal(lifecycle.auditRecords.length, 2); assert.equal(lifecycle.integrity.valid, true);
+  } finally { await rm(root, { recursive: true, force: true }); }
 });
