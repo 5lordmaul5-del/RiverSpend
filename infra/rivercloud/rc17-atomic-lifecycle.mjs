@@ -10,7 +10,8 @@ const transitions = {
   running: new Set(["completed", "failed"]), completed: new Set(),
   failed: new Set(["prepared"]), cancelled: new Set()
 };
-const safeId = /^[A-Za-z0-9_-]{1,64}$/;\nconst HASH = /^[a-f0-9]{64}$/i;
+const safeId = /^[A-Za-z0-9_-]{1,64}$/;
+const HASH = /^[a-f0-9]{64}$/i;
 const sensitive = /password|secret|token|authorization|cookie|private.?key|credential|api.?key/i;
 function redact(value, depth = 0) {
   if (depth > 8) return "[depth-limit]";
@@ -131,7 +132,8 @@ export async function storeApprovalForLifecycleAtomic(file, record) {
       throw new Error("approval_already_issued");
     }
     state.approvals.push({ ...record, used: false });
-    state.events.push({ event: "approval_issued", jobId: job.id, at: new Date().toISOString() });\n    appendAtomicAuditBatch(state, [{ event: "approval_issued", details: { approvalId: record.tokenId, jobId: job.id, digest: job.digest, approver: record.approver, expiresAt: record.expiresAt } }]);
+    state.events.push({ event: "approval_issued", jobId: job.id, at: new Date().toISOString() });
+    appendAtomicAuditBatch(state, [{ event: "approval_issued", details: { approvalId: record.tokenId, jobId: job.id, digest: job.digest, approver: record.approver, expiresAt: record.expiresAt } }]);
     return record.tokenId;
   });
 }
@@ -200,4 +202,4 @@ export async function readAtomicLifecycle(file) {
     }
   }
   return { jobs, auditRecords, integrity };
-}\n
+}
