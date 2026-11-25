@@ -767,26 +767,21 @@ export default function Home() {
   }
 
   function aggiungiAlCarrello(p) {
-    const key = 'riverspend-cart';
+    // Canonical collection shared by homepage, Rete and Checkout; safely merge legacy cart.
+    const key = 'riverspend-rete';
     let current = [];
-    try { current = JSON.parse(localStorage.getItem(key) || '[]'); } catch {}
-    if (!Array.isArray(current)) current = [];
-    const exists = current.some((item) => String(item.id) === String(p.id));
-    const record = {
-      id: p.id,
-      title: p.titolo || p.title || 'Prodotto',
-      price: Number(p.prezzo ?? p.price ?? 0),
-      image: p.immagini?.[0] || p.image || '',
-      quantity: 1
-    };
-    const next = exists
-      ? current.map((item) => String(item.id) === String(p.id) ? { ...item, quantity: Number(item.quantity || 1) + 1 } : item)
-      : [...current, record];
     try {
-      localStorage.setItem(key, JSON.stringify(next));
-      sessionStorage.setItem(key, JSON.stringify(next));
+      const rete = JSON.parse(localStorage.getItem(key) || '[]');
+      const legacy = JSON.parse(localStorage.getItem('riverspend-cart') || '[]');
+      current = Array.isArray(rete) ? rete : [];
+      if (Array.isArray(legacy)) legacy.forEach(item => { if (!current.some(entry => String(entry.id) === String(item.id) && String(entry.variantName || '') === String(item.variantName || ''))) current.push(item); });
     } catch {}
-    setCarrelloIds(next.map((item) => String(item.id)));
+    if (!Array.isArray(current)) current = [];
+    const record = { id:p.id, title:p.titolo || p.title || 'Prodotto', price:Number(p.prezzo ?? p.price ?? 0), image:p.immagini?.[0] || p.image || '', stock:Number(p.quantita ?? p.stock ?? 0), quantity:1, deliveryOptions:Array.isArray(p.modalitaConsegna) ? p.modalitaConsegna : ['home_delivery','seller_pickup','rs_local'] };
+    const exists = current.some(item => String(item.id) === String(p.id) && String(item.variantName || '') === '');
+    const next = exists ? current.map(item => String(item.id) === String(p.id) && String(item.variantName || '') === '' ? {...item,quantity:Number(item.quantity || 1)+1} : item) : [...current,record];
+    try { localStorage.setItem(key,JSON.stringify(next)); sessionStorage.setItem(key,JSON.stringify(next)); localStorage.setItem('riverspend-cart',JSON.stringify(next)); sessionStorage.setItem('riverspend-cart',JSON.stringify(next)); } catch {}
+    setCarrelloIds(next.map(item=>String(item.id))); setReteIds(next.map(item=>String(item.id)));
   }
 
   useEffect(() => {
