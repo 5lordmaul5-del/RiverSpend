@@ -1,6 +1,6 @@
 services:
   caddy:
-    image: caddy:2
+    image: caddy:2.11.9
     restart: unless-stopped
     ports:
       - "80:80"
@@ -15,17 +15,13 @@ services:
     networks: [rivercloud]
     depends_on: [rivercloud-demo]
   rivercloud-demo:
-    image: traefik/whoami:v1.11
+    image: traefik/whoami:v1.12.0
     restart: unless-stopped
     command: ["--port=8080"]
-    healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080"]
-      interval: 20s
-      timeout: 5s
-      retries: 3
     expose:
       - "8080"
     networks: [rivercloud]
+    # The minimal whoami image does not contain wget/curl; avoid a false failing healthcheck.
     # Example app only; replace with app services when configuring deployments.
 networks:
   rivercloud:
