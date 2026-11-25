@@ -159,3 +159,12 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 - Isolated local workspace: **9/9 identity tests passed** (not a full repository checkout).
 - GitHub Actions **run 45637987956 (run #124) — SUCCESS: 97/97 Node tests**, shell/Python, Compose and Caddy validation.
 - This remains only a claim-validation helper: it does not verify token cryptography or integrate with the server, provider, routes or authenticated approval records.
+
+
+## RC-13 OIDC proxy configuration checks
+
+- Added static tests for reverse-proxy mode, trusted Caddy IP, secure/HttpOnly/SameSite cookies, group allowlist, absence of skip-auth route/regex rules, and no host-published OAuth2 Proxy ports.
+- Isolated local workspace: **3/3 OIDC proxy tests passed** (not a full repository checkout).
+- GitHub Actions **run 45638333275 (run #132) — SUCCESS: 98/98 Node tests**, plus bootstrap, backup/restore/Python, Compose and Caddy validation.
+- Advisory review: CVE-2026-40575 affects OAuth2 Proxy versions before 7.15.2; CVE-2026-76835 is reported for 7.15.2 through 7.15.4. The scaffold uses v7.15.6, sets the trusted proxy IP, and has no skip-auth rules. References: https://github.com/advisories/GHSA-7x63-xv5r-3p2x and https://euvd.enisa.europa.eu/enisa/EUVD-2026-65061.
+- This was a targeted advisory/configuration review, not a full image vulnerability scan. OIDC provider login, MFA and route-level RBAC remain untested and unintegrated.
