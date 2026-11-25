@@ -62,9 +62,14 @@ A focused review of the restore script found that checking only member paths did
 - Extracts regular files/directories only, using restrictive permissions and exclusive/no-follow file creation where available.
 - Uses a new target directory and removes it on extraction failure.
 - Requires Python 3 on restore host; CI now checks helper syntax and exercises rejection tests.
-- New regression tests build symlink and traversal archives and test size limits. These tests are pending CI evidence for this commit.
+- New regression tests build symlink and traversal archives and test size limits. A reconstructed isolated workspace using copies of the branch scripts and tests passed **6/6** (not a repository checkout).
 
-This reduces archive-extraction risk, but does not substitute for a formal threat review, external backup storage, encryption, or restore rehearsal.
+This reduces archive-extraction risk, but does not substitute for a formal threat review, external backup storage, encryption, or restore rehearsal. Usage instructions are in `RC19-BACKUP-RESTORE.md`.
+
+### CI regression and correction evidence
+- PR workflow run **45620539532 — FAILURE**: 77/81 tests passed; the 4 restore-related tests failed because the Python helper contained a syntax error in the backslash-path validation. The logs confirmed that the failure occurred before the restore logic executed.
+- Corrected the validation block on the branch (head **4c470295cd598bb82a367cb40c2c3b0e52dc0f4d**). The exact fetched helper was syntax-checked and the reconstructed restore suite passed **6/6** locally in an isolated temporary workspace.
+- A subsequent GitHub Actions result for the corrected branch head has not yet been independently retrieved. Do not count the correction as repository CI passing until that evidence is available.
 
 ## Additional control-plane audit findings
 
