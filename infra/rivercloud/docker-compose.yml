@@ -1,0 +1,27 @@
+services:
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      RIVERCLOUD_DOMAIN: ${RIVERCLOUD_DOMAIN}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks: [rivercloud]
+  rivercloud-watch:
+    image: alpine:3.20
+    restart: unless-stopped
+    command: ["sh","-c","while true; do date -u; sleep 60; done"]
+    networks: [rivercloud]
+    # Placeholder health/monitoring container. Replace with dedicated metrics stack in a later milestone.
+networks:
+  rivercloud:
+    name: rivercloud
+volumes:
+  caddy_data:
+  caddy_config:
