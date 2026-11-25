@@ -1,16 +1,34 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { prepareRun, executeRun } from "./runner.mjs";
+import { prepareRun, verifyPreparedRun, executeRun } from "./runner.mjs";
 
 const valid={projectId:"riverspend",branch:"main",commit:"0123456789abcdef0123456789abcdef01234567",target:"staging"};
-test("runner creates a deterministic run identity and safe prepared status",()=>{
+test("runner creates a verifiable safe prepared envelope",()=>{
  const run=prepareRun(valid);
  assert.equal(run.status,"prepared_not_executed");
  assert.equal(run.safety.commandExecution,false);
  assert.equal(run.safety.dockerSocket,false);
  assert.equal(run.plan.target,"staging");
+ assert.equal(verifyPreparedRun(run).ok,true);
 });
-test("execution remains disabled pending isolation and approval",()=>{
+test("verification rejects plan, digest or identity tampering",()=>{
+ const run=prepareRun(valid);
+ assert.equal(verifyPreparedRun({...run,plan:{...run.plan,commit:"a".repeat(40)}}).reason,"plan_digest_mismatch");
+ assert.equal(verifyPreparedRun({...run,digest:"b".repeat(64)}).reason,"plan_digest_mismatch");
+ assert.equal(verifyPreparedRun({...run,runId:"altered"}).reason,"plan_digest_mismatch");
+});
+test("verification rejects unsafe execution flags and changed status",()=>{
+ const run=prepareRun(valid);
+ assert.equal(verifyPreparedRun({...run,safety:{...run.safety,networkFetch:true}}).reason,"unsafe_flags");
+ assert.equal(verifyPreparedRun({...run,status:"running"}).reason,"run_status_invalid");
+ assert.equal(verifyPreparedRun({...run,safety:{...run.safety,extra:false}}).reason,"unsafe_flags");
+});
+test("verification rejects envelope checksum alteration and unexpected fields",()=>{
+ const run=prepareRun(valid);
+ assert.equal(verifyPreparedRun({...run,envelopeDigest:"0".repeat(64)}).reason,"envelope_digest_mismatch");
+ assert.equal(verifyPreparedRun({...run,unexpected:"value"}).reason,"run_schema_invalid");
+});
+test("execution remains disabled pending isolation and authenticated approval",()=>{
  assert.throws(()=>executeRun(prepareRun(valid)),/runner_execution_disabled/);
 });
 test("runner rejects unallowlisted project",()=>{
