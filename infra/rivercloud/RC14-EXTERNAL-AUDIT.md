@@ -26,3 +26,8 @@ This remains a sender/verifier contract prototype. Verification is not a receive
 ### RC-27 replay guard contract
 
 Signed delivery descriptors now include a 128-bit random nonce, and the HMAC covers timestamp, nonce, and exact body. Verification is asynchronous and fails closed unless a `consumeReplay` callback is supplied; the callback must atomically persist/reject the nonce in a durable receiver-side replay store. This prototype does not implement or provision that store and performs no network delivery.
+
+
+### RC-27 verification evidence
+
+- Runs #247/#248 verified the replay-guard contract and all 122 Node tests, plus bootstrap, backup/restore/Python, Compose and Caddy validation. No receiver or network delivery was implemented or started.

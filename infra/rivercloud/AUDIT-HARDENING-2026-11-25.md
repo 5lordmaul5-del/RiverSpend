@@ -360,3 +360,11 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 - Added a random 128-bit nonce to the signed delivery descriptor; HMAC covers timestamp, nonce and exact body.
 - Verification now requires a caller-supplied asynchronous replay-store callback and fails closed when it is absent, rejects duplicates, or reports storage errors. The callback must atomically persist the nonce; no receiver storage or network delivery is implemented here.
 - Added tests for nonce generation, missing replay store, replay rejection and fail-closed storage errors. **CI evidence pending** for this increment and report-only closeout.
+
+
+### RC-27 CI closeout — verified
+
+- GitHub Actions **run 45708327208 (#247) — SUCCESS: 122/122 Node tests**, and PR run **45708344831 (#248) — SUCCESS: 122/122** verify code commit `92cadbb4218cb37f730c00c72dfb5b54c16084e3`.
+- Both runs also passed bootstrap shell syntax, backup/restore and Python extractor syntax, Compose configuration, and Caddy validation. No network delivery or RiverCloud services were started.
+- Tests verify signed nonce generation, mandatory replay-store callback, repeated nonce rejection, and fail-closed callback errors. The durable receiver-side replay store remains unimplemented.
+- The next report-only commit requires its own CI verification.

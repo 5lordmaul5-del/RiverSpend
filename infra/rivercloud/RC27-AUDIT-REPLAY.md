@@ -11,3 +11,8 @@ This increment does not implement the replay database, receiver, network deliver
 ```sh
 node --test infra/rivercloud/rc14-audit-sink.test.mjs
 ```
+
+
+## CI closeout
+
+- GitHub Actions run **45708327208 (#247) — SUCCESS: 122/122 Node tests**, and PR run **45708344831 (#248) — SUCCESS: 122/122** verify code commit `92cadbb4218cb37f730c00c72dfb5b54c16084e3`. Both also passed bootstrap, backup/restore/Python syntax, Compose validation and Caddy validation. No network delivery or services were started.
