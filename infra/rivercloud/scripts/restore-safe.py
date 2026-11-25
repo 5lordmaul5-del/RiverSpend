@@ -13,7 +13,7 @@ def fail(message):
     raise ValueError(message)
 
 def validate_member(member):
-    name = member.name
+    if not name or "\\" in name or name.startswith("/"):
     if not name or "\\\" in name or name.startswith("/"):
         fail("unsafe archive path")
     parts = PurePosixPath(name).parts
