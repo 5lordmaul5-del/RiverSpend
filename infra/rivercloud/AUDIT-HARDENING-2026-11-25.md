@@ -201,5 +201,13 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 - Audit verification now replays the permitted lifecycle transitions instead of checking only sequence/hash continuity.
 - Read-time validation cross-checks the replayed state and creation digest against the persisted lifecycle jobs; deleted audit history, mismatched job state, duplicate IDs, and illegal replay sequences return integrity failures.
 - Added regression tests for state/audit divergence, missing audit records and an illegal transition whose hash chain was recomputed, to ensure transition-policy validation is not bypassed by recomputing hashes.
-- Reconstructed temporary workspace: **16/16 lifecycle facade + RC-17 tests passed** using fetched source/test copies, not a repository checkout. GitHub CI for these new changes is pending; this is not yet a repository CI result.
+- Reconstructed temporary workspace: **16/16 lifecycle facade + RC-17 tests passed** using fetched source/test copies, not a repository checkout. GitHub Actions run **45647746438 (#170) — SUCCESS: 105/105 tests** plus shell/Python, Compose and Caddy validation now verifies the audit replay and state-consistency guard.
 - Hash-chain integrity is still local tamper-evidence only: a privileged writer can rewrite the entire snapshot and recompute a chain. Independent protected external audit remains a blocker.
+
+
+## RC-18 request media-type strictness (25 November 2026)
+
+- Changed the API JSON content-type gate from a prefix check to exact media-type parsing (parameters such as charset remain permitted; misleading types like `application/jsonp` are rejected).
+- Added an HTTP regression test for the misleading content-type. Reconstructed workspace: **3/3 server tests passed** using fetched source/test copies, not a repository checkout.
+- GitHub Actions run **45647746438 (#170) — SUCCESS: 105/105 tests** verified the server change along with the prior RC-17 audit replay hardening and Compose/security checks. This run also completed bootstrap, backup/restore shell and Python syntax, Compose configuration, and Caddy validation.
+- No RiverCloud stack was started; Caddy validation used a temporary validation container only.
