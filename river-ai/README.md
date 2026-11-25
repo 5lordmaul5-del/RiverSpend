@@ -37,3 +37,10 @@ A local file-based knowledge store for explicit user-provided notes. Entries req
 
 ## RiverAudit
 Structured local event log foundation (JSON Lines) with bounded fields and a small event-type allowlist. It is append-oriented but not tamper-proof; production requires protected storage, integrity controls and review. It is not wired to other modules yet.
+
+
+## RiverIdentity (static policy foundation)
+- Roles: Owner, Admin, Operator, Viewer; unknown roles/permissions default to deny.
+- Owner alone has policy/identity management permissions; Admin has operational write permissions but cannot manage policy or identities; Operator can read and plan; Viewer is read-only.
+- `src/identity.js` is a static permission registry/check helper, with tests in `test/identity.test.js`.
+- This is not authentication, credential management, or a security boundary; it must be integrated and reviewed before real access control is relied on.
