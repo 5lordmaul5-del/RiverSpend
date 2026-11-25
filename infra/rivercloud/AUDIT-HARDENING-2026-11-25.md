@@ -20,7 +20,7 @@ Inspected the control-plane and core prototype files, including server.mjs, rc11
 ## Test evidence
 
 - Focused local tests against an isolated reconstructed copy of affected modules: 16/16 passed. This is not a checkout of the repository.
-- GitHub Actions full RiverCloud test suite: initial run 58/59 passed; after correcting the assertion, the branch workflow completed successfully. A validation job is being extended to check shell syntax and Compose configuration without starting services.
+- GitHub Actions full RiverCloud test suite: the initial run exposed one incorrect assertion (58/59); after correction, latest run 45597555182 passed 59/59 tests, shell syntax validation, and Docker Compose configuration validation. No containers/services were started.
 
 ## Remaining blockers — not production eligible
 
