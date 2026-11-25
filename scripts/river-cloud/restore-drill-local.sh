@@ -56,12 +56,11 @@ docker run --detach \
   --name "$CONTAINER_NAME" \
   --network none \
   --env POSTGRES_PASSWORD="$TEMP_PASSWORD" \
-  --env POSTGRES_DB=rivercloud_restore \
   postgres:17-alpine >/dev/null
 
 READY=0
 for _ in $(seq 1 60); do
-  if docker exec "$CONTAINER_NAME" pg_isready -U postgres -d rivercloud_restore >/dev/null 2>&1; then
+  if docker exec "$CONTAINER_NAME" pg_isready -U postgres -d postgres >/dev/null 2>&1; then
     READY=1
     break
   fi
@@ -69,9 +68,17 @@ for _ in $(seq 1 60); do
 done
 [[ "$READY" -eq 1 ]] || { echo "Disposable PostgreSQL did not become ready." >&2; exit 1; }
 
+# pg_isready can report a server ready even when the requested database is missing.
+# Bootstrap the target DB explicitly against the always-present maintenance database.
+if ! docker exec "$CONTAINER_NAME" psql -U postgres -d postgres -At \
+  -c "SELECT 1 FROM pg_database WHERE datname = 'rivercloud_restore';" | grep -q '^1$'; then
+  docker exec "$CONTAINER_NAME" psql -U postgres -d postgres -v ON_ERROR_STOP=1 \
+    -c "CREATE DATABASE rivercloud_restore;"
+fi
+
 # The restored RLS policies reference this role. Create a restricted placeholder
-# role in the disposable database before pg_restore; it is not used for login.
-docker exec "$CONTAINER_NAME" psql -U postgres -d rivercloud_restore -v ON_ERROR_STOP=1 \
+# role in the disposable cluster before pg_restore; it is not used for login.
+docker exec "$CONTAINER_NAME" psql -U postgres -d postgres -v ON_ERROR_STOP=1 \
   -c "CREATE ROLE rivercloud_api NOLOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT;"
 
 age --decrypt --identity "$RIVER_CLOUD_AGE_IDENTITY_FILE" "$BACKUP_FILE" \
