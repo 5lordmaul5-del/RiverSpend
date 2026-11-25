@@ -401,3 +401,8 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 ### RC-28 report-only CI closeout
 
 - Report-only commit `2b98632c5c587ac58c18c224e1a8be62ca97f8d8` was verified by **45709159040 (#263) and 45709171430 (#264) — SUCCESS: 123/123 Node tests** each, plus bootstrap, backup/restore and Python syntax, Compose configuration and Caddy validation. Code is unchanged from the corrected RC-28 source commit.
+
+
+### RC-28 report-only CI closeout
+
+- Report-only commit `d3c629bca31253f059da2c95f2c0ab2644490b41` was verified by **45709253095 (#265) and 45709259403 (#266) — SUCCESS: 123/123 Node tests** each, plus bootstrap, backup/restore and Python syntax, Compose configuration and Caddy validation. Code is unchanged from the corrected RC-28 source commit.
