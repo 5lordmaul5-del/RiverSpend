@@ -502,3 +502,9 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 - Run #314 verified commit **`dd90f8b3e0772275cfb7266c3d1db6a38c143cde`**, including the single-descriptor restore correction and the symlink archive regression.
 - The Caddy check used a temporary validation container; no RiverCloud service or runner was started. No production backup/restore, merge, deployment or spending occurred.
 - RC-31 documentation closeout is committed separately and requires fresh CI verification before latest branch head is considered verified.
+
+
+### RC-31 report closeout — verified
+
+- GitHub Actions **45717458639 (#318) — SUCCESS: 131/131 Node tests, 0 failures**, plus bootstrap shell, backup/restore and Python extractor syntax, Compose configuration and Caddy validation.
+- Run #318 verified report commit **`26f58738b2fc740cc30e31e5c665f817160e51bb`**, including RC-31 report/doc closeout. No RiverCloud services were started.
