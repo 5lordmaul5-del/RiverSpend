@@ -186,5 +186,11 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 - Added a `readLifecycle` facade for reading lifecycle jobs and the verified audit chain from the same state file.
 - Rewrote the lifecycle regression tests to verify successful transitions, rejected transitions, concurrent one-time approval transitions, and duplicate job creation while checking job/audit integrity together.
 - Updated RC-9/RC-17 docs. The prior separate-file crash window is no longer used by this facade; the RC-8 audit module remains a standalone ledger prototype and is not a replacement for protected external storage.
-- This migration is committed on the isolated branch. CI for this latest migration is pending; do not consider it validated until a new run is confirmed. No production data is involved.
+- The migration is committed on the isolated branch. A reconstructed temporary workspace passed **5/5 lifecycle-facade tests** (not a repository checkout). GitHub Actions run **45647177095 (#154) — SUCCESS: 101/101 tests** plus shell/Python, Compose and Caddy validation verified this migration commit. No production data is involved.
 - The prototype actor field remains unverified; OIDC/RBAC integration and caller audit are still required before any deployment.
+
+
+## CI evidence — lifecycle facade migration
+
+- Run **45647177095 (#154) — SUCCESS: 101/101 tests**, shell syntax for bootstrap and backup/restore, Python extractor syntax, Compose configuration, and Caddy validation. This run verifies the RC-9 facade migration to RC-17, Compose digest pin, and the Compose security regression tests on commit `0c1e359a09c0eb09a8f723b818b7611be325095e`.
+- Caddy validation used a temporary validation container; no RiverCloud services were started. The report-only update following this run is not covered by this CI result and will be treated separately.
