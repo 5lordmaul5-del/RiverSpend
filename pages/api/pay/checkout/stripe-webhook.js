@@ -39,6 +39,8 @@ export default async function handler(req, res) {
     return fail(res, 400, "Firma webhook Stripe non valida.");
   }
 
+  if (event.livemode === true) return fail(res, 403, "Evento Stripe live rifiutato dal webhook test.");
+
   if (event.type !== "checkout.session.completed") {
     return res.status(200).json({ received: true, ignored: true });
   }
@@ -50,7 +52,7 @@ export default async function handler(req, res) {
 
   const transactionId = session.metadata?.riverpay_transaction_id;
   const orderId = session.metadata?.order_id;
-  if (!transactionId || !orderId || session.mode !== "payment") {
+  if (!transactionId || !orderId || session.mode !== "payment" || session.livemode === true || session.metadata?.test_only !== "true") {
     return fail(res, 400, "Metadati checkout mancanti o non validi.");
   }
 
