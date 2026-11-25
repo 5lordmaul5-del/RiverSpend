@@ -2,7 +2,7 @@
 
 ## Snapshot
 
-PR #75 remains isolated on feat/rivercloud-core-2026-11-25. No merge, production deploy, server provisioning or paid operation was performed. The pull request has **64 changed files**; this report records a focused code audit and corrections, not a completed certification of all changed files.
+PR #75 remains isolated on feat/rivercloud-core-2026-11-25. No merge, production deploy, server provisioning or paid operation was performed. The pull request has **68 changed files**; this report records a focused code audit and corrections, not a completed certification of all changed files.
 
 ## Detailed source review
 
@@ -22,20 +22,27 @@ Inspected the control-plane and core files, including server.mjs, rc11-state.mjs
 - GitHub Actions run **45597555182** passed **59/59** tests, shell syntax and Compose validation.
 - Run **45609163400** passed **66/66** Node tests plus shell and Compose validation.
 - Runs **45609326685**, **45609337469**, **45609679828** and **45609697534** also passed 66/66 tests and relevant shell/Compose/Caddyfile validations.
-- **Latest full PR workflow run 45617853040 — SUCCESS:** **74/74 Node tests**, bootstrap shell syntax, Docker Compose config and Caddyfile validation all passed. The workflow checked out the PR merge commit **053b7ed1da4e61e8c0c55f4ab0e29a908ea6521f**, corresponding to the then-current branch head **68b35757fa48244237401245d9f14482fa3bc368**. The Caddy validation used a short-lived container; no RiverCloud services were started. This is verified GitHub Actions evidence.
+- **Latest full PR workflow run 45617853040 — SUCCESS:** **74/74 Node tests**, bootstrap shell syntax, Docker Compose config and Caddyfile validation all passed. The workflow checked out the PR merge commit **053b7ed1da4e61e8c0c55f4ab0e29a908ea6521f**, corresponding to the then-current branch head **68b35757fa48244237401245d9f14482fa3bc368**. The Caddy validation used a short-lived container; no RiverCloud services were started. This verified run does not include RC-19 files added afterward.
 
 ## RC-17 — same-file lifecycle/audit migration path
 
 - Added `rc17-atomic-lifecycle.mjs` and tests as a migration path that keeps lifecycle jobs and their hash-chained audit records in the same RC-11 atomic snapshot, avoiding the cross-file commit window for this new API.
 - Sequence/hash verification, sensitive-detail redaction, duplicate and transition checks.
 - Plans are redacted for sensitive-key values before persistence. Tests cover secret/token key redaction, chain tampering, concurrent transitions and concurrent job creation.
-- Local isolated reconstructed workspace: **8/8 passed**, using a copy of the reviewed RC-11 state-store source and the new RC-17 module/tests. This was not a repository checkout. The latest GitHub Actions run now also covers the module/tests.
+- Local isolated reconstructed workspace: **8/8 passed**, using a copy of the reviewed RC-11 state-store source and new RC-17 module/tests. This was not a repository checkout. The latest CI run also covered these module/tests.
 - Actor labels are not authenticated. Existing `lifecycle.mjs` callers have not yet been migrated.
 
 ## RC-18 — request resource bounds
 
 - `server.mjs` sets request timeout 15 s, headers timeout 10 s, socket inactivity timeout 15 s, keep-alive timeout 5 s and maximum 100 requests per socket. The JSON body remains bounded to 8 KiB.
-- Local reconstructed isolated workspace: **2/2** server tests passed using copies of the reviewed state-store/server/queue/engine sources and the updated server test. This was not a checkout of the repository. The latest GitHub Actions run verifies these tests in the PR merge checkout.
+- Local reconstructed isolated workspace: **2/2** server tests passed using copies of the reviewed state-store/server/queue/engine sources and the updated server test. This was not a checkout of the repository. Latest GitHub Actions run verified these tests.
+
+## RC-19 — backup/restore scripts
+
+- Added local data snapshot and restore scripts, checksum verification, refusal of source symlinks, exclusion of temporary locks/write files, and restore into a new directory only with explicit confirmation.
+- Local isolated workspace: **3/3** tests passed for round-trip, refusal of symlinked sources, and refusal to overwrite an existing restore target. Tests used temporary directories only, not production data or repository checkout.
+- Added shell syntax validation to the CI workflow. The latest full CI run above occurred before RC-19 was added; GitHub Actions verification for RC-19 is pending.
+- This is not encrypted/off-site/immutable backup storage, and it does not ensure database-aware consistency while files are being written. A critical store should be stopped/quiesced for snapshots.
 
 ## Supply-chain and image review
 
@@ -51,15 +58,17 @@ Inspected the control-plane and core files, including server.mjs, rc11-state.mjs
 - Lock behavior and crash durability have not been tested on supported target platforms; stale recovery is fail-closed/manual for the RC-11 store.
 - The existing lifecycle API and external audit file remain separate. RC-17 is an isolated migration path, not a completed migration.
 - No independent protected audit delivery, retries, receiver or immutable retention.
+- Backup/restore scripts are local and unencrypted; off-site retention, key separation, monitoring, restore drills and consistency controls remain outstanding.
 - Image digest pinning, image scan/SBOM and dependency/supply-chain scan remain outstanding.
-- Backup/restore, staging rehearsal, performance tests and migration/cutover remain unperformed.
+- Staging rehearsal, performance tests and migration/cutover remain unperformed.
 
 ## Next gates
 
-1. Continue the remaining file-by-file review.
-2. Integrate OIDC/MFA via a standard provider; do not implement custom token cryptography.
-3. Migrate existing lifecycle callers to the same-file store only after tests and review.
-4. Test lock/crash durability on target platforms.
-5. Build an isolated worker and staging environment after review and approval.
-6. Execute backup/restore and security review; preserve evidence.
-7. Do not consider production or migration until every gate is independently verified and explicitly approved.
+1. Obtain CI evidence for RC-19 and fix any failures.
+2. Continue the remaining file-by-file review.
+3. Integrate OIDC/MFA via a standard provider; do not implement custom token cryptography.
+4. Migrate existing lifecycle callers to the same-file store only after tests and review.
+5. Test lock/crash durability on target platforms.
+6. Build an isolated worker and staging environment after review and approval.
+7. Execute secure backup/restore and security review; preserve evidence.
+8. Do not consider production or migration until every gate is independently verified and explicitly approved.
