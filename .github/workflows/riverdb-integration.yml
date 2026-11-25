@@ -42,6 +42,19 @@ jobs:
         env:
           RIVERDB_TEST_URL: postgresql://postgres:test-only-password@localhost:5432/riverdb_test
         run: npm test
+      - name: Backup and restore verification (isolated CI database)
+        env:
+          RIVERDB_TEST_URL: postgresql://postgres:test-only-password@localhost:5432/riverdb_test
+        run: |
+          set -eu
+          export PGPASSWORD=test-only-password
+          pg_dump --format=custom --no-owner --no-acl "$RIVERDB_TEST_URL" > /tmp/riverdb-ci.dump
+          psql "postgresql://postgres:test-only-password@localhost:5432/postgres" -v ON_ERROR_STOP=1 -c "DROP DATABASE IF EXISTS riverdb_restore_test;"
+          psql "postgresql://postgres:test-only-password@localhost:5432/postgres" -v ON_ERROR_STOP=1 -c "CREATE DATABASE riverdb_restore_test;"
+          pg_restore --no-owner --no-acl --dbname "postgresql://postgres:test-only-password@localhost:5432/riverdb_restore_test" /tmp/riverdb-ci.dump
+          test "$(psql "postgresql://postgres:test-only-password@localhost:5432/riverdb_restore_test" -tAc "SELECT count(*) FROM riverdb.modules")" -ge 3
+          test "$(psql "postgresql://postgres:test-only-password@localhost:5432/riverdb_restore_test" -tAc "SELECT count(*) FROM riverdb.tasks")" -ge 1
+          echo "Backup/restore drill verified: modules and task data restored."
       - name: Validate runtime permissions
         env:
           RIVERDB_MIGRATION_URL: postgresql://postgres:test-only-password@localhost:5432/riverdb_test
