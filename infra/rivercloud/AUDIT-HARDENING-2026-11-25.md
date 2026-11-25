@@ -246,3 +246,5 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 - **Important limitation:** the unkeyed envelope checksum is tamper-evidence, not authentication or authorization. The runner remains disabled; this helper is not approval, OIDC, RBAC or sandbox enforcement.
 - Previous verified head before this increment: GitHub Actions run **45668468565 (#189) — SUCCESS**, 110/110 tests and shell/Python, Compose and Caddy validation.
 - The new runner code/tests/docs/report commits are awaiting a fresh CI result; no test result is claimed for this increment until GitHub Actions completes.
+
+- CI evidence for the RC-20 increment: GitHub Actions run **45673597279 (#195) — SUCCESS: 113/113 Node tests** and run **45673611842 (#196) — SUCCESS: 113/113 Node tests**, including bootstrap shell, backup/restore and Python syntax, Compose validation and Caddy validation. The logs show runner tests 100–104 passed and **0 failures**. No RiverCloud services were started; Caddy validation used a temporary validation container only.
