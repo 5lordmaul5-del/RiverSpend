@@ -236,3 +236,13 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 ### Limitations
 
 - This protection addresses symlink/special-file reads on the Linux CI/runtime path. The state store is still a prototype, not a database; target-platform crash durability, bounded file growth, authenticated API access and production-grade backup remain separate gates.
+
+
+## RC-20 — prepared-run integrity gate (25 November 2026)
+
+- Added `verifyPreparedRun` to independently revalidate the runner plan schema against the allowlist, the plan digest/run ID, strict prepared status, timestamp, exact fail-closed safety flags, and a SHA-256 envelope checksum.
+- Added regression tests for altered plans/digests/run IDs, changed status, unsafe/extra safety flags, altered envelope checksum, unexpected fields, and the still-disabled execution function.
+- Added `RC20-RUN-ENVELOPE.md` documenting the gate and reproducible command.
+- **Important limitation:** the unkeyed envelope checksum is tamper-evidence, not authentication or authorization. The runner remains disabled; this helper is not approval, OIDC, RBAC or sandbox enforcement.
+- Previous verified head before this increment: GitHub Actions run **45668468565 (#189) — SUCCESS**, 110/110 tests and shell/Python, Compose and Caddy validation.
+- The new runner code/tests/docs/report commits are awaiting a fresh CI result; no test result is claimed for this increment until GitHub Actions completes.
