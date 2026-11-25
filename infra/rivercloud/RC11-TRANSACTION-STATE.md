@@ -11,3 +11,7 @@ The queue fails closed when the lock cannot be acquired within its bounded timeo
 - JSON storage is local prototype storage, not a distributed or scalable database.
 - Identity authentication, runner execution and deployment remain disabled.
 \n\n### RC-28 directory-sync durability warning\n\nThe RC-11 store no longer silently ignores directory-sync failures after the atomic rename. It throws `state_commit_durability_uncertain` with `commitApplied=true` and a cause; the snapshot may already be committed. Callers must read/reconcile state before retrying rather than blindly resubmitting. A deterministic injected failure test exercises this post-rename condition and lock release. This is a fault-injection test, not a proof of target-filesystem crash durability.\n
+
+### RC-28 CI evidence
+
+- Runs **#257/#258 — SUCCESS: 123/123 Node tests**, plus bootstrap, backup/restore and Python syntax, Compose and Caddy validation. The corrected commit verified the directory-sync uncertainty handling and deterministic fault-injection test.
