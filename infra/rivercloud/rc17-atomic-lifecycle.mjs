@@ -49,7 +49,8 @@ function appendAtomicAudit(state, details) {
 }
 export async function createLifecycleJobAtomic(file, { jobId, digest, plan, actor = "system" } = {}) {
   if (!safeId.test(jobId ?? "") || !/^[a-f0-9]{64}$/i.test(String(digest ?? "")) || !plan || typeof plan !== "object" || Array.isArray(plan) || typeof actor !== "string" || !actor.trim() || actor.length > 100) throw new Error("invalid_job");
-  const safePlan = structuredClone(plan);
+  // Never persist raw secrets from caller-supplied plan data.
+  const safePlan = redact(plan);
   return transactState(file, state => {
     if (!Array.isArray(state.lifecycleJobs)) state.lifecycleJobs = [];
     if (state.lifecycleJobs.some(j => j.id === jobId)) throw new Error("job_exists");
