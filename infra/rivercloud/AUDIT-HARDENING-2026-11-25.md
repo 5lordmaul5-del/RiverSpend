@@ -2,7 +2,7 @@
 
 ## Snapshot
 
-PR #75 remains isolated on feat/rivercloud-core-2026-11-25. No merge, production deploy, server provisioning or paid operation was performed. The pull request has 60 changed files after this increment; this report records a focused code audit and corrections, not a completed certification of all changed files.
+PR #75 remains isolated on feat/rivercloud-core-2026-11-25. No merge, production deploy, server provisioning or paid operation was performed. The pull request has 60 changed files; this report records a focused code audit and corrections, not a completed certification of all changed files.
 
 ## Detailed source review
 
@@ -14,12 +14,13 @@ Inspected the control-plane and core prototype files, including server.mjs, rc11
 - Queue API: retained loopback-only binding and token authentication; added explicit JSON content-type, bounded body size, no-store response headers, safe internal error handling and tests.
 - Approval prototype: replaced Math.random nonce generation and separate read/modify/write with cryptographic random nonce and transaction-backed one-use consumption. Binding now requires a canonical project ID and 64-hex plan digest.
 - Staging path: added safe-segment validation and rejection of traversal paths.
-- Test-quality correction: the initial full CI run found one incorrect assertion in lifecycle.test.mjs (the helper returns false for an invalid transition; the test incorrectly expected an exception). This assertion has been corrected; the implementation itself was not changed for this finding.
+- Test-quality correction: the initial CI run found an incorrect assertion in lifecycle.test.mjs (the helper returns false for an invalid transition; the test incorrectly expected an exception). The assertion was corrected.
+- Compose/bootstrap: pinned Caddy and whoami to exact version tags; removed a healthcheck that depended on wget absent from the minimal whoami image. Bootstrap no longer pipes a remote installer into a shell and requires Docker to be installed and reviewed manually.
 
 ## Test evidence
 
 - Focused local tests against an isolated reconstructed copy of affected modules: 16/16 passed. This is not a checkout of the repository.
-- GitHub Actions full PR suite: initial run 58/59 passed; the one failure was the assertion defect described above. The corrected suite is awaiting its next run.
+- GitHub Actions full RiverCloud test suite: initial run 58/59 passed; after correcting the assertion, the branch workflow completed successfully. A validation job is being extended to check shell syntax and Compose configuration without starting services.
 
 ## Remaining blockers — not production eligible
 
@@ -28,13 +29,12 @@ Inspected the control-plane and core prototype files, including server.mjs, rc11
 - Local lock files may remain after a crash; manual review/recovery is required.
 - The existing local audit ledger and lifecycle persistence are not yet a unified transactional store and need concurrency/crash tests.
 - No external protected audit delivery, retries, receiver, or immutable retention.
-- Docker image tags are not pinned to digests; update/provenance policy remains.
-- Bootstrap uses a remote convenience installer pipeline and needs provenance/version review before any host use.
+- Image tags are version-pinned but not pinned by digest; update/provenance policy remains.
 - Backup/restore, dependency/supply-chain scan, staging rehearsal, performance tests and migration/cutover remain unperformed.
 
 ## Next gates
 
-1. Confirm the full branch test workflow passes and fix evidence-backed failures.
+1. Run the full branch test workflow including shell and Compose checks; fix evidence-backed failures.
 2. Continue file-by-file review of the remaining documentation, panel, configuration and test files.
 3. Design and integrate an actual OIDC/RBAC layer, without homemade token verification.
 4. Harden audit/lifecycle persistence and lock/crash recovery.
