@@ -178,3 +178,13 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 - GitHub Actions run **45646823737 (#142) — SUCCESS: 101/101 Node tests**, bootstrap shell syntax, backup/restore shell and Python syntax, Compose config, and Caddy validation. The Caddy validation used a temporary validation container only; the RiverCloud stack was not started.
 - Run #142 verifies head `4a63e38e7b17ebbb1f89c45e3da47efd84d3e044`; the report-only update is the next commit and will require a fresh CI run.
 - Remaining security gates: official registry digest verification/scan, image SBOM/CVE analysis, OIDC integration and route-level RBAC, real runner isolation, external audit storage and staging.
+
+
+## RC-9 facade migration to RC-17 atomic lifecycle (25 November 2026)
+
+- Migrated the `lifecycle.mjs` facade from two separately committed state/audit files to the RC-17 same-snapshot lifecycle/audit API.
+- Added a `readLifecycle` facade for reading lifecycle jobs and the verified audit chain from the same state file.
+- Rewrote the lifecycle regression tests to verify successful transitions, rejected transitions, concurrent one-time approval transitions, and duplicate job creation while checking job/audit integrity together.
+- Updated RC-9/RC-17 docs. The prior separate-file crash window is no longer used by this facade; the RC-8 audit module remains a standalone ledger prototype and is not a replacement for protected external storage.
+- This migration is committed on the isolated branch. CI for this latest migration is pending; do not consider it validated until a new run is confirmed. No production data is involved.
+- The prototype actor field remains unverified; OIDC/RBAC integration and caller audit are still required before any deployment.
