@@ -22,7 +22,7 @@ test("approval cannot be applied to changed commit", async () => {
   const root = await mkdtemp(path.join(os.tmpdir(), "rc10-"));
   try {
     const secret = "s".repeat(40), issued = await issueApproval({ storeDir: root, binding, secret, approver: "reviewer" }), changed = { ...binding, commit: "c".repeat(40) };
-    await assert.rejects(() => consumeApproval({ storeDir: root, binding: changed, secret, token: issued.token }), /missing|mismatch/);
+    await assert.rejects(() => consumeApproval({ storeDir: root, binding: changed, secret, token: issued.token, consumerIdentity: "executor-1" }), /missing|mismatch/);
   } finally { await rm(root, { recursive: true, force: true }); }
 });
 

@@ -285,3 +285,9 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 - Direct consumption now rejects missing/blank/oversized identity labels and rejects a label equal to the stored approver before consuming the token. The one-use transaction remains unchanged.
 - Updated the legacy approval tests and six-process race test to pass an explicit consumer label; added regressions for missing label and self-consumption. Labels remain unverified and caller-supplied in this low-level helper; this does not complete OIDC/RBAC route integration.
 - Starting-head CI evidence: run **45685641423 (#228) — SUCCESS**, 117/117 Node tests and the bootstrap, backup/restore/Python, Compose and Caddy validations. This validates the previous head `4bb7cebe3baabe6b0874af28823aeddf8825c068`, not the RC-24 changes. RC-24 changes require a fresh CI run before being considered tested.
+
+
+### RC-24 CI feedback — test fixture correction
+
+- Push/PR runs **45691902249 (#229)** and **45691912666 (#230)** reached the Node suite and failed 1 of 117 tests. The failure was in the changed-commit regression fixture: it omitted the newly mandatory `consumerIdentity`, so the test asserted the old rejection instead of exercising the binding mismatch.
+- The implementation's mandatory identity check and the process-level race test passed in those runs. Corrected the fixture to supply a distinct consumer label. The next CI result is required before declaring RC-24 verified.
