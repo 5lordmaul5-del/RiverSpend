@@ -62,3 +62,8 @@ The sandbox webhook deliberately does **not** update `orders`, confirm fulfillme
 The older routes under `/api/pay/stripe/*` are legacy routes and are not called by this adapter. They need a separate security review and must not be assumed to inherit the new test-only restrictions.
 
 If Stripe reports the existing hosted session as expired, the endpoint returns HTTP 409 rather than creating another session with a different idempotency key. A controlled retry/new-intent mechanism is deferred until an atomic database operation is available; this avoids accidental duplicate sessions under concurrent requests.
+
+
+### Additional test-webhook guard
+
+The Stripe test webhook explicitly rejects events marked as live (`event.livemode`) and checkout sessions marked live (`session.livemode`). It also requires checkout metadata `test_only: "true"`. This supplements the `sk_test_` server-key and test-mode environment gate. These checks are not a substitute for end-to-end webhook tests.
