@@ -270,3 +270,10 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 - This module is opt-in; no server route, OIDC provider or runner is wired to it. Legacy approval interfaces remain prototype paths. The test verifier is a stub, not a cryptographic provider integration.
 - GitHub clone attempt failed at DNS resolution (`github.com` could not be resolved); no checkout-based suite could be run in this environment. A reconstructed temporary workspace built from exact fetched branch copies of `approval-bound.mjs`, `rc11-state.mjs`, `rc13-identity.mjs`, the RC-22 helper and tests passed **16/16** across the RC-22, RC-13 identity and legacy approval test files. This is a targeted reconstructed-workspace result, not a full checkout or CI result. GitHub Actions for this increment is not independently confirmed.
 - Documentation: `RC22-APPROVAL-IDENTITY.md`.
+
+
+## RC-23 — explicit RBAC permission catalog (25 November 2026)
+
+- Audited the RC-13 permission helper and found that the owner wildcard returned true for arbitrary, unrecognized permission names. Unknown actions should fail closed even for privileged roles.
+- Added an explicit permission catalog; `hasPermission` now rejects unknown permission names before role evaluation. Added a regression assertion for owner/unknown-permission denial.
+- Added `RC23-RBAC-PERMISSION-CATALOG.md`. GitHub Actions evidence for this increment is pending; no result is claimed yet.
