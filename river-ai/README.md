@@ -19,3 +19,6 @@ Next: provider adapters, memory consent/UI, sandboxed tools with approval, evalu
 
 ## Provider adapter groundwork
 A provider-neutral interface and mock adapter exist for tests only. They do not connect to or simulate a live model. Real providers are a future milestone requiring explicit configuration, secrets handling, and tests.
+
+## Task Engine (planning only)
+A deterministic task planner creates a reviewable four-step plan, flags keywords associated with sensitive actions, and always sets execution disabled and approval required. It does not run commands, use tools, contact external services, deploy, or modify project state. This is planning groundwork, not agent autonomy.
