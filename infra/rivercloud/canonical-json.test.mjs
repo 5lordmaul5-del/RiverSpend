@@ -34,3 +34,14 @@ test("rejects prototype-sensitive keys and non-JSON values",()=>{
   assert.throws(()=>canonicalJson({value:Infinity}),/json_number_invalid/);
   assert.equal({}.polluted,undefined);
 });
+
+test("rejects hidden own properties and nonstandard array prototypes",()=>{
+  const hiddenObject={visible:true};
+  Object.defineProperty(hiddenObject,"hidden",{value:"ignored",enumerable:false});
+  assert.throws(()=>canonicalJson(hiddenObject),/json_object_invalid/);
+  const hiddenArray=[];
+  Object.defineProperty(hiddenArray,"hidden",{value:"ignored",enumerable:false});
+  assert.throws(()=>canonicalJson(hiddenArray),/json_array_invalid/);
+  const subclass=new class extends Array{}();
+  assert.throws(()=>canonicalJson(subclass),/json_array_invalid/);
+});
