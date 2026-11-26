@@ -49,7 +49,7 @@ test("RC-35 public and internal networks are separated",()=>{
 
 
 test("RC-54 proxy peer defaults and Compose override match the private API network",()=>{
- assert.match(apiSource,/trustedProxyAddress = "172\\.31\\.250\\.3"/);
- assert.match(apiSource,/RIVERCLOUD_TRUSTED_PROXY_IP \\|\\| "172\\.31\\.250\\.3"/);
- assert.match(compose,/RIVERCLOUD_TRUSTED_PROXY_IP: 172\\.31\\.250\\.3/);
+ assert.ok(apiSource.includes('trustedProxyAddress = "172.31.250.3"'));
+ assert.ok(apiSource.includes('RIVERCLOUD_TRUSTED_PROXY_IP || "172.31.250.3"'));
+ assert.ok(compose.includes("RIVERCLOUD_TRUSTED_PROXY_IP: 172.31.250.3"));
 });
