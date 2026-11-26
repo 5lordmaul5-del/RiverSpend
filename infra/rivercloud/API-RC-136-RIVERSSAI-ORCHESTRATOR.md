@@ -20,3 +20,8 @@ node --test infra/rivercloud/river-ssai-orchestrator.test.mjs
 ```
 
 No production key, agent process, live service or payment operation is used.
+
+
+## API-RC-136 CI closeout
+
+GitHub Actions **run 45814754280 — SUCCESS, 33/33 Node tests**. The added orchestrator tests are included alongside the API-key core/store, registry, shared-contract and mock-gateway tests. The orchestrator remains planning-only: no worker/process is launched; the approval verifier is a mock callback; maxConcurrency/maxRunSeconds are not runtime-enforced.
