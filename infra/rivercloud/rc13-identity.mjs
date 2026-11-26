@@ -6,7 +6,7 @@ const REQUIRED=["issuer","subject","audience","issuedAt","expiresAt","roles"];
 function audienceMatches(audience,expected){if(typeof expected!=="string"||!expected.trim())return false;if(typeof audience==="string")return audience===expected;if(Array.isArray(audience)&&audience.length>0&&audience.length<=20)return audience.every(v=>typeof v==="string"&&v.length>0)&&audience.includes(expected);return false;}
 export function validateIdentityClaims(claims,{now=Date.now(),verifyIssuer=()=>false,expectedIssuer,expectedAudience}={}) {
  if(!claims||typeof claims!=="object"||Array.isArray(claims))return {ok:false,reason:"invalid_claims"};
- for(const key of REQUIRED)if(!(key in claims))return {ok:false,reason:"missing_claim"};
+ for(const key of REQUIRED)if(!Object.hasOwn(claims,key))return {ok:false,reason:"missing_claim"};
  if(typeof claims.issuer!=="string"||!claims.issuer.trim()||claims.issuer.length>MAX_ISSUER_LENGTH||typeof claims.subject!=="string"||!claims.subject.trim()||claims.subject.length>MAX_SUBJECT_LENGTH)return {ok:false,reason:"invalid_subject"};
  if(typeof expectedIssuer!=="string"||!expectedIssuer.trim()||claims.issuer!==expectedIssuer||!audienceMatches(claims.audience,expectedAudience))return {ok:false,reason:"issuer_or_audience_mismatch"};
  if(!Number.isSafeInteger(now)||!Number.isSafeInteger(claims.issuedAt)||!Number.isSafeInteger(claims.expiresAt)||claims.expiresAt<=now||claims.issuedAt>now+60_000||claims.expiresAt<=claims.issuedAt||claims.expiresAt-claims.issuedAt>MAX_TOKEN_LIFETIME_MS)return {ok:false,reason:"invalid_time_window"};
