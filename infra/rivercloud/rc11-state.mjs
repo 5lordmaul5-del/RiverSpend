@@ -32,6 +32,8 @@ function validateState(s){
  if(s.jobs.length>MAX_STATE_JOBS||s.approvals.length>MAX_STATE_APPROVALS||s.events.length>MAX_STATE_EVENTS)throw new Error("state_collection_capacity_exceeded");
  for(const [name,limit] of [["auditRecords",MAX_STATE_AUDIT_RECORDS],["auditLogRecords",MAX_STATE_AUDIT_RECORDS],["lifecycleJobs",MAX_STATE_LIFECYCLE_JOBS],["approvalEvents",MAX_STATE_APPROVAL_EVENTS]]){
   if(s[name]!==undefined){
+   // The legacy lifecycle reader deliberately preserves a damaged non-array audit ledger so it can report integrity failure without resetting it.
+   if(name==="auditRecords"&&!Array.isArray(s[name]))continue;
    if(!Array.isArray(s[name]))throw new Error("state_extension_schema_invalid");
    if(s[name].length>limit)throw new Error("state_extension_capacity_exceeded");
    if(s[name].some(item=>!item||typeof item!=="object"||Array.isArray(item)))throw new Error("invalid_state_extension_record");
