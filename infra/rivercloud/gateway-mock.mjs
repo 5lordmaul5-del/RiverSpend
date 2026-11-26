@@ -1,6 +1,7 @@
 // Mock gateway contract: scoped API keys, bounded bodies and idempotent mock writes only.
 import { createHash } from "node:crypto";
 import { verifyApiKey } from "./api-key-core.mjs";
+import { canonicalJson } from "./canonical-json.mjs";
 
 export const MOCK_GATEWAY_ROUTES = Object.freeze([
   { method:"GET", path:"/api/v1/rivercloud/jobs", service:"RiverCloud", scope:"cloud:jobs:read" },
@@ -19,26 +20,6 @@ function responseSnapshot(value){return structuredClone(value);}
 const REQUEST_ID = /^[A-Za-z0-9._:-]{1,128}$/;
 const IDEMPOTENCY_KEY = /^[A-Za-z0-9._:-]{16,128}$/;
 
-function canonical(value, depth=0) {
-  if (depth>32) throw new Error("json_depth_exceeded");
-  if (value===null || typeof value==="string" || typeof value==="boolean") return JSON.stringify(value);
-  if (typeof value==="number") {
-    if (!Number.isFinite(value)) throw new Error("json_number_invalid");
-    return JSON.stringify(value);
-  }
-  if (Array.isArray(value)) return "["+value.map(v=>canonical(v,depth+1)).join(",")+"]";
-  if (value && typeof value==="object") {
-    const proto=Object.getPrototypeOf(value);
-    if (proto!==Object.prototype && proto!==null) throw new Error("json_object_invalid");
-    const keys=Object.keys(value).sort();
-    if (keys.some(k=>k==="__proto__" || k==="prototype" || k==="constructor")) throw new Error("json_key_invalid");
-    return "{"+keys.map(k=>JSON.stringify(k)+":"+canonical(value[k],depth+1)).join(",")+"}";
-  }
-  throw new Error("json_value_invalid");
-}
-function digestBody(body) {
-  return createHash("sha256").update(canonical(body)).digest("hex");
-}
 function plainObject(body) {
   return !!body && typeof body==="object" && !Array.isArray(body) &&
     (Object.getPrototypeOf(body)===Object.prototype || Object.getPrototypeOf(body)===null);
@@ -58,7 +39,7 @@ export function createMockGateway({maxIdempotencyEntries=10000}={}) {
       if (route.method==="GET") return {status:200,response:{status:"mock",service:route.service,requestId}};
       if (!plainObject(body)) return {status:400,error:"json_object_body_required"};
       let serialized;
-      try { serialized=canonical(body); } catch { return {status:400,error:"body_invalid"}; }
+      try { serialized=canonicalJson(body,{maxDepth:32,maxBytes:MAX_BODY_BYTES}); } catch { return {status:400,error:"body_invalid"}; }
       if (Buffer.byteLength(serialized)>MAX_BODY_BYTES) return {status:413,error:"body_too_large"};
       if (typeof idempotencyKey!=="string" || !IDEMPOTENCY_KEY.test(idempotencyKey)) return {status:400,error:"idempotency_key_required"};
       const digest=createHash("sha256").update(serialized).digest("hex");
