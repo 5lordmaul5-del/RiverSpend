@@ -1,0 +1,2 @@
+# RC-164 — Ledger contract tests
+Adds lightweight test mixin and stub contract tests for lease/completion/failure signatures. This validates interface shape only and is not an integration test with RC-159, persistence, concurrent leasing or execution.
