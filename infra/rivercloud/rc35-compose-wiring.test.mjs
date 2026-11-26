@@ -53,3 +53,6 @@ test("RC-54 proxy peer defaults and Compose override match the private API netwo
  assert.ok(apiSource.includes('RIVERCLOUD_TRUSTED_PROXY_IP || "172.31.250.3"'));
  assert.ok(compose.includes("RIVERCLOUD_TRUSTED_PROXY_IP: 172.31.250.3"));
 });
+
+
+test("RC-62 API image initializes the queue data volume with private permissions",()=>{assert.match(dockerfile,/RUN mkdir -p \/data && chown node:node \/data && chmod 700 \/data/);});
