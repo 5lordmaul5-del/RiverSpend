@@ -1,0 +1,1 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {inspectIntegrity} from './integrity-monitor.mjs';test('reports failing input without remediation',()=>{const r=inspectIntegrity({ledger:{},events:[],riskRegister:{schema:'bad',risks:[]}});assert.equal(r.healthy,false);assert.equal(r.automaticRepair,false);});
