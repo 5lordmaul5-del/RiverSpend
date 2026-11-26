@@ -29,3 +29,5 @@ Run RiverSpend in staging on RiverCloud, validate reliability, backups, secrets,
 - These RCs are code/test increments, not a production readiness certification. OIDC-provider operation, real runner, external audit sink, staging and production readiness remain unverified.
 
 - RC-62: RC-11 now fails closed on final state-directory symlinks/ownership/permissions and unsafe snapshot ownership/permissions; the API image initializes `/data` at mode 0700. CI verification pending.
+
+- RC-62 initial CI failure #672 was caused by legacy test-fixture files written with 0644 mode; the privacy gate correctly rejected them. Fixtures are being corrected to 0600, with fresh CI evidence pending.
