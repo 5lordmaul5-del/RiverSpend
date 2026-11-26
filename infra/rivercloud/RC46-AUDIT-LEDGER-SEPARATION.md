@@ -22,3 +22,10 @@ The queue and approval helpers append operational events into `state.events`. Th
 ```sh
 node --test infra/rivercloud/audit-log.test.mjs infra/rivercloud/queue.test.mjs
 ```
+
+
+## RC-46 CI closeout (26 November 2026)
+
+- Code/test commit `3348c1e26166d7034ab00fc78cb7bae05683b0b6`: GitHub Actions **45765929407 (#401) — SUCCESS, 154/154 Node tests**, 0 failures; bootstrap shell, backup/restore and Python syntax, restore directory-replacement race, Compose, API image build/inspection and Caddy validation all passed.
+- Report/document closeout commit `15d30cdd20661315d42602792977c7512c859ddf`: GitHub Actions **45765947186 (#404) — SUCCESS, 154/154 tests**, plus the same shell/Python, restore race, Compose, API image build/inspection and Caddy validation suite.
+- No RiverCloud services or runner were started; no real deployment, merge, provisioning, production data/credentials or spending.
