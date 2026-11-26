@@ -1,0 +1,10 @@
+import test from "node:test"; import assert from "node:assert/strict";
+import {consolidateEvidence} from "../../infra/rivercloud/evidence-consolidation.mjs";
+import {assessArchitecture} from "../../infra/rivercloud/architecture-consistency.mjs";
+import {compareContracts} from "../../infra/rivercloud/interface-compatibility.mjs";
+import {inventoryDebt} from "../../infra/rivercloud/technical-debt-inventory.mjs";
+test("RC191 deduplicates evidence",()=>{const r=consolidateEvidence([{type:"test",reference:"a"},{type:"test",reference:"a"}]);assert.equal(r.count,1);});
+test("RC192 flags missing invariant target",()=>{assert.equal(assessArchitecture([{id:"x"}],[{componentId:"y",description:"d"}]).consistent,false);});
+test("RC193 flags declared breaking change",()=>{assert.equal(compareContracts([{id:"a",version:"1",compatibility:"breaking"}]).reviewRequired,true);});
+test("RC194 prioritizes severity",()=>{const r=inventoryDebt([{id:"a",title:"A",severity:"low"},{id:"b",title:"B",severity:"critical"}]);assert.equal(r.items[0].id,"b");});
+test("bounds reject oversized input",()=>{assert.throws(()=>consolidateEvidence(Array(501).fill({type:"x",reference:"y"})));});
