@@ -11,3 +11,6 @@ test("rejects unsafe timestamps and excessive token lifetime",()=>{assert.equal(
 test("rejects invalid verifier configuration",()=>{assert.equal(validateIdentityClaims(claims,{...options,expectedIssuer:""}).reason,"issuer_or_audience_mismatch");assert.equal(validateIdentityClaims(claims,{...options,verifyIssuer:null}).reason,"signature_not_verified");});
 
 test("admin, operator and auditor receive status read access without widening unknown permissions",()=>{assert.equal(hasPermission({roles:["admin"]},"read_status"),true);assert.equal(hasPermission({roles:["operator"]},"read_status"),true);assert.equal(hasPermission({roles:["auditor"]},"read_status"),true);assert.equal(hasPermission({roles:["auditor"]},"manage_projects"),false);assert.equal(hasPermission({roles:["operator"]},"read_audit"),false);});
+
+
+test("identity claim verifier exceptions fail closed with a normalized result",()=>{const r=validateIdentityClaims(claims,{...options,verifyIssuer:()=>{throw new Error("verifier_unavailable");}});assert.deepEqual(r,{ok:false,reason:"signature_not_verified"});});
