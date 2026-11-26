@@ -95,3 +95,8 @@ test("RC-88 corrupted envelope hash never reaches replay storage",async()=>{cons
 test("RC-89 delivery signed with a different secret is rejected before replay storage",async()=>{const d=buildSignedDelivery(envelope(),{endpoint,secret,now});let calls=0;const result=await verifySignedDelivery(d,{secret:"z".repeat(40),now,consumeReplay:async()=>{calls++;return true;}});assert.equal(result.valid,false);assert.equal(result.reason,"signature_mismatch");assert.equal(calls,0);});
 
 test("RC-90 missing nonce header is rejected before replay storage",async()=>{const d=buildSignedDelivery(envelope(),{endpoint,secret,now});const headers={...d.headers};delete headers["x-rivercloud-audit-nonce"];let calls=0;const result=await verifySignedDelivery({...d,headers},{secret,now,consumeReplay:async()=>{calls++;return true;}});assert.equal(result.valid,false);assert.equal(calls,0);});
+
+
+test("RC-91 wrong content type never invokes replay storage",async()=>{const d=buildSignedDelivery(envelope(),{endpoint,secret,now});const headers={...d.headers,"content-type":"text/plain"};let calls=0;const result=await verifySignedDelivery({...d,headers},{secret,now,consumeReplay:async()=>{calls++;return true;}});assert.equal(result.valid,false);assert.equal(result.reason,"invalid_content_type");assert.equal(calls,0);});
+
+test("RC-92 malformed nonce never invokes replay storage",async()=>{const d=buildSignedDelivery(envelope(),{endpoint,secret,now});const headers={...d.headers,"x-rivercloud-audit-nonce":"not-a-valid-nonce"};let calls=0;const result=await verifySignedDelivery({...d,headers},{secret,now,consumeReplay:async()=>{calls++;return true;}});assert.equal(result.valid,false);assert.equal(result.reason,"invalid_nonce");assert.equal(calls,0);});
