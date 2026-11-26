@@ -28,3 +28,8 @@ test("reject malformed post-mutation snapshots before commit",async()=>{const ro
 
 
 test("reject persisted state collections beyond configured capacity",async()=>{const root=await mkdtemp(path.join(os.tmpdir(),"rc11-capacity-"));try{const file=path.join(root,"state.json");for(const [collection,count] of [["jobs",5001],["approvals",5001],["events",10001]]){const state={schema:1,jobs:[],approvals:[],events:[]};state[collection]=Array.from({length:count},(_,i)=>({id:String(i)}));await writeFile(file,JSON.stringify(state));await assert.rejects(()=>readState(file),/state_collection_capacity_exceeded/);}}finally{await rm(root,{recursive:true,force:true});}});
+
+
+test("reject persisted optional extension arrays beyond their independent limits",async()=>{const root=await mkdtemp(path.join(os.tmpdir(),"rc11-extension-cap-"));try{const file=path.join(root,"state.json");for(const [name,count] of [["auditLogRecords",10001],["lifecycleJobs",5001],["approvalEvents",10001]]){const state={schema:1,jobs:[],approvals:[],events:[],[name]:Array.from({length:count},()=>({id:"x"}))};await writeFile(file,JSON.stringify(state));await assert.rejects(()=>readState(file),/state_extension_capacity_exceeded/);}}finally{await rm(root,{recursive:true,force:true});}});
+
+test("reject malformed optional extension collections before commit",async()=>{const root=await mkdtemp(path.join(os.tmpdir(),"rc11-extension-shape-"));try{const file=path.join(root,"state.json");for(const name of ["auditLogRecords","lifecycleJobs","approvalEvents"]){await assert.rejects(()=>transactState(file,state=>{state[name]=null;}),/state_extension_capacity_exceeded/);assert.deepEqual(await readState(file),{schema:1,jobs:[],approvals:[],events:[]});}}finally{await rm(root,{recursive:true,force:true});}});
