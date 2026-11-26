@@ -30,12 +30,14 @@ function inputMatchesSchema(input,schema){
   return true;
 }
 function digestInput(input){return createHash("sha256").update("river-ssai-input-v1\0").update(canonical(input)).digest("hex");}
+function deepFreeze(value){if(value&&typeof value==="object"&&!Object.isFrozen(value)){for(const child of Object.values(value))deepFreeze(child);Object.freeze(value);}return value;}
 
 export function createRiverSSAIOrchestrator({definitions=[],maxIdempotencyEntries=5000,approvalVerifier=()=>false}={}){
   const validation=validateAgentRegistry(definitions);
   if(!validation.valid)throw new Error("registry_invalid:"+validation.reason);
   if(!Number.isSafeInteger(maxIdempotencyEntries)||maxIdempotencyEntries<1||maxIdempotencyEntries>100000||typeof approvalVerifier!=="function")throw new Error("orchestrator_options_invalid");
-  const registry=new Map(definitions.map(d=>[d.id,d]));
+  // Snapshot caller-owned registry objects so mutations after construction cannot alter policy.
+  const registry=new Map(definitions.map(d=>{const copy=deepFreeze(structuredClone(d));return [copy.id,copy];}));
   const idempotency=new Map();
   return Object.freeze({
     async planInvoke({key,record,agentId,version,input,requestId,idempotencyKey,approvalToken,now=Date.now()}={}){
