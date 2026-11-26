@@ -829,3 +829,13 @@ GitHub PR metadata confirms **98 changed files** at the current branch head. The
 - Regression coverage exercises malformed container types and inherited critical headers.
 - Correction history: early test commits had a syntax newline issue and failed CI; corrected test syntax was committed. The corrected code/test head `f9f61e6f9feeaa5e4cc69b95544690f615c50fad` was verified by push run **45772818189 — SUCCESS** and PR run **45772826123 — SUCCESS**, including Node tests and bootstrap, backup/restore/Python, restore race, Compose, isolated API image build/inspection and Caddy validation.
 - This prototype still makes no network calls; endpoint DNS/IP restrictions, authenticated sink operation and immutable storage remain unresolved. No services, merge, live deployment, production data/credentials, provisioning or spending.
+
+
+## RC-60 — audit append rejects invalid details containers (26 November 2026)
+
+- File-by-file review found `appendAudit` accepted `null`, arrays, primitives and non-plain objects for `details`. The ledger verifier rejects these as malformed record details, so a single append could persist a record that makes subsequent `readLedger` fail closed.
+- Added pre-transaction validation: `details` must be a plain object or null-prototype object; invalid inputs reject with `invalid_audit_details` before state mutation.
+- Added regression coverage for `null`, array, string, number and `Date` inputs and checks that the ledger remains absent/empty after rejection.
+- Code commit `1081cfeb22147158998b1f651a3f672c86818edb`; test commit `d4b7be603fe7094445dbd88a3a1a6d7ebfe297e1`.
+- **CI pending;** no test execution is claimed for this RC yet.
+- No live services, runner, staging, merge, deployment, production data/credentials, provisioning or spending.
