@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 const root=path.dirname(fileURLToPath(import.meta.url));
 const compose=await readFile(path.join(root,"docker-compose.yml"),"utf8");
 const dockerfile=await readFile(path.join(root,"Dockerfile"),"utf8");
+const apiSource=await readFile(path.join(root,"rc34-proxy-api.mjs"),"utf8");
 const services=[...compose.matchAll(/^  ([a-z0-9-]+):\n([\s\S]*?)(?=^  [a-z0-9-]+:\n|^networks:\n|^volumes:\n)/gm)].map(m=>({name:m[1],body:m[2]}));
 const block=name=>services.find(s=>s.name===name)?.body||"";
 
@@ -44,4 +45,11 @@ test("RC-35 public and internal networks are separated",()=>{
  assert.match(demo,/rivercloud-api:/);
  assert.match(compose,/rivercloud-api:\n\s+name: rivercloud-api\n\s+internal: true/);
  assert.match(compose,/rivercloud-public:\n\s+name: rivercloud-public/);
+});
+
+
+test("RC-54 proxy peer defaults and Compose override match the private API network",()=>{
+ assert.match(apiSource,/trustedProxyAddress = "172\\.31\\.250\\.3"/);
+ assert.match(apiSource,/RIVERCLOUD_TRUSTED_PROXY_IP \\|\\| "172\\.31\\.250\\.3"/);
+ assert.match(compose,/RIVERCLOUD_TRUSTED_PROXY_IP: 172\\.31\\.250\\.3/);
 });
