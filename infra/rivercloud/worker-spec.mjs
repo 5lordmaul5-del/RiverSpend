@@ -1,6 +1,6 @@
 // RC-6 worker job specification validator. Declarative profile only; no execution.
 import { exactDataObject } from "./engine.mjs";
-import { PROJECT_POLICY, WORKER_PROFILES, resolveProjectPolicy, resolveWorkerProfile } from "./unified-policy.mjs";
+import { WORKER_PROFILES, resolveProjectPolicy, resolveWorkerProfile } from "./unified-policy.mjs";
 export function validateWorkerJob(job){
  const data=exactDataObject(job,["projectId","branch","commit","target","profile"]);
  if(!data||Object.values(data).some(v=>typeof v!=="string"))throw new Error("invalid_job");
