@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {mkdtemp,rm,writeFile,symlink,lstat,mkdir,unlink} from "node:fs/promises";
+import {mkdtemp,rm,writeFile,symlink,lstat,mkdir,unlink,chmod} from "node:fs/promises";
 import {readFile} from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
@@ -31,3 +31,11 @@ test("reject persisted state collections beyond configured capacity",async()=>{c
 
 
 test("reject persisted optional extension arrays beyond their independent limits",async()=>{const root=await mkdtemp(path.join(os.tmpdir(),"rc11-extension-cap-"));try{const file=path.join(root,"state.json");for(const [name,count] of [["auditLogRecords",10001],["lifecycleJobs",5001],["approvalEvents",10001]]){const state={schema:1,jobs:[],approvals:[],events:[],[name]:Array.from({length:count},()=>({id:"x"}))};await writeFile(file,JSON.stringify(state));await assert.rejects(()=>readState(file),/state_extension_capacity_exceeded/);}}finally{await rm(root,{recursive:true,force:true});}});
+
+test("rejects a symlinked state-store directory before acquiring a lock",async()=>{const root=await mkdtemp(path.join(os.tmpdir(),"rc11-dir-link-"));try{const target=path.join(root,"real"),alias=path.join(root,"alias");await mkdir(target);await symlink(target,alias);await assert.rejects(()=>transactState(path.join(alias,"state.json"),()=>true),/state_directory_not_regular/);assert.equal(await lstat(path.join(target,"state.json")).then(()=>true).catch(()=>false),false);}finally{await rm(root,{recursive:true,force:true});}});
+
+test("refuses state-store directories with group or world permissions",async()=>{const root=await mkdtemp(path.join(os.tmpdir(),"rc11-dir-mode-"));try{const dir=path.join(root,"store");await mkdir(dir);await chmod(dir,0o777);const file=path.join(dir,"state.json");await assert.rejects(()=>transactState(file,()=>true),/state_directory_permissions_unsafe/);await chmod(dir,0o700);await addJob(file,{id:"private"});assert.equal((await readState(file)).jobs.length,1);}finally{await rm(root,{recursive:true,force:true});}});
+
+test("refuses state snapshots with group or world permissions",async()=>{const root=await mkdtemp(path.join(os.tmpdir(),"rc11-file-mode-"));try{const file=path.join(root,"state.json");await writeFile(file,JSON.stringify({schema:1,jobs:[],approvals:[],events:[]}));await chmod(file,0o644);await assert.rejects(()=>readState(file),/state_file_permissions_unsafe/);await chmod(file,0o600);assert.deepEqual(await readState(file),{schema:1,jobs:[],approvals:[],events:[]});}finally{await rm(root,{recursive:true,force:true});}});
+
+test("new state snapshots are persisted with private mode",async()=>{const root=await mkdtemp(path.join(os.tmpdir(),"rc11-file-private-"));try{const file=path.join(root,"state.json");await addJob(file,{id:"private-mode"});const stat=await lstat(file);assert.equal(stat.mode&0o077,0);}finally{await rm(root,{recursive:true,force:true});}});
