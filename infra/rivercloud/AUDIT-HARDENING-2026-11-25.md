@@ -317,7 +317,6 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 - Node 22 run: **8/8 tests passed** (approval binding/replay, process-level one-use race, RC-22 identity gate and co-location with the lifecycle snapshot). The full repository CI run for code head `874ab71163f879a58cf2d6a345bb02bd9e213c2a` has not yet been surfaced; do not treat the targeted workspace result as full-suite CI.
 - The test explicitly confirms the remaining gap: the approval is consumed in the shared snapshot while the lifecycle job stays `pending`; consume + transition still need a single transaction.
 
-
 ### RC-25 CI closeout — verified
 
 - GitHub Actions run **45692378410 (#235) — SUCCESS: 117/117 tests** and PR run **45692390510 (#236) — SUCCESS: 117/117 tests** verify code commit `874ab71163f879a58cf2d6a345bb02bd9e213c2a`. Both also passed bootstrap shell syntax, backup/restore and Python extractor syntax, Compose config, and Caddy validation. No RiverCloud services were started.
@@ -526,3 +525,13 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 - GitHub Actions run **45723627763 (#322) — SUCCESS: 131/131 Node tests, 0 failures**, plus shell/Python syntax, the new **1/1 directory-replacement race test**, Compose configuration and Caddy validation.
 - Run #322 verified commit **245707bc0a0f869404d7aaa57b6b1467ec71bcb1**. The race regression is explicitly present as step 7 and passed. The Caddy validation used a temporary container; no RiverCloud service or runner was started.
 - The report-only closeout commit requires a fresh CI verification before the latest branch head is considered verified.
+
+
+## RC-33 — audit redactor special-key safety (26 November 2026)
+
+- File-by-file review of RC-14 found that redaction copied untrusted object keys into an ordinary object. A JSON own-key named `__proto__` could alter the output object's prototype rather than being preserved as data, while special keys could be mishandled during serialization.
+- The redactor now constructs copied objects with `Object.create(null)`, preserving special keys as own data properties without mutating `Object.prototype`.
+- Added a regression for `__proto__`, `constructor`, and `prototype`, nested secret redaction, canonical envelope verification, and an explicit check that `Object.prototype` remains untouched.
+- Reconstructed temporary workspace using Node **22.16.0**: **13/13 RC-14 audit-sink tests passed**. This is a focused local test, not a full repository checkout.
+- GitHub Actions verification of the branch increment is pending; no CI pass is claimed for RC-33 yet.
+- No audit delivery, network receiver, RiverCloud service, runner, backup/restore, production operation or spending was performed.
