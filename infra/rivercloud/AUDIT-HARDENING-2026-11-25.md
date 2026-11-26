@@ -791,3 +791,12 @@ GitHub PR metadata confirms **98 changed files** at the current branch head. The
 - Test commit `99c45ebdef0593ec072db974f94ab80203f3c07d`: GitHub Actions **45769271258 (#485) — SUCCESS, 169/169 Node tests**, plus bootstrap shell, backup/restore and Python syntax, restore-directory race, Compose configuration, isolated API image build/inspection and Caddy validation.
 - Report commit `4c5b6e86e8f510c964e716cc5197b4feb76a1a48`: workflow **45769293314 (#487) — SUCCESS, 169/169 tests**, plus the same validation steps.
 - The test verifies that an envelope containing a raw sensitive-key value is rejected even if the unkeyed envelope hash is recomputed. This protects against accidentally signed-but-unredacted payloads in this verifier prototype; it is not independent immutable audit storage or real network delivery.
+
+
+## RC-56 — audit ledger read integrity and special-key safety (26 November 2026)
+
+- Review of RC-8 found `readLedger` returned persisted records without verifying the hash chain, and its redactor used ordinary-object assignment for `__proto__`, which could silently drop that key. The verifier also did not reject unredacted sensitive details when a record hash was recomputed.
+- `readLedger` now verifies the persisted ledger and fails closed on integrity errors. Redaction uses null-prototype objects, preserves special keys safely, and the verifier rejects data that is not already redacted.
+- Added tests for persisted-chain tampering, unredacted sensitive fields with recomputed hashes, special-key preservation, and read fail-closed behavior.
+- Code commit `a4854ca0a93fbde986ed9298670c198c28572cdd`; test commit `aafe752614e0eef5e84a77c719ee47ed945a1011`.
+- **CI pending for RC-56.** No external audit sink delivery, immutable storage, network operation, service, runner, staging, production data/credentials, merge, deployment, provisioning or spending.
