@@ -601,3 +601,17 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 - The first RC-37 commit failed both Push run **45751777462 (#344)** and PR run **45751783317 (#345)**: the new Admin test was inserted with literal escaped newline sequences, causing a JavaScript syntax error in the RC-34 test file. The test job stopped before the remaining validation steps; the 142/143 count is not a successful suite.
 - Corrected the test block to contain real line breaks. The correction is isolated on the same feature branch; CI evidence for the corrected commit is pending.
 - The finding itself remains: generic status-read access must not expose full queue/job details.
+
+
+### RC-37 CI regression and second correction
+
+- Corrected run **45751858304 (#346) — FAILURE**: the malformed test insertion was fixed, but the old Viewer test still expected `GET /api/jobs` to return 200. The new policy correctly returned 403; the stale assertion failed (147/148), so the workflow stopped before later validations.
+- Updated that test to reflect the new role boundary: Viewer and Auditor may read health/status but not full job details; Viewer cannot submit plans. The health response must not echo the actor label. The corrected commit's CI is pending.
+
+### RC-38 — preliminary image-version advisory review (26 November 2026)
+
+- **Node base:** Dockerfile pins Node `22.23.5-alpine3.23`. The official Node 22.23.5 security release (11 November 2026) includes security fixes; the pinned upstream version is newer than the 22.23.4 fix for CVE-2026-111497. Version-level review only; exact Alpine package/image scan was not run.
+- **Caddy:** pinned image is `2.11.9`. A version-level advisory result lists Caddy versions below 2.11.9-r0 as affected by CVE-2026-111943. The exact container package inventory and fix status were not verified by a scanner.
+- **OAuth2 Proxy:** pinned `v7.15.6`; the upstream release notes dated 5 November 2026 list security fixes. The v7.15.2 release also fixed multiple configuration-dependent authentication bypasses. This is not an image scan or proof that every embedded dependency is free of CVEs.
+- All three image references are digest-pinned in Compose/Dockerfile. **No SBOM, image signature verification or full vulnerability scan has been produced.** The demo `whoami` image is also not scanned.
+- Sources reviewed: Node release https://nodejs.org/en/blog/release/v22.23.5 ; OAuth2 Proxy release https://github.com/oauth2-proxy/oauth2-proxy/releases ; Caddy version-level advisory search https://security.snyk.io/vuln/SNYK-MINIMOSLATEST-CADDY-22514111 .

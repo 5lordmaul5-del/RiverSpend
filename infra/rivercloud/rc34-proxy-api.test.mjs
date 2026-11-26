@@ -33,13 +33,22 @@ test("RC-34 fails closed when direct caller is not the configured proxy", async 
   });
 });
 
-test("RC-34 viewer may read queue but cannot submit a plan", async () => {
+test("RC-37 viewer and auditor may read status but cannot read job details", async () => {
   await withServer({ trustedProxyAddress: "127.0.0.1", groupRoleMap }, async url => {
     const viewer = headers("viewer-1", "viewer");
-    assert.equal((await fetch(url + "/api/jobs", { headers: viewer })).status, 200);
-    const denied = await fetch(url + "/api/plan", { method: "POST", headers: { ...viewer, "content-type": "application/json" }, body: JSON.stringify(basePlan) });
-    assert.equal(denied.status, 403);
-    assert.equal((await denied.json()).error, "permission_denied");
+    const health = await fetch(url + "/api/health", { headers: viewer });
+    assert.equal(health.status, 200);
+    const healthBody = await health.json();
+    assert.equal(healthBody.executionEnabled, false);
+    assert.equal("actor" in healthBody, false);
+    const deniedJobs = await fetch(url + "/api/jobs", { headers: viewer });
+    assert.equal(deniedJobs.status, 403);
+    assert.equal((await deniedJobs.json()).error, "permission_denied");
+    const deniedPlan = await fetch(url + "/api/plan", { method: "POST", headers: { ...viewer, "content-type": "application/json" }, body: JSON.stringify(basePlan) });
+    assert.equal(deniedPlan.status, 403);
+    const auditor = headers("auditor-1", "auditor");
+    assert.equal((await fetch(url + "/api/health", { headers: auditor })).status, 200);
+    assert.equal((await fetch(url + "/api/jobs", { headers: auditor })).status, 403);
   });
 });
 
