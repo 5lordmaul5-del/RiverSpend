@@ -34,3 +34,11 @@ The first CI attempt exposed a fixture setup error: a test called `mkdir` on the
 ## API-RC-135 CI closeout
 
 GitHub Actions **run 45814328503 — SUCCESS, 26/26 Node tests**. The workflow now includes the seven file-store tests alongside the existing API-key core, registry, contract and mock-gateway tests. The store remains a prototype with filesystem-permission-only confidentiality, path/lock race limitations, no encryption-at-rest and no live key/gateway wiring.
+
+
+## RC-154 — data-only store option boundary
+
+- The file-store wrapper now reuses the shared API-key core's descriptor-only options snapshot for construction, creation, resolution and verification.
+- Accessor option fields fail closed before getter invocation, including wrapper-level fields that previously would have been destructured before reaching the core.
+- Regression coverage was added for store construction and create/verify/resolve requests.
+- Filesystem path/lock races and no-encryption-at-rest limitations remain unchanged; this does not make the store production-ready.
