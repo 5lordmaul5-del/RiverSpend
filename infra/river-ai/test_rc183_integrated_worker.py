@@ -3,8 +3,10 @@ import sqlite3
 import tempfile
 import time
 import unittest
+from concurrent.futures import ThreadPoolExecutor
 
-from rc181_payload_ledger import PayloadPersistentTaskLedger
+from rc159_persistent_ledger import PersistentTaskLedger
+from rc181_payload_ledger import PayloadPersistentTaskLedger, PayloadLedgerError
 from rc183_integrated_worker import WorkerCore
 
 
@@ -157,5 +159,56 @@ class WorkerCoreIntegrationTests(unittest.TestCase):
         with sqlite3.connect(legacy_path) as db:
             columns={row[1] for row in db.execute("PRAGMA table_info(task_results)")}
         self.assertIn("owner",columns)
+
+    def test_intake_request_key_is_idempotent_and_canonical(self):
+        first=self.ledger.enqueue("echo","summary","user-1",{"text":"hello","n":1},request_key="req-1")
+        second=self.ledger.enqueue("echo","summary","user-1",{"n":1,"text":"hello"},request_key="req-1")
+        self.assertEqual(first,second)
+        self.assertEqual(self.ledger.status()["queued"],1)
+
+    def test_duplicate_request_key_checked_before_queue_capacity(self):
+        first=self.ledger.enqueue("echo","summary","user-1",{"x":1},request_key="req-1")
+        repeat=self.ledger.enqueue("echo","summary","user-1",{"x":1},request_key="req-1")
+        self.assertEqual(first,repeat)
+        self.assertEqual(self.ledger.status()["queued"],1)
+
+    def test_request_key_reuse_with_changed_content_rejected(self):
+        first=self.ledger.enqueue("echo","summary","user-1",{"x":1},request_key="req-1")
+        with self.assertRaises(PayloadLedgerError):
+            self.ledger.enqueue("echo","summary","user-1",{"x":2},request_key="req-1")
+        with self.assertRaises(PayloadLedgerError):
+            self.ledger.enqueue("echo","summary","user-1",{"x":1},request_key="req-1",summary_limit=1)
+        self.assertEqual(self.ledger.lease_next("worker",("echo",))["id"],first)
+
+    def test_request_key_owner_scope(self):
+        first=self.ledger.enqueue("echo","summary","user-1",{"x":1},request_key="same")
+        second=self.ledger.enqueue("echo","summary","user-2",{"x":1},request_key="same")
+        self.assertNotEqual(first,second)
+
+    def test_request_key_validation(self):
+        for value in ("", " ", "x"*129, 1):
+            with self.subTest(value=value), self.assertRaises(PayloadLedgerError):
+                self.ledger.enqueue("echo","summary","user-1",{},request_key=value)
+
+    def test_concurrent_duplicate_intake_returns_one_task(self):
+        def submit():
+            return self.ledger.enqueue("echo","summary","user-1",{"text":"race"},request_key="race-key")
+        with ThreadPoolExecutor(max_workers=6) as pool:
+            ids=list(pool.map(lambda _:submit(),range(6)))
+        self.assertEqual(len(set(ids)),1)
+        self.assertEqual(self.ledger.status()["queued"],1)
+
+    def test_migrates_rc159_task_schema_for_request_keys(self):
+        legacy_path=os.path.join(self.tmp.name,"legacy-tasks.sqlite")
+        base=PersistentTaskLedger(legacy_path,queue_limit=2,lease_seconds=10)
+        old_task=base.enqueue("echo","old")
+        migrated=PayloadPersistentTaskLedger(legacy_path,queue_limit=2,lease_seconds=10)
+        new_task=migrated.enqueue("echo","new","user-1",{"text":"new"},request_key="migrated-key")
+        self.assertEqual(migrated.lease_next("worker",("echo",))["id"],old_task)
+        with sqlite3.connect(legacy_path) as db:
+            cols={row[1] for row in db.execute("PRAGMA table_info(tasks)")}
+        self.assertIn("request_key",cols)
+        self.assertIn("request_sha256",cols)
+        self.assertNotEqual(old_task,new_task)
 
 if __name__=="__main__": unittest.main()
