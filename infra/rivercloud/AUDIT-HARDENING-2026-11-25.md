@@ -730,3 +730,20 @@ GitHub PR metadata confirms **98 changed files** at the current branch head. The
 
 - Code/test commit `7ebbabbae101c1d39e98d59a117c64078202ce6a`: GitHub Actions **45766399053 (#423) — SUCCESS, 156/156 Node tests**, 0 failures; bootstrap shell, backup/restore/Python syntax, restore directory-replacement race, Compose, API image build/inspection and Caddy validation passed.
 - No real backup or restore was performed. No services or runner were started, no merge, deployment, production data/credentials, provisioning or spending.
+
+
+## RC-52 — post-mutation snapshot validation (26 November 2026)
+
+- The RC-11 transaction store now revalidates the snapshot after the mutator and before serialization/commit, preventing invalid collection/schema mutations from being persisted.
+- Regression tests exercise schema and collection-shape mutations and verify the original snapshot remains intact when validation rejects them.
+- Code commit `cc1475632e75985f266111db11969e913339d43f`; test commit `b4818b9521f292d7fc6625382781c93ca37b111a`.
+- CI evidence for this exact head was not independently retrieved at this report update; no local checkout test run is claimed.
+
+## RC-53 — fail-closed lifecycle extension state and capacity (26 November 2026)
+
+- Review of RC-17 found that malformed optional lifecycle/audit collections could be silently reinitialized as empty arrays, risking concealment or replacement of damaged data. RC-17 now initializes only absent collections and rejects existing non-array values; reads return explicit invalid-integrity reasons instead of presenting damaged extension state as empty/valid.
+- Added hard bounds: 5,000 lifecycle jobs, 10,000 atomic audit records and 10,000 approvals. Batch audit append checks its full requested size before mutation.
+- Added regression tests for damaged lifecycle/audit collection preservation, fail-closed reads/mutations, and capacity rejection.
+- Code commit `09fe41e5bb4c9f39e5c9802089bae8b30063df29`; test commit `ac68ac92f588907662871aa4049869697f4d6ca0`.
+- **CI pending for RC-53;** the commits were confirmed on the isolated PR branch, but tests have not been independently executed in this run.
+- No runner or service was started, no merge/deployment/staging operation, real data/credentials, provisioning or spending occurred.
