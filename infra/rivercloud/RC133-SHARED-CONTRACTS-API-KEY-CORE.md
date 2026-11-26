@@ -99,3 +99,10 @@ GitHub Actions **run 45814754280 — SUCCESS, 33/33 Node tests**. The added orch
 - Canonicalization now checks the full own-key inventory, requires data-only enumerable object properties, exact array index/length shape, and standard Array.prototype.
 - Added regression tests for hidden properties and array subclass prototypes. Existing canonical digest, size, node, depth, cycle and accessor checks remain in place.
 - GitHub Actions verification is pending for the new test commit.
+
+## Canonical JSON closeout — hidden-property and node-limit regression (26 November 2026)
+
+- The first CI attempt on the hidden-property correction exposed two expectation/ordering issues: the registry preflight now rejects hidden definition fields at the serializer boundary (`definition_json_invalid`), and array node-capacity failures must retain `json_nodes_exceeded` rather than a generic array-shape error.
+- Updated the regression expectation and preserved the node-limit error before array-shape validation; no checks were weakened.
+- GitHub Actions **run 45874759029 (#198) and 45874766496 (#199) — SUCCESS, 65/65 tests** on commit `8bfa517a75d4facadba53aa4b55b53ffc0ff11ac`.
+- The serializer remains mock/test-only and no production gateway or agent runtime is enabled.
