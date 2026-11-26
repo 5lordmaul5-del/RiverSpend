@@ -48,3 +48,6 @@ test("RC-70 rejects delivery inherited and unexpected properties",async()=>{cons
 
 
 test("RC-71 rejects exotic header prototypes",async()=>{const d=buildSignedDelivery(envelope(),{endpoint,secret,now});const h=Object.assign(Object.create({polluted:"x"}),d.headers);const altered={...d,headers:h};assert.equal((await verifySignedDelivery(altered,{secret,now,consumeReplay:acceptReplay})).reason,"invalid_headers");});
+
+
+test("RC-72 rejects missing, extra, and inherited header keys",async()=>{const d=buildSignedDelivery(envelope(),{endpoint,secret,now});const missing={...d,headers:{"content-type":"application/json","x-rivercloud-audit-timestamp":d.headers["x-rivercloud-audit-timestamp"],"x-rivercloud-audit-nonce":d.headers["x-rivercloud-audit-nonce"]}};assert.equal((await verifySignedDelivery(missing,{secret,now,consumeReplay:acceptReplay})).reason,"invalid_headers");const extra={...d,headers:{...d.headers,extra:"x"}};assert.equal((await verifySignedDelivery(extra,{secret,now,consumeReplay:acceptReplay})).reason,"invalid_headers");const inherited={...d,headers:Object.assign(Object.create(null),d.headers)};assert.equal((await verifySignedDelivery(inherited,{secret,now,consumeReplay:acceptReplay})).valid,true);});
