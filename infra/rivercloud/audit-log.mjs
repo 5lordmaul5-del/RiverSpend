@@ -1,7 +1,8 @@
 // RC-8 local audit ledger prototype. Hash-chained, transactional file persistence.
 import {transactState,readState} from "./rc11-state.mjs";
 import {createHash} from "node:crypto";
-const allowed=new Set(["plan_created","job_queued","approval_requested","approval_granted","approval_denied","worker_prepared","build_started","build_finished","health_check","rollback_requested","rollback_completed","failure","job_transition"]);\nconst MAX_AUDIT_RECORDS=10000;
+const allowed=new Set(["plan_created","job_queued","approval_requested","approval_granted","approval_denied","worker_prepared","build_started","build_finished","health_check","rollback_requested","rollback_completed","failure","job_transition"]);
+const MAX_AUDIT_RECORDS=10000;
 const SENSITIVE=/password|secret|token|authorization|cookie|private.?key|credential|api.?key/i;
 function safeDetails(v,depth=0){if(depth>8)return "[depth-limit]";if(Array.isArray(v))return v.slice(0,100).map(x=>safeDetails(x,depth+1));if(v&&typeof v==="object"){const o={};for(const [k,x] of Object.entries(v).slice(0,100))o[k]=SENSITIVE.test(k)?"[redacted]":safeDetails(x,depth+1);return o;}if(typeof v==="string")return v.length>4000?v.slice(0,4000)+"[truncated]":v;if(typeof v==="number"||typeof v==="boolean"||v===null)return v;return "[unsupported]";}
 function hashRecord(r){return createHash("sha256").update(JSON.stringify(r)).digest("hex");}
