@@ -44,7 +44,8 @@ class WorkerCoreIntegrationTests(unittest.TestCase):
         task=self.ledger.enqueue("echo","summary","user-1",{"text":"hello"})
         out=self.core.run_once("worker-token")
         self.assertEqual(out["status"],"completed")
-        stored=self.core.get_result(task)
+        stored=self.core.get_result(task,"user-1")
+        self.assertIsNone(self.core.get_result(task,"other-user"))
         self.assertEqual(stored["result"]["echo"],"hello")
         self.assertEqual(stored["result"]["key"],task)
         self.assertEqual(self.ledger.status()["completed"],1)
@@ -56,7 +57,7 @@ class WorkerCoreIntegrationTests(unittest.TestCase):
         out=self.core.run_once("bad-token")
         self.assertEqual(out["status"],"denied")
         self.assertEqual(self.ledger.status()["queued"],1)
-        self.assertIsNone(self.core.get_result(task))
+        self.assertIsNone(self.core.get_result(task,"user-1"))
 
     def test_capability_mismatch_leaves_task_queued(self):
         self.ledger.enqueue("echo","summary","user-1",{"text":"hello"})
@@ -79,7 +80,7 @@ class WorkerCoreIntegrationTests(unittest.TestCase):
         self.assertEqual(self.ledger.status()["queued"],1)
         self.assertEqual(core.run_once("worker-token")["status"],"completed")
         self.assertEqual(executor.keys,[task,task])
-        self.assertEqual(core.get_result(task)["result"],{"ok":"retry"})
+        self.assertEqual(core.get_result(task,"user-1")["result"],{"ok":"retry"})
         actions=[e["action"] for e in core.events(task)]
         self.assertIn("retry_scheduled",actions)
         self.assertIn("completed",actions)
@@ -135,5 +136,12 @@ class WorkerCoreIntegrationTests(unittest.TestCase):
         self.assertEqual(out["status"],"exhausted")
         self.assertEqual(self.ledger.status()["cancelled"],1)
         self.assertEqual(self.executor.keys,[])
+
+    def test_oversized_identity_token_is_rejected_before_leasing(self):
+        task=self.ledger.enqueue("echo","summary","user-1",{"text":"hello"})
+        out=self.core.run_once("x"*8193)
+        self.assertEqual(out["status"],"denied")
+        self.assertEqual(self.ledger.status()["queued"],1)
+        self.assertIsNone(self.core.get_result(task,"user-1"))
 
 if __name__=="__main__": unittest.main()
