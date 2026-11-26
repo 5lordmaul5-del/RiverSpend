@@ -839,3 +839,13 @@ GitHub PR metadata confirms **98 changed files** at the current branch head. The
 - Code commit `1081cfeb22147158998b1f651a3f672c86818edb`; test commit `d4b7be603fe7094445dbd88a3a1a6d7ebfe297e1`.
 - **CI pending;** no test execution is claimed for this RC yet.
 - No live services, runner, staging, merge, deployment, production data/credentials, provisioning or spending.
+
+
+## RC-61 — restore target-parent directory descriptor isolation (26 November 2026)
+
+- Audit found the restore target's parent path was still resolved by path-based `mkdir/open`, leaving a race if an intermediate parent directory were replaced by a symlink after the target directory was created.
+- The extractor now opens and walks the absolute target-parent path component-by-component with `O_DIRECTORY|O_NOFOLLOW`, checks and creates the target by name relative to the held parent descriptor, and uses descriptor-based cleanup of owned target contents. Symlinked parent components are rejected.
+- Added deterministic race coverage for parent-path replacement and a test for rejecting a pre-existing symlinked parent. The original nested-target race regression remains.
+- Early CI runs **45778908239 (#624)** and **45778930875 (#626)** failed on the implementation/test commits with `Bad file descriptor`; **45778949343 (#628)** failed for the same issue. Audit of the failure identified variable reuse between the held target-parent descriptor and the per-file parent descriptor. The scope was corrected in commit `2b07562e99f6959a74d089244e579c136a4b6346`.
+- Latest race-test commit `d1674535f5a3a0f621ad38b14f625625f136ee89`; **fresh CI verification pending**. No pass is claimed for RC-61 yet.
+- No restore against RiverSpend data, service, runner, staging, merge, deployment, production data/credentials, provisioning or spending.
