@@ -23,3 +23,11 @@ This is an architectural gap, not evidence of a live exploit. The prototype rema
 
 ## Status
 Assessment only. No API wiring or external authentication was activated in this commit.
+
+
+## RC-155 — actor-context data-only boundary (26 November 2026)
+
+- `queuePlan` now snapshots an exact two-field actor context and dense role array using property descriptors; accessor, sparse, hidden, symbol and unsupported-prototype data fail closed without getter invocation.
+- Regression covers actor and role-array accessors, sparse roles and hidden properties.
+- GitHub Actions run **45870398248 (#940) — SUCCESS, 268/268 Node tests**; **5/5 restore safety tests**; shell/Python syntax, Compose, isolated API-image build, SBOM and fixed HIGH/CRITICAL gate, and Caddy validation passed.
+- The API remains a prototype: forwarded identity provenance, external audit sink, runner/staging execution and restore rehearsal in a real isolated environment are still blockers. The SBOM contained 6 vulnerability entries; the fixed HIGH/CRITICAL gate passing is not a zero-vulnerability claim.
