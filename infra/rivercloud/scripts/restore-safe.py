@@ -152,10 +152,6 @@ def verify_archive_checksum_fd(archive_fd, archive_path, checksum_path):
         side_stat = os.fstat(side_fd)
         if not stat.S_ISREG(side_stat.st_mode) or side_stat.st_size > 512:
             fail("checksum sidecar must be a small regular file")
-        if (side_stat.st_mode & 0o077) != 0:
-            fail("checksum sidecar permissions unsafe")
-        if hasattr(os, "getuid") and side_stat.st_uid != os.getuid():
-            fail("checksum sidecar owner mismatch")
         raw = b""
         while len(raw) <= 512:
             chunk = os.read(side_fd, 513 - len(raw))

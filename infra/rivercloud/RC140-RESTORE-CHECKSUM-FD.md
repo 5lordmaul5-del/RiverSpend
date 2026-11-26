@@ -2,7 +2,7 @@
 
 The shell restore preflight verifies the archive checksum, but path-based preflight alone leaves a replacement window before the extractor opens the archive.
 
-RC-140 closes that gap by passing the checksum sidecar to `restore-safe.py`. The extractor re-verifies the checksum against the **same opened file descriptor** it subsequently reads as the tar stream. It checks the sidecar as a bounded regular file, rejects symlinks, unsafe permissions, mismatched filenames and malformed sidecar contents, and rewinds the archive descriptor before extraction.
+RC-140 closes that gap by passing the checksum sidecar to `restore-safe.py`. The extractor re-verifies the checksum against the **same opened file descriptor** it subsequently reads as the tar stream. It checks the sidecar as a bounded regular file, rejects symlinks, mismatched filenames and malformed sidecar contents, and rewinds the archive descriptor before extraction.
 
 Regression tests cover:
 - mismatched archive bytes rejected before the target is created;
