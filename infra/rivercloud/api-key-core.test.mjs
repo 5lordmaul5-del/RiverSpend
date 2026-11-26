@@ -77,3 +77,15 @@ test("record proxy traps fail closed instead of escaping verification",()=>{
   assert.equal(verifyApiKey(key,hostile,{now}).reason,"invalid_record");
   assert.equal(revokeApiKey(record).status,"revoked");
 });
+
+test("create and verify options reject accessor fields before reading them",()=>{
+  let getterCalls=0;
+  const createOptions={ownerId:"owner",scopes:["ai:invoke"],now,ttlMs:ttl};
+  Object.defineProperty(createOptions,"now",{enumerable:true,get(){getterCalls++;return now;}});
+  assert.throws(()=>createApiKey(createOptions),/invalid_api_key_request/);
+  const {key,record}=createApiKey({ownerId:"owner",scopes:["ai:invoke"],now,ttlMs:ttl});
+  const verifyOptions={now};
+  Object.defineProperty(verifyOptions,"requiredScope",{enumerable:true,get(){getterCalls++;return "ai:invoke";}});
+  assert.equal(verifyApiKey(key,record,verifyOptions).reason,"invalid_options");
+  assert.equal(getterCalls,0);
+});
