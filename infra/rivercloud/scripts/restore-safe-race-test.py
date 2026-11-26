@@ -105,11 +105,7 @@ def test_restore_parent_path_replacement_uses_open_parent_descriptor():
         assert (moved / "restored" / "nested" / "first.txt").read_text(encoding="utf-8") == "first"
 
 
-if __name__ == "__main__":
-    test_restore_uses_open_directory_descriptors_during_path_replacement()
-    test_restore_parent_path_replacement_uses_open_parent_descriptor()
-    test_restore_rejects_symlinked_parent_path()
-    print("3/3 restore directory replacement race tests passed")
+
 
 
 def test_restore_rejects_symlinked_parent_path():
@@ -131,3 +127,10 @@ def test_restore_rejects_symlinked_parent_path():
         else:
             raise AssertionError("restore accepted a symlinked target-parent component")
         assert not (real_parent / "restored").exists()
+
+
+if __name__ == "__main__":
+    test_restore_uses_open_directory_descriptors_during_path_replacement()
+    test_restore_parent_path_replacement_uses_open_parent_descriptor()
+    test_restore_rejects_symlinked_parent_path()
+    print("3/3 restore directory replacement race tests passed")
