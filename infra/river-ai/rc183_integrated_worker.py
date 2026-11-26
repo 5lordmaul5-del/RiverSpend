@@ -9,6 +9,7 @@ import hashlib
 import json
 import sqlite3
 import time
+from contextlib import contextmanager
 from pathlib import Path
 
 from rc181_payload_ledger import _canonical_payload
@@ -38,11 +39,15 @@ class WorkerCore:
                 result_sha256 TEXT, error_code TEXT, created REAL NOT NULL
             )""")
 
+    @contextmanager
     def _db(self):
         db = sqlite3.connect(self.db_path, timeout=10, isolation_level=None)
-        db.execute("PRAGMA busy_timeout=10000")
-        db.execute("PRAGMA journal_mode=WAL")
-        return db
+        try:
+            db.execute("PRAGMA busy_timeout=10000")
+            db.execute("PRAGMA journal_mode=WAL")
+            yield db
+        finally:
+            db.close()
 
     @staticmethod
     def _claims(token, verifier):
