@@ -32,7 +32,7 @@ try:
   lines = f.readlines()
  if len(lines) != 1:
   raise ValueError
- match = re.fullmatch(r"([0-9a-fA-F]{64})[ \t]+(?:\\*)?([^\n]+)\n?", lines[0])
+ match = re.fullmatch(r"([0-9a-fA-F]{64})[ \t]+(\*?)([^\n]+)\n?", lines[0])
  if not match or match.group(3) != expected_name:
   raise ValueError
  digest = hashlib.sha256()
