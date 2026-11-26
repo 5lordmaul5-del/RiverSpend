@@ -8,6 +8,7 @@ This increment adds a separate experimental lifecycle API that commits job state
 - reads replay the audit transition sequence and cross-check current job state/digest against the replay
 - missing audit history, mismatched state, duplicate job IDs and invalid transition replay are reported as integrity failures
 - invalid transitions and duplicate jobs fail without changing state
+- `pending -> approved` is not permitted through the generic transition API; it must use the RC-17 atomic one-use approval-consumption pathway (and the audit replay requires the adjacent consume/transition pair)
 - audit details are bounded and key-redacted
 - concurrent transition and create tests exercise the RC-11 lock/rename transaction
 
