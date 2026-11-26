@@ -125,6 +125,9 @@ def main(archive_path, target_path):
     require_dirfd_support()
     target_parent_fd = open_absolute_directory(target.parent)
     try:
+        parent_mode = os.fstat(target_parent_fd).st_mode
+        if parent_mode & 0o022:
+            fail("restore parent directory has unsafe permissions")
         try:
             os.stat(target_name, dir_fd=target_parent_fd, follow_symlinks=False)
             fail("restore target must not already exist")
