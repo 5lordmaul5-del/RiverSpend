@@ -7,11 +7,18 @@ import sys
 import tarfile
 from pathlib import Path, PurePosixPath
 
-MAX_FILES = int(os.environ.get("RIVERCLOUD_RESTORE_MAX_FILES", "100000"))
-MAX_BYTES = int(os.environ.get("RIVERCLOUD_RESTORE_MAX_BYTES", str(20 * 1024**3)))
-if MAX_FILES < 1 or MAX_BYTES < 1:
-    fail_config = "restore limits must be positive integers"
-    raise ValueError(fail_config)
+def read_positive_limit(name, default):
+    raw = os.environ.get(name, str(default))
+    try:
+        value = int(raw)
+    except (TypeError, ValueError):
+        raise ValueError(f"{name} must be a positive integer")
+    if value < 1:
+        raise ValueError(f"{name} must be a positive integer")
+    return value
+
+MAX_FILES = read_positive_limit("RIVERCLOUD_RESTORE_MAX_FILES", 100000)
+MAX_BYTES = read_positive_limit("RIVERCLOUD_RESTORE_MAX_BYTES", 20 * 1024**3)
 
 def fail(message):
     raise ValueError(message)
