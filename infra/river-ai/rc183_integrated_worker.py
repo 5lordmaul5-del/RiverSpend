@@ -117,16 +117,13 @@ class WorkerCore:
 
     def _event(self, task_id, attempt, worker, action, payload_digest=None,
                result_digest=None, error_code=None, db=None):
-        own = db is None
-        conn = db or self._db()
-        try:
-            conn.execute(
-                "INSERT INTO task_events(task_id,attempt,worker_subject,action,payload_sha256,result_sha256,error_code,created) VALUES(?,?,?,?,?,?,?,?)",
-                (task_id, attempt, worker, action, payload_digest, result_digest, error_code, time.time()),
-            )
-        finally:
-            if own:
-                conn.close()
+        sql = "INSERT INTO task_events(task_id,attempt,worker_subject,action,payload_sha256,result_sha256,error_code,created) VALUES(?,?,?,?,?,?,?,?)"
+        values = (task_id, attempt, worker, action, payload_digest, result_digest, error_code, time.time())
+        if db is not None:
+            db.execute(sql, values)
+        else:
+            with self._db() as conn:
+                conn.execute(sql, values)
 
     def _persist_success(self, task_id, worker, attempt, payload_digest, result_json, result_digest):
         now = time.time()
