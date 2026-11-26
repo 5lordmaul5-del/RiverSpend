@@ -2,7 +2,7 @@ import http from "node:http";
 import { timingSafeEqual } from "node:crypto";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { queuePlan, listQueue } from "./queue.mjs";
+import { queuePlan, listQueue } from "./queue.mjs";\nimport { POLICY_ERROR_CODES, CAPACITY_ERROR_CODES } from "./shared-contracts.mjs";
 
 const MAX_BODY = 8192;
 const POLICY_ERRORS = new Set(["invalid_request", "project_not_allowlisted", "target_not_allowed", "immutable_commit_sha_required", "branch_not_allowlisted"]);
