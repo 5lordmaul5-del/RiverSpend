@@ -12,7 +12,7 @@ export RIVERCLOUD_BACKUP_DIR=/path/to/separate/backups
 sh infra/rivercloud/scripts/backup.sh
 ```
 
-The script refuses source symlinks and a backup destination inside the source directory, excludes lock/temp files, creates a compressed archive and SHA-256 checksum, and uses restrictive umask.
+The script refuses source symlinks and a backup destination inside the source directory. It also fails closed if any transaction lock or temporary snapshot file is present, rather than silently excluding it and producing a potentially inconsistent backup. It creates a compressed archive and SHA-256 checksum and uses restrictive umask. The preflight is not a substitute for quiescing the writer; a concurrent transaction can still race the check.
 
 ## Restore to a new isolated directory
 
