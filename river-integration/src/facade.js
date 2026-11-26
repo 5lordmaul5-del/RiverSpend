@@ -5,7 +5,8 @@ const ALLOWED_FIELDS=new Set(["requestId","task","model","maxOutputTokens"]);
 const genericDenied=()=>({status:403,error:"request-denied"});
 function validId(v){return typeof v==="string"&&v.length>=1&&v.length<=128&&!/[\u0000-\u001f\u007f]/.test(v);}
 export function createIntegrationFacade({verifyIdentity,keyManager,provider,audit=()=>{},maxOutputTokens=2048,timeoutMs=DEFAULT_TIMEOUT_MS,quotaStore=null}={}){
- if(quotaStore!==null&&typeof quotaStore.consume!=="function")throw new Error("integration-dependencies-required");\n if(typeof verifyIdentity!=="function"||!keyManager||typeof keyManager.validate!=="function"||!provider||typeof provider.generate!=="function"||typeof audit!=="function"||!Number.isInteger(maxOutputTokens)||maxOutputTokens<1||!Number.isInteger(timeoutMs)||timeoutMs<1||timeoutMs>60000)throw new Error("integration-dependencies-required");
+ if(quotaStore!==null&&typeof quotaStore.consume!=="function")throw new Error("integration-dependencies-required");
+ if(typeof verifyIdentity!=="function"||!keyManager||typeof keyManager.validate!=="function"||!provider||typeof provider.generate!=="function"||typeof audit!=="function"||!Number.isInteger(maxOutputTokens)||maxOutputTokens<1||!Number.isInteger(timeoutMs)||timeoutMs<1||timeoutMs>60000)throw new Error("integration-dependencies-required");
  return Object.freeze({async invoke({authorization,body}={}){
   let identity;
   try{identity=await verifyIdentity(authorization);}catch{return genericDenied();}
@@ -17,7 +18,8 @@ export function createIntegrationFacade({verifyIdentity,keyManager,provider,audi
   if(!key)return genericDenied();
   let check;
   try{check=keyManager.validate({key,tenantId:identity.tenantId,scope:"inference"});}catch{return genericDenied();}
-  if(!check?.allowed)return genericDenied();\n  if(quotaStore){let quota;try{quota=quotaStore.consume({tenantId:identity.tenantId});}catch{return genericDenied();}if(!quota?.allowed)return{status:429,error:"quota-exceeded",retryAfterMs:Number.isFinite(quota.retryAfterMs)?quota.retryAfterMs:undefined};}
+  if(!check?.allowed)return genericDenied();
+  if(quotaStore){let quota;try{quota=quotaStore.consume({tenantId:identity.tenantId});}catch{return genericDenied();}if(!quota?.allowed)return{status:429,error:"quota-exceeded",retryAfterMs:Number.isFinite(quota.retryAfterMs)?quota.retryAfterMs:undefined};}
   let outcome="error",durationStart=Date.now();
   try{
    const controller=new AbortController();
