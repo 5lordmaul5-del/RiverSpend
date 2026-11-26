@@ -38,7 +38,42 @@ test("unknown required scopes and malformed records are denied", () => {
   assert.equal(API_KEY_SCOPES.includes("shop:checkout:real"), false);
 });
 
- 
 test("key expiry timestamp must remain within safe integer range",()=>{
   assert.throws(()=>createApiKey({ownerId:"owner",scopes:["ai:invoke"],now:Number.MAX_SAFE_INTEGER-1000,ttlMs:ttl}),/invalid_api_key_request/);
+});
+
+test("sparse, accessor and extended scope arrays are rejected without invoking getters",()=>{
+  const sparse=new Array(1);
+  assert.throws(()=>createApiKey({ownerId:"owner",scopes:sparse,now,ttlMs:ttl}),/invalid_api_key_request/);
+  let getterCalls=0;
+  const accessor=[];
+  Object.defineProperty(accessor,"0",{enumerable:true,get(){getterCalls++;return "ai:invoke";}});
+  accessor.length=1;
+  assert.throws(()=>createApiKey({ownerId:"owner",scopes:accessor,now,ttlMs:ttl}),/invalid_api_key_request/);
+  const extra=["ai:invoke"];
+  Object.defineProperty(extra,"hidden",{value:"ignored",enumerable:false});
+  assert.throws(()=>createApiKey({ownerId:"owner",scopes:extra,now,ttlMs:ttl}),/invalid_api_key_request/);
+  assert.equal(getterCalls,0);
+});
+
+test("API key record rejects accessors, hidden fields and malformed scope snapshots fail closed",()=>{
+  const {key,record}=createApiKey({ownerId:"owner",scopes:["ai:invoke"],now,ttlMs:ttl});
+  let getterCalls=0;
+  const accessor={...record};
+  Object.defineProperty(accessor,"ownerId",{enumerable:true,get(){getterCalls++;return "owner";}});
+  assert.equal(verifyApiKey(key,accessor,{now}).reason,"invalid_record");
+  assert.equal(getterCalls,0);
+  const hidden={...record};
+  Object.defineProperty(hidden,"extra",{value:"hidden",enumerable:false});
+  assert.equal(verifyApiKey(key,hidden,{now}).reason,"invalid_record");
+  const sparse={...record,scopes:new Array(1)};
+  assert.equal(verifyApiKey(key,sparse,{now}).reason,"invalid_record");
+  assert.throws(()=>revokeApiKey(accessor),/invalid_api_key_record/);
+});
+
+test("record proxy traps fail closed instead of escaping verification",()=>{
+  const {key,record}=createApiKey({ownerId:"owner",scopes:["ai:invoke"],now,ttlMs:ttl});
+  const hostile=new Proxy(record,{getOwnPropertyDescriptor(){throw new Error("trap");}});
+  assert.equal(verifyApiKey(key,hostile,{now}).reason,"invalid_record");
+  assert.equal(revokeApiKey(record).status,"revoked");
 });
