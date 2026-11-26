@@ -5,7 +5,7 @@ const ALLOWED_FIELDS=new Set(["requestId","task","model","maxOutputTokens"]);
 const genericDenied=()=>({status:403,error:"request-denied"});
 function validId(v){return typeof v==="string"&&v.length>=1&&v.length<=128&&!/[\u0000-\u001f\u007f]/.test(v);}
 export function createIntegrationFacade({verifyIdentity,keyManager,provider,audit=()=>{},maxOutputTokens=2048}={}){
- if(typeof verifyIdentity!=="function"||!keyManager||typeof keyManager.validate!=="function"||!provider||typeof provider.generate!=="function"||typeof audit!=="function")throw new Error("integration-dependencies-required");
+ if(typeof verifyIdentity!=="function"||!keyManager||typeof keyManager.validate!=="function"||!provider||typeof provider.generate!=="function"||typeof audit!=="function"||!Number.isInteger(maxOutputTokens)||maxOutputTokens<1)throw new Error("integration-dependencies-required");
  return Object.freeze({async invoke({authorization,body}={}){
   let identity;
   try{identity=await verifyIdentity(authorization);}catch{return genericDenied();}
