@@ -60,7 +60,7 @@ export async function verifySignedDelivery(delivery,{secret,now=Date.now(),maxSk
  if(typeof timestamp!=="string"||!/^\d{1,16}$/.test(timestamp)||Math.abs(now-Number(timestamp))>maxSkewMs) return {valid:false,reason:"timestamp_out_of_window"};
  if(typeof nonce!=="string"||! /^[a-f0-9]{32}$/i.test(nonce)) return {valid:false,reason:"invalid_nonce"};
  if(typeof signature!=="string"||!/^sha256=[a-f0-9]{64}$/i.test(signature)) return {valid:false,reason:"invalid_signature"};
- let envelope;try{envelope=JSON.parse(delivery.body);}catch{return {valid:false,reason:"invalid_body"};}
+ let envelope;try{envelope=JSON.parse(delivery.body);}catch{return {valid:false,reason:"invalid_body"};}if(JSON.stringify(envelope)!==delivery.body)return {valid:false,reason:"noncanonical_body"};
  const envelopeCheck=verifyAuditEnvelope(envelope);if(!envelopeCheck.valid)return envelopeCheck;
  const expected=createHmac("sha256",secret).update(timestamp+"."+nonce+"."+delivery.body).digest();
  const actual=Buffer.from(signature.slice(7),"hex");
