@@ -87,10 +87,14 @@ class WorkerCore:
                 or type(owner) is not str or type(payload) is not dict
                 or type(attempt) is not int or attempt < 1):
             return {"status": "rejected", "error": "lease_contract_invalid"}
+        if attempt > self.max_attempts:
+            self._persist_failure(task_id, worker, attempt, None)
+            return {"status": "exhausted", "task_id": task_id}
         try:
             payload_json = _canonical_payload(payload)
         except Exception:
-            return {"status": "rejected", "error": "payload_invalid"}
+            state = self._persist_failure(task_id, worker, attempt, None)
+            return {"status": state, "task_id": task_id, "error": "payload_invalid"}
         payload_digest = hashlib.sha256(payload_json.encode("utf-8")).hexdigest()
         self._event(task_id, attempt, worker, "leased", payload_digest)
         authorization = None
@@ -99,11 +103,18 @@ class WorkerCore:
                 kind, owner, worker_subject=worker, payload_sha256=payload_digest,
                 idempotency_key=task_id, attempt=attempt,
             )
+            if authorization is None:
+                raise RuntimeError("policy_denied")
             result = self.executor.execute(kind, payload, idempotency_key=task_id)
             result_json = _canonical_payload(result)
             result_digest = hashlib.sha256(result_json.encode("utf-8")).hexdigest()
-            self.policy.finish(authorization, True)
+            if self.policy.finish(authorization, True) is not True:
+                raise RuntimeError("policy_settlement_failed")
             if not self._persist_success(task_id, worker, attempt, payload_digest, result_json, result_digest):
+                try:
+                    self.policy.refund(authorization)
+                except Exception:
+                    pass
                 return {"status": "lease_lost", "task_id": task_id}
             return {"status": "completed", "task_id": task_id, "result_sha256": result_digest}
         except Exception:
