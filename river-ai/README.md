@@ -122,3 +122,14 @@ Queue jobs now start unapproved. A job must be explicitly approved before `claim
 - The CI workflow now pins checkout and setup-node to immutable commit SHAs; the pin regression test is added. A fresh run on the updated workflow is pending.
 
 **Boundaries remain:** no model/provider is connected; the task engine is planning-only; RiverBuild execution is disabled by default and requires an injected executor; the worker does not start Docker itself; RiverGit local service is not mounted into the main HTTP server; identity is static policy only, not authentication; audit/history are local or in-memory foundations, not durable tamper-proof storage. This core is not production-ready or independent of hardware/provider limits.
+
+## Virtual specialist catalog and planning scheduler — 26 November 2026
+
+- RiverSSAI now exposes a virtual catalog of **100,000 specialist definitions**, generated lazily from bounded role/domain templates. Pagination is capped; no 100,000 processes or separate model instances are created.
+- Task plans route to a specialist definition and remain `planned`, with `processCount: 0` and execution disabled.
+- A bounded in-memory scheduler supports priorities, queue limits and assignment records marked `assigned_not_started`. It is not connected to a model, worker or executor; its active process count remains zero and its state is not durable.
+- Read-only local API endpoints: `GET /specialists` (offset/limit/domain) and `GET /scheduler/status`. The HTTP API has no write endpoint; `scheduler-enqueue` remains disabled in the tool registry.
+- The standalone server entrypoint enforces loopback binding. Do not use `createServer()` with a public listener; it is a test/API factory, not an exposure control.
+- CI run #82 initially failed 2 tests because assertions assumed 50 domains while the catalog has 53; the tests now derive counts from the catalog. Fresh CI evidence for the correction is pending.
+
+**Limits:** the catalog is virtual, not a real pool of 100,000 agents. No inference, process activation, model loading, tool execution, network access, deployment, financial action or production mutation is implemented.
