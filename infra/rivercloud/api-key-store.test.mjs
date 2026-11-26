@@ -66,7 +66,7 @@ test("unsafe directory permissions and symlinked key file are rejected",async()=
 
 test("lock timeout and invalid snapshot fail closed",async()=>{
   const root=await mkdtemp(path.join(os.tmpdir(),"api-key-store-"));try{
-    const file=path.join(root,"keys.json"),dir=path.dirname(file);await mkdir(dir,{mode:0o700});
+    const file=path.join(root,"keys.json");
     await writeFile(file+".lock","occupied",{mode:0o600});
     await assert.rejects(()=>createApiKeyStore(file,{lockTimeoutMs:100}).create({ownerId:"owner",scopes:["ai:invoke"],now,ttlMs:ttl}),/lock_timeout/);
     await rm(file+".lock");
