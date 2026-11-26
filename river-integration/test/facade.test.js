@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {createIntegrationFacade} from "./facade.js";
+import {createIntegrationFacade} from "../src/facade.js";
 function fixture({identity={tenantId:"tenant-a",actorId:"actor-a"},allowed=true,output="ok",providerError=false}={}){
  let providerCalls=0,audits=[];
  const keyManager={validate(args){assert.equal(args.scope,"inference");return allowed?{allowed:true,keyId:"kid-1"}:{allowed:false};}};
