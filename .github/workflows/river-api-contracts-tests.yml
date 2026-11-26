@@ -1,0 +1,28 @@
+name: River API contract tests
+
+on:
+  push:
+    branches:
+      - feat/river-api-contracts-key-core-2026-11-26
+    paths:
+      - "infra/rivercloud/**"
+      - ".github/workflows/river-api-contracts-tests.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "infra/rivercloud/**"
+      - ".github/workflows/river-api-contracts-tests.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "22"
+      - name: Run shared contract, API key and registry tests
+        run: node --test infra/rivercloud/api-key-core.test.mjs infra/rivercloud/api-key-store.test.mjs infra/rivercloud/agent-registry-core.test.mjs infra/rivercloud/shared-contracts.test.mjs infra/rivercloud/gateway-mock.test.mjs infra/rivercloud/river-ssai-orchestrator.test.mjs infra/rivercloud/canonical-json.test.mjs infra/rivercloud/gateway-store-adapter.test.mjs

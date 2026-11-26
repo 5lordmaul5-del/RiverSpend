@@ -1,0 +1,157 @@
+{
+  "version": "river-spend.shared.v1",
+  "status": "prototype-contract",
+  "common": {
+    "apiPrefix": "/api/v1",
+    "requestIdHeader": "X-Request-Id",
+    "idempotencyHeader": "Idempotency-Key",
+    "authContext": "provider-verified identity or scoped API key; never caller-supplied body identity"
+  },
+  "apiKey": {
+    "prefix": "rs_test_",
+    "storage": "SHA-256 domain-separated digest only",
+    "secretReturnedOnce": true,
+    "minimumTtlMs": 3600000,
+    "maximumTtlMs": 7776000000,
+    "scopes": [
+      "cloud:plan",
+      "cloud:jobs:read",
+      "ai:invoke",
+      "registry:read",
+      "signals:read",
+      "signals:send",
+      "shop:catalog:read",
+      "shop:catalog:write",
+      "shop:checkout:mock"
+    ]
+  },
+  "agentRegistry": {
+    "maximumDefinitions": 100000,
+    "definitionCatalogOnly": true,
+    "workerProcessesCreated": false,
+    "requiredFields": [
+      "id",
+      "version",
+      "name",
+      "domain",
+      "capabilities",
+      "inputSchema",
+      "outputSchema",
+      "riskClass",
+      "requiresApproval",
+      "maxRunSeconds",
+      "maxConcurrency",
+      "status"
+    ],
+    "statuses": [
+      "draft",
+      "active",
+      "deprecated"
+    ],
+    "highRiskRequiresApproval": true
+  },
+  "services": {
+    "RiverCloud": {
+      "scope": "cloud:plan;cloud:jobs:read",
+      "operations": [
+        "plan",
+        "read-jobs"
+      ],
+      "executionEnabled": false
+    },
+    "RiverSSAI": {
+      "scope": "ai:invoke;registry:read",
+      "operations": [
+        "registry-read",
+        "invoke-mock"
+      ],
+      "liveExecutionEnabled": false
+    },
+    "RiverAPI": {
+      "scope": "shared-v1",
+      "operations": [
+        "gateway-auth",
+        "scope-check",
+        "request-id",
+        "idempotency"
+      ]
+    },
+    "Signals": {
+      "scope": "signals:read;signals:send",
+      "operations": [
+        "read-mock",
+        "send-mock"
+      ]
+    },
+    "Shop": {
+      "scope": "shop:catalog:read;shop:catalog:write;shop:checkout:mock",
+      "operations": [
+        "catalog-mock",
+        "checkout-mock"
+      ],
+      "realPaymentEnabled": false
+    }
+  },
+  "boundary": {
+    "noProductionKeys": true,
+    "noRealPaymentAuthorization": true,
+    "noExecutionRunner": true,
+    "noExternalServiceProvisioning": true
+  },
+  "mockGatewayRoutes": [
+    {
+      "method": "GET",
+      "path": "/api/v1/rivercloud/jobs",
+      "service": "RiverCloud",
+      "scope": "cloud:jobs:read"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rivercloud/plan",
+      "service": "RiverCloud",
+      "scope": "cloud:plan"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/agents/registry",
+      "service": "RiverSSAI",
+      "scope": "registry:read"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/agents/invoke",
+      "service": "RiverSSAI",
+      "scope": "ai:invoke"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/signals",
+      "service": "Signals",
+      "scope": "signals:read"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/signals/send",
+      "service": "Signals",
+      "scope": "signals:send"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/shop/catalog",
+      "service": "Shop",
+      "scope": "shop:catalog:read"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/shop/catalog",
+      "service": "Shop",
+      "scope": "shop:catalog:write"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/shop/checkout/mock",
+      "service": "Shop",
+      "scope": "shop:checkout:mock"
+    }
+  ]
+}
