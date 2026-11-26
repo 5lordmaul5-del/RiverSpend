@@ -1,4 +1,5 @@
 import os
+import sqlite3
 import tempfile
 import time
 import unittest
@@ -12,7 +13,9 @@ class Policy:
     def authorize(self, kind, owner, **binding):
         self.authorized.append((kind, owner, binding))
         return {"approval":"test-only"}
-    def finish(self, authorization, success): self.finished.append((authorization, success))
+    def finish(self, authorization, success):
+        self.finished.append((authorization, success))
+        return True
     def refund(self, authorization): self.refunded.append(authorization)
 
 
@@ -33,6 +36,7 @@ class WorkerCoreIntegrationTests(unittest.TestCase):
         def verify(token):
             if token!="worker-token": raise ValueError("invalid token")
             return {"subject":"worker-a","capabilities":["echo"]}
+        self.verify=verify
         self.core=WorkerCore(self.ledger,self.path,verify,self.policy,self.executor,max_attempts=3)
     def tearDown(self): self.tmp.cleanup()
 
@@ -55,7 +59,7 @@ class WorkerCoreIntegrationTests(unittest.TestCase):
         self.assertIsNone(self.core.get_result(task))
 
     def test_capability_mismatch_leaves_task_queued(self):
-        task=self.ledger.enqueue("echo","summary","user-1",{"text":"hello"})
+        self.ledger.enqueue("echo","summary","user-1",{"text":"hello"})
         def limited(token): return {"subject":"worker-b","capabilities":["other"]}
         core=WorkerCore(self.ledger,self.path,limited,self.policy,self.executor)
         self.assertEqual(core.run_once("token")["status"],"idle")
@@ -70,7 +74,7 @@ class WorkerCoreIntegrationTests(unittest.TestCase):
                 if len(self.keys)==1: raise RuntimeError("transient")
                 return {"ok":payload["text"]}
         executor=FailOnce()
-        core=WorkerCore(self.ledger,self.path,self.core.identity_verifier,self.policy,executor,max_attempts=3)
+        core=WorkerCore(self.ledger,self.path,self.verify,self.policy,executor,max_attempts=3)
         self.assertEqual(core.run_once("worker-token")["status"],"retry")
         self.assertEqual(self.ledger.status()["queued"],1)
         self.assertEqual(core.run_once("worker-token")["status"],"completed")
@@ -84,7 +88,7 @@ class WorkerCoreIntegrationTests(unittest.TestCase):
         task=self.ledger.enqueue("echo","summary","user-1",{"text":"fail"})
         class Broken:
             def execute(self,kind,payload,idempotency_key): raise RuntimeError()
-        core=WorkerCore(self.ledger,self.path,self.core.identity_verifier,self.policy,Broken(),max_attempts=2)
+        core=WorkerCore(self.ledger,self.path,self.verify,self.policy,Broken(),max_attempts=2)
         self.assertEqual(core.run_once("worker-token")["status"],"retry")
         self.assertEqual(core.run_once("worker-token")["status"],"exhausted")
         self.assertEqual(self.ledger.status()["cancelled"],1)
@@ -94,13 +98,42 @@ class WorkerCoreIntegrationTests(unittest.TestCase):
         path=os.path.join(self.tmp.name,"short.sqlite")
         ledger=PayloadPersistentTaskLedger(path,queue_limit=2,lease_seconds=1)
         ledger.enqueue("echo","summary","user-1",{"text":"slow"})
-        def verify(token): return {"subject":"worker-a","capabilities":["echo"]}
         class Slow:
             def execute(self,kind,payload,idempotency_key):
                 time.sleep(1.15)
                 return {"ok":True}
-        core=WorkerCore(ledger,path,verify,Policy(),Slow())
-        self.assertEqual(core.run_once("token")["status"],"lease_lost")
+        core=WorkerCore(ledger,path,self.verify,Policy(),Slow())
+        self.assertEqual(core.run_once("worker-token")["status"],"lease_lost")
         self.assertEqual(ledger.status()["completed"],0)
+
+    def test_malformed_payload_is_requeued_without_execution(self):
+        task=self.ledger.enqueue("echo","summary","user-1",{"text":"bad"})
+        with sqlite3.connect(self.path) as db:
+            db.execute("UPDATE tasks SET payload_json=? WHERE id=?",('{"__proto__":1}',task))
+        out=self.core.run_once("worker-token")
+        self.assertEqual(out["status"],"retry")
+        self.assertEqual(self.ledger.status()["queued"],1)
+        self.assertIn("retry_scheduled",[e["action"] for e in self.core.events(task)])
+
+    def test_policy_settlement_failure_retries_and_refunds(self):
+        task=self.ledger.enqueue("echo","summary","user-1",{"text":"settle"})
+        class RefusingPolicy(Policy):
+            def finish(self,authorization,success):
+                self.finished.append((authorization,success))
+                return False
+        policy=RefusingPolicy()
+        core=WorkerCore(self.ledger,self.path,self.verify,policy,self.executor)
+        self.assertEqual(core.run_once("worker-token")["status"],"retry")
+        self.assertTrue(policy.refunded)
+        self.assertEqual(self.ledger.status()["queued"],1)
+
+    def test_attempts_from_expired_leases_cannot_exceed_limit(self):
+        task=self.ledger.enqueue("echo","summary","user-1",{"text":"crash"})
+        with sqlite3.connect(self.path) as db:
+            db.execute("UPDATE tasks SET attempts=3 WHERE id=?",(task,))
+        out=self.core.run_once("worker-token")
+        self.assertEqual(out["status"],"exhausted")
+        self.assertEqual(self.ledger.status()["cancelled"],1)
+        self.assertEqual(self.executor.keys,[])
 
 if __name__=="__main__": unittest.main()
