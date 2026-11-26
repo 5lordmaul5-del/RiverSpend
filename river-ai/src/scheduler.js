@@ -27,7 +27,7 @@ export class SpecialistScheduler {
   const queued=this.#queue.splice(index,1)[0];
   const assigned=Object.freeze({...queued,status:"assigned_not_started",assignedAt:new Date().toISOString(),executionEnabled:false,processStarted:false});
   this.#assigned.push(assigned);
-  if(this.#assigned.length>this.maxQueue)this.#assigned.shift();
+  if(this.#assigned.length>this.maxQueue){const removed=this.#assigned.shift();this.#known.delete(removed.taskId);}
   return copy(assigned);
  }
  get(taskId){const q=this.#queue.find(x=>x.taskId===taskId);if(q)return copy(q);const a=this.#assigned.find(x=>x.taskId===taskId);return a?copy(a):null;}
