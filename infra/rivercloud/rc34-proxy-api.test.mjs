@@ -119,10 +119,10 @@ test("RC-34 rejects wrong methods, media types and oversized bodies", async () =
 });
 
 
-test("RC-54 standalone API defaults to its loopback trust peer instead of the stale Compose address", async () => {
+test("RC-54 standalone API default rejects a local caller outside the private proxy peer", async () => {
   await withServer({}, async url => {
-    const response = await fetch(url + "/api/health");
-    assert.equal(response.status, 401);
-    assert.equal((await response.json()).error, "identity_required");
+    const response = await fetch(url + "/api/health", { headers: headers("spoofed", "operator") });
+    assert.equal(response.status, 403);
+    assert.equal((await response.json()).error, "untrusted_proxy");
   });
 });
