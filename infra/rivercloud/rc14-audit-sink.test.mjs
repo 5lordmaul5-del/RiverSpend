@@ -57,3 +57,6 @@ test("RC-73 rejects negative verifier clock",async()=>{const d=buildSignedDelive
 
 
 test("RC-74 replay store fails closed on false and thrown errors",async()=>{const d=buildSignedDelivery(envelope(),{endpoint,secret,now});assert.equal((await verifySignedDelivery(d,{secret,now,consumeReplay:async()=>false})).reason,"replay_rejected");assert.equal((await verifySignedDelivery(d,{secret,now,consumeReplay:async()=>{throw new Error("store down");}})).reason,"replay_store_error");});
+
+
+test("RC-75 replay store is not called for invalid signatures",async()=>{const d=buildSignedDelivery(envelope(),{endpoint,secret,now});const bad={...d,headers:{...d.headers,"x-rivercloud-audit-signature":"sha256="+"0".repeat(64)}};let calls=0;const result=await verifySignedDelivery(bad,{secret,now,consumeReplay:async()=>{calls++;return true;}});assert.equal(result.valid,false);assert.equal(calls,0);});
