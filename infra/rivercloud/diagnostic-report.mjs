@@ -20,5 +20,5 @@ export function validateDiagnosticReport(report){
  const s=safeData(d.summary,["total","passed","failed","blocked","coverage","findings","missingControls"]);
  const c=safeData(d.coverage,["required","catalogued","missing"]);
  if(!s||!c||!Array.isArray(c.required)||!Array.isArray(c.catalogued)||!Array.isArray(c.missing))return false;
- return s.total===d.findings.length+s.passed+s.failed+s.blocked-s.findings /* aggregate sanity handled by producer */ || Number.isInteger(s.total);
+ return Number.isInteger(s.total)&&Number.isInteger(s.passed)&&Number.isInteger(s.failed)&&Number.isInteger(s.blocked)&&Number.isInteger(s.findings)&&Number.isInteger(s.missingControls)&&s.total===s.passed+s.failed+s.blocked&&s.findings===d.findings.length&&s.missingControls===c.missing.length&&d.gaps.length===c.missing.length;
 }
