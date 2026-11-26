@@ -1,0 +1,15 @@
+import test from "node:test";import assert from "node:assert/strict";
+import {systemReview} from "../../infra/rivercloud/system-wide-review.mjs";
+import {assessResilience} from "../../infra/rivercloud/resilience-assessment.mjs";
+import {consolidateSecurityGovernance} from "../../infra/rivercloud/security-governance-consolidation.mjs";
+import {integrationReadiness} from "../../infra/rivercloud/integration-readiness.mjs";
+import {buildEvidencePack} from "../../infra/rivercloud/final-evidence-pack.mjs";
+import {unifiedCompletionGate} from "../../infra/rivercloud/unified-rc-completion-gate.mjs";
+test("RC195 flags fail status",()=>assert.equal(systemReview([{area:"x",status:"fail"}]).reviewStatus,"review-required"));
+test("RC196 untested controls flagged",()=>assert.ok(assessResilience([{name:"backup",state:"planned"}]).issues.length));
+test("RC197 consolidates findings",()=>assert.equal(consolidateSecurityGovernance([{id:"s",state:"open"}],[]).reviewRequired,true));
+test("RC198 integration requires verified",()=>assert.equal(integrationReadiness([{name:"api",status:"pending"}]).ready,false));
+test("RC199 bounded evidence pack",()=>assert.equal(buildEvidencePack([{title:"tests",items:["x"]}]).itemCount,1));
+test("RC200 gate not complete with pending signal",()=>assert.equal(unifiedCompletionGate([{key:"tests",state:"pending"}]).complete,false));
+test("RC200 gate requires non-empty all positive",()=>assert.equal(unifiedCompletionGate([{key:"a",state:"verified"}]).complete,true));
+test("input bounds",()=>assert.throws(()=>systemReview(Array(501).fill({area:"x"}))));
