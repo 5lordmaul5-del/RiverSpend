@@ -15,5 +15,5 @@ export function validateIdentityClaims(claims,{now=Date.now(),verifyIssuer=()=>f
  return {ok:true,actor:{issuer:claims.issuer,subject:claims.subject,audience:claims.audience,roles:[...new Set(claims.roles)]}};
 }
 export function hasRole(actor,role){return Boolean(actor&&Array.isArray(actor.roles)&&ROLES.has(role)&&actor.roles.includes(role));}
-export const RC13_ROLE_POLICY=Object.freeze({owner:["*"],admin:["manage_users","manage_projects","approve_jobs"],operator:["manage_projects","approve_jobs"],auditor:["read_audit"],viewer:["read_status"]});
+export const RC13_ROLE_POLICY=Object.freeze({owner:["*"],admin:["manage_users","manage_projects","approve_jobs","read_audit","read_status"],operator:["manage_projects","approve_jobs","read_status"],auditor:["read_audit","read_status"],viewer:["read_status"]});
 export function hasPermission(actor,permission){if(typeof permission!=="string"||!PERMISSIONS.has(permission)||!actor||!Array.isArray(actor.roles))return false;return actor.roles.some(role=>ROLES.has(role)&&(RC13_ROLE_POLICY[role].includes("*")||RC13_ROLE_POLICY[role].includes(permission)));}

@@ -541,3 +541,13 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 - GitHub Actions **run 45729220577 (#329) — SUCCESS: 132/132 Node tests, 0 failures**, plus bootstrap shell syntax, backup/restore and Python extractor syntax, the 1/1 directory-replacement race regression, Compose validation, and Caddy validation.
 - Run #329 checked report commit **aafd7f0523f06182941cc45bc04b0d535ab3b082**, including the RC-33 source/test increment and the initial pending-evidence note.
 - The Caddy validation used a temporary pinned-image container only. No RiverCloud service, runner, audit receiver, backup/restore operation or staging host was started.
+
+
+## RC-34 — proxy identity/API authorization prototype (26 November 2026)
+
+- Added a separate API prototype that accepts OIDC Proxy identity headers only from the configured trusted source IP (default `172.30.250.3`), maps provider group names to RC-13 roles, and enforces route permissions.
+- Routes: `GET /api/health` and `GET /api/jobs` require `read_status`; `POST /api/plan` requires `manage_projects`. The plan endpoint is queue-only; execution is disabled.
+- Added tests for source-IP rejection, missing/unmapped identity, viewer/operator RBAC, idempotent plan submission, method/content-type/body bounds.
+- RC-13 policy now grants status-read to admin, operator and auditor roles without adding project-management/audit permissions to viewer or auditor.
+- **CI verification pending for this increment.** No full local checkout was available: `git clone` failed because DNS could not resolve github.com. The branch changes will be verified by GitHub Actions; no local test result is claimed.
+- The prototype is not connected to Compose or OAuth2 Proxy. No real OIDC authentication, API route integration, runner, staging, production operation or spending occurred.
