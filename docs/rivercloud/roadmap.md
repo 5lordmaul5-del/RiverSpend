@@ -70,3 +70,14 @@ Run RiverSpend in staging on RiverCloud, validate reliability, backups, secrets,
 - The RC-134 path preflight remains path-based and does not eliminate concurrent ancestor replacement races.
 
 - RC-135 (API workstream): see PR #102 for a separate bounded file-backed API-key store prototype and CI evidence; the shared branch remains isolated.
+
+
+## RC-137 — keyed actor pseudonymization (26 November 2026)
+
+- Replaced the provisional unkeyed actor hash with HMAC-SHA-256 using a separate actor-pseudonym secret.
+- The API rejects missing, short or `CHANGE_ME` placeholder secrets; the Compose `.env.example` placeholder is not a usable runtime value. No real secret was set or modified.
+- GitHub Actions **run 45815034075 — SUCCESS, 257/257 Node tests**.
+- Also passed: bootstrap shell syntax, backup/restore/Python syntax, **3/3 restore directory replacement race tests**, Compose validation, API image build/inspection, runtime package-manager absence check, SBOM generation, fixed HIGH/CRITICAL Trivy gate and Caddy validation.
+- API image SBOM: **20 components, 6 vulnerability entries**, SHA-256 `1e12c40ef36e0dfcb72b7557bc92c0589651ff490311704612e6d12d908d5b63`. The fixed HIGH/CRITICAL gate passed; this is not a zero-vulnerability or full-repository scan. The SBOM was not retained.
+- Caddy validation passed with a formatting warning at line 4. No service was started.
+- The pseudonym still derives from a proxy-supplied user label, not a verified issuer+subject, and does not replace authentication or an external audit sink.
