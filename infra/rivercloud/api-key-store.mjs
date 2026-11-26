@@ -103,6 +103,11 @@ export function createApiKeyStore(file,{maxKeys=MAX_KEYS,lockTimeoutMs=3000,sync
     async create({ownerId,scopes,now=Date.now(),ttlMs}={}){
       const generated=createApiKey({ownerId,scopes,now,ttlMs});await transact(file,s=>{if(s.keys.length>=maxKeys)throw new Error("api_key_store_capacity_exceeded");if(s.keys.some(k=>k.id===generated.record.id))throw new Error("api_key_store_duplicate_id");s.keys.push(generated.record);return true;},{maxKeys,lockTimeoutMs,syncDirectoryFn});return generated.key;
     },
+    async resolveRecord(key,{now=Date.now()}={}){
+      const match=KEY_PREFIX.exec(typeof key==="string"?key:"");if(!match)return {valid:false,reason:"key_id_mismatch"};
+      const snapshot=await readSnapshot(file,maxKeys);const record=snapshot.keys.find(k=>k.id===match[1]);if(!record)return {valid:false,reason:"invalid_record"};
+      const auth=verifyApiKey(key,record,{now});return auth.valid?{valid:true,record:structuredClone(record)}:auth;
+    },
     async verify(key,{now=Date.now(),requiredScope}={}){
       const match=KEY_PREFIX.exec(typeof key==="string"?key:"");if(!match)return {valid:false,reason:"key_id_mismatch"};
       const snapshot=await readSnapshot(file,maxKeys);const record=snapshot.keys.find(k=>k.id===match[1]);if(!record)return {valid:false,reason:"invalid_record"};return verifyApiKey(key,record,{now,requiredScope});
