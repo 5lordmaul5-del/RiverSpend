@@ -39,3 +39,11 @@ GitHub Actions **run 45814754280 — SUCCESS, 33/33 Node tests**. The added orch
 - GitHub Actions run **45815849404 (#53) — SUCCESS**; the contracts job completed successfully on the RC-138 code/test commit.
 - The run summary available through the repository integration confirms the job conclusion, but does not expose a test-count transcript; no numeric count is claimed here.
 - Regression coverage verifies that mutation of caller-owned definition metadata and nested input-schema objects after orchestrator construction cannot change the validated registry policy.
+
+
+## RC-139 — Gateway idempotency response isolation
+
+- Gateway now snapshots responses when storing and when returning idempotent write responses.
+- Regression test mutates the response object returned to the caller and confirms replay returns an intact cached response.
+- Commits: `2265db71` (code), `0a6a1930` (test).
+- CI evidence pending; no test execution is claimed for RC-139 yet.
