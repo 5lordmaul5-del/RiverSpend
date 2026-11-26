@@ -23,7 +23,7 @@ Run RiverSpend in staging on RiverCloud, validate reliability, backups, secrets,
 
 - Branch: `feat/rivercloud-core-2026-11-25` (Draft; no merge or live deployment).
 - RC-52 through RC-59: transaction, lifecycle state capacity, proxy trust-peer alignment, audit redaction/verification and delivery header hardening; see the progressive report for exact CI evidence and limitations.
-- RC-60: audit append now rejects non-object/non-plain details before transaction to avoid persisting verifier-invalid records; CI verified at 194/194 and 195/195 tests.
+- RC-60: audit append now rejects non-object/non-plain details before transaction to avoid persisting verifier-invalid records; CI verified at 194/194 (#617), 195/195 (#619), and report closeout 195/195 (#621).
 - RC-61: restore target-parent traversal/create/cleanup uses directory descriptors and rejects symlinked parent components; CI verified at 195/195 Node tests and 3/3 restore race checks after recording and correcting descriptor-scope failures.
 - Progressive technical evidence and blockers are recorded in `infra/rivercloud/AUDIT-HARDENING-2026-11-25.md`.
 - These RCs are code/test increments, not a production readiness certification. OIDC-provider operation, real runner, external audit sink, staging and production readiness remain unverified.
