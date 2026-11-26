@@ -821,3 +821,11 @@ GitHub PR metadata confirms **98 changed files** at the current branch head. The
 - RC-58 extends fail-closed state validation to optional persisted arrays `auditLogRecords` (10,000), `lifecycleJobs` (5,000), and `approvalEvents` (10,000). Oversized arrays reject reads and transactions before commit; malformed extension schemas continue to be rejected by their dedicated consumers, preserving existing fail-closed behavior. Regression tests cover over-capacity persisted arrays and malformed extension collections.
 - RC-58 CI verification pending; do not count this increment as verified until workflows pass.
 - No merge, deployment, production cutover, service startup, provisioning, credentials/data changes, or spending.
+
+
+## RC-59 — strict audit-delivery header structure (26 November 2026)
+
+- The signed-delivery verifier now rejects malformed header containers (null, array, primitive) and requires timestamp, nonce, and signature to be own-properties rather than inherited values.
+- Regression coverage exercises malformed container types and inherited critical headers.
+- Correction history: early test commits had a syntax newline issue and failed CI; corrected test syntax was committed. The corrected code/test head `f9f61e6f9feeaa5e4cc69b95544690f615c50fad` was verified by push run **45772818189 — SUCCESS** and PR run **45772826123 — SUCCESS**, including Node tests and bootstrap, backup/restore/Python, restore race, Compose, isolated API image build/inspection and Caddy validation.
+- This prototype still makes no network calls; endpoint DNS/IP restrictions, authenticated sink operation and immutable storage remain unresolved. No services, merge, live deployment, production data/credentials, provisioning or spending.
