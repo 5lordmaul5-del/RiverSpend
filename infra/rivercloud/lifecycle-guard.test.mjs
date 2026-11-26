@@ -1,0 +1,7 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import {canTransition,isLifecycleState,transitionLifecycle,lifecycleTransitions} from "./lifecycle-guard.mjs";
+test("RC-150 exposes bounded states and transitions",()=>{assert.equal(isLifecycleState("planned_not_queued"),true);assert.equal(isLifecycleState("running"),false);assert.deepEqual(lifecycleTransitions().verified,["rejected"]);});
+test("allows only defined transitions",()=>{assert.equal(canTransition("planned_not_queued","prepared_not_executed"),true);assert.equal(canTransition("prepared_not_executed","verified"),true);assert.equal(canTransition("verified","running"),false);assert.equal(canTransition("rejected","verified"),false);});
+test("transition returns immutable copy without altering source",()=>{const r={runId:"abc",status:"planned_not_queued"};const n=transitionLifecycle(r,"prepared_not_executed");assert.equal(r.status,"planned_not_queued");assert.equal(n.status,"prepared_not_executed");assert.equal(Object.isFrozen(n),true);});
+test("rejects hostile records and illegal transitions",()=>{const g={status:"planned_not_queued"};Object.defineProperty(g,"status",{enumerable:true,get(){throw Error("invoked");}});assert.throws(()=>transitionLifecycle(g,"prepared_not_executed"),/lifecycle_record_invalid/);assert.throws(()=>transitionLifecycle({status:"verified"},"running"),/lifecycle_transition_denied/);});
