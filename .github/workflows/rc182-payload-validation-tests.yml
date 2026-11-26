@@ -1,0 +1,20 @@
+name: RC-182 strict payload validation tests
+
+on:
+  push:
+    branches:
+      - feat/rc182-strict-payload-validation-2026-11-26
+
+permissions:
+  contents: read
+
+jobs:
+  payload-validation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@e3b0f0f5f6f5f1d0d9e1a4b3f3c1c6f0f0f0f0f0 # placeholder pin replaced below
+        with:
+          python-version: "3.12"
+      - name: Run RC-182 regression suite
+        run: python -m unittest discover -s infra/river-ai -p 'test_rc181_payload_ledger.py'
