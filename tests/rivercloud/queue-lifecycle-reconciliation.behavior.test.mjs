@@ -14,7 +14,7 @@ async function fixture(t, planOverride) {
   const queueFile = path.join(dir, "queue.json");
   const lifecycleFile = path.join(dir, "lifecycle.json");
   const plan = planOverride ?? validateDeployRequest({
-    projectId: "riverspend", repository: undefined, branch: "main",
+    projectId: "riverspend", branch: "main",
     commit: "a".repeat(40), target: "staging"
   });
   const digest = planDigest(plan);
