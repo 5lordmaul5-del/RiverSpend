@@ -1,5 +1,5 @@
 import http from "node:http";
-import { createHash } from "node:crypto";
+import { createHmac } from "node:crypto";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { queuePlan, listQueue } from "./queue.mjs";
@@ -79,11 +79,13 @@ export function createProxyApiServer({
   port = 0,
   trustedProxyAddress = "172.31.250.3",
   groupRoleMap = DEFAULT_GROUP_ROLE_MAP,
+  actorPseudonymSecret = process.env.RIVERCLOUD_ACTOR_PSEUDONYM_SECRET || "",
   storeFile = path.resolve(process.env.RIVERCLOUD_QUEUE_DIR || "./queue-data/state.json")
 } = {}) {
   if (!["127.0.0.1", "::1", "0.0.0.0"].includes(host)) throw new Error("invalid_api_bind_host");
   if (!Number.isInteger(port) || port < 0 || port > 65535) throw new Error("invalid_port");
   if (typeof trustedProxyAddress !== "string" || !trustedProxyAddress.trim() || trustedProxyAddress.length > 64) throw new Error("invalid_trusted_proxy");
+  if (typeof actorPseudonymSecret !== "string" || actorPseudonymSecret.length < 32 || actorPseudonymSecret.startsWith("CHANGE_ME")) throw new Error("actor_pseudonym_secret_required");
   const rolesByGroup = validateGroupRoleMap(groupRoleMap);
 
   const server = http.createServer(async (req, res) => {
@@ -114,7 +116,7 @@ export function createProxyApiServer({
       }
       if (route.method === "POST" && url.pathname === "/api/plan") {
         const input = await readBody(req);
-        const actorRef = createHash("sha256").update("rivercloud-actor-v1\\0" + actor.subject).digest("hex");
+        const actorRef = createHmac("sha256", actorPseudonymSecret).update("rivercloud-actor-v1\0").update(actor.subject).digest("hex");
         const result = await queuePlan(storeFile, input, { actorRef, roles: actor.roles });
         const responseJob = result.duplicate
           ? { id: result.job.id, digest: result.job.digest, state: result.job.state }
