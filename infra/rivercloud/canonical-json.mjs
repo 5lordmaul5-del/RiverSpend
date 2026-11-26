@@ -23,11 +23,10 @@ export function canonicalJson(value, { maxDepth = 32, maxBytes = 8192, maxNodes 
       return emit(JSON.stringify(value));
     }
     if (Array.isArray(value)) {
-      if (active.has(value)) throw new Error("json_cycle_detected");
-      if (value.length > maxNodes) throw new Error("json_nodes_exceeded");
-      const keys = Object.keys(value);
-      if (keys.length !== value.length || keys.some((key, index) => key !== String(index)) ||
-          Object.getOwnPropertySymbols(value).length) throw new Error("json_array_invalid");
+      if (Object.getPrototypeOf(value)!==Array.prototype || active.has(value) || value.length > maxNodes) throw new Error("json_array_invalid");
+      const keys=Reflect.ownKeys(value);
+      if (keys.length!==value.length+1||!keys.includes("length")||
+          keys.some(key=>key!=="length"&&(typeof key!=="string"||!/^(0|[1-9][0-9]*)$/.test(key)||Number(key)>=value.length))) throw new Error("json_array_invalid");
       for (let index = 0; index < value.length; index++) {
         const descriptor = Object.getOwnPropertyDescriptor(value, String(index));
         if (!descriptor || !descriptor.enumerable || !Object.hasOwn(descriptor, "value")) throw new Error("json_array_invalid");
@@ -37,7 +36,7 @@ export function canonicalJson(value, { maxDepth = 32, maxBytes = 8192, maxNodes 
         const parts = [emit("[")];
         for (let index = 0; index < value.length; index++) {
           if (index) parts.push(emit(","));
-          parts.push(walk(value[index], depth + 1));
+          parts.push(walk(Object.getOwnPropertyDescriptor(value,String(index)).value, depth + 1));
         }
         parts.push(emit("]"));
         return parts.join("");
@@ -45,15 +44,16 @@ export function canonicalJson(value, { maxDepth = 32, maxBytes = 8192, maxNodes 
     }
     if (isPlainObject(value)) {
       if (active.has(value)) throw new Error("json_cycle_detected");
-      if (Object.getOwnPropertySymbols(value).length) throw new Error("json_object_invalid");
-      const keys = Object.keys(value).sort();
-      if (keys.some(key => PROTECTED_KEYS.has(key))) throw new Error("json_key_invalid");
+      const ownKeys=Reflect.ownKeys(value);
+      if(ownKeys.some(key=>typeof key!=="string"))throw new Error("json_object_invalid");
+      const keys=ownKeys.sort();
+      if(keys.some(key=>PROTECTED_KEYS.has(key)))throw new Error("json_key_invalid");
       active.add(value);
       try {
         const parts = [emit("{")];
         for (let index = 0; index < keys.length; index++) {
-          const key = keys[index], descriptor = Object.getOwnPropertyDescriptor(value, key);
-          if (!descriptor || !descriptor.enumerable || !Object.hasOwn(descriptor, "value")) throw new Error("json_object_invalid");
+          const key=keys[index],descriptor=Object.getOwnPropertyDescriptor(value,key);
+          if(!descriptor||!descriptor.enumerable||!Object.hasOwn(descriptor,"value"))throw new Error("json_object_invalid");
           if (index) parts.push(emit(","));
           parts.push(emit(JSON.stringify(key)), emit(":"), walk(descriptor.value, depth + 1));
         }
