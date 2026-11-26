@@ -1,0 +1,3 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {analyzePolicyConflicts} from './policy-conflict-analyzer.mjs';
+test('detects mixed levels per scope',()=>{const r=analyzePolicyConflicts([{id:'a',scope:'deploy',level:'deny'},{id:'b',scope:'deploy',level:'allow'}]);assert.equal(r.conflictCount,1);assert.equal(r.policyMutation,false);});
+test('same level is not conflict and invalid level rejected',()=>{assert.equal(analyzePolicyConflicts([{id:'a',scope:'x',level:'deny'},{id:'b',scope:'x',level:'deny'}]).conflictCount,0);assert.throws(()=>analyzePolicyConflicts([{id:'a',scope:'x',level:'execute'}]));});
