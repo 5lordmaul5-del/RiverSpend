@@ -32,3 +32,10 @@ GitHub Actions **run 45814754280 — SUCCESS, 33/33 Node tests**. The added orch
 - Orchestrator now clones and recursively freezes validated definitions at construction, preventing later caller-side mutation from changing approval/risk/status/schema policy.
 - Regression test mutates the original definition and nested schema after construction; the orchestrator retains its validated snapshot.
 - CI evidence pending; no test execution is claimed for this commit.
+
+
+## RC-138 CI closeout
+
+- GitHub Actions run **45815849404 (#53) — SUCCESS**; the contracts job completed successfully on the RC-138 code/test commit.
+- The run summary available through the repository integration confirms the job conclusion, but does not expose a test-count transcript; no numeric count is claimed here.
+- Regression coverage verifies that mutation of caller-owned definition metadata and nested input-schema objects after orchestrator construction cannot change the validated registry policy.
