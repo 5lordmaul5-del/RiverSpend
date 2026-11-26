@@ -849,3 +849,11 @@ GitHub PR metadata confirms **98 changed files** at the current branch head. The
 - Early CI runs **45778908239 (#624)** and **45778930875 (#626)** failed on the implementation/test commits with `Bad file descriptor`; **45778949343 (#628)** failed for the same issue. Audit of the failure identified variable reuse between the held target-parent descriptor and the per-file parent descriptor. The scope was corrected in commit `2b07562e99f6959a74d089244e579c136a4b6346`.
 - Latest race-test commit `d1674535f5a3a0f621ad38b14f625625f136ee89`; **fresh CI verification pending**. No pass is claimed for RC-61 yet.
 - No restore against RiverSpend data, service, runner, staging, merge, deployment, production data/credentials, provisioning or spending.
+
+
+### RC-61 CI closeout (26 November 2026)
+
+- Corrected code commit `2b07562e99f6959a74d089244e579c136a4b6346`: GitHub Actions **45779015477 (#632) — SUCCESS, 195/195 Node tests**, 0 failures; Python restore race check **2/2** passed along with bootstrap shell, backup/restore and Python syntax, Compose configuration, isolated API image build/inspection and Caddy validation.
+- Latest regression-test commit `d1674535f5a3a0f621ad38b14f625625f136ee89`: GitHub Actions **45779060031 (#636) — SUCCESS, 195/195 Node tests**, 0 failures; restore race check **3/3** passed, including parent-path replacement and symlink-parent refusal. The same infrastructure validation steps passed.
+- Failures #624, #626 and #628 were caused by a descriptor-scope bug in the first implementation; they are recorded and not counted as passes. The correction and subsequent CI evidence are above.
+- No restore operation against real data was performed; no RiverCloud service or runner started, no merge, live deployment, production data/credentials, provisioning or spending.
