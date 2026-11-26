@@ -857,3 +857,10 @@ GitHub PR metadata confirms **98 changed files** at the current branch head. The
 - Latest regression-test commit `d1674535f5a3a0f621ad38b14f625625f136ee89`: GitHub Actions **45779060031 (#636) — SUCCESS, 195/195 Node tests**, 0 failures; restore race check **3/3** passed, including parent-path replacement and symlink-parent refusal. The same infrastructure validation steps passed.
 - Failures #624, #626 and #628 were caused by a descriptor-scope bug in the first implementation; they are recorded and not counted as passes. The correction and subsequent CI evidence are above.
 - No restore operation against real data was performed; no RiverCloud service or runner started, no merge, live deployment, production data/credentials, provisioning or spending.
+
+
+### RC-60 CI closeout (26 November 2026)
+
+- Code commit `1081cfeb22147158998b1f651a3f672c86818edb`: GitHub Actions **45778681439 (#617) — SUCCESS, 194/194 Node tests**, 0 failures, plus bootstrap shell, backup/restore and Python syntax, restore race, Compose, API image build/inspection and Caddy validation.
+- Regression test commit `d4b7be603fe7094445dbd88a3a1a6d7ebfe297e1`: GitHub Actions **45778690767 (#619) — SUCCESS, 195/195 Node tests**, 0 failures, with the same infrastructure validation steps.
+- Report commit `38154c06bd507894534fd826e665dfbb8258e9a8`: GitHub Actions **45778724537 (#621) — SUCCESS, 195/195 Node tests**, plus the same validations. Invalid audit details are rejected before persistence; no ledger corruption occurred in the regression.
