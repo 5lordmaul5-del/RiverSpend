@@ -1,0 +1,2 @@
+# RC-174 — Risk Register
+Adds a bounded, structured register for risk descriptions, severity, status, and owner labels. Does not assess risk automatically, execute mitigation, or validate owners as real identities.
