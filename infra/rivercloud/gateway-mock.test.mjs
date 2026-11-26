@@ -82,3 +82,11 @@ test("gateway canonicalization rejects excessive nesting",()=>{
   const result=gateway.handle({key:issued.key,record:issued.record,method:"POST",path:"/api/v1/signals/send",requestId:"req-depth-00000001",idempotencyKey:"idem-depth-00000001",body:deep,now});
   assert.equal(result.status,400);assert.equal(result.error,"body_invalid");
 });
+
+
+test("gateway rejects prototype-sensitive JSON keys",()=>{
+  const body=JSON.parse('{"__proto__":{"polluted":true}}');
+  const result=gateway.handle({key:issued.key,record:issued.record,method:"POST",path:"/api/v1/signals/send",requestId:"req-proto-000001",idempotencyKey:"idem-proto-000001",body,now});
+  assert.equal(result.status,400);assert.equal(result.error,"body_invalid");
+  assert.equal({}.polluted,undefined);
+});
