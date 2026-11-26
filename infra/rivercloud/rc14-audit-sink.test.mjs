@@ -114,3 +114,8 @@ test("RC-96 wrong method rejected before replay storage",async()=>{const d=build
 test("RC-97 endpoint query string rejected before replay storage",async()=>{const d=buildSignedDelivery(envelope(),{endpoint,secret,now});const altered={...d,endpoint:endpoint+"?x=1"};let calls=0;const result=await verifySignedDelivery(altered,{secret,now,consumeReplay:async()=>{calls++;return true;}});assert.equal(result.valid,false);assert.equal(calls,0);});
 
 test("RC-98 delivery body JSON parse failure rejected before replay storage",async()=>{const d=buildSignedDelivery(envelope(),{endpoint,secret,now});const altered={...d,body:"{"};let calls=0;const result=await verifySignedDelivery(altered,{secret,now,consumeReplay:async()=>{calls++;return true;}});assert.equal(result.valid,false);assert.equal(result.reason,"invalid_body");assert.equal(calls,0);});
+
+
+test("RC-99 HTTP endpoint is rejected before replay storage",async()=>{const d=buildSignedDelivery(envelope(),{endpoint,secret,now});const altered={...d,endpoint:"http://audit.example/receive"};let calls=0;const result=await verifySignedDelivery(altered,{secret,now,consumeReplay:async()=>{calls++;return true;}});assert.equal(result.valid,false);assert.equal(calls,0);});
+
+test("RC-100 body whitespace alteration rejected before replay storage",async()=>{const d=buildSignedDelivery(envelope(),{endpoint,secret,now});const altered={...d,body:d.body+"\n"};let calls=0;const result=await verifySignedDelivery(altered,{secret,now,consumeReplay:async()=>{calls++;return true;}});assert.equal(result.valid,false);assert.equal(calls,0);});
