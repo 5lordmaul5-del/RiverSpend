@@ -7,14 +7,13 @@ export const WORKER_PROFILES = Object.freeze({
   "node-tests": Object.freeze({ runtime:"node", buildProfile:"test-suite", timeoutSeconds:300, network:"restricted" })
 });
 export function resolveProjectPolicy(projectId, branch, target) {
-  const p = PROJECT_POLICY[projectId];
-  if (!p) throw new Error("project_not_allowlisted");
+  if(typeof projectId!=="string"||!Object.hasOwn(PROJECT_POLICY,projectId))throw new Error("project_not_allowlisted");
+  const p=PROJECT_POLICY[projectId];
   if (!p.branches.includes(branch)) throw new Error("branch_not_allowlisted");
   if (!p.targets.includes(target)) throw new Error("target_not_allowed");
   return p;
 }
 export function resolveWorkerProfile(profile) {
-  const p = WORKER_PROFILES[profile];
-  if (!p) throw new Error("profile_not_allowlisted");
-  return p;
+  if(typeof profile!=="string"||!Object.hasOwn(WORKER_PROFILES,profile))throw new Error("profile_not_allowlisted");
+  return WORKER_PROFILES[profile];
 }
