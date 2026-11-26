@@ -908,3 +908,16 @@ GitHub PR metadata confirms **98 changed files** at the current branch head. The
 - Regression test added for a claims object inheriting the required fields from its prototype.
 - GitHub Actions **45782011843 (#695) — SUCCESS, 221/221 Node tests**, plus bootstrap shell, backup/restore and Python syntax, 3/3 restore directory-replacement race checks, Compose, isolated API image build/inspection and Caddy validation.
 - No real provider login, OIDC/JWKS integration, route wiring, runner, staging, merge, live deployment, production data/credentials, provisioning or spending.
+
+
+## RC-129 — backup destination privacy preflight (26 November 2026)
+
+- Review of the backup script found that a canonicalized backup directory was not checked for ownership or group/world access. The restrictive umask was also applied after directory creation.
+- The script now applies `umask 077` before creating the destination, verifies that the canonical directory is owned by the current UID, requires owner rwx and rejects group/world permission bits. Existing unsafe directories are rejected without automatic permission repair.
+- Added two regressions for private 0700 creation and rejection of an existing permissive destination.
+- Focused tests in a reconstructed temporary workspace: **2/2 passed**; shell syntax passed. This was not a full checkout or a direct run of the repository test file.
+- GitHub Actions for RC-129 was not independently retrievable; **no CI pass is claimed**. The prior RC-128 workflow **45790894733 (#794)** passed **249/249 Node tests**, 3/3 restore directory-replacement race checks and the full validation suite; it does not cover RC-129.
+- A local clone attempt failed because github.com DNS resolution was unavailable.
+- No real backup/restore, service, runner, staging, merge, live deployment, production data/credentials, provisioning or spending.
+
+**Report reconciliation note:** the main progressive report's last detailed RC section is RC-64, while the verified branch head had already reached RC-128. This RC-129 entry records the current increment and latest available CI evidence; a consolidated RC-65–128 report reconciliation remains a documentation gap and is not treated as verified detail.
