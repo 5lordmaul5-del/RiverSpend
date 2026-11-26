@@ -3,7 +3,7 @@ import {constants as fsConstants} from "node:fs";
 import {mkdir,open,rename,unlink,lstat} from "node:fs/promises";
 import path from "node:path";
 import {randomUUID} from "node:crypto";
-import {createApiKey,verifyApiKey,revokeApiKey,validateApiKeyRecord} from "./api-key-core.mjs";
+import {createApiKey,verifyApiKey,revokeApiKey,validateApiKeyRecord,snapshotApiKeyOptions} from "./api-key-core.mjs";
 
 const INIT={schema:1,keys:[]};
 const MAX_BYTES=1024*1024;
@@ -96,19 +96,29 @@ function safeMetadata(record){
   return {id:record.id,ownerId:record.ownerId,scopes:[...record.scopes],status:record.status,createdAt:record.createdAt,expiresAt:record.expiresAt};
 }
 
-export function createApiKeyStore(file,{maxKeys=MAX_KEYS,lockTimeoutMs=3000,syncDirectoryFn=syncDirectory}={}){
-  if(typeof file!=="string"||!file)throw new Error("api_key_store_path_required");
+export function createApiKeyStore(file,options){
+  const config=snapshotApiKeyOptions(options,["maxKeys","lockTimeoutMs","syncDirectoryFn"],{maxKeys:MAX_KEYS,lockTimeoutMs:3000,syncDirectoryFn:syncDirectory});
+  if(typeof file!=="string"||!file||!config)throw new Error("api_key_store_path_required");
+  const {maxKeys,lockTimeoutMs,syncDirectoryFn}=config;
   if(!Number.isSafeInteger(maxKeys)||maxKeys<1||maxKeys>MAX_KEYS||!Number.isSafeInteger(lockTimeoutMs)||lockTimeoutMs<100||lockTimeoutMs>10000||typeof syncDirectoryFn!=="function")throw new Error("api_key_store_options_invalid");
   return Object.freeze({
-    async create({ownerId,scopes,now=Date.now(),ttlMs}={}){
-      const generated=createApiKey({ownerId,scopes,now,ttlMs});await transact(file,s=>{if(s.keys.length>=maxKeys)throw new Error("api_key_store_capacity_exceeded");if(s.keys.some(k=>k.id===generated.record.id))throw new Error("api_key_store_duplicate_id");s.keys.push(generated.record);return true;},{maxKeys,lockTimeoutMs,syncDirectoryFn});return generated.key;
+    async create(request){
+      const data=snapshotApiKeyOptions(request,["ownerId","scopes","now","ttlMs"],{now:Date.now()});
+      if(!data)throw new Error("invalid_api_key_request");
+      const generated=createApiKey(data);await transact(file,s=>{if(s.keys.length>=maxKeys)throw new Error("api_key_store_capacity_exceeded");if(s.keys.some(k=>k.id===generated.record.id))throw new Error("api_key_store_duplicate_id");s.keys.push(generated.record);return true;},{maxKeys,lockTimeoutMs,syncDirectoryFn});return generated.key;
     },
-    async resolveRecord(key,{now=Date.now()}={}){
+    async resolveRecord(key,options){
+      const data=snapshotApiKeyOptions(options,["now"],{now:Date.now()});
+      if(!data)return {valid:false,reason:"invalid_options"};
+      const {now}=data;
       const match=KEY_PREFIX.exec(typeof key==="string"?key:"");if(!match)return {valid:false,reason:"key_id_mismatch"};
       const snapshot=await readSnapshot(file,maxKeys);const record=snapshot.keys.find(k=>k.id===match[1]);if(!record)return {valid:false,reason:"invalid_record"};
       const auth=verifyApiKey(key,record,{now});return auth.valid?{valid:true,record:structuredClone(record)}:auth;
     },
-    async verify(key,{now=Date.now(),requiredScope}={}){
+    async verify(key,options){
+      const data=snapshotApiKeyOptions(options,["now","requiredScope"],{now:Date.now()});
+      if(!data)return {valid:false,reason:"invalid_options"};
+      const {now,requiredScope}=data;
       const match=KEY_PREFIX.exec(typeof key==="string"?key:"");if(!match)return {valid:false,reason:"key_id_mismatch"};
       const snapshot=await readSnapshot(file,maxKeys);const record=snapshot.keys.find(k=>k.id===match[1]);if(!record)return {valid:false,reason:"invalid_record"};return verifyApiKey(key,record,{now,requiredScope});
     },
