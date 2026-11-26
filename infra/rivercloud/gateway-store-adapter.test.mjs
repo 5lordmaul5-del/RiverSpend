@@ -36,3 +36,10 @@ test("store-backed mock gateway denies a persisted key with insufficient scope",
 test("adapter rejects missing API-key-store boundary",()=>{
   assert.throws(()=>createStoreBackedMockGateway({}),/api_key_store_required/);
 });
+
+
+test("store-backed gateway maps key-store failures to fail-closed 503",async()=>{
+  const gateway=createStoreBackedMockGateway({store:{resolveRecord:async()=>{throw new Error("store_read_failed");}}});
+  const result=await gateway.handle({...request,key:"rs_test_00000000000000000000000000000000.invalid"});
+  assert.equal(result.status,503);assert.equal(result.error,"api_key_store_unavailable");
+});
