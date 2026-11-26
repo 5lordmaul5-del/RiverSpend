@@ -1,7 +1,7 @@
 // Explicit reconciliation adapter between queue plans and the isolated lifecycle ledger.
-// This is NOT wired into the HTTP routes or execution runner yet.
-// Reconciliation is deliberately operator-invoked and fails closed on mismatched IDs/digests.
+// NOT wired into HTTP routes or the execution runner. Operator-invoked, fail-closed.
 import { listQueue } from "./queue.mjs";
+import { planDigest } from "./engine.mjs";
 import { readAtomicLifecycle, createLifecycleJobAtomic, digestLifecyclePlan } from "./rc17-atomic-lifecycle.mjs";
 
 export async function reconcileAcceptedPlans({ queueFile, lifecycleFile, actor = "reconciliation" } = {}) {
@@ -15,26 +15,33 @@ export async function reconcileAcceptedPlans({ queueFile, lifecycleFile, actor =
   for (const queueJob of queueJobs) {
     if (queueJob.state !== "accepted_not_executed") continue;
     report.examined++;
-    // Queue digest is the idempotency key. Lifecycle plan digest is independently derived.
-    const lifecycleId = String(queueJob.digest ?? "");
-    if (!/^[a-f0-9]{64}$/i.test(lifecycleId)) { report.mismatches++; continue; }
+    // Verify the queue's own digest before using the plan as reconciliation input.
+    if (!queueJob.plan || planDigest(queueJob.plan) !== String(queueJob.digest ?? "").toLowerCase() ||
+        queueJob.id !== queueJob.digest || !/^[a-f0-9]{64}$/i.test(String(queueJob.digest ?? ""))) {
+      report.mismatches++; continue;
+    }
+    // Lifecycle digest is independently computed over the bounded/redacted plan.
+    const lifecycleDigest = digestLifecyclePlan(queueJob.plan);
+    const lifecycleId = lifecycleDigest;
     const existing = known.get(lifecycleId);
     if (existing) {
-      if (digestLifecyclePlan(existing.plan) !== existing.digest || digestLifecyclePlan(queueJob.plan) !== existing.digest) report.mismatches++;
+      if (existing.digest !== lifecycleDigest || digestLifecyclePlan(existing.plan) !== lifecycleDigest ||
+          JSON.stringify(existing.plan) !== JSON.stringify(queueJob.plan)) report.mismatches++;
       else report.alreadyPresent++;
       continue;
     }
-    const derived = digestLifecyclePlan(queueJob.plan);
-    // A queue digest and redacted lifecycle digest are distinct domains. Do not force them equal.
-    const newId = derived.slice(0,64);
-    if (known.has(newId)) { report.mismatches++; continue; }
     try {
-      const created = await createLifecycleJobAtomic(lifecycleFile, { jobId: newId, plan: queueJob.plan, actor });
+      const created = await createLifecycleJobAtomic(lifecycleFile, { jobId: lifecycleId, digest: lifecycleDigest, plan: queueJob.plan, actor });
       known.set(created.id, created);
       report.created++;
     } catch (e) {
-      if (e.message === "job_exists") report.alreadyPresent++;
-      else throw e;
+      if (e.message === "job_exists") {
+        // Concurrent operator invocation: reread and compare, never assume success.
+        const refreshed = await readAtomicLifecycle(lifecycleFile);
+        const concurrent = refreshed.jobs.find(j => j.id === lifecycleId);
+        if (refreshed.integrity?.valid && concurrent?.digest === lifecycleDigest && digestLifecyclePlan(concurrent.plan) === lifecycleDigest) report.alreadyPresent++;
+        else report.mismatches++;
+      } else throw e;
     }
   }
   return report;
