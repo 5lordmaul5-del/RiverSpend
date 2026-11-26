@@ -7,7 +7,7 @@ import sys
 import tarfile
 from pathlib import Path, PurePosixPath
 
-MAX_FILES = 100_000
+MAX_FILES = int(os.environ.get("RIVERCLOUD_RESTORE_MAX_FILES", "100000"))
 MAX_BYTES = int(os.environ.get("RIVERCLOUD_RESTORE_MAX_BYTES", str(20 * 1024**3)))
 
 def fail(message):
