@@ -11,7 +11,9 @@ export function validateIdentityClaims(claims,{now=Date.now(),verifyIssuer=()=>f
  if(typeof expectedIssuer!=="string"||!expectedIssuer.trim()||claims.issuer!==expectedIssuer||!audienceMatches(claims.audience,expectedAudience))return {ok:false,reason:"issuer_or_audience_mismatch"};
  if(!Number.isSafeInteger(now)||!Number.isSafeInteger(claims.issuedAt)||!Number.isSafeInteger(claims.expiresAt)||claims.expiresAt<=now||claims.issuedAt>now+60_000||claims.expiresAt<=claims.issuedAt||claims.expiresAt-claims.issuedAt>MAX_TOKEN_LIFETIME_MS)return {ok:false,reason:"invalid_time_window"};
  if(!Array.isArray(claims.roles)||claims.roles.length===0||claims.roles.length>10||claims.roles.some(role=>typeof role!=="string"||!ROLES.has(role)))return {ok:false,reason:"invalid_roles"};
- if(typeof verifyIssuer!=="function"||verifyIssuer(claims)!==true)return {ok:false,reason:"signature_not_verified"};
+ if(typeof verifyIssuer!=="function")return {ok:false,reason:"signature_not_verified"};
+ let verified=false;try{verified=verifyIssuer(claims)===true;}catch{verified=false;}
+ if(!verified)return {ok:false,reason:"signature_not_verified"};
  return {ok:true,actor:{issuer:claims.issuer,subject:claims.subject,audience:claims.audience,roles:[...new Set(claims.roles)]}};
 }
 export function hasRole(actor,role){return Boolean(actor&&Array.isArray(actor.roles)&&ROLES.has(role)&&actor.roles.includes(role));}
