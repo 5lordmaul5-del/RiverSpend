@@ -12,9 +12,11 @@ def read_positive_limit(name, default):
     try:
         value = int(raw)
     except (TypeError, ValueError):
-        raise ValueError(f"{name} must be a positive integer")
+        print("restore limits must be positive integers", file=sys.stderr)
+        raise SystemExit(2)
     if value < 1:
-        raise ValueError(f"{name} must be a positive integer")
+        print("restore limits must be positive integers", file=sys.stderr)
+        raise SystemExit(2)
     return value
 
 MAX_FILES = read_positive_limit("RIVERCLOUD_RESTORE_MAX_FILES", 100000)
