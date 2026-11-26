@@ -879,3 +879,10 @@ GitHub PR metadata confirms **98 changed files** at the current branch head. The
 
 - Initial PR workflow **45781519481 (#672) failed 5/219 tests** because several pre-existing state-store test fixtures were created with the default 0644 file mode. The new privacy gate correctly rejected those fixtures before their intended schema/size/capacity assertions.
 - The implementation is not relaxed. The test fixtures are being updated to create private-mode snapshots (0600) except the dedicated permission-rejection regression. A fresh CI pass is required before closeout.
+
+
+### RC-62 CI closeout (26 November 2026)
+
+- Corrected fixture commit `c321e4bd3ee8cd2cc251f6a4cf4604f3ca43ec56`: GitHub Actions run **45781654024 (#679) — SUCCESS, 219/219 Node tests**; bootstrap shell, backup/restore and Python syntax, **3/3 restore directory-replacement race tests**, Compose validation, isolated API image build/inspection and Caddy validation also passed.
+- The initial #672 failure (5/219) was caused by legacy fixtures created with mode 0644; fixtures were corrected to mode 0600 while the dedicated unsafe-mode test remains deliberately permissive. No privacy checks were weakened.
+- No service or runner started, no real backup/restore, merge, live deployment, production data/credentials, provisioning or spending.
