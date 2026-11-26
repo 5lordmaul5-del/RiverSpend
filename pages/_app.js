@@ -11,6 +11,7 @@ const APP_MANIFESTS = [
   { match: '/servizi/sound-studio-live', href: '/manifest-soundstudioissa.json', color: '#7e22ce' },
   { match: '/servizi/music', href: '/manifest-music.json', color: '#7e22ce' },
   { match: '/river-spend-stream', href: '/manifest-streaming.json', color: '#7c3aed' },
+  { match: '/river-video', href: '/manifest-river-video.json', color: '#0f172a' },
   { match: '/park', href: '/manifest-park.json', color: '#0891b2' },
   { match: '/rs-control-center', href: '/manifest-panelcontrol.json', color: '#0f172a' },
   { match: '/riverspace-signals', href: '/manifest-signals.json', color: '#073b4c' },
