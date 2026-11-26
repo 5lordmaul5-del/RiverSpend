@@ -1024,3 +1024,11 @@ GitHub Actions run 45803301270 failed at the Node test suite: 254/256 passed; tw
 - The verifier callback receives only the descriptor-derived snapshot; tests confirm accessor getter count remains zero and hostile proxy traps fail closed.
 - Claims remain a prototype boundary: no JWT/OIDC cryptographic verifier or live route wiring is provided by this increment.
 - GitHub Actions verification pending.
+
+
+## RC-143 (RiverCloud) — data-only deployment and worker specifications
+
+- Audit found that deployment and worker-spec validators coerced fields directly from caller objects, allowing accessors to run and silently ignoring hidden extra properties.
+- Reused the shared \`exactDataObject\` boundary in the worker specification validator and restricted deployment requests to exact data-only fields with string values.
+- Added regression tests for getter invocation, hidden extras and symbol properties.
+- CI verification pending. This remains a policy/specification-only engine; no runner execution was added.
