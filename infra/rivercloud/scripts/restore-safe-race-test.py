@@ -67,4 +67,45 @@ def test_restore_uses_open_directory_descriptors_during_path_replacement():
 
 if __name__ == "__main__":
     test_restore_uses_open_directory_descriptors_during_path_replacement()
-    print("1/1 directory replacement race test passed")
+    test_restore_parent_path_replacement_uses_open_parent_descriptor()
+    print("2/2 restore directory replacement race tests passed")
+
+
+def test_restore_parent_path_replacement_uses_open_parent_descriptor():
+    with tempfile.TemporaryDirectory(prefix="rc61-") as temp:
+        root = Path(temp)
+        parent = root / "restore-parent"
+        moved = root / "restore-parent-moved"
+        outside = root / "outside"
+        parent.mkdir()
+        outside.mkdir()
+        (outside / "marker").write_text("outside-safe", encoding="utf-8")
+        archive = root / "archive.tar.gz"
+        make_archive(archive)
+        target = parent / "restored"
+
+        original_open = os.open
+        injected = False
+
+        def replace_parent_before_target_open(name, flags, *args, **kwargs):
+            nonlocal injected
+            is_target_open = (str(name) == str(target)) or (name == target.name and kwargs.get("dir_fd") is not None)
+            if not injected and is_target_open and flags & getattr(os, "O_DIRECTORY", 0):
+                injected = True
+                os.rename(parent, moved)
+                os.symlink(outside, parent)
+            return original_open(name, flags, *args, **kwargs)
+
+        os.supports_dir_fd.add(replace_parent_before_target_open)
+        os.open = replace_parent_before_target_open
+        try:
+            restore_safe.main(str(archive), str(target))
+        finally:
+            os.open = original_open
+            os.supports_dir_fd.discard(replace_parent_before_target_open)
+
+        assert injected, "target-root replacement hook did not fire"
+        assert (outside / "marker").read_text(encoding="utf-8") == "outside-safe"
+        assert not (outside / "restored").exists(), "restore created target through the replaced parent symlink"
+        assert (moved / "restored" / "nested" / "second.txt").read_text(encoding="utf-8") == "second"
+        assert (moved / "restored" / "nested" / "first.txt").read_text(encoding="utf-8") == "first"
