@@ -98,7 +98,7 @@ export function createProxyApiServer({
       const url = new URL(req.url || "/", "http://rivercloud.internal");
       const routes = new Map([
         ["/api/health", { method: "GET", permission: "read_status" }],
-        ["/api/jobs", { method: "GET", permission: "read_status" }],
+        ["/api/jobs", { method: "GET", permission: "read_jobs" }],
         ["/api/plan", { method: "POST", permission: "manage_projects" }]
       ]);
       const route = routes.get(url.pathname);
@@ -107,7 +107,7 @@ export function createProxyApiServer({
       if (!hasPermission(actor, route.permission)) return respond(res, 403, { error: "permission_denied" });
 
       if (route.method === "GET" && url.pathname === "/api/health") {
-        return respond(res, 200, { status: "proxy_identity_api_prototype", executionEnabled: false, actor: actor.subject });
+        return respond(res, 200, { status: "proxy_identity_api_prototype", executionEnabled: false });
       }
       if (route.method === "GET" && url.pathname === "/api/jobs") {
         return respond(res, 200, { jobs: await listQueue(storeFile) });

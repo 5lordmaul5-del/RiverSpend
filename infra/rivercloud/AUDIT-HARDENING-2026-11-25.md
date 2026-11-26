@@ -2,7 +2,7 @@
 
 ## Snapshot
 
-PR #75 remains isolated on feat/rivercloud-core-2026-11-25. No merge, production deploy, server provisioning or paid operation was performed. The pull request has **73 changed files**; this report records a focused code audit and corrections, not a completed certification of all changed files.
+PR #75 remains isolated on feat/rivercloud-core-2026-11-25. No merge, production deploy, server provisioning or paid operation was performed. PR #75 currently has **96 changed files**; this report records a focused code audit and corrections, not a completed certification of all changed files.
 
 ## Detailed source review
 
@@ -594,3 +594,4 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 - GitHub Actions run **45743359921 (#340) — SUCCESS: 147/147 Node tests**, 0 failures, including the actor-attribution and malformed-context regressions.
 - Run #340 also passed bootstrap shell syntax, backup/restore and Python syntax, the **1/1 restore directory-replacement race test**, Docker Compose configuration, and Caddy validation. It verifies commit **f31985e3b1a4d25fd078faccd665a2da21dbe711**.
 - The attribution remains provisional and pseudonymous; it is not issuer+subject authentication or an immutable audit record. No service was started or API integration request made.
+\n\n### RC-37 — separate job-list permission from generic status (26 November 2026)\n\n- Audit found `GET /api/jobs` was using `read_status`, which granted full persisted job/plan details to Viewer and Auditor roles. This was broader than a status-read permission.\n- Added explicit `read_jobs` to the RC-13 permission catalog and grant it only to owner/admin/operator; Auditor and Viewer now fail closed on the queue endpoint.\n- The health response no longer echoes the raw proxy username.\n- Regression tests cover Viewer/Auditor denial, Operator/Admin access, and health-only status access.\n- **Previous code head evidence:** GitHub Actions run **45743430386 (#343) — SUCCESS: 147/147 Node tests**, 0 failures; shell/Python, 1/1 restore directory-replacement race test, Compose and Caddy validation also passed for commit `da0203408557de14a4ba43e0d44ed6c723ae1e29`.\n- RC-37 changes are committed on the isolated branch; CI for the new commit is pending. No real OIDC login or live proxy/API integration was exercised.\n\n
