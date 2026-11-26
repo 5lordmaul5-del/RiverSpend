@@ -986,3 +986,13 @@ GitHub PR metadata confirms **98 changed files** at the current branch head. The
 ## RC-135 — RC-134 regression-test contract correction
 
 GitHub Actions run 45803301270 failed at the Node test suite: 254/256 passed; two existing tests asserted the older `state_directory_not_regular` message while RC-134 now emits `state_directory_component_not_regular` for ancestor symlinks. The tests were updated to assert the current specific error code. This changes test expectations only; no security check was weakened. CI verification is pending.
+
+
+## RC-135 closeout — RC-134 regression correction (26 November 2026)
+
+- Corrected two legacy test assertions to the specific ancestor-component error emitted by RC-134; no code security check was weakened.
+- GitHub Actions **run 45813699838 — SUCCESS, 256/256 Node tests**.
+- Also passed: bootstrap shell syntax, backup/restore shell and Python syntax, **3/3 restore directory replacement race tests**, Compose validation, isolated API image build/inspection, runtime package-manager absence check, CycloneDX SBOM generation, fixed HIGH/CRITICAL Trivy gate and Caddy validation.
+- API image SBOM: **20 components, 6 vulnerability entries**, SHA-256 `6dad8f2e9fccedda12344433b0c7627fdf72f166f84899cbd3193fd1ef83b9e2`. The fixed HIGH/CRITICAL gate passed; this is not a zero-vulnerability or full-repository scan claim. SBOM is not retained as an artifact.
+- Caddy validation passed with a formatting warning (line 4); formatting is cosmetic and not treated as a validation failure.
+- The RC-134 path preflight remains path-based and does not eliminate concurrent ancestor replacement races.
