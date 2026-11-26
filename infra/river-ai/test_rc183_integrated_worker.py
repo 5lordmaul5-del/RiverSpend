@@ -52,6 +52,13 @@ class WorkerCoreIntegrationTests(unittest.TestCase):
         self.assertEqual([e["action"] for e in self.core.events(task)],["leased","completed"])
         self.assertEqual(self.policy.finished[0][1],True)
 
+    def test_result_digest_corruption_fails_closed(self):
+        task=self.ledger.enqueue("echo","summary","user-1",{"text":"hello"})
+        self.assertEqual(self.core.run_once("worker-token")["status"],"completed")
+        with sqlite3.connect(self.path) as db:
+            db.execute("UPDATE task_results SET result_json=? WHERE task_id=?",('{"tampered":true}',task))
+        self.assertIsNone(self.core.get_result(task,"user-1"))
+
     def test_invalid_identity_does_not_lease_task(self):
         task=self.ledger.enqueue("echo","summary","user-1",{"text":"hello"})
         out=self.core.run_once("bad-token")
@@ -115,6 +122,51 @@ class WorkerCoreIntegrationTests(unittest.TestCase):
         self.assertEqual(out["status"],"retry")
         self.assertEqual(self.ledger.status()["queued"],1)
         self.assertIn("retry_scheduled",[e["action"] for e in self.core.events(task)])
+
+    def test_malformed_lease_envelope_recovers_and_audits(self):
+        task=self.ledger.enqueue("echo","summary","user-1",{"text":"shape"})
+        class Malformed:
+            db_path=self.ledger.db_path
+            lease_seconds=self.ledger.lease_seconds
+            def lease_next(inner,worker,caps):
+                lease=self.ledger.lease_next(worker,caps)
+                if lease: lease.pop("payload")
+                return lease
+        core=WorkerCore(Malformed(),self.path,self.verify,self.policy,self.executor)
+        out=core.run_once("worker-token")
+        self.assertEqual(out["status"],"rejected")
+        self.assertEqual(out["recovery"],"retry")
+        self.assertEqual(self.ledger.status()["queued"],1)
+        event=self.core.events(task)[-1]
+        self.assertEqual(event["action"],"retry_scheduled")
+        self.assertEqual(event["error_code"],"lease_contract_invalid")
+        self.assertEqual(self.executor.keys,[])
+
+    def test_malformed_lease_uses_persisted_attempt_budget(self):
+        task=self.ledger.enqueue("echo","summary","user-1",{"text":"shape"})
+        with sqlite3.connect(self.path) as db:
+            db.execute("UPDATE tasks SET attempts=2 WHERE id=?",(task,))
+        class Malformed:
+            db_path=self.ledger.db_path
+            lease_seconds=self.ledger.lease_seconds
+            def lease_next(inner,worker,caps):
+                lease=self.ledger.lease_next(worker,caps)
+                if lease:
+                    lease["attempts"]=1 # envelope lies; DB has attempt 3
+                    lease.pop("payload")
+                return lease
+        core=WorkerCore(Malformed(),self.path,self.verify,self.policy,self.executor,max_attempts=3)
+        out=core.run_once("worker-token")
+        self.assertEqual(out["status"],"rejected")
+        self.assertEqual(out["recovery"],"exhausted")
+        self.assertEqual(self.ledger.status()["cancelled"],1)
+        self.assertEqual(self.executor.keys,[])
+
+    def test_mismatched_database_path_is_rejected(self):
+        other=os.path.join(self.tmp.name,"other.sqlite")
+        with self.assertRaises(ValueError):
+            WorkerCore(self.ledger,other,self.verify,self.policy,self.executor)
+        self.assertFalse(os.path.exists(other))
 
     def test_policy_settlement_failure_retries_and_refunds(self):
         task=self.ledger.enqueue("echo","summary","user-1",{"text":"settle"})
