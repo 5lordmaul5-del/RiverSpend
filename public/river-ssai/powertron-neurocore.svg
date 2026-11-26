@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 760" role="img" aria-labelledby="title desc">
+<title id="title">PowerTron NeuroCore</title><desc id="desc">Nucleo energetico azzurro e oro al centro di una fortezza digitale, circondato da sei nodi agenti specialistici.</desc>
+<defs>
+ <radialGradient id="bg"><stop stop-color="#164c65"/><stop offset="1" stop-color="#06172b"/></radialGradient>
+ <radialGradient id="core"><stop stop-color="#f4ffff"/><stop offset=".18" stop-color="#a8ffff"/><stop offset=".48" stop-color="#26c9e5"/><stop offset=".78" stop-color="#087caa"/><stop offset="1" stop-color="#06304f"/></radialGradient>
+ <linearGradient id="gold"><stop stop-color="#fff0b4"/><stop offset=".5" stop-color="#d9ad4e"/><stop offset="1" stop-color="#8d6422"/></linearGradient>
+ <filter id="glow"><feGaussianBlur stdDeviation="14" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+ <filter id="soft"><feGaussianBlur stdDeviation="5"/></filter>
+</defs>
+<rect width="1400" height="760" rx="34" fill="url(#bg)"/>
+<g opacity=".22" stroke="#48d6ec" fill="none"><path d="M0 130H1400M0 250H1400M0 370H1400M0 490H1400M0 610H1400M140 0V760M320 0V760M500 0V760M900 0V760M1080 0V760M1260 0V760"/><path d="M0 0L1400 760M1400 0L0 760"/></g>
+<g stroke="#d9b45c" stroke-width="3" fill="none" opacity=".65"><path d="M700 380L270 180M700 380L1130 180M700 380L250 570M700 380L1150 570M700 380L700 90M700 380L700 670"/><circle cx="700" cy="380" r="265" stroke-dasharray="8 14"/><circle cx="700" cy="380" r="315" stroke-dasharray="2 16"/></g>
+<g filter="url(#glow)"><circle cx="700" cy="380" r="150" fill="#18cce9" opacity=".16"/><circle cx="700" cy="380" r="112" fill="url(#core)" stroke="#bafcff" stroke-width="4"/><path d="M630 375c-42-52 5-106 48-76 23-54 87-25 78 14 48 20 29 84-8 87-8 53-78 63-101 23-37 15-72-12-57-48z" fill="none" stroke="#e4ffff" stroke-width="9" opacity=".8"/><path d="M640 340c40 30 80-15 120 20M650 415c34-35 70 25 104-8M685 300c-8 40 28 45 18 82" fill="none" stroke="#fff" stroke-width="5" opacity=".65"/></g>
+<g fill="#071d30" stroke="url(#gold)" stroke-width="4">
+ <rect x="160" y="115" width="220" height="125" rx="22"/><rect x="1020" y="115" width="220" height="125" rx="22"/>
+ <rect x="140" y="515" width="240" height="125" rx="22"/><rect x="1020" y="515" width="240" height="125" rx="22"/>
+ <rect x="585" y="28" width="230" height="105" rx="20"/><rect x="585" y="625" width="230" height="105" rx="20"/>
+</g>
+<g fill="#effdff" font-family="Arial,sans-serif" text-anchor="middle">
+ <g font-size="23" font-weight="700"><text x="270" y="165">INTELDESK</text><text x="1130" y="165">SHIELDOPS</text><text x="260" y="565">FRAUDLAB</text><text x="1140" y="565">PRIVACYVAULT</text><text x="700" y="70">NOVA CORE</text><text x="700" y="670">EVIDENCE LEDGER</text></g>
+ <g font-size="15" fill="#9fe8f0"><text x="270" y="198">OSINT autorizzato</text><text x="1130" y="198">Cyber difesa</text><text x="260" y="598">Integrità finanziaria</text><text x="1140" y="598">Dati protetti</text><text x="700" y="98">Orchestrazione</text><text x="700" y="698">Tracciabilità</text></g>
+</g>
+<g fill="#f2d78e" stroke="#fff1bd" stroke-width="2"><circle cx="270" cy="180" r="9"/><circle cx="1130" cy="180" r="9"/><circle cx="260" cy="580" r="9"/><circle cx="1140" cy="580" r="9"/><circle cx="700" cy="90" r="9"/><circle cx="700" cy="675" r="9"/></g>
+<text x="700" y="555" text-anchor="middle" fill="#f3d78d" font-family="Arial,sans-serif" font-size="30" font-weight="800" letter-spacing="5">POWERTRON</text>
+<text x="700" y="590" text-anchor="middle" fill="#b8eff4" font-family="Arial,sans-serif" font-size="17" letter-spacing="3">RIVERSSAI SUPERAI 20.0 · DIGITAL FORTRESS</text>
+</svg>

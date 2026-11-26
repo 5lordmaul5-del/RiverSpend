@@ -20,5 +20,13 @@ export default async function handler(req, res) {
     return res.status(503).json({ error: "Non è stato possibile verificare i permessi." });
   }
   if (data?.tier !== "nova_ultra_power_mega") return res.status(403).json({ error: "Area 51 è riservata al proprietario RiverSpend." });
-  return res.status(200).json({ allowed: true, area: "RIVERSPEND AREA 51", tier: data.tier });
+  return res.status(200).json({
+    allowed: true,
+    area: "RIVERSPEND AREA 51",
+    tier: data.tier,
+    role: "oracolo",
+    displayName: "ORACOLO",
+    owner: true,
+    capabilities: ["river_ai_private_access", "powertron_private_access", "umpsd_private_access"]
+  });
 }
