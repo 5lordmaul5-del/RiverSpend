@@ -77,7 +77,7 @@ function respond(res, status, data) {
 export function createProxyApiServer({
   host = "127.0.0.1",
   port = 0,
-  trustedProxyAddress = "172.30.250.3",
+  trustedProxyAddress = "127.0.0.1",
   groupRoleMap = DEFAULT_GROUP_ROLE_MAP,
   storeFile = path.resolve(process.env.RIVERCLOUD_QUEUE_DIR || "./queue-data/state.json")
 } = {}) {
@@ -150,7 +150,7 @@ export function startProxyApiServer(options = {}) {
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const host = process.env.RIVERCLOUD_API_HOST || "127.0.0.1";
   const port = Number(process.env.RIVERCLOUD_API_PORT || 8788);
-  const trustedProxyAddress = process.env.RIVERCLOUD_TRUSTED_PROXY_IP || "172.30.250.3";
+  const trustedProxyAddress = process.env.RIVERCLOUD_TRUSTED_PROXY_IP || "127.0.0.1";
   const server = startProxyApiServer({ host, port, trustedProxyAddress });
   server.once("listening", () => console.log("RiverCloud proxy-identity API prototype listening on " + host + ":" + server.address().port));
   server.once("error", e => { console.error("RiverCloud API startup failed:", e.message); process.exitCode = 1; });
