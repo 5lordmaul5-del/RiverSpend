@@ -74,10 +74,10 @@ test("registry accepts the full 100000-definition catalogue without creating pro
 test("registry rejects non-enumerable or hidden top-level definition fields", () => {
   const hidden = { ...sample };
   Object.defineProperty(hidden, "id", { value:sample.id, enumerable:false, configurable:true });
-  assert.equal(validateAgentDefinition(hidden).reason, "definition_schema_invalid");
+  assert.equal(validateAgentDefinition(hidden).reason, "definition_json_invalid");
   const extra = { ...sample };
   Object.defineProperty(extra, "hiddenExecution", { value:"not-allowed", enumerable:false });
-  assert.equal(validateAgentDefinition(extra).reason, "definition_schema_invalid");
+  assert.equal(validateAgentDefinition(extra).reason, "definition_json_invalid");
 });
 
 
