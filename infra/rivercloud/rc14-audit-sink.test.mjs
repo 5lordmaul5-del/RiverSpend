@@ -119,3 +119,26 @@ test("RC-98 delivery body JSON parse failure rejected before replay storage",asy
 test("RC-99 HTTP endpoint is rejected before replay storage",async()=>{const d=buildSignedDelivery(envelope(),{endpoint,secret,now});const altered={...d,endpoint:"http://audit.example/receive"};let calls=0;const result=await verifySignedDelivery(altered,{secret,now,consumeReplay:async()=>{calls++;return true;}});assert.equal(result.valid,false);assert.equal(calls,0);});
 
 test("RC-100 body whitespace alteration rejected before replay storage",async()=>{const d=buildSignedDelivery(envelope(),{endpoint,secret,now});const altered={...d,body:d.body+"\n"};let calls=0;const result=await verifySignedDelivery(altered,{secret,now,consumeReplay:async()=>{calls++;return true;}});assert.equal(result.valid,false);assert.equal(calls,0);});
+
+test("RC-144 redaction rejects nested accessors without executing them",()=>{
+ let getterCalls=0;
+ const data={};
+ Object.defineProperty(data,"reason",{enumerable:true,get(){getterCalls++;return "unsafe";}});
+ assert.throws(()=>createAuditEnvelope({type:"system_event",data},{sinkId:"sink-1",actor:"user-1",occurredAt:new Date(now).toISOString()}),/audit_data_accessor_rejected/);
+ assert.equal(getterCalls,0);
+ const e=envelope(),hostile={...e,data:{}};
+ Object.defineProperty(hostile.data,"reason",{enumerable:true,get(){getterCalls++;return "unsafe";}});
+ assert.equal(verifyAuditEnvelope(hostile).valid,false);
+ assert.equal(getterCalls,0);
+});
+test("RC-144 event accessors, sparse arrays and cyclic audit data fail closed",()=>{
+ let getterCalls=0;
+ const event={};
+ Object.defineProperty(event,"type",{enumerable:true,get(){getterCalls++;return "system_event";}});
+ assert.throws(()=>createAuditEnvelope(event,{sinkId:"sink-1",actor:"user-1"}),/unsupported_event_type/);
+ assert.equal(getterCalls,0);
+ const sparse=new Array(2);sparse[1]="x";
+ assert.throws(()=>createAuditEnvelope({type:"system_event",data:{items:sparse}},{sinkId:"sink-1",actor:"user-1"}),/audit_data_array_invalid/);
+ const cyclic={};cyclic.self=cyclic;
+ assert.throws(()=>createAuditEnvelope({type:"system_event",data:cyclic},{sinkId:"sink-1",actor:"user-1"}),/audit_data_object_invalid/);
+});
