@@ -28,3 +28,8 @@ No provider credentials, production data, staging host, runner, deployment, or e
 ## CI evidence
 
 GitHub Actions run **45735325864 (#333)** passed **138/138 Node tests**, zero failures, plus shell/Python syntax, the restore directory-race test, Compose configuration and Caddy validation. This verifies commit `e2dbdbbca5556c215307c81ed23d3c005bdecd85`. The prototype is still not wired to the actual OAuth2 Proxy upstream or Compose service.
+
+
+## RC-35 follow-up
+
+The isolated Compose configuration now routes the `/api/` upstream to this module on a separate internal network, with the API service unexposed to host ports. This is configuration wiring only; no real OIDC login or container build has been tested. See [RC-35](RC35-API-OIDC-WIRING.md).

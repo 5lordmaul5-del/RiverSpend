@@ -13,7 +13,7 @@ services:
       - caddy_data:/data
       - caddy_config:/config
     networks:
-      rivercloud:
+      rivercloud-public:
         ipv4_address: 172.30.250.2
     depends_on:
       - oauth2-proxy
@@ -31,7 +31,7 @@ services:
       OAUTH2_PROXY_ALLOWED_GROUPS: ${RIVERCLOUD_OIDC_ALLOWED_GROUPS}
       OAUTH2_PROXY_OIDC_GROUPS_CLAIM: ${RIVERCLOUD_OIDC_GROUPS_CLAIM}
       OAUTH2_PROXY_SCOPE: "openid email profile groups"
-      OAUTH2_PROXY_UPSTREAMS: http://rivercloud-demo:8080/
+      OAUTH2_PROXY_UPSTREAMS: "http://rivercloud-api:8788/api/,http://rivercloud-demo:8080/"
       OAUTH2_PROXY_HTTP_ADDRESS: 0.0.0.0:4180
       OAUTH2_PROXY_REVERSE_PROXY: "true"
       OAUTH2_PROXY_TRUSTED_PROXY_IPS: 172.30.250.2/32
@@ -43,10 +43,39 @@ services:
       OAUTH2_PROXY_SKIP_PROVIDER_BUTTON: "true"
       OAUTH2_PROXY_CODE_CHALLENGE_METHOD: S256
     networks:
-      rivercloud:
+      rivercloud-public:
         ipv4_address: 172.30.250.3
+      rivercloud-api:
+        ipv4_address: 172.31.250.3
     depends_on:
+      - rivercloud-api
       - rivercloud-demo
+  rivercloud-api:
+    build:
+      context: ../..
+      dockerfile: infra/rivercloud/Dockerfile
+    restart: unless-stopped
+    environment:
+      RIVERCLOUD_API_HOST: 0.0.0.0
+      RIVERCLOUD_API_PORT: "8788"
+      RIVERCLOUD_TRUSTED_PROXY_IP: 172.31.250.3
+      RIVERCLOUD_QUEUE_DIR: /data/state.json
+    volumes:
+      - queue_data:/data
+    expose:
+      - "8788"
+    networks:
+      rivercloud-api:
+        ipv4_address: 172.31.250.4
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 256m
+    cpus: 0.5
   rivercloud-demo:
     image: traefik/whoami:v1.12.0@sha256:c4717a8d1f0134a7444e24f881160e033991f23027c6c5a9a3f8fd22e70d1d44
     restart: unless-stopped
@@ -54,15 +83,22 @@ services:
     expose:
       - "8080"
     networks:
-      rivercloud:
-        ipv4_address: 172.30.250.4
+      rivercloud-api:
+        ipv4_address: 172.31.250.5
     # Placeholder upstream only; never publish this container directly.
 networks:
-  rivercloud:
-    name: rivercloud
+  rivercloud-public:
+    name: rivercloud-public
     ipam:
       config:
         - subnet: 172.30.250.0/24
+  rivercloud-api:
+    name: rivercloud-api
+    internal: true
+    ipam:
+      config:
+        - subnet: 172.31.250.0/24
 volumes:
   caddy_data:
   caddy_config:
+  queue_data:

@@ -559,3 +559,15 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 - The log explicitly records **138 passed, 0 failed** and the RC-34 tests at 116–120. No services were started.
 - Run #333 verifies commit `e2dbdbbca5556c215307c81ed23d3c005bdecd85`. The API prototype remains unconnected to Compose/OAuth2 Proxy; this is test evidence for the isolated module, not real OIDC authentication or production readiness.
 - Local checkout remains unavailable due DNS resolution of github.com; no local test result is claimed.
+
+
+
+## RC-35 — API/OIDC Compose wiring prototype (26 November 2026)
+
+- Connected the RC-34 API prototype to the Compose topology using a dedicated internal network. Caddy remains on the public network; OAuth2 Proxy bridges the public and internal networks; API and demo upstream are not reachable from Caddy directly.
+- OAuth2 Proxy upstream mapping now routes `/api/` to the API and root-path traffic to the demo. Group allowlist examples include the five RC-13 roles; actual provider group names must be verified.
+- API has no host-published port, uses a named state volume, read-only root, non-root Node user, dropped capabilities, no-new-privileges, and declared CPU/memory bounds. The Dockerfile copies only required API modules and uses a digest-pinned Node base.
+- Added static Node regressions for network topology, proxy path/header configuration, API bind/trusted proxy IP, storage and runtime restrictions, Dockerfile digest and explicit file copies. CI evidence is pending; no test result is claimed for RC-35 until a fresh run completes.
+- Compose configuration validation does not build or start the API image. No real OIDC login, header-spoofing integration test, session revocation test, container build, service startup, staging, deployment or spending occurred.
+- Source reference for OAuth2 Proxy path-based multi-upstream routing: https://oauth2-proxy.github.io/oauth2-proxy/configuration/overview/#upstreams-configuration. Node base digest reference: https://hub.docker.com/layers/library/node/22.23.5-alpine3.23/images/sha256-7ee381e2296c8edb56698bb4f14563880e8c3562d91564c085b334c1e1106faf.
+
