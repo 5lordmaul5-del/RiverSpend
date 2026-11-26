@@ -132,3 +132,28 @@ test("rejects corrupt JSON state instead of treating it as an empty queue", asyn
     await assert.rejects(() => queuePlan(file, base));
   } finally { await rm(root, { recursive: true, force: true }); }
 });
+
+
+test("actor context rejects accessor, sparse and hidden data without invoking getters", async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), "rcq-actor-data-only-"));
+  try {
+    const file = path.join(root, "state.json");
+    let getterCalls = 0;
+    const accessorContext = { roles: ["operator"] };
+    Object.defineProperty(accessorContext, "actorRef", { enumerable: true, get() { getterCalls++; return "a".repeat(64); } });
+    await assert.rejects(() => queuePlan(file, base, accessorContext), /invalid_actor_context/);
+
+    const accessorRoles = ["operator"];
+    Object.defineProperty(accessorRoles, "0", { enumerable: true, get() { getterCalls++; return "operator"; } });
+    await assert.rejects(() => queuePlan(file, base, { actorRef: "b".repeat(64), roles: accessorRoles }), /invalid_actor_context/);
+
+    const sparseRoles = new Array(2);
+    sparseRoles[1] = "operator";
+    await assert.rejects(() => queuePlan(file, base, { actorRef: "c".repeat(64), roles: sparseRoles }), /invalid_actor_context/);
+
+    const hidden = { actorRef: "d".repeat(64), roles: ["operator"] };
+    Object.defineProperty(hidden, "extra", { value: "hidden", enumerable: false });
+    await assert.rejects(() => queuePlan(file, base, hidden), /invalid_actor_context/);
+    assert.equal(getterCalls, 0);
+  } finally { await rm(root, { recursive: true, force: true }); }
+});
