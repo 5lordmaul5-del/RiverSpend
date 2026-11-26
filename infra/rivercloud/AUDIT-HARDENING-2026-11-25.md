@@ -654,3 +654,9 @@ GitHub PR metadata confirms **98 changed files** at the current branch head. The
 
 - CI runs **45757190923 (#358)** and **45757195384 (#359)** failed at Node test 27: the test's escaped newline splitter did not split the `.dockerignore` lines, so it reported the first required pattern missing. The other 148 tests passed; subsequent validation steps were skipped.
 - Corrected the regression test to split on the literal newline. The `.dockerignore` file itself was not the failure. Fresh CI verification is pending; these failures are recorded, not counted as passes.
+
+
+### RC-40 test corrections (26 November 2026)
+
+- Runs **45757190923 (#358)** and **45757195384 (#359)** failed because the regression test's escaped newline splitter did not split `.dockerignore` lines (148/149 passed); the implementation file was not the failure.
+- Runs **45757276500 (#360)** and **45757283045 (#361)** failed on the same test after the first correction; the line comparison was not robust to whitespace/line-ending normalization. The test is now changed to split on LF and trim each line before matching. These failures are recorded, not counted as passes. Fresh CI is pending.

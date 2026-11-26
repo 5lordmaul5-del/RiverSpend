@@ -62,6 +62,6 @@ test("example secrets are placeholders and role groups are allowlisted", () => {
 const dockerignore = await readFile(path.join(root, "../../.dockerignore"), "utf8");
 test("Docker build context excludes secret, runtime state and common artifact paths", () => {
   const required = [".env", ".env.*", "**/.env", "**/.env.*", ".git", "**/.git", "**/secrets/", "**/queue-data/", "**/queue_data/", "**/state.json", "**/lifecycle.json", "**/*.lock", "**/*.tmp", "**/*.log", "**/*.bak", "**/*.backup", "**/node_modules/", "**/coverage/", "**/dist/", "**/build/"];
-  const lines = dockerignore.split(String.fromCharCode(10));
+  const lines = dockerignore.split(String.fromCharCode(10)).map(line => line.trim());
   for (const pattern of required) assert.ok(lines.includes(pattern), `missing Docker context exclusion: ${pattern}`);
 });
