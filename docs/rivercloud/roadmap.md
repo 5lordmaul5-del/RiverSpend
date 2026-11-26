@@ -52,3 +52,6 @@ Run RiverSpend in staging on RiverCloud, validate reliability, backups, secrets,
 - RC-132 follow-up removes the remaining Yarn package directory and uses Trivy's `--pkg-types` flag instead of deprecated `--vuln-type`; fresh CI is pending.
 
 - RC-132 closeout verified in CI **45800488045 (#854) — SUCCESS, 255/255 Node tests**, 3/3 restore race tests, syntax, Compose, API image build/inspection, package-manager absence check, SBOM, fixed HIGH/CRITICAL gate and Caddy validation. SBOM: **20 components, 6 vulnerability entries**, SHA-256 `38c5c50946df1276b8a3666a3d503653cfec7d9def89c869815cfe59d6980fc7`. The fixed HIGH/CRITICAL gate reported no matching findings; this does not imply zero vulnerabilities or a full repository/service scan.
+
+
+- RC-134: RC-11 now rejects pre-existing symlink/non-directory components in the store path before reads and transactions; a regression test is added. CI pending and path-preflight race limitation documented.
