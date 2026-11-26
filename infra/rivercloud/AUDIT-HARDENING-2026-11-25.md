@@ -685,3 +685,12 @@ GitHub PR metadata confirms **98 changed files** at the current branch head. The
 - Code/test commit `be13c9eff5373f13eb8f2a040608f2af462ff01f`: GitHub Actions **45765635507 (#387) — SUCCESS, 152/152 Node tests**, 0 failures; bootstrap shell, backup/restore and Python syntax, restore directory-replacement race, Compose configuration, API image build/inspection and Caddy validation all passed.
 - Documentation closeout commit `370f06a9a292b45911a1859f28d3a84edea2f25f`: GitHub Actions **45765687287 (#392) — SUCCESS** across Node tests, bootstrap shell, backup/restore/Python, restore race, Compose, API image build/inspection and Caddy validation. Exact Node count was not independently extracted from this run's logs; the count above is from #387.
 - No RiverCloud services or runner were started. No live deployment, merge, staging host, production credentials/data, provisioning or spending occurred.
+
+
+## RC-46 — queue events / audit ledger storage separation (26 November 2026)
+
+- Audit of `queue.mjs` and `audit-log.mjs` found a shared-field collision: queue and lifecycle-related events use `state.events`, while the standalone RC-8 hash-chained ledger also treated `state.events` as its ledger. A queue-created event could therefore invalidate audit-ledger replay and the two stores were not safely composable.
+- The RC-8 ledger now uses a dedicated `state.auditLogRecords` field. Queue/event records remain in `state.events`; the audit ledger is independently verified and bounded to 10,000 records.
+- Tests added for queue+audit coexistence and independent ledger capacity, alongside redaction, concurrent append ordering and tamper detection.
+- **CI pending for RC-46 at this report update.** Local test execution is not claimed.
+- No services or runner started, no real staging, deployment, production data/credentials, merge, provisioning or spending.
