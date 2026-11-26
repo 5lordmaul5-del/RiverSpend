@@ -22,7 +22,7 @@ Run RiverSpend in staging on RiverCloud, validate reliability, backups, secrets,
 ## Current isolated hardening campaign — PR #75
 
 - Branch: `feat/rivercloud-core-2026-11-25` (Draft; no merge or live deployment).
-- RC-52: transaction snapshots are revalidated after mutation and before persistence.
-- RC-53: RC-17 lifecycle extension collections fail closed on malformed data and enforce explicit capacity bounds.
+- RC-52 through RC-59: transaction, lifecycle state capacity, proxy trust-peer alignment, audit redaction/verification and delivery header hardening; see the progressive report for exact CI evidence and limitations.
+- RC-60: audit append now rejects non-object/non-plain details before transaction to avoid persisting verifier-invalid records; CI pending.
 - Progressive technical evidence and blockers are recorded in `infra/rivercloud/AUDIT-HARDENING-2026-11-25.md`.
-- These RCs are code/test increments, not a production readiness certification. CI verification of the latest RC-52/53 commits is pending.
+- These RCs are code/test increments, not a production readiness certification. OIDC-provider operation, real runner, external audit sink, staging and production readiness remain unverified.
