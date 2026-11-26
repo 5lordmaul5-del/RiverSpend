@@ -2,7 +2,7 @@
 
 ## Snapshot
 
-PR #75 remains isolated on feat/rivercloud-core-2026-11-25. No merge, production deploy, server provisioning or paid operation was performed. PR #75 currently has **98 changed files**; this report records a focused code audit and corrections, not a completed certification of all changed files.
+PR #75 remains isolated on feat/rivercloud-core-2026-11-25. No merge, production deploy, server provisioning or paid operation was performed. PR #75 currently has **101 changed files**; this report records a focused code audit and corrections, not a completed certification of all changed files.
 
 ## Detailed source review
 
@@ -643,11 +643,17 @@ GitHub PR metadata confirms **98 changed files** at the current branch head. The
 - Static audit of the runner/worker entry points confirms execution remains disabled; no runner was started.
 
 
-## RC-40 — Docker build-context secret/state exclusions (verification pending)
+## RC-40 — Docker build-context exclusions verified (26 November 2026)
 
-- Added root `.dockerignore` to exclude repository metadata, environment files, secret directories, queue/lifecycle state, locks, temporary files, logs, backups, archives and common build artifacts from the API image build context.
-- Added a regression test that checks these exclusions are present. This reduces accidental context exposure, especially when a build uses a remote Docker daemon.
-- No secrets or real data were accessed; no services were started. CI verification is pending.
+- Root `.dockerignore` excludes repository metadata, environment files, secret directories, queue/lifecycle state, locks, temporary files, logs, backups, archives and common build artifacts from the API image build context.
+- Regression test checks the required patterns; line parsing normalizes LF and whitespace.
+- GitHub Actions **push run 45757386114 (#364)** and **PR run 45757391345 (#365)** — SUCCESS, **149/149 Node tests**, zero failures, plus bootstrap/backup/restore/Python syntax, **1/1 restore directory-replacement race**, Compose configuration, API image build and image inspection, and Caddy validation.
+- The test fixture corrections were recorded: runs #358/#359 and #360/#361 failed in the new test (not the `.dockerignore`), then #362/#363 succeeded with 149/149. These failed runs are not counted as passes.
+- The Docker build was validated; no API container or Compose service was started. No real secrets or runtime data were accessed.
+
+## Read-only repository governance observation
+
+- GitHub branch metadata reports `main` as **not protected** (`protected: false`) at read time. No branch settings were changed. Branch protection and required checks should be configured before any future merge; this PR remains Draft and no merge is authorized.
 
 
 ### RC-40 test correction (26 November 2026)
