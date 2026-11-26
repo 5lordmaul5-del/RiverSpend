@@ -677,3 +677,11 @@ GitHub PR metadata confirms **98 changed files** at the current branch head. The
 - **CI for the RC-45 code commits has not yet been independently confirmed at this report update.** Local clone/test execution remains unavailable due the earlier GitHub DNS restriction; no local test pass is claimed.
 - No OIDC provider login, route wiring, runner execution, staging host, live deployment, production data/credentials, provisioning, merge or spending occurred.
 - Remaining boundaries: identity claims are not cryptographically verified at API integration; external audit sink, runner isolation, staging, encrypted off-site backups, SBOM and exact-digest vulnerability scans remain open.
+
+
+## RC-45 CI closeout (26 November 2026)
+
+- Intermediate runs **45765623540 (#382)** and **45765631060 (#385)** failed as the new gate was introduced: the existing approval/facade tests still attempted generic `pending -> approved`. The failures were not counted as passing evidence; assertions and fixture transitions were corrected.
+- Code/test commit `be13c9eff5373f13eb8f2a040608f2af462ff01f`: GitHub Actions **45765635507 (#387) — SUCCESS, 152/152 Node tests**, 0 failures; bootstrap shell, backup/restore and Python syntax, restore directory-replacement race, Compose configuration, API image build/inspection and Caddy validation all passed.
+- Documentation closeout commit `370f06a9a292b45911a1859f28d3a84edea2f25f`: GitHub Actions **45765687287 (#392) — SUCCESS** across Node tests, bootstrap shell, backup/restore/Python, restore race, Compose, API image build/inspection and Caddy validation. Exact Node count was not independently extracted from this run's logs; the count above is from #387.
+- No RiverCloud services or runner were started. No live deployment, merge, staging host, production credentials/data, provisioning or spending occurred.
