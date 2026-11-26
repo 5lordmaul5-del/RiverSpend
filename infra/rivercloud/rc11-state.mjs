@@ -6,7 +6,10 @@ import {randomUUID} from "node:crypto";
 const init={schema:1,jobs:[],approvals:[],events:[]};
 const MAX_STATE_BYTES=8*1024*1024;
 async function syncDirectoryHandle(dir){const d=await open(dir,"r");try{await d.sync();}finally{await d.close();}}
-function validateState(s){if(!s||s.schema!==1||!Array.isArray(s.jobs)||!Array.isArray(s.approvals)||!Array.isArray(s.events))throw new Error("invalid_state_schema");}
+function validateState(s){
+ if(!s||s.schema!==1||!Array.isArray(s.jobs)||!Array.isArray(s.approvals)||!Array.isArray(s.events))throw new Error("invalid_state_schema");
+ for(const collection of [s.jobs,s.approvals,s.events])if(collection.some(item=>!item||typeof item!=="object"||Array.isArray(item)))throw new Error("invalid_state_record");
+}
 async function readBounded(handle,limit){
  const chunks=[];let total=0;const buffer=Buffer.allocUnsafe(64*1024);
  while(total<=limit){
@@ -62,3 +65,4 @@ export async function addJob(file,job){if(!job||typeof job.id!=="string"||!job.i
 export async function setJobState(file,id,to,allowed){return transactState(file,state=>{const job=state.jobs.find(j=>j.id===id);if(!job)throw new Error("job_not_found");if(typeof allowed!=="function"||!allowed(job.state,to))throw new Error("transition_not_allowed");const from=job.state;job.state=to;job.updatedAt=new Date().toISOString();state.events.push({event:"job_state_changed",jobId:id,from,to,at:new Date().toISOString()});return job;});}
 export async function storeApproval(file,record){if(!record||typeof record.tokenId!=="string"||!record.tokenId||typeof record.jobId!=="string"||!Number.isFinite(record.expiresAt))throw new Error("invalid_approval");return transactState(file,state=>{if(state.approvals.some(a=>a.tokenId===record.tokenId))throw new Error("approval_exists");state.approvals.push({...record,used:false});state.events.push({event:"approval_issued",jobId:record.jobId,at:new Date().toISOString()});return record.tokenId;});}
 export async function consumeStoredApproval(file,tokenId,bindingVerifier){if(typeof bindingVerifier!=="function")throw new Error("invalid_binding_verifier");return transactState(file,state=>{const a=state.approvals.find(x=>x.tokenId===tokenId);if(!a||a.used)throw new Error("approval_missing_or_used");if(a.expiresAt<Date.now())throw new Error("approval_expired");if(!bindingVerifier(a))throw new Error("approval_binding_mismatch");a.used=true;state.events.push({event:"approval_consumed",jobId:a.jobId,at:new Date().toISOString()});return a.jobId;});}
+
