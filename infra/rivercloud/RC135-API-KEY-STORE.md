@@ -42,3 +42,11 @@ GitHub Actions **run 45814328503 — SUCCESS, 26/26 Node tests**. The workflow n
 - Accessor option fields fail closed before getter invocation, including wrapper-level fields that previously would have been destructured before reaching the core.
 - Regression coverage was added for store construction and create/verify/resolve requests.
 - Filesystem path/lock races and no-encryption-at-rest limitations remain unchanged; this does not make the store production-ready.
+
+## RC-155 — adapter clock normalization
+
+- Audit found the store-backed mock gateway passed `{ now: undefined }` when callers omitted the optional clock. This overrides the store's default clock and causes API-key verification to reject the request.
+- The adapter now normalizes the default clock once and passes the same value to both store verification and gateway handling.
+- Regression test exercises a persisted key through the adapter without an explicit `now` field.
+- GitHub Actions push/PR runs **45874150743 (#186) and 45874160664 (#187) — SUCCESS** on the test commit `a075d0ddb815d9225123332e8cf1e7d1b467c497`.
+- Test-only mock behavior; no live key issuance or service integration.
