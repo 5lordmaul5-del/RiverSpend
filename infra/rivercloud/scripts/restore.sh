@@ -23,8 +23,29 @@ except (ValueError, OSError):
  print("restore limits must be positive integers or archive unavailable", file=sys.stderr)
  raise SystemExit(2)
 PY
-[ -f "$archive.sha256" ] || { echo "checksum file missing" >&2; exit 2; }
-(cd "$(dirname "$archive")" && sha256sum -c "$base.sha256") || { echo "archive checksum verification failed" >&2; exit 2; }
+[ -f "$archive.sha256" ] && [ ! -L "$archive.sha256" ] || { echo "checksum file missing or unsafe" >&2; exit 2; }
+python3 - "$archive" "$archive.sha256" "$base" <<'PY'
+import hashlib, os, re, sys
+archive, sidecar, expected_name = sys.argv[1:]
+try:
+ with open(sidecar, "r", encoding="ascii") as f:
+  lines = f.readlines()
+ if len(lines) != 1:
+  raise ValueError
+ match = re.fullmatch(r"([0-9a-fA-F]{64})[ \\t]+(?:\\*?)([^\\n]+)\\n?", lines[0])
+ if not match or match.group(2) != expected_name:
+  raise ValueError
+ digest = hashlib.sha256()
+ with open(archive, "rb") as f:
+  for chunk in iter(lambda: f.read(1024*1024), b""):
+   digest.update(chunk)
+ if digest.hexdigest().lower() != match.group(1).lower():
+  print("archive checksum verification failed", file=sys.stderr)
+  raise SystemExit(2)
+except (OSError, UnicodeError, ValueError):
+ print("archive checksum sidecar invalid or checksum verification failed", file=sys.stderr)
+ raise SystemExit(2)
+PY
 [ ! -e "$RIVERCLOUD_RESTORE_TARGET" ] || { echo "restore target must not already exist" >&2; exit 2; }
 script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 exec python3 "$script_dir/restore-safe.py" "$archive" "$RIVERCLOUD_RESTORE_TARGET"
