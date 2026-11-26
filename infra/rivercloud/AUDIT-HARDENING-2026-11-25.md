@@ -627,4 +627,9 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 
 ### Report snapshot correction
 
-GitHub PR metadata confirms **98 changed files** at the current branch head. The count was corrected from 96 after adding RC-37 and RC-38 documentation. The current report-only commit requires its own CI verification.
+GitHub PR metadata confirms **98 changed files** at the current branch head. The count was corrected from 96 after adding RC-37 and RC-38 documentation. The report-count correction was verified by GitHub Actions runs #352 and #353 — SUCCESS, 148/148 tests each, plus all shell/Python, restore race, Compose and Caddy validations.
+
+
+### RC-38 report-count correction CI closeout
+
+- GitHub Actions push run **45752079082 (#352)** and PR run **45752083124 (#353)** — SUCCESS, **148/148 Node tests** each, 0 failures, plus bootstrap shell, backup/restore and Python syntax, **1/1 restore directory-replacement race**, Compose configuration and Caddy validation. These runs verify the report count correction commit `b52977df3e2eb12316bfdecb16c5e8b06c55a678`.
