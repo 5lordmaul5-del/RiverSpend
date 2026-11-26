@@ -13,14 +13,41 @@ function plainObject(v) {
   return !!v && typeof v === "object" && !Array.isArray(v) &&
     (Object.getPrototypeOf(v) === Object.prototype || Object.getPrototypeOf(v) === null);
 }
+function exactDataObject(value, allowedKeys, exact = true) {
+  if (!plainObject(value) || Object.getOwnPropertySymbols(value).length) return false;
+  const keys = Reflect.ownKeys(value);
+  if (keys.some(key => typeof key !== "string" || !allowedKeys.includes(key)) ||
+      (exact && keys.length !== allowedKeys.length)) return false;
+  return keys.every(key => {
+    const descriptor = Object.getOwnPropertyDescriptor(value, key);
+    return !!descriptor && descriptor.enumerable && Object.hasOwn(descriptor, "value");
+  });
+}
 function validateObjectSchema(schema) {
-  if (!plainObject(schema) || schema.type !== "object" || !plainObject(schema.properties) ||
-      schema.additionalProperties !== false || !Array.isArray(schema.required) ||
-      schema.required.length > 64 || schema.required.some(k => typeof k !== "string" || !Object.hasOwn(schema.properties,k)) ||
-      new Set(schema.required).size !== schema.required.length) return false;
+  if (!exactDataObject(schema, ["type","properties","required","additionalProperties"]) ||
+      schema.type !== "object" || schema.additionalProperties !== false ||
+      !plainObject(schema.properties) || Object.getOwnPropertySymbols(schema.properties).length ||
+      !Array.isArray(schema.required) || schema.required.length > 64 ||
+      Object.getOwnPropertySymbols(schema.required).length) return false;
+  const requiredKeys = Object.keys(schema.required);
+  if (requiredKeys.length !== schema.required.length ||
+      requiredKeys.some((key, index) => key !== String(index))) return false;
+  for (let index = 0; index < schema.required.length; index++) {
+    const descriptor = Object.getOwnPropertyDescriptor(schema.required, String(index));
+    if (!descriptor || !descriptor.enumerable || !Object.hasOwn(descriptor, "value") ||
+        typeof descriptor.value !== "string") return false;
+  }
   const keys = Object.keys(schema.properties);
-  if (keys.length > 64 || keys.some(k => !/^[A-Za-z][A-Za-z0-9_-]{0,63}$/.test(k) || ["__proto__","constructor","prototype"].includes(k))) return false;
-  return keys.every(k => plainObject(schema.properties[k]) && SCHEMA_TYPES.has(schema.properties[k].type));
+  if (keys.length > 64 || keys.some(k => !/^[A-Za-z][A-Za-z0-9_-]{0,63}$/.test(k) ||
+      ["__proto__","constructor","prototype"].includes(k))) return false;
+  if (Reflect.ownKeys(schema.properties).length !== keys.length ||
+      !keys.every(k => {
+        const descriptor = Object.getOwnPropertyDescriptor(schema.properties, k);
+        return !!descriptor && descriptor.enumerable && Object.hasOwn(descriptor, "value") &&
+          exactDataObject(descriptor.value, ["type"]) && SCHEMA_TYPES.has(descriptor.value.type);
+      })) return false;
+  return schema.required.every(k => Object.hasOwn(schema.properties,k)) &&
+    new Set(schema.required).size === schema.required.length;
 }
 
 export function validateAgentDefinition(definition) {
