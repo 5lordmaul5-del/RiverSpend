@@ -49,9 +49,9 @@ test("high-risk plan uses the store key and binding-aware approval verifier",asy
 test("store boundary is required and storage failures fail closed",async()=>sandbox(async root=>{
   assert.throws(()=>createStoreBackedRiverSSAIOrchestrator({}),/api_key_store_required/);
   const dir=path.join(root,"store");const store=createApiKeyStore(path.join(dir,"keys.json"));
-  await store.create({ownerId:"error-owner",scopes:["ai:invoke"],now,ttlMs:ttl});
+  const key=await store.create({ownerId:"error-owner",scopes:["ai:invoke"],now,ttlMs:ttl});
   await chmod(dir,0o755);
   const adapter=createStoreBackedRiverSSAIOrchestrator({store,definitions:[definition]});
-  const result=await adapter.planInvoke({...request,key:"rs_test_invalid"});
+  const result=await adapter.planInvoke({...request,key});
   assert.equal(result.status,503);assert.equal(result.error,"api_key_store_unavailable");
 }));
