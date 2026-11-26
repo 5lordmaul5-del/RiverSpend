@@ -53,3 +53,12 @@ Added a planning-only mock orchestrator with API-key scope verification, active 
 ## API-RC-136 CI closeout
 
 GitHub Actions **run 45814754280 — SUCCESS, 33/33 Node tests**. The added orchestrator tests are included alongside the API-key core/store, registry, shared-contract and mock-gateway tests. The orchestrator remains planning-only: no worker/process is launched; the approval verifier is a mock callback; maxConcurrency/maxRunSeconds are not runtime-enforced.
+
+
+## RC-142 — shared bounded canonical JSON
+
+- Replaced the gateway's and RiverSSAI orchestrator's duplicated canonicalizers with a shared strict serializer.
+- Enforces depth, byte and node bounds; detects cycles, sparse arrays, non-index array properties, accessors, symbol keys, prototype-sensitive keys and non-JSON values.
+- Both mock gateway and planning-only orchestrator reject malformed nested payloads before hashing/idempotency storage.
+- Added direct utility and adapter regression tests. This remains mock-only and does not create a live API or agent runtime.
+- GitHub Actions verification pending at commit time.
