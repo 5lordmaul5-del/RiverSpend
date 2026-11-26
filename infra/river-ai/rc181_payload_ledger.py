@@ -1,6 +1,7 @@
 """RC-181 additive SQLite ledger extension storing bounded owner and payload metadata."""
 from __future__ import annotations
 
+import hashlib
 import json
 import math
 import time
@@ -14,6 +15,7 @@ MAX_PAYLOAD_NODES = 2048
 MAX_OWNER_CHARS = 128
 MAX_CAPABILITY_CHARS = 128
 MAX_SUMMARY_CHARS = 500
+MAX_REQUEST_KEY_CHARS = 128
 _FORBIDDEN_KEYS = {"__proto__", "prototype", "constructor"}
 
 
@@ -22,12 +24,7 @@ class PayloadLedgerError(ValueError):
 
 
 def _canonical_payload(payload: object) -> str:
-    """Validate a bounded JSON data tree and return deterministic JSON.
-
-    Only exact built-in JSON types are accepted. This avoids executing custom
-    container/number methods during validation and rejects non-finite floats,
-    non-string object keys, cycles and excessive depth/node counts.
-    """
+    """Validate a bounded JSON data tree and return deterministic JSON."""
     if type(payload) is not dict:
         raise PayloadLedgerError("payload must be an object")
 
@@ -103,6 +100,14 @@ class PayloadPersistentTaskLedger(PersistentTaskLedger):
                 db.execute("ALTER TABLE tasks ADD COLUMN owner TEXT")
             if "payload_json" not in columns:
                 db.execute("ALTER TABLE tasks ADD COLUMN payload_json TEXT")
+            if "request_key" not in columns:
+                db.execute("ALTER TABLE tasks ADD COLUMN request_key TEXT")
+            if "request_sha256" not in columns:
+                db.execute("ALTER TABLE tasks ADD COLUMN request_sha256 TEXT")
+            db.execute(
+                "CREATE UNIQUE INDEX IF NOT EXISTS tasks_owner_request_key "
+                "ON tasks(owner,request_key) WHERE request_key IS NOT NULL"
+            )
 
     def enqueue(
         self,
@@ -111,6 +116,7 @@ class PayloadPersistentTaskLedger(PersistentTaskLedger):
         owner: str,
         payload: dict,
         summary_limit: int = MAX_SUMMARY_CHARS,
+        request_key: str | None = None,
     ) -> str:
         if type(owner) is not str or not owner.strip() or len(owner) > MAX_OWNER_CHARS:
             raise PayloadLedgerError("invalid owner")
@@ -118,17 +124,45 @@ class PayloadPersistentTaskLedger(PersistentTaskLedger):
             raise PayloadLedgerError("capability required or invalid")
         if type(summary) is not str or type(summary_limit) is not int or not 1 <= summary_limit <= MAX_SUMMARY_CHARS or len(summary) > summary_limit:
             raise PayloadLedgerError("summary invalid/too long")
+        if request_key is not None and (
+            type(request_key) is not str or not request_key.strip()
+            or len(request_key) > MAX_REQUEST_KEY_CHARS
+        ):
+            raise PayloadLedgerError("invalid request key")
         encoded = _canonical_payload(payload)
+        request_sha256 = None
+        if request_key is not None:
+            fingerprint = json.dumps(
+                {"capability": capability, "summary": summary, "payload": encoded},
+                ensure_ascii=False,
+                separators=(",", ":"),
+                sort_keys=True,
+            )
+            request_sha256 = hashlib.sha256(fingerprint.encode("utf-8")).hexdigest()
         with self._db() as db:
             db.execute("BEGIN IMMEDIATE")
+            # A repeat with the same owner/key and identical request returns the
+            # original task before queue-capacity accounting.
+            if request_key is not None:
+                existing = db.execute(
+                    "SELECT id,request_sha256 FROM tasks WHERE owner=? AND request_key=?",
+                    (owner, request_key),
+                ).fetchone()
+                if existing:
+                    if existing[1] != request_sha256:
+                        db.rollback()
+                        raise PayloadLedgerError("request key reused with different request")
+                    db.commit()
+                    return existing[0]
             queued = db.execute("SELECT COUNT(*) FROM tasks WHERE state='queued'").fetchone()[0]
             if queued >= self.queue_limit:
                 db.rollback()
                 raise OverflowError("queue capacity reached")
             tid = str(uuid.uuid4())
             db.execute(
-                "INSERT INTO tasks(id,capability,summary,state,created,owner,payload_json) VALUES(?,?,?,'queued',?,?,?)",
-                (tid, capability, summary, time.time(), owner, encoded),
+                "INSERT INTO tasks(id,capability,summary,state,created,owner,payload_json,request_key,request_sha256) "
+                "VALUES(?,?,?,'queued',?,?,?,?,?)",
+                (tid, capability, summary, time.time(), owner, encoded, request_key, request_sha256),
             )
             db.commit()
             return tid
