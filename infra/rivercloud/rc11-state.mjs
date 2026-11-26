@@ -61,7 +61,7 @@ export async function readState(file){
   validateState(s);
   return s;
  }catch(e){
-  if(e.code==="ENOENT")return structuredClone(init);
+  if(e.code==="ENOENT"){await assertPrivateDirectory(path.dirname(file));return structuredClone(init);}
   if(e.code==="ELOOP")throw new Error("state_file_symlink_rejected");
   throw e;
  }finally{if(handle)await handle.close().catch(()=>{});}
