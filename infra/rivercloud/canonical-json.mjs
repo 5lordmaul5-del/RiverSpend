@@ -23,7 +23,8 @@ export function canonicalJson(value, { maxDepth = 32, maxBytes = 8192, maxNodes 
       return emit(JSON.stringify(value));
     }
     if (Array.isArray(value)) {
-      if (Object.getPrototypeOf(value)!==Array.prototype || active.has(value) || value.length > maxNodes) throw new Error("json_array_invalid");
+      if(value.length>maxNodes)throw new Error("json_nodes_exceeded");
+      if (Object.getPrototypeOf(value)!==Array.prototype || active.has(value)) throw new Error("json_array_invalid");
       const keys=Reflect.ownKeys(value);
       if (keys.length!==value.length+1||!keys.includes("length")||
           keys.some(key=>key!=="length"&&(typeof key!=="string"||!/^(0|[1-9][0-9]*)$/.test(key)||Number(key)>=value.length))) throw new Error("json_array_invalid");
