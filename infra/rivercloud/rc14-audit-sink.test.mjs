@@ -60,3 +60,6 @@ test("RC-74 replay store fails closed on false and thrown errors",async()=>{cons
 
 
 test("RC-75 replay store is not called for invalid signatures",async()=>{const d=buildSignedDelivery(envelope(),{endpoint,secret,now});const bad={...d,headers:{...d.headers,"x-rivercloud-audit-signature":"sha256="+"0".repeat(64)}};let calls=0;const result=await verifySignedDelivery(bad,{secret,now,consumeReplay:async()=>{calls++;return true;}});assert.equal(result.valid,false);assert.equal(calls,0);});
+
+
+test("RC-76 rejects replay callback return values other than strict true",async()=>{const d=buildSignedDelivery(envelope(),{endpoint,secret,now});for(const value of [undefined,null,1,"true",{}]){assert.equal((await verifySignedDelivery(d,{secret,now,consumeReplay:async()=>value})).reason,"replay_rejected");}});
