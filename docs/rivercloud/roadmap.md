@@ -35,3 +35,6 @@ Run RiverSpend in staging on RiverCloud, validate reliability, backups, secrets,
 - RC-63: RC-13 normalizes thrown identity-verifier callbacks to `signature_not_verified` (fail closed). CI run #686 verified 220/220 Node tests and the full infrastructure-validation suite. Real provider verification and API-route integration remain blockers.
 
 - RC-64: mandatory identity claims must be own properties, not inherited values; CI run #695 verified 221/221 Node tests and the complete infrastructure-validation suite.
+
+
+- RC-129: backup destination preflight now requires current-user ownership, owner rwx, and no group/world access; newly created destinations are private under umask 077. Focused reconstructed tests 2/2 and shell syntax passed, but RC-129 CI remains unverified. See `infra/rivercloud/RC129-BACKUP-DIRECTORY-PRIVACY.md`.
