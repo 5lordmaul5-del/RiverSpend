@@ -78,3 +78,6 @@ test("RC-80 replay store is skipped for malformed timestamps",async()=>{const d=
 
 
 test("RC-81 rejects out-of-range replay timestamp windows",async()=>{const d=buildSignedDelivery(envelope(),{endpoint,secret,now});for(const skew of [999,600001,-1,1.5]){assert.equal((await verifySignedDelivery(d,{secret,now,maxSkewMs:skew,consumeReplay:acceptReplay})).reason,"invalid_verifier_config");}});
+
+
+test("RC-82 invalid verifier configuration never touches replay storage",async()=>{const d=buildSignedDelivery(envelope(),{endpoint,secret,now});for(const config of [{secret:"short"},{secret,now:-1},{secret,now,maxSkewMs:999},{secret,now,consumeReplay:null}]){let calls=0;const result=await verifySignedDelivery(d,{...config,consumeReplay:async()=>{calls++;return true;}});assert.equal(result.valid,false);assert.equal(calls,0);}});
