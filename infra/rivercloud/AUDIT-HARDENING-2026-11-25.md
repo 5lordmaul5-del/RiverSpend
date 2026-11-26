@@ -709,3 +709,10 @@ GitHub PR metadata confirms **98 changed files** at the current branch head. The
 - Added a preflight refusal if the data directory contains a transaction lock or temporary snapshot file. Tests cover both marker types. The preflight is a detection aid only; it does not atomically lock the store and the operator must still quiesce the writer.
 - **CI pending for RC-47.** No local test pass is claimed.
 - No real backup, restore, staging, services, runner, deployment, merge, production data/credentials, provisioning or spending.
+
+
+## RC-47 CI closeout (26 November 2026)
+
+- Code/test commit `5d4132937689260827e736f7cff6346c57a048fe`: GitHub Actions **45766205553 (#412) — SUCCESS, 155/155 Node tests**, 0 failures; bootstrap shell, backup/restore/Python syntax, restore directory-replacement race, Compose, API image build/inspection and Caddy validation passed.
+- Report/document closeout commit `8b11279c780eb6ea8a1ab3f3600ae0fcc599f14c`: GitHub Actions **45766244589 (#417) — SUCCESS, 155/155 Node tests**, plus the same validation suite.
+- No real backup or restore was performed. No services or runner were started, no merge, deployment, production data/credentials, provisioning or spending.
