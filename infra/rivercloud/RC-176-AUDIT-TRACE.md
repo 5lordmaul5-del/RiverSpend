@@ -1,0 +1,2 @@
+# RC-176 — Audit Trace Projection
+Builds a bounded sequential SHA-256 hash-chain projection from supplied entries. This is not persisted, signed, tamper-proof, or a substitute for protected external audit storage.
