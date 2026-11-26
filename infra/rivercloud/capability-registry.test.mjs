@@ -1,0 +1,3 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {buildCapabilityRegistry} from './capability-registry.mjs';
+test('registry only accepts bounded declarative capabilities',()=>{const r=buildCapabilityRegistry([{id:'diag',description:'Diagnostics',capabilities:['inspect','report'],enabled:true}]);assert.equal(r.execution,false);assert.deepEqual(r.entries[0].capabilities,['inspect','report']);});
+test('rejects duplicate IDs and unsafe capabilities',()=>{assert.throws(()=>buildCapabilityRegistry([{id:'x',description:'',capabilities:['execute'],enabled:true}]));assert.throws(()=>buildCapabilityRegistry([{id:'x',description:'',capabilities:[],enabled:true},{id:'x',description:'',capabilities:[],enabled:false}]));});
