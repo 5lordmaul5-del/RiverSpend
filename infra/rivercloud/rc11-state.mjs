@@ -18,6 +18,13 @@ async function assertPrivateDirectory(dir){
  if(typeof process.getuid==="function"&&stat.uid!==process.getuid())throw new Error("state_directory_owner_mismatch");
  if((stat.mode&0o077)!==0)throw new Error("state_directory_permissions_unsafe");
 }
+async function assertNoSymlinkDirectoryComponents(dir){
+ const absolute=path.resolve(dir),root=path.parse(absolute).root;let current=root;
+ for(const part of absolute.slice(root.length).split(path.sep).filter(Boolean)){
+  current=path.join(current,part);const stat=await lstat(current);
+  if(!stat.isDirectory()||stat.isSymbolicLink())throw new Error("state_directory_component_not_regular");
+ }
+}
 async function syncDirectoryHandle(dir){const d=await open(dir,"r");try{await d.sync();}finally{await d.close();}}
 function validateState(s){
  if(!s||s.schema!==1||!Array.isArray(s.jobs)||!Array.isArray(s.approvals)||!Array.isArray(s.events))throw new Error("invalid_state_schema");
@@ -48,6 +55,7 @@ async function unlinkOwnedLock(lock,identity){
 export async function readState(file){
  let handle;
  try{
+  await assertNoSymlinkDirectoryComponents(path.dirname(file));
   if(typeof fsConstants.O_NOFOLLOW!=="number"||typeof fsConstants.O_NONBLOCK!=="number")throw new Error("state_file_safe_open_unavailable");
   handle=await open(file,fsConstants.O_RDONLY|fsConstants.O_NOFOLLOW|fsConstants.O_NONBLOCK);
   const stat=await handle.stat();
@@ -61,14 +69,14 @@ export async function readState(file){
   validateState(s);
   return s;
  }catch(e){
-  if(e.code==="ENOENT"){await assertPrivateDirectory(path.dirname(file));return structuredClone(init);}
+  if(e.code==="ENOENT"){await assertNoSymlinkDirectoryComponents(path.dirname(file));await assertPrivateDirectory(path.dirname(file));return structuredClone(init);}
   if(e.code==="ELOOP")throw new Error("state_file_symlink_rejected");
   throw e;
  }finally{if(handle)await handle.close().catch(()=>{});}
 }
 export async function transactState(file,mutator,{lockTimeoutMs=3000,syncDirectory=syncDirectoryHandle}={}){
  if(!Number.isSafeInteger(lockTimeoutMs)||lockTimeoutMs<100||lockTimeoutMs>10000)throw new Error("invalid_lock_timeout");if(typeof syncDirectory!=="function")throw new Error("invalid_directory_sync");
- const dir=path.dirname(file);await mkdir(dir,{recursive:true,mode:0o700});await assertPrivateDirectory(dir);const lock=file+".lock";let handle,lockStat;
+ const dir=path.dirname(file);await mkdir(dir,{recursive:true,mode:0o700});await assertNoSymlinkDirectoryComponents(dir);await assertPrivateDirectory(dir);const lock=file+".lock";let handle,lockStat;
  const start=Date.now();while(!handle){try{handle=await open(lock,"wx",0o600);lockStat=await handle.stat();await handle.writeFile(JSON.stringify({pid:process.pid,createdAt:new Date().toISOString()}));await handle.sync();}catch(e){if(handle){await unlinkOwnedLock(lock,lockStat).catch(()=>{});await handle.close().catch(()=>{});handle=null;lockStat=null;}if(e.code!=="EEXIST")throw e;if(Date.now()-start>lockTimeoutMs)throw new Error("state_lock_timeout");await new Promise(r=>setTimeout(r,25));}}
  let temp;
  try{
