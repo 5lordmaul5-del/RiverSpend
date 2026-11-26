@@ -3,7 +3,7 @@ import { createHmac } from "node:crypto";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { queuePlan, listQueue } from "./queue.mjs";
-import { hasPermission } from "./rc13-identity.mjs";
+import { hasPermission } from "./rc13-identity.mjs";\nimport { POLICY_ERROR_CODES, CAPACITY_ERROR_CODES } from "./shared-contracts.mjs";
 
 const MAX_BODY = 8192;
 const MAX_GROUPS = 20;
