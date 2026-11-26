@@ -44,7 +44,7 @@ jobs:
       - name: Confirm API image has Node but no package manager
         run: |
           docker run --rm rivercloud-api:ci node --version
-          if docker run --rm rivercloud-api:ci sh -c 'command -v npm || command -v npx || command -v corepack || command -v yarn || command -v pnpm'; then
+          if docker run --rm rivercloud-api:ci sh -c 'test -e /opt/yarn-v1.22.22 || command -v npm || command -v npx || command -v corepack || command -v yarn || command -v pnpm'; then
             echo "Unexpected package manager present in runtime image"
             exit 1
           fi
@@ -79,6 +79,6 @@ jobs:
           console.log(summary);
           NODE
       - name: Scan API image for fixed HIGH and CRITICAL vulnerabilities
-        run: trivy image --scanners vuln --vuln-type os,library --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 rivercloud-api:ci
+        run: trivy image --scanners vuln --pkg-types os,library --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 rivercloud-api:ci
       - name: Validate Caddyfile with pinned Caddy image
         run: docker run --rm -e RIVERCLOUD_DOMAIN=cloud.example.com -v "$PWD/infra/rivercloud/Caddyfile:/etc/caddy/Caddyfile:ro" caddy:2.11.9@sha256:4851e54a46b206517c574821bb5cc67f170d2156041e9fbc4c9193b45e84a75b caddy validate --config /etc/caddy/Caddyfile
