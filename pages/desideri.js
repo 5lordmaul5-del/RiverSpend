@@ -7,9 +7,9 @@ export default function Desideri() {
   useEffect(() => {
     try { const x = JSON.parse(localStorage.getItem('riverspend-wishlist') || '[]'); setItems(Array.isArray(x) ? x : []); } catch { setItems([]); }
     let active = true;
-    fetch('/api/products', { cache: 'no-store' })
+    fetch('/api/products?mode=sold-ids', { cache: 'no-store' })
       .then((res) => res.ok ? res.json() : [])
-      .then((products) => { if (active && Array.isArray(products)) setSoldIds(products.filter((product) => product.venduto || product.statoAnnuncio === 'sold').map((product) => String(product.id))); })
+      .then((ids) => { if (active && Array.isArray(ids)) setSoldIds(ids.map(String)); })
       .catch(() => {});
     return () => { active = false; };
   }, []);
