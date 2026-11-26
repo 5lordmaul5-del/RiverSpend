@@ -33,3 +33,5 @@ Run RiverSpend in staging on RiverCloud, validate reliability, backups, secrets,
 - RC-62 initial CI failure #672 was caused by legacy test-fixture files written with 0644 mode; the privacy gate correctly rejected them. Fixtures are being corrected to 0600, with fresh CI evidence pending.
 
 - RC-63: RC-13 normalizes thrown identity-verifier callbacks to `signature_not_verified` (fail closed). CI run #686 verified 220/220 Node tests and the full infrastructure-validation suite. Real provider verification and API-route integration remain blockers.
+
+- RC-64: mandatory identity claims must be own properties, not inherited values; CI run #695 verified 221/221 Node tests and the complete infrastructure-validation suite.
