@@ -1,39 +1,11 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { prepareRun, verifyPreparedRun, executeRun } from "./runner.mjs";
-
 const valid={projectId:"riverspend",branch:"main",commit:"0123456789abcdef0123456789abcdef01234567",target:"staging"};
-test("runner creates a verifiable safe prepared envelope",()=>{
- const run=prepareRun(valid);
- assert.equal(run.status,"prepared_not_executed");
- assert.equal(run.safety.commandExecution,false);
- assert.equal(run.safety.dockerSocket,false);
- assert.equal(run.plan.target,"staging");
- assert.equal(verifyPreparedRun(run).ok,true);
-});
-test("verification rejects plan, digest or identity tampering",()=>{
- const run=prepareRun(valid);
- assert.equal(verifyPreparedRun({...run,plan:{...run.plan,commit:"a".repeat(40)}}).reason,"plan_digest_mismatch");
- assert.equal(verifyPreparedRun({...run,digest:"b".repeat(64)}).reason,"plan_digest_mismatch");
- assert.equal(verifyPreparedRun({...run,runId:"altered"}).reason,"plan_digest_mismatch");
-});
-test("verification rejects unsafe execution flags and changed status",()=>{
- const run=prepareRun(valid);
- assert.equal(verifyPreparedRun({...run,safety:{...run.safety,networkFetch:true}}).reason,"unsafe_flags");
- assert.equal(verifyPreparedRun({...run,status:"running"}).reason,"run_status_invalid");
- assert.equal(verifyPreparedRun({...run,safety:{...run.safety,extra:false}}).reason,"unsafe_flags");
-});
-test("verification rejects envelope checksum alteration and unexpected fields",()=>{
- const run=prepareRun(valid);
- assert.equal(verifyPreparedRun({...run,envelopeDigest:"0".repeat(64)}).reason,"envelope_digest_mismatch");
- assert.equal(verifyPreparedRun({...run,unexpected:"value"}).reason,"run_schema_invalid");
-});
-test("execution remains disabled pending isolation and authenticated approval",()=>{
- assert.throws(()=>executeRun(prepareRun(valid)),/runner_execution_disabled/);
-});
-test("runner rejects unallowlisted project",()=>{
- assert.throws(()=>prepareRun({...valid,projectId:"unknown"}),/project_not_allowlisted/);
-});
-test("runner rejects nonimmutable commit",()=>{
- assert.throws(()=>prepareRun({...valid,commit:"main"}),/immutable_commit_sha_required/);
-});
+test("runner creates verifiable safe prepared envelope",()=>{const r=prepareRun(valid);assert.equal(r.status,"prepared_not_executed");assert.equal(r.safety.commandExecution,false);assert.equal(r.safety.dockerSocket,false);assert.equal(r.plan.target,"staging");assert.equal(verifyPreparedRun(r).ok,true);});
+test("verification rejects plan, digest or identity tampering",()=>{const r=prepareRun(valid);assert.equal(verifyPreparedRun({...r,plan:{...r.plan,commit:"a".repeat(40)}}).reason,"plan_digest_mismatch");assert.equal(verifyPreparedRun({...r,digest:"b".repeat(64)}).reason,"plan_digest_mismatch");assert.equal(verifyPreparedRun({...r,runId:"altered"}).reason,"plan_digest_mismatch");});
+test("verification rejects unsafe flags, altered status and safety extra",()=>{const r=prepareRun(valid);assert.equal(verifyPreparedRun({...r,safety:{...r.safety,networkFetch:true}}).reason,"unsafe_flags");assert.equal(verifyPreparedRun({...r,status:"running"}).reason,"run_status_invalid");assert.equal(verifyPreparedRun({...r,safety:{...r.safety,extra:false}}).reason,"unsafe_flags");});
+test("rejects altered envelope checksum and unexpected fields",()=>{const r=prepareRun(valid);assert.equal(verifyPreparedRun({...r,envelopeDigest:"0".repeat(64)}).reason,"envelope_digest_mismatch");assert.equal(verifyPreparedRun({...r,unexpected:"value"}).reason,"run_schema_invalid");});
+test("fails closed on getters, hidden properties and symbols without invoking getters",()=>{const r=prepareRun(valid);let calls=0;const getter={...r};Object.defineProperty(getter,"status",{enumerable:true,get(){calls++;return "prepared_not_executed";}});assert.equal(verifyPreparedRun(getter).reason,"run_schema_invalid");assert.equal(calls,0);const hidden={...r};Object.defineProperty(hidden,"extra",{value:1});assert.equal(verifyPreparedRun(hidden).reason,"run_schema_invalid");const sym={...r};sym[Symbol("x")]=1;assert.equal(verifyPreparedRun(sym).reason,"run_schema_invalid");const nested={...r,safety:{...r.safety}};Object.defineProperty(nested.safety,"networkFetch",{enumerable:true,get(){calls++;return false;}});assert.equal(verifyPreparedRun(nested).reason,"unsafe_flags");assert.equal(calls,0);});
+test("execution disabled pending isolation and authenticated approval",()=>assert.throws(()=>executeRun(prepareRun(valid)),/runner_execution_disabled/));
+test("runner rejects unknown project and mutable commit",()=>{assert.throws(()=>prepareRun({...valid,projectId:"unknown"}),/project_not_allowlisted/);assert.throws(()=>prepareRun({...valid,commit:"main"}),/immutable_commit_sha_required/);});
