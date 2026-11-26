@@ -1,6 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 
-const MODEL_DEFAULT = "openai/gpt-oss-20b";
+const MODEL_DEFAULT = "@cf/openai/gpt-oss-20b";
 const MAX_AGENTS = 30;
 const MAX_MESSAGE_CHARS = 4000;
 const MAX_HISTORY = 16;
@@ -106,14 +106,14 @@ function chooseTeam(agent, requestedSize, prompt = "") {
   return selected;
 }
 
-async function callModel(apiKey, model, messages, maxTokens = 850) {
+async function callModel(apiToken, accountId, model, messages, maxTokens = 850) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 45000);
   try {
-    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    const response = await fetch(`https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/v1/chat/completions`, {
       method: "POST",
       headers: {
-        Authorization: "Bearer " + apiKey,
+        Authorization: "Bearer " + apiToken,
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
@@ -160,9 +160,10 @@ export default async function handler(req, res) {
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  const groqKey = process.env.GROQ_API_KEY;
-  if (!supabaseUrl || !serviceKey || !groqKey) {
-    return json(res, 503, { error: "Configurazione River AI incompleta. Controllare le variabili server." });
+  const cloudflareAccountId = process.env.CLOUDFLARE_ACCOUNT_ID;
+  const cloudflareToken = process.env.CLOUDFLARE_API_TOKEN;
+  if (!supabaseUrl || !serviceKey || !cloudflareAccountId || !cloudflareToken) {
+    return json(res, 503, { error: "RiverSSAI non è ancora collegata al motore cloud indipendente. Configurazione Cloudflare AI mancante." });
   }
 
   const authHeader = req.headers.authorization || "";
@@ -221,21 +222,21 @@ export default async function handler(req, res) {
       const teamHistory = safeMessages.slice(-4);
       const teamMemory = memoryContext.slice(0, 900);
       const reports = await runWithLimit(team, MAX_PARALLEL, async (specialist) => {
-        const report = await callModel(groqKey, model, [
+        const report = await callModel(cloudflareToken, cloudflareAccountId, model, [
           { role: "system", content: BASE_PROMPT + "\nRUOLO SPECIALISTA: " + AGENTS[specialist] + "\nFornisci un rapporto sintetico: priorità, un rischio e verifica essenziale." },
           ...(teamMemory ? [{ role: "system", content: "CONTESTO PRIVATO RIVERSPEND (sintesi):\n" + teamMemory }] : []),
           ...teamHistory
         ], 300);
         return { specialist, report };
       });
-      const synthesis = await callModel(groqKey, model, [
+      const synthesis = await callModel(cloudflareToken, cloudflareAccountId, model, [
         { role: "system", content: BASE_PROMPT + "\nSei NOVA, coordinatrice. Confronta i rapporti, risolvi le contraddizioni senza nasconderle e restituisci decisione, piano, rischi e verifiche." },
         { role: "user", content: "RICHIESTA:\n" + latestPrompt + "\n\nRAPPORTI SPECIALISTI:\n" + reports.map((item) => "AGENTE " + item.specialist.toUpperCase() + ":\n" + item.report).join("\n\n") }
       ], 900);
       answer = synthesis;
       agentsUsed = ["nova", ...team];
     } else {
-      answer = await callModel(groqKey, model, [
+      answer = await callModel(cloudflareToken, cloudflareAccountId, model, [
         { role: "system", content: BASE_PROMPT + "\nRUOLO ATTIVO: " + AGENTS[agent] },
         ...(memoryContext ? [{ role: "system", content: "MEMORIA PRIVATA RIVER AI:\n" + memoryContext }] : []),
         ...safeMessages
@@ -252,6 +253,7 @@ export default async function handler(req, res) {
     return json(res, 200, {
       answer,
       model,
+      provider: "cloudflare-workers-ai",
       agent,
       agentsUsed,
       teamSize: agent === "team" ? team.length : 1,
@@ -264,7 +266,7 @@ export default async function handler(req, res) {
       const waitMatch = String(error?.message || "").match(/try again in ([0-9.]+)s/i);
       const waitSeconds = waitMatch ? Math.ceil(Number(waitMatch[1])) : 20;
       res.setHeader("Retry-After", String(waitSeconds));
-      return json(res, 429, { error: "Il servizio AI sta raggiungendo il limite di richieste. Attendi circa " + waitSeconds + " secondi e riprova. La Squadra non ha completato l'analisi." });
+      return json(res, 429, { error: "Il motore AI cloud sta raggiungendo il limite di utilizzo. Attendi circa " + waitSeconds + " secondi e riprova. La Squadra non ha completato l'analisi." });
     }
     if (error?.name === "AbortError") return json(res, 504, { error: "La richiesta ha superato il tempo massimo. Riprova con una richiesta più breve." });
     return json(res, 502, { error: "Servizio AI temporaneamente non disponibile. La richiesta può essere ripetuta." });

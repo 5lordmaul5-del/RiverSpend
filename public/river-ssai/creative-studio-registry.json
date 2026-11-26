@@ -1,0 +1,50 @@
+{
+  "name": "RiverSSAI Creative Studio",
+  "version": "1.0.0",
+  "status": "foundation",
+  "access": "owner-session-required",
+  "modules": [
+    {
+      "id": "nova-core",
+      "name": "Nova Core",
+      "status": "orchestration-ui",
+      "description": "Creative workflow coordination and brief preparation."
+    },
+    {
+      "id": "image-engine",
+      "name": "Image Engine",
+      "status": "optional-comfyui-adapter-present-runtime-not-configured",
+      "description": "Owner-authenticated server adapter for a private ComfyUI runtime; uses an SDXL-compatible checkpoint workflow when configured. No runtime is currently configured."
+    },
+    {
+      "id": "video-engine",
+      "name": "Video Engine",
+      "status": "configurable-comfyui-workflow-adapter-runtime-not-configured",
+      "description": "Owner-authenticated adapter for a server-configured ComfyUI API workflow; requires a compatible video model, custom nodes and private GPU runtime."
+    },
+    {
+      "id": "motion-lab",
+      "name": "Motion Lab",
+      "status": "local-browser-export",
+      "description": "Creates WEBM slideshow animations from images using Canvas and MediaRecorder; not AI video generation."
+    },
+    {
+      "id": "media-vault",
+      "name": "Media Vault",
+      "status": "local-indexeddb",
+      "description": "Stores user-selected and generated media in browser IndexedDB on this device; not cloud-synced."
+    }
+  ],
+  "safety": {
+    "noApiKeysInBrowser": true,
+    "externalProvidersDisabled": true,
+    "cloudSync": false,
+    "requiresOwnerAuth": true
+  },
+  "nextSteps": [
+    "Measure available laptop GPU, VRAM, RAM and free disk before choosing local model sizes.",
+    "Configure a private ComfyUI image runtime and SDXL-compatible checkpoint on a trusted GPU host.",
+    "Configure and validate a ComfyUI API-format video workflow for a compatible open-weight model.",
+    "Add authenticated cloud object storage, job queue, quotas and retention controls."
+  ]
+}

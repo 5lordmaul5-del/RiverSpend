@@ -2605,14 +2605,22 @@ export default function Home() {
         .rs-apps-download-strip::-webkit-scrollbar { display:none !important; }
         .rs-apps-download-strip { gap:8px !important; padding-bottom:8px !important; }
         .rs-apps-download-strip > a {
-          box-sizing:border-box; flex:0 0 120px !important; width:120px !important;
-          min-width:120px !important; max-width:120px !important; scroll-snap-align:none !important;
+          box-sizing:border-box; flex:0 0 132px !important; width:132px !important;
+          min-width:132px !important; max-width:132px !important; scroll-snap-align:none !important;
+          padding:7px 6px 9px !important; border:1px solid #c5e8eb !important;
+          border-radius:16px !important; background:linear-gradient(155deg,#fff,#eafafb) !important;
+          box-shadow:0 5px 16px rgba(5,70,82,.10) !important;
         }
         .rs-apps-download-strip > a img,
         .rs-apps-download-strip > a > span:first-child {
-          flex-shrink:0; width:76px !important; height:76px !important;
-          min-width:76px !important; min-height:76px !important;
-          max-width:76px !important; max-height:76px !important;
+          flex-shrink:0; width:90px !important; height:90px !important;
+          min-width:90px !important; min-height:90px !important;
+          max-width:90px !important; max-height:90px !important;
+          border-radius:15px !important; object-fit:cover !important;
+          background:#e8f6f7 !important; box-shadow:0 4px 12px rgba(4,52,66,.18) !important;
+        }
+        .rs-apps-download-strip > a span {
+          max-width:100%; overflow-wrap:anywhere;
         }
       `}</style>
     </main>
