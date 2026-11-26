@@ -108,3 +108,15 @@ test("concurrent high-risk requests reserve idempotency and capacity", async () 
   assert.equal(verificationCalls,1);
   assert.equal(o.getIdempotencyCount(),1);
 });
+
+
+test("schema validation never evaluates input accessors before JSON preflight",async()=>{
+  const o=createRiverSSAIOrchestrator({definitions:[definition]});
+  let getterCalls=0;
+  const input={};
+  Object.defineProperty(input,"prompt",{enumerable:true,get(){getterCalls++;return "unsafe";}});
+  const result=await o.planInvoke({...invoke,input,idempotencyKey:"idempotency-getter"});
+  assert.equal(result.status,400);assert.equal(result.error,"input_invalid");
+  assert.equal(getterCalls,0);
+  assert.equal(o.getIdempotencyCount(),0);
+});
