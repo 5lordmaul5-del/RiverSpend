@@ -873,3 +873,9 @@ GitHub PR metadata confirms **98 changed files** at the current branch head. The
 - The API image now initializes `/data` as node-owned and mode 0700. No automatic chmod/chown of existing state is performed.
 - Regression tests cover symlinked store directories, unsafe directory permissions, unsafe snapshot permissions and private snapshot mode. Fresh CI evidence is pending; no local checkout test run is claimed.
 - Existing named volumes that fail preflight require a reviewed, offline permission/ownership repair. No service, real data, deployment, merge, credentials, provisioning or spending was touched.
+
+
+### RC-62 fixture correction (26 November 2026)
+
+- Initial PR workflow **45781519481 (#672) failed 5/219 tests** because several pre-existing state-store test fixtures were created with the default 0644 file mode. The new privacy gate correctly rejected those fixtures before their intended schema/size/capacity assertions.
+- The implementation is not relaxed. The test fixtures are being updated to create private-mode snapshots (0600) except the dedicated permission-rejection regression. A fresh CI pass is required before closeout.
