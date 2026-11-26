@@ -25,3 +25,10 @@ No production key, agent process, live service or payment operation is used.
 ## API-RC-136 CI closeout
 
 GitHub Actions **run 45814754280 — SUCCESS, 33/33 Node tests**. The added orchestrator tests are included alongside the API-key core/store, registry, shared-contract and mock-gateway tests. The orchestrator remains planning-only: no worker/process is launched; the approval verifier is a mock callback; maxConcurrency/maxRunSeconds are not runtime-enforced.
+
+
+## RC-138 — Registry definition snapshot isolation
+
+- Orchestrator now clones and recursively freezes validated definitions at construction, preventing later caller-side mutation from changing approval/risk/status/schema policy.
+- Regression test mutates the original definition and nested schema after construction; the orchestrator retains its validated snapshot.
+- CI evidence pending; no test execution is claimed for this commit.
