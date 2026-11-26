@@ -26,7 +26,7 @@ async function withServer(options, run) {
 const headers = (user, groups) => ({ "x-forwarded-user": user, "x-forwarded-groups": groups });
 
 test("RC-34 fails closed when direct caller is not the configured proxy", async () => {
-  await withServer({}, async url => {
+  await withServer({ trustedProxyAddress: "172.31.250.3" }, async url => {
     const r = await fetch(url + "/api/jobs", { headers: headers("spoofed", "operator") });
     assert.equal(r.status, 403);
     assert.equal((await r.json()).error, "untrusted_proxy");
