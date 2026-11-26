@@ -48,7 +48,7 @@ export function createRiverSSAIOrchestrator({definitions=[],maxIdempotencyEntrie
       if(Buffer.byteLength(serialized)>MAX_INPUT_BYTES)return {status:413,error:"input_too_large"};
       if(!inputMatchesSchema(sanitizedInput,definition.inputSchema))return {status:400,error:"input_schema_invalid"};
       const inputDigest=digestInput(serialized);
-      const idempotencyId=auth.keyId+":"+agentId+":"+version+":"+idempotencyKey;
+      const idempotencyId=canonicalJson([auth.keyId,agentId,version,idempotencyKey],{maxDepth:2,maxBytes:1024,maxNodes:8});
       const existing=idempotency.get(idempotencyId);
       if(existing)return existing.inputDigest===inputDigest?{status:202,duplicate:true,plan:existing.plan}:{status:409,error:"idempotency_conflict"};
       const inflight=pending.get(idempotencyId);
