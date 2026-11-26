@@ -69,7 +69,16 @@ test("RC-34 operator may submit plans, but no execution is enabled and retries a
   });
 });
 
-test("RC-37 admin may read the job queue", async () => {\n  await withServer({ trustedProxyAddress: "127.0.0.1", groupRoleMap }, async url => {\n    const admin = headers("admin-1", "admin");\n    const response = await fetch(url + "/api/jobs", { headers: admin });\n    assert.equal(response.status, 200);\n    assert.deepEqual((await response.json()).jobs, []);\n  });\n});\n\ntest("RC-34 missing identity fails and unmapped groups are denied", async () => {
+test("RC-37 admin may read the job queue", async () => {
+  await withServer({ trustedProxyAddress: "127.0.0.1", groupRoleMap }, async url => {
+    const admin = headers("admin-1", "admin");
+    const response = await fetch(url + "/api/jobs", { headers: admin });
+    assert.equal(response.status, 200);
+    assert.deepEqual((await response.json()).jobs, []);
+  });
+});
+
+test("RC-34 missing identity fails and unmapped groups are denied", async () => {
   await withServer({ trustedProxyAddress: "127.0.0.1", groupRoleMap }, async url => {
     assert.equal((await fetch(url + "/api/jobs")).status, 401);
     const noGroups = await fetch(url + "/api/jobs", { headers: { "x-forwarded-user": "user-1" } });
