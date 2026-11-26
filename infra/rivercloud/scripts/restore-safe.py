@@ -48,13 +48,13 @@ def open_absolute_directory(path):
         fail("restore parent must be absolute")
     current_fd = os.open("/", _DIR_FLAGS)
     try:
-        if os.fstat(current_fd).st_mode & 0o022:
+        if (os.fstat(current_fd).st_mode & 0o022) and not (os.fstat(current_fd).st_mode & 0o1000):
             fail("restore parent directory has unsafe permissions")
         for part in path.parts[1:]:
             if part in ("", ".", ".."):
                 fail("unsafe restore parent path")
             next_fd = os.open(part, _DIR_FLAGS, dir_fd=current_fd)
-            if os.fstat(next_fd).st_mode & 0o022:
+            if (os.fstat(next_fd).st_mode & 0o022) and not (os.fstat(next_fd).st_mode & 0o1000):
                 os.close(next_fd)
                 fail("restore parent directory has unsafe permissions")
             os.close(current_fd)
