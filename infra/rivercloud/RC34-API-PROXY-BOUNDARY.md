@@ -4,7 +4,7 @@
 
 This increment adds a testable API-side trust boundary for the future OAuth2 Proxy integration:
 
-- Only a configured source address is trusted for identity headers; the default is the Compose proxy address `172.30.250.3`.
+- Only a configured source address is trusted for identity headers. The standalone prototype defaults to loopback `127.0.0.1`; Compose explicitly overrides it to the proxy's API-network address `172.31.250.3`.
 - Identity is taken only from `X-Forwarded-User` and `X-Forwarded-Groups`, after source-address validation. No client-supplied role header is accepted.
 - Groups are mapped to the existing RC-13 role catalog. Unmapped groups fail closed.
 - Route permissions are enforced for `GET /api/health`, `GET /api/jobs`, and `POST /api/plan`.
@@ -33,3 +33,8 @@ GitHub Actions run **45735325864 (#333)** passed **138/138 Node tests**, zero fa
 ## RC-35 follow-up
 
 The isolated Compose configuration now routes the `/api/` upstream to this module on a separate internal network, with the API service unexposed to host ports. This is configuration wiring only; no real OIDC login or container build has been tested. See [RC-35](RC35-API-OIDC-WIRING.md).
+
+
+### RC-54 — local default peer alignment
+
+The standalone API default was corrected from a stale public-network address to `127.0.0.1`, matching its loopback default bind for local testing. The Compose environment still explicitly uses `172.31.250.3` on the private API network. A regression test ensures a loopback request reaches identity validation (401 without identity), rather than being rejected as an untrusted network peer (403). This is local-default consistency only; it does not verify live OAuth2 Proxy header behavior.
