@@ -1,4 +1,4 @@
-# RC-135 — Persistent API-key record store prototype
+# API-RC-135 — Persistent API-key record store prototype
 
 Date: 26 November 2026
 
@@ -24,3 +24,8 @@ node --test infra/rivercloud/api-key-core.test.mjs infra/rivercloud/api-key-stor
 ```
 
 No production keys, credentials, live services or payment operations were used.
+
+
+## Test correction and local evidence
+
+The first CI attempt exposed a fixture setup error: a test called `mkdir` on the already-created `mkdtemp` root. That redundant call was removed. The seven API-key-store tests then passed in a reconstructed temporary workspace copied from the source and test files (**7/7**). This is not a full checkout and is not GitHub Actions evidence; CI for the corrected commit remains unverified.
