@@ -1,0 +1,2 @@
+# RC-190 — Consolidated Verification Gate
+Combines supplied readiness, security, configuration, rollback, and interoperability signals. Gate is evidence projection only; it never authorizes or performs a release.
