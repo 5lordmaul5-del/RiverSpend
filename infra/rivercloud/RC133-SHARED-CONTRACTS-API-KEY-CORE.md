@@ -48,3 +48,8 @@ GitHub Actions **run 45814328503 — SUCCESS, 26/26 Node tests**. The workflow n
 ## API-RC-136 — RiverSSAI planning orchestrator
 
 Added a planning-only mock orchestrator with API-key scope verification, active definition lookup, input-schema validation, canonical digest, bounded idempotency and binding-aware approval callback for high-risk definitions. It returns a plan with execution disabled and launches no workers. Tests and limitations are recorded in `API-RC-136-RIVERSSAI-ORCHESTRATOR.md`; CI verification is pending.
+
+
+## API-RC-136 CI closeout
+
+GitHub Actions **run 45814754280 — SUCCESS, 33/33 Node tests**. The added orchestrator tests are included alongside the API-key core/store, registry, shared-contract and mock-gateway tests. The orchestrator remains planning-only: no worker/process is launched; the approval verifier is a mock callback; maxConcurrency/maxRunSeconds are not runtime-enforced.
