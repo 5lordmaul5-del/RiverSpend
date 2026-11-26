@@ -15,3 +15,8 @@ RC-34's proxy/API prototype previously accepted a trusted identity header and en
 The actor reference is a deterministic, unkeyed hash of a proxy-supplied username/label, not an anonymization or cryptographic identity proof. It is not bound to an OIDC issuer or stable `sub` claim, and the local queue events are not independently immutable. Before production use, replace the provisional label with an authenticated issuer+subject identity and a keyed pseudonymization scheme, then migrate queue submission into the RC-17 protected lifecycle/audit transaction.
 
 Tests cover format validation, persisted attribution, role snapshot, idempotency and preservation of the first attribution on duplicate plans. CI evidence is pending.
+
+
+### CI closeout
+
+GitHub Actions run **45743359921 (#340)** passed **147/147 Node tests**, including actor-attribution and malformed-context tests, plus all shell/Python, restore race, Compose and Caddy validations. This verifies commit `f31985e3b1a4d25fd078faccd665a2da21dbe711`. No RiverCloud services were started.

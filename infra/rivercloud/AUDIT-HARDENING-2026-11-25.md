@@ -587,3 +587,10 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 - Queue validates the actor-reference format and role vocabulary. Idempotent retries preserve the original attribution and never overwrite it with a later caller.
 - Added tests for pseudonymous attribution, role snapshot, duplicate preservation, and malformed actor contexts. CI evidence is pending.
 - This is provisional attribution only: unkeyed SHA-256 of a proxy-supplied user label is not anonymization, issuer/sub binding, authentication proof or protected immutable audit. Legacy queue callers remain unattributed. RC-17 lifecycle migration and external protected audit remain blockers.
+
+
+### RC-36 CI closeout — verified
+
+- GitHub Actions run **45743359921 (#340) — SUCCESS: 147/147 Node tests**, 0 failures, including the actor-attribution and malformed-context regressions.
+- Run #340 also passed bootstrap shell syntax, backup/restore and Python syntax, the **1/1 restore directory-replacement race test**, Docker Compose configuration, and Caddy validation. It verifies commit **f31985e3b1a4d25fd078faccd665a2da21dbe711**.
+- The attribution remains provisional and pseudonymous; it is not issuer+subject authentication or an immutable audit record. No service was started or API integration request made.
