@@ -666,3 +666,14 @@ GitHub PR metadata confirms **98 changed files** at the current branch head. The
 
 - Runs **45757190923 (#358)** and **45757195384 (#359)** failed because the regression test's escaped newline splitter did not split `.dockerignore` lines (148/149 passed); the implementation file was not the failure.
 - Runs **45757276500 (#360)** and **45757283045 (#361)** failed on the same test after the first correction; the line comparison was not robust to whitespace/line-ending normalization. The test is now changed to split on LF and trim each line before matching. These failures are recorded, not counted as passes. Fresh CI is pending.
+
+
+## RC-45 — lifecycle approval gate (26 November 2026)
+
+- Static audit found that the generic RC-17/RC-9 transition API could set a job from `pending` to `approved` without consuming a one-use approval token. The atomic approval-consumption helper existed, but the generic transition route was a bypass.
+- The generic transition map now excludes `pending -> approved`; the API returns `approval_required` for a direct attempt. The legacy facade mirrors this restriction.
+- Audit replay now accepts the `approved` transition only when immediately preceded by the matching, audited approval-consumption event (same job, consumer actor and required note). A manually fabricated approval transition with a recomputed unkeyed hash is rejected.
+- Regression tests cover the generic gate, tampered/recomputed audit replay, legacy facade, concurrency, and the approval-consumption path's integrity. Tests were amended to use rejection for generic transition cases and to exercise approval through the atomic approval helper.
+- **CI for the RC-45 code commits has not yet been independently confirmed at this report update.** Local clone/test execution remains unavailable due the earlier GitHub DNS restriction; no local test pass is claimed.
+- No OIDC provider login, route wiring, runner execution, staging host, live deployment, production data/credentials, provisioning, merge or spending occurred.
+- Remaining boundaries: identity claims are not cryptographically verified at API integration; external audit sink, runner isolation, staging, encrypted off-site backups, SBOM and exact-digest vulnerability scans remain open.
