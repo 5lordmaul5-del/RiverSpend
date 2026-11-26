@@ -41,3 +41,10 @@ Signed delivery descriptors now include a 128-bit random nonce, and the HMAC cov
 ### RC-27 report-only commit verification
 
 - The report-only commit `63a30d6da170a301df0a29fad5241bd5c2dbc07c` was verified by GitHub Actions **45708543769 (#251) and 45708555561 (#252) — SUCCESS: 122/122 tests** each, plus bootstrap, backup/restore/Python, Compose configuration and Caddy validation. The code was unchanged from RC-27's verified source commit.
+
+## Audit data preflight correction
+
+- The previous redactor used `Object.entries`, which could invoke nested getters during redaction or envelope verification and silently accepted sparse/cyclic structures via truncation.
+- The prototype now snapshots event and envelope properties through data descriptors; nested accessor properties, sparse arrays, cycles and oversized object/array shapes fail closed. Special own keys are still redacted and preserved safely using null-prototype snapshots.
+- Regression tests cover accessor non-execution, sparse/cyclic rejection and verifier fail-closed behavior.
+- GitHub Actions is pending for this correction at the time of this note.
