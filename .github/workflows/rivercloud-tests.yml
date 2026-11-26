@@ -41,6 +41,13 @@ jobs:
         run: docker build --file infra/rivercloud/Dockerfile --tag rivercloud-api:ci .
       - name: Confirm API image build result
         run: docker image inspect rivercloud-api:ci --format '{{.Id}}'
+      - name: Confirm API image has Node but no package manager
+        run: |
+          docker run --rm rivercloud-api:ci node --version
+          if docker run --rm rivercloud-api:ci sh -c 'command -v npm || command -v npx || command -v corepack || command -v yarn || command -v pnpm'; then
+            echo "Unexpected package manager present in runtime image"
+            exit 1
+          fi
       - name: Install pinned Trivy scanner
         uses: aquasecurity/setup-trivy@e07451d2e059ed86c2870430ea286b3a9e0bf241 # pinned installer
         with:
