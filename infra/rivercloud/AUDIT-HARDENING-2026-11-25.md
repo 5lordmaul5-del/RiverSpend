@@ -818,6 +818,6 @@ GitHub PR metadata confirms **98 changed files** at the current branch head. The
 ## RC-57/RC-58 progression (26 November 2026)
 
 - RC-57 bounds persisted audit-ledger verification to 10,000 records before replay; the regression rejects an oversized array. GitHub Actions **45769667056 and 45769663785 — SUCCESS** for RC-57 commit `d09d1c25307abcabab303d132a809bafe5662b3c`.
-- RC-58 extends fail-closed state validation to optional persisted arrays `auditLogRecords` (10,000), `lifecycleJobs` (5,000), and `approvalEvents` (10,000). Invalid types or capacity overflow reject both reads and transactions before commit. Regression tests cover over-capacity persisted arrays and malformed extension collections.
+- RC-58 extends fail-closed state validation to optional persisted arrays `auditLogRecords` (10,000), `lifecycleJobs` (5,000), and `approvalEvents` (10,000). Oversized arrays reject reads and transactions before commit; malformed extension schemas continue to be rejected by their dedicated consumers, preserving existing fail-closed behavior. Regression tests cover over-capacity persisted arrays and malformed extension collections.
 - RC-58 CI verification pending; do not count this increment as verified until workflows pass.
 - No merge, deployment, production cutover, service startup, provisioning, credentials/data changes, or spending.
