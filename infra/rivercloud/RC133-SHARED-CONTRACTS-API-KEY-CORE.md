@@ -30,3 +30,8 @@ The test files use Node's built-in test runner and no external packages.
 The contract manifest and mock route table are checked for drift. Mock routes cover RiverCloud plan/jobs, RiverSSAI registry/invoke, Signals read/send and Shop catalog/mock checkout. API-key scopes are enforced in the harness; POST requests require request IDs and idempotency keys, bodies are bounded, duplicate payloads return the original mock response, and conflicting payloads are rejected.
 
 The harness is an in-memory test adapter only. It is not a production gateway, durable idempotency service, messaging service, catalogue backend or payment processor.
+
+
+## RC-135 — Persistent API-key store prototype
+
+A bounded private file-backed record store is added in `api-key-store.mjs`. It persists digest-only records, supports verification, revocation and metadata listing, and uses atomic snapshot writes with a lock and private-mode checks. See `RC135-API-KEY-STORE.md` for limitations and reproducible tests. This is not an encrypted production credential store.
