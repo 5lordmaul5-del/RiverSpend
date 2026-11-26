@@ -144,4 +144,18 @@ class WorkerCoreIntegrationTests(unittest.TestCase):
         self.assertEqual(self.ledger.status()["queued"],1)
         self.assertIsNone(self.core.get_result(task,"user-1"))
 
+    def test_legacy_result_table_migrates_owner_column(self):
+        legacy_path=os.path.join(self.tmp.name,"legacy.sqlite")
+        with sqlite3.connect(legacy_path) as db:
+            db.execute("""CREATE TABLE task_results (
+                task_id TEXT PRIMARY KEY, result_json TEXT NOT NULL,
+                result_sha256 TEXT NOT NULL, worker_subject TEXT NOT NULL,
+                idempotency_key TEXT NOT NULL UNIQUE, completed_at REAL NOT NULL
+            )""")
+        ledger=PayloadPersistentTaskLedger(legacy_path,queue_limit=2,lease_seconds=10)
+        WorkerCore(ledger,legacy_path,self.verify,Policy(),self.executor)
+        with sqlite3.connect(legacy_path) as db:
+            columns={row[1] for row in db.execute("PRAGMA table_info(task_results)")}
+        self.assertIn("owner",columns)
+
 if __name__=="__main__": unittest.main()
