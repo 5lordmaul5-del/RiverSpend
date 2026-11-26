@@ -21,6 +21,7 @@ def read_positive_limit(name, default):
 
 MAX_FILES = read_positive_limit("RIVERCLOUD_RESTORE_MAX_FILES", 100000)
 MAX_BYTES = read_positive_limit("RIVERCLOUD_RESTORE_MAX_BYTES", 20 * 1024**3)
+MAX_ARCHIVE_BYTES = read_positive_limit("RIVERCLOUD_RESTORE_MAX_ARCHIVE_BYTES", 20 * 1024**3)
 MAX_PATH_DEPTH = 128
 MAX_PATH_BYTES = 4096
 MAX_COMPONENT_BYTES = 255
@@ -167,8 +168,11 @@ def main(archive_path, target_path):
     fd = None
     try:
         fd = os.open(str(archive_path), os.O_RDONLY | os.O_NOFOLLOW)
-        if not stat.S_ISREG(os.fstat(fd).st_mode):
+        archive_stat = os.fstat(fd)
+        if not stat.S_ISREG(archive_stat.st_mode):
             fail("archive must be a regular file")
+        if archive_stat.st_size > MAX_ARCHIVE_BYTES:
+            fail("archive compressed-size limit exceeded")
         raw = os.fdopen(fd, "rb", closefd=False)
         try:
             with tarfile.open(fileobj=raw, mode="r:gz") as archive:
