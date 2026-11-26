@@ -29,3 +29,8 @@ The backup script did not verify ownership or privacy of the source data directo
 ## Safety
 
 No real backup/restore, service, runner, staging, merge, deployment, production data/credentials, provisioning or spending was performed.
+
+### RC-130 test-review correction
+
+- Corrected the negative test to assert that the backup destination remains empty after source-directory rejection. It no longer expects an existing destination to have been made private, because the fail-closed source check runs first and does not modify an existing directory.
+- This test-only correction has no independent CI evidence.
