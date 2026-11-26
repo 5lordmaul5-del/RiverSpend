@@ -111,3 +111,14 @@ Queue jobs now start unapproved. A job must be explicitly approved before `claim
 ### RiverBuild Phase 5 — coordinator (plan-only)
 
 `src/riverbuild-coordinator.js` claims one approved queue job and prepares a restricted Docker command plan using the runner module. It never executes Docker. It requires a separate worker to perform execution; errors while planning mark the claimed job blocked. Tests are written but not run.
+
+## Hardening progress — 26 November 2026
+
+- RiverBuild Guardian and Worker validation now distinguish standalone Docker flags from option/value pairs, require a single read-only `-v` workspace mount, and reject root users and alternate mount syntax in the Worker validation path.
+- The bounded history default listing now respects small configured limits.
+- The integrity-anchor regression test now deliberately leaves the report unanchored; the fully anchored path remains a human-review gate only.
+- Worker tests now use a complete constrained Docker plan fixture. A test-only executor is injected; no real Docker execution is connected.
+- GitHub Actions run **45799828186 (#60) — SUCCESS, 136/136 tests**. Earlier failures #50 (multiple stale assertions/fixtures) and #58 (test-file syntax error) are recorded and not counted as passes.
+- The CI workflow now pins checkout and setup-node to immutable commit SHAs; the pin regression test is added. A fresh run on the updated workflow is pending.
+
+**Boundaries remain:** no model/provider is connected; the task engine is planning-only; RiverBuild execution is disabled by default and requires an injected executor; the worker does not start Docker itself; RiverGit local service is not mounted into the main HTTP server; identity is static policy only, not authentication; audit/history are local or in-memory foundations, not durable tamper-proof storage. This core is not production-ready or independent of hardware/provider limits.
