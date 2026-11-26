@@ -28,10 +28,14 @@ class WorkerCore:
         Path(self.db_path).parent.mkdir(parents=True, exist_ok=True)
         with self._db() as db:
             db.execute("""CREATE TABLE IF NOT EXISTS task_results (
-                task_id TEXT PRIMARY KEY, result_json TEXT NOT NULL,
-                result_sha256 TEXT NOT NULL, worker_subject TEXT NOT NULL,
-                idempotency_key TEXT NOT NULL UNIQUE, completed_at REAL NOT NULL
+                task_id TEXT PRIMARY KEY, owner TEXT NOT NULL DEFAULT '',
+                result_json TEXT NOT NULL, result_sha256 TEXT NOT NULL,
+                worker_subject TEXT NOT NULL, idempotency_key TEXT NOT NULL UNIQUE,
+                completed_at REAL NOT NULL
             )""")
+            result_columns = {row[1] for row in db.execute("PRAGMA table_info(task_results)")}
+            if "owner" not in result_columns:
+                db.execute("ALTER TABLE task_results ADD COLUMN owner TEXT NOT NULL DEFAULT ''")
             db.execute("""CREATE TABLE IF NOT EXISTS task_events (
                 event_id INTEGER PRIMARY KEY AUTOINCREMENT, task_id TEXT NOT NULL,
                 attempt INTEGER NOT NULL, worker_subject TEXT NOT NULL,
@@ -51,7 +55,7 @@ class WorkerCore:
 
     @staticmethod
     def _claims(token, verifier):
-        if type(token) is not str or not token:
+        if type(token) is not str or not token or len(token) > 8192:
             return None
         try:
             claims = verifier(token)
@@ -148,9 +152,14 @@ class WorkerCore:
                 db.rollback()
                 self._event(task_id, attempt, worker, "lease_lost", payload_digest)
                 return False
+            owner_row = db.execute("SELECT owner FROM tasks WHERE id=?", (task_id,)).fetchone()
+            if owner_row is None or type(owner_row[0]) is not str or not owner_row[0].strip():
+                db.rollback()
+                self._event(task_id, attempt, worker, "owner_missing", payload_digest)
+                return False
             db.execute(
-                "INSERT INTO task_results(task_id,result_json,result_sha256,worker_subject,idempotency_key,completed_at) VALUES(?,?,?,?,?,?)",
-                (task_id, result_json, result_digest, worker, task_id, now),
+                "INSERT INTO task_results(task_id,owner,result_json,result_sha256,worker_subject,idempotency_key,completed_at) VALUES(?,?,?,?,?,?,?)",
+                (task_id, owner_row[0], result_json, result_digest, worker, task_id, now),
             )
             self._event(task_id, attempt, worker, "completed", payload_digest, result_digest, db=db)
             db.commit()
@@ -175,9 +184,15 @@ class WorkerCore:
             db.commit()
             return "retry" if retry else "exhausted"
 
-    def get_result(self, task_id):
+    def get_result(self, task_id, owner):
+        """Return a result only when the requested owner matches its persisted owner."""
+        if type(owner) is not str or not owner.strip():
+            return None
         with self._db() as db:
-            row = db.execute("SELECT result_json,result_sha256 FROM task_results WHERE task_id=?", (task_id,)).fetchone()
+            row = db.execute(
+                "SELECT result_json,result_sha256 FROM task_results WHERE task_id=? AND owner=?",
+                (task_id, owner),
+            ).fetchone()
         if row is None:
             return None
         return {"result": json.loads(row[0]), "sha256": row[1]}
