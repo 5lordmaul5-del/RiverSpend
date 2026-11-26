@@ -633,3 +633,11 @@ GitHub PR metadata confirms **98 changed files** at the current branch head. The
 ### RC-38 report-count correction CI closeout
 
 - GitHub Actions push run **45752079082 (#352)** and PR run **45752083124 (#353)** — SUCCESS, **148/148 Node tests** each, 0 failures, plus bootstrap shell, backup/restore and Python syntax, **1/1 restore directory-replacement race**, Compose configuration and Caddy validation. These runs verify the report count correction commit `b52977df3e2eb12316bfdecb16c5e8b06c55a678`.
+
+
+## RC-39 — API container build added to CI (26 November 2026)
+
+- Static review of the runner/worker boundary confirms that the execution entry points still throw and remain disabled; no runner or worker was started.
+- Added a CI step to build the API image from the pinned Node base using the explicit Dockerfile and repository-root context, then inspect the resulting local image ID.
+- This is build validation only: it does not run the API container, start Compose services, create staging, or connect to an OIDC provider.
+- **Verification is pending** for this commit until a fresh GitHub Actions run completes. No image scan or SBOM is claimed by this increment.

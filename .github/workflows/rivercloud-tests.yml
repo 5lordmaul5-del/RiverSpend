@@ -37,5 +37,9 @@ jobs:
         run: python3 infra/rivercloud/scripts/restore-safe-race-test.py
       - name: Validate Compose configuration without starting services
         run: docker compose -f infra/rivercloud/docker-compose.yml --env-file infra/rivercloud/.env.example config
+      - name: Build the isolated RiverCloud API image (no services started)
+        run: docker build --file infra/rivercloud/Dockerfile --tag rivercloud-api:ci .
+      - name: Confirm API image build result
+        run: docker image inspect rivercloud-api:ci --format '{{.Id}}'
       - name: Validate Caddyfile with pinned Caddy image
         run: docker run --rm -e RIVERCLOUD_DOMAIN=cloud.example.com -v "$PWD/infra/rivercloud/Caddyfile:/etc/caddy/Caddyfile:ro" caddy:2.11.9@sha256:4851e54a46b206517c574821bb5cc67f170d2156041e9fbc4c9193b45e84a75b caddy validate --config /etc/caddy/Caddyfile
