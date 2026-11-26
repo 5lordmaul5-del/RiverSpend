@@ -36,9 +36,28 @@ _FILE_FLAGS = os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, "O_NOFOLLOW", 0
 
 
 def require_dirfd_support():
+    required = (os.open, os.mkdir, os.stat, os.unlink, os.rmdir)
     if (not hasattr(os, "O_DIRECTORY") or not hasattr(os, "O_NOFOLLOW")
-            or os.open not in os.supports_dir_fd or os.mkdir not in os.supports_dir_fd):
+            or any(fn not in os.supports_dir_fd for fn in required)
+            or os.listdir not in os.supports_fd):
         fail("safe directory-descriptor extraction unavailable")
+
+
+def open_absolute_directory(path):
+    if not path.is_absolute():
+        fail("restore parent must be absolute")
+    current_fd = os.open("/", _DIR_FLAGS)
+    try:
+        for part in path.parts[1:]:
+            if part in ("", ".", ".."):
+                fail("unsafe restore parent path")
+            next_fd = os.open(part, _DIR_FLAGS, dir_fd=current_fd)
+            os.close(current_fd)
+            current_fd = next_fd
+        return current_fd
+    except Exception:
+        os.close(current_fd)
+        raise
 
 
 def open_child_directory(parent_fd, name):
@@ -67,25 +86,53 @@ def open_directory_chain(root_fd, parts):
         raise
 
 
-def cleanup_owned_target(target, root_identity):
+def remove_directory_contents(directory_fd):
+    for name in os.listdir(directory_fd):
+        entry = os.stat(name, dir_fd=directory_fd, follow_symlinks=False)
+        if stat.S_ISDIR(entry.st_mode) and not stat.S_ISLNK(entry.st_mode):
+            child_fd = os.open(name, _DIR_FLAGS, dir_fd=directory_fd)
+            try:
+                remove_directory_contents(child_fd)
+            finally:
+                os.close(child_fd)
+            os.rmdir(name, dir_fd=directory_fd)
+        else:
+            os.unlink(name, dir_fd=directory_fd)
+
+
+def cleanup_owned_target_at(parent_fd, target_name, root_fd, root_identity):
     try:
-        current = target.lstat()
-        if (stat.S_ISDIR(current.st_mode) and not stat.S_ISLNK(current.st_mode)
-                and current.st_dev == root_identity.st_dev and current.st_ino == root_identity.st_ino):
-            shutil.rmtree(target, ignore_errors=True)
+        current = os.stat(target_name, dir_fd=parent_fd, follow_symlinks=False)
+        if (stat.S_ISDIR(current.st_mode) and current.st_dev == root_identity.st_dev
+                and current.st_ino == root_identity.st_ino):
+            remove_directory_contents(root_fd)
+            current = os.stat(target_name, dir_fd=parent_fd, follow_symlinks=False)
+            if (stat.S_ISDIR(current.st_mode) and current.st_dev == root_identity.st_dev
+                    and current.st_ino == root_identity.st_ino):
+                os.rmdir(target_name, dir_fd=parent_fd)
+                os.fsync(parent_fd)
     except OSError:
         pass
 
 def main(archive_path, target_path):
     archive_path = Path(archive_path)
-    target = Path(target_path)
-    if target.exists() or target.is_symlink():
-        fail("restore target must not already exist")
-    if not target.parent.is_dir():
-        fail("restore parent directory must exist")
+    target = Path(os.path.abspath(str(target_path)))
+    target_name = target.name
+    if target_name in ("", ".", ".."):
+        fail("invalid restore target name")
     if not hasattr(os, "O_NOFOLLOW"):
         fail("safe archive open unavailable")
     require_dirfd_support()
+    parent_fd = open_absolute_directory(target.parent)
+    try:
+        try:
+            os.stat(target_name, dir_fd=parent_fd, follow_symlinks=False)
+            fail("restore target must not already exist")
+        except FileNotFoundError:
+            pass
+    except Exception:
+        os.close(parent_fd)
+        raise
 
     fd = os.open(str(archive_path), os.O_RDONLY | os.O_NOFOLLOW)
     try:
@@ -122,8 +169,9 @@ def main(archive_path, target_path):
                         if ancestor in files:
                             fail("file entry conflicts with child path")
 
-                target.mkdir(mode=0o700)
-                root_fd = os.open(target, _DIR_FLAGS)
+                os.mkdir(target_name, mode=0o700, dir_fd=parent_fd)
+                os.fsync(parent_fd)
+                root_fd = os.open(target_name, _DIR_FLAGS, dir_fd=parent_fd)
                 root_identity = os.fstat(root_fd)
                 try:
                     try:
@@ -152,7 +200,7 @@ def main(archive_path, target_path):
                                 os.close(parent_fd)
                         os.fsync(root_fd)
                     except Exception:
-                        cleanup_owned_target(target, root_identity)
+                        cleanup_owned_target_at(parent_fd, target_name, root_fd, root_identity)
                         raise
                 finally:
                     os.close(root_fd)
@@ -160,6 +208,7 @@ def main(archive_path, target_path):
             raw.close()
     finally:
         os.close(fd)
+        os.close(parent_fd)
     print("Restore extracted safely to:", target)
 
 if __name__ == "__main__":
