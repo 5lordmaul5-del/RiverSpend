@@ -5,10 +5,14 @@ import path from "node:path";
 import {randomUUID} from "node:crypto";
 const init={schema:1,jobs:[],approvals:[],events:[]};
 const MAX_STATE_BYTES=8*1024*1024;
+const MAX_STATE_JOBS=5000;
+const MAX_STATE_APPROVALS=5000;
+const MAX_STATE_EVENTS=10000;
 async function syncDirectoryHandle(dir){const d=await open(dir,"r");try{await d.sync();}finally{await d.close();}}
 function validateState(s){
  if(!s||s.schema!==1||!Array.isArray(s.jobs)||!Array.isArray(s.approvals)||!Array.isArray(s.events))throw new Error("invalid_state_schema");
  for(const collection of [s.jobs,s.approvals,s.events])if(collection.some(item=>!item||typeof item!=="object"||Array.isArray(item)))throw new Error("invalid_state_record");
+ if(s.jobs.length>MAX_STATE_JOBS||s.approvals.length>MAX_STATE_APPROVALS||s.events.length>MAX_STATE_EVENTS)throw new Error("state_collection_capacity_exceeded");
 }
 async function readBounded(handle,limit){
  const chunks=[];let total=0;const buffer=Buffer.allocUnsafe(64*1024);
