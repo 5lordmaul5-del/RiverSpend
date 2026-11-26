@@ -31,7 +31,7 @@ test("RC-22 blocks self-consumption and allows one distinct authorized consumer"
   const root = await mkdtemp(path.join(os.tmpdir(), "rc22-"));
   try {
     const lifecycleFile = path.join(root, "lifecycle.json");
-    await createLifecycleJobAtomic(lifecycleFile, { jobId: binding.jobId, digest: binding.digest, plan: binding });
+    await createLifecycleJobAtomic(lifecycleFile, { jobId: plan.jobId, digest, plan });
     const approverClaims = claims("approver-1");
     const issued = await issueApprovalForIdentity({ claims: approverClaims, identityOptions: options, storeDir: root, binding, secret });
     await assert.rejects(() => consumeApprovalForIdentity({ claims: approverClaims, identityOptions: options, storeDir: root, binding, secret, token: issued.token }), /self_approval_not_allowed/);

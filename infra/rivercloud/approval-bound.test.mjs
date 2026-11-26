@@ -1,14 +1,16 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { issueApproval, consumeApproval } from "./approval-bound.mjs";
-import { createLifecycleJobAtomic, transitionLifecycleJobAtomic, readAtomicLifecycle } from "./rc17-atomic-lifecycle.mjs";
+import { createLifecycleJobAtomic, digestLifecyclePlan, transitionLifecycleJobAtomic, readAtomicLifecycle } from "./rc17-atomic-lifecycle.mjs";
 import { readState } from "./rc11-state.mjs";
 import { mkdtemp, rm } from "node:fs/promises";
 import path from "node:path";
 import os from "node:os";
 
-const binding = { jobId: "jobA", projectId: "riverspend", profile: "node-tests", target: "staging", commit: "a".repeat(40), digest: "b".repeat(64) };
-async function prepareJob(root) { await createLifecycleJobAtomic(path.join(root, "lifecycle.json"), { jobId: binding.jobId, digest: binding.digest, plan: binding }); }
+const plan = { jobId: "jobA", projectId: "riverspend", profile: "node-tests", target: "staging", commit: "a".repeat(40) };
+const digest = digestLifecyclePlan(plan);
+const binding = { ...plan, digest };
+async function prepareJob(root) { await createLifecycleJobAtomic(path.join(root, "lifecycle.json"), { jobId: plan.jobId, digest, plan }); }
 
 test("approval bound to exact plan and single use", async () => {
   const root = await mkdtemp(path.join(os.tmpdir(), "rc26-"));
