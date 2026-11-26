@@ -3,7 +3,8 @@ import { createHmac } from "node:crypto";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { queuePlan, listQueue } from "./queue.mjs";
-import { hasPermission } from "./rc13-identity.mjs";\nimport { POLICY_ERROR_CODES, CAPACITY_ERROR_CODES } from "./shared-contracts.mjs";
+import { hasPermission } from "./rc13-identity.mjs";
+import { POLICY_ERROR_CODES, CAPACITY_ERROR_CODES } from "./shared-contracts.mjs";
 
 const MAX_BODY = 8192;
 const MAX_GROUPS = 20;
@@ -11,8 +12,8 @@ const MAX_GROUP_HEADER = 2048;
 const MAX_USER_LENGTH = 256;
 const MAX_GROUP_LENGTH = 128;
 const KNOWN_ROLES = new Set(["owner", "admin", "operator", "auditor", "viewer"]);
-const POLICY_ERRORS = new Set(["invalid_request", "project_not_allowlisted", "target_not_allowed", "immutable_commit_sha_required", "branch_not_allowlisted", "profile_not_allowed"]);
-const CAPACITY_ERRORS = new Set(["queue_capacity_exceeded", "state_file_too_large", "state_lock_timeout"]);
+const POLICY_ERRORS = new Set(POLICY_ERROR_CODES);
+const CAPACITY_ERRORS = new Set(CAPACITY_ERROR_CODES);
 
 export const DEFAULT_GROUP_ROLE_MAP = Object.freeze({
   RiverCloudOwners: "owner",
