@@ -886,3 +886,11 @@ GitHub PR metadata confirms **98 changed files** at the current branch head. The
 - Corrected fixture commit `c321e4bd3ee8cd2cc251f6a4cf4604f3ca43ec56`: GitHub Actions run **45781654024 (#679) — SUCCESS, 219/219 Node tests**; bootstrap shell, backup/restore and Python syntax, **3/3 restore directory-replacement race tests**, Compose validation, isolated API image build/inspection and Caddy validation also passed.
 - The initial #672 failure (5/219) was caused by legacy fixtures created with mode 0644; fixtures were corrected to mode 0600 while the dedicated unsafe-mode test remains deliberately permissive. No privacy checks were weakened.
 - No service or runner started, no real backup/restore, merge, live deployment, production data/credentials, provisioning or spending.
+
+
+## RC-63 — identity verifier exception fail-closed behavior (26 November 2026)
+
+- RC-13 now catches exceptions from the caller-supplied issuer/signature verification callback and normalizes them to `signature_not_verified`; authorization validation no longer propagates callback exceptions.
+- Added regression coverage for a verifier callback that throws. Only an explicit boolean `true` remains accepted.
+- GitHub Actions **45781862392 (#686) — SUCCESS, 220/220 Node tests**, plus bootstrap shell, backup/restore and Python syntax, **3/3 restore-directory-replacement race checks**, Compose configuration, isolated API image build/inspection and Caddy validation.
+- No real provider/JWKS verification, login, route integration, session revocation or MFA was added. No services/runner started, merge, live deployment, production data/credentials, provisioning or spending.
