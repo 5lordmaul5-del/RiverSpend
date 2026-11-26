@@ -31,3 +31,5 @@ Run RiverSpend in staging on RiverCloud, validate reliability, backups, secrets,
 - RC-62: RC-11 now fails closed on final state-directory symlinks/ownership/permissions and unsafe snapshot ownership/permissions; the API image initializes `/data` at mode 0700. GitHub Actions run #679 verified 219/219 Node tests and the full shell/Python, restore-race, Compose, image-build/inspection and Caddy validation suite.
 
 - RC-62 initial CI failure #672 was caused by legacy test-fixture files written with 0644 mode; the privacy gate correctly rejected them. Fixtures are being corrected to 0600, with fresh CI evidence pending.
+
+- RC-63: RC-13 normalizes thrown identity-verifier callbacks to `signature_not_verified` (fail closed). CI run #686 verified 220/220 Node tests and the full infrastructure-validation suite. Real provider verification and API-route integration remain blockers.
