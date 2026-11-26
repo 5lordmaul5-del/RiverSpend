@@ -24,7 +24,7 @@ except (ValueError, OSError):
  raise SystemExit(2)
 PY
 [ -f "$archive.sha256" ] || { echo "checksum file missing" >&2; exit 2; }
-(cd "$(dirname "$archive")" && sha256sum -c "$base.sha256")
+(cd "$(dirname "$archive")" && sha256sum -c "$base.sha256") || { echo "archive checksum verification failed" >&2; exit 2; }
 [ ! -e "$RIVERCLOUD_RESTORE_TARGET" ] || { echo "restore target must not already exist" >&2; exit 2; }
 script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 exec python3 "$script_dir/restore-safe.py" "$archive" "$RIVERCLOUD_RESTORE_TARGET"
