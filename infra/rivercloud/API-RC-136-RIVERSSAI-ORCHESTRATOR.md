@@ -55,3 +55,10 @@ GitHub Actions **run 45814754280 — SUCCESS, 33/33 Node tests**. The added orch
 - Added regression coverage with a 40-level nested body; expected fail-closed 400 `body_invalid`.
 - Code commit `26ecdc2b`; test commit `ccac1d4e`.
 - CI verification pending; no test pass is claimed yet.
+
+
+## RC-141 — prototype-sensitive gateway keys
+
+- Gateway canonical JSON rejects `__proto__`, `prototype`, and `constructor` property names to reduce prototype-pollution and downstream parser ambiguity risks.
+- Added regression coverage for a JSON-owned `__proto__` property and confirms no global prototype mutation.
+- CI pending; earlier RC-140 CI failed due to malformed test-source formatting, subsequently repaired. RC-140 depth guard is present.
