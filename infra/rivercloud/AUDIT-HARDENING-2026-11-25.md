@@ -921,3 +921,13 @@ GitHub PR metadata confirms **98 changed files** at the current branch head. The
 - No real backup/restore, service, runner, staging, merge, live deployment, production data/credentials, provisioning or spending.
 
 **Report reconciliation note:** the main progressive report's last detailed RC section is RC-64, while the verified branch head had already reached RC-128. This RC-129 entry records the current increment and latest available CI evidence; a consolidated RC-65–128 report reconciliation remains a documentation gap and is not treated as verified detail.
+
+
+## RC-130 — backup source-directory privacy preflight (26 November 2026)
+
+- The standalone backup script now also verifies source-directory ownership and permissions, requiring current-user ownership, owner rwx and no group/world access before archive creation.
+- Added a negative regression for a permissive source directory and adjusted ordinary source fixtures to private mode 0700.
+- Reconstructed focused test workspace: **3/3 passed** for RC-129/130 scenarios; shell syntax passed. Not a full checkout or direct run of the repository test file.
+- GitHub Actions for RC-130 remains unverified; no CI pass is claimed. DNS prevented local checkout.
+- No real backup/restore, service, runner, staging, merge, deployment, production data/credentials, provisioning or spending.
+
