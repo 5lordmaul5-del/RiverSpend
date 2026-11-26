@@ -97,3 +97,10 @@ The orchestrator now shares the strict bounded canonical JSON utility with the m
 - Initial RC-145 run **45833616034 (#125) — SUCCESS, 49/49** did not include the new adapter tests because the workflow used an explicit test list. The workflow was corrected to include the adapter integration suite.
 - GitHub Actions run **45833702458 (#127) — SUCCESS, 52/52 tests**, including RC-145 integration coverage.
 - Adapter and gateway idempotency remain in-memory; store persistence covers API-key records/revocation only. This is test-only and not an operational API or production payment/gateway service.
+
+
+## RC-146 — full registry catalogue acceptance and performance smoke
+
+- Added a CI smoke test that validates exactly **100000** bounded definitions and confirms the registry count/domain tally without starting processes.
+- GitHub Actions run **45833898145 (#131) — SUCCESS, 53/53 tests**. The 100000-definition validation test took approximately **2.11 seconds** in this runner (test duration only; not a general performance guarantee).
+- Catalogue maximum remains definitions only; execution, workers, resource limits and real runtime enforcement are not implied.
