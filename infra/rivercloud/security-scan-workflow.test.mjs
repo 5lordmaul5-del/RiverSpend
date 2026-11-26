@@ -18,12 +18,14 @@ test("RiverCloud CI pins Trivy and generates a CycloneDX image SBOM", () => {
 });
 
 test("RiverCloud CI gates fixed HIGH and CRITICAL image vulnerabilities", () => {
-  assert.match(workflow, /trivy image --scanners vuln --vuln-type os,library --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 rivercloud-api:ci/);
+  assert.match(workflow, /trivy image --scanners vuln --pkg-types os,library --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 rivercloud-api:ci/);
 });
 
 test("API runtime image removes unused package managers", () => {
   assert.match(dockerfile, /rm -rf \/usr\/local\/lib\/node_modules\/npm/);
   assert.match(dockerfile, /\/usr\/local\/lib\/node_modules\/corepack/);
+  assert.match(dockerfile, /\/opt\/yarn-v1\.22\.22/);
   assert.match(workflow, /Confirm API image has Node but no package manager/);
   assert.match(workflow, /command -v npm/);
+  assert.match(workflow, /test -e \/opt\/yarn-v1\.22\.22/);
 });
