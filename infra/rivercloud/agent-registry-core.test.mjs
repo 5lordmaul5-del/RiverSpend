@@ -46,3 +46,15 @@ test("registry rejects cyclic and extra schema fields before snapshotting", () =
   const sparseSchema = { type:"object", properties:{query:{type:"string"}}, required:sparseRequired, additionalProperties:false };
   assert.equal(validateAgentDefinition({ ...sample, inputSchema:sparseSchema }).reason, "schema_contract_invalid");
 });
+
+
+test("registry rejects cycles, sparse arrays and non-JSON capability properties", () => {
+  const cyclicCapabilities = ["search:public"];
+  cyclicCapabilities.self = cyclicCapabilities;
+  assert.equal(validateAgentDefinition({ ...sample, capabilities:cyclicCapabilities }).reason, "definition_json_invalid");
+  const sparseCapabilities = new Array(1);
+  assert.equal(validateAgentDefinition({ ...sample, capabilities:sparseCapabilities }).reason, "definition_json_invalid");
+  const accessorCapabilities = ["search:public"];
+  Object.defineProperty(accessorCapabilities, "extra", { enumerable:true, get(){ throw new Error("must not execute"); } });
+  assert.equal(validateAgentDefinition({ ...sample, capabilities:accessorCapabilities }).reason, "definition_json_invalid");
+});
