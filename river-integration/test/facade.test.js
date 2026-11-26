@@ -34,7 +34,6 @@ test("idempotency rejects payload mismatch",async()=>{const s=createIdempotencyS
 test("idempotency shares concurrent operation",async()=>{const s=createIdempotencyStore();let calls=0;const args={tenantId:"t",requestId:"r2",payload:"p"};const op=async()=>{calls++;await new Promise(resolve=>setTimeout(resolve,15));return 42};const [a,b]=await Promise.all([s.execute(args,op),s.execute(args,op)]);assert.equal(a,42);assert.equal(b,42);assert.equal(calls,1);});
 test("idempotency config is bounded",()=>{assert.throws(()=>createIdempotencyStore({maxEntries:0}),/invalid-idempotency-config/);});
 
-import {createQuotaStore} from "../src/quota-store.js";
 test("quota allows requests then rejects within window",()=>{const q=createQuotaStore({windowMs:100,maxRequests:2});assert.equal(q.consume({tenantId:"a",now:0}).allowed,true);assert.equal(q.consume({tenantId:"a",now:1}).allowed,true);assert.equal(q.consume({tenantId:"a",now:2}).reason,"quota-exceeded");});
 test("quota resets after window",()=>{const q=createQuotaStore({windowMs:100,maxRequests:1});q.consume({tenantId:"a",now:0});assert.equal(q.consume({tenantId:"a",now:100}).allowed,true);});
 test("quota isolates tenants",()=>{const q=createQuotaStore({maxRequests:1});q.consume({tenantId:"a",now:1});assert.equal(q.consume({tenantId:"b",now:1}).allowed,true);});
