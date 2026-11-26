@@ -37,3 +37,16 @@ test("runner rejects unallowlisted project",()=>{
 test("runner rejects nonimmutable commit",()=>{
  assert.throws(()=>prepareRun({...valid,commit:"main"}),/immutable_commit_sha_required/);
 });
+
+test("prepared-run verifier rejects envelope and safety accessors without invoking them",()=>{
+ const run=prepareRun(valid);
+ let calls=0;
+ const envelope={...run};
+ Object.defineProperty(envelope,"status",{enumerable:true,get(){calls++;return "prepared_not_executed";}});
+ assert.equal(verifyPreparedRun(envelope).reason,"run_schema_invalid");
+ assert.equal(calls,0);
+ const safety={...run.safety};
+ Object.defineProperty(safety,"networkFetch",{enumerable:true,get(){calls++;return false;}});
+ assert.equal(verifyPreparedRun({...run,safety}).reason,"unsafe_flags");
+ assert.equal(calls,0);
+});
