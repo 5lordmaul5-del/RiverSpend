@@ -1015,3 +1015,12 @@ GitHub Actions run 45803301270 failed at the Node test suite: 254/256 passed; tw
 - The helper now requires the callback's synchronous result to be exactly `true`; Promise/object/false results fail closed. A regression confirms the approval remains unused after rejection and can subsequently be consumed by a valid synchronous verifier.
 - GitHub Actions **runs 45838469719 (#890, pull request) and 45838461717 (#889, push) — SUCCESS, 258/258 Node tests** on commit `6c2415e683546503da4507fb46a5a2d98d781e4d`.
 - RC-17's identity-bound atomic consumption path already enforced strict `=== true`; this fix hardens the legacy RC-11 helper. It does not replace a real OIDC provider or production approval service.
+
+
+## RC-142 — data-only identity claims preflight (26 November 2026)
+
+- Audit found that the RC-13 claim validator read unverified claim fields and role/audience arrays before the issuer callback. Accessors or sparse arrays could therefore execute caller code or produce inconsistent validation.
+- Added a bounded data-only snapshot (depth, node, field and byte limits) before claim validation and verifier invocation. Sparse/accessor/symbol/prototype-sensitive and non-JSON data are rejected.
+- The verifier callback receives only the descriptor-derived snapshot; tests confirm accessor getter count remains zero and hostile proxy traps fail closed.
+- Claims remain a prototype boundary: no JWT/OIDC cryptographic verifier or live route wiring is provided by this increment.
+- GitHub Actions verification pending.
