@@ -1,0 +1,3 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {buildControlMap} from './control-map.mjs';
+test('map deterministic and bounded',()=>{const m=buildControlMap([{id:'b',label:'B',status:'unknown',dependencies:['a']},{id:'a',label:'A',status:'healthy',dependencies:[]}]);assert.equal(m.edgeCount,1);assert.deepEqual(m.nodes.map(n=>n.id),['a','b']);assert.equal(m.counts.unknown,1);});
+test('rejects unknown dependency and duplicate ids',()=>{assert.throws(()=>buildControlMap([{id:'a',label:'A',status:'healthy',dependencies:['x']} ]));assert.throws(()=>buildControlMap([{id:'a',label:'A',status:'healthy',dependencies:[]},{id:'a',label:'duplicate',status:'healthy',dependencies:[]} ]));});
