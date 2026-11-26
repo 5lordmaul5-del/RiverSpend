@@ -571,3 +571,10 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 - Compose configuration validation does not build or start the API image. No real OIDC login, header-spoofing integration test, session revocation test, container build, service startup, staging, deployment or spending occurred.
 - Source reference for OAuth2 Proxy path-based multi-upstream routing: https://oauth2-proxy.github.io/oauth2-proxy/configuration/overview/#upstreams-configuration. Node base digest reference: https://hub.docker.com/layers/library/node/22.23.5-alpine3.23/images/sha256-7ee381e2296c8edb56698bb4f14563880e8c3562d91564c085b334c1e1106faf.
 
+
+
+### RC-35 CI closeout — verified
+
+- GitHub Actions run **45743142427 (#337) — SUCCESS: 145/145 Node tests**, 0 failures; bootstrap shell syntax, backup/restore and Python syntax, **1/1 restore directory-replacement race test**, Docker Compose configuration, and Caddy validation also passed.
+- Run #337 verifies commit **cb91b7f9db268c9ef53c255903b6f51a7a84d3a5**. The static RC-35 tests are numbered 124–127 and passed. The workflow only ran Compose `config` and Caddy validation; it did not build the API image or start RiverCloud services.
+- No real OIDC provider login, proxy/API traffic, header-spoofing runtime test, container build, runner, staging, production deployment, real backup/restore, or spending occurred.

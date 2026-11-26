@@ -35,3 +35,8 @@ Added a small Dockerfile with explicit COPY entries for the API and its direct c
 - Before production eligibility: build the API image in a controlled CI job, test real provider login in disposable staging, test header spoofing and group claim mapping, verify proxy/API source-IP enforcement and path mapping, and test session revocation/CSRF/rate-limits.
 
 No merge, deployment, server provisioning or spending is authorized by this increment.
+
+
+## CI closeout
+
+GitHub Actions run **45743142427 (#337)** passed **145/145 Node tests** and all validation steps (bootstrap shell, backup/restore/Python syntax, the 1/1 restore race test, Compose config and Caddy validation). This verifies commit `cb91b7f9db268c9ef53c255903b6f51a7a84d3a5`. The API image was not built and no service was started.
