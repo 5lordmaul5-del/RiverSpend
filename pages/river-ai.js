@@ -162,6 +162,7 @@ export default function RiverAI() {
           <button onClick={installApp} style={{ border:"1px solid #f5d77a",borderRadius:11,padding:"9px 11px",background:"#f5d77a",color:"#12343b",fontWeight:800 }}>Installa app</button>
           <a href="/area-51" style={{ border:"1px solid #d9b65c",borderRadius:11,padding:"9px 11px",background:"rgba(217,182,92,.12)",color:"#f5d77a",fontWeight:800,textDecoration:"none",fontSize:13 }}>◈ Area 51</a>
           <a href="/river-ai/umpsd" style={{ border:"1px solid #55e6ff",borderRadius:11,padding:"9px 11px",background:"rgba(85,230,255,.12)",color:"#b9f5ff",fontWeight:800,textDecoration:"none",fontSize:13 }}>UMPSD 20.0</a>
+          <a href="/river-ai/powertron" style={{ border:"1px solid #f5d77a",borderRadius:11,padding:"9px 11px",background:"rgba(245,215,122,.16)",color:"#ffe7a3",fontWeight:900,textDecoration:"none",fontSize:13 }}>⚡ PowerTron</a>
           <button onClick={newChat} disabled={access!=="ready" || busy} style={{ border:"1px solid #ffffff66",borderRadius:11,padding:"9px 11px",background:"transparent",color:"#fff",fontWeight:700 }}>Nuova chat</button>
         </header>
         <section aria-label="Nova e i tre comandanti River" style={{background:"#06172b",color:"#fff",padding:"12px 14px 16px"}}>
