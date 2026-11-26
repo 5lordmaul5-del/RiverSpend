@@ -62,17 +62,51 @@ export function validateAgentDefinition(definition) {
   return { valid:true };
 }
 
+function snapshotRegistryArray(input) {
+  try {
+    if (!Array.isArray(input)) return null;
+    const proto=Object.getPrototypeOf(input);
+    if (proto!==Array.prototype && proto!==null) return null;
+    if (Object.getOwnPropertySymbols(input).length) return null;
+    const lengthDescriptor=Object.getOwnPropertyDescriptor(input,"length");
+    if (!lengthDescriptor || !Object.hasOwn(lengthDescriptor,"value") ||
+        !Number.isSafeInteger(lengthDescriptor.value) || lengthDescriptor.value<0 ||
+        lengthDescriptor.value>MAX_AGENT_DEFINITIONS) return null;
+    const length=lengthDescriptor.value,keys=Reflect.ownKeys(input);
+    if (keys.length!==length+1 || !keys.includes("length") ||
+        keys.some(key=>key!=="length"&&(typeof key!=="string"||!/^(0|[1-9][0-9]*)$/.test(key)||Number(key)>=length))) return null;
+    const snapshot=new Array(length);
+    for(let index=0;index<length;index++){
+      const descriptor=Object.getOwnPropertyDescriptor(input,String(index));
+      if(!descriptor||!descriptor.enumerable||!Object.hasOwn(descriptor,"value"))return null;
+      snapshot[index]=descriptor.value;
+    }
+    return snapshot;
+  } catch { return null; }
+}
+
 export function validateAgentRegistry(definitions) {
-  if (!Array.isArray(definitions)) return { valid:false, reason:"registry_not_array" };
-  if (definitions.length > MAX_AGENT_DEFINITIONS) return { valid:false, reason:"registry_capacity_exceeded" };
+  let isArray=false,length;
+  try {
+    isArray=Array.isArray(definitions);
+    if(isArray){
+      const descriptor=Object.getOwnPropertyDescriptor(definitions,"length");
+      if(!descriptor||!Object.hasOwn(descriptor,"value"))return {valid:false,reason:"registry_array_invalid"};
+      length=descriptor.value;
+    }
+  } catch { return { valid:false, reason:"registry_not_array" }; }
+  if (!isArray) return { valid:false, reason:"registry_not_array" };
+  if (length > MAX_AGENT_DEFINITIONS) return { valid:false, reason:"registry_capacity_exceeded" };
+  const snapshot=snapshotRegistryArray(definitions);
+  if(!snapshot)return {valid:false,reason:"registry_array_invalid"};
   const ids = new Set();
   const byDomain = Object.create(null);
-  for (const definition of definitions) {
+  for (const definition of snapshot) {
     const result = validateAgentDefinition(definition);
     if (!result.valid) return result;
     if (ids.has(definition.id)) return { valid:false, reason:"duplicate_agent_id" };
     ids.add(definition.id);
     byDomain[definition.domain] = (byDomain[definition.domain] || 0) + 1;
   }
-  return { valid:true, count:definitions.length, byDomain };
+  return { valid:true, count:snapshot.length, byDomain };
 }
