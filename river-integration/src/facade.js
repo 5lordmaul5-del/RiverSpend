@@ -20,7 +20,11 @@ export function createIntegrationFacade({verifyIdentity,keyManager,provider,audi
   if(!check?.allowed)return genericDenied();
   let outcome="error",durationStart=Date.now();
   try{
-   const controller=new AbortController();\n   let timer;\n   const timeout=new Promise((_,reject)=>{timer=setTimeout(()=>{controller.abort();reject(new Error("provider-timeout"));},timeoutMs);});\n   let result;\n   try{result=await Promise.race([provider.generate(task,{model:model.trim(),numPredict:limit,signal:controller.signal}),timeout]);}finally{clearTimeout(timer);}
+   const controller=new AbortController();
+   let timer;
+   const timeout=new Promise((_,reject)=>{timer=setTimeout(()=>{controller.abort();reject(new Error("provider-timeout"));},timeoutMs);});
+   let result;
+   try{result=await Promise.race([provider.generate(task,{model:model.trim(),numPredict:limit,signal:controller.signal}),timeout]);}finally{clearTimeout(timer);}
    const output=result?.response??result?.output;
    if(typeof output!=="string"||output.length>MAX_OUTPUT)return{status:502,error:"provider-response-invalid"};
    outcome="success";
