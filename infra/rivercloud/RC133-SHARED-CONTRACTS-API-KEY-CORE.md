@@ -78,3 +78,10 @@ GitHub Actions **run 45814754280 — SUCCESS, 33/33 Node tests**. The added orch
 - Key records require an exact data-only object shape. Verification and revocation operate on the descriptor-derived snapshot rather than rereading caller-controlled properties.
 - Regression tests prove sparse arrays, getters, hidden extras and proxy traps fail closed without getter execution.
 - This remains a prototype boundary; filesystem races, encryption-at-rest and production issuer/auth integration are not solved by this increment.
+
+
+## RC-153 — data-only API-key options
+
+- The core's create/verify option objects now require bounded enumerated data properties rather than accessors or hidden/symbol fields.
+- Regression tests confirm accessor getters are not invoked and the operations fail closed on malformed option objects.
+- This applies to the reusable API-key core boundary; it does not add production credential storage, authentication, key rotation or encrypted-at-rest protection.
