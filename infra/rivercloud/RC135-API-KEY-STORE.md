@@ -29,3 +29,8 @@ No production keys, credentials, live services or payment operations were used.
 ## Test correction and local evidence
 
 The first CI attempt exposed a fixture setup error: a test called `mkdir` on the already-created `mkdtemp` root. That redundant call was removed. The seven API-key-store tests then passed in a reconstructed temporary workspace copied from the source and test files (**7/7**). This is not a full checkout and is not GitHub Actions evidence; CI for the corrected commit remains unverified.
+
+
+## API-RC-135 CI closeout
+
+GitHub Actions **run 45814328503 — SUCCESS, 26/26 Node tests**. The workflow now includes the seven file-store tests alongside the existing API-key core, registry, contract and mock-gateway tests. The store remains a prototype with filesystem-permission-only confidentiality, path/lock race limitations, no encryption-at-rest and no live key/gateway wiring.
