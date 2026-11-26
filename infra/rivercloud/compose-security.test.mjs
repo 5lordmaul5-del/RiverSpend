@@ -52,7 +52,7 @@ test("API network is isolated and only the proxy bridges both networks", () => {
 });
 
 test("example secrets are placeholders and role groups are allowlisted", () => {
-  for (const key of ["RIVERCLOUD_OIDC_CLIENT_SECRET", "RIVERCLOUD_OAUTH2_PROXY_COOKIE_SECRET"]) {
+  for (const key of ["RIVERCLOUD_OIDC_CLIENT_SECRET", "RIVERCLOUD_OAUTH2_PROXY_COOKIE_SECRET", "RIVERCLOUD_ACTOR_PSEUDONYM_SECRET"]) {
     assert.match(env, new RegExp("^" + key + "=CHANGE_ME", "m"));
   }
   assert.match(env, /RIVERCLOUD_OIDC_ALLOWED_GROUPS=RiverCloudOwners,RiverCloudAdmins,RiverCloudOperators,RiverCloudAuditors,RiverCloudViewers/);
