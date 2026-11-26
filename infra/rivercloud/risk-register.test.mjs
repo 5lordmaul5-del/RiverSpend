@@ -1,0 +1,3 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {buildRiskRegister} from './risk-register.mjs';
+test('builds bounded register',()=>{const r=buildRiskRegister([{id:'r1',description:'risk',severity:'high',status:'open',owner:'review'}]);assert.equal(r.count,1);assert.equal(r.mitigationExecution,false);});
+test('rejects duplicate and invalid status',()=>{assert.throws(()=>buildRiskRegister([{id:'x',description:'',severity:'low',status:'open',owner:''},{id:'x',description:'',severity:'low',status:'open',owner:''}]));assert.throws(()=>buildRiskRegister([{id:'x',description:'',severity:'low',status:'execute',owner:''}]));});
