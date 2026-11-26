@@ -478,7 +478,6 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 - The Caddy check used a short-lived validation container only. No RiverCloud services, runner, staging host or production deployment were started.
 - The later RC-30 closeout-doc commit `5391fb79ce231dd9b5f5d9d25dc150a5b7568180` still needs its own CI verification before the latest branch head is considered verified.
 
-
 ### RC-30 documentation closeout — verified
 
 - GitHub Actions **45717083964 (#302) — SUCCESS: 130/130 Node tests, 0 failures**, plus bootstrap shell, backup/restore and Python extractor syntax, Compose configuration and Caddy validation.
@@ -535,3 +534,10 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 - Reconstructed temporary workspace using Node **22.16.0**: **13/13 RC-14 audit-sink tests passed**. This is a focused local test, not a full repository checkout.
 - GitHub Actions verification of the branch increment is pending; no CI pass is claimed for RC-33 yet.
 - No audit delivery, network receiver, RiverCloud service, runner, backup/restore, production operation or spending was performed.
+
+
+### RC-33 CI closeout — verified
+
+- GitHub Actions **run 45729220577 (#329) — SUCCESS: 132/132 Node tests, 0 failures**, plus bootstrap shell syntax, backup/restore and Python extractor syntax, the 1/1 directory-replacement race regression, Compose validation, and Caddy validation.
+- Run #329 checked report commit **aafd7f0523f06182941cc45bc04b0d535ab3b082**, including the RC-33 source/test increment and the initial pending-evidence note.
+- The Caddy validation used a temporary pinned-image container only. No RiverCloud service, runner, audit receiver, backup/restore operation or staging host was started.
