@@ -1,0 +1,1 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {assessOperationalReadiness} from './operational-readiness.mjs';test('keeps implementation separate from verification',()=>{const r=assessOperationalReadiness([{id:'a',status:'implemented',evidence:'code exists'}]);assert.equal(r.ready,false);assert.deepEqual(r.unverified,['a']);});
