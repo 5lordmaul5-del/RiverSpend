@@ -742,8 +742,8 @@ GitHub PR metadata confirms **98 changed files** at the current branch head. The
 ## RC-53 — fail-closed lifecycle extension state and capacity (26 November 2026)
 
 - Review of RC-17 found that malformed optional lifecycle/audit collections could be silently reinitialized as empty arrays, risking concealment or replacement of damaged data. RC-17 now initializes only absent collections and rejects existing non-array values; reads return explicit invalid-integrity reasons instead of presenting damaged extension state as empty/valid.
-- Added hard bounds: 5,000 lifecycle jobs, 10,000 atomic audit records and 10,000 approvals. Batch audit append checks its full requested size before mutation.
-- Added regression tests for damaged lifecycle/audit collection preservation, fail-closed reads/mutations, and capacity rejection.
+- Added hard bounds: 5,000 lifecycle jobs, 10,000 atomic audit records, 10,000 approvals and 10,000 lifecycle approval events. Batch audit append checks its full requested size before mutation; approval issuance/consumption fail closed when the event collection is full.
+- Added regression tests for damaged lifecycle/audit collection preservation, fail-closed reads/mutations, and capacity rejection, including approval-event capacity.
 - Code commit `09fe41e5bb4c9f39e5c9802089bae8b30063df29`; test commit `ac68ac92f588907662871aa4049869697f4d6ca0`.
 - **CI pending for RC-53;** the commits were confirmed on the isolated PR branch, but tests have not been independently executed in this run.
 - No runner or service was started, no merge/deployment/staging operation, real data/credentials, provisioning or spending occurred.
@@ -760,7 +760,15 @@ GitHub PR metadata confirms **98 changed files** at the current branch head. The
 
 ## RC-54 — proxy API local trust-peer default alignment (26 November 2026)
 
-- File review found the standalone RC-34 API's default trusted peer was a stale public-network IP, despite its default bind being loopback. Compose explicitly overrides the peer to `172.31.250.3` on the private API network.
-- Corrected the standalone default to `127.0.0.1` and added a regression test requiring an unauthenticated loopback request to reach identity validation (401) rather than fail peer validation (403). Compose override remains unchanged.
-- Code commit `3135fd4296d3c1c89caa344608db128e6828f03b`; test commit `c8e48db8de15b9035522761f38dca1e2a84ca02a`; documentation commit `c6beeb970fb0782c6ea916b7be1a86963e357206`.
-- CI for RC-54 is pending at this report update. No live OIDC/provider request, service start, runner, staging, production data/credentials, merge, deployment, provisioning or spending.
+- File review found the standalone RC-34 API default trusted peer was a stale public-network IP `172.30.250.3`, while Compose assigns the proxy `172.31.250.3` on the private API network.
+- Corrected the default peer to `172.31.250.3`; added a local-caller fail-closed regression and static checks that the API default and Compose override match. This does not prove real proxy header behavior.
+- Code commit `01cb33a9bc2734f03890065dccb579ec75015709`; test commits `099bf4801ca81410631c4e703fb82fb8b91b01bc` and `0cff59e1ce9e76018ed34a514c87fba7fae260e0`; documentation commit `c37bc47c9fbfc19349043d715d318909e453b499`.
+- Intermediate runs **45768905119 (#461, 165/166)** and **45768950548 (#468, 166/167)** failed on the first loopback-default attempt: a direct local caller was incorrectly treated as the trusted peer. The implementation was corrected to trust the private network address, and these failures are not counted as passes.
+- Latest workflow **45769108597 (#479) — SUCCESS, 168/168 Node tests**, plus bootstrap shell, backup/restore and Python syntax, restore-directory race, Compose configuration, isolated API image build/inspection and Caddy validation. No RiverCloud services were started.
+- No live OIDC/provider request, runner, staging, production data/credentials, merge, deployment, provisioning or spending.
+
+
+### RC-53 event-cap follow-up
+
+- Added a separate regression that fills `state.events` to its configured 10,000-record limit and requires approval issuance to reject rather than append. The lifecycle helpers also fail closed when the event collection is at capacity during approval consumption.
+- The test is included in latest run **45769108597 (#479) — SUCCESS, 168/168**.
