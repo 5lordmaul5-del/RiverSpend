@@ -807,3 +807,9 @@ GitHub PR metadata confirms **98 changed files** at the current branch head. The
 - Workflow **45769413800 (#491) failed 168/169** on the implementation-only commit because the existing capacity test still expected `readLedger` to return malformed records; the assertion was changed to require fail-closed read behavior.
 - Workflow **45769429794 (#493) failed 171/172** because the special-key regression checked the prototype after JSON persistence, where parsing restores ordinary prototypes. The test was corrected to check the append-time redactor result and persisted key/redaction preservation.
 - Corrected test commit `9d2402b42c7152e8745eb71ff329ed1effed100b`. **Fresh CI evidence for this corrected test commit has not yet been retrieved; no pass is claimed.**
+
+
+### RC-56 CI closeout (26 November 2026)
+
+- The corrected report/branch commit `c3cb99f92e873e0db1ac34c4a3a9a131503ec0c9` was verified by GitHub Actions **45769517850 (#499) — SUCCESS, 172/172 Node tests**, plus bootstrap shell, backup/restore and Python syntax, restore-directory race, Compose configuration, isolated API image build/inspection and Caddy validation.
+- This run includes the corrected special-key regression, persisted-ledger verification, and rejection of unredacted sensitive details. The earlier failures #491/#493 are recorded above and not counted as passes.
