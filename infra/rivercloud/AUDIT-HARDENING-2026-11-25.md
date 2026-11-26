@@ -894,3 +894,17 @@ GitHub PR metadata confirms **98 changed files** at the current branch head. The
 - Added regression coverage for a verifier callback that throws. Only an explicit boolean `true` remains accepted.
 - GitHub Actions **45781862392 (#686) — SUCCESS, 220/220 Node tests**, plus bootstrap shell, backup/restore and Python syntax, **3/3 restore-directory-replacement race checks**, Compose configuration, isolated API image build/inspection and Caddy validation.
 - No real provider/JWKS verification, login, route integration, session revocation or MFA was added. No services/runner started, merge, live deployment, production data/credentials, provisioning or spending.
+
+
+### RC-63 CI closeout (26 November 2026)
+
+- The report/roadmap closeout commit was verified by GitHub Actions **45781939927 (#691) — SUCCESS, 220/220 Node tests**, plus bootstrap shell, backup/restore and Python syntax, 3/3 restore race checks, Compose, API image build/inspection and Caddy validation.
+
+
+## RC-64 — mandatory identity claims must be own-properties (26 November 2026)
+
+- Review found RC-13 checked mandatory claim presence using the prototype-aware `in` operator. An object with inherited `issuer`, `subject`, or other required fields could satisfy the presence check.
+- Mandatory claim presence now uses `Object.hasOwn`, rejecting inherited-only claim data before validation.
+- Regression test added for a claims object inheriting the required fields from its prototype.
+- GitHub Actions **45782011843 (#695) — SUCCESS, 221/221 Node tests**, plus bootstrap shell, backup/restore and Python syntax, 3/3 restore directory-replacement race checks, Compose, isolated API image build/inspection and Caddy validation.
+- No real provider login, OIDC/JWKS integration, route wiring, runner, staging, merge, live deployment, production data/credentials, provisioning or spending.
