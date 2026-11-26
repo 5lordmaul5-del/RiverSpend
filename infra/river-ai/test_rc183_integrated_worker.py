@@ -177,7 +177,7 @@ class WorkerCoreIntegrationTests(unittest.TestCase):
         with self.assertRaises(PayloadLedgerError):
             self.ledger.enqueue("echo","summary","user-1",{"x":2},request_key="req-1")
         with self.assertRaises(PayloadLedgerError):
-            self.ledger.enqueue("echo","summary","user-1",{"x":1},request_key="req-1",summary_limit=1)
+            self.ledger.enqueue("echo","different","user-1",{"x":1},request_key="req-1")
         self.assertEqual(self.ledger.lease_next("worker",("echo",))["id"],first)
 
     def test_request_key_owner_scope(self):
