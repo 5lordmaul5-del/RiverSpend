@@ -1,0 +1,59 @@
+{
+  "id": "RC175",
+  "name": "RSEngineer Engineering Pyramid & Campus",
+  "status": "blueprint_only",
+  "principles": [
+    "human_dignity",
+    "ethical_work",
+    "qualified_supervision",
+    "safety_first",
+    "transparent_budgeting",
+    "independent_review"
+  ],
+  "layers": [
+    "council_program_office",
+    "architecture_systems",
+    "research_innovation",
+    "engineering_divisions",
+    "build_test_operations",
+    "field_operations_support",
+    "knowledge_training_recruitment",
+    "safety_ethics_compliance"
+  ],
+  "stages": [
+    "organize",
+    "digital_foundations",
+    "virtual_labs",
+    "low_risk_prototyping",
+    "partnerships",
+    "specialized_facilities",
+    "productization"
+  ],
+  "specialties": [
+    "software_ai_computational",
+    "cloud_systems_data",
+    "cybersecurity_privacy_resilience",
+    "electronics_embedded_hardware",
+    "robotics_mechatronics",
+    "aerospace_space",
+    "aviation_flight",
+    "audio_acoustics_immersive",
+    "video_cinema_imaging_streaming",
+    "games_interactive_engines",
+    "telecommunications_networking",
+    "materials_product_industrial_design",
+    "energy_environment",
+    "manufacturing_supply_chain_operations",
+    "testing_reliability_qa_certification_support",
+    "research_experimental_innovation"
+  ],
+  "approval_gates": [
+    "feasibility_screen",
+    "design_resource_approval",
+    "prototype_authorization",
+    "test_evidence_independent_review",
+    "release_operations_human_authorization"
+  ],
+  "safety_critical_requires_qualified_human_review": true,
+  "facilities_and_staffing_exist": false
+}
