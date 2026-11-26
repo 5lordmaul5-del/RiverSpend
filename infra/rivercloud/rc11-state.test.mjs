@@ -22,3 +22,6 @@ test("transaction refuses an oversized serialized snapshot before replacing stat
 
 
 test("reject snapshot collections containing null, arrays or primitive records",async()=>{const root=await mkdtemp(path.join(os.tmpdir(),"rc11-record-shape-"));try{const file=path.join(root,"state.json");for(const collection of ["jobs","approvals","events"]){for(const invalid of [null,[],7,"bad"]){const state={schema:1,jobs:[],approvals:[],events:[]};state[collection]=[invalid];await writeFile(file,JSON.stringify(state));await assert.rejects(()=>readState(file),/invalid_state_record/);}}}finally{await rm(root,{recursive:true,force:true});}});
+
+
+test("reject malformed post-mutation snapshots before commit",async()=>{const root=await mkdtemp(path.join(os.tmpdir(),"rc11-post-mutation-"));try{const file=path.join(root,"state.json");for(const mutate of [state=>{state.schema=2;},state=>{state.jobs=null;},state=>{state.events.push([]);}]){await assert.rejects(()=>transactState(file,state=>{mutate(state);}),/invalid_state_(schema|record)/);assert.deepEqual(await readState(file),{schema:1,jobs:[],approvals:[],events:[]});}}finally{await rm(root,{recursive:true,force:true});}});
