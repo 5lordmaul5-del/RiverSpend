@@ -4,6 +4,7 @@ This stores task metadata and provides atomic lease operations. It does NOT exec
 """
 from __future__ import annotations
 import sqlite3, time, uuid
+from contextlib import contextmanager
 from pathlib import Path
 
 class PersistentTaskLedger:
@@ -19,11 +20,16 @@ class PersistentTaskLedger:
             )""")
             db.execute("CREATE INDEX IF NOT EXISTS tasks_state_created ON tasks(state, created)")
 
+    @contextmanager
     def _db(self):
-        db=sqlite3.connect(self.db_path, timeout=10, isolation_level=None)
-        db.execute("PRAGMA journal_mode=WAL")
-        db.execute("PRAGMA busy_timeout=10000")
-        return db
+        """Yield a configured connection and always close it, even on errors."""
+        db = sqlite3.connect(self.db_path, timeout=10, isolation_level=None)
+        try:
+            db.execute("PRAGMA journal_mode=WAL")
+            db.execute("PRAGMA busy_timeout=10000")
+            yield db
+        finally:
+            db.close()
 
     def enqueue(self, capability: str, summary: str, summary_limit: int=500) -> str:
         if not capability or not capability.strip(): raise ValueError("capability required")
@@ -55,7 +61,7 @@ class PersistentTaskLedger:
 
     def complete(self, task_id: str, worker_id: str) -> bool:
         with self._db() as db:
-            cur=db.execute("UPDATE tasks SET state='completed',leased=NULL,lease_owner=NULL WHERE id=? AND state='leased' AND lease_owner=?",(task_id,worker_id))
+            cur=db.execute("UPDATE tasks SET state='completed',leased=NULL,lease_owner=NULL WHERE id=? AND state='leased' AND lease_owner=? AND leased >= ?",(task_id,worker_id,time.time()-self.lease_seconds))
             return cur.rowcount==1
 
     def cancel(self, task_id: str) -> bool:
