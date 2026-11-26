@@ -15,8 +15,9 @@ The earlier RC-45 review identified that the lifecycle stored a caller-supplied 
 ## Limits
 This digest covers the **redacted prototype plan**, not a separate secret-bearing execution payload. The execution runner remains disabled. JSON key order is retained and affects the digest; this is not a general-purpose canonical JSON implementation. The hash-chained audit ledger is unkeyed and not an external immutable sink, so a local attacker with write access to the state can rewrite the full ledger. OIDC/RBAC and real staging remain blockers.
 
-## Regression coverage
+## Regression closeout — 26 November 2026
 - Caller digest mismatch rejected before commit.
 - Post-creation plan mutation detected on read.
 - Redaction capacity and accessor input fail closed.
-- CI evidence will be recorded after the current branch workflow verifies this increment.
+- GitHub Actions **run 45853593027 (#917) — SUCCESS, 262/262 Node tests; 5/5 restore safety tests** on RC-141 test head.
+- Approval and lifecycle tests now use a digest derived from the bounded redacted plan; the cross-process one-use approval race test also passes.
