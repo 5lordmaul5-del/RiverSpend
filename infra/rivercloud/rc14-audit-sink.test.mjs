@@ -69,3 +69,6 @@ test("RC-77 accepts timestamp exactly at configured skew boundary",async()=>{con
 
 
 test("RC-78 replay store receives the verified envelope identifiers once",async()=>{const e=envelope(),d=buildSignedDelivery(e,{endpoint,secret,now});let calls=0;const result=await verifySignedDelivery(d,{secret,now,consumeReplay:async info=>{calls++;assert.equal(info.nonce,d.headers["x-rivercloud-audit-nonce"]);assert.equal(info.timestamp,now);assert.equal(info.sinkId,e.sinkId);assert.equal(info.envelopeHash,e.hash);return true;}});assert.equal(result.valid,true);assert.equal(calls,1);});
+
+
+test("RC-79 rejected replay never returns envelope hash",async()=>{const d=buildSignedDelivery(envelope(),{endpoint,secret,now});for(const callback of [async()=>false,async()=>{throw new Error("unavailable")}]){const result=await verifySignedDelivery(d,{secret,now,consumeReplay:callback});assert.equal(result.valid,false);assert.equal(result.envelopeHash,undefined);}});
