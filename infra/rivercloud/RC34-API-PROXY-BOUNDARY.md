@@ -24,3 +24,7 @@ This increment adds a testable API-side trust boundary for the future OAuth2 Pro
 The current Compose OAuth2 Proxy still routes to the demo upstream only. This module is **not yet connected to the proxy or a Compose service**. Before integration, the API must be an internal-only service with no published host port, the proxy must route `/api/` to it, the source address/network must be enforced, and a real OIDC provider login plus spoofing/revocation tests must be performed. Do not treat the test callback headers as real authentication.
 
 No provider credentials, production data, staging host, runner, deployment, or external service are used by these tests.
+
+## CI evidence
+
+GitHub Actions run **45735325864 (#333)** passed **138/138 Node tests**, zero failures, plus shell/Python syntax, the restore directory-race test, Compose configuration and Caddy validation. This verifies commit `e2dbdbbca5556c215307c81ed23d3c005bdecd85`. The prototype is still not wired to the actual OAuth2 Proxy upstream or Compose service.

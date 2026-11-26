@@ -551,3 +551,11 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 - RC-13 policy now grants status-read to admin, operator and auditor roles without adding project-management/audit permissions to viewer or auditor.
 - **CI verification pending for this increment.** No full local checkout was available: `git clone` failed because DNS could not resolve github.com. The branch changes will be verified by GitHub Actions; no local test result is claimed.
 - The prototype is not connected to Compose or OAuth2 Proxy. No real OIDC authentication, API route integration, runner, staging, production operation or spending occurred.
+
+
+### RC-34 CI closeout — verified
+
+- GitHub Actions **run 45735325864 (#333) — SUCCESS: 138/138 Node tests**, zero failures, plus bootstrap shell syntax, backup/restore and Python extractor syntax, the 1/1 directory-replacement race test, Compose configuration, and Caddy validation.
+- The log explicitly records **138 passed, 0 failed** and the RC-34 tests at 116–120. No services were started.
+- Run #333 verifies commit `e2dbdbbca5556c215307c81ed23d3c005bdecd85`. The API prototype remains unconnected to Compose/OAuth2 Proxy; this is test evidence for the isolated module, not real OIDC authentication or production readiness.
+- Local checkout remains unavailable due DNS resolution of github.com; no local test result is claimed.
