@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Deterministic regression for a nested-directory replacement during extraction."""
+"""Deterministic regressions for nested and parent-directory replacement during extraction."""
 import importlib.util
 import os
 import tempfile
@@ -65,12 +65,6 @@ def test_restore_uses_open_directory_descriptors_during_path_replacement():
         assert (target / "nested-moved" / "first.txt").read_text(encoding="utf-8") == "first"
 
 
-if __name__ == "__main__":
-    test_restore_uses_open_directory_descriptors_during_path_replacement()
-    test_restore_parent_path_replacement_uses_open_parent_descriptor()
-    print("2/2 restore directory replacement race tests passed")
-
-
 def test_restore_parent_path_replacement_uses_open_parent_descriptor():
     with tempfile.TemporaryDirectory(prefix="rc61-") as temp:
         root = Path(temp)
@@ -109,3 +103,9 @@ def test_restore_parent_path_replacement_uses_open_parent_descriptor():
         assert not (outside / "restored").exists(), "restore created target through the replaced parent symlink"
         assert (moved / "restored" / "nested" / "second.txt").read_text(encoding="utf-8") == "second"
         assert (moved / "restored" / "nested" / "first.txt").read_text(encoding="utf-8") == "first"
+
+
+if __name__ == "__main__":
+    test_restore_uses_open_directory_descriptors_during_path_replacement()
+    test_restore_parent_path_replacement_uses_open_parent_descriptor()
+    print("2/2 restore directory replacement race tests passed")
