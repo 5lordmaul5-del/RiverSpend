@@ -117,3 +117,12 @@ test("RC-34 rejects wrong methods, media types and oversized bodies", async () =
     assert.equal(oversized.status, 413);
   });
 });
+
+
+test("RC-54 standalone API defaults to its loopback trust peer instead of the stale Compose address", async () => {
+  await withServer({}, async url => {
+    const response = await fetch(url + "/api/health");
+    assert.equal(response.status, 401);
+    assert.equal((await response.json()).error, "identity_required");
+  });
+});
