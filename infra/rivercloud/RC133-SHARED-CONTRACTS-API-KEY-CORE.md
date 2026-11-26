@@ -38,3 +38,8 @@ A bounded private file-backed record store is added in `api-key-store.mjs`. It p
 
 
 API-RC-135 focused reconstructed local tests: **7/7 passed** after correcting a redundant directory-creation call in the lock-timeout test fixture. This evidence is not a full checkout or GitHub Actions result; CI remains unverified.
+
+
+## API-RC-135 CI closeout
+
+GitHub Actions **run 45814328503 — SUCCESS, 26/26 Node tests**. The workflow now includes the seven file-store tests alongside the existing API-key core, registry, contract and mock-gateway tests. The store remains a prototype with filesystem-permission-only confidentiality, path/lock race limitations, no encryption-at-rest and no live key/gateway wiring.
