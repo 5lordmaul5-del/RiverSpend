@@ -1,0 +1,2 @@
+# RC-173 — Cross-Module Audit
+Correlates a validated evidence ledger, static component map, and supplied event timeline. Detects event references absent from the map and components without event entries. This is structural consistency analysis, not a live audit or certification.
