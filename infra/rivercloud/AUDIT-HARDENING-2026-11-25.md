@@ -701,3 +701,11 @@ GitHub PR metadata confirms **98 changed files** at the current branch head. The
 - Code/test commit `3348c1e26166d7034ab00fc78cb7bae05683b0b6`: GitHub Actions **45765929407 (#401) — SUCCESS, 154/154 Node tests**, 0 failures; bootstrap shell, backup/restore and Python syntax, restore directory-replacement race, Compose, API image build/inspection and Caddy validation all passed.
 - Report/document closeout commit `15d30cdd20661315d42602792977c7512c859ddf`: GitHub Actions **45765947186 (#404) — SUCCESS, 154/154 tests**, plus the same shell/Python, restore race, Compose, API image build/inspection and Caddy validation suite.
 - No RiverCloud services or runner were started; no real deployment, merge, provisioning, production data/credentials or spending.
+
+
+## RC-47 — backup preflight for active state transactions (26 November 2026)
+
+- Static audit of RC-19 found the backup script silently excluded `*.lock` and `*.tmp-*` files without checking whether a transaction was in progress. The documentation required quiescing, but the script did not fail closed.
+- Added a preflight refusal if the data directory contains a transaction lock or temporary snapshot file. Tests cover both marker types. The preflight is a detection aid only; it does not atomically lock the store and the operator must still quiesce the writer.
+- **CI pending for RC-47.** No local test pass is claimed.
+- No real backup, restore, staging, services, runner, deployment, merge, production data/credentials, provisioning or spending.
