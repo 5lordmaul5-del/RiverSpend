@@ -69,3 +69,12 @@ GitHub Actions **run 45814754280 — SUCCESS, 33/33 Node tests**. The added orch
 - GitHub Actions run **45821019210 — SUCCESS, 46/46 tests** (including the new strict canonical JSON utility, gateway and RiverSSAI adapter regressions).
 - The preceding attempt **45820922845 failed 44/46** because oversized inputs mapped to HTTP-style status 400 instead of 413. This was corrected to preserve explicit size-limit semantics; no validation was weakened.
 - RC-142 remains a shared serializer/security boundary prototype. The mock gateway and orchestrator are not live service runtimes.
+
+
+## RC-152 — API-key core data-only validation
+
+- Audit identified that public API-key validation could invoke getters while checking scope arrays and record fields, and sparse scope arrays could pass the initial array predicate.
+- Scope arrays are now validated from own enumerable data-property descriptors, reject sparse/accessor/non-index/hidden/symbol properties, and are copied to a safe snapshot before sorting or use.
+- Key records require an exact data-only object shape. Verification and revocation operate on the descriptor-derived snapshot rather than rereading caller-controlled properties.
+- Regression tests prove sparse arrays, getters, hidden extras and proxy traps fail closed without getter execution.
+- This remains a prototype boundary; filesystem races, encryption-at-rest and production issuer/auth integration are not solved by this increment.
