@@ -27,3 +27,5 @@ Run RiverSpend in staging on RiverCloud, validate reliability, backups, secrets,
 - RC-61: restore target-parent traversal/create/cleanup uses directory descriptors and rejects symlinked parent components; CI verified at 195/195 Node tests and 3/3 restore race checks after recording and correcting descriptor-scope failures.
 - Progressive technical evidence and blockers are recorded in `infra/rivercloud/AUDIT-HARDENING-2026-11-25.md`.
 - These RCs are code/test increments, not a production readiness certification. OIDC-provider operation, real runner, external audit sink, staging and production readiness remain unverified.
+
+- RC-62: RC-11 now fails closed on final state-directory symlinks/ownership/permissions and unsafe snapshot ownership/permissions; the API image initializes `/data` at mode 0700. CI verification pending.
