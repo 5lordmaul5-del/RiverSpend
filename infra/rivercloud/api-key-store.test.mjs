@@ -82,3 +82,25 @@ test("directory sync uncertainty is reported after atomic commit",async()=>{
     const snapshot=JSON.parse(await readFile(file,"utf8"));assert.equal(snapshot.keys.length,1);
   }finally{await rm(root,{recursive:true,force:true});}
 });
+
+
+test("store request and verifier option accessors fail closed without getter execution",async()=>{
+  const root=await mkdtemp(path.join(os.tmpdir(),"api-key-store-"));try{
+    let getterCalls=0;
+    const store=createApiKeyStore(path.join(root,"keys.json"));
+    const createRequest={ownerId:"owner",scopes:["ai:invoke"],now,ttlMs:ttl};
+    Object.defineProperty(createRequest,"now",{enumerable:true,get(){getterCalls++;return now;}});
+    await assert.rejects(()=>store.create(createRequest),/invalid_api_key_request/);
+    const key=await store.create({ownerId:"owner",scopes:["ai:invoke"],now,ttlMs:ttl});
+    const verifyOptions={now};
+    Object.defineProperty(verifyOptions,"requiredScope",{enumerable:true,get(){getterCalls++;return "ai:invoke";}});
+    assert.equal((await store.verify(key,verifyOptions)).reason,"invalid_options");
+    const resolveOptions={now};
+    Object.defineProperty(resolveOptions,"now",{enumerable:true,get(){getterCalls++;return now;}});
+    assert.equal((await store.resolveRecord(key,resolveOptions)).reason,"invalid_options");
+    const constructorOptions={maxKeys:5};
+    Object.defineProperty(constructorOptions,"lockTimeoutMs",{enumerable:true,get(){getterCalls++;return 3000;}});
+    assert.throws(()=>createApiKeyStore(path.join(root,"other.json"),constructorOptions),/api_key_store_options_invalid|api_key_store_path_required/);
+    assert.equal(getterCalls,0);
+  }finally{await rm(root,{recursive:true,force:true});}
+});
