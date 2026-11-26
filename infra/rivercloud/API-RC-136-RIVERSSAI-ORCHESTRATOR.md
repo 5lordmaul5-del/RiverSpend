@@ -74,3 +74,17 @@ The orchestrator now shares the strict bounded canonical JSON utility with the m
 - GitHub Actions run **45821019210 — SUCCESS, 46/46 tests** (including the new strict canonical JSON utility, gateway and RiverSSAI adapter regressions).
 - The preceding attempt **45820922845 failed 44/46** because oversized inputs mapped to HTTP-style status 400 instead of 413. This was corrected to preserve explicit size-limit semantics; no validation was weakened.
 - RC-142 remains a shared serializer/security boundary prototype. The mock gateway and orchestrator are not live service runtimes.
+
+
+## RC-143 — strict registry schema and concurrent idempotency reservation
+
+- Registry input/output schema objects and their field descriptors are now exact, data-only shapes; sparse required arrays and cyclic/extra schema fields are rejected before snapshotting.
+- High-risk async approval verification reserves its idempotency slot and capacity before yielding. Concurrent retries with the same key/input share one verification/result; conflicting input is rejected and pending work counts against capacity.
+- GitHub Actions run **45832990570 (#113) — SUCCESS, 48/48 tests**. This verified RC-143 before the RC-144 bounded JSON preflight.
+
+## RC-144 — bounded JSON preflight for specialist definitions
+
+- Registry definitions now pass through the shared canonical JSON validator before semantic validation: depth 16, 16 KiB and 2048-node bounds; cyclic references, sparse arrays, accessors, non-JSON values and unsupported array properties fail closed.
+- Initial run **45833184587 (#116)** failed one test because the new preflight intentionally returned `definition_json_invalid` instead of the older `schema_contract_invalid` expectation. The assertion was corrected to match the new validation boundary; no security check was weakened.
+- GitHub Actions run **45833340221 (#118) — SUCCESS, 49/49 tests**.
+- Still a definition catalogue/planning prototype: no live credentials, workers, production API, or real approval service.
