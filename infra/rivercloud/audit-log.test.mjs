@@ -23,3 +23,5 @@ test("ledger verifier rejects oversized persisted ledger before replay", async (
   const oversized = new Array(10001);
   assert.deepEqual(verifyLedger(oversized), { valid: false, reason: "ledger_capacity_exceeded" });
 });
+
+test("append rejects non-plain or non-object details without corrupting ledger",async()=>{const root=await mkdtemp(path.join(os.tmpdir(),"audit-invalid-details-"));try{const file=path.join(root,"state.json");for(const invalid of [null,[], "text", 7, new Date()])await assert.rejects(()=>appendAudit(file,"plan_created",invalid),/invalid_audit_details/);assert.deepEqual(await readLedger(file),[]);const state=await readState(file);assert.equal(state.auditLogRecords,undefined);}finally{await rm(root,{recursive:true,force:true});}});
