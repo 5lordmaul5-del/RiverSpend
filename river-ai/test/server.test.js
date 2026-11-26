@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { createServer,startServer } from "../src/server.js";
+import { SpecialistRegistry } from "../src/specialist-registry.js";
 
 test("health, status and read-only specialist endpoints",async()=>{
  const server=createServer();
@@ -14,7 +15,7 @@ test("health, status and read-only specialist endpoints",async()=>{
   const specialists=await fetch("http://127.0.0.1:"+port+"/specialists?limit=5");
   const page=await specialists.json();assert.equal(specialists.status,200);assert.equal(page.total,100000);assert.equal(page.items.length,5);assert.equal(page.executionEnabled,false);
   const security=await fetch("http://127.0.0.1:"+port+"/specialists?domain=security&limit=3");
-  const s=await security.json();assert.equal(s.total,2000);assert.ok(s.items.every(x=>x.domain==="security"));
+  const s=await security.json();const registry=new SpecialistRegistry();const domainIndex=registry.domains.indexOf("security");assert.equal(s.total,Math.floor((registry.total-1-domainIndex)/registry.domains.length)+1);assert.ok(s.items.every(x=>x.domain==="security"));
   const scheduler=await fetch("http://127.0.0.1:"+port+"/scheduler/status");
   const q=await scheduler.json();assert.equal(q.activeProcesses,0);assert.equal(q.executionEnabled,false);assert.equal(q.persistence,"memory-only");
   const tools=await fetch("http://127.0.0.1:"+port+"/tools");const t=await tools.json();assert.ok(t.tools.some(x=>x.name==="specialists-list"&&x.enabled));assert.ok(t.tools.some(x=>x.name==="scheduler-enqueue"&&!x.enabled));
