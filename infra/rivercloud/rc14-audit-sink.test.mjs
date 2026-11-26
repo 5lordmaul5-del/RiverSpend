@@ -42,3 +42,6 @@ test("RC-68 rejects uppercase nonce encodings",async()=>{const d=buildSignedDeli
 
 
 test("RC-69 rejects uppercase signature hex encoding",async()=>{const d=buildSignedDelivery(envelope(),{endpoint,secret,now});const sig=d.headers["x-rivercloud-audit-signature"];const altered={...d,headers:{...d.headers,"x-rivercloud-audit-signature":"sha256="+sig.slice(7).toUpperCase()}};assert.equal((await verifySignedDelivery(altered,{secret,now,consumeReplay:acceptReplay})).reason,"invalid_signature");});
+
+
+test("RC-70 rejects delivery inherited and unexpected properties",async()=>{const d=buildSignedDelivery(envelope(),{endpoint,secret,now});const inherited=Object.create(d);assert.equal((await verifySignedDelivery(inherited,{secret,now,consumeReplay:acceptReplay})).reason,"invalid_delivery");assert.equal((await verifySignedDelivery({...d,extra:"x"},{secret,now,consumeReplay:acceptReplay})).reason,"invalid_delivery");});
