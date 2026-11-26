@@ -14,3 +14,6 @@ test("admin, operator and auditor receive status read access without widening un
 
 
 test("identity claim verifier exceptions fail closed with a normalized result",()=>{const r=validateIdentityClaims(claims,{...options,verifyIssuer:()=>{throw new Error("verifier_unavailable");}});assert.deepEqual(r,{ok:false,reason:"signature_not_verified"});});
+
+
+test("identity validation requires own properties for every mandatory claim",()=>{const inherited=Object.create(claims);const r=validateIdentityClaims(inherited,options);assert.equal(r.ok,false);assert.equal(r.reason,"missing_claim");});
