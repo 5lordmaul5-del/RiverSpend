@@ -1,4 +1,5 @@
 import http from "node:http";
+import { createHash } from "node:crypto";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { queuePlan, listQueue } from "./queue.mjs";
@@ -113,7 +114,8 @@ export function createProxyApiServer({
       }
       if (route.method === "POST" && url.pathname === "/api/plan") {
         const input = await readBody(req);
-        const result = await queuePlan(storeFile, input);
+        const actorRef = createHash("sha256").update("rivercloud-actor-v1\\0" + actor.subject).digest("hex");
+        const result = await queuePlan(storeFile, input, { actorRef, roles: actor.roles });
         return respond(res, result.duplicate ? 200 : 202, {
           job: result.job,
           duplicate: result.duplicate,

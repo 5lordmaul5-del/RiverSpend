@@ -72,3 +72,33 @@ test("idempotent retry remains accepted when both queue and event caps are reach
     assert.equal((await readState(file)).events.length, 10000);
   } finally { await rm(root, { recursive: true, force: true }); }
 });
+
+
+test("authenticated actor attribution is persisted pseudonymously and duplicates never overwrite it", async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), "rcq-actor-"));
+  try {
+    const file = path.join(root, "state.json");
+    const actorA = { actorRef: "a".repeat(64), roles: ["operator"] };
+    const actorB = { actorRef: "b".repeat(64), roles: ["operator"] };
+    const first = await queuePlan(file, base, actorA);
+    assert.equal(first.duplicate, false);
+    assert.equal(first.job.actorRef, actorA.actorRef);
+    assert.deepEqual(first.job.actorRoles, ["operator"]);
+    const retry = await queuePlan(file, base, actorB);
+    assert.equal(retry.duplicate, true);
+    assert.equal(retry.job.actorRef, actorA.actorRef);
+    assert.deepEqual(retry.job.actorRoles, ["operator"]);
+    const state = await readState(file);
+    assert.equal(state.events.length, 1);
+    assert.equal(state.events[0].actorRef, actorA.actorRef);
+    assert.deepEqual(state.events[0].actorRoles, ["operator"]);
+  } finally { await rm(root, { recursive: true, force: true }); }
+});
+
+test("queue rejects malformed actor attribution", async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), "rcq-actor-invalid-"));
+  try {
+    await assert.rejects(() => queuePlan(path.join(root, "state.json"), base, { actorRef: "not-a-hash", roles: ["operator"] }), /invalid_actor_context/);
+    await assert.rejects(() => queuePlan(path.join(root, "state.json"), base, { actorRef: "c".repeat(64), roles: ["root"] }), /invalid_actor_context/);
+  } finally { await rm(root, { recursive: true, force: true }); }
+});

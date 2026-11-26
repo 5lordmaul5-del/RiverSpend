@@ -578,3 +578,12 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 - GitHub Actions run **45743142427 (#337) — SUCCESS: 145/145 Node tests**, 0 failures; bootstrap shell syntax, backup/restore and Python syntax, **1/1 restore directory-replacement race test**, Docker Compose configuration, and Caddy validation also passed.
 - Run #337 verifies commit **cb91b7f9db268c9ef53c255903b6f51a7a84d3a5**. The static RC-35 tests are numbered 124–127 and passed. The workflow only ran Compose `config` and Caddy validation; it did not build the API image or start RiverCloud services.
 - No real OIDC provider login, proxy/API traffic, header-spoofing runtime test, container build, runner, staging, production deployment, real backup/restore, or spending occurred.
+
+
+
+## RC-36 — provisional authenticated queue attribution (26 November 2026)
+
+- RC-34 API submission previously enforced proxy identity/RBAC but did not persist who submitted a queue plan. Added a domain-separated SHA-256 actor reference and mapped-role snapshot to new API-created queue jobs and their transactional `job_created` event.
+- Queue validates the actor-reference format and role vocabulary. Idempotent retries preserve the original attribution and never overwrite it with a later caller.
+- Added tests for pseudonymous attribution, role snapshot, duplicate preservation, and malformed actor contexts. CI evidence is pending.
+- This is provisional attribution only: unkeyed SHA-256 of a proxy-supplied user label is not anonymization, issuer/sub binding, authentication proof or protected immutable audit. Legacy queue callers remain unattributed. RC-17 lifecycle migration and external protected audit remain blockers.

@@ -1,4 +1,5 @@
 import test from "node:test";
+import { createHash } from "node:crypto";
 import assert from "node:assert/strict";
 import { mkdtemp, rm } from "node:fs/promises";
 import os from "node:os";
@@ -50,9 +51,19 @@ test("RC-34 operator may submit plans, but no execution is enabled and retries a
     assert.equal((await health.json()).executionEnabled, false);
     const first = await fetch(url + "/api/plan", { method: "POST", headers: { ...operator, "content-type": "application/json" }, body: JSON.stringify(basePlan) });
     assert.equal(first.status, 202);
+    const firstBody = await first.json();
+    assert.match(firstBody.job.actorRef, /^[a-f0-9]{64}$/);
+    assert.equal(firstBody.job.actorRef, createHash("sha256").update("rivercloud-actor-v1\\0operator-1").digest("hex"));
+    assert.deepEqual(firstBody.job.actorRoles, ["operator"]);
+    assert.doesNotMatch(JSON.stringify(firstBody.job), /operator-1/);
     const duplicate = await fetch(url + "/api/plan", { method: "POST", headers: { ...operator, "content-type": "application/json" }, body: JSON.stringify(basePlan) });
     assert.equal(duplicate.status, 200);
-    assert.equal((await duplicate.json()).duplicate, true);
+    const duplicateBody = await duplicate.json();
+    assert.equal(duplicateBody.duplicate, true);
+    assert.equal(duplicateBody.job.actorRef, firstBody.job.actorRef);
+    const otherActor = await fetch(url + "/api/plan", { method: "POST", headers: { ...headers("operator-2", "operator"), "content-type": "application/json" }, body: JSON.stringify(basePlan) });
+    assert.equal(otherActor.status, 200);
+    assert.equal((await otherActor.json()).job.actorRef, firstBody.job.actorRef);
     const jobs = await fetch(url + "/api/jobs", { headers: operator });
     assert.equal((await jobs.json()).jobs.length, 1);
   });
