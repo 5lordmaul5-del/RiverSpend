@@ -64,8 +64,8 @@ test("failed consumption leaves approval unused and does not append consume even
   try {
     await prepareJob(root);
     const secret = "s".repeat(40), issued = await issueApproval({ storeDir: root, binding, secret, approver: "reviewer" });
-    await transitionLifecycleJobAtomic(path.join(root, "lifecycle.json"), { jobId: binding.jobId, to: "approved", actor: "separate-test-transition" });
+    await transitionLifecycleJobAtomic(path.join(root, "lifecycle.json"), { jobId: binding.jobId, to: "rejected", actor: "separate-test-transition" });
     await assert.rejects(() => consumeApproval({ storeDir: root, binding, secret, token: issued.token, consumerIdentity: "executor-1" }), /job_not_pending/);
-    const state = await readState(path.join(root, "lifecycle.json")); assert.equal(state.approvals[0].used, false); assert.equal(state.events.filter(e => e.event === "approval_consumed").length, 0);
+    const state = await readState(path.join(root, "lifecycle.json")); assert.equal(state.approvals[0].used, false); assert.equal(state.events.filter(e => e.event === "approval_consumed").length, 0); const lifecycle = await readAtomicLifecycle(path.join(root, "lifecycle.json")); assert.equal(lifecycle.jobs[0].state, "rejected"); assert.equal(lifecycle.integrity.valid, true);
   } finally { await rm(root, { recursive: true, force: true }); }
 });
