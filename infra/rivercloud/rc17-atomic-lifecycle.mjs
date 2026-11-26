@@ -12,6 +12,11 @@ const transitions = {
 };
 const safeId = /^[A-Za-z0-9_-]{1,64}$/;
 const HASH = /^[a-f0-9]{64}$/i;
+const MAX_LIFECYCLE_JOBS = 5000;
+const MAX_AUDIT_RECORDS = 10000;
+const MAX_LIFECYCLE_APPROVALS = 10000;
+function ensureLifecycleJobs(state) { if (state.lifecycleJobs === undefined) state.lifecycleJobs = []; else if (!Array.isArray(state.lifecycleJobs)) throw new Error('lifecycle_jobs_schema_invalid'); return state.lifecycleJobs; }
+function ensureAuditRecords(state) { if (state.auditRecords === undefined) state.auditRecords = []; else if (!Array.isArray(state.auditRecords)) throw new Error('audit_records_schema_invalid'); return state.auditRecords; }
 const sensitive = /password|secret|token|authorization|cookie|private.?key|credential|api.?key/i;
 function redact(value, depth = 0) {
   if (depth > 8) return "[depth-limit]";
@@ -67,8 +72,9 @@ export function verifyAtomicAudit(records) {
   return { valid: true, count: records.length, states: Object.fromEntries(states), digests: Object.fromEntries(digests), approvals: Object.fromEntries(approvals) };
 }
 function appendAtomicAuditBatch(state, detailsList) {
-  if (!Array.isArray(state.auditRecords)) state.auditRecords = [];
-  const records = state.auditRecords, checked = verifyAtomicAudit(records);
+  const records = ensureAuditRecords(state);
+  if (records.length + detailsList.length > MAX_AUDIT_RECORDS) throw new Error('audit_capacity_exceeded');
+  const checked = verifyAtomicAudit(records);
   if (!checked.valid) throw new Error("audit_integrity_failure");
   for (const details of detailsList) {
     const payload = { sequence: records.length + 1, event: details.event, details: redact(details.details), at: new Date().toISOString(), previousHash: records.at(-1)?.hash || "GENESIS" };
@@ -84,11 +90,12 @@ export async function createLifecycleJobAtomic(file, { jobId, digest, plan, acto
   // Never persist raw secrets from caller-supplied plan data.
   const safePlan = redact(plan);
   return transactState(file, state => {
-    if (!Array.isArray(state.lifecycleJobs)) state.lifecycleJobs = [];
-    if (state.lifecycleJobs.some(j => j.id === jobId)) throw new Error("job_exists");
+    const jobs = ensureLifecycleJobs(state); ensureAuditRecords(state);
+    if (jobs.some(j => j.id === jobId)) throw new Error("job_exists");
+    if (jobs.length >= MAX_LIFECYCLE_JOBS) throw new Error("lifecycle_job_capacity_exceeded");
     const at = new Date().toISOString();
     const job = { id: jobId, digest: digest.toLowerCase(), plan: safePlan, state: "pending", createdAt: at, updatedAt: at };
-    state.lifecycleJobs.push(job);
+    jobs.push(job);
     appendAtomicAudit(state, { jobId, from: null, to: "pending", actor, note: "created", digest: job.digest });
     return job;
   });
@@ -96,8 +103,8 @@ export async function createLifecycleJobAtomic(file, { jobId, digest, plan, acto
 export async function transitionLifecycleJobAtomic(file, { jobId, to, actor = "system", note = "" } = {}) {
   if (!safeId.test(jobId ?? "") || !STATES.includes(to) || typeof actor !== "string" || !actor.trim() || actor.length > 100 || typeof note !== "string" || note.length > 500) throw new Error("invalid_transition_input");
   return transactState(file, state => {
-    if (!Array.isArray(state.lifecycleJobs)) state.lifecycleJobs = [];
-    const job = state.lifecycleJobs.find(j => j.id === jobId);
+    const jobs = ensureLifecycleJobs(state); ensureAuditRecords(state);
+    const job = jobs.find(j => j.id === jobId);
     if (!job) throw new Error("job_not_found");
     if (to === "approved") throw new Error("approval_required");
     if (!STATES.includes(job.state) || !transitions[job.state]?.has(to)) throw new Error("transition_not_allowed");
@@ -118,18 +125,18 @@ export async function storeApprovalForLifecycleAtomic(file, record) {
     throw new Error("invalid_approval");
   }
   return transactState(file, state => {
-    if (!Array.isArray(state.lifecycleJobs)) state.lifecycleJobs = [];
-    if (!Array.isArray(state.approvals)) state.approvals = [];
-    if (!Array.isArray(state.events)) state.events = [];
+    const jobs = ensureLifecycleJobs(state); ensureAuditRecords(state);
+    if (!Array.isArray(state.approvals) || !Array.isArray(state.events)) throw new Error('approval_state_schema_invalid');
     if (state.approvals.some(a => a.tokenId === record.tokenId)) throw new Error("approval_exists");
-    const job = state.lifecycleJobs.find(j => j.id === record.jobId);
+    const job = jobs.find(j => j.id === record.jobId);
     if (!job || job.state !== "pending" || String(job.digest).toLowerCase() !== String(record.binding.digest).toLowerCase()) {
       throw new Error("approval_job_not_pending_or_digest_mismatch");
     }
-    const audit = verifyAtomicAudit(state.auditRecords || []);
+    const audit = verifyAtomicAudit(ensureAuditRecords(state));
     if (!audit.valid || audit.states[job.id] !== job.state || audit.digests[job.id] !== String(job.digest).toLowerCase()) {
       throw new Error("audit_integrity_failure");
     }
+    if (state.approvals.length >= MAX_LIFECYCLE_APPROVALS) throw new Error('approval_capacity_exceeded');
     if (state.approvals.some(a => a.jobId === job.id && !a.used && a.expiresAt > Date.now())) {
       throw new Error("approval_already_issued");
     }
@@ -150,9 +157,8 @@ export async function consumeApprovalAndTransitionAtomic(file, {
     throw new Error("invalid_approval_consume_request");
   }
   return transactState(file, state => {
-    if (!Array.isArray(state.lifecycleJobs)) state.lifecycleJobs = [];
-    if (!Array.isArray(state.approvals)) state.approvals = [];
-    if (!Array.isArray(state.events)) state.events = [];
+    const jobs = ensureLifecycleJobs(state); ensureAuditRecords(state);
+    if (!Array.isArray(state.approvals) || !Array.isArray(state.events)) throw new Error('approval_state_schema_invalid');
     const approval = state.approvals.find(a => a.tokenId === tokenId);
     if (!approval || approval.used) throw new Error("approval_missing_or_used");
     if (!Number.isSafeInteger(approval.expiresAt) || approval.expiresAt <= Date.now()) throw new Error("approval_expired");
@@ -162,12 +168,12 @@ export async function consumeApprovalAndTransitionAtomic(file, {
     }
     if (approval.approver === consumerIdentity) throw new Error("self_approval_not_allowed");
     if (verifyApproval(approval) !== true) throw new Error("approval_binding_mismatch");
-    const job = state.lifecycleJobs.find(j => j.id === binding.jobId);
+    const job = jobs.find(j => j.id === binding.jobId);
     if (!job) throw new Error("job_not_found");
     if (job.state !== "pending" || String(job.digest).toLowerCase() !== String(binding.digest).toLowerCase()) {
       throw new Error("job_not_pending_or_digest_mismatch");
     }
-    const audit = verifyAtomicAudit(state.auditRecords || []);
+    const audit = verifyAtomicAudit(ensureAuditRecords(state));
     if (!audit.valid || audit.states[job.id] !== job.state || audit.digests[job.id] !== String(job.digest).toLowerCase()) {
       throw new Error("audit_integrity_failure");
     }
@@ -185,7 +191,10 @@ export async function consumeApprovalAndTransitionAtomic(file, {
 }
 
 export async function readAtomicLifecycle(file) {
-  const state = await readState(file), jobs = Array.isArray(state.lifecycleJobs) ? state.lifecycleJobs : [], auditRecords = Array.isArray(state.auditRecords) ? state.auditRecords : [];
+  const state = await readState(file);
+  if (state.lifecycleJobs !== undefined && !Array.isArray(state.lifecycleJobs)) return { jobs: [], auditRecords: [], integrity: { valid: false, reason: 'lifecycle_jobs_schema_invalid' } };
+  if (state.auditRecords !== undefined && !Array.isArray(state.auditRecords)) return { jobs: [], auditRecords: [], integrity: { valid: false, reason: 'audit_records_schema_invalid' } };
+  const jobs = state.lifecycleJobs ?? [], auditRecords = state.auditRecords ?? [];
   let integrity = verifyAtomicAudit(auditRecords);
   if (integrity.valid) {
     const jobIds = new Set();
