@@ -25,4 +25,4 @@ jobs:
         with:
           node-version: "22"
       - name: Run shared contract, API key and registry tests
-        run: node --test infra/rivercloud/api-key-core.test.mjs infra/rivercloud/api-key-store.test.mjs infra/rivercloud/agent-registry-core.test.mjs infra/rivercloud/shared-contracts.test.mjs infra/rivercloud/gateway-mock.test.mjs
+        run: node --test infra/rivercloud/api-key-core.test.mjs infra/rivercloud/api-key-store.test.mjs infra/rivercloud/agent-registry-core.test.mjs infra/rivercloud/shared-contracts.test.mjs infra/rivercloud/gateway-mock.test.mjs infra/rivercloud/river-ssai-orchestrator.test.mjs
