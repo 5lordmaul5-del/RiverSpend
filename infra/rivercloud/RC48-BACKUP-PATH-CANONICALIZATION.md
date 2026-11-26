@@ -20,3 +20,9 @@ RC-19 checked whether the backup destination was inside the source using logical
 ```sh
 node --test infra/rivercloud/backup-restore.test.mjs
 ```
+
+
+## RC-48 CI closeout (26 November 2026)
+
+- Code/test commit `7ebbabbae101c1d39e98d59a117c64078202ce6a`: GitHub Actions **45766399053 (#423) — SUCCESS, 156/156 Node tests**, 0 failures; bootstrap shell, backup/restore/Python syntax, restore directory-replacement race, Compose, API image build/inspection and Caddy validation passed.
+- No real backup or restore was performed. No services or runner were started, no merge, deployment, production data/credentials, provisioning or spending.
