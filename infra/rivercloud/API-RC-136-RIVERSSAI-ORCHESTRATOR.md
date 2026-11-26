@@ -62,3 +62,8 @@ GitHub Actions **run 45814754280 — SUCCESS, 33/33 Node tests**. The added orch
 - Gateway canonical JSON rejects `__proto__`, `prototype`, and `constructor` property names to reduce prototype-pollution and downstream parser ambiguity risks.
 - Added regression coverage for a JSON-owned `__proto__` property and confirms no global prototype mutation.
 - CI pending; earlier RC-140 CI failed due to malformed test-source formatting, subsequently repaired. RC-140 depth guard is present.
+
+
+## RC-142 follow-up — shared canonical JSON bounds
+
+The orchestrator now shares the strict bounded canonical JSON utility with the mock gateway, rejecting sparse/accessor arrays, cyclic/deep structures and other non-JSON input before hashing. Tests added; CI verification pending at commit time.
