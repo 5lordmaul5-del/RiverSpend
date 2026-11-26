@@ -61,7 +61,7 @@ class PersistentTaskLedger:
 
     def complete(self, task_id: str, worker_id: str) -> bool:
         with self._db() as db:
-            cur=db.execute("UPDATE tasks SET state='completed',leased=NULL,lease_owner=NULL WHERE id=? AND state='leased' AND lease_owner=?",(task_id,worker_id))
+            cur=db.execute("UPDATE tasks SET state='completed',leased=NULL,lease_owner=NULL WHERE id=? AND state='leased' AND lease_owner=? AND leased >= ?",(task_id,worker_id,time.time()-self.lease_seconds))
             return cur.rowcount==1
 
     def cancel(self, task_id: str) -> bool:
