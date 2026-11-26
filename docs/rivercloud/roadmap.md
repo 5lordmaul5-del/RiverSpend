@@ -55,3 +55,6 @@ Run RiverSpend in staging on RiverCloud, validate reliability, backups, secrets,
 
 
 - RC-134: RC-11 now rejects pre-existing symlink/non-directory components in the store path before reads and transactions; a regression test is added. CI pending and path-preflight race limitation documented.
+
+
+- RC-135: corrected two legacy RC-11 test expectations to the specific RC-134 ancestor-component error; CI verification pending.
