@@ -1,6 +1,7 @@
 import os
 import tempfile
 import unittest
+from concurrent.futures import ThreadPoolExecutor
 
 from rc159_persistent_ledger import PersistentTaskLedger
 from rc181_payload_ledger import PayloadPersistentTaskLedger, PayloadLedgerError
@@ -95,6 +96,51 @@ class PayloadLedgerTests(unittest.TestCase):
         self.assertEqual(lease["id"], tid)
         self.assertIsNone(lease["owner"])
         self.assertIsNone(lease["payload"])
+
+    def test_idempotent_same_owner_request_returns_original_task(self):
+        payload = {"text": "hello", "n": 1}
+        first = self.ledger.enqueue("echo", "task", "user-1", payload, request_key="req-1")
+        repeat = self.ledger.enqueue("echo", "task", "user-1", {"n": 1, "text": "hello"}, request_key="req-1")
+        self.assertEqual(first, repeat)
+        self.assertEqual(self.ledger.status()["queued"], 1)
+
+    def test_duplicate_request_key_is_checked_before_queue_capacity(self):
+        first = self.ledger.enqueue("echo", "task", "user-1", {"x": 1}, request_key="req-1")
+        self.ledger.enqueue("echo", "other", "user-2", {"x": 2})
+        repeat = self.ledger.enqueue("echo", "task", "user-1", {"x": 1}, request_key="req-1")
+        self.assertEqual(first, repeat)
+
+    def test_request_key_reuse_with_changed_content_rejected(self):
+        first = self.ledger.enqueue("echo", "task", "user-1", {"x": 1}, request_key="req-1")
+        with self.assertRaises(PayloadLedgerError):
+            self.ledger.enqueue("echo", "task", "user-1", {"x": 2}, request_key="req-1")
+        with self.assertRaises(PayloadLedgerError):
+            self.ledger.enqueue("echo", "changed", "user-1", {"x": 1}, request_key="req-1")
+        with self.assertRaises(PayloadLedgerError):
+            self.ledger.enqueue("other", "task", "user-1", {"x": 1}, request_key="req-1")
+        self.assertEqual(self.ledger.lease_next("worker", ("echo",))["id"], first)
+
+    def test_request_key_is_owner_scoped(self):
+        first = self.ledger.enqueue("echo", "task", "user-1", {"x": 1}, request_key="same")
+        second = self.ledger.enqueue("echo", "task", "user-1", {"x": 1})
+        third = self.ledger.enqueue("echo", "task", "user-2", {"x": 1}, request_key="same")
+        self.assertNotEqual(first, second)
+        self.assertNotEqual(first, third)
+
+    def test_request_key_validation(self):
+        for value in ("", " " , "x" * 129, 1, None):
+            if value is None:
+                continue
+            with self.subTest(value=value), self.assertRaises(PayloadLedgerError):
+                self.ledger.enqueue("echo", "task", "user-1", {}, request_key=value)
+
+    def test_concurrent_identical_requests_share_one_task(self):
+        def submit():
+            return self.ledger.enqueue("echo", "task", "user-1", {"x": 1}, request_key="race-key")
+        with ThreadPoolExecutor(max_workers=6) as pool:
+            ids = list(pool.map(lambda _: submit(), range(6)))
+        self.assertEqual(len(set(ids)), 1)
+        self.assertEqual(self.ledger.status()["queued"], 1)
 
 
 if __name__ == "__main__":
