@@ -97,5 +97,61 @@
     "noRealPaymentAuthorization": true,
     "noExecutionRunner": true,
     "noExternalServiceProvisioning": true
-  }
-}
+  },
+  "mockGatewayRoutes": [
+    {
+      "method": "GET",
+      "path": "/api/v1/rivercloud/jobs",
+      "service": "RiverCloud",
+      "scope": "cloud:jobs:read"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/rivercloud/plan",
+      "service": "RiverCloud",
+      "scope": "cloud:plan"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/agents/registry",
+      "service": "RiverSSAI",
+      "scope": "registry:read"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/agents/invoke",
+      "service": "RiverSSAI",
+      "scope": "ai:invoke"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/signals",
+      "service": "Signals",
+      "scope": "signals:read"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/signals/send",
+      "service": "Signals",
+      "scope": "signals:send"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/shop/catalog",
+      "service": "Shop",
+      "scope": "shop:catalog:read"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/shop/catalog",
+      "service": "Shop",
+      "scope": "shop:catalog:write"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/shop/checkout/mock",
+      "service": "Shop",
+      "scope": "shop:checkout:mock"
+    }
+  ]
+}\n
