@@ -107,3 +107,10 @@ test("RC-93 malformed signature format is rejected before replay storage",async(
 test("RC-94 unsupported envelope schema rejected before replay storage",async()=>{const d=buildSignedDelivery(envelope(),{endpoint,secret,now});const parsed=JSON.parse(d.body);parsed.schema="rivercloud.audit.v2";const altered={...d,body:JSON.stringify(parsed)};let calls=0;const result=await verifySignedDelivery(altered,{secret,now,consumeReplay:async()=>{calls++;return true;}});assert.equal(result.valid,false);assert.equal(calls,0);});
 
 test("RC-95 signature header prefix must be exact",async()=>{const d=buildSignedDelivery(envelope(),{endpoint,secret,now});const headers={...d.headers,"x-rivercloud-audit-signature":"SHA256="+d.headers["x-rivercloud-audit-signature"].slice(7)};let calls=0;const result=await verifySignedDelivery({...d,headers},{secret,now,consumeReplay:async()=>{calls++;return true;}});assert.equal(result.valid,false);assert.equal(result.reason,"invalid_signature");assert.equal(calls,0);});
+
+
+test("RC-96 wrong method rejected before replay storage",async()=>{const d=buildSignedDelivery(envelope(),{endpoint,secret,now});const altered={...d,method:"PUT"};let calls=0;const result=await verifySignedDelivery(altered,{secret,now,consumeReplay:async()=>{calls++;return true;}});assert.equal(result.valid,false);assert.equal(calls,0);});
+
+test("RC-97 endpoint query string rejected before replay storage",async()=>{const d=buildSignedDelivery(envelope(),{endpoint,secret,now});const altered={...d,endpoint:endpoint+"?x=1"};let calls=0;const result=await verifySignedDelivery(altered,{secret,now,consumeReplay:async()=>{calls++;return true;}});assert.equal(result.valid,false);assert.equal(calls,0);});
+
+test("RC-98 delivery body JSON parse failure rejected before replay storage",async()=>{const d=buildSignedDelivery(envelope(),{endpoint,secret,now});const altered={...d,body:"{"};let calls=0;const result=await verifySignedDelivery(altered,{secret,now,consumeReplay:async()=>{calls++;return true;}});assert.equal(result.valid,false);assert.equal(result.reason,"invalid_body");assert.equal(calls,0);});
