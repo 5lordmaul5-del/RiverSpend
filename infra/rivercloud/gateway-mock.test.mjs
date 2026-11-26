@@ -64,3 +64,15 @@ test("mock gateway rejects non-JSON nested values",()=>{
   assert.equal(bad2.status,400);
   assert.equal(bad3.status,400);
 });
+
+
+test("gateway cached idempotency responses cannot be mutated by callers",()=>{
+  const isolated=createMockGateway();
+  const first=isolated.handle({key:issued.key,record:issued.record,method:"POST",path:"/api/v1/signals/send",...headers,body:{message:"stable"},now});
+  first.response.status="tampered";first.response.payloadDigest="changed";
+  const duplicate=isolated.handle({key:issued.key,record:issued.record,method:"POST",path:"/api/v1/signals/send",...headers,body:{message:"stable"},now});
+  assert.equal(duplicate.duplicate,true);assert.equal(duplicate.response.status,"accepted_mock");assert.notEqual(duplicate.response.payloadDigest,"changed");
+  duplicate.response.status="again";
+  const third=isolated.handle({key:issued.key,record:issued.record,method:"POST",path:"/api/v1/signals/send",...headers,body:{message:"stable"},now});
+  assert.equal(third.response.status,"accepted_mock");
+});
