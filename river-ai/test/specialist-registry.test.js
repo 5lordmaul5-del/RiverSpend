@@ -22,7 +22,8 @@ test("bounded pagination and domain filtering",()=>{
  assert.equal(page.items[0].id,"rs-specialist-000101");
  assert.equal(page.items.length,5);
  const security=registry.list({domain:"security",limit:5});
- assert.equal(security.total,2000);
+ const domainIndex=registry.domains.indexOf("security");
+ assert.equal(security.total,Math.floor((registry.total-1-domainIndex)/registry.domains.length)+1);
  assert.equal(security.items.length,5);
  assert.ok(security.items.every(x=>x.domain==="security"));
 });
