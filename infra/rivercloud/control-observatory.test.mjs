@@ -1,0 +1,6 @@
+import test from "node:test";import assert from "node:assert/strict";import {buildControlObservatory,validateObservatory} from "./control-observatory.mjs";import {prepareRun} from "./runner.mjs";import {projectPreparedRunAudit} from "./audit-projection.mjs";
+function bundle(){const run=prepareRun({projectId:"riverspend",branch:"main",commit:"a".repeat(40),target:"staging"});return {run,audit:projectPreparedRunAudit(run),lifecycle:{runId:run.runId,digest:run.digest,status:run.status}};}
+test("observatory aggregates matrix and report",()=>{const o=buildControlObservatory(bundle());assert.equal(o.overview.controlsTotal,7);assert.equal(o.overview.controlsPassed,7);assert.equal(o.overview.reportValid,true);});
+test("observatory validates output",()=>assert.equal(validateObservatory(buildControlObservatory(bundle())),true));
+test("observatory validator rejects hostile accessor",()=>{const o=buildControlObservatory(bundle());Object.defineProperty(o,"overview",{get(){throw Error("bad");}});assert.equal(validateObservatory(o),false);});
+test("counts must reconcile",()=>{const o=buildControlObservatory(bundle());const bad={...o,overview:{...o.overview,controlsPassed:6}};assert.equal(validateObservatory(bad),false);});
