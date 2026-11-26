@@ -22,3 +22,10 @@ The RC-19 backup script excluded lock and temporary snapshot files from its arch
 ```sh
 node --test infra/rivercloud/backup-restore.test.mjs
 ```
+
+
+## RC-47 CI closeout (26 November 2026)
+
+- Code/test commit `5d4132937689260827e736f7cff6346c57a048fe`: GitHub Actions **45766205553 (#412) — SUCCESS, 155/155 Node tests**, 0 failures; bootstrap shell, backup/restore/Python syntax, restore directory-replacement race, Compose, API image build/inspection and Caddy validation passed.
+- Report/document closeout commit `8b11279c780eb6ea8a1ab3f3600ae0fcc599f14c`: GitHub Actions **45766244589 (#417) — SUCCESS, 155/155 Node tests**, plus the same validation suite.
+- No real backup or restore was performed. No services or runner were started, no merge, deployment, production data/credentials, provisioning or spending.
