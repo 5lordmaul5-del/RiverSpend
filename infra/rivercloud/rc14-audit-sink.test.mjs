@@ -72,3 +72,6 @@ test("RC-78 replay store receives the verified envelope identifiers once",async(
 
 
 test("RC-79 rejected replay never returns envelope hash",async()=>{const d=buildSignedDelivery(envelope(),{endpoint,secret,now});for(const callback of [async()=>false,async()=>{throw new Error("unavailable")}]){const result=await verifySignedDelivery(d,{secret,now,consumeReplay:callback});assert.equal(result.valid,false);assert.equal(result.envelopeHash,undefined);}});
+
+
+test("RC-80 replay store is skipped for malformed timestamps",async()=>{const d=buildSignedDelivery(envelope(),{endpoint,secret,now});const bad={...d,headers:{...d.headers,"x-rivercloud-audit-timestamp":"01"+String(now)}};let calls=0;const result=await verifySignedDelivery(bad,{secret,now,consumeReplay:async()=>{calls++;return true;}});assert.equal(result.valid,false);assert.equal(calls,0);});
