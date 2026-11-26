@@ -20,18 +20,43 @@ function ensureLifecycleJobs(state) { if (state.lifecycleJobs === undefined) sta
 function ensureAuditRecords(state) { if (state.auditRecords === undefined) state.auditRecords = []; else if (!Array.isArray(state.auditRecords)) throw new Error('audit_records_schema_invalid'); return state.auditRecords; }
 const sensitive = /password|secret|token|authorization|cookie|private.?key|credential|api.?key/i;
 function redact(value, depth = 0) {
-  if (depth > 8) return "[depth-limit]";
-  if (Array.isArray(value)) return value.slice(0, 100).map(v => redact(v, depth + 1));
+  if (depth > 8) throw new Error("plan_redaction_depth_exceeded");
+  if (Array.isArray(value)) {
+    if (value.length > 100 || Object.getOwnPropertySymbols(value).length) throw new Error("plan_redaction_array_capacity_exceeded");
+    const keys = Object.keys(value);
+    if (keys.length !== value.length || keys.some((key, index) => key !== String(index))) throw new Error("plan_redaction_array_invalid");
+    for (let index = 0; index < value.length; index++) {
+      const descriptor = Object.getOwnPropertyDescriptor(value, String(index));
+      if (!descriptor || !descriptor.enumerable || !Object.hasOwn(descriptor, "value")) throw new Error("plan_redaction_property_invalid");
+    }
+    return value.map(v => redact(v, depth + 1));
+  }
   if (value && typeof value === "object") {
+    const proto = Object.getPrototypeOf(value);
+    if (proto !== Object.prototype && proto !== null) throw new Error("plan_redaction_object_invalid");
+    const keys = Reflect.ownKeys(value);
+    if (keys.length > 100 || keys.some(key => typeof key !== "string")) throw new Error("plan_redaction_object_capacity_exceeded");
     const out = Object.create(null);
-    for (const [key, v] of Object.entries(value).slice(0, 100)) out[key] = sensitive.test(key) ? "[redacted]" : redact(v, depth + 1);
+    for (const key of keys) {
+      const descriptor = Object.getOwnPropertyDescriptor(value, key);
+      if (!descriptor || !descriptor.enumerable || !Object.hasOwn(descriptor, "value")) throw new Error("plan_redaction_property_invalid");
+      out[key] = sensitive.test(key) ? "[redacted]" : redact(descriptor.value, depth + 1);
+    }
     return out;
   }
-  if (typeof value === "string") return value.length > 4000 ? value.slice(0, 4000) + "[truncated]" : value;
-  if (typeof value === "number" || typeof value === "boolean" || value === null) return value;
-  return "[unsupported]";
+  if (typeof value === "string") {
+    if (value.length > 4000) throw new Error("plan_redaction_string_limit_exceeded");
+    return value;
+  }
+  if (typeof value === "number") {
+    if (!Number.isFinite(value)) throw new Error("plan_redaction_number_invalid");
+    return value;
+  }
+  if (typeof value === "boolean" || value === null) return value;
+  throw new Error("plan_redaction_value_invalid");
 }
 function digestPayload(payload) { return createHash("sha256").update(JSON.stringify(payload)).digest("hex"); }
+export function digestLifecyclePlan(plan) { return digestPayload(redact(plan)); }
 export function verifyAtomicAudit(records) {
   if (!Array.isArray(records)) return { valid: false, reason: "ledger_not_array" };
   let previous = "GENESIS", pendingApprovalTransition = null;
@@ -87,15 +112,17 @@ function appendAtomicAuditBatch(state, detailsList) {
 }
 function appendAtomicAudit(state, details) { return appendAtomicAuditBatch(state, [{ event: "job_transition", details }])[0]; }
 export async function createLifecycleJobAtomic(file, { jobId, digest, plan, actor = "system" } = {}) {
-  if (!safeId.test(jobId ?? "") || !/^[a-f0-9]{64}$/i.test(String(digest ?? "")) || !plan || typeof plan !== "object" || Array.isArray(plan) || typeof actor !== "string" || !actor.trim() || actor.length > 100) throw new Error("invalid_job");
-  // Never persist raw secrets from caller-supplied plan data.
+  if (!safeId.test(jobId ?? "") || !plan || typeof plan !== "object" || Array.isArray(plan) || typeof actor !== "string" || !actor.trim() || actor.length > 100) throw new Error("invalid_job");
+  // The digest is derived from the exact bounded, redacted plan that is persisted.
   const safePlan = redact(plan);
+  const computedDigest = digestPayload(safePlan);
+  if (digest !== undefined && (!HASH.test(String(digest)) || String(digest).toLowerCase() !== computedDigest)) throw new Error("plan_digest_mismatch");
   return transactState(file, state => {
     const jobs = ensureLifecycleJobs(state); ensureAuditRecords(state);
     if (jobs.some(j => j.id === jobId)) throw new Error("job_exists");
     if (jobs.length >= MAX_LIFECYCLE_JOBS) throw new Error("lifecycle_job_capacity_exceeded");
     const at = new Date().toISOString();
-    const job = { id: jobId, digest: digest.toLowerCase(), plan: safePlan, state: "pending", createdAt: at, updatedAt: at };
+    const job = { id: jobId, digest: computedDigest, plan: safePlan, state: "pending", createdAt: at, updatedAt: at };
     jobs.push(job);
     appendAtomicAudit(state, { jobId, from: null, to: "pending", actor, note: "created", digest: job.digest });
     return job;
@@ -203,6 +230,12 @@ export async function readAtomicLifecycle(file) {
     const jobIds = new Set();
     if (jobs.length !== Object.keys(integrity.states).length) integrity = { valid: false, reason: "job_audit_count_mismatch" };
     else for (const job of jobs) {
+      let planValid = false;
+      try {
+        const safeStoredPlan = redact(job?.plan);
+        planValid = JSON.stringify(safeStoredPlan) === JSON.stringify(job?.plan) && digestPayload(safeStoredPlan) === String(job?.digest ?? "").toLowerCase();
+      } catch { planValid = false; }
+      if (!planValid) { integrity = { valid: false, reason: "plan_digest_mismatch" }; break; }
       if (!job || !safeId.test(String(job.id ?? "")) || jobIds.has(job.id) || integrity.states[job.id] !== job.state || integrity.digests[job.id] !== String(job.digest ?? "").toLowerCase()) { integrity = { valid: false, reason: "job_audit_state_mismatch" }; break; }
       jobIds.add(job.id);
     }
