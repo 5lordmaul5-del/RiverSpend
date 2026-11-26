@@ -40,7 +40,7 @@ export function verifyAuditEnvelope(envelope) {
 }
 function validEndpoint(endpoint) {
  if(typeof endpoint!=="string") return false;
- try { const u=new URL(endpoint); return u.protocol==="https:"&&!!u.hostname&&!u.username&&!u.password&&!u.hash&&!u.search; }
+ try { const u=new URL(endpoint); return u.protocol==="https:"&&!!u.hostname&&!u.username&&!u.password&&!u.hash&&!u.search&&u.href===endpoint; }
  catch { return false; }
 }
 export function buildSignedDelivery(envelope,{endpoint,secret,now=Date.now()}={}) {
