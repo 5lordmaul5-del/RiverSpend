@@ -756,3 +756,11 @@ GitHub PR metadata confirms **98 changed files** at the current branch head. The
 - Report commit `c199a0c6508d9b6506758c0c5a2d149d27cbd86e`: workflow **45768696371 (#455) — SUCCESS, 165/165 tests**, plus all validation steps above.
 - Latest roadmap/report branch commit `13d579ea3a9c909df72d6e7ef7e0b50cb0db46b9`: workflow **45768708467 (#456) — SUCCESS, 165/165 tests**, plus bootstrap, backup/restore/Python, restore race, Compose, API image build/inspection and Caddy validation.
 - This CI evidence validates the isolated code and regression tests, not actual RiverCloud operation, OIDC provider integration, real runner execution, staging, backup to external storage, or production readiness.
+
+
+## RC-54 — proxy API local trust-peer default alignment (26 November 2026)
+
+- File review found the standalone RC-34 API's default trusted peer was a stale public-network IP, despite its default bind being loopback. Compose explicitly overrides the peer to `172.31.250.3` on the private API network.
+- Corrected the standalone default to `127.0.0.1` and added a regression test requiring an unauthenticated loopback request to reach identity validation (401) rather than fail peer validation (403). Compose override remains unchanged.
+- Code commit `3135fd4296d3c1c89caa344608db128e6828f03b`; test commit `c8e48db8de15b9035522761f38dca1e2a84ca02a`; documentation commit `c6beeb970fb0782c6ea916b7be1a86963e357206`.
+- CI for RC-54 is pending at this report update. No live OIDC/provider request, service start, runner, staging, production data/credentials, merge, deployment, provisioning or spending.
