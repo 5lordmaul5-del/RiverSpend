@@ -123,15 +123,15 @@ def main(archive_path, target_path):
     if not hasattr(os, "O_NOFOLLOW"):
         fail("safe archive open unavailable")
     require_dirfd_support()
-    parent_fd = open_absolute_directory(target.parent)
+    target_parent_fd = open_absolute_directory(target.parent)
     try:
         try:
-            os.stat(target_name, dir_fd=parent_fd, follow_symlinks=False)
+            os.stat(target_name, dir_fd=target_parent_fd, follow_symlinks=False)
             fail("restore target must not already exist")
         except FileNotFoundError:
             pass
     except Exception:
-        os.close(parent_fd)
+        os.close(target_parent_fd)
         raise
 
     fd = None
@@ -170,9 +170,9 @@ def main(archive_path, target_path):
                         if ancestor in files:
                             fail("file entry conflicts with child path")
 
-                os.mkdir(target_name, mode=0o700, dir_fd=parent_fd)
-                os.fsync(parent_fd)
-                root_fd = os.open(target_name, _DIR_FLAGS, dir_fd=parent_fd)
+                os.mkdir(target_name, mode=0o700, dir_fd=target_parent_fd)
+                os.fsync(target_parent_fd)
+                root_fd = os.open(target_name, _DIR_FLAGS, dir_fd=target_parent_fd)
                 root_identity = os.fstat(root_fd)
                 try:
                     try:
@@ -201,7 +201,7 @@ def main(archive_path, target_path):
                                 os.close(parent_fd)
                         os.fsync(root_fd)
                     except Exception:
-                        cleanup_owned_target_at(parent_fd, target_name, root_fd, root_identity)
+                        cleanup_owned_target_at(target_parent_fd, target_name, root_fd, root_identity)
                         raise
                 finally:
                     os.close(root_fd)
@@ -210,7 +210,7 @@ def main(archive_path, target_path):
     finally:
         if fd is not None:
             os.close(fd)
-        os.close(parent_fd)
+        os.close(target_parent_fd)
     print("Restore extracted safely to:", target)
 
 if __name__ == "__main__":
