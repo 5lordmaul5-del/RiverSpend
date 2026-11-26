@@ -8,7 +8,7 @@ on:
       - "infra/rivercloud/**"
       - ".github/workflows/river-api-contracts-tests.yml"
   pull_request:
-    branches: [main]
+    branches: [main, feat/river-api-contracts-key-core-2026-11-26]
     paths:
       - "infra/rivercloud/**"
       - ".github/workflows/river-api-contracts-tests.yml"
