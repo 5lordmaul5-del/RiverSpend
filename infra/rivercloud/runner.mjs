@@ -1,10 +1,11 @@
 // RiverCloud runner boundary prototype. It prepares and verifies a run record only; it does not execute builds.
 import { createHash } from "node:crypto";
-import { validateDeployRequest, planDigest } from "./engine.mjs";
+import { validateDeployRequest, planDigest, exactDataObject } from "./engine.mjs";
 
 const SAFETY = Object.freeze({ commandExecution: false, networkFetch: false, dockerSocket: false, production: false });
 const EXPECTED_KEYS = ["runId", "digest", "plan", "status", "safety", "createdAt", "envelopeDigest"];
 const SAFETY_KEYS = ["commandExecution", "networkFetch", "dockerSocket", "production"];
+const PLAN_KEYS=["projectId","repository","branch","commit","target","status"];
 function envelopePayload(run) {
   return { runId: run.runId, digest: run.digest, plan: run.plan, status: run.status, safety: run.safety, createdAt: run.createdAt };
 }
@@ -30,9 +31,11 @@ export function verifyPreparedRun(run) {
   if (run.status !== "prepared_not_executed") return { ok: false, reason: "run_status_invalid" };
   if (!run.safety || typeof run.safety !== "object" || Array.isArray(run.safety) || Object.keys(run.safety).sort().join("|") !== [...SAFETY_KEYS].sort().join("|") || SAFETY_KEYS.some(k => run.safety[k] !== false)) return { ok: false, reason: "unsafe_flags" };
   if (typeof run.createdAt !== "string" || !Number.isFinite(Date.parse(run.createdAt)) || new Date(run.createdAt).toISOString() !== run.createdAt) return { ok: false, reason: "timestamp_invalid" };
+  const planData=exactDataObject(run.plan,PLAN_KEYS);
+  if(!planData)return {ok:false,reason:"plan_schema_invalid"};
   let plan;
-  try { plan = validateDeployRequest(run.plan); } catch { return { ok: false, reason: "plan_invalid" }; }
-  if (JSON.stringify(plan) !== JSON.stringify(run.plan)) return { ok: false, reason: "plan_schema_invalid" };
+  try { plan = validateDeployRequest({projectId:planData.projectId,branch:planData.branch,commit:planData.commit,target:planData.target}); } catch { return { ok: false, reason: "plan_invalid" }; }
+  if(planData.repository!==plan.repository||planData.status!==plan.status||JSON.stringify(plan)!==JSON.stringify(planData))return {ok:false,reason:"plan_schema_invalid"};
   const digest = planDigest(plan);
   if (run.digest !== digest || run.runId !== digest.slice(0, 20)) return { ok: false, reason: "plan_digest_mismatch" };
   if (typeof run.envelopeDigest !== "string" || !/^[a-f0-9]{64}$/.test(run.envelopeDigest) || envelopeDigest(run) !== run.envelopeDigest) return { ok: false, reason: "envelope_digest_mismatch" };
