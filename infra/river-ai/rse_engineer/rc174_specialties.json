@@ -1,0 +1,24 @@
+{
+  "id": "RSEngineer",
+  "name": "RiverSpend Multidisciplinary Engineering & Research",
+  "status": "organizational_blueprint",
+  "specialties": [
+    "Aerospace & Space Systems",
+    "Robotics & Automation",
+    "Aviation & Flight Systems",
+    "Sound & Acoustics",
+    "Video, Imaging & Cinema",
+    "Game Engineering",
+    "Software & Systems Engineering",
+    "AI & Computational Engineering",
+    "Hardware & Electronics",
+    "Computer & Infrastructure Engineering",
+    "Telecommunications & Networks",
+    "Materials & Industrial Design",
+    "Energy & Environmental Engineering",
+    "Cybersecurity & Safety Engineering",
+    "Testing, Quality & Certification",
+    "Research & Experimental Lab"
+  ],
+  "recruitment_status": "proposed_not_hired"
+}
