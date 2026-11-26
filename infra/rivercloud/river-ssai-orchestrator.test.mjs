@@ -120,3 +120,16 @@ test("schema validation never evaluates input accessors before JSON preflight",a
   assert.equal(getterCalls,0);
   assert.equal(o.getIdempotencyCount(),0);
 });
+
+
+test("idempotency composite cannot collide across agent IDs and keys containing separators",async()=>{
+  const firstDefinition={...definition,id:"assistant.test:1.0.0"};
+  const secondDefinition={...definition,id:"assistant.test"};
+  const o=createRiverSSAIOrchestrator({definitions:[firstDefinition,secondDefinition]});
+  const first=await o.planInvoke({...invoke,agentId:firstDefinition.id,idempotencyKey:"idempotency-alpha"});
+  const second=await o.planInvoke({...invoke,agentId:secondDefinition.id,idempotencyKey:"1.0.0:idempotency-alpha"});
+  assert.equal(first.status,202);assert.equal(first.duplicate,false);
+  assert.equal(second.status,202);assert.equal(second.duplicate,false);
+  assert.equal(second.plan.agentId,secondDefinition.id);
+  assert.equal(o.getIdempotencyCount(),2);
+});
