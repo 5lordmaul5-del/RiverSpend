@@ -6,12 +6,14 @@ import path from "node:path";
 import { spawn } from "node:child_process";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { issueApproval } from "./approval-bound.mjs";
-import { createLifecycleJobAtomic, readAtomicLifecycle } from "./rc17-atomic-lifecycle.mjs";
+import { createLifecycleJobAtomic, digestLifecyclePlan, readAtomicLifecycle } from "./rc17-atomic-lifecycle.mjs";
 import { readState } from "./rc11-state.mjs";
 
 const rootDir = path.dirname(fileURLToPath(import.meta.url));
 const approvalModuleUrl = pathToFileURL(path.join(rootDir, "approval-bound.mjs")).href;
-const binding = { jobId: "process-race", projectId: "riverspend", profile: "node-tests", target: "staging", commit: "a".repeat(40), digest: "b".repeat(64) };
+const plan = { jobId: "process-race", projectId: "riverspend", profile: "node-tests", target: "staging", commit: "a".repeat(40) };
+const digest = digestLifecyclePlan(plan);
+const binding = { ...plan, digest };
 const secret = "s".repeat(40);
 
 function child(code, args = []) {
@@ -28,7 +30,7 @@ function child(code, args = []) {
 test("separate processes race one approval and only one consumes it", async () => {
   const root = await mkdtemp(path.join(os.tmpdir(), "rc26-approval-process-"));
   try {
-    await createLifecycleJobAtomic(path.join(root, "lifecycle.json"), { jobId: binding.jobId, digest: binding.digest, plan: binding });
+    await createLifecycleJobAtomic(path.join(root, "lifecycle.json"), { jobId: plan.jobId, digest, plan });
     const issued = await issueApproval({ storeDir: root, binding, secret, approver: "unverified-test-label" });
     const code = `import { consumeApproval } from ${JSON.stringify(approvalModuleUrl)}; try { await consumeApproval({storeDir:process.argv[1],binding:JSON.parse(process.argv[2]),secret:process.argv[3],token:process.argv[4],consumerIdentity:"worker-"+process.pid}); } catch(e) { if(e.message==="approval_missing_or_used") process.exit(2); throw e; }`;
     const args = [root, JSON.stringify(binding), secret, issued.token];
