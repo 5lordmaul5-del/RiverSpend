@@ -108,4 +108,26 @@ def test_restore_parent_path_replacement_uses_open_parent_descriptor():
 if __name__ == "__main__":
     test_restore_uses_open_directory_descriptors_during_path_replacement()
     test_restore_parent_path_replacement_uses_open_parent_descriptor()
-    print("2/2 restore directory replacement race tests passed")
+    test_restore_rejects_symlinked_parent_path()
+    print("3/3 restore directory replacement race tests passed")
+
+
+def test_restore_rejects_symlinked_parent_path():
+    with tempfile.TemporaryDirectory(prefix="rc61-parent-symlink-") as temp:
+        root = Path(temp)
+        real_parent = root / "real-parent"
+        alias_parent = root / "alias-parent"
+        real_parent.mkdir()
+        outside = root / "outside"
+        outside.mkdir()
+        archive = root / "archive.tar.gz"
+        make_archive(archive)
+        os.symlink(real_parent, alias_parent)
+        target = alias_parent / "restored"
+        try:
+            restore_safe.main(str(archive), str(target))
+        except OSError:
+            pass
+        else:
+            raise AssertionError("restore accepted a symlinked target-parent component")
+        assert not (real_parent / "restored").exists()
