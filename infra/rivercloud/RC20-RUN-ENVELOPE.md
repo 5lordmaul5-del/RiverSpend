@@ -15,3 +15,10 @@ The verifier rejects:
 Reproducible check: `node --test infra/rivercloud/runner.test.mjs`.
 
 Execution remains unconditionally disabled until an isolated runtime, real identity/RBAC, authenticated approver binding, immutable artifact/source binding, and audit integration are implemented and reviewed.
+
+## RC-144 — data-only envelope verification
+
+- Audit identified that the prepared-run verifier read top-level envelope and nested safety values before checking property descriptors. Getter properties could therefore execute during verification.
+- The verifier now snapshots the entire envelope and safety object using the existing exact data-object validator before reading any values, then calculates the envelope checksum from the normalized snapshot.
+- Regression test covers getter accessors on the top-level status and safety flag and verifies the getter count stays zero.
+- GitHub Actions is pending for the correction commits at the time of this note. No execution capability was enabled.
