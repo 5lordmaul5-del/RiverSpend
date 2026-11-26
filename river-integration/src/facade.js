@@ -1,11 +1,11 @@
 // Minimal mockable RiverSSAI ↔ River API gateway facade.
 // No HTTP listener, durable storage, or real identity provider is included.
-const MAX_TASK=8000, MAX_MODEL=120, MAX_OUTPUT=16000;
+const MAX_TASK=8000, MAX_MODEL=120, MAX_OUTPUT=16000, DEFAULT_TIMEOUT_MS=10000;
 const ALLOWED_FIELDS=new Set(["requestId","task","model","maxOutputTokens"]);
 const genericDenied=()=>({status:403,error:"request-denied"});
 function validId(v){return typeof v==="string"&&v.length>=1&&v.length<=128&&!/[\u0000-\u001f\u007f]/.test(v);}
-export function createIntegrationFacade({verifyIdentity,keyManager,provider,audit=()=>{},maxOutputTokens=2048}={}){
- if(typeof verifyIdentity!=="function"||!keyManager||typeof keyManager.validate!=="function"||!provider||typeof provider.generate!=="function"||typeof audit!=="function"||!Number.isInteger(maxOutputTokens)||maxOutputTokens<1)throw new Error("integration-dependencies-required");
+export function createIntegrationFacade({verifyIdentity,keyManager,provider,audit=()=>{},maxOutputTokens=2048,timeoutMs=DEFAULT_TIMEOUT_MS}={}){
+ if(typeof verifyIdentity!=="function"||!keyManager||typeof keyManager.validate!=="function"||!provider||typeof provider.generate!=="function"||typeof audit!=="function"||!Number.isInteger(maxOutputTokens)||maxOutputTokens<1||!Number.isInteger(timeoutMs)||timeoutMs<1||timeoutMs>60000)throw new Error("integration-dependencies-required");
  return Object.freeze({async invoke({authorization,body}={}){
   let identity;
   try{identity=await verifyIdentity(authorization);}catch{return genericDenied();}
@@ -20,7 +20,7 @@ export function createIntegrationFacade({verifyIdentity,keyManager,provider,audi
   if(!check?.allowed)return genericDenied();
   let outcome="error",durationStart=Date.now();
   try{
-   const result=await provider.generate(task,{model:model.trim(),numPredict:limit});
+   const controller=new AbortController();\n   let timer;\n   const timeout=new Promise((_,reject)=>{timer=setTimeout(()=>{controller.abort();reject(new Error("provider-timeout"));},timeoutMs);});\n   let result;\n   try{result=await Promise.race([provider.generate(task,{model:model.trim(),numPredict:limit,signal:controller.signal}),timeout]);}finally{clearTimeout(timer);}
    const output=result?.response??result?.output;
    if(typeof output!=="string"||output.length>MAX_OUTPUT)return{status:502,error:"provider-response-invalid"};
    outcome="success";
