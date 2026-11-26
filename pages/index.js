@@ -1157,6 +1157,10 @@ export default function Home() {
                 <img src="/icons/music.svg" alt="RSMusic" className="h-24 w-24 rounded-2xl object-contain shadow-md ring-2 ring-cyan-200 sm:h-28 sm:w-28" loading="lazy" />
                 <span className="w-full break-words text-xs font-extrabold leading-tight text-slate-900">RSMusic</span>
               </a>
+              <a href="/games" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RiverSpend Games">
+                <img src="/icons/riverspace-galaxy-games.svg" alt="RiverSpend Games" className="h-20 w-20 rounded-2xl object-contain shadow-md ring-2 ring-amber-300 sm:h-24 sm:w-24" loading="lazy" />
+                <span className="w-full break-words text-xs font-extrabold leading-tight text-slate-900">RiverSpend Games</span>
+              </a>
 
             </div>
             <a href="/app" className="mt-2 block text-center text-[10px] font-semibold text-teal-800 underline underline-offset-2">Istruzioni per installarle da Google Chrome · App Store non ancora disponibile</a>
