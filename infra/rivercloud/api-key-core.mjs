@@ -22,6 +22,23 @@ const RECORD_KEYS = ["id","keyHash","ownerId","scopes","status","createdAt","exp
 function validOwner(ownerId) {
   return typeof ownerId === "string" && /^[A-Za-z0-9._:-]{1,128}$/.test(ownerId);
 }
+function dataOptions(input,allowed,defaults){
+  try{
+    if(input===undefined)return {...defaults};
+    if(!input||typeof input!=="object"||Array.isArray(input)||
+       (Object.getPrototypeOf(input)!==Object.prototype&&Object.getPrototypeOf(input)!==null)||
+       Object.getOwnPropertySymbols(input).length)return null;
+    const keys=Reflect.ownKeys(input);
+    if(keys.some(k=>typeof k!=="string"||!allowed.includes(k)))return null;
+    const out={...defaults};
+    for(const key of keys){
+      const descriptor=Object.getOwnPropertyDescriptor(input,key);
+      if(!descriptor||!descriptor.enumerable||!Object.hasOwn(descriptor,"value"))return null;
+      out[key]=descriptor.value;
+    }
+    return out;
+  }catch{return null;}
+}
 function scopeValues(scopes) {
   try {
     if (!Array.isArray(scopes) || scopes.length < 1 || scopes.length > API_KEY_SCOPES.length ||
@@ -74,7 +91,10 @@ function recordSnapshot(record) {
 }
 function validRecord(record) { return recordSnapshot(record)!==null; }
 
-export function createApiKey({ ownerId, scopes, now = Date.now(), ttlMs = 30 * 24 * 60 * 60 * 1000 } = {}) {
+export function createApiKey(options) {
+  const input=dataOptions(options,["ownerId","scopes","now","ttlMs"],{now:Date.now(),ttlMs:30*24*60*60*1000});
+  if(!input)throw new Error("invalid_api_key_request");
+  const {ownerId,scopes,now,ttlMs}=input;
   const scopeList=scopeValues(scopes);
   if (!validOwner(ownerId) || !scopeList || !Number.isSafeInteger(now) ||
       !Number.isSafeInteger(ttlMs) || ttlMs < MIN_TTL || ttlMs > MAX_TTL || now < 0 || !Number.isSafeInteger(now + ttlMs)) {
@@ -91,7 +111,10 @@ export function createApiKey({ ownerId, scopes, now = Date.now(), ttlMs = 30 * 2
 
 export function validateApiKeyRecord(record) { return validRecord(record); }
 
-export function verifyApiKey(key, record, { now = Date.now(), requiredScope } = {}) {
+export function verifyApiKey(key, record, options) {
+  const input=dataOptions(options,["now","requiredScope"],{now:Date.now()});
+  if(!input)return {valid:false,reason:"invalid_options"};
+  const {now,requiredScope}=input;
   if (!Number.isSafeInteger(now) || now < 0) return { valid: false, reason: "invalid_time" };
   const safeRecord=recordSnapshot(record);
   if (!safeRecord) return { valid: false, reason: "invalid_record" };
