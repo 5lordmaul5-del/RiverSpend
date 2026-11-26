@@ -19,7 +19,7 @@ This branch does not connect a gateway, durable key database, issuer login, key 
 Run from the repository root:
 
 ```sh
-node --test infra/rivercloud/api-key-core.test.mjs infra/rivercloud/agent-registry-core.test.mjs infra/rivercloud/shared-contracts.test.mjs
+node --test infra/rivercloud/api-key-core.test.mjs infra/rivercloud/agent-registry-core.test.mjs infra/rivercloud/shared-contracts.test.mjs infra/rivercloud/gateway-mock.test.mjs
 ```
 
 The test files use Node's built-in test runner and no external packages.
