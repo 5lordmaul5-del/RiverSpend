@@ -54,3 +54,13 @@ test("mock gateway body and idempotency-store capacity are bounded",()=>{
   assert.equal(second.status,503);
   assert.equal(large.status,413);
 });
+
+ 
+test("mock gateway rejects non-JSON nested values",()=>{
+  const bad1=gateway.handle({key:issued.key,record:issued.record,method:"POST",path:"/api/v1/signals/send",requestId:"req-0000000000000003",idempotencyKey:"idem-0000000000000003",body:{message:undefined},now});
+  const bad2=gateway.handle({key:issued.key,record:issued.record,method:"POST",path:"/api/v1/signals/send",requestId:"req-0000000000000004",idempotencyKey:"idem-0000000000000004",body:{nested:new Date(now)},now});
+  const bad3=gateway.handle({key:issued.key,record:issued.record,method:"POST",path:"/api/v1/signals/send",requestId:"req-0000000000000005",idempotencyKey:"idem-0000000000000005",body:{count:NaN},now});
+  assert.equal(bad1.status,400);
+  assert.equal(bad2.status,400);
+  assert.equal(bad3.status,400);
+});
