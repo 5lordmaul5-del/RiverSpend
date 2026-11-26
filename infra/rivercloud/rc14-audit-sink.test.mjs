@@ -63,3 +63,6 @@ test("RC-75 replay store is not called for invalid signatures",async()=>{const d
 
 
 test("RC-76 rejects replay callback return values other than strict true",async()=>{const d=buildSignedDelivery(envelope(),{endpoint,secret,now});for(const value of [undefined,null,1,"true",{}]){assert.equal((await verifySignedDelivery(d,{secret,now,consumeReplay:async()=>value})).reason,"replay_rejected");}});
+
+
+test("RC-77 accepts timestamp exactly at configured skew boundary",async()=>{const d=buildSignedDelivery(envelope(),{endpoint,secret,now});assert.equal((await verifySignedDelivery(d,{secret,now:now+1000,maxSkewMs:1000,consumeReplay:acceptReplay})).valid,true);assert.equal((await verifySignedDelivery(d,{secret,now:now+1001,maxSkewMs:1000,consumeReplay:acceptReplay})).reason,"timestamp_out_of_window");});
