@@ -1,4 +1,4 @@
-import test from "node:test"; import assert from "node:assert/strict";
+import test from "node:test"; import assert from "node:assert/strict"; import {createHash} from "node:crypto";
 import {createAuditEnvelope,buildSignedDelivery,verifyAuditEnvelope,verifySignedDelivery} from "./rc14-audit-sink.mjs";
 const secret="s".repeat(40),endpoint="https://audit.example/receive",now=1700000000000;
 const envelope=()=>createAuditEnvelope({type:"auth_denied",data:{password:"x",token:"y",reason:"bad"}},{sinkId:"sink-1",actor:"user-1",occurredAt:new Date(now).toISOString()});
@@ -18,3 +18,5 @@ test("rejects invalid verifier configuration",async()=>{const d=buildSignedDeliv
 
 
 test("redactor preserves special keys safely without prototype mutation",()=>{const input=JSON.parse('{"__proto__":{"token":"hidden"},"constructor":{"secret":"hidden"},"prototype":{"apiKey":"hidden"},"ordinary":"ok"}');const e=createAuditEnvelope({type:"system_event",data:input},{sinkId:"sink-1",actor:"user-1",occurredAt:new Date(now).toISOString()});assert.equal(Object.getPrototypeOf(e.data),null);assert.equal(Object.hasOwn(e.data,"__proto__"),true);assert.deepEqual(e.data.__proto__,Object.assign(Object.create(null),{token:"[redacted]"}));assert.equal(e.data.constructor.secret,"[redacted]");assert.equal(e.data.prototype.apiKey,"[redacted]");assert.equal(e.data.ordinary,"ok");assert.equal(verifyAuditEnvelope(e).valid,true);assert.equal(Object.prototype.token,undefined);});
+
+test("rejects externally supplied envelope data that bypasses redaction even with a recomputed hash",()=>{const e=envelope();e.data.password="raw-secret";const {hash,...payload}=e;e.hash=createHash("sha256").update(JSON.stringify(payload)).digest("hex");assert.equal(verifyAuditEnvelope(e).reason,"data_not_redacted");});
