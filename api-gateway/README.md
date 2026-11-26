@@ -35,3 +35,9 @@ This isolated branch adds an in-memory API key-management foundation. It is not 
 ## Validation
 
 CI uses Node 22 and `node --test`; no dependencies or secrets are required. Fresh workflow evidence is pending.
+
+## CI closeout — 26 November 2026
+
+- GitHub Actions **45802386498 (#7) — SUCCESS, 10/10 tests**. Tests cover generation/safe metadata, scopes, tenant isolation, quota/rate limits, rotation, revocation, expiry, bounded audit and store limits.
+- Audit event details are returned as deep copies so readers cannot mutate the stored event detail arrays through a read result.
+- This verifies the in-memory prototype only; no HTTP gateway, persistence, authenticated tenant identity, external audit sink or production runtime is connected.
