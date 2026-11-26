@@ -33,6 +33,7 @@ export function createRiverSSAIOrchestrator({definitions=[],maxIdempotencyEntrie
   // Snapshot caller-owned registry objects so mutations after construction cannot alter policy.
   const registry=new Map(definitions.map(d=>{const copy=deepFreeze(structuredClone(d));return [copy.id,copy];}));
   const idempotency=new Map();
+  const pending=new Map();
   return Object.freeze({
     async planInvoke({key,record,agentId,version,input,requestId,idempotencyKey,approvalToken,now=Date.now()}={}){
       if(typeof requestId!=="string"||!REQUEST_ID.test(requestId))return {status:400,error:"request_id_required"};
