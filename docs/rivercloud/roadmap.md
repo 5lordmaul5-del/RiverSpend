@@ -40,3 +40,8 @@ Run RiverSpend in staging on RiverCloud, validate reliability, backups, secrets,
 - RC-129: backup destination preflight now requires current-user ownership, owner rwx, and no group/world access; newly created destinations are private under umask 077. Focused reconstructed tests 2/2 and shell syntax passed, but RC-129 CI remains unverified. See `infra/rivercloud/RC129-BACKUP-DIRECTORY-PRIVACY.md`.
 
 - RC-130: backup now rejects source data directories with unsafe ownership or group/world permissions. The focused reconstructed RC-129/130 tests passed 3/3; CI remains unverified. See `infra/rivercloud/RC130-BACKUP-SOURCE-PRIVACY.md`.
+
+
+
+- RC-130 CI closeout: GitHub Actions run **45795579682 (#822) — SUCCESS, 252/252 Node tests**, 3/3 restore-directory replacement race tests, shell/Python syntax, Compose, API image build/inspection and Caddy validation. This includes the corrected RC-130 assertion; the earlier reconstructed-only test claim is superseded by this CI evidence.
+- RC-131: the isolated CI workflow now installs pinned Trivy **v0.76.2**, generates a CycloneDX SBOM for the RiverCloud API image, records counts and SHA-256 in the job summary, and gates fixed HIGH/CRITICAL OS/library findings. A workflow regression test and technical note were added. Run **45799174492 (#829)** was queued at the time of this update; no scanner pass or scan findings are claimed yet. SBOM is ephemeral and not retained as an artifact. Scope is only the API image, not all services or the repository.
