@@ -1,0 +1,1 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {reviewIsolationBoundaries} from './isolation-boundary-review.mjs';test('flags shared boundary descriptions',()=>{const r=reviewIsolationBoundaries([{id:'a',type:'service',boundary:'x',shared:true,reviewNote:''}]);assert.equal(r.reviewRequired,true);assert.equal(r.actualIsolationVerified,false);});
