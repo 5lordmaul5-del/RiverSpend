@@ -51,3 +51,6 @@ test("RC-71 rejects exotic header prototypes",async()=>{const d=buildSignedDeliv
 
 
 test("RC-72 rejects missing, extra, and inherited header keys",async()=>{const d=buildSignedDelivery(envelope(),{endpoint,secret,now});const missing={...d,headers:{"content-type":"application/json","x-rivercloud-audit-timestamp":d.headers["x-rivercloud-audit-timestamp"],"x-rivercloud-audit-nonce":d.headers["x-rivercloud-audit-nonce"]}};assert.equal((await verifySignedDelivery(missing,{secret,now,consumeReplay:acceptReplay})).reason,"invalid_headers");const extra={...d,headers:{...d.headers,extra:"x"}};assert.equal((await verifySignedDelivery(extra,{secret,now,consumeReplay:acceptReplay})).reason,"invalid_headers");const inherited={...d,headers:Object.assign(Object.create(null),d.headers)};assert.equal((await verifySignedDelivery(inherited,{secret,now,consumeReplay:acceptReplay})).valid,true);});
+
+
+test("RC-73 rejects negative verifier clock",async()=>{const d=buildSignedDelivery(envelope(),{endpoint,secret,now});assert.equal((await verifySignedDelivery(d,{secret,now:-1,consumeReplay:acceptReplay})).reason,"invalid_verifier_config");});
