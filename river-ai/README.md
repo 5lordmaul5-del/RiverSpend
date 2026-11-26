@@ -18,7 +18,7 @@ No provider, secrets, database, public network integration or deployment is enab
 Next: provider adapters, memory consent/UI, sandboxed tools with approval, evaluation/security testing. Never expose publicly without authentication, TLS, rate limits and review.
 
 ## Provider adapter groundwork
-A provider-neutral interface and mock adapter exist for tests only. They do not connect to or simulate a live model. Real providers are a future milestone requiring explicit configuration, secrets handling, and tests.
+A provider-neutral mock adapter and a local-only Ollama adapter contract are available. The Ollama adapter accepts loopback URLs only, bounds prompt/output and generation settings, disables streaming, and uses a timeout. It is tested with an injected mock fetch; it is not integrated into the HTTP server and no model is loaded or connected. External providers remain optional future adapters.
 
 ## Task Engine (planning only)
 A deterministic task planner creates a reviewable four-step plan, flags keywords associated with sensitive actions, and always sets execution disabled and approval required. It does not run commands, use tools, contact external services, deploy, or modify project state. This is planning groundwork, not agent autonomy.
@@ -136,3 +136,12 @@ Queue jobs now start unapproved. A job must be explicitly approved before `claim
 
 - GitHub Actions run **45801241769 (#87) — SUCCESS, 146/146 tests** verified the 100,000 virtual specialist catalog, scheduler, task routing and read-only API. The two earlier #82 failures were test assertions that hard-coded the domain count; they were corrected to derive it from the catalog.
 - A follow-up bounds domain-filtered pagination offsets; fresh CI for this small correction is pending.
+
+## Local Ollama adapter groundwork — 26 November 2026
+
+- `createOllamaAdapter` only accepts loopback endpoints (`127.0.0.1`, `localhost`, `::1`), requires an explicit model name, uses a bounded non-streaming request, and aborts on timeout.
+- The adapter rejects oversized prompts/responses and invalid generation parameters. It never downloads models or invokes tools.
+- Tests use a mocked fetch implementation; no live Ollama runtime or model was contacted.
+- GitHub Actions **45801702703 (#97) — SUCCESS, 152/152 tests**.
+
+This adapter is a local inference interface foundation, not a connected AI service. The main HTTP API remains read-only and does not expose an inference endpoint.
