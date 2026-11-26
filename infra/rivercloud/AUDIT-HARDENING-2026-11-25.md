@@ -933,3 +933,20 @@ GitHub PR metadata confirms **98 changed files** at the current branch head. The
 
 
 - RC-130 regression review correction: the negative test now checks that no backup files are published after source privacy rejection, rather than expecting the existing destination directory to be chmodded. The corrected test has no separate CI evidence.
+
+
+
+### RC-130 CI closeout (26 November 2026)
+
+- GitHub Actions run **45795579682 (#822) — SUCCESS, 252/252 Node tests**. The corrected regression assertion is included in the tested branch head.
+- **3/3 restore-directory replacement race tests** passed, alongside bootstrap/backup/restore/Python syntax, Compose validation, API image build/inspection and Caddy validation.
+- This supersedes the earlier reconstructed-only test evidence for the corrected RC-130 assertion; it does not establish a real backup or restore operation against live data.
+
+## RC-131 — API image SBOM and vulnerability gate (26 November 2026)
+
+- CI now installs Trivy v0.76.2 via a pinned setup action SHA, generates a CycloneDX SBOM for the built API image, validates the SBOM JSON and records component/vulnerability-entry counts and SHA-256 in the GitHub job summary.
+- A second scan gates fixed HIGH/CRITICAL OS and library findings (`--ignore-unfixed`); the scan is limited to the RiverCloud API image.
+- Added `infra/rivercloud/security-scan-workflow.test.mjs` to assert the scanner pin, SBOM generation and threshold gate; added `infra/rivercloud/RC131-IMAGE-SBOM-CVE-SCAN.md`.
+- SBOM is generated in the ephemeral runner and not retained/uploaded as an artifact. No extra artifact storage or permissions are introduced.
+- GitHub Actions run **45799174492 (#829)** was queued when this entry was drafted. Fresh CI and scanner results are pending; no pass or vulnerability-free claim is made.
+- Caddy, oauth2-proxy, demo upstream, repository-wide secrets/IaC and runtime scans remain out of scope for this increment.
