@@ -15,6 +15,7 @@ export const MOCK_GATEWAY_ROUTES = Object.freeze([
 ]);
 const ROUTE_MAP = new Map(MOCK_GATEWAY_ROUTES.map(r=>[r.method+" "+r.path,r]));
 const MAX_BODY_BYTES = 8192;
+function responseSnapshot(value){return structuredClone(value);}
 const REQUEST_ID = /^[A-Za-z0-9._:-]{1,128}$/;
 const IDEMPOTENCY_KEY = /^[A-Za-z0-9._:-]{16,128}$/;
 
@@ -61,11 +62,11 @@ export function createMockGateway({maxIdempotencyEntries=10000}={}) {
       const digest=createHash("sha256").update(serialized).digest("hex");
       const id=auth.keyId+":"+route.path+":"+idempotencyKey;
       const existing=idempotency.get(id);
-      if (existing) return existing.digest===digest ? {status:202,duplicate:true,response:existing.response} : {status:409,error:"idempotency_conflict"};
+      if (existing) return existing.digest===digest ? {status:202,duplicate:true,response:responseSnapshot(existing.response)} : {status:409,error:"idempotency_conflict"};
       if (idempotency.size>=maxIdempotencyEntries) return {status:503,error:"idempotency_capacity_exceeded"};
       const response={status:"accepted_mock",service:route.service,requestId,payloadDigest:digest,idempotencyKey};
-      idempotency.set(id,{digest,response});
-      return {status:202,duplicate:false,response};
+      idempotency.set(id,{digest,response:responseSnapshot(response)});
+      return {status:202,duplicate:false,response:responseSnapshot(response)};
     },
     getIdempotencyCount(){return idempotency.size;}
   });
