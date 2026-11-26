@@ -716,3 +716,11 @@ GitHub PR metadata confirms **98 changed files** at the current branch head. The
 - Code/test commit `5d4132937689260827e736f7cff6346c57a048fe`: GitHub Actions **45766205553 (#412) — SUCCESS, 155/155 Node tests**, 0 failures; bootstrap shell, backup/restore/Python syntax, restore directory-replacement race, Compose, API image build/inspection and Caddy validation passed.
 - Report/document closeout commit `8b11279c780eb6ea8a1ab3f3600ae0fcc599f14c`: GitHub Actions **45766244589 (#417) — SUCCESS, 155/155 Node tests**, plus the same validation suite.
 - No real backup or restore was performed. No services or runner were started, no merge, deployment, production data/credentials, provisioning or spending.
+
+
+## RC-48 — canonical backup path containment (26 November 2026)
+
+- Follow-up audit found that RC-19 used logical `pwd` paths for source and backup directories. A symlink alias could make a backup destination physically inside the data directory appear outside during the containment check.
+- The backup script now resolves both directories with `pwd -P` before containment comparison. A regression test supplies a source-directory symlink alias and a backup destination inside the physical source, and requires refusal.
+- **CI pending for RC-48.** No local test pass claimed.
+- No backup/restore operation, services, runner, staging, deployment, merge, production data/credentials, provisioning or spending.
