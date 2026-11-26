@@ -4,7 +4,7 @@ import { transactState, readState } from "./rc11-state.mjs";
 import { createHash } from "node:crypto";
 const STATES = ["pending", "approved", "rejected", "prepared", "running", "completed", "failed", "cancelled"];
 const transitions = {
-  pending: new Set(["approved", "rejected", "cancelled"]),
+  pending: new Set(["rejected", "cancelled"]),
   approved: new Set(["prepared", "cancelled"]),
   rejected: new Set(), prepared: new Set(["running", "cancelled", "failed"]),
   running: new Set(["completed", "failed"]), completed: new Set(),
@@ -40,7 +40,8 @@ export function verifyAtomicAudit(records) {
         if (d.to !== "pending" || states.has(d.jobId) || !HASH.test(String(d.digest ?? ""))) return { valid: false, reason: "creation_record_invalid" };
         states.set(d.jobId, "pending"); digests.set(d.jobId, String(d.digest).toLowerCase());
       } else {
-        if (states.get(d.jobId) !== d.from || !transitions[d.from]?.has(d.to)) return { valid: false, reason: "transition_sequence_invalid" };
+        const approvalTransition = pendingApprovalTransition && pendingApprovalTransition.jobId === d.jobId && pendingApprovalTransition.consumer === d.actor && d.from === "pending" && d.to === "approved" && d.note === "approval_consumed";
+        if (states.get(d.jobId) !== d.from || (!transitions[d.from]?.has(d.to) && !approvalTransition)) return { valid: false, reason: "transition_sequence_invalid" };
         if (d.digest !== undefined && String(d.digest).toLowerCase() !== digests.get(d.jobId)) return { valid: false, reason: "transition_digest_mismatch" };
         states.set(d.jobId, d.to);
       }
@@ -98,6 +99,7 @@ export async function transitionLifecycleJobAtomic(file, { jobId, to, actor = "s
     if (!Array.isArray(state.lifecycleJobs)) state.lifecycleJobs = [];
     const job = state.lifecycleJobs.find(j => j.id === jobId);
     if (!job) throw new Error("job_not_found");
+    if (to === "approved") throw new Error("approval_required");
     if (!STATES.includes(job.state) || !transitions[job.state]?.has(to)) throw new Error("transition_not_allowed");
     const from = job.state, at = new Date().toISOString();
     job.state = to; job.updatedAt = at;
