@@ -23,3 +23,10 @@ node --test infra/rivercloud/api-key-core.test.mjs infra/rivercloud/agent-regist
 ```
 
 The test files use Node's built-in test runner and no external packages.
+
+
+## Mock gateway route harness
+
+The contract manifest and mock route table are checked for drift. Mock routes cover RiverCloud plan/jobs, RiverSSAI registry/invoke, Signals read/send and Shop catalog/mock checkout. API-key scopes are enforced in the harness; POST requests require request IDs and idempotency keys, bodies are bounded, duplicate payloads return the original mock response, and conflicting payloads are rejected.
+
+The harness is an in-memory test adapter only. It is not a production gateway, durable idempotency service, messaging service, catalogue backend or payment processor.
