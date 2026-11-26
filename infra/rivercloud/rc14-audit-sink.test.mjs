@@ -27,3 +27,6 @@ test("audit envelope verifier rejects inherited and unexpected fields",()=>{cons
 
 
 test("RC-62 rejects unexpected signed-delivery header extensions",async()=>{const d=buildSignedDelivery(envelope(),{endpoint,secret,now});const extra={...d.headers,"x-extra":"ignored"};assert.equal((await verifySignedDelivery({...d,headers:extra},{secret,now,consumeReplay:acceptReplay})).reason,"unexpected_headers");});
+
+
+test("RC-63 rejects noncanonical JSON body representation",async()=>{const d=buildSignedDelivery(envelope(),{endpoint,secret,now});const parsed=JSON.parse(d.body);const altered=JSON.stringify(parsed,null,2);const signed={...d,body:altered,headers:{...d.headers}};assert.equal((await verifySignedDelivery(signed,{secret,now,consumeReplay:acceptReplay})).reason,"noncanonical_body");});
