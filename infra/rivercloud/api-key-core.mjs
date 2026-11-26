@@ -42,11 +42,11 @@ function scopeValues(scopes) {
   } catch { return null; }
 }
 function digestKey(key) {
-  return createHash("sha256").update("river-api-key-v1\\0").update(key).digest("hex");
+  return createHash("sha256").update("river-api-key-v1\0").update(key).digest("hex");
 }
 function parseKey(key) {
   if (typeof key !== "string") return null;
-  const m = /^rs_test_([a-f0-9]{32})\\.([A-Za-z0-9_-]{43})$/.exec(key);
+  const m = /^rs_test_([a-f0-9]{32})\.([A-Za-z0-9_-]{43})$/.exec(key);
   return m ? { id: m[1] } : null;
 }
 function recordSnapshot(record) {
