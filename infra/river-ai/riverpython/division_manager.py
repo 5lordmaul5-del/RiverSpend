@@ -1,7 +1,7 @@
 """RC-169 division manager: deterministic task routing registry prototype."""
 from __future__ import annotations
 import uuid,time
-from river_divisions import DIVISIONS
+from rc169_divisions_catalog import DIVISIONS
 class DivisionManager:
  def __init__(self):self.tasks={}
  def assign(self,division,description,priority="normal",requester="system"):
