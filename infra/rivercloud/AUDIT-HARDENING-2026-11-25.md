@@ -931,3 +931,5 @@ GitHub PR metadata confirms **98 changed files** at the current branch head. The
 - GitHub Actions for RC-130 remains unverified; no CI pass is claimed. DNS prevented local checkout.
 - No real backup/restore, service, runner, staging, merge, deployment, production data/credentials, provisioning or spending.
 
+
+- RC-130 regression review correction: the negative test now checks that no backup files are published after source privacy rejection, rather than expecting the existing destination directory to be chmodded. The corrected test has no separate CI evidence.
