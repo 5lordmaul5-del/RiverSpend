@@ -1,13 +1,14 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { transitionAllowed, createLifecycleJob, transitionJob, readLifecycle } from "./lifecycle.mjs";
+import { digestLifecyclePlan } from "./rc17-atomic-lifecycle.mjs";
 import { mkdtemp, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-const digest="a".repeat(64);
+const digest=digestLifecyclePlan({});
 const sandbox=async(fn)=>{const root=await mkdtemp(path.join(os.tmpdir(),"rc9-"));try{await fn(path.join(root,"store"));}finally{await rm(root,{recursive:true,force:true});}};
 test("bounded transition rules",()=>{assert.equal(transitionAllowed("pending","approved"),false);assert.equal(transitionAllowed("pending","running"),false);assert.equal(transitionAllowed("completed","running"),false);assert.equal(transitionAllowed("failed","prepared"),true);});
-test("lifecycle facade persists state and audit atomically through RC17",async()=>sandbox(async storeDir=>{await createLifecycleJob({storeDir,jobId:"demo1",digest,plan:{target:"staging"}});await transitionJob({storeDir,jobId:"demo1",to:"rejected",actor:"reviewer"});const s=await readLifecycle(storeDir);assert.equal(s.integrity.valid,true);assert.equal(s.jobs.length,1);assert.equal(s.auditRecords.length,2);assert.equal(s.jobs[0].state,"rejected");assert.equal(transitionAllowed("rejected","prepared"),false);}));
+test("lifecycle facade persists state and audit atomically through RC17",async()=>sandbox(async storeDir=>{await createLifecycleJob({storeDir,jobId:"demo1",digest:digestLifecyclePlan({target:"staging"}),plan:{target:"staging"}});await transitionJob({storeDir,jobId:"demo1",to:"rejected",actor:"reviewer"});const s=await readLifecycle(storeDir);assert.equal(s.integrity.valid,true);assert.equal(s.jobs.length,1);assert.equal(s.auditRecords.length,2);assert.equal(s.jobs[0].state,"rejected");assert.equal(transitionAllowed("rejected","prepared"),false);}));
 test("rejects illegal state jump without mutating either ledger",async()=>sandbox(async storeDir=>{await createLifecycleJob({storeDir,jobId:"demo2",digest,plan:{}});await assert.rejects(()=>transitionJob({storeDir,jobId:"demo2",to:"completed"}),/transition_not_allowed/);const s=await readLifecycle(storeDir);assert.equal(s.jobs[0].state,"pending");assert.equal(s.auditRecords.length,1);assert.equal(s.integrity.valid,true);}));
 test("concurrent pending-to-rejected transitions only commit once",async()=>sandbox(async storeDir=>{await createLifecycleJob({storeDir,jobId:"demo3",digest,plan:{}});const results=await Promise.allSettled(Array.from({length:10},()=>transitionJob({storeDir,jobId:"demo3",to:"rejected"})));assert.equal(results.filter(x=>x.status==="fulfilled").length,1);const s=await readLifecycle(storeDir);assert.equal(s.jobs[0].state,"rejected");assert.equal(s.auditRecords.length,2);assert.equal(s.integrity.valid,true);}));
 test("concurrent duplicate job creation only creates one record",async()=>sandbox(async storeDir=>{const results=await Promise.allSettled(Array.from({length:6},()=>createLifecycleJob({storeDir,jobId:"demo4",digest,plan:{}})));assert.equal(results.filter(x=>x.status==="fulfilled").length,1);const s=await readLifecycle(storeDir);assert.equal(s.jobs.length,1);assert.equal(s.auditRecords.length,1);assert.equal(s.integrity.valid,true);}));

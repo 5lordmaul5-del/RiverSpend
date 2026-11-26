@@ -4,12 +4,14 @@ import { mkdtemp, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { readState } from "./rc11-state.mjs";
-import { createLifecycleJobAtomic, readAtomicLifecycle } from "./rc17-atomic-lifecycle.mjs";
+import { createLifecycleJobAtomic, digestLifecyclePlan, readAtomicLifecycle } from "./rc17-atomic-lifecycle.mjs";
 import { issueApprovalForIdentity, consumeApprovalForIdentity } from "./rc22-approval-identity.mjs";
 
 const issuer = "https://issuer.example";
 const audience = "rivercloud";
-const binding = { jobId: "job22", projectId: "riverspend", profile: "node-tests", target: "staging", commit: "a".repeat(40), digest: "b".repeat(64) };
+const plan = { jobId: "job22", projectId: "riverspend", profile: "node-tests", target: "staging", commit: "a".repeat(40) };
+const digest = digestLifecyclePlan(plan);
+const binding = { ...plan, digest };
 const claims = (subject, roles = ["operator"]) => { const now = Date.now(); return { issuer, subject, audience, issuedAt: now - 1000, expiresAt: now + 60_000, roles }; };
 const options = { expectedIssuer: issuer, expectedAudience: audience, verifyIssuer: () => true };
 const secret = "r".repeat(40);
@@ -17,7 +19,7 @@ const secret = "r".repeat(40);
 test("approval issuance requires verified identity with approve_jobs permission", async () => {
   const root = await mkdtemp(path.join(os.tmpdir(), "rc22-"));
   try {
-    await createLifecycleJobAtomic(path.join(root, "lifecycle.json"), { jobId: binding.jobId, digest: binding.digest, plan: binding });
+    await createLifecycleJobAtomic(path.join(root, "lifecycle.json"), { jobId: plan.jobId, digest, plan });
     await assert.rejects(() => issueApprovalForIdentity({ claims: claims("auditor", ["auditor"]), identityOptions: options, storeDir: root, binding, secret }), /approval_permission_denied/);
     await assert.rejects(() => issueApprovalForIdentity({ claims: claims("unverified"), identityOptions: { ...options, verifyIssuer: () => false }, storeDir: root, binding, secret }), /identity_rejected:signature_not_verified/);
     const issued = await issueApprovalForIdentity({ claims: claims("approver-1"), identityOptions: options, storeDir: root, binding, secret });
