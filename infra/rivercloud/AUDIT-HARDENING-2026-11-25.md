@@ -958,3 +958,10 @@ GitHub PR metadata confirms **98 changed files** at the current branch head. The
 - Findings included vulnerable versions of brace-expansion, ip-address, pacote, picomatch and sigstore inside the bundled npm package tree. No findings are ignored or suppressed.
 - The API image now removes npm, npx, corepack and common package-manager shims because the API runtime uses Node only. CI additionally asserts Node is present and those package managers are absent.
 - Fresh CI and vulnerability scan evidence is pending; the initial scan failure is not counted as a pass.
+
+### RC-131 remediation verified (26 November 2026)
+
+- GitHub Actions run **45800059060 (#843) — SUCCESS, 255/255 Node tests**, 3/3 restore-directory race tests, shell/Python syntax, Compose validation, API image build/inspection, runtime package-manager check, SBOM generation, vulnerability gate and Caddy validation.
+- Tested SBOM: **21 components**, **6 vulnerability entries**, SHA-256 `912296d8a3e4f2cb4d3f26a763488504824e26c0b632ef73123c265022519090`.
+- The fixed HIGH/CRITICAL gate passed with no matching findings. This does not imply zero vulnerabilities or a scan of all service images, source files, runtime or external dependencies.
+- RC-132 follow-up removes the remaining Yarn package directory and uses Trivy's `--pkg-types` flag instead of the deprecated `--vuln-type`; fresh CI is pending.
