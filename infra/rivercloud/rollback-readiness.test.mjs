@@ -1,0 +1,1 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {assessRollbackReadiness} from './rollback-readiness.mjs';test('reports untested rollback items',()=>{const r=assessRollbackReadiness([{id:'x',state:'prepared',note:''}]);assert.equal(r.ready,false);assert.equal(r.rollbackExecuted,false);});
