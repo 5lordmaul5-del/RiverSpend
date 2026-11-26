@@ -41,5 +41,37 @@ jobs:
         run: docker build --file infra/rivercloud/Dockerfile --tag rivercloud-api:ci .
       - name: Confirm API image build result
         run: docker image inspect rivercloud-api:ci --format '{{.Id}}'
+      - name: Install pinned Trivy scanner
+        uses: aquasecurity/setup-trivy@e07451d2e059ed86c2870430ea286b3a9e0bf241 # pinned installer
+        with:
+          version: v0.76.2
+      - name: Generate CycloneDX SBOM for API image
+        run: trivy image --scanners vuln --format cyclonedx --output rivercloud-api-sbom.cdx.json rivercloud-api:ci
+      - name: Validate and summarize generated SBOM
+        run: |
+          node <<'NODE'
+          const fs = require("node:fs");
+          const crypto = require("node:crypto");
+          const file = "rivercloud-api-sbom.cdx.json";
+          const raw = fs.readFileSync(file);
+          const sbom = JSON.parse(raw.toString("utf8"));
+          const components = Array.isArray(sbom.components) ? sbom.components.length : 0;
+          const vulnerabilities = Array.isArray(sbom.vulnerabilities) ? sbom.vulnerabilities.length : 0;
+          const digest = crypto.createHash("sha256").update(raw).digest("hex");
+          const summary = [
+            "## RiverCloud API image SBOM",
+            "",
+            "- Format: CycloneDX",
+            "- Components listed: " + components,
+            "- Vulnerability entries in SBOM: " + vulnerabilities,
+            "- SHA-256: " + digest,
+            "- SBOM generated on this runner; not uploaded or retained as an artifact.",
+            ""
+          ].join("\\n");
+          fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, summary);
+          console.log(summary);
+          NODE
+      - name: Scan API image for fixed HIGH and CRITICAL vulnerabilities
+        run: trivy image --scanners vuln --vuln-type os,library --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 rivercloud-api:ci
       - name: Validate Caddyfile with pinned Caddy image
         run: docker run --rm -e RIVERCLOUD_DOMAIN=cloud.example.com -v "$PWD/infra/rivercloud/Caddyfile:/etc/caddy/Caddyfile:ro" caddy:2.11.9@sha256:4851e54a46b206517c574821bb5cc67f170d2156041e9fbc4c9193b45e84a75b caddy validate --config /etc/caddy/Caddyfile
