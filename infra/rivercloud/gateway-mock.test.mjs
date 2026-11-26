@@ -90,3 +90,13 @@ test("gateway rejects prototype-sensitive JSON keys",()=>{
   assert.equal(result.status,400);assert.equal(result.error,"body_invalid");
   assert.equal({}.polluted,undefined);
 });
+
+
+test("gateway rejects sparse and accessor arrays before hashing",()=>{
+  const sparse=new Array(2);sparse[1]="x";
+  const result=gateway.handle({key:issued.key,record:issued.record,method:"POST",path:"/api/v1/signals/send",requestId:"req-array-00000001",idempotencyKey:"idem-array-00000001",body:{items:sparse},now});
+  assert.equal(result.status,400);assert.equal(result.error,"body_invalid");
+  const accessor=[];Object.defineProperty(accessor,"0",{enumerable:true,get(){throw new Error("not JSON");}});accessor.length=1;
+  const result2=gateway.handle({key:issued.key,record:issued.record,method:"POST",path:"/api/v1/signals/send",requestId:"req-array-00000002",idempotencyKey:"idem-array-00000002",body:{items:accessor},now});
+  assert.equal(result2.status,400);assert.equal(result2.error,"body_invalid");
+});
