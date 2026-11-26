@@ -67,3 +67,10 @@ GitHub Actions **run 45814754280 — SUCCESS, 33/33 Node tests**. The added orch
 ## RC-142 follow-up — shared canonical JSON bounds
 
 The orchestrator now shares the strict bounded canonical JSON utility with the mock gateway, rejecting sparse/accessor arrays, cyclic/deep structures and other non-JSON input before hashing. Tests added; CI verification pending at commit time.
+
+
+### RC-142 CI closeout
+
+- GitHub Actions run **45821019210 — SUCCESS, 46/46 tests** (including the new strict canonical JSON utility, gateway and RiverSSAI adapter regressions).
+- The preceding attempt **45820922845 failed 44/46** because oversized inputs mapped to HTTP-style status 400 instead of 413. This was corrected to preserve explicit size-limit semantics; no validation was weakened.
+- RC-142 remains a shared serializer/security boundary prototype. The mock gateway and orchestrator are not live service runtimes.
