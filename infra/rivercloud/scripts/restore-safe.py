@@ -21,6 +21,9 @@ def read_positive_limit(name, default):
 
 MAX_FILES = read_positive_limit("RIVERCLOUD_RESTORE_MAX_FILES", 100000)
 MAX_BYTES = read_positive_limit("RIVERCLOUD_RESTORE_MAX_BYTES", 20 * 1024**3)
+MAX_PATH_DEPTH = 128
+MAX_PATH_BYTES = 4096
+MAX_COMPONENT_BYTES = 255
 
 def fail(message):
     raise ValueError(message)
@@ -37,6 +40,13 @@ def validate_member(member):
     clean = tuple(part for part in parts if part not in (".",))
     if not clean or any(part in ("..",) for part in clean):
         fail("unsafe archive path")
+    if len(clean) > MAX_PATH_DEPTH:
+        fail("archive path depth limit exceeded")
+    encoded_parts = [os.fsencode(part) for part in clean]
+    if any(len(part) > MAX_COMPONENT_BYTES for part in encoded_parts):
+        fail("archive path component length limit exceeded")
+    if sum(len(part) for part in encoded_parts) + len(clean) - 1 > MAX_PATH_BYTES:
+        fail("archive path length limit exceeded")
     if member.isdir():
         return clean
     if member.isfile():
