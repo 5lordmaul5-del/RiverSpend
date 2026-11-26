@@ -4,9 +4,13 @@ on:
   push:
     branches:
       - feat/rc183-integrated-worker-core-2026-11-26
+      - feat/rc183-lease-recovery-hardening-2026-11-26
+      - feat/rc181-idempotent-intake-core-2026-11-26
   pull_request:
     branches:
       - feat/rc182-strict-payload-validation-2026-11-26
+      - feat/rc183-integrated-worker-core-2026-11-26
+      - feat/rc183-lease-recovery-hardening-2026-11-26
 
 permissions:
   contents: read
@@ -18,3 +22,5 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Run integrated worker tests
         run: python3 -m unittest discover -s infra/river-ai -p 'test_rc183_integrated_worker.py'
+      - name: Run RC-181 intake and migration tests
+        run: python3 -m unittest discover -s infra/river-ai -p 'test_rc181_payload_ledger.py'
