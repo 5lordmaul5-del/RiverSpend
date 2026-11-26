@@ -648,3 +648,9 @@ GitHub PR metadata confirms **98 changed files** at the current branch head. The
 - Added root `.dockerignore` to exclude repository metadata, environment files, secret directories, queue/lifecycle state, locks, temporary files, logs, backups, archives and common build artifacts from the API image build context.
 - Added a regression test that checks these exclusions are present. This reduces accidental context exposure, especially when a build uses a remote Docker daemon.
 - No secrets or real data were accessed; no services were started. CI verification is pending.
+
+
+### RC-40 test correction (26 November 2026)
+
+- CI runs **45757190923 (#358)** and **45757195384 (#359)** failed at Node test 27: the test's escaped newline splitter did not split the `.dockerignore` lines, so it reported the first required pattern missing. The other 148 tests passed; subsequent validation steps were skipped.
+- Corrected the regression test to split on the literal newline. The `.dockerignore` file itself was not the failure. Fresh CI verification is pending; these failures are recorded, not counted as passes.

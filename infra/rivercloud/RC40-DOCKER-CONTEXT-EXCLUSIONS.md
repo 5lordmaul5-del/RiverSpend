@@ -15,4 +15,4 @@ A regression test checks the required exclusions are present. This does not guar
 
 ## CI evidence
 
-Pending until a fresh GitHub Actions run completes for the code commit.
+- Runs **45757190923 (#358)** and **45757195384 (#359)** failed on the new test's newline splitting logic (148/149 passed). The test is corrected in a follow-up commit; fresh CI is pending.
