@@ -133,3 +133,6 @@ Queue jobs now start unapproved. A job must be explicitly approved before `claim
 - CI run #82 initially failed 2 tests because assertions assumed 50 domains while the catalog has 53; the tests now derive counts from the catalog. Fresh CI evidence for the correction is pending.
 
 **Limits:** the catalog is virtual, not a real pool of 100,000 agents. No inference, process activation, model loading, tool execution, network access, deployment, financial action or production mutation is implemented.
+
+- GitHub Actions run **45801241769 (#87) — SUCCESS, 146/146 tests** verified the 100,000 virtual specialist catalog, scheduler, task routing and read-only API. The two earlier #82 failures were test assertions that hard-coded the domain count; they were corrected to derive it from the catalog.
+- A follow-up bounds domain-filtered pagination offsets; fresh CI for this small correction is pending.
