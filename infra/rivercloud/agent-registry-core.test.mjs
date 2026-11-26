@@ -58,3 +58,14 @@ test("registry rejects cycles, sparse arrays and non-JSON capability properties"
   Object.defineProperty(accessorCapabilities, "extra", { enumerable:true, get(){ throw new Error("must not execute"); } });
   assert.equal(validateAgentDefinition({ ...sample, capabilities:accessorCapabilities }).reason, "definition_json_invalid");
 });
+
+
+test("registry accepts the full 100000-definition catalogue without creating processes", () => {
+  const definitions = Array.from({ length:MAX_AGENT_DEFINITIONS }, (_, index) => ({
+    ...sample, id:"agent.catalogue." + index
+  }));
+  const result = validateAgentRegistry(definitions);
+  assert.equal(result.valid, true);
+  assert.equal(result.count, MAX_AGENT_DEFINITIONS);
+  assert.equal(result.byDomain.research, MAX_AGENT_DEFINITIONS);
+});
