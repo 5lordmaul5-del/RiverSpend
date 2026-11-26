@@ -5,6 +5,14 @@ set -eu
 [ -d "$RIVERCLOUD_DATA_DIR" ] || { echo "data directory missing" >&2; exit 2; }
 DATA_DIR=$(cd "$RIVERCLOUD_DATA_DIR" && pwd -P)
 case "$DATA_DIR" in /) echo "root data directory is not supported" >&2; exit 2;; esac
+source_owner=$(stat -c '%u' "$DATA_DIR")
+source_mode=$(stat -c '%a' "$DATA_DIR")
+source_uid=$(id -u)
+source_mode_bits=$((0$source_mode))
+if [ "$source_owner" != "$source_uid" ] || [ $((source_mode_bits & 077)) -ne 0 ] || [ $((source_mode_bits & 0700)) -ne $((0700)) ]; then
+  echo "data directory must be owned by current user and have private 0700 permissions" >&2
+  exit 2
+fi
 # Keep newly created backup directories private; never silently repair an existing directory.
 umask 077
 mkdir -p "$RIVERCLOUD_BACKUP_DIR"
