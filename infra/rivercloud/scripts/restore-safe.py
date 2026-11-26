@@ -164,7 +164,7 @@ def verify_archive_checksum_fd(archive_fd, archive_path, checksum_path):
             line = raw.decode("ascii")
         except UnicodeDecodeError:
             fail("checksum sidecar invalid")
-        match = re.fullmatch(r"([0-9a-fA-F]{64})[ \\t]+(\\*?)([^\\r\\n]+)\\r?\\n?", line)
+        match = re.fullmatch(r"([0-9a-fA-F]{64})[ \t]+(\*?)([^\r\n]+)\r?\n?", line)
         if not match or match.group(3) != os.path.basename(archive_path):
             fail("checksum sidecar invalid")
         digest = hashlib.sha256()
