@@ -56,6 +56,8 @@ export function createApiKey({ ownerId, scopes, now = Date.now(), ttlMs = 30 * 2
   return Object.freeze({ key, record });
 }
 
+export function validateApiKeyRecord(record) { return validRecord(record); }
+
 export function verifyApiKey(key, record, { now = Date.now(), requiredScope } = {}) {
   if (!Number.isSafeInteger(now) || now < 0) return { valid: false, reason: "invalid_time" };
   if (!validRecord(record)) return { valid: false, reason: "invalid_record" };
