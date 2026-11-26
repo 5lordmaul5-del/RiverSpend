@@ -1,0 +1,2 @@
+# RC-180 — Unified Control Assessment
+Combines compatible, supplied governance, policy-analysis, and integrity signals into review flags. It is static orchestration over input objects; no live validation or enforcement.
