@@ -1,0 +1,2 @@
+# RC-177 — Integrity Monitor
+Checks supplied ledger validity and basic event/risk-register bounds. This is a static input inspection, not continuous monitoring, runtime telemetry, repair, or certification.
