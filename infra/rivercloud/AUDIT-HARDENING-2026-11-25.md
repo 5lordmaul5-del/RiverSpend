@@ -784,3 +784,10 @@ GitHub PR metadata confirms **98 changed files** at the current branch head. The
 - The verifier now re-applies the canonical redactor and rejects data that is not already redacted (`data_not_redacted`), before digest verification. Added a regression that injects a raw secret, recomputes the envelope hash, and requires rejection.
 - Code commit `f9588979a4becc10bcae88b6e2e28814d0f856b8`; test commit `99c45ebdef0593ec072db974f94ab80203f3c07d`.
 - **CI pending for RC-55.** No network delivery, receiver, real audit sink, external storage, live service, runner, staging, production data/credentials, merge, deployment, provisioning or spending.
+
+
+### RC-55 CI closeout (26 November 2026)
+
+- Test commit `99c45ebdef0593ec072db974f94ab80203f3c07d`: GitHub Actions **45769271258 (#485) — SUCCESS, 169/169 Node tests**, plus bootstrap shell, backup/restore and Python syntax, restore-directory race, Compose configuration, isolated API image build/inspection and Caddy validation.
+- Report commit `4c5b6e86e8f510c964e716cc5197b4feb76a1a48`: workflow **45769293314 (#487) — SUCCESS, 169/169 tests**, plus the same validation steps.
+- The test verifies that an envelope containing a raw sensitive-key value is rejected even if the unkeyed envelope hash is recomputed. This protects against accidentally signed-but-unredacted payloads in this verifier prototype; it is not independent immutable audit storage or real network delivery.
