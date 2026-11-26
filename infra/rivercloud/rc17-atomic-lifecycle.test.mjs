@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import { mkdtemp, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { createLifecycleJobAtomic, transitionLifecycleJobAtomic, readAtomicLifecycle, verifyAtomicAudit } from "./rc17-atomic-lifecycle.mjs";
+import { createLifecycleJobAtomic, transitionLifecycleJobAtomic, readAtomicLifecycle, verifyAtomicAudit, storeApprovalForLifecycleAtomic } from "./rc17-atomic-lifecycle.mjs";
 const digest = "a".repeat(64);
 async function sandbox(fn) { const root = await mkdtemp(path.join(os.tmpdir(), "rc17-")); try { await fn(path.join(root, "state.json")); } finally { await rm(root, { recursive: true, force: true }); } }
 test("job and initial audit record are committed together", async () => sandbox(async file => { await createLifecycleJobAtomic(file, { jobId: "J1", digest, plan: { target: "staging" }, actor: "test" }); const s = await readAtomicLifecycle(file); assert.equal(s.jobs.length, 1); assert.equal(s.auditRecords.length, 1); assert.equal(s.integrity.valid, true); }));
@@ -66,4 +66,14 @@ test("lifecycle and audit collections enforce explicit capacity bounds", async (
   await assert.rejects(() => createLifecycleJobAtomic(file, { jobId: "CAP", digest, plan: {} }), /lifecycle_job_capacity_exceeded/);
   await transactState(file, state => { state.lifecycleJobs = [{ id: "J16", digest, state: "pending", plan: {}, createdAt: "x", updatedAt: "x" }]; state.auditRecords = Array.from({ length: 10000 }, (_, i) => ({ sequence: i + 1 })); });
   await assert.rejects(() => transitionLifecycleJobAtomic(file, { jobId: "J16", to: "rejected" }), /audit_capacity_exceeded/);
+}));
+
+test("approval event ledger fails closed at its capacity", async () => sandbox(async file => {
+  await createLifecycleJobAtomic(file, { jobId: "J13", digest, plan: {} });
+  const { transactState } = await import("./rc11-state.mjs");
+  await transactState(file, state => { state.events = Array.from({ length: 10000 }, () => ({ event: "bounded-test" })); });
+  await assert.rejects(() => storeApprovalForLifecycleAtomic(file, {
+    tokenId: "b".repeat(64), jobId: "J13", binding: { jobId: "J13", digest },
+    expiresAt: Date.now() + 10000, nonce: "nonce-test", approver: "reviewer"
+  }), /approval_event_capacity_exceeded/);
 }));
