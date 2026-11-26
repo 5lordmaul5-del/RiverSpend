@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Safe, restricted restore for RiverCloud local tar.gz backups."""
+import hashlib
 import os
+import re
 import shutil
 import stat
 import sys
@@ -142,7 +144,48 @@ def cleanup_owned_target_at(parent_fd, target_name, root_fd, root_identity):
     except OSError:
         pass
 
-def main(archive_path, target_path):
+
+def verify_archive_checksum_fd(archive_fd, archive_path, checksum_path):
+    side_fd = None
+    try:
+        side_fd = os.open(checksum_path, os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_NONBLOCK", 0))
+        side_stat = os.fstat(side_fd)
+        if not stat.S_ISREG(side_stat.st_mode) or side_stat.st_size > 512:
+            fail("checksum sidecar must be a small regular file")
+        if (side_stat.st_mode & 0o077) != 0:
+            fail("checksum sidecar permissions unsafe")
+        if hasattr(os, "getuid") and side_stat.st_uid != os.getuid():
+            fail("checksum sidecar owner mismatch")
+        raw = b""
+        while len(raw) <= 512:
+            chunk = os.read(side_fd, 513 - len(raw))
+            if not chunk:
+                break
+            raw += chunk
+        if len(raw) > 512:
+            fail("checksum sidecar too large")
+        try:
+            line = raw.decode("ascii")
+        except UnicodeDecodeError:
+            fail("checksum sidecar invalid")
+        match = re.fullmatch(r"([0-9a-fA-F]{64})[ \\t]+(\\*?)([^\\r\\n]+)\\r?\\n?", line)
+        if not match or match.group(3) != os.path.basename(archive_path):
+            fail("checksum sidecar invalid")
+        digest = hashlib.sha256()
+        os.lseek(archive_fd, 0, os.SEEK_SET)
+        while True:
+            chunk = os.read(archive_fd, 1024 * 1024)
+            if not chunk:
+                break
+            digest.update(chunk)
+        os.lseek(archive_fd, 0, os.SEEK_SET)
+        if digest.hexdigest().lower() != match.group(1).lower():
+            fail("archive checksum verification failed")
+    finally:
+        if side_fd is not None:
+            os.close(side_fd)
+
+def main(archive_path, target_path, checksum_path=None):
     archive_path = Path(archive_path)
     target = Path(os.path.abspath(str(target_path)))
     target_name = target.name
@@ -173,6 +216,8 @@ def main(archive_path, target_path):
             fail("archive must be a regular file")
         if archive_stat.st_size > MAX_ARCHIVE_BYTES:
             fail("archive compressed-size limit exceeded")
+        if checksum_path is not None:
+            verify_archive_checksum_fd(fd, str(archive_path), checksum_path)
         raw = os.fdopen(fd, "rb", closefd=False)
         try:
             with tarfile.open(fileobj=raw, mode="r:gz") as archive:
@@ -250,11 +295,11 @@ def main(archive_path, target_path):
     print("Restore extracted safely to:", target)
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        print("Usage: restore-safe.py ARCHIVE TARGET", file=sys.stderr)
+    if len(sys.argv) not in (3, 4):
+        print("Usage: restore-safe.py ARCHIVE TARGET [CHECKSUM]", file=sys.stderr)
         sys.exit(2)
     try:
-        main(sys.argv[1], sys.argv[2])
+        main(sys.argv[1], sys.argv[2], sys.argv[3] if len(sys.argv) == 4 else None)
     except Exception as exc:
         print("Restore failed:", str(exc), file=sys.stderr)
         sys.exit(2)

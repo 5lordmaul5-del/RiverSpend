@@ -48,4 +48,4 @@ except (OSError, UnicodeError, ValueError):
 PY
 [ ! -e "$RIVERCLOUD_RESTORE_TARGET" ] || { echo "restore target must not already exist" >&2; exit 2; }
 script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
-exec python3 "$script_dir/restore-safe.py" "$archive" "$RIVERCLOUD_RESTORE_TARGET"
+exec python3 "$script_dir/restore-safe.py" "$archive" "$RIVERCLOUD_RESTORE_TARGET" "$archive.sha256"

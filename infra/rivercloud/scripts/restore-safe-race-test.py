@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Deterministic regressions for nested and parent-directory replacement during extraction."""
+import hashlib
 import importlib.util
 import os
 import tempfile
@@ -128,9 +129,67 @@ def test_restore_rejects_symlinked_parent_path():
             raise AssertionError("restore accepted a symlinked target-parent component")
         assert not (real_parent / "restored").exists()
 
+def write_checksum(archive, sidecar):
+    digest = hashlib.sha256(archive.read_bytes()).hexdigest()
+    sidecar.write_text(f"{digest}  {archive.name}\n", encoding="ascii")
+
+
+def test_restore_rejects_archive_mismatch_with_checksum_sidecar():
+    with tempfile.TemporaryDirectory(prefix="rc140-checksum-") as temp:
+        root = Path(temp)
+        archive = root / "archive.tar.gz"
+        sidecar = root / "archive.tar.gz.sha256"
+        target = root / "restored"
+        make_archive(archive)
+        write_checksum(archive, sidecar)
+        archive.write_bytes(b"tampered archive bytes")
+        try:
+            restore_safe.main(str(archive), str(target), str(sidecar))
+        except ValueError as exc:
+            assert "checksum verification failed" in str(exc)
+        else:
+            raise AssertionError("restore accepted archive bytes that do not match the sidecar")
+        assert not target.exists()
+
+
+def test_restore_checksum_is_bound_to_open_archive_descriptor():
+    with tempfile.TemporaryDirectory(prefix="rc140-fd-bound-") as temp:
+        root = Path(temp)
+        archive = root / "archive.tar.gz"
+        sidecar = root / "archive.tar.gz.sha256"
+        target = root / "restored"
+        moved = root / "original-archive.tar.gz"
+        make_archive(archive)
+        write_checksum(archive, sidecar)
+        original_open = os.open
+        injected = False
+
+        def replace_archive_after_open(name, flags, *args, **kwargs):
+            nonlocal injected
+            fd = original_open(name, flags, *args, **kwargs)
+            if not injected and name == str(archive) and kwargs.get("dir_fd") is None:
+                injected = True
+                os.rename(archive, moved)
+                archive.write_bytes(b"replacement bytes")
+            return fd
+
+        os.supports_dir_fd.add(replace_archive_after_open)
+        os.open = replace_archive_after_open
+        try:
+            restore_safe.main(str(archive), str(target), str(sidecar))
+        finally:
+            os.open = original_open
+            os.supports_dir_fd.discard(replace_archive_after_open)
+
+        assert injected, "archive replacement hook did not fire"
+        assert (target / "nested" / "first.txt").read_text(encoding="utf-8") == "first"
+        assert (target / "nested" / "second.txt").read_text(encoding="utf-8") == "second"
+
 
 if __name__ == "__main__":
     test_restore_uses_open_directory_descriptors_during_path_replacement()
     test_restore_parent_path_replacement_uses_open_parent_descriptor()
     test_restore_rejects_symlinked_parent_path()
-    print("3/3 restore directory replacement race tests passed")
+    test_restore_rejects_archive_mismatch_with_checksum_sidecar()
+    test_restore_checksum_is_bound_to_open_archive_descriptor()
+    print("5/5 restore safety tests passed")
