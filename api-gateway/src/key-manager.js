@@ -55,7 +55,7 @@ export class APIKeyManager{
   old.revoked=true;old.revokedAt=new Date(now).toISOString();old.revokedBy=rotatedBy;this.#event("key-rotated",{keyId:old.keyId,tenantId:tenant,details:{newKeyId:next.keyId},now});return next;
  }
  listKeys(tenantId){const tenant=validateTenant(tenantId);return[...this.#records.values()].filter(r=>r.tenantId===tenant).map(safeRecord);}
- auditEvents({tenantId,limit=100}={}){const tenant=validateTenant(tenantId);validateLimit(limit,1,500,"audit-limit");return this.#audit.filter(e=>e.tenantId===tenant).slice(-limit).map(e=>({...e,details:e.details&&typeof e.details==="object"?{...e.details}:e.details}));}
+ auditEvents({tenantId,limit=100}={}){const tenant=validateTenant(tenantId);validateLimit(limit,1,500,"audit-limit");return this.#audit.filter(e=>e.tenantId===tenant).slice(-limit).map(e=>({...e,details:e.details===null?null:structuredClone(e.details)}));}
  get stats(){return{keyCount:this.#records.size,auditCount:this.#audit.length,maxKeys:this.maxKeys,maxAudit:this.maxAudit,storage:"memory-only"};}
 }
 export {ALLOWED_SCOPES};
