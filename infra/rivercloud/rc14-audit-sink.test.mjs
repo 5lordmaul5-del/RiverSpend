@@ -54,3 +54,6 @@ test("RC-72 rejects missing, extra, and inherited header keys",async()=>{const d
 
 
 test("RC-73 rejects negative verifier clock",async()=>{const d=buildSignedDelivery(envelope(),{endpoint,secret,now});assert.equal((await verifySignedDelivery(d,{secret,now:-1,consumeReplay:acceptReplay})).reason,"invalid_verifier_config");});
+
+
+test("RC-74 replay store fails closed on false and thrown errors",async()=>{const d=buildSignedDelivery(envelope(),{endpoint,secret,now});assert.equal((await verifySignedDelivery(d,{secret,now,consumeReplay:async()=>false})).reason,"replay_rejected");assert.equal((await verifySignedDelivery(d,{secret,now,consumeReplay:async()=>{throw new Error("store down");}})).reason,"replay_store_error");});
