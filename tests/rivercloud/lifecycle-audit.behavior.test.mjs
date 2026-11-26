@@ -45,3 +45,16 @@ test("invalid transition leaves state and audit intact", async t => {
   assert.equal(read.integrity.valid, true);
   assert.equal(read.jobs[0].state, "pending");
 });
+
+test("audit tampering is detected on read", async t => {
+  const file = await ledgerFixture(t);
+  const digest = digestLifecyclePlan(plan);
+  await createLifecycleJobAtomic(file, { jobId: digest, digest, plan, actor: "fixture" });
+  const fs = await import("node:fs/promises");
+  const state = JSON.parse(await fs.readFile(file, "utf8"));
+  state.auditRecords[0].details.actor = "tampered";
+  await fs.writeFile(file, JSON.stringify(state), { mode: 0o600 });
+  const read = await readAtomicLifecycle(file);
+  assert.equal(read.integrity.valid, false);
+  assert.match(read.integrity.reason, /record_hash_mismatch|job_audit_state_mismatch/);
+});
