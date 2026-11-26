@@ -45,3 +45,25 @@ test("audit replay rejects a manually approved transition with a recomputed hash
   assert.equal(verifyAtomicAudit(records).valid, false);
   assert.equal(verifyAtomicAudit(records).reason, "transition_sequence_invalid");
 }));
+
+
+test("malformed lifecycle extension collections fail closed without being reset", async () => sandbox(async file => {
+  const { transactState, readState } = await import("./rc11-state.mjs");
+  await createLifecycleJobAtomic(file, { jobId: "J14", digest, plan: {} });
+  await transactState(file, state => { state.lifecycleJobs = null; });
+  assert.equal((await readAtomicLifecycle(file)).integrity.reason, "lifecycle_jobs_schema_invalid");
+  await assert.rejects(() => createLifecycleJobAtomic(file, { jobId: "J15", digest, plan: {} }), /lifecycle_jobs_schema_invalid/);
+  assert.equal((await readState(file)).lifecycleJobs, null);
+  await transactState(file, state => { state.lifecycleJobs = [{ id: "J14", digest, state: "pending", plan: {}, createdAt: "x", updatedAt: "x" }]; state.auditRecords = { damaged: true }; });
+  assert.equal((await readAtomicLifecycle(file)).integrity.reason, "audit_records_schema_invalid");
+  await assert.rejects(() => transitionLifecycleJobAtomic(file, { jobId: "J14", to: "rejected" }), /audit_records_schema_invalid/);
+  assert.deepEqual((await readState(file)).auditRecords, { damaged: true });
+}));
+
+test("lifecycle and audit collections enforce explicit capacity bounds", async () => sandbox(async file => {
+  const { transactState } = await import("./rc11-state.mjs");
+  await transactState(file, state => { state.lifecycleJobs = Array.from({ length: 5000 }, (_, i) => ({ id: "C" + i })); state.auditRecords = []; });
+  await assert.rejects(() => createLifecycleJobAtomic(file, { jobId: "CAP", digest, plan: {} }), /lifecycle_job_capacity_exceeded/);
+  await transactState(file, state => { state.lifecycleJobs = [{ id: "J16", digest, state: "pending", plan: {}, createdAt: "x", updatedAt: "x" }]; state.auditRecords = Array.from({ length: 10000 }, (_, i) => ({ sequence: i + 1 })); });
+  await assert.rejects(() => transitionLifecycleJobAtomic(file, { jobId: "J16", to: "rejected" }), /audit_capacity_exceeded/);
+}));
