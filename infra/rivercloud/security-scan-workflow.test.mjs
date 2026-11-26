@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 
 const root = path.dirname(fileURLToPath(import.meta.url));
 const workflow = await readFile(path.join(root, "../../.github/workflows/rivercloud-tests.yml"), "utf8");
+const dockerfile = await readFile(path.join(root, "Dockerfile"), "utf8");
 
 test("RiverCloud CI pins Trivy and generates a CycloneDX image SBOM", () => {
   assert.match(workflow, /aquasecurity\/setup-trivy@e07451d2e059ed86c2870430ea286b3a9e0bf241/);
@@ -18,4 +19,11 @@ test("RiverCloud CI pins Trivy and generates a CycloneDX image SBOM", () => {
 
 test("RiverCloud CI gates fixed HIGH and CRITICAL image vulnerabilities", () => {
   assert.match(workflow, /trivy image --scanners vuln --vuln-type os,library --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 rivercloud-api:ci/);
+});
+
+test("API runtime image removes unused package managers", () => {
+  assert.match(dockerfile, /rm -rf \/usr\/local\/lib\/node_modules\/npm/);
+  assert.match(dockerfile, /\/usr\/local\/lib\/node_modules\/corepack/);
+  assert.match(workflow, /Confirm API image has Node but no package manager/);
+  assert.match(workflow, /command -v npm/);
 });
