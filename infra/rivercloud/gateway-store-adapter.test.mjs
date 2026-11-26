@@ -43,3 +43,13 @@ test("store-backed gateway maps key-store failures to fail-closed 503",async()=>
   const result=await gateway.handle({...request,key:"rs_test_00000000000000000000000000000000.invalid"});
   assert.equal(result.status,503);assert.equal(result.error,"api_key_store_unavailable");
 });
+
+test("adapter applies the same default clock to key-store verification and gateway handling",async()=>sandbox(async root=>{
+  const store=createApiKeyStore(path.join(root,"keys.json"));
+  const key=await store.create({ownerId:"integration-owner",scopes:["signals:send"],ttlMs:60*60*1000});
+  const gateway=createStoreBackedMockGateway({store});
+  const {now:_ignored,...requestWithoutClock}=request;
+  const result=await gateway.handle({...requestWithoutClock,key,idempotencyKey:"idem-default-clock"});
+  assert.equal(result.status,202);
+  assert.equal(result.duplicate,false);
+}));
