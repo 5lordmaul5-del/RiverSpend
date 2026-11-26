@@ -104,3 +104,12 @@ The orchestrator now shares the strict bounded canonical JSON utility with the m
 - Added a CI smoke test that validates exactly **100000** bounded definitions and confirms the registry count/domain tally without starting processes.
 - GitHub Actions run **45833898145 (#131) — SUCCESS, 53/53 tests**. The 100000-definition validation test took approximately **2.11 seconds** in this runner (test duration only; not a general performance guarantee).
 - Catalogue maximum remains definitions only; execution, workers, resource limits and real runtime enforcement are not implied.
+
+
+## RC-147 — exact top-level specialist-definition data shape
+
+- Audit found that the top-level registry validator used enumerable keys for the JSON preflight but subsequently accepted hidden/non-enumerable required fields through `Object.hasOwn`. Such fields could bypass the canonical JSON size/shape boundary and be dropped during snapshotting.
+- Replaced the top-level loose key check with the existing exact data-object validator: exactly the declared fields, enumerable own data properties only, no accessors, symbols or hidden extra fields.
+- Added regressions for a non-enumerable required `id` and a hidden extra field.
+- GitHub Actions **run 45838353414 (#137) — SUCCESS, 54/54 tests** on commit `5d68e22a05e8c8d245a92ba649a3817ec1e84041`.
+- The registry remains a bounded catalogue only; this validation change does not create or execute workers.
