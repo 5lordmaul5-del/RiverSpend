@@ -62,3 +62,12 @@ test("input size and idempotency capacity are bounded",async()=>{
 test("orchestrator validates registry at construction",()=>{
   assert.throws(()=>createRiverSSAIOrchestrator({definitions:[{...definition,riskClass:"high",requiresApproval:false}]}),/registry_invalid/);
 });
+
+test("registry definitions are immutable snapshots after orchestrator construction",async()=>{
+  const mutable={...definition,inputSchema:structuredClone(definition.inputSchema)};
+  const o=createRiverSSAIOrchestrator({definitions:[mutable]});
+  mutable.status="draft";mutable.riskClass="high";mutable.requiresApproval=true;mutable.inputSchema.properties.prompt.type="integer";
+  const result=await o.planInvoke({...invoke,agentId:mutable.id});
+  assert.equal(result.status,202);assert.equal(result.plan.riskClass,"low");assert.equal(result.plan.requiresApproval,false);
+  assert.equal((await o.planInvoke({...invoke,agentId:mutable.id,idempotencyKey:"idempotency-abcdef",input:{prompt:1}})).error,"input_schema_invalid");
+});
