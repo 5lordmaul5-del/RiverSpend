@@ -19,7 +19,8 @@ function responseSnapshot(value){return structuredClone(value);}
 const REQUEST_ID = /^[A-Za-z0-9._:-]{1,128}$/;
 const IDEMPOTENCY_KEY = /^[A-Za-z0-9._:-]{16,128}$/;
 
-function canonical(value, depth=0) {\n  if (depth>32) throw new Error("json_depth_exceeded");
+function canonical(value, depth=0) {
+  if (depth>32) throw new Error("json_depth_exceeded");
   if (value===null || typeof value==="string" || typeof value==="boolean") return JSON.stringify(value);
   if (typeof value==="number") {
     if (!Number.isFinite(value)) throw new Error("json_number_invalid");
