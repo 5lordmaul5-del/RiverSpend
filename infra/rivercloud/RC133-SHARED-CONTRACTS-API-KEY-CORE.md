@@ -85,3 +85,10 @@ GitHub Actions **run 45814754280 — SUCCESS, 33/33 Node tests**. The added orch
 - The core's create/verify option objects now require bounded enumerated data properties rather than accessors or hidden/symbol fields.
 - Regression tests confirm accessor getters are not invoked and the operations fail closed on malformed option objects.
 - This applies to the reusable API-key core boundary; it does not add production credential storage, authentication, key rotation or encrypted-at-rest protection.
+
+
+## API-RC-155 — registry-array preflight (26 November 2026)
+
+- `validateAgentRegistry` snapshots the catalogue array through own-property descriptors before iteration. Accessor entries, sparse arrays, hidden extra fields and symbol properties are rejected without invoking element getters.
+- Regression tests cover those cases and preserve the 100,000-definition catalogue ceiling; definitions are still catalogue records, not launched processes.
+- GitHub Actions run **45870542457 (#178) — SUCCESS, 62/62 tests** on the updated branch. This verifies the prototype boundary only; no worker execution, live API, credentials, production deployment or payment authorization is enabled.
