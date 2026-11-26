@@ -45,3 +45,6 @@ test("RC-69 rejects uppercase signature hex encoding",async()=>{const d=buildSig
 
 
 test("RC-70 rejects delivery inherited and unexpected properties",async()=>{const d=buildSignedDelivery(envelope(),{endpoint,secret,now});const inherited=Object.create(d);assert.equal((await verifySignedDelivery(inherited,{secret,now,consumeReplay:acceptReplay})).reason,"invalid_delivery");assert.equal((await verifySignedDelivery({...d,extra:"x"},{secret,now,consumeReplay:acceptReplay})).reason,"invalid_delivery");});
+
+
+test("RC-71 rejects exotic header prototypes",async()=>{const d=buildSignedDelivery(envelope(),{endpoint,secret,now});const h=Object.assign(Object.create({polluted:"x"}),d.headers);const altered={...d,headers:h};assert.equal((await verifySignedDelivery(altered,{secret,now,consumeReplay:acceptReplay})).reason,"invalid_headers");});
