@@ -1,6 +1,6 @@
 // RiverCloud deployment engine prototype: policy/queue only; no shell execution.
 import { createHash } from "node:crypto";
-import { resolveProjectPolicy } from "./unified-policy.mjs";
+import { resolveProjectPolicy } from "./unified-policy.mjs";\nimport { DEPLOY_REQUEST_KEYS } from "./shared-contracts.mjs";
 
 export function exactDataObject(input,keys){
   try{
@@ -20,7 +20,7 @@ export function exactDataObject(input,keys){
 }
 
 export function validateDeployRequest(input) {
-  const data=exactDataObject(input,["projectId","branch","commit","target"]);
+  const data=exactDataObject(input,DEPLOY_REQUEST_KEYS);
   if(!data||Object.values(data).some(v=>typeof v!=="string"))throw new Error("invalid_request");
   const {projectId,commit,target,branch}=data;
   const project=resolveProjectPolicy(projectId,branch,target);
