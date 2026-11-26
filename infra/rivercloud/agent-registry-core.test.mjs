@@ -79,3 +79,24 @@ test("registry rejects non-enumerable or hidden top-level definition fields", ()
   Object.defineProperty(extra, "hiddenExecution", { value:"not-allowed", enumerable:false });
   assert.equal(validateAgentDefinition(extra).reason, "definition_schema_invalid");
 });
+
+
+test("registry rejects accessor, sparse and hidden catalogue entries without getter execution", () => {
+  let getterCalls=0;
+  const accessor=new Array(1);
+  Object.defineProperty(accessor,"0",{enumerable:true,get(){getterCalls++;return sample;}});
+  assert.equal(validateAgentRegistry(accessor).reason,"registry_array_invalid");
+
+  const sparse=new Array(2);
+  sparse[1]=sample;
+  assert.equal(validateAgentRegistry(sparse).reason,"registry_array_invalid");
+
+  const hidden=[sample];
+  Object.defineProperty(hidden,"extra",{value:"hidden",enumerable:false});
+  assert.equal(validateAgentRegistry(hidden).reason,"registry_array_invalid");
+
+  const symbols=[sample];
+  symbols[Symbol("hidden")]=sample;
+  assert.equal(validateAgentRegistry(symbols).reason,"registry_array_invalid");
+  assert.equal(getterCalls,0);
+});
