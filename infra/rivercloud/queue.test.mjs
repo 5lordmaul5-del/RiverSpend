@@ -102,3 +102,33 @@ test("queue rejects malformed actor attribution", async () => {
     await assert.rejects(() => queuePlan(path.join(root, "state.json"), base, { actorRef: "c".repeat(64), roles: ["root"] }), /invalid_actor_context/);
   } finally { await rm(root, { recursive: true, force: true }); }
 });
+
+
+test("retry after uncertain directory-sync durability returns the committed duplicate", async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), "rcq-uncertain-"));
+  try {
+    const file = path.join(root, "state.json");
+    let injected = false;
+    await assert.rejects(() => transactState(file, state => {
+      const plan = validateDeployRequest(base), digest = planDigest(plan);
+      state.jobs.push({ id: digest, digest, plan, createdAt: new Date().toISOString(), state: "accepted_not_executed" });
+      state.events.push({ event: "job_created", jobId: digest, digest, at: new Date().toISOString() });
+      return digest;
+    }, { syncDirectory: async () => { injected = true; throw new Error("simulated_sync_uncertainty"); } }), /state_commit_durability_uncertain/);
+    assert.equal(injected, true);
+    const retry = await queuePlan(file, base);
+    assert.equal(retry.duplicate, true);
+    assert.equal((await listQueue(file)).length, 1);
+    assert.equal((await readState(file)).events.length, 1);
+  } finally { await rm(root, { recursive: true, force: true }); }
+});
+
+test("rejects corrupt JSON state instead of treating it as an empty queue", async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), "rcq-corrupt-"));
+  try {
+    const file = path.join(root, "state.json");
+    await (await import("node:fs/promises")).writeFile(file, "{partial-json");
+    await assert.rejects(() => listQueue(file));
+    await assert.rejects(() => queuePlan(file, base));
+  } finally { await rm(root, { recursive: true, force: true }); }
+});
