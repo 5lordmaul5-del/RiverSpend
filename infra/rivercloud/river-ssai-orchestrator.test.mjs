@@ -83,3 +83,28 @@ test("orchestrator rejects sparse arrays and excessive nesting",async()=>{
   const deepResult=await o.planInvoke({...invoke,input:{prompt:"ok",items:deep},idempotencyKey:"idempotency-depth"});
   assert.equal(deepResult.status,400);assert.equal(deepResult.error,"input_invalid");
 });
+
+
+test("concurrent high-risk requests reserve idempotency and capacity", async () => {
+  let release;
+  const gate = new Promise(resolve => { release = resolve; });
+  let verificationCalls = 0;
+  const o = createRiverSSAIOrchestrator({
+    definitions:[high],
+    maxIdempotencyEntries:1,
+    approvalVerifier:async () => { verificationCalls++; await gate; return true; }
+  });
+  const firstPromise = o.planInvoke({ ...invoke, agentId:high.id, approvalToken:"approval-token-123456" });
+  const duplicatePromise = o.planInvoke({ ...invoke, requestId:"req-duplicate", agentId:high.id, approvalToken:"approval-token-123456" });
+  const overflowPromise = o.planInvoke({ ...invoke, agentId:high.id, idempotencyKey:"idempotency-other", approvalToken:"approval-token-123456" });
+  const overflow = await overflowPromise;
+  assert.equal(overflow.status,503);
+  release();
+  const [first, duplicate] = await Promise.all([firstPromise, duplicatePromise]);
+  assert.equal(first.status,202);
+  assert.equal(first.duplicate,false);
+  assert.equal(duplicate.status,202);
+  assert.equal(duplicate.duplicate,true);
+  assert.equal(verificationCalls,1);
+  assert.equal(o.getIdempotencyCount(),1);
+});
