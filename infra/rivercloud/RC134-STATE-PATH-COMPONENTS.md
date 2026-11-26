@@ -4,7 +4,7 @@ The state-store read and transaction paths now reject pre-existing symlinked or 
 
 This preflight is path-based and does not close a race against concurrent ancestor replacement. It is a narrowing mitigation, not descriptor-anchored race-proof access.
 
-CI verification is pending.
+CI verified in GitHub Actions run 45813699838 — 256/256 Node tests and the complete isolated infrastructure validation suite passed. See RC-135 closeout in the progressive report. The path-based race limitation remains.
 
 ## RC-135 — CI regression correction
 
