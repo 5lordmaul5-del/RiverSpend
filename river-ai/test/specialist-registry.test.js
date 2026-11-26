@@ -47,3 +47,5 @@ test("rejects invalid ids, domains and page limits",()=>{
  assert.throws(()=>registry.list({domain:"unknown"}),/domain/);
  assert.throws(()=>new SpecialistRegistry({total:10}),/total/);
 });
+
+test("rejects offset beyond filtered domain count",()=>{const registry=new SpecialistRegistry();const domainIndex=registry.domains.indexOf("security");const count=Math.floor((registry.total-1-domainIndex)/registry.domains.length)+1;assert.throws(()=>registry.list({domain:"security",offset:count+1,limit:1}),/offset/);});
