@@ -55,6 +55,8 @@ export async function transactState(file,mutator,{lockTimeoutMs=3000,syncDirecto
  let temp;
  try{
   const state=await readState(file);validateState(state);const result=await mutator(state);
+  // Validate the post-mutation snapshot before it can be persisted.
+  validateState(state);
   const serialized=Buffer.from(JSON.stringify(state,null,2));
   if(serialized.byteLength>MAX_STATE_BYTES)throw new Error("state_file_too_large");
   temp=file+".tmp-"+process.pid+"-"+randomUUID();const t=await open(temp,"wx",0o600);try{await t.writeFile(serialized);await t.sync();}finally{await t.close();}
