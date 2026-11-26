@@ -116,8 +116,11 @@ export function createProxyApiServer({
         const input = await readBody(req);
         const actorRef = createHash("sha256").update("rivercloud-actor-v1\\0" + actor.subject).digest("hex");
         const result = await queuePlan(storeFile, input, { actorRef, roles: actor.roles });
+        const responseJob = result.duplicate
+          ? { id: result.job.id, digest: result.job.digest, state: result.job.state }
+          : result.job;
         return respond(res, result.duplicate ? 200 : 202, {
-          job: result.job,
+          job: responseJob,
           duplicate: result.duplicate,
           notice: "Plan only; no build or deployment is executed."
         });
