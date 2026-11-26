@@ -177,6 +177,8 @@ def main(archive_path, target_path):
         try:
             with tarfile.open(fileobj=raw, mode="r:gz") as archive:
                 members = archive.getmembers()
+                if not members:
+                    fail("archive contains no entries")
                 if len(members) > MAX_FILES:
                     fail("archive file-count limit exceeded")
                 entries = []
