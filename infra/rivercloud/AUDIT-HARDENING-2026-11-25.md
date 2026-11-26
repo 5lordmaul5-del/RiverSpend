@@ -864,3 +864,12 @@ GitHub PR metadata confirms **98 changed files** at the current branch head. The
 - Code commit `1081cfeb22147158998b1f651a3f672c86818edb`: GitHub Actions **45778681439 (#617) — SUCCESS, 194/194 Node tests**, 0 failures, plus bootstrap shell, backup/restore and Python syntax, restore race, Compose, API image build/inspection and Caddy validation.
 - Regression test commit `d4b7be603fe7094445dbd88a3a1a6d7ebfe297e1`: GitHub Actions **45778690767 (#619) — SUCCESS, 195/195 Node tests**, 0 failures, with the same infrastructure validation steps.
 - Report commit `38154c06bd507894534fd826e665dfbb8258e9a8`: GitHub Actions **45778724537 (#621) — SUCCESS, 195/195 Node tests**, plus the same validations. Invalid audit details are rejected before persistence; no ledger corruption occurred in the regression.
+
+
+## RC-62 — state-store privacy preflight (26 November 2026)
+
+- Review found RC-11 relied on requested mode 0700/0600 but did not verify the permissions or ownership of an already-existing store directory or snapshot. An existing permissive directory/file could therefore bypass those intended privacy defaults.
+- Transactions now require the final store directory to be a real directory owned by the current user with no group/world permission bits; state reads reject snapshots with unsafe ownership or permissions. Symlinked store directories fail closed. New snapshots and locks retain private mode 0600.
+- The API image now initializes `/data` as node-owned and mode 0700. No automatic chmod/chown of existing state is performed.
+- Regression tests cover symlinked store directories, unsafe directory permissions, unsafe snapshot permissions and private snapshot mode. Fresh CI evidence is pending; no local checkout test run is claimed.
+- Existing named volumes that fail preflight require a reviewed, offline permission/ownership repair. No service, real data, deployment, merge, credentials, provisioning or spending was touched.
