@@ -1,0 +1,1 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {buildReleaseEvidenceChecklist} from './release-evidence-checklist.mjs';test('defaults absent evidence and never releases',()=>{const c=buildReleaseEvidenceChecklist({source_review:'verified'});assert.equal(c.complete,false);assert.equal(c.releaseAction,false);});
