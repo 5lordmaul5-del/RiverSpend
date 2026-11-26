@@ -1,0 +1,2 @@
+# RC-184 — Operational Readiness
+Distinguishes documentation, implementation, verification and blocked/unknown states. Readiness is only reported when every supplied item is labelled verified; this label itself is not independently authenticated.
