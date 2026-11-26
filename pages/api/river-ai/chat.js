@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { callLLMWithFailover } from "../../../lib/riverSSAI/llmProvider";
 
 const MODEL_DEFAULT = "openai/gpt-oss-20b";
 const MAX_AGENTS = 30;
@@ -106,38 +107,6 @@ function chooseTeam(agent, requestedSize, prompt = "") {
   return selected;
 }
 
-async function callModel(apiKey, model, messages, maxTokens = 850) {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 45000);
-  try {
-    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: "Bearer " + apiKey,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        model,
-        messages,
-        temperature: 0.25,
-        max_tokens: maxTokens
-      }),
-      signal: controller.signal
-    });
-    const payload = await response.json().catch(() => ({}));
-    if (!response.ok) {
-      const error = new Error(payload?.error?.message || "Provider AI non disponibile.");
-      error.status = response.status;
-      throw error;
-    }
-    const answer = payload?.choices?.[0]?.message?.content;
-    if (typeof answer !== "string" || !answer.trim()) throw new Error("Il modello ha restituito una risposta vuota.");
-    return answer.trim();
-  } finally {
-    clearTimeout(timeout);
-  }
-}
-
 async function runWithLimit(items, limit, worker) {
   const results = new Array(items.length);
   let next = 0;
@@ -160,9 +129,11 @@ export default async function handler(req, res) {
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  const groqKey = process.env.GROQ_API_KEY;
-  if (!supabaseUrl || !serviceKey || !groqKey) {
-    return json(res, 503, { error: "Configurazione River AI incompleta. Controllare le variabili server." });
+  const hasGroqKey = Boolean(process.env.GROQ_API_KEY);
+  const hasBackupKey = Boolean(process.env.BACKUP_LLM_API_KEY || process.env.OPENROUTER_API_KEY);
+  const hasBackupModel = Boolean(process.env.BACKUP_LLM_MODEL || process.env.RIVER_AI_BACKUP_MODEL);
+  if ((!hasGroqKey && !hasBackupKey) || (hasBackupKey && !hasBackupModel)) {
+    return json(res, 503, { error: "Configurazione provider AI incompleta. Verificare le chiavi e il modello di backup." });
   }
 
   const authHeader = req.headers.authorization || "";
@@ -197,8 +168,6 @@ export default async function handler(req, res) {
 
   const agent = body.agent === "team" ? "team" : normalizeAgent(body.agent);
   const team = chooseTeam(agent, body.teamSize, safeMessages[safeMessages.length - 1].content);
-  const model = process.env.RIVER_AI_MODEL || MODEL_DEFAULT;
-
   try {
     const { data: memories, error: memoryReadError } = await adminClient
       .from("river_ai_memories")
@@ -215,31 +184,35 @@ export default async function handler(req, res) {
     const latestPrompt = safeMessages[safeMessages.length - 1].content;
     let answer;
     let agentsUsed = team;
+    let providerResults = [];
 
     if (agent === "team") {
       // La Squadra usa un contesto compatto per rispettare il limite TPM del provider.
       const teamHistory = safeMessages.slice(-4);
       const teamMemory = memoryContext.slice(0, 900);
       const reports = await runWithLimit(team, MAX_PARALLEL, async (specialist) => {
-        const report = await callModel(groqKey, model, [
+        const reportResult = await callLLMWithFailover([
           { role: "system", content: BASE_PROMPT + "\nRUOLO SPECIALISTA: " + AGENTS[specialist] + "\nFornisci un rapporto sintetico: priorità, un rischio e verifica essenziale." },
           ...(teamMemory ? [{ role: "system", content: "CONTESTO PRIVATO RIVERSPEND (sintesi):\n" + teamMemory }] : []),
           ...teamHistory
-        ], 300);
-        return { specialist, report };
+        ], { temperature: 0.25, max_tokens: 300 });
+        return { specialist, report: reportResult.content, provider: reportResult.provider, model: reportResult.model };
       });
-      const synthesis = await callModel(groqKey, model, [
+      const synthesisResult = await callLLMWithFailover([
         { role: "system", content: BASE_PROMPT + "\nSei NOVA, coordinatrice. Confronta i rapporti, risolvi le contraddizioni senza nasconderle e restituisci decisione, piano, rischi e verifiche." },
         { role: "user", content: "RICHIESTA:\n" + latestPrompt + "\n\nRAPPORTI SPECIALISTI:\n" + reports.map((item) => "AGENTE " + item.specialist.toUpperCase() + ":\n" + item.report).join("\n\n") }
-      ], 900);
-      answer = synthesis;
+      ], { temperature: 0.25, max_tokens: 900 });
+      answer = synthesisResult.content;
+      providerResults = [...reports, synthesisResult];
       agentsUsed = ["nova", ...team];
     } else {
-      answer = await callModel(groqKey, model, [
+      const answerResult = await callLLMWithFailover([
         { role: "system", content: BASE_PROMPT + "\nRUOLO ATTIVO: " + AGENTS[agent] },
         ...(memoryContext ? [{ role: "system", content: "MEMORIA PRIVATA RIVER AI:\n" + memoryContext }] : []),
         ...safeMessages
-      ], 1500);
+      ], { temperature: 0.25, max_tokens: 1500 });
+      answer = answerResult.content;
+      providerResults = [answerResult];
     }
 
     const memoryRows = [
@@ -249,9 +222,13 @@ export default async function handler(req, res) {
     const { error: memoryWriteError } = await adminClient.from("river_ai_memories").insert(memoryRows);
     if (memoryWriteError) console.error("River AI memory write failed:", memoryWriteError.message);
 
+    const providersUsed = [...new Set(providerResults.map((item) => item.provider))];
+    const modelsUsed = [...new Set(providerResults.map((item) => item.model))];
     return json(res, 200, {
       answer,
-      model,
+      provider: providersUsed.length === 1 ? providersUsed[0] : "mixed",
+      providersUsed,
+      model: modelsUsed.length === 1 ? modelsUsed[0] : "mixed",
       agent,
       agentsUsed,
       teamSize: agent === "team" ? team.length : 1,
