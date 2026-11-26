@@ -981,3 +981,8 @@ GitHub PR metadata confirms **98 changed files** at the current branch head. The
 - Added a regression for a pre-existing symlinked store-parent path, covering read and transaction paths.
 - This is path-based preflight and **does not eliminate a race against a concurrent ancestor replacement**; a descriptor-anchored filesystem implementation or enforced environment boundary is still required for that stronger guarantee. The change narrows the pre-existing-path attack and must not be treated as race-proof.
 - CI verification pending. No live state, service, merge or deployment was touched.
+
+
+## RC-135 — RC-134 regression-test contract correction
+
+GitHub Actions run 45803301270 failed at the Node test suite: 254/256 passed; two existing tests asserted the older `state_directory_not_regular` message while RC-134 now emits `state_directory_component_not_regular` for ancestor symlinks. The tests were updated to assert the current specific error code. This changes test expectations only; no security check was weakened. CI verification is pending.
