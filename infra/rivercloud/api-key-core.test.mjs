@@ -37,3 +37,8 @@ test("unknown required scopes and malformed records are denied", () => {
   assert.equal(verifyApiKey(key, { ...record, keyHash: "bad" }, { now }).reason, "invalid_record");
   assert.equal(API_KEY_SCOPES.includes("shop:checkout:real"), false);
 });
+
+ 
+test("key expiry timestamp must remain within safe integer range",()=>{
+  assert.throws(()=>createApiKey({ownerId:"owner",scopes:["ai:invoke"],now:Number.MAX_SAFE_INTEGER-1000,ttlMs:ttl}),/invalid_api_key_request/);
+});
