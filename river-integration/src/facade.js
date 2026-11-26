@@ -15,7 +15,8 @@ export function createIntegrationFacade({verifyIdentity,keyManager,provider,audi
   if(!validId(requestId)||typeof task!=="string"||!task.trim()||task.length>MAX_TASK||typeof model!=="string"||!model.trim()||model.length>MAX_MODEL||!Number.isInteger(limit)||limit<1||limit>maxOutputTokens)return{status:400,error:"invalid-request"};
   const key=typeof authorization?.apiKey==="string"?authorization.apiKey:null;
   if(!key)return genericDenied();
-  let check;\n  try{check=keyManager.validate({key,tenantId:identity.tenantId,scope:"inference"});}catch{return genericDenied();}
+  let check;
+  try{check=keyManager.validate({key,tenantId:identity.tenantId,scope:"inference"});}catch{return genericDenied();}
   if(!check?.allowed)return genericDenied();
   let outcome="error",durationStart=Date.now();
   try{
