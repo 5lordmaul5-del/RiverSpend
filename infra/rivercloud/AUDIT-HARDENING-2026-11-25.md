@@ -615,3 +615,11 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 - **OAuth2 Proxy:** pinned `v7.15.6`; the upstream release notes dated 5 November 2026 list security fixes. The v7.15.2 release also fixed multiple configuration-dependent authentication bypasses. This is not an image scan or proof that every embedded dependency is free of CVEs.
 - All three image references are digest-pinned in Compose/Dockerfile. **No SBOM, image signature verification or full vulnerability scan has been produced.** The demo `whoami` image is also not scanned.
 - Sources reviewed: Node release https://nodejs.org/en/blog/release/v22.23.5 ; OAuth2 Proxy release https://github.com/oauth2-proxy/oauth2-proxy/releases ; Caddy version-level advisory search https://security.snyk.io/vuln/SNYK-MINIMOSLATEST-CADDY-22514111 .
+
+
+### RC-37/RC-38 CI closeout — verified 26 November 2026
+
+- Push run **45751948706 (#348) — SUCCESS: 148/148 Node tests**, 0 failures. PR run **45751952030 (#349) — SUCCESS: 148/148 Node tests**, 0 failures.
+- Both runs also passed bootstrap shell syntax, backup/restore and Python syntax, **1/1 restore directory-replacement race test**, Compose configuration, and Caddy validation. No RiverCloud services were started.
+- The corrected RBAC test now proves Viewer and Auditor are denied full queue details; Operator and Admin have the explicit `read_jobs` grant, while health/status does not echo the actor label.
+- RC-38 is only a preliminary version/advisory review. SBOMs, exact-image scans, signature verification and a full CVE assessment remain pending.
