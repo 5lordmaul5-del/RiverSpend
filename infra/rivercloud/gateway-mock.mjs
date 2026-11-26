@@ -39,7 +39,7 @@ export function createMockGateway({maxIdempotencyEntries=10000}={}) {
       if (route.method==="GET") return {status:200,response:{status:"mock",service:route.service,requestId}};
       if (!plainObject(body)) return {status:400,error:"json_object_body_required"};
       let serialized;
-      try { serialized=canonicalJson(body,{maxDepth:32,maxBytes:MAX_BODY_BYTES}); } catch { return {status:400,error:"body_invalid"}; }
+      try { serialized=canonicalJson(body,{maxDepth:32,maxBytes:MAX_BODY_BYTES}); } catch (error) { return error?.message==="json_size_exceeded" ? {status:413,error:"body_too_large"} : {status:400,error:"body_invalid"}; }
       if (Buffer.byteLength(serialized)>MAX_BODY_BYTES) return {status:413,error:"body_too_large"};
       if (typeof idempotencyKey!=="string" || !IDEMPOTENCY_KEY.test(idempotencyKey)) return {status:400,error:"idempotency_key_required"};
       const digest=createHash("sha256").update(serialized).digest("hex");
