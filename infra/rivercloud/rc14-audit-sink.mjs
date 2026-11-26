@@ -7,7 +7,7 @@ const MAX_BODY = 64 * 1024;
 export function redact(value, depth=0) {
  if(depth>8) return "[depth-limit]";
  if(Array.isArray(value)) return value.slice(0,100).map(v=>redact(v,depth+1));
- if(value && typeof value === "object") { const out={}; for(const [k,v] of Object.entries(value).slice(0,100)) out[k]=SENSITIVE_KEYS.test(k)?"[redacted]":redact(v,depth+1); return out; }
+ if(value && typeof value === "object") { const out=Object.create(null); for(const [k,v] of Object.entries(value).slice(0,100)) out[k]=SENSITIVE_KEYS.test(k)?"[redacted]":redact(v,depth+1); return out; }
  if(typeof value === "string") return value.length>4000?value.slice(0,4000)+"[truncated]":value;
  if(typeof value === "number" || typeof value === "boolean" || value===null) return value;
  return "[unsupported]";
