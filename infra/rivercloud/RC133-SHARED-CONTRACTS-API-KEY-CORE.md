@@ -32,6 +32,9 @@ The contract manifest and mock route table are checked for drift. Mock routes co
 The harness is an in-memory test adapter only. It is not a production gateway, durable idempotency service, messaging service, catalogue backend or payment processor.
 
 
-## RC-135 — Persistent API-key store prototype
+## API-RC-135 — Persistent API-key store prototype
 
 A bounded private file-backed record store is added in `api-key-store.mjs`. It persists digest-only records, supports verification, revocation and metadata listing, and uses atomic snapshot writes with a lock and private-mode checks. See `RC135-API-KEY-STORE.md` for limitations and reproducible tests. This is not an encrypted production credential store.
+
+
+API-RC-135 focused reconstructed local tests: **7/7 passed** after correcting a redundant directory-creation call in the lock-timeout test fixture. This evidence is not a full checkout or GitHub Actions result; CI remains unverified.
