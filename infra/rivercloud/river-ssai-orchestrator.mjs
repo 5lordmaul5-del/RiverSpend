@@ -44,9 +44,9 @@ export function createRiverSSAIOrchestrator({definitions=[],maxIdempotencyEntrie
       const definition=registry.get(agentId);
       if(!definition||definition.version!==version)return {status:404,error:"agent_not_found"};
       if(definition.status!=="active")return {status:409,error:"agent_not_active"};
-      if(!inputMatchesSchema(input,definition.inputSchema))return {status:400,error:"input_schema_invalid"};
-      let serialized;try{serialized=canonicalJson(input,{maxDepth:32,maxBytes:MAX_INPUT_BYTES});}catch(error){return error?.message==="json_size_exceeded"?{status:413,error:"input_too_large"}:{status:400,error:"input_invalid"};}
+      let serialized,sanitizedInput;try{serialized=canonicalJson(input,{maxDepth:32,maxBytes:MAX_INPUT_BYTES});sanitizedInput=JSON.parse(serialized);}catch(error){return error?.message==="json_size_exceeded"?{status:413,error:"input_too_large"}:{status:400,error:"input_invalid"};}
       if(Buffer.byteLength(serialized)>MAX_INPUT_BYTES)return {status:413,error:"input_too_large"};
+      if(!inputMatchesSchema(sanitizedInput,definition.inputSchema))return {status:400,error:"input_schema_invalid"};
       const inputDigest=digestInput(serialized);
       const idempotencyId=auth.keyId+":"+agentId+":"+version+":"+idempotencyKey;
       const existing=idempotency.get(idempotencyId);
