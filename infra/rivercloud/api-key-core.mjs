@@ -39,6 +39,7 @@ function dataOptions(input,allowed,defaults){
     return out;
   }catch{return null;}
 }
+export function snapshotApiKeyOptions(input,allowed,defaults){return dataOptions(input,allowed,defaults);}
 function scopeValues(scopes) {
   try {
     if (!Array.isArray(scopes) || scopes.length < 1 || scopes.length > API_KEY_SCOPES.length ||
