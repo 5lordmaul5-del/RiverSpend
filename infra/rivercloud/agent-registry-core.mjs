@@ -53,7 +53,7 @@ function validateObjectSchema(schema) {
 
 export function validateAgentDefinition(definition) {
   try { canonicalJson(definition, { maxDepth:16, maxBytes:16384, maxNodes:2048 }); } catch { return { valid:false, reason:"definition_json_invalid" }; }
-  if (!plainObject(definition) || Object.keys(definition).some(k => !KEYS.includes(k)) || KEYS.some(k => !Object.hasOwn(definition,k))) return { valid:false, reason:"definition_schema_invalid" };
+  if (!exactDataObject(definition, KEYS)) return { valid:false, reason:"definition_schema_invalid" };
   if (!ID.test(definition.id) || !VERSION.test(definition.version) || typeof definition.name !== "string" || !definition.name.trim() || definition.name.length > 128 || !DOMAINS.test(definition.domain)) return { valid:false, reason:"definition_metadata_invalid" };
   if (!Array.isArray(definition.capabilities) || definition.capabilities.length < 1 || definition.capabilities.length > 32 || definition.capabilities.some(c => typeof c !== "string" || !CAPABILITY.test(c)) || new Set(definition.capabilities).size !== definition.capabilities.length) return { valid:false, reason:"capabilities_invalid" };
   if (!validateObjectSchema(definition.inputSchema) || !validateObjectSchema(definition.outputSchema)) return { valid:false, reason:"schema_contract_invalid" };
