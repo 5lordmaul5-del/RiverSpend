@@ -39,6 +39,7 @@ export function verifyAuditEnvelope(envelope) {
  return actual.length===expected.length&&timingSafeEqual(actual,expected)?{valid:true}:{valid:false,reason:"hash_mismatch"};
 }
 function validEndpoint(endpoint) {
+ if(typeof endpoint!=="string") return false;
  try { const u=new URL(endpoint); return u.protocol==="https:"&&!!u.hostname&&!u.username&&!u.password&&!u.hash&&!u.search; }
  catch { return false; }
 }
