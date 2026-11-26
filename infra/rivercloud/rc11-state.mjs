@@ -30,7 +30,13 @@ function validateState(s){
  if(!s||s.schema!==1||!Array.isArray(s.jobs)||!Array.isArray(s.approvals)||!Array.isArray(s.events))throw new Error("invalid_state_schema");
  for(const collection of [s.jobs,s.approvals,s.events])if(collection.some(item=>!item||typeof item!=="object"||Array.isArray(item)))throw new Error("invalid_state_record");
  if(s.jobs.length>MAX_STATE_JOBS||s.approvals.length>MAX_STATE_APPROVALS||s.events.length>MAX_STATE_EVENTS)throw new Error("state_collection_capacity_exceeded");
- for(const [name,limit] of [["auditRecords",MAX_STATE_AUDIT_RECORDS],["auditLogRecords",MAX_STATE_AUDIT_RECORDS],["lifecycleJobs",MAX_STATE_LIFECYCLE_JOBS],["approvalEvents",MAX_STATE_APPROVAL_EVENTS]]){\n  if(s[name]!==undefined){\n   if(!Array.isArray(s[name]))throw new Error("state_extension_schema_invalid");\n   if(s[name].length>limit)throw new Error("state_extension_capacity_exceeded");\n   if(s[name].some(item=>!item||typeof item!=="object"||Array.isArray(item)))throw new Error("invalid_state_extension_record");\n  }\n }
+ for(const [name,limit] of [["auditRecords",MAX_STATE_AUDIT_RECORDS],["auditLogRecords",MAX_STATE_AUDIT_RECORDS],["lifecycleJobs",MAX_STATE_LIFECYCLE_JOBS],["approvalEvents",MAX_STATE_APPROVAL_EVENTS]]){
+  if(s[name]!==undefined){
+   if(!Array.isArray(s[name]))throw new Error("state_extension_schema_invalid");
+   if(s[name].length>limit)throw new Error("state_extension_capacity_exceeded");
+   if(s[name].some(item=>!item||typeof item!=="object"||Array.isArray(item)))throw new Error("invalid_state_extension_record");
+  }
+ }
 }
 async function readBounded(handle,limit){
  const chunks=[];let total=0;const buffer=Buffer.allocUnsafe(64*1024);
