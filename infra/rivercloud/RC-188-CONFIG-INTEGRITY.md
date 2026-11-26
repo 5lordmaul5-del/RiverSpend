@@ -1,0 +1,2 @@
+# RC-188 — Configuration Integrity Review
+Hashes bounded supplied configuration text and compares with a caller-provided digest. Does not fetch secrets, inspect live settings, or detect secret content.
