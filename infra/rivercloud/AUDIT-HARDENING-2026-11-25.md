@@ -1007,3 +1007,11 @@ GitHub Actions run 45803301270 failed at the Node test suite: 254/256 passed; tw
 - API image SBOM: **20 components, 6 vulnerability entries**, SHA-256 `1e12c40ef36e0dfcb72b7557bc92c0589651ff490311704612e6d12d908d5b63`. The fixed HIGH/CRITICAL gate passed; this is not a zero-vulnerability or full-repository scan. The SBOM was not retained.
 - Caddy validation passed with a formatting warning at line 4. No service was started.
 - The pseudonym still derives from a proxy-supplied user label, not a verified issuer+subject, and does not replace authentication or an external audit sink.
+
+
+## RC-138 — fail closed on asynchronous approval verifier results (26 November 2026)
+
+- Audit found that the legacy `consumeStoredApproval` callback boundary accepted any truthy result. An asynchronous verifier returning a Promise that ultimately resolved to `false` could therefore be treated as successful before resolution.
+- The helper now requires the callback's synchronous result to be exactly `true`; Promise/object/false results fail closed. A regression confirms the approval remains unused after rejection and can subsequently be consumed by a valid synchronous verifier.
+- GitHub Actions **runs 45838469719 (#890, pull request) and 45838461717 (#889, push) — SUCCESS, 258/258 Node tests** on commit `6c2415e683546503da4507fb46a5a2d98d781e4d`.
+- RC-17's identity-bound atomic consumption path already enforced strict `=== true`; this fix hardens the legacy RC-11 helper. It does not replace a real OIDC provider or production approval service.
