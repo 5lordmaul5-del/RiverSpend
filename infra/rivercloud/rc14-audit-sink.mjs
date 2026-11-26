@@ -33,6 +33,7 @@ export function createAuditEnvelope(event,{sinkId,actor,occurredAt=new Date().to
 export function verifyAuditEnvelope(envelope) {
  if(!envelope||typeof envelope!=="object"||Array.isArray(envelope)||envelope.schema!=="rivercloud.audit.v1"||!ALLOWED.has(envelope.type)) return {valid:false,reason:"invalid_envelope"};
  if(!validContext(envelope)||!envelope.data||typeof envelope.data!=="object"||Array.isArray(envelope.data)||!HASH.test(envelope.hash??"")) return {valid:false,reason:"invalid_envelope_fields"};
+ if(JSON.stringify(redact(envelope.data))!==JSON.stringify(envelope.data)) return {valid:false,reason:"data_not_redacted"};
  const expected=createHash("sha256").update(JSON.stringify(payloadOf(envelope))).digest();
  const actual=Buffer.from(envelope.hash,"hex");
  return actual.length===expected.length&&timingSafeEqual(actual,expected)?{valid:true}:{valid:false,reason:"hash_mismatch"};
