@@ -24,3 +24,6 @@ test("redactor preserves special keys safely without prototype mutation",()=>{co
 test("rejects externally supplied envelope data that bypasses redaction even with a recomputed hash",()=>{const e=envelope();e.data.password="raw-secret";const {hash,...payload}=e;e.hash=createHash("sha256").update(JSON.stringify(payload)).digest("hex");assert.equal(verifyAuditEnvelope(e).reason,"data_not_redacted");});
 
 test("audit envelope verifier rejects inherited and unexpected fields",()=>{const e=envelope();const inherited=Object.create(e);assert.equal(verifyAuditEnvelope(inherited).valid,false);assert.equal(verifyAuditEnvelope({...e,extra:"unexpected"}).valid,false);const missing={...e};delete missing.actor;assert.equal(verifyAuditEnvelope(missing).valid,false);});
+
+
+test("RC-62 rejects unexpected signed-delivery header extensions",async()=>{const d=buildSignedDelivery(envelope(),{endpoint,secret,now});const extra={...d.headers,"x-extra":"ignored"};assert.equal((await verifySignedDelivery({...d,headers:extra},{secret,now,consumeReplay:acceptReplay})).reason,"unexpected_headers");});
