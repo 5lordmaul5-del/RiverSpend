@@ -30,7 +30,8 @@ function canonical(value, depth=0) {
   if (value && typeof value==="object") {
     const proto=Object.getPrototypeOf(value);
     if (proto!==Object.prototype && proto!==null) throw new Error("json_object_invalid");
-    const keys=Object.keys(value).sort();\n    if (keys.some(k=>k==="__proto__" || k==="prototype" || k==="constructor")) throw new Error("json_key_invalid");
+    const keys=Object.keys(value).sort();
+    if (keys.some(k=>k==="__proto__" || k==="prototype" || k==="constructor")) throw new Error("json_key_invalid");
     return "{"+keys.map(k=>JSON.stringify(k)+":"+canonical(value[k],depth+1)).join(",")+"}";
   }
   throw new Error("json_value_invalid");
