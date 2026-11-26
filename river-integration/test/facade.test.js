@@ -33,3 +33,10 @@ test("idempotency returns same result and runs operation once",async()=>{const s
 test("idempotency rejects payload mismatch",async()=>{const s=createIdempotencyStore();await s.execute({tenantId:"t",requestId:"r",payload:{x:1}},async()=>1);const r=await s.execute({tenantId:"t",requestId:"r",payload:{x:2}},async()=>2);assert.equal(r.status,409);});
 test("idempotency shares concurrent operation",async()=>{const s=createIdempotencyStore();let calls=0;const args={tenantId:"t",requestId:"r2",payload:"p"};const op=async()=>{calls++;await new Promise(resolve=>setTimeout(resolve,15));return 42};const [a,b]=await Promise.all([s.execute(args,op),s.execute(args,op)]);assert.equal(a,42);assert.equal(b,42);assert.equal(calls,1);});
 test("idempotency config is bounded",()=>{assert.throws(()=>createIdempotencyStore({maxEntries:0}),/invalid-idempotency-config/);});
+
+import test from "node:test";import assert from "node:assert/strict";import{createQuotaStore}from"../src/quota-store.js";
+test("quota allows requests then rejects within window",()=>{const q=createQuotaStore({windowMs:100,maxRequests:2});assert.equal(q.consume({tenantId:"a",now:0}).allowed,true);assert.equal(q.consume({tenantId:"a",now:1}).allowed,true);assert.equal(q.consume({tenantId:"a",now:2}).reason,"quota-exceeded");});
+test("quota resets after window",()=>{const q=createQuotaStore({windowMs:100,maxRequests:1});q.consume({tenantId:"a",now:0});assert.equal(q.consume({tenantId:"a",now:100}).allowed,true);});
+test("quota isolates tenants",()=>{const q=createQuotaStore({maxRequests:1});q.consume({tenantId:"a",now:1});assert.equal(q.consume({tenantId:"b",now:1}).allowed,true);});
+test("quota bounds tenant buckets",()=>{const q=createQuotaStore({maxTenants:1,windowMs:1000});q.consume({tenantId:"a",now:0});assert.equal(q.consume({tenantId:"b",now:1}).reason,"capacity");assert.equal(q.consume({tenantId:"b",now:1000}).allowed,true);});
+test("invalid configuration fails",()=>{assert.throws(()=>createQuotaStore({maxRequests:0}),/invalid-quota-config/);});
