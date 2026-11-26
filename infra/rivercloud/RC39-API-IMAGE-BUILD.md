@@ -11,4 +11,5 @@ This increment adds a Docker build of the RiverCloud API image to the existing i
 
 ## CI evidence
 
-Verification pending until GitHub Actions completes for the code/report commit. Do not claim the image built until that run reports success.
+- GitHub Actions push run **45757060159 (#356)** and PR run **45757064289 (#357)** — SUCCESS, 148/148 Node tests and the complete validation suite, including API image build and image inspection.
+- No API container or Compose service was started.

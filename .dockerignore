@@ -1,0 +1,25 @@
+# Exclude secrets, repository metadata, runtime state and build artifacts from Docker context.
+.git
+**/.git
+.env
+.env.*
+**/.env
+**/.env.*
+**/secrets/
+**/secrets/**
+**/queue-data/
+**/queue_data/
+**/state.json
+**/lifecycle.json
+**/*.lock
+**/*.tmp
+**/*.log
+**/*.bak
+**/*.backup
+**/*.tar
+**/*.tar.gz
+**/*.zip
+**/node_modules/
+**/coverage/
+**/dist/
+**/build/

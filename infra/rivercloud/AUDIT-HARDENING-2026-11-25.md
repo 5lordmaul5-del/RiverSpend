@@ -635,9 +635,16 @@ GitHub PR metadata confirms **98 changed files** at the current branch head. The
 - GitHub Actions push run **45752079082 (#352)** and PR run **45752083124 (#353)** — SUCCESS, **148/148 Node tests** each, 0 failures, plus bootstrap shell, backup/restore and Python syntax, **1/1 restore directory-replacement race**, Compose configuration and Caddy validation. These runs verify the report count correction commit `b52977df3e2eb12316bfdecb16c5e8b06c55a678`.
 
 
-## RC-39 — API container build added to CI (26 November 2026)
+## RC-39 — API image build verification (26 November 2026)
 
-- Static review of the runner/worker boundary confirms that the execution entry points still throw and remain disabled; no runner or worker was started.
-- Added a CI step to build the API image from the pinned Node base using the explicit Dockerfile and repository-root context, then inspect the resulting local image ID.
-- This is build validation only: it does not run the API container, start Compose services, create staging, or connect to an OIDC provider.
-- **Verification is pending** for this commit until a fresh GitHub Actions run completes. No image scan or SBOM is claimed by this increment.
+- Added a CI build of the isolated API image using the explicit Dockerfile and repository-root context, followed by inspection of the resulting image ID.
+- GitHub Actions push run **45757060159 (#356)** and PR run **45757064289 (#357)** — SUCCESS, **148/148 Node tests**, zero failures, plus shell/Python syntax, **1/1 restore directory-replacement race**, Compose configuration, API image build and image inspection, and Caddy validation.
+- This proves the Dockerfile builds in CI; no API container or Compose service was started. It is not an SBOM or vulnerability scan.
+- Static audit of the runner/worker entry points confirms execution remains disabled; no runner was started.
+
+
+## RC-40 — Docker build-context secret/state exclusions (verification pending)
+
+- Added root `.dockerignore` to exclude repository metadata, environment files, secret directories, queue/lifecycle state, locks, temporary files, logs, backups, archives and common build artifacts from the API image build context.
+- Added a regression test that checks these exclusions are present. This reduces accidental context exposure, especially when a build uses a remote Docker daemon.
+- No secrets or real data were accessed; no services were started. CI verification is pending.
