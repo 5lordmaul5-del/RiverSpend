@@ -88,3 +88,12 @@ The orchestrator now shares the strict bounded canonical JSON utility with the m
 - Initial run **45833184587 (#116)** failed one test because the new preflight intentionally returned `definition_json_invalid` instead of the older `schema_contract_invalid` expectation. The assertion was corrected to match the new validation boundary; no security check was weakened.
 - GitHub Actions run **45833340221 (#118) — SUCCESS, 49/49 tests**.
 - Still a definition catalogue/planning prototype: no live credentials, workers, production API, or real approval service.
+
+
+## RC-145 — store-backed mock vertical integration
+
+- Added a test-only adapter that resolves a key against the private persistent API-key store, then reuses the existing mock gateway's scope checks, body validation and idempotency logic; it does not duplicate key verification or create a live endpoint.
+- Integration coverage verifies scoped send, idempotent replay, persisted revocation, scope denial and missing-store fail-closed behavior.
+- Initial RC-145 run **45833616034 (#125) — SUCCESS, 49/49** did not include the new adapter tests because the workflow used an explicit test list. The workflow was corrected to include the adapter integration suite.
+- GitHub Actions run **45833702458 (#127) — SUCCESS, 52/52 tests**, including RC-145 integration coverage.
+- Adapter and gateway idempotency remain in-memory; store persistence covers API-key records/revocation only. This is test-only and not an operational API or production payment/gateway service.
