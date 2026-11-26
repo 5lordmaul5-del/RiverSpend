@@ -19,18 +19,18 @@ function responseSnapshot(value){return structuredClone(value);}
 const REQUEST_ID = /^[A-Za-z0-9._:-]{1,128}$/;
 const IDEMPOTENCY_KEY = /^[A-Za-z0-9._:-]{16,128}$/;
 
-function canonical(value) {
+function canonical(value, depth=0) {\n  if (depth>32) throw new Error("json_depth_exceeded");
   if (value===null || typeof value==="string" || typeof value==="boolean") return JSON.stringify(value);
   if (typeof value==="number") {
     if (!Number.isFinite(value)) throw new Error("json_number_invalid");
     return JSON.stringify(value);
   }
-  if (Array.isArray(value)) return "["+value.map(canonical).join(",")+"]";
+  if (Array.isArray(value)) return "["+value.map(v=>canonical(v,depth+1)).join(",")+"]";
   if (value && typeof value==="object") {
     const proto=Object.getPrototypeOf(value);
     if (proto!==Object.prototype && proto!==null) throw new Error("json_object_invalid");
     const keys=Object.keys(value).sort();
-    return "{"+keys.map(k=>JSON.stringify(k)+":"+canonical(value[k])).join(",")+"}";
+    return "{"+keys.map(k=>JSON.stringify(k)+":"+canonical(value[k],depth+1)).join(",")+"}";
   }
   throw new Error("json_value_invalid");
 }
