@@ -54,6 +54,7 @@ export class SpecialistRegistry {
   }
   const domainIndex=DOMAINS.indexOf(domain);
   const count=domainIndex>=this.total?0:Math.floor((this.total-1-domainIndex)/DOMAINS.length)+1;
+  if(offset>count)throw new Error("offset out of range");
   const start=domainIndex+offset*DOMAINS.length;
   for(let index=start;index<this.total&&items.length<limit;index+=DOMAINS.length)items.push(this.get(idFor(index)));
   return Object.freeze({registryVersion:"virtual-1",total:count,offset,limit,domain,items:Object.freeze(items),activeProcesses:0,executionEnabled:false});
