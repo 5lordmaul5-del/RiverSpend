@@ -47,3 +47,11 @@ GitHub Actions **run 45814754280 — SUCCESS, 33/33 Node tests**. The added orch
 - Regression test mutates the response object returned to the caller and confirms replay returns an intact cached response.
 - Commits: `2265db71` (code), `0a6a1930` (test).
 - CI evidence pending; no test execution is claimed for RC-139 yet.
+
+
+## RC-140 — bounded gateway canonicalization depth
+
+- Gateway canonical JSON traversal now rejects bodies deeper than 32 nested levels, limiting stack exhaustion from deeply nested request structures.
+- Added regression coverage with a 40-level nested body; expected fail-closed 400 `body_invalid`.
+- Code commit `26ecdc2b`; test commit `ccac1d4e`.
+- CI verification pending; no test pass is claimed yet.
