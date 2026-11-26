@@ -972,3 +972,12 @@ GitHub PR metadata confirms **98 changed files** at the current branch head. The
 - SBOM: **20 components**, **6 vulnerability entries**, SHA-256 `38c5c50946df1276b8a3666a3d503653cfec7d9def89c869815cfe59d6980fc7`.
 - Trivy `--pkg-types os,library` scan summary reported **0 matching HIGH/CRITICAL** for the scanned API image. The SBOM still contains 6 entries; this is not a zero-vulnerability claim or a full repository/service/runtime scan.
 - CI confirms the unused npm/corepack/shims and Yarn directory are absent while Node remains available.
+
+
+## RC-134 — reject symlinked state-store path components (26 November 2026)
+
+- File-by-file storage review found that RC-11 checked only the final directory with `lstat`; intermediate parent components were traversed by path resolution and could be symlinks.
+- Added a preflight walk of absolute directory components, rejecting symlink/non-directory components before read/open and after transaction directory creation. The final store directory retains owner/private-mode checks.
+- Added a regression for a pre-existing symlinked store-parent path, covering read and transaction paths.
+- This is path-based preflight and **does not eliminate a race against a concurrent ancestor replacement**; a descriptor-anchored filesystem implementation or enforced environment boundary is still required for that stronger guarantee. The change narrows the pre-existing-path attack and must not be treated as race-proof.
+- CI verification pending. No live state, service, merge or deployment was touched.
