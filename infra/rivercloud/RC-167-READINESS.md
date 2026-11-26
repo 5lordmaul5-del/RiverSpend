@@ -1,0 +1,3 @@
+# RC-167 — Unified Readiness Assessment
+
+Combines a validated evidence ledger and a bounded static component map. Reports missing required components, declared fault/degraded/unknown status and evidence states. Status labels are assessment-only (not_ready, review_required, assessment_only), never certification. No live checks, remediation, deployment, or authorization. Tests authored; not claimed executed.
