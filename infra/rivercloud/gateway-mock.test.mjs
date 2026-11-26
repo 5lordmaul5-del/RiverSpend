@@ -76,4 +76,9 @@ test("gateway cached idempotency responses cannot be mutated by callers",()=>{
   const third=isolated.handle({key:issued.key,record:issued.record,method:"POST",path:"/api/v1/signals/send",...headers,body:{message:"stable"},now});
   assert.equal(third.response.status,"accepted_mock");
 });
-\n\ntest("gateway canonicalization rejects excessive nesting",()=>{\n  const deep={};let cursor=deep;for(let i=0;i<40;i++){cursor.child={};cursor=cursor.child;}\n  const result=gateway.handle({key:issued.key,record:issued.record,method:"POST",path:"/api/v1/signals/send",requestId:"req-depth-00000001",idempotencyKey:"idem-depth-00000001",body:deep,now});\n  assert.equal(result.status,400);assert.equal(result.error,"body_invalid");\n});\n
+\n\n
+test("gateway canonicalization rejects excessive nesting",()=>{
+  const deep={};let cursor=deep;for(let i=0;i<40;i++){cursor.child={};cursor=cursor.child;}
+  const result=gateway.handle({key:issued.key,record:issued.record,method:"POST",path:"/api/v1/signals/send",requestId:"req-depth-00000001",idempotencyKey:"idem-depth-00000001",body:deep,now});
+  assert.equal(result.status,400);assert.equal(result.error,"body_invalid");
+});
