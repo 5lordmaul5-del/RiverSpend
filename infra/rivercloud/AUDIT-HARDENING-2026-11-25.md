@@ -747,3 +747,12 @@ GitHub PR metadata confirms **98 changed files** at the current branch head. The
 - Code commit `09fe41e5bb4c9f39e5c9802089bae8b30063df29`; test commit `ac68ac92f588907662871aa4049869697f4d6ca0`.
 - **CI pending for RC-53;** the commits were confirmed on the isolated PR branch, but tests have not been independently executed in this run.
 - No runner or service was started, no merge/deployment/staging operation, real data/credentials, provisioning or spending occurred.
+
+
+### RC-53 CI closeout (26 November 2026)
+
+- Intermediate workflow **45768639404 (#451) — FAILURE, 163/165 Node tests**: the two newly added RC-53 regression tests failed on the test-only commit before the corresponding fail-closed/capacity implementation landed. This failure is recorded, not counted as a pass.
+- Code commit `09fe41e5bb4c9f39e5c9802089bae8b30063df29`: workflow **45768665982 (#453) — SUCCESS, 165/165 Node tests**. Bootstrap shell, backup/restore and Python syntax, restore directory-replacement race, Compose configuration, isolated API image build/inspection and Caddy validation also passed. No RiverCloud services were started.
+- Report commit `c199a0c6508d9b6506758c0c5a2d149d27cbd86e`: workflow **45768696371 (#455) — SUCCESS, 165/165 tests**, plus all validation steps above.
+- Latest roadmap/report branch commit `13d579ea3a9c909df72d6e7ef7e0b50cb0db46b9`: workflow **45768708467 (#456) — SUCCESS, 165/165 tests**, plus bootstrap, backup/restore/Python, restore race, Compose, API image build/inspection and Caddy validation.
+- This CI evidence validates the isolated code and regression tests, not actual RiverCloud operation, OIDC provider integration, real runner execution, staging, backup to external storage, or production readiness.
