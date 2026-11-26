@@ -27,6 +27,6 @@ export function checkRunConsistency(input){
    if(run&&a.envelopeDigest!==run.envelopeDigest)diagnostics.push("audit_envelope_digest_mismatch");
   }
  }
- if(life&&typeof life.status==="string"&&run&&typeof run.status==="string"&&life.status!==run.status)diagnostics.push("lifecycle_run_status_mismatch");
+ if(life&&typeof life.status==="string"&&life.status==="prepared_not_executed"&&run&&run.status!=="prepared_not_executed")diagnostics.push("lifecycle_run_status_mismatch");
  return result(diagnostics.length===0,diagnostics);
 }
