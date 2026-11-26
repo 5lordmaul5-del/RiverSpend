@@ -76,7 +76,11 @@ test("RC-34 operator may submit plans, but no execution is enabled and retries a
     assert.equal(duplicateBody.job.state, "accepted_not_executed");
     const otherActor = await fetch(url + "/api/plan", { method: "POST", headers: { ...headers("operator-2", "operator"), "content-type": "application/json" }, body: JSON.stringify(basePlan) });
     assert.equal(otherActor.status, 200);
-    assert.equal((await otherActor.json()).job.actorRef, firstBody.job.actorRef);
+    const otherActorBody = await otherActor.json();
+    assert.equal(otherActorBody.duplicate, true);
+    assert.equal(otherActorBody.job.id, firstBody.job.id);
+    assert.equal("actorRef" in otherActorBody.job, false);
+    assert.equal("actorRoles" in otherActorBody.job, false);
     const jobs = await fetch(url + "/api/jobs", { headers: operator });
     assert.equal((await jobs.json()).jobs.length, 1);
   });
