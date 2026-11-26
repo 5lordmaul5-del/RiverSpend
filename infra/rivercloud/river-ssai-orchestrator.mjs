@@ -51,17 +51,32 @@ export function createRiverSSAIOrchestrator({definitions=[],maxIdempotencyEntrie
       const idempotencyId=auth.keyId+":"+agentId+":"+version+":"+idempotencyKey;
       const existing=idempotency.get(idempotencyId);
       if(existing)return existing.inputDigest===inputDigest?{status:202,duplicate:true,plan:existing.plan}:{status:409,error:"idempotency_conflict"};
-      if(idempotency.size>=maxIdempotencyEntries)return {status:503,error:"idempotency_capacity_exceeded"};
-      let approvalVerified=false;
-      if(definition.requiresApproval){
-        if(typeof approvalToken!=="string"||approvalToken.length<16||approvalToken.length>256)return {status:403,error:"approval_required"};
-        const binding={keyId:auth.keyId,ownerId:auth.ownerId,agentId,version,inputDigest,requestId,idempotencyKey};
-        try{approvalVerified=await approvalVerifier({token:approvalToken,binding})===true;}catch{approvalVerified=false;}
-        if(!approvalVerified)return {status:403,error:"approval_not_verified"};
+      const inflight=pending.get(idempotencyId);
+      if(inflight){
+        if(inflight.inputDigest!==inputDigest)return {status:409,error:"idempotency_conflict"};
+        const result=await inflight.promise;
+        return result.status===202?{...result,duplicate:true}:result;
       }
-      const plan=Object.freeze({status:"accepted_mock",requestId,agentId,version,inputDigest,riskClass:definition.riskClass,requiresApproval:definition.requiresApproval,approvalVerified,maxRunSeconds:definition.maxRunSeconds,maxConcurrency:definition.maxConcurrency,executionEnabled:false});
-      idempotency.set(idempotencyId,{inputDigest,plan});
-      return {status:202,duplicate:false,plan};
+      if(idempotency.size+pending.size>=maxIdempotencyEntries)return {status:503,error:"idempotency_capacity_exceeded"};
+      const reservation={inputDigest,promise:null};
+      pending.set(idempotencyId,reservation);
+      reservation.promise=(async()=>{
+        try{
+          let approvalVerified=false;
+          if(definition.requiresApproval){
+            if(typeof approvalToken!=="string"||approvalToken.length<16||approvalToken.length>256)return {status:403,error:"approval_required"};
+            const binding={keyId:auth.keyId,ownerId:auth.ownerId,agentId,version,inputDigest,requestId,idempotencyKey};
+            try{approvalVerified=await approvalVerifier({token:approvalToken,binding})===true;}catch{approvalVerified=false;}
+            if(!approvalVerified)return {status:403,error:"approval_not_verified"};
+          }
+          const plan=Object.freeze({status:"accepted_mock",requestId,agentId,version,inputDigest,riskClass:definition.riskClass,requiresApproval:definition.requiresApproval,approvalVerified,maxRunSeconds:definition.maxRunSeconds,maxConcurrency:definition.maxConcurrency,executionEnabled:false});
+          idempotency.set(idempotencyId,{inputDigest,plan});
+          return {status:202,duplicate:false,plan};
+        }finally{
+          pending.delete(idempotencyId);
+        }
+      })();
+      return reservation.promise;
     },
     getIdempotencyCount(){return idempotency.size;},
     getDefinitionCount(){return registry.size;}
