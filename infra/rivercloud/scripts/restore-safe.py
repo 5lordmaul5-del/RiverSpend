@@ -134,8 +134,9 @@ def main(archive_path, target_path):
         os.close(parent_fd)
         raise
 
-    fd = os.open(str(archive_path), os.O_RDONLY | os.O_NOFOLLOW)
+    fd = None
     try:
+        fd = os.open(str(archive_path), os.O_RDONLY | os.O_NOFOLLOW)
         if not stat.S_ISREG(os.fstat(fd).st_mode):
             fail("archive must be a regular file")
         raw = os.fdopen(fd, "rb", closefd=False)
@@ -207,7 +208,8 @@ def main(archive_path, target_path):
         finally:
             raw.close()
     finally:
-        os.close(fd)
+        if fd is not None:
+            os.close(fd)
         os.close(parent_fd)
     print("Restore extracted safely to:", target)
 
