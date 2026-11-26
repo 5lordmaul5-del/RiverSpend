@@ -965,3 +965,10 @@ GitHub PR metadata confirms **98 changed files** at the current branch head. The
 - Tested SBOM: **21 components**, **6 vulnerability entries**, SHA-256 `912296d8a3e4f2cb4d3f26a763488504824e26c0b632ef73123c265022519090`.
 - The fixed HIGH/CRITICAL gate passed with no matching findings. This does not imply zero vulnerabilities or a scan of all service images, source files, runtime or external dependencies.
 - RC-132 follow-up removes the remaining Yarn package directory and uses Trivy's `--pkg-types` flag instead of the deprecated `--vuln-type`; fresh CI is pending.
+
+### RC-132 closeout (26 November 2026)
+
+- GitHub Actions run **45800488045 (#854) — SUCCESS, 255/255 Node tests**, 3/3 restore-directory race tests, shell/Python syntax, Compose validation, API image build/inspection, package-manager absence check, SBOM, fixed HIGH/CRITICAL gate and Caddy validation.
+- SBOM: **20 components**, **6 vulnerability entries**, SHA-256 `38c5c50946df1276b8a3666a3d503653cfec7d9def89c869815cfe59d6980fc7`.
+- Trivy `--pkg-types os,library` scan summary reported **0 matching HIGH/CRITICAL** for the scanned API image. The SBOM still contains 6 entries; this is not a zero-vulnerability claim or a full repository/service/runtime scan.
+- CI confirms the unused npm/corepack/shims and Yarn directory are absent while Node remains available.
