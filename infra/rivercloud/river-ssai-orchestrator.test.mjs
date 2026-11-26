@@ -71,3 +71,15 @@ test("registry definitions are immutable snapshots after orchestrator constructi
   assert.equal(result.status,202);assert.equal(result.plan.riskClass,"low");assert.equal(result.plan.requiresApproval,false);
   assert.equal((await o.planInvoke({...invoke,agentId:mutable.id,idempotencyKey:"idempotency-abcdef",input:{prompt:1}})).error,"input_schema_invalid");
 });
+
+
+test("orchestrator rejects sparse arrays and excessive nesting",async()=>{
+  const arrayDefinition={...definition,inputSchema:{type:"object",properties:{prompt:{type:"string"},items:{type:"array"}},required:["prompt"],additionalProperties:false}};
+  const o=createRiverSSAIOrchestrator({definitions:[arrayDefinition]});
+  const sparse=new Array(2);sparse[1]="x";
+  const sparseResult=await o.planInvoke({...invoke,input:{prompt:"ok",items:sparse}});
+  assert.equal(sparseResult.status,400);assert.equal(sparseResult.error,"input_invalid");
+  let deep=[];let cursor=deep;for(let i=0;i<40;i++){const next=[];cursor.push(next);cursor=next;}
+  const deepResult=await o.planInvoke({...invoke,input:{prompt:"ok",items:deep},idempotencyKey:"idempotency-depth"});
+  assert.equal(deepResult.status,400);assert.equal(deepResult.error,"input_invalid");
+});
