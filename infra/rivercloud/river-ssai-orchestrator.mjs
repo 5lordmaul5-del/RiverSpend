@@ -2,18 +2,12 @@
 import {createHash} from "node:crypto";
 import {verifyApiKey} from "./api-key-core.mjs";
 import {validateAgentRegistry} from "./agent-registry-core.mjs";
+import {canonicalJson} from "./canonical-json.mjs";
 
 const REQUEST_ID=/^[A-Za-z0-9._:-]{1,128}$/;
 const IDEMPOTENCY=/^[A-Za-z0-9._:-]{16,128}$/;
 const MAX_INPUT_BYTES=8192;
 function plainObject(value){return !!value&&typeof value==="object"&&!Array.isArray(value)&&(Object.getPrototypeOf(value)===Object.prototype||Object.getPrototypeOf(value)===null);}
-function canonical(value){
-  if(value===null||typeof value==="string"||typeof value==="boolean")return JSON.stringify(value);
-  if(typeof value==="number"){if(!Number.isFinite(value))throw new Error("input_number_invalid");return JSON.stringify(value);}
-  if(Array.isArray(value))return "["+value.map(canonical).join(",")+"]";
-  if(plainObject(value)){const keys=Object.keys(value).sort();if(keys.some(k=>["__proto__","constructor","prototype"].includes(k)))throw new Error("input_key_invalid");return "{"+keys.map(k=>JSON.stringify(k)+":"+canonical(value[k])).join(",")+"}";}
-  throw new Error("input_value_invalid");
-}
 function inputMatchesSchema(input,schema){
   if(!plainObject(input)||!plainObject(schema)||schema.type!=="object"||schema.additionalProperties!==false||!plainObject(schema.properties)||!Array.isArray(schema.required))return false;
   const keys=Object.keys(input),allowed=Object.keys(schema.properties);
@@ -29,7 +23,7 @@ function inputMatchesSchema(input,schema){
   }
   return true;
 }
-function digestInput(input){return createHash("sha256").update("river-ssai-input-v1\0").update(canonical(input)).digest("hex");}
+function digestInput(serialized){return createHash("sha256").update("river-ssai-input-v1\0").update(serialized).digest("hex");}
 function deepFreeze(value){if(value&&typeof value==="object"&&!Object.isFrozen(value)){for(const child of Object.values(value))deepFreeze(child);Object.freeze(value);}return value;}
 
 export function createRiverSSAIOrchestrator({definitions=[],maxIdempotencyEntries=5000,approvalVerifier=()=>false}={}){
@@ -50,9 +44,9 @@ export function createRiverSSAIOrchestrator({definitions=[],maxIdempotencyEntrie
       if(!definition||definition.version!==version)return {status:404,error:"agent_not_found"};
       if(definition.status!=="active")return {status:409,error:"agent_not_active"};
       if(!inputMatchesSchema(input,definition.inputSchema))return {status:400,error:"input_schema_invalid"};
-      let serialized;try{serialized=canonical(input);}catch{return {status:400,error:"input_invalid"};}
+      let serialized;try{serialized=canonicalJson(input,{maxDepth:32,maxBytes:MAX_INPUT_BYTES});}catch{return {status:400,error:"input_invalid"};}
       if(Buffer.byteLength(serialized)>MAX_INPUT_BYTES)return {status:413,error:"input_too_large"};
-      const inputDigest=digestInput(input);
+      const inputDigest=digestInput(serialized);
       const idempotencyId=auth.keyId+":"+agentId+":"+version+":"+idempotencyKey;
       const existing=idempotency.get(idempotencyId);
       if(existing)return existing.inputDigest===inputDigest?{status:202,duplicate:true,plan:existing.plan}:{status:409,error:"idempotency_conflict"};
