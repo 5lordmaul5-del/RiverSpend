@@ -950,3 +950,11 @@ GitHub PR metadata confirms **98 changed files** at the current branch head. The
 - SBOM is generated in the ephemeral runner and not retained/uploaded as an artifact. No extra artifact storage or permissions are introduced.
 - GitHub Actions run **45799174492 (#829)** was queued when this entry was drafted. Fresh CI and scanner results are pending; no pass or vulnerability-free claim is made.
 - Caddy, oauth2-proxy, demo upstream, repository-wide secrets/IaC and runtime scans remain out of scope for this increment.
+
+### RC-131 initial scan finding and remediation (26 November 2026)
+
+- CI run **45799322843 (#832)** generated the CycloneDX SBOM but the threshold gate failed: **10 fixed HIGH, 0 CRITICAL** vulnerabilities in the bundled npm package tree.
+- SBOM evidence: **218 components**, **28 vulnerability entries**, SHA-256 `d5eb735a25c18d7447d42a8f1f90b84b92a94c5be500ec1af023420873ec1646`. These figures describe that initial image only.
+- Findings included vulnerable versions of brace-expansion, ip-address, pacote, picomatch and sigstore inside the bundled npm package tree. No findings are ignored or suppressed.
+- The API image now removes npm, npx, corepack and common package-manager shims because the API runtime uses Node only. CI additionally asserts Node is present and those package managers are absent.
+- Fresh CI and vulnerability scan evidence is pending; the initial scan failure is not counted as a pass.
