@@ -8,16 +8,31 @@ const POLICY = Object.freeze({
   productionRequiresApproval: true,
 });
 
+export function exactDataObject(input,keys){
+  try{
+    if(!input||typeof input!=="object"||Array.isArray(input)||
+       (Object.getPrototypeOf(input)!==Object.prototype&&Object.getPrototypeOf(input)!==null)||
+       Object.getOwnPropertySymbols(input).length)return null;
+    const ownKeys=Reflect.ownKeys(input);
+    if(ownKeys.length!==keys.length||ownKeys.some(k=>typeof k!=="string"||!keys.includes(k)))return null;
+    const snapshot=Object.create(null);
+    for(const key of keys){
+      const descriptor=Object.getOwnPropertyDescriptor(input,key);
+      if(!descriptor||!descriptor.enumerable||!Object.hasOwn(descriptor,"value"))return null;
+      snapshot[key]=descriptor.value;
+    }
+    return snapshot;
+  }catch{return null;}
+}
+
 export function validateDeployRequest(input) {
-  if (!input || typeof input !== "object") throw new Error("invalid_request");
-  const projectId = String(input.projectId || "");
-  const commit = String(input.commit || "");
-  const target = String(input.target || "");
+  const data=exactDataObject(input,["projectId","branch","commit","target"]);
+  if(!data||Object.values(data).some(v=>typeof v!=="string"))throw new Error("invalid_request");
+  const {projectId,commit,target,branch}=data;
   const project = POLICY.projects[projectId];
   if (!project) throw new Error("project_not_allowlisted");
   if (!project.targets.includes(target)) throw new Error("target_not_allowed");
   if (!/^[0-9a-f]{40}$/i.test(commit)) throw new Error("immutable_commit_sha_required");
-  const branch = String(input.branch || "");
   if (!project.branches.includes(branch)) throw new Error("branch_not_allowlisted");
   if (target === "production" && POLICY.productionRequiresApproval) throw new Error("production_approval_required");
   return Object.freeze({ projectId, repository: project.repository, branch, commit: commit.toLowerCase(), target, status: "planned_not_queued" });
