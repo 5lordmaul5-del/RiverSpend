@@ -32,3 +32,17 @@ test("registry has a hard ceiling of 100000 definitions without creating workers
   assert.equal(validateAgentRegistry(new Array(MAX_AGENT_DEFINITIONS + 1)).reason, "registry_capacity_exceeded");
   assert.equal(validateAgentRegistry(null).reason, "registry_not_array");
 });
+
+
+test("registry rejects cyclic and extra schema fields before snapshotting", () => {
+  const cyclic = { type:"object", properties:{ query:{type:"string"} }, required:["query"], additionalProperties:false };
+  cyclic.extra = cyclic;
+  assert.equal(validateAgentDefinition({ ...sample, inputSchema:cyclic }).reason, "schema_contract_invalid");
+  const nested = { type:"string", extra:{} };
+  nested.extra.self = nested.extra;
+  const malformed = { type:"object", properties:{ query:nested }, required:["query"], additionalProperties:false };
+  assert.equal(validateAgentDefinition({ ...sample, inputSchema:malformed }).reason, "schema_contract_invalid");
+  const sparseRequired = new Array(1);
+  const sparseSchema = { type:"object", properties:{query:{type:"string"}}, required:sparseRequired, additionalProperties:false };
+  assert.equal(validateAgentDefinition({ ...sample, inputSchema:sparseSchema }).reason, "schema_contract_invalid");
+});
