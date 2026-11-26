@@ -38,3 +38,5 @@ Run RiverSpend in staging on RiverCloud, validate reliability, backups, secrets,
 
 
 - RC-129: backup destination preflight now requires current-user ownership, owner rwx, and no group/world access; newly created destinations are private under umask 077. Focused reconstructed tests 2/2 and shell syntax passed, but RC-129 CI remains unverified. See `infra/rivercloud/RC129-BACKUP-DIRECTORY-PRIVACY.md`.
+
+- RC-130: backup now rejects source data directories with unsafe ownership or group/world permissions. The focused reconstructed RC-129/130 tests passed 3/3; CI remains unverified. See `infra/rivercloud/RC130-BACKUP-SOURCE-PRIVACY.md`.
