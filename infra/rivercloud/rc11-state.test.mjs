@@ -25,3 +25,6 @@ test("reject snapshot collections containing null, arrays or primitive records",
 
 
 test("reject malformed post-mutation snapshots before commit",async()=>{const root=await mkdtemp(path.join(os.tmpdir(),"rc11-post-mutation-"));try{const file=path.join(root,"state.json");for(const mutate of [state=>{state.schema=2;},state=>{state.jobs=null;},state=>{state.events.push([]);}]){await assert.rejects(()=>transactState(file,state=>{mutate(state);}),/invalid_state_(schema|record)/);assert.deepEqual(await readState(file),{schema:1,jobs:[],approvals:[],events:[]});}}finally{await rm(root,{recursive:true,force:true});}});
+
+
+test("reject persisted state collections beyond configured capacity",async()=>{const root=await mkdtemp(path.join(os.tmpdir(),"rc11-capacity-"));try{const file=path.join(root,"state.json");for(const [collection,count] of [["jobs",5001],["approvals",5001],["events",10001]]){const state={schema:1,jobs:[],approvals:[],events:[]};state[collection]=Array.from({length:count},(_,i)=>({id:String(i)}));await writeFile(file,JSON.stringify(state));await assert.rejects(()=>readState(file),/state_collection_capacity_exceeded/);}}finally{await rm(root,{recursive:true,force:true});}});
