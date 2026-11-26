@@ -1,5 +1,5 @@
 import test from "node:test";
-import { createHash } from "node:crypto";
+import { createHmac } from "node:crypto";
 import assert from "node:assert/strict";
 import { mkdtemp, rm } from "node:fs/promises";
 import os from "node:os";
@@ -8,10 +8,11 @@ import { createProxyApiServer } from "./rc34-proxy-api.mjs";
 
 const basePlan = { projectId: "riverspend", branch: "main", target: "staging", commit: "b".repeat(40) };
 const groupRoleMap = { operator: "operator", viewer: "viewer", auditor: "auditor", admin: "admin" };
+const actorSecret = "test-actor-pseudonym-secret-32-bytes";
 
 async function withServer(options, run) {
   const root = await mkdtemp(path.join(os.tmpdir(), "rc34-"));
-  const server = createProxyApiServer({ storeFile: path.join(root, "state.json"), ...options });
+  const server = createProxyApiServer({ actorPseudonymSecret: actorSecret, storeFile: path.join(root, "state.json"), ...options });
   try {
     await new Promise((resolve, reject) => { server.once("error", reject); server.listen(0, options.host || "127.0.0.1", resolve); });
     const url = "http://127.0.0.1:" + server.address().port;
@@ -62,7 +63,7 @@ test("RC-34 operator may submit plans, but no execution is enabled and retries a
     assert.equal(first.status, 202);
     const firstBody = await first.json();
     assert.match(firstBody.job.actorRef, /^[a-f0-9]{64}$/);
-    assert.equal(firstBody.job.actorRef, createHash("sha256").update("rivercloud-actor-v1\\0operator-1").digest("hex"));
+    assert.equal(firstBody.job.actorRef, createHmac("sha256", actorSecret).update("rivercloud-actor-v1\0").update("operator-1").digest("hex"));
     assert.deepEqual(firstBody.job.actorRoles, ["operator"]);
     assert.doesNotMatch(JSON.stringify(firstBody.job), /operator-1/);
     const duplicate = await fetch(url + "/api/plan", { method: "POST", headers: { ...operator, "content-type": "application/json" }, body: JSON.stringify(basePlan) });
@@ -126,3 +127,6 @@ test("RC-54 standalone API default rejects a local caller outside the private pr
     assert.equal((await response.json()).error, "untrusted_proxy");
   });
 });
+
+
+test("RC-137 rejects missing, short and placeholder actor pseudonym secrets",()=>{assert.throws(()=>createProxyApiServer({actorPseudonymSecret:"short"}),/actor_pseudonym_secret_required/);assert.throws(()=>createProxyApiServer({actorPseudonymSecret:"CHANGE_ME_generate_32_bytes_base64"}),/actor_pseudonym_secret_required/);});
