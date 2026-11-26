@@ -6,3 +6,6 @@ test("rejects branch outside allowlist",()=>assert.throws(()=>resolveProjectPoli
 test("rejects production target",()=>assert.throws(()=>resolveProjectPolicy("riverspend","main","production"),/target_not_allowed/));
 test("resolves only known worker profile",()=>assert.equal(resolveWorkerProfile("node-tests").timeoutSeconds,300));
 test("rejects arbitrary profile",()=>assert.throws(()=>resolveWorkerProfile("shell"),/profile_not_allowlisted/));
+test("prototype names cannot bypass project allowlist",()=>assert.throws(()=>resolveProjectPolicy("__proto__","main","staging"),/project_not_allowlisted/));
+test("prototype names cannot bypass worker profile allowlist",()=>assert.throws(()=>resolveWorkerProfile("constructor"),/profile_not_allowlisted/));
+test("non-string identifiers fail closed",()=>assert.throws(()=>resolveWorkerProfile({}),/profile_not_allowlisted/));
