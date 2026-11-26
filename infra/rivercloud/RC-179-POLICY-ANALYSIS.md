@@ -1,0 +1,2 @@
+# RC-179 — Policy Enforcement Analysis
+Identifies simple same-scope differences in supplied policy levels. It is a conflict detector only: does not evaluate real-world applicability or enforce decisions.
