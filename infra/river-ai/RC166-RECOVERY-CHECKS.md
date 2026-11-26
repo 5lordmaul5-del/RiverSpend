@@ -1,0 +1,2 @@
+# RC-166 — Retry and recovery decisions
+Pure decision helper for bounded retry eligibility and capped exponential delay. It does not perform retries, store attempt counters, alter ledger state, or schedule work. Retryable codes are explicitly allowlisted. Prototype; tests authored but not run.
