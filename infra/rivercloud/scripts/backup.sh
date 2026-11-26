@@ -13,7 +13,7 @@ backup_owner=$(stat -c '%u' "$BACKUP_DIR")
 backup_mode=$(stat -c '%a' "$BACKUP_DIR")
 backup_uid=$(id -u)
 backup_mode_bits=$((0$backup_mode))
-if [ "$backup_owner" != "$backup_uid" ] || [ $((backup_mode_bits & 077)) -ne 0 ] || [ $((backup_mode_bits & 0700)) -ne 0700 ]; then
+if [ "$backup_owner" != "$backup_uid" ] || [ $((backup_mode_bits & 077)) -ne 0 ] || [ $((backup_mode_bits & 0700)) -ne $((0700)) ]; then
   echo "backup directory must be owned by current user and have private 0700 permissions" >&2
   exit 2
 fi
