@@ -14,6 +14,17 @@ if find "$DATA_DIR" -type f \( -name "*.lock" -o -name "*.tmp-*" \) -print -quit
 umask 077
 base="rivercloud-data-$(date -u +%Y%m%dT%H%M%SZ)-$$.tar.gz"
 archive="$BACKUP_DIR/$base"
-tar --exclude="*.lock" --exclude="*.tmp-*" -czf "$archive" -C "$DATA_DIR" .
-(cd "$BACKUP_DIR" && sha256sum "$base" > "$base.sha256")
+tmp_archive=$(mktemp "$BACKUP_DIR/.rivercloud-archive.XXXXXX")
+tmp_checksum=$(mktemp "$BACKUP_DIR/.rivercloud-checksum.XXXXXX")
+cleanup() {
+  rm -f "$tmp_archive" "$tmp_checksum"
+  if [ "${published_archive:-}" = "yes" ] && [ "${published_checksum:-}" != "yes" ]; then rm -f "$archive"; fi
+}
+trap cleanup EXIT HUP INT TERM
+tar --exclude="*.lock" --exclude="*.tmp-*" -czf "$tmp_archive" -C "$DATA_DIR" .
+mv "$tmp_archive" "$archive"
+published_archive=yes
+(cd "$BACKUP_DIR" && sha256sum "$base") > "$tmp_checksum"
+mv "$tmp_checksum" "$archive.sha256"
+published_checksum=yes
 printf '%s\n' "$archive"
