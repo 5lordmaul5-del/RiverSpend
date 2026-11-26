@@ -44,7 +44,7 @@ function validRecord(record) {
 
 export function createApiKey({ ownerId, scopes, now = Date.now(), ttlMs = 30 * 24 * 60 * 60 * 1000 } = {}) {
   if (!validOwner(ownerId) || !validScopes(scopes) || !Number.isSafeInteger(now) ||
-      !Number.isSafeInteger(ttlMs) || ttlMs < MIN_TTL || ttlMs > MAX_TTL || now < 0) {
+      !Number.isSafeInteger(ttlMs) || ttlMs < MIN_TTL || ttlMs > MAX_TTL || now < 0 || !Number.isSafeInteger(now + ttlMs)) {
     throw new Error("invalid_api_key_request");
   }
   const id = randomBytes(16).toString("hex");
