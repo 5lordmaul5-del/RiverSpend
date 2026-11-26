@@ -772,3 +772,15 @@ GitHub PR metadata confirms **98 changed files** at the current branch head. The
 
 - Added a separate regression that fills `state.events` to its configured 10,000-record limit and requires approval issuance to reject rather than append. The lifecycle helpers also fail closed when the event collection is at capacity during approval consumption.
 - The test is included in latest run **45769108597 (#479) — SUCCESS, 168/168**.
+
+
+### RC-54 report closeout
+
+- Report commit `fc117c74c34f7146f9566f0391ee534253c8b7cf`: workflow **45769186772 (#481) — SUCCESS, 168/168 tests**, plus bootstrap, backup/restore/Python syntax, restore-race, Compose, API image build/inspection and Caddy validation.
+
+## RC-55 — audit-envelope redaction enforcement (26 November 2026)
+
+- Review of RC-14 found `verifyAuditEnvelope` checked integrity but did not require the data to be redacted. A manually assembled envelope could include sensitive-key values and still pass the envelope verifier if its unkeyed hash were recomputed; signed delivery would then transmit it.
+- The verifier now re-applies the canonical redactor and rejects data that is not already redacted (`data_not_redacted`), before digest verification. Added a regression that injects a raw secret, recomputes the envelope hash, and requires rejection.
+- Code commit `f9588979a4becc10bcae88b6e2e28814d0f856b8`; test commit `99c45ebdef0593ec072db974f94ab80203f3c07d`.
+- **CI pending for RC-55.** No network delivery, receiver, real audit sink, external storage, live service, runner, staging, production data/credentials, merge, deployment, provisioning or spending.
