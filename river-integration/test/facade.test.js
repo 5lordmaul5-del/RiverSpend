@@ -1,3 +1,4 @@
+import {createIdempotencyStore} from "../src/idempotency-store.js";
 import test from "node:test";
 import assert from "node:assert/strict";
 import {createIntegrationFacade} from "../src/facade.js";
@@ -27,3 +28,8 @@ test("key-manager failure fails closed before provider",async()=>{const provider
 test("invalid facade output-token configuration rejected",()=>{assert.throws(()=>createIntegrationFacade({verifyIdentity:async()=>({}),keyManager:{validate:()=>({allowed:true})},provider:{generate:async()=>({response:'ok'})},maxOutputTokens:0}),/integration-dependencies-required/);});
 
 test("provider timeout aborts and returns generic failure",async()=>{let aborted=false;const facade=createIntegrationFacade({verifyIdentity:async()=>({tenantId:"tenant-a",actorId:"actor-a"}),keyManager:{validate:()=>({allowed:true,keyId:"kid"})},provider:{generate:(_,opts)=>new Promise((_,reject)=>opts.signal.addEventListener("abort",()=>{aborted=true;reject(Error("aborted"));}))},timeoutMs:5});const r=await facade.invoke(request);assert.equal(r.status,502);assert.equal(r.error,"provider-failure");assert.equal(aborted,true);});
+
+test("idempotency returns same result and runs operation once",async()=>{const s=createIdempotencyStore();let calls=0;const args={tenantId:"t",requestId:"r",payload:{x:1}};const a=await s.execute(args,async()=>{calls++;return{status:200,value:"v"}});const b=await s.execute(args,async()=>{calls++;return{status:500}});assert.deepEqual(a,b);assert.equal(calls,1);});
+test("idempotency rejects payload mismatch",async()=>{const s=createIdempotencyStore();await s.execute({tenantId:"t",requestId:"r",payload:{x:1}},async()=>1);const r=await s.execute({tenantId:"t",requestId:"r",payload:{x:2}},async()=>2);assert.equal(r.status,409);});
+test("idempotency shares concurrent operation",async()=>{const s=createIdempotencyStore();let calls=0;const args={tenantId:"t",requestId:"r2",payload:"p"};const op=async()=>{calls++;await new Promise(resolve=>setTimeout(resolve,15));return 42};const [a,b]=await Promise.all([s.execute(args,op),s.execute(args,op)]);assert.equal(a,42);assert.equal(b,42);assert.equal(calls,1);});
+test("idempotency config is bounded",()=>{assert.throws(()=>createIdempotencyStore({maxEntries:0}),/invalid-idempotency-config/);});
