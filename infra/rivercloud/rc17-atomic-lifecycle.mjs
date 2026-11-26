@@ -15,6 +15,7 @@ const HASH = /^[a-f0-9]{64}$/i;
 const MAX_LIFECYCLE_JOBS = 5000;
 const MAX_AUDIT_RECORDS = 10000;
 const MAX_LIFECYCLE_APPROVALS = 10000;
+const MAX_LIFECYCLE_EVENTS = 10000;
 function ensureLifecycleJobs(state) { if (state.lifecycleJobs === undefined) state.lifecycleJobs = []; else if (!Array.isArray(state.lifecycleJobs)) throw new Error('lifecycle_jobs_schema_invalid'); return state.lifecycleJobs; }
 function ensureAuditRecords(state) { if (state.auditRecords === undefined) state.auditRecords = []; else if (!Array.isArray(state.auditRecords)) throw new Error('audit_records_schema_invalid'); return state.auditRecords; }
 const sensitive = /password|secret|token|authorization|cookie|private.?key|credential|api.?key/i;
@@ -127,6 +128,7 @@ export async function storeApprovalForLifecycleAtomic(file, record) {
   return transactState(file, state => {
     const jobs = ensureLifecycleJobs(state); ensureAuditRecords(state);
     if (!Array.isArray(state.approvals) || !Array.isArray(state.events)) throw new Error('approval_state_schema_invalid');
+    if (state.events.length >= MAX_LIFECYCLE_EVENTS) throw new Error('approval_event_capacity_exceeded');
     if (state.approvals.some(a => a.tokenId === record.tokenId)) throw new Error("approval_exists");
     const job = jobs.find(j => j.id === record.jobId);
     if (!job || job.state !== "pending" || String(job.digest).toLowerCase() !== String(record.binding.digest).toLowerCase()) {
@@ -159,6 +161,7 @@ export async function consumeApprovalAndTransitionAtomic(file, {
   return transactState(file, state => {
     const jobs = ensureLifecycleJobs(state); ensureAuditRecords(state);
     if (!Array.isArray(state.approvals) || !Array.isArray(state.events)) throw new Error('approval_state_schema_invalid');
+    if (state.events.length >= MAX_LIFECYCLE_EVENTS) throw new Error('approval_event_capacity_exceeded');
     const approval = state.approvals.find(a => a.tokenId === tokenId);
     if (!approval || approval.used) throw new Error("approval_missing_or_used");
     if (!Number.isSafeInteger(approval.expiresAt) || approval.expiresAt <= Date.now()) throw new Error("approval_expired");
