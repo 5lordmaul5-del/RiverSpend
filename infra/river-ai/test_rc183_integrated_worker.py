@@ -167,10 +167,12 @@ class WorkerCoreIntegrationTests(unittest.TestCase):
         self.assertEqual(self.ledger.status()["queued"],1)
 
     def test_duplicate_request_key_checked_before_queue_capacity(self):
-        first=self.ledger.enqueue("echo","summary","user-1",{"x":1},request_key="req-1")
-        repeat=self.ledger.enqueue("echo","summary","user-1",{"x":1},request_key="req-1")
+        full_path=os.path.join(self.tmp.name,"full.sqlite")
+        full=PayloadPersistentTaskLedger(full_path,queue_limit=1,lease_seconds=10)
+        first=full.enqueue("echo","summary","user-1",{"x":1},request_key="req-1")
+        repeat=full.enqueue("echo","summary","user-1",{"x":1},request_key="req-1")
         self.assertEqual(first,repeat)
-        self.assertEqual(self.ledger.status()["queued"],1)
+        self.assertEqual(full.status()["queued"],1)
 
     def test_request_key_reuse_with_changed_content_rejected(self):
         first=self.ledger.enqueue("echo","summary","user-1",{"x":1},request_key="req-1")
