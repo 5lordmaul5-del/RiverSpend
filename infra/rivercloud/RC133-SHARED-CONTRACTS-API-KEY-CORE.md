@@ -92,3 +92,10 @@ GitHub Actions **run 45814754280 — SUCCESS, 33/33 Node tests**. The added orch
 - `validateAgentRegistry` snapshots the catalogue array through own-property descriptors before iteration. Accessor entries, sparse arrays, hidden extra fields and symbol properties are rejected without invoking element getters.
 - Regression tests cover those cases and preserve the 100,000-definition catalogue ceiling; definitions are still catalogue records, not launched processes.
 - GitHub Actions run **45870542457 (#178) — SUCCESS, 62/62 tests** on the updated branch. This verifies the prototype boundary only; no worker execution, live API, credentials, production deployment or payment authorization is enabled.
+
+## Canonical JSON — hidden property preflight correction
+
+- Audit found that `Object.keys`-based canonicalization ignored non-enumerable own properties in otherwise plain object/array payloads. Arrays could also carry nonstandard prototypes.
+- Canonicalization now checks the full own-key inventory, requires data-only enumerable object properties, exact array index/length shape, and standard Array.prototype.
+- Added regression tests for hidden properties and array subclass prototypes. Existing canonical digest, size, node, depth, cycle and accessor checks remain in place.
+- GitHub Actions verification is pending for the new test commit.
