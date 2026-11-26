@@ -38,4 +38,4 @@ test("RC-66 rejects unsafe integer timestamp values before verification",async()
 test("RC-67 rejects noncanonical timestamp header encodings",async()=>{const d=buildSignedDelivery(envelope(),{endpoint,secret,now});const altered={...d,headers:{...d.headers,"x-rivercloud-audit-timestamp":"0"+String(now)}};assert.equal((await verifySignedDelivery(altered,{secret,now,consumeReplay:acceptReplay})).reason,"timestamp_out_of_window");});
 
 
-test("RC-68 rejects uppercase nonce encodings",async()=>{const d=buildSignedDelivery(envelope(),{endpoint,secret,now});const altered={...d,headers:{...d.headers,"x-rivercloud-audit-nonce":d.headers["x-rivercloud-audit-nonce"].toUpperCase()}};assert.equal((await verifySignedDelivery(altered,{secret,now,consumeReplay:acceptReplay})).reason,"invalid_nonce");});
+test("RC-68 rejects uppercase nonce encodings",async()=>{const d=buildSignedDelivery(envelope(),{endpoint,secret,now});const altered={...d,headers:{...d.headers,"x-rivercloud-audit-nonce":"A"+"a".repeat(31)}};assert.equal((await verifySignedDelivery(altered,{secret,now,consumeReplay:acceptReplay})).reason,"invalid_nonce");});
