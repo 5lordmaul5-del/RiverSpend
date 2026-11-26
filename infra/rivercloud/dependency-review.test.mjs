@@ -1,0 +1,1 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {reviewDependencies} from './dependency-review.mjs';test('flags missing dependency names',()=>{const r=reviewDependencies([{id:'a',dependsOn:['b']}]);assert.equal(r.missing.length,1);});test('bounded',()=>assert.throws(()=>reviewDependencies(new Array(501).fill({}))));
