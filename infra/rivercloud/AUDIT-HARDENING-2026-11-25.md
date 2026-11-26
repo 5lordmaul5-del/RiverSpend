@@ -800,3 +800,10 @@ GitHub PR metadata confirms **98 changed files** at the current branch head. The
 - Added tests for persisted-chain tampering, unredacted sensitive fields with recomputed hashes, special-key preservation, and read fail-closed behavior.
 - Code commit `a4854ca0a93fbde986ed9298670c198c28572cdd`; test commit `aafe752614e0eef5e84a77c719ee47ed945a1011`.
 - **CI pending for RC-56.** No external audit sink delivery, immutable storage, network operation, service, runner, staging, production data/credentials, merge, deployment, provisioning or spending.
+
+
+### RC-56 test correction status
+
+- Workflow **45769413800 (#491) failed 168/169** on the implementation-only commit because the existing capacity test still expected `readLedger` to return malformed records; the assertion was changed to require fail-closed read behavior.
+- Workflow **45769429794 (#493) failed 171/172** because the special-key regression checked the prototype after JSON persistence, where parsing restores ordinary prototypes. The test was corrected to check the append-time redactor result and persisted key/redaction preservation.
+- Corrected test commit `9d2402b42c7152e8745eb71ff329ed1effed100b`. **Fresh CI evidence for this corrected test commit has not yet been retrieved; no pass is claimed.**
