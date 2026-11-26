@@ -2,7 +2,7 @@
 
 ## Snapshot
 
-PR #75 remains isolated on feat/rivercloud-core-2026-11-25. No merge, production deploy, server provisioning or paid operation was performed. PR #75 currently has **96 changed files**; this report records a focused code audit and corrections, not a completed certification of all changed files.
+PR #75 remains isolated on feat/rivercloud-core-2026-11-25. No merge, production deploy, server provisioning or paid operation was performed. PR #75 currently has **98 changed files**; this report records a focused code audit and corrections, not a completed certification of all changed files.
 
 ## Detailed source review
 
@@ -623,3 +623,8 @@ This reduces archive-extraction risk, but does not substitute for a formal threa
 - Both runs also passed bootstrap shell syntax, backup/restore and Python syntax, **1/1 restore directory-replacement race test**, Compose configuration, and Caddy validation. No RiverCloud services were started.
 - The corrected RBAC test now proves Viewer and Auditor are denied full queue details; Operator and Admin have the explicit `read_jobs` grant, while health/status does not echo the actor label.
 - RC-38 is only a preliminary version/advisory review. SBOMs, exact-image scans, signature verification and a full CVE assessment remain pending.
+
+
+### Report snapshot correction
+
+GitHub PR metadata confirms **98 changed files** at the current branch head. The count was corrected from 96 after adding RC-37 and RC-38 documentation. The current report-only commit requires its own CI verification.
