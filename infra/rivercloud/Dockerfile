@@ -5,7 +5,7 @@ COPY --chown=node:node infra/rivercloud/queue.mjs /app/infra/rivercloud/queue.mj
 COPY --chown=node:node infra/rivercloud/engine.mjs /app/infra/rivercloud/engine.mjs
 COPY --chown=node:node infra/rivercloud/rc11-state.mjs /app/infra/rivercloud/rc11-state.mjs
 COPY --chown=node:node infra/rivercloud/rc13-identity.mjs /app/infra/rivercloud/rc13-identity.mjs
-RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/corepack /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/corepack /usr/local/bin/yarn /usr/local/bin/yarnpkg /usr/local/bin/pnpm
+RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/corepack /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/corepack /usr/local/bin/yarn /usr/local/bin/yarnpkg /usr/local/bin/pnpm /opt/yarn-v1.22.22
 RUN mkdir -p /data && chown node:node /data && chmod 700 /data
 USER node
 EXPOSE 8788
