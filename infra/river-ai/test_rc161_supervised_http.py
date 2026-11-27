@@ -106,7 +106,7 @@ class SupervisedHTTPIntegrationTests(unittest.TestCase):
         status, result = self.request("/v1/tasks/%s/result" % task_id, token=self.user_token)
         self.assertEqual(status, 200)
         self.assertEqual(result["result"]["echo"]["text"], "hello")
-        self.assertEqual(result["result"]["echo"]["key"] if "key" in result["result"]["echo"] else task_id, task_id)
+        self.assertEqual(result["result"]["echo"], {"text": "hello"})
 
         other_token = sign(claims("bob", "user"))
         status, _ = self.request("/v1/tasks/%s/result" % task_id, token=other_token)
