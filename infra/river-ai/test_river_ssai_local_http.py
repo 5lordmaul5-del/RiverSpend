@@ -3,6 +3,7 @@ import hashlib
 import hmac
 import json
 import os
+import socket
 import tempfile
 import threading
 import unittest
@@ -35,7 +36,8 @@ def sign(claims):
 
 
 def claims(subject, capabilities=None):
-    c={"iss":ISSUER,"aud":AUDIENCE,"sub":subject,"iat":NOW,"exp":NOW+60}
+    c={"iss":ISSUER,"aud":AUDIENCE,"sub":subject,"iat":NOW,"exp":NOW+60,
+       "token_use":"worker" if capabilities is not None else "user"}
     if capabilities is not None:
         c["capabilities"]=capabilities
     return c
@@ -156,6 +158,35 @@ class LocalHTTPIntegrationTests(unittest.TestCase):
         self.assertEqual(status, 400)
         self.assertEqual(response["error"], "request_shape_invalid")
         self.assertEqual(self.ledger.status()["queued"], 0)
+
+    def test_duplicate_authorization_headers_rejected(self):
+        body = b'{"capability":"echo","summary":"hello","payload":{"text":"hello"},"request_key":"dup-auth"}'
+        request = (
+            "POST /v1/tasks HTTP/1.0\r\nHost: 127.0.0.1\r\n"
+            "Authorization: Bearer " + self.alice + "\r\n"
+            "Authorization: Bearer " + self.alice + "\r\n"
+            "Content-Length: " + str(len(body)) + "\r\n\r\n"
+        ).encode("ascii") + body
+        with socket.create_connection(("127.0.0.1", self.server.server_address[1]), timeout=3) as sock:
+            sock.sendall(request)
+            response = sock.recv(1024).decode("latin-1")
+        self.assertIn(" 401 ", response.splitlines()[0])
+        self.assertEqual(self.ledger.status()["queued"], 0)
+
+    def test_chunked_worker_request_rejected_before_lease(self):
+        task = self.ledger.enqueue("echo", "hello", "alice", {"text":"hello"})
+        request = (
+            "POST /v1/worker/run HTTP/1.0\r\nHost: 127.0.0.1\r\n"
+            "Authorization: Bearer " + self.worker_token + "\r\n"
+            "Transfer-Encoding: chunked\r\n\r\n"
+            "0\r\n\r\n"
+        ).encode("ascii")
+        with socket.create_connection(("127.0.0.1", self.server.server_address[1]), timeout=3) as sock:
+            sock.sendall(request)
+            response = sock.recv(1024).decode("latin-1")
+        self.assertIn(" 400 ", response.splitlines()[0])
+        self.assertEqual(self.ledger.status()["queued"], 1)
+        self.assertIsNone(self.worker.get_result(task, "alice"))
 
     def test_loopback_binding_and_health(self):
         with self.assertRaises(ValueError):
