@@ -18,6 +18,6 @@ class Tests(unittest.TestCase):
   self.assertEqual(self.g.acquire('u',100.5).reason,'invalid_time')
  def test_expired_lease_reaped_on_acquire(self):
   a=self.g.acquire('u',100);self.assertEqual(self.g.acquire('u',102).reason,'concurrency_limit');b=self.g.acquire('u',103);self.assertTrue(b.allowed);self.assertNotEqual(a.lease_id,b.lease_id)
- def test_reaper_and_idempotent_release(self):
+ def test_fencing_stale_worker_rejected(self):\n  a=self.g.acquire("u",100);self.assertTrue(self.g.is_current("u",a.fencing_token,100));self.g.reap_expired(103);b=self.g.acquire("u",103);self.assertGreater(b.fencing_token,a.fencing_token);self.assertFalse(self.g.is_current("u",a.fencing_token,103));self.assertTrue(self.g.is_current("u",b.fencing_token,103))\n def test_reaper_and_idempotent_release(self):
   a=self.g.acquire('u',100);self.assertEqual(self.g.reap_expired(103),1);self.assertFalse(self.g.release(a.lease_id,103));b=self.g.acquire('u',103);self.assertTrue(self.g.release(b.lease_id,103));self.assertFalse(self.g.release(b.lease_id,103))
 if __name__=='__main__':unittest.main()
