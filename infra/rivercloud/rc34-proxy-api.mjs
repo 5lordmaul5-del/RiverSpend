@@ -4,6 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { queuePlan, listQueue } from "./queue.mjs";
 import { hasPermission } from "./rc13-identity.mjs";
+import { rejectDuplicateObjectKeys } from "./json-duplicate-keys.mjs";
 
 const MAX_BODY = 8192;
 const MAX_GROUPS = 20;
@@ -49,34 +50,6 @@ function actorFromHeaders(req, groupRoleMap) {
 }
 
 
-function rejectDuplicateObjectKeys(raw) {
-  const stack = [];
-  for (let i = 0; i < raw.length;) {
-    const ch = raw[i];
-    if (ch === '"') {
-      const start = i++;
-      while (i < raw.length) {
-        if (raw[i] === "\\") { i += 2; continue; }
-        if (raw[i] === '"') { i++; break; }
-        i++;
-      }
-      const token = raw.slice(start, i);
-      let next = i;
-      while (next < raw.length && /\s/.test(raw[next])) next++;
-      const frame = stack[stack.length - 1];
-      if (frame && frame.type === "object" && raw[next] === ":") {
-        const key = JSON.parse(token);
-        if (frame.keys.has(key)) throw new Error("duplicate_json_key");
-        frame.keys.add(key);
-      }
-      continue;
-    }
-    if (ch === "{") stack.push({ type: "object", keys: new Set() });
-    else if (ch === "[") stack.push({ type: "array" });
-    else if (ch === "}" || ch === "]") stack.pop();
-    i++;
-  }
-}
 async function readBody(req) {
   const contentType = String(req.headers["content-type"] || "").toLowerCase();
   if (contentType.split(";")[0].trim() !== "application/json") throw Object.assign(new Error("json_required"), { status: 415 });
