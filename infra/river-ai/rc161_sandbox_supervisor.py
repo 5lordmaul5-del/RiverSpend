@@ -58,7 +58,6 @@ class SandboxSupervisor:
                         cwd=cwd,
                         env=env,
                         start_new_session=True,
-                        check=False,
                         close_fds=True,
                     )
                     try:
