@@ -36,6 +36,24 @@ test("server enforces bounded timeout settings and token, queue-only health", as
   }
 });
 
+test("server rejects duplicate JSON keys before queueing", async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), "rcs-dup-"));
+  const file = path.join(root, "state.json");
+  const server = createServer({ port: 0, token, storeFile: file });
+  try {
+    await new Promise((resolve, reject) => { server.once("error", reject); server.listen(0, "127.0.0.1", resolve); });
+    const url = "http://127.0.0.1:" + server.address().port;
+    const raw = '{"projectId":"riverspend","branch":"main","branch":"main","target":"staging","commit":"' + "b".repeat(40) + '"}';
+    const response = await fetch(url + "/deploy", { method: "POST", headers: { authorization: "Bearer " + token, "content-type": "application/json" }, body: raw });
+    assert.equal(response.status, 400);
+    assert.equal((await response.json()).error, "invalid_json");
+    assert.deepEqual(await import("./queue.mjs").then(m => m.listQueue(file)), []);
+  } finally {
+    await new Promise(resolve => server.close(resolve));
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
 test("server rejects oversized JSON", async () => {
   const root = await mkdtemp(path.join(os.tmpdir(), "rcs-"));
   const server = createServer({ port: 0, token, storeFile: path.join(root, "state.json") });
