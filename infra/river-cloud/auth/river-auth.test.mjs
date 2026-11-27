@@ -58,3 +58,15 @@ test('RiverAuth reports issuer outages as service unavailable', async (t) => {
     (error) => error.status === 503,
   );
 });
+
+
+test('RiverAuth treats malformed issuer JSON as service unavailable', async (t) => {
+  const originalFetch = globalThis.fetch;
+  t.after(() => { globalThis.fetch = originalFetch; });
+  globalThis.fetch = async () => new Response('not-json', { status: 200 });
+  const auth = createRiverAuth({ issuerUrl, publishableKey });
+  await assert.rejects(
+    auth.verifyBearerToken('Bearer test-access-token'),
+    (error) => error.status === 503 && error.message === 'identity_provider_unavailable',
+  );
+});
