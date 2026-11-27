@@ -1,6 +1,10 @@
 import unittest
+import os
 import resource
 import signal
+import sys
+import tempfile
+import time
 from unittest.mock import Mock, call, patch
 import subprocess
 
@@ -67,6 +71,41 @@ class SupervisorTests(unittest.TestCase):
         self.assertIs(popen.call_args.kwargs["stdin"], subprocess.PIPE)
         killpg.assert_called_once_with(4242, signal.SIGKILL)
         self.assertEqual(fake.communicate.call_count, 2)
+
+    def test_timeout_kills_real_process_group_descendant(self):
+        with tempfile.TemporaryDirectory() as directory:
+            pid_file = os.path.join(directory, "descendant.pid")
+            code = (
+                "import os,subprocess,sys,time; "
+                "p=subprocess.Popen([sys.executable,'-c','import time; time.sleep(60)']); "
+                "open(os.environ['RC161_TEST_PID_FILE'],'w').write(str(p.pid)); "
+                "time.sleep(60)"
+            )
+            real_popen = subprocess.Popen
+
+            def spawn_descendant(*args, **kwargs):
+                kwargs["env"] = {**kwargs["env"], "RC161_TEST_PID_FILE": pid_file}
+                return real_popen([sys.executable, "-c", code], **kwargs)
+
+            with patch("subprocess.Popen", side_effect=spawn_descendant):
+                with self.assertRaisesRegex(SupervisorError, "timeout"):
+                    SandboxSupervisor(timeout=1.0).run("echo", {"probe": True})
+
+            self.assertTrue(os.path.isfile(pid_file), "descendant PID was not recorded")
+            with open(pid_file, encoding="ascii") as pid_input:
+                descendant_pid = int(pid_input.read())
+            stopped = False
+            for _ in range(50):
+                try:
+                    with open(f"/proc/{descendant_pid}/stat", encoding="ascii") as stat_file:
+                        state = stat_file.read().split(")", 1)[1].strip().split()[0]
+                    stopped = state in {"Z", "X"}
+                except FileNotFoundError:
+                    stopped = True
+                if stopped:
+                    break
+                time.sleep(0.02)
+            self.assertTrue(stopped, "descendant process survived timeout group kill")
 
     def test_output_limit_rejected_before_read(self):
         def fake_popen(*args, **kwargs):
