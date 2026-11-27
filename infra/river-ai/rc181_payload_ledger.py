@@ -108,6 +108,63 @@ class PayloadPersistentTaskLedger(PersistentTaskLedger):
                 "CREATE UNIQUE INDEX IF NOT EXISTS tasks_owner_request_key "
                 "ON tasks(owner,request_key) WHERE request_key IS NOT NULL"
             )
+            db.execute("""CREATE TABLE IF NOT EXISTS intake_audit_events (
+                event_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                task_id TEXT,
+                actor_subject TEXT,
+                action TEXT NOT NULL,
+                request_key_sha256 TEXT,
+                request_sha256 TEXT,
+                created REAL NOT NULL
+            )""")
+            db.execute("CREATE INDEX IF NOT EXISTS intake_audit_task ON intake_audit_events(task_id,event_id)")
+
+    @staticmethod
+    def _audit_insert(db, task_id, actor, action, key_digest, request_digest):
+        db.execute(
+            "INSERT INTO intake_audit_events(task_id,actor_subject,action,request_key_sha256,request_sha256,created) "
+            "VALUES(?,?,?,?,?,?)",
+            (task_id, actor, action, key_digest, request_digest, time.time()),
+        )
+
+    def record_intake_event(self, actor_subject, action, request_key_sha256=None, request_sha256=None, task_id=None):
+        """Persist an authenticated or anonymous intake decision without logging tokens or payloads."""
+        if actor_subject is not None and (
+            type(actor_subject) is not str or not actor_subject.strip() or len(actor_subject) > MAX_OWNER_CHARS
+        ):
+            raise PayloadLedgerError("invalid audit actor")
+        if type(action) is not str or not action or len(action) > 64:
+            raise PayloadLedgerError("invalid audit action")
+        for digest in (request_key_sha256, request_sha256):
+            if digest is not None and (
+                type(digest) is not str or len(digest) != 64
+                or any(ch not in "0123456789abcdef" for ch in digest)
+            ):
+                raise PayloadLedgerError("invalid audit digest")
+        if task_id is not None and (type(task_id) is not str or not task_id or len(task_id) > 128):
+            raise PayloadLedgerError("invalid audit task id")
+        with self._db() as db:
+            db.execute("BEGIN IMMEDIATE")
+            self._audit_insert(db, task_id, actor_subject, action, request_key_sha256, request_sha256)
+            db.commit()
+
+    def intake_events(self, task_id=None):
+        with self._db() as db:
+            if task_id is None:
+                rows = db.execute(
+                    "SELECT task_id,actor_subject,action,request_key_sha256,request_sha256,created "
+                    "FROM intake_audit_events ORDER BY event_id"
+                ).fetchall()
+            else:
+                rows = db.execute(
+                    "SELECT task_id,actor_subject,action,request_key_sha256,request_sha256,created "
+                    "FROM intake_audit_events WHERE task_id=? ORDER BY event_id", (task_id,)
+                ).fetchall()
+        return [
+            {"task_id":r[0],"actor":r[1],"action":r[2],"request_key_sha256":r[3],
+             "request_sha256":r[4],"created":r[5]}
+            for r in rows
+        ]
 
     def enqueue(
         self,
@@ -117,7 +174,9 @@ class PayloadPersistentTaskLedger(PersistentTaskLedger):
         payload: dict,
         summary_limit: int = MAX_SUMMARY_CHARS,
         request_key: str | None = None,
-    ) -> str:
+        audit_actor: str | None = None,
+        return_status: bool = False,
+    ) -> str | tuple[str, str]:
         if type(owner) is not str or not owner.strip() or len(owner) > MAX_OWNER_CHARS:
             raise PayloadLedgerError("invalid owner")
         if type(capability) is not str or not capability.strip() or len(capability) > MAX_CAPABILITY_CHARS:
@@ -129,16 +188,23 @@ class PayloadPersistentTaskLedger(PersistentTaskLedger):
             or len(request_key) > MAX_REQUEST_KEY_CHARS
         ):
             raise PayloadLedgerError("invalid request key")
+        if audit_actor is not None and (
+            type(audit_actor) is not str or not audit_actor.strip()
+            or len(audit_actor) > MAX_OWNER_CHARS or audit_actor != owner
+        ):
+            raise PayloadLedgerError("audit actor must match owner")
+        if type(return_status) is not bool:
+            raise PayloadLedgerError("return_status must be boolean")
         encoded = _canonical_payload(payload)
         request_sha256 = None
+        key_digest = None
         if request_key is not None:
             fingerprint = json.dumps(
                 {"capability": capability, "summary": summary, "payload": encoded},
-                ensure_ascii=False,
-                separators=(",", ":"),
-                sort_keys=True,
+                ensure_ascii=False, separators=(",", ":"), sort_keys=True,
             )
             request_sha256 = hashlib.sha256(fingerprint.encode("utf-8")).hexdigest()
+            key_digest = hashlib.sha256(request_key.encode("utf-8")).hexdigest()
         with self._db() as db:
             db.execute("BEGIN IMMEDIATE")
             if request_key is not None:
@@ -148,13 +214,23 @@ class PayloadPersistentTaskLedger(PersistentTaskLedger):
                 ).fetchone()
                 if existing:
                     if existing[1] != request_sha256:
-                        db.rollback()
+                        if audit_actor is not None:
+                            self._audit_insert(db, existing[0], audit_actor, "request_key_conflict", key_digest, request_sha256)
+                            db.commit()
+                        else:
+                            db.rollback()
                         raise PayloadLedgerError("request key reused with different request")
+                    if audit_actor is not None:
+                        self._audit_insert(db, existing[0], audit_actor, "intake_replayed", key_digest, request_sha256)
                     db.commit()
-                    return existing[0]
+                    return (existing[0], "replayed") if return_status else existing[0]
             queued = db.execute("SELECT COUNT(*) FROM tasks WHERE state='queued'").fetchone()[0]
             if queued >= self.queue_limit:
-                db.rollback()
+                if audit_actor is not None:
+                    self._audit_insert(db, None, audit_actor, "queue_full", key_digest, request_sha256)
+                    db.commit()
+                else:
+                    db.rollback()
                 raise OverflowError("queue capacity reached")
             tid = str(uuid.uuid4())
             db.execute(
@@ -162,8 +238,10 @@ class PayloadPersistentTaskLedger(PersistentTaskLedger):
                 "VALUES(?,?,?,'queued',?,?,?,?,?)",
                 (tid, capability, summary, time.time(), owner, encoded, request_key, request_sha256),
             )
+            if audit_actor is not None:
+                self._audit_insert(db, tid, audit_actor, "intake_accepted", key_digest, request_sha256)
             db.commit()
-            return tid
+            return (tid, "accepted") if return_status else tid
 
     def lease_next(self, worker_id: str, allowed_capabilities: tuple[str, ...]) -> dict | None:
         if type(worker_id) is not str or not worker_id.strip() or len(worker_id) > MAX_OWNER_CHARS:
@@ -195,11 +273,7 @@ class PayloadPersistentTaskLedger(PersistentTaskLedger):
             )
             db.commit()
             return {
-                "id": row[0],
-                "capability": row[1],
-                "summary": row[2],
-                "attempts": row[3] + 1,
-                "lease_owner": worker_id,
-                "owner": row[4],
-                "payload": json.loads(row[5]) if row[5] is not None else None,
+                "id": row[0], "capability": row[1], "summary": row[2],
+                "attempts": row[3] + 1, "lease_owner": worker_id,
+                "owner": row[4], "payload": json.loads(row[5]) if row[5] is not None else None,
             }
