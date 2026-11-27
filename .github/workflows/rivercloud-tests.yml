@@ -2,13 +2,14 @@ name: RiverCloud isolated tests
 
 on:
   pull_request:
-    branches: [main]
+    branches: [main, feat/rivercloud-core-2026-11-25]
     paths:
       - "infra/rivercloud/**"
       - ".github/workflows/rivercloud-tests.yml"
   push:
     branches:
       - "feat/rivercloud-core-2026-11-25"
+      - "feat/rc41-proxy-header-ambiguity-2026-11-27"
     paths:
       - "infra/rivercloud/**"
       - ".github/workflows/rivercloud-tests.yml"

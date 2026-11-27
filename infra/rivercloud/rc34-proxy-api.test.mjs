@@ -1,6 +1,7 @@
 import test from "node:test";
 import { createHmac } from "node:crypto";
 import assert from "node:assert/strict";
+import net from "node:net";
 import { mkdtemp, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
@@ -9,6 +10,18 @@ import { createProxyApiServer } from "./rc34-proxy-api.mjs";
 const basePlan = { projectId: "riverspend", branch: "main", target: "staging", commit: "b".repeat(40) };
 const groupRoleMap = { operator: "operator", viewer: "viewer", auditor: "auditor", admin: "admin" };
 const actorSecret = "test-actor-pseudonym-secret-32-bytes";
+
+async function rawRequest(port, request) {
+  return new Promise((resolve, reject) => {
+    const socket = net.createConnection({ host: "127.0.0.1", port });
+    let response = "";
+    socket.setTimeout(3000, () => { socket.destroy(); reject(new Error("raw request timeout")); });
+    socket.on("data", chunk => { response += chunk.toString("latin1"); });
+    socket.on("end", () => resolve(response));
+    socket.on("error", reject);
+    socket.on("connect", () => socket.end(request));
+  });
+}
 
 async function withServer(options, run) {
   const root = await mkdtemp(path.join(os.tmpdir(), "rc34-"));
@@ -31,6 +44,41 @@ test("RC-34 fails closed when direct caller is not the configured proxy", async 
     const r = await fetch(url + "/api/jobs", { headers: headers("spoofed", "operator") });
     assert.equal(r.status, 403);
     assert.equal((await r.json()).error, "untrusted_proxy");
+  });
+});
+
+test("RC-41 rejects duplicate and comma-ambiguous forwarded identity headers", async () => {
+  await withServer({ trustedProxyAddress: "127.0.0.1", groupRoleMap }, async url => {
+    const port = Number(new URL(url).port);
+    const requests = [
+      "GET /api/jobs HTTP/1.1\r\nHost: localhost\r\nX-Forwarded-User: operator-1\r\nX-Forwarded-User: operator-2\r\nX-Forwarded-Groups: operator\r\nConnection: close\r\n\r\n",
+      "GET /api/jobs HTTP/1.1\r\nHost: localhost\r\nX-Forwarded-User: operator-1\r\nX-Forwarded-Groups: operator\r\nX-Forwarded-Groups: viewer\r\nConnection: close\r\n\r\n",
+      "GET /api/jobs HTTP/1.1\r\nHost: localhost\r\nX-Forwarded-User: operator-1,operator-2\r\nX-Forwarded-Groups: operator\r\nConnection: close\r\n\r\n"
+    ];
+    for (const raw of requests) {
+      const response = await rawRequest(port, raw);
+      assert.match(response.split("\r\n")[0], / 401 /);
+      assert.match(response, /identity_required/);
+    }
+  });
+});
+
+test("RC-41 rejects ambiguous plan-body framing headers", async () => {
+  await withServer({ trustedProxyAddress: "127.0.0.1", groupRoleMap }, async url => {
+    const port = Number(new URL(url).port);
+    const common = "POST /api/plan HTTP/1.1\\r\\nHost: localhost\\r\\nX-Forwarded-User: operator-1\\r\\nX-Forwarded-Groups: operator\\r\\n";
+    const requests = [
+      common + "Content-Type: application/json\\r\\nContent-Type: application/json\\r\\nContent-Length: 0\\r\\nConnection: close\\r\\n\\r\\n",
+      common + "Content-Type: application/json\\r\\nContent-Length: 0\\r\\nContent-Length: 0\\r\\nConnection: close\\r\\n\\r\\n",
+      common + "Content-Type: application/json\\r\\nTransfer-Encoding: chunked\\r\\nTransfer-Encoding: chunked\\r\\nConnection: close\\r\\n\\r\\n0\\r\\n\\r\\n",
+      common + "Content-Type: application/json\\r\\nContent-Length: 0\\r\\nTransfer-Encoding: chunked\\r\\nConnection: close\\r\\n\\r\\n0\\r\\n\\r\\n"
+    ];
+    for (const raw of requests) {
+      const response = await rawRequest(port, raw);
+      assert.match(response.split("\\r\\n")[0], / 400 /, response);
+    }
+    const jobs = await fetch(url + "/api/jobs", { headers: headers("operator-1", "operator") });
+    assert.deepEqual((await jobs.json()).jobs, []);
   });
 });
 

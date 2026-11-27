@@ -27,6 +27,16 @@ function normalizeAddress(value) {
   return typeof value === "string" && value.startsWith("::ffff:") ? value.slice(7) : value;
 }
 
+function rawHeaderCount(req, name) {
+  const raw = req.rawHeaders;
+  if (!Array.isArray(raw)) return 0;
+  let count = 0;
+  for (let i = 0; i < raw.length; i += 2) {
+    if (typeof raw[i] === "string" && raw[i].toLowerCase() === name) count++;
+  }
+  return count;
+}
+
 function validateGroupRoleMap(input) {
   const entries = input instanceof Map ? [...input.entries()] : input && typeof input === "object" && !Array.isArray(input) ? Object.entries(input) : null;
   if (!entries || entries.length > 100) throw new Error("invalid_group_role_map");
@@ -39,9 +49,11 @@ function validateGroupRoleMap(input) {
 }
 
 function actorFromHeaders(req, groupRoleMap) {
+  // These identity headers are a single-value proxy contract; Node may merge duplicates.
+  if (rawHeaderCount(req, "x-forwarded-user") !== 1 || rawHeaderCount(req, "x-forwarded-groups") !== 1) return null;
   const user = req.headers["x-forwarded-user"];
   const rawGroups = req.headers["x-forwarded-groups"];
-  if (typeof user !== "string" || !user.trim() || user.length > MAX_USER_LENGTH || /[\r\n\0]/.test(user)) return null;
+  if (typeof user !== "string" || !user.trim() || user.length > MAX_USER_LENGTH || /[\r\n\0,]/.test(user)) return null;
   if (typeof rawGroups !== "string" || !rawGroups.trim() || rawGroups.length > MAX_GROUP_HEADER || /[\r\n\0]/.test(rawGroups)) return null;
   const groups = rawGroups.split(",").map(g => g.trim()).filter(Boolean);
   if (!groups.length || groups.length > MAX_GROUPS || groups.some(g => g.length > MAX_GROUP_LENGTH || /[\r\n\0]/.test(g))) return null;
@@ -51,6 +63,13 @@ function actorFromHeaders(req, groupRoleMap) {
 
 
 async function readBody(req) {
+  const contentTypeCount = rawHeaderCount(req, "content-type");
+  const contentLengthCount = rawHeaderCount(req, "content-length");
+  const transferEncodingCount = rawHeaderCount(req, "transfer-encoding");
+  if (contentTypeCount !== 1 || contentLengthCount > 1 || transferEncodingCount > 1 ||
+      (contentLengthCount && transferEncodingCount)) {
+    throw Object.assign(new Error("request_headers_ambiguous"), { status: 400 });
+  }
   const contentType = String(req.headers["content-type"] || "").toLowerCase();
   if (contentType.split(";")[0].trim() !== "application/json") throw Object.assign(new Error("json_required"), { status: 415 });
   let size = 0;
