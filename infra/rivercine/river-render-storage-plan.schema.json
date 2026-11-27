@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RiverRender storage plan",
+  "type": "object",
+  "required": [
+    "schema",
+    "items"
+  ],
+  "properties": {
+    "schema": {
+      "const": "river-render-storage-plan-v1"
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "category",
+          "retention",
+          "tier"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "category": {
+            "enum": [
+              "Source media",
+              "Proxy",
+              "Cache",
+              "Intermediate",
+              "Final output"
+            ]
+          },
+          "retention": {
+            "enum": [
+              "Temporary",
+              "Session",
+              "Retain until manually cleared",
+              "Archive planning"
+            ]
+          },
+          "tier": {
+            "enum": [
+              "Fast local (planned)",
+              "Standard local (planned)",
+              "Remote/shared (planned)"
+            ]
+          },
+          "plannedOnly": {
+            "const": true
+          }
+        }
+      }
+    }
+  }
+}
