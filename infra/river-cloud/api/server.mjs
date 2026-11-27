@@ -180,7 +180,7 @@ function runProfileSql(sql, variables) {
     });
     child.stdin.on('error', () => {
       child.kill('SIGKILL');
-      reject(Object.assign(new Error('RiverCloud database input failed'), { status: 503 }));
+      // close handler performs final rejection and releases the concurrency slot.
     });
     child.stdin.end(sql);
   });
