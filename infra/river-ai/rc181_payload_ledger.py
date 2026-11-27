@@ -23,6 +23,10 @@ class PayloadLedgerError(ValueError):
     pass
 
 
+class RequestKeyConflict(PayloadLedgerError):
+    """A request key was reused with a different canonical request."""
+
+
 def _canonical_payload(payload: object) -> str:
     """Validate a bounded JSON data tree and return deterministic JSON."""
     if type(payload) is not dict:
@@ -219,7 +223,7 @@ class PayloadPersistentTaskLedger(PersistentTaskLedger):
                             db.commit()
                         else:
                             db.rollback()
-                        raise PayloadLedgerError("request key reused with different request")
+                        raise RequestKeyConflict("request key reused with different request")
                     if audit_actor is not None:
                         self._audit_insert(db, existing[0], audit_actor, "intake_replayed", key_digest, request_sha256)
                     db.commit()
