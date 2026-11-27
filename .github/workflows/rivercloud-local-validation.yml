@@ -35,7 +35,8 @@ jobs:
           node --check infra/river-cloud/api/server.mjs
           node --check infra/river-cloud/api/rate-limit.mjs
           node --check infra/river-cloud/api/db-concurrency.mjs
-          node --test infra/river-cloud/api/rate-limit.test.mjs infra/river-cloud/api/db-concurrency.test.mjs
+          node --check infra/river-cloud/api/db-concurrency.integration.test.mjs
+          node --test infra/river-cloud/api/rate-limit.test.mjs infra/river-cloud/api/db-concurrency.test.mjs infra/river-cloud/api/db-concurrency.integration.test.mjs
           node --test infra/river-cloud/auth/river-auth.test.mjs
 
       - name: Validate Compose configuration
