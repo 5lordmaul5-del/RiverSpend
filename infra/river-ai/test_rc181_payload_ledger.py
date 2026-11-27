@@ -49,6 +49,17 @@ class PayloadLedgerTests(unittest.TestCase):
         self.ledger.enqueue("echo", "task", "u", {})
         self.assertIsNone(self.ledger.lease_next("w", ("other",)))
 
+    def test_retry_after_hides_queued_task_until_due(self):
+        task = self.ledger.enqueue("echo", "task", "u", {})
+        with sqlite3.connect(self.path) as db:
+            db.execute("UPDATE tasks SET retry_after=? WHERE id=?", (time.time() + 30, task))
+        self.assertIsNone(self.ledger.lease_next("w", ("echo",)))
+        with sqlite3.connect(self.path) as db:
+            db.execute("UPDATE tasks SET retry_after=? WHERE id=?", (time.time() - 1, task))
+        lease = self.ledger.lease_next("w", ("echo",))
+        self.assertEqual(lease["id"], task)
+        self.assertIsNone(lease.get("retry_after"))
+
     def test_invalid_owner_and_capability(self):
         with self.assertRaises(PayloadLedgerError):
             self.ledger.enqueue("echo", "task", "", {})
@@ -118,6 +129,8 @@ class PayloadLedgerTests(unittest.TestCase):
         self.assertEqual(lease["id"], tid)
         self.assertIsNone(lease["owner"])
         self.assertIsNone(lease["payload"])
+        with sqlite3.connect(self.path) as db:
+            self.assertIn("retry_after", {row[1] for row in db.execute("PRAGMA table_info(tasks)")})
 
 
 if __name__ == "__main__":
