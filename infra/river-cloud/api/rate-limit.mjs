@@ -20,7 +20,7 @@ export function createRateLimiter({ windowMs = 60_000, limit = 60, maxKeys = 10_
         if (windows.size >= maxKeys) windows.delete(windows.keys().next().value);
       }
       windows.set(key, { start: now, count: 1 });
-      return false;
+      return 1 > limit;
     }
     entry.count += 1;
     return entry.count > limit;
