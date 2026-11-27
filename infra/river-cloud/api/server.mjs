@@ -94,10 +94,23 @@ function runProfileSql(sql, variables) {
       args.push('-v', `${key}=${value}`);
     }
 
-    const child = spawn('psql', args, {
-      env: { ...process.env, PGPASSWORD: DATABASE_PASSWORD, PGOPTIONS: '-c statement_timeout=5000' },
-      stdio: ['pipe', 'pipe', 'pipe'],
-    });
+    let child;
+    let released = false;
+    const releaseSlot = () => {
+      if (released) return;
+      released = true;
+      activeDbOperations = Math.max(0, activeDbOperations - 1);
+    };
+    try {
+      child = spawn('psql', args, {
+        env: { ...process.env, PGPASSWORD: DATABASE_PASSWORD, PGOPTIONS: '-c statement_timeout=5000' },
+        stdio: ['pipe', 'pipe', 'pipe'],
+      });
+    } catch (error) {
+      releaseSlot();
+      reject(error);
+      return;
+    }
     let stdout = '';
     let stderr = '';
     child.stdout.setEncoding('utf8');
@@ -107,12 +120,12 @@ function runProfileSql(sql, variables) {
     const timeout = setTimeout(() => child.kill('SIGKILL'), 8000);
     child.on('error', (error) => {
       clearTimeout(timeout);
-      activeDbOperations = Math.max(0, activeDbOperations - 1);
+      releaseSlot();
       reject(error);
     });
     child.on('close', (code) => {
       clearTimeout(timeout);
-      activeDbOperations = Math.max(0, activeDbOperations - 1);
+      releaseSlot();
       if (code !== 0) {
         const error = new Error('RiverCloud database operation failed');
         error.status = 503;
