@@ -51,13 +51,13 @@ test("RC-41 rejects duplicate and comma-ambiguous forwarded identity headers", a
   await withServer({ trustedProxyAddress: "127.0.0.1", groupRoleMap }, async url => {
     const port = Number(new URL(url).port);
     const requests = [
-      "GET /api/jobs HTTP/1.1\\r\\nHost: localhost\\r\\nX-Forwarded-User: operator-1\\r\\nX-Forwarded-User: operator-2\\r\\nX-Forwarded-Groups: operator\\r\\nConnection: close\\r\\n\\r\\n",
-      "GET /api/jobs HTTP/1.1\\r\\nHost: localhost\\r\\nX-Forwarded-User: operator-1\\r\\nX-Forwarded-Groups: operator\\r\\nX-Forwarded-Groups: viewer\\r\\nConnection: close\\r\\n\\r\\n",
-      "GET /api/jobs HTTP/1.1\\r\\nHost: localhost\\r\\nX-Forwarded-User: operator-1,operator-2\\r\\nX-Forwarded-Groups: operator\\r\\nConnection: close\\r\\n\\r\\n"
+      "GET /api/jobs HTTP/1.1\r\nHost: localhost\r\nX-Forwarded-User: operator-1\r\nX-Forwarded-User: operator-2\r\nX-Forwarded-Groups: operator\r\nConnection: close\r\n\r\n",
+      "GET /api/jobs HTTP/1.1\r\nHost: localhost\r\nX-Forwarded-User: operator-1\r\nX-Forwarded-Groups: operator\r\nX-Forwarded-Groups: viewer\r\nConnection: close\r\n\r\n",
+      "GET /api/jobs HTTP/1.1\r\nHost: localhost\r\nX-Forwarded-User: operator-1,operator-2\r\nX-Forwarded-Groups: operator\r\nConnection: close\r\n\r\n"
     ];
     for (const raw of requests) {
       const response = await rawRequest(port, raw);
-      assert.match(response.split("\\r\\n")[0], / 401 /);
+      assert.match(response.split("\r\n")[0], / 401 /);
       assert.match(response, /identity_required/);
     }
   });
@@ -92,7 +92,7 @@ test("RC-34 operator may submit plans, but no execution is enabled and retries a
     assert.equal(first.status, 202);
     const firstBody = await first.json();
     assert.match(firstBody.job.actorRef, /^[a-f0-9]{64}$/);
-    assert.equal(firstBody.job.actorRef, createHmac("sha256", actorSecret).update("rivercloud-actor-v1\\0").update("operator-1").digest("hex"));
+    assert.equal(firstBody.job.actorRef, createHmac("sha256", actorSecret).update("rivercloud-actor-v1\0").update("operator-1").digest("hex"));
     assert.deepEqual(firstBody.job.actorRoles, ["operator"]);
     assert.doesNotMatch(JSON.stringify(firstBody.job), /operator-1/);
     const duplicate = await fetch(url + "/api/plan", { method: "POST", headers: { ...operator, "content-type": "application/json" }, body: JSON.stringify(basePlan) });
