@@ -1,0 +1,1 @@
+{"name":"RiverMail","short_name":"RiverMail","description":"La posta del mondo RiverSpend","start_url":"./index.html","scope":"./","display":"standalone","orientation":"portrait","background_color":"#eefafa","theme_color":"#13b9c8","icons":[{"src":"./icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]}
