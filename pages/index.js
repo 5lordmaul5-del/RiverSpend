@@ -201,6 +201,8 @@ export default function Home() {
     ['🌌 RS FutureWorld · FutureCity & Droid','/rs-future-world'],
     ['RiverSpend Broadcast','/servizi/broadcast'],
     ['RiverSpend Music','/servizi/music'],
+    ['🎚️ RSSoundStudio · Studio audio','/servizi/sound-studio-live'],
+    ['🎬 RiverSpendStream · Video','/river-spend-stream'],
     ['RiverSpend sPrint','/riverspend-sprint'],
     ['RS Spons','/rs-spons'],
     ['RiverSpend TV','/servizi/tv'],
