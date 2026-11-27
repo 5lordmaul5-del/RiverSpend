@@ -140,14 +140,23 @@ function runProfileSql(sql, variables) {
       stdout += chunk;
     });
     const timeout = setTimeout(() => { timedOut = true; child.kill('SIGKILL'); }, 8000);
-    child.on('error', (error) => {
+    let settled = false;
+    const settleReject = (error) => {
+      if (settled) return;
+      settled = true;
       clearTimeout(timeout);
       releaseSlot();
       reject(error);
+    };
+    child.on('error', (error) => {
+      // An error may precede close; settle once and keep slot accounting idempotent.
+      settleReject(error);
     });
     child.on('close', (code) => {
       clearTimeout(timeout);
       releaseSlot();
+      if (settled) return;
+      settled = true;
       if (timedOut) {
         const error = new Error('RiverCloud database operation timed out');
         error.status = 503;
