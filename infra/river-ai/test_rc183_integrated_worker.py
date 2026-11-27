@@ -261,11 +261,11 @@ class WorkerCoreIntegrationTests(unittest.TestCase):
         self.assertEqual(second["attempts"], 2)
         result_json = '{"ok":true}'
         result_digest = __import__("hashlib").sha256(result_json.encode()).hexdigest()
-        self.assertFalse(self.core._persist_success(task, "worker-a", first["attempts"], "payload-digest", result_json, result_digest))
+        self.assertFalse(self.core._persist_success(task, "worker-a", first["attempts"], first["leased_at"], "payload-digest", result_json, result_digest))
         with sqlite3.connect(self.path) as db:
             state, attempts = db.execute("SELECT state,attempts FROM tasks WHERE id=?", (task,)).fetchone()
         self.assertEqual((state, attempts), ("leased", 2))
-        self.assertTrue(self.core._persist_success(task, "worker-a", second["attempts"], "payload-digest", result_json, result_digest))
+        self.assertTrue(self.core._persist_success(task, "worker-a", second["attempts"], second["leased_at"], "payload-digest", result_json, result_digest))
         self.assertEqual(self.core.get_result(task, "user-1")["result"], {"ok": True})
 
     def test_stale_attempt_cannot_fail_newer_lease(self):
@@ -276,11 +276,11 @@ class WorkerCoreIntegrationTests(unittest.TestCase):
             db.execute("UPDATE tasks SET leased=? WHERE id=?", (time.time() - self.ledger.lease_seconds - 1, task))
         second = self.ledger.lease_next("worker-a", ("echo",))
         self.assertEqual(second["attempts"], 2)
-        self.assertEqual(self.core._persist_failure(task, "worker-a", first["attempts"], "payload-digest"), "lease_lost")
+        self.assertEqual(self.core._persist_failure(task, "worker-a", first["attempts"], first["leased_at"], "payload-digest"), "lease_lost")
         with sqlite3.connect(self.path) as db:
             state, attempts = db.execute("SELECT state,attempts FROM tasks WHERE id=?", (task,)).fetchone()
         self.assertEqual((state, attempts), ("leased", 2))
-        self.assertEqual(self.core._persist_failure(task, "worker-a", second["attempts"], "payload-digest"), "retry")
+        self.assertEqual(self.core._persist_failure(task, "worker-a", second["attempts"], second["leased_at"], "payload-digest"), "retry")
         self.assertEqual(self.ledger.status()["queued"], 1)
 
 if __name__=="__main__": unittest.main()
