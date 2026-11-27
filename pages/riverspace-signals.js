@@ -616,7 +616,7 @@ export default function RiverSpaceSignals() {
           <p className="pb-3 text-xs text-white/60">{new Date(viewStatus.created_at).toLocaleString('it-IT')}</p>
         </div>
       </div>}
-      <footer className="hidden shrink-0 flex-wrap items-center justify-center gap-4 py-2 text-xs text-slate-500 md:flex"><span>RiverSpaceSignals · RiverSpend · Comunicazioni private</span><button type="button" onClick={() => window.dispatchEvent(new Event("riverspend:open-cookie-settings"))} className="underline underline-offset-2">Privacy e cookie</button><Link href="/" className="underline underline-offset-2">Torna al sito RiverSpend</Link></footer>
+      <footer className="hidden shrink-0 flex-wrap items-center justify-center gap-4 py-2 text-xs text-slate-500 md:flex"><span>RiverSpaceSignals · RiverSpend · Comunicazioni private</span><button type="button" onClick={() => window.dispatchEvent(new Event("riverspend:open-cookie-settings"))} className="underline underline-offset-2">Privacy e cookie</button><Link href="/apps/rivermail/" className="underline underline-offset-2">📧 Apri RiverMail</Link> <Link href="/" className="underline underline-offset-2">Torna al sito RiverSpend</Link></footer>
     </main>
   </>;
 }
