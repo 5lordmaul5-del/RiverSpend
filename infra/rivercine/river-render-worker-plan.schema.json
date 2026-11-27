@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RiverRender Worker Plan",
+  "type": "object",
+  "required": [
+    "schema",
+    "workers"
+  ],
+  "properties": {
+    "schema": {
+      "const": "river-render-worker-plan-v1"
+    },
+    "workers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "type",
+          "resourceProfile",
+          "state"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "Local",
+              "Remote (future)"
+            ]
+          },
+          "resourceProfile": {
+            "enum": [
+              "Conservative",
+              "Balanced",
+              "High capacity (planning)"
+            ]
+          },
+          "state": {
+            "const": "planned"
+          }
+        }
+      }
+    }
+  }
+}
