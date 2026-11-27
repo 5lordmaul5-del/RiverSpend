@@ -14,6 +14,7 @@ from contextlib import contextmanager
 from pathlib import Path
 
 from rc181_payload_ledger import _canonical_payload
+from rc180_contract_bridge import ContractError, bind_lease
 
 
 class WorkerCore:
@@ -100,8 +101,18 @@ class WorkerCore:
         if not required.issubset(lease):
             recovery = self._recover_invalid_lease(lease, worker)
             return {"status": "rejected", "error": "lease_contract_invalid", "recovery": recovery}
+        try:
+            bound = bind_lease(lease, {
+                "worker_id": worker,
+                "kind": lease["capability"],
+                "owner": lease["owner"],
+                "payload": lease["payload"],
+            })
+        except ContractError:
+            recovery = self._recover_invalid_lease(lease, worker)
+            return {"status": "rejected", "error": "lease_contract_invalid", "recovery": recovery}
         task_id, kind, summary, owner, payload = (
-            lease["id"], lease["capability"], lease["summary"], lease["owner"], lease["payload"]
+            bound["task_id"], bound["kind"], bound["summary"], bound["owner"], bound["payload"]
         )
         attempt = lease["attempts"]
         lease_at = lease["leased_at"]
