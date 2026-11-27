@@ -108,3 +108,15 @@ This section is a design backlog informed by publicly described contemporary wor
 - Export/interchange roadmap: investigate formats and pipelines such as FBX, glTF, BVH, USD and supported image/video/audio formats; validate compatibility and licensing per integration.
 - Integration: Motion data and scene markers can flow to Cartoon Studio, 3D Animation, Game Studio, VFX compositor, video timeline and I.S.S.A. audio sessions; linked voice, footsteps, Foley, ambience and music tracks.
 - Phased build: (1) file import and rig mapping/editing; (2) webcam/markerless capture prototype with clear limitations; (3) hardware/sensor integrations; (4) synchronized multi-modal performance capture and virtual production.
+
+
+## Implementation sequence and acceptance gates for creative-production expansion
+- Treat the Animation/Game/Mocap/Virtual Production workspaces as distinct modules sharing a project asset layer and timeline metadata, not one monolithic UI.
+- Milestone A — shared project/media foundation: asset catalog, metadata, versioned project schema, import validation, autosave/recovery, timecode/markers, undo/redo and storage quota warnings.
+- Milestone B — animation foundation: timeline/layers, storyboard/animatic, keyframes, curves, character/rig import and simple 2D animation playback/export.
+- Milestone C — motion-data foundation: import supported motion formats, mapping preview, retargeting configuration, cleanup tools and selectable takes; verify with sample assets.
+- Milestone D — accessible capture prototype: webcam/markerless capture experimentation, explicit confidence/quality indicators, local privacy controls and test fixtures.
+- Milestone E — green/blue-screen and compositing: keyer, masks, edge/spill controls, layers, tracking data import and render/export tests.
+- Milestone F — game authoring prototype: scene/asset browser, simple 2D scene, visual event graph, trigger/audio wiring and playable local preview.
+- Milestone G — advanced simulation and integrations: particle/VFX, multi-camera capture, sensor integrations, live virtual production and plugin/integration evaluation.
+- Each milestone requires: design/spec, isolated branch, implementation, static/unit tests, documented manual test steps, sample project, review; no merge or production deploy without explicit approval.
