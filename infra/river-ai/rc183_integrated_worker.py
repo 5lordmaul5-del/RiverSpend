@@ -13,7 +13,9 @@ import time
 from contextlib import contextmanager
 from pathlib import Path
 
-from rc181_payload_ledger import _canonical_payload
+from rc181_payload_ledger import (
+    _canonical_payload, RETRY_BACKOFF_BASE_SECONDS, RETRY_BACKOFF_MAX_SECONDS,
+)
 from rc180_contract_bridge import ContractError, bind_lease
 
 
@@ -239,9 +241,14 @@ class WorkerCore:
             retry = persisted_attempt < self.max_attempts
             target = "queued" if retry else "cancelled"
             action = "retry_scheduled" if retry else "attempts_exhausted"
+            delay = min(
+                RETRY_BACKOFF_MAX_SECONDS,
+                RETRY_BACKOFF_BASE_SECONDS * (2 ** min(max(persisted_attempt - 1, 0), 6)),
+            ) if retry else None
+            retry_after = now + delay if retry else None
             cur = db.execute(
-                "UPDATE tasks SET state=?,leased=NULL,lease_owner=NULL WHERE id=? AND state='leased' AND lease_owner=? AND attempts=? AND leased=? AND leased>=?",
-                (target, task_id, worker, persisted_attempt, lease_at, now - self.ledger.lease_seconds),
+                "UPDATE tasks SET state=?,leased=NULL,lease_owner=NULL,retry_after=? WHERE id=? AND state='leased' AND lease_owner=? AND attempts=? AND leased=? AND leased>=?",
+                (target, retry_after, task_id, worker, persisted_attempt, lease_at, now - self.ledger.lease_seconds),
             )
             if cur.rowcount != 1:
                 db.rollback()
