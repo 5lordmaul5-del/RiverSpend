@@ -230,6 +230,11 @@ const server = http.createServer(async (req, res) => {
       return send(res, 200, { profile });
     }
 
+    const contentType = String(req.headers['content-type'] || '').split(';')[0].trim().toLowerCase();
+    if (contentType !== 'application/json') {
+      return send(res, 415, { error: 'content_type_must_be_application_json' });
+    }
+
     const body = await readJson(req);
     if (!body || typeof body.display_name !== 'string') {
       return send(res, 400, { error: 'display_name_required' });
