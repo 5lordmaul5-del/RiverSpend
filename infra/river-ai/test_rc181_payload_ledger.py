@@ -24,7 +24,7 @@ class PayloadLedgerTests(unittest.TestCase):
         self.assertEqual(lease["owner"], "user-1")
         self.assertEqual(lease["payload"], {"text": "hi"})
 
-    def test_expired_lease_reclaim_is_durably_audited(self):
+    def test_expired_lease_reclaim_is_audited_and_cooldown_scheduled(self):
         task = self.ledger.enqueue("echo", "task", "user-1", {"text": "recover"})
         first = self.ledger.lease_next("worker-old", ("echo",))
         with sqlite3.connect(self.path) as db:
@@ -32,18 +32,51 @@ class PayloadLedgerTests(unittest.TestCase):
                 "UPDATE tasks SET leased=? WHERE id=?",
                 (time.time() - self.ledger.lease_seconds - 1, task),
             )
-        second = self.ledger.lease_next("worker-new", ("echo",))
-        self.assertEqual(second["id"], task)
-        self.assertEqual(second["attempts"], first["attempts"] + 1)
+        # Expiry is audited and requeued, but the same polling call cannot
+        # immediately reclaim it: the cooldown is persisted in the task row.
+        self.assertIsNone(self.ledger.lease_next("worker-new", ("echo",)))
         with sqlite3.connect(self.path) as db:
             row = db.execute(
                 "SELECT task_id,attempt,worker_subject,action,error_code "
                 "FROM task_events WHERE task_id=? ORDER BY event_id LIMIT 1",
                 (task,),
             ).fetchone()
+            retry_after = db.execute("SELECT retry_after FROM tasks WHERE id=?", (task,)).fetchone()[0]
         self.assertEqual(
             row, (task, first["attempts"], "worker-old", "lease_expired_requeued", "lease_expired")
         )
+        self.assertGreater(retry_after - time.time(), 0)
+        self.assertLessEqual(retry_after - time.time(), 1.5)
+
+        with sqlite3.connect(self.path) as db:
+            db.execute("UPDATE tasks SET retry_after=? WHERE id=?", (time.time()-1, task))
+        second = self.ledger.lease_next("worker-new", ("echo",))
+        self.assertEqual(second["id"], task)
+        self.assertEqual(second["attempts"], first["attempts"] + 1)
+
+        with sqlite3.connect(self.path) as db:
+            db.execute(
+                "UPDATE tasks SET leased=? WHERE id=?",
+                (time.time() - self.ledger.lease_seconds - 1, task),
+            )
+        self.assertIsNone(self.ledger.lease_next("worker-third", ("echo",)))
+        with sqlite3.connect(self.path) as db:
+            retry_after = db.execute("SELECT retry_after FROM tasks WHERE id=?", (task,)).fetchone()[0]
+            events = db.execute(
+                "SELECT attempt,worker_subject,action,error_code FROM task_events WHERE task_id=? ORDER BY event_id",
+                (task,),
+            ).fetchall()
+        self.assertGreater(retry_after - time.time(), 0)
+        self.assertLessEqual(retry_after - time.time(), 2.5)
+        self.assertEqual(events, [
+            (first["attempts"], "worker-old", "lease_expired_requeued", "lease_expired"),
+            (second["attempts"], "worker-new", "lease_expired_requeued", "lease_expired"),
+        ])
+        with sqlite3.connect(self.path) as db:
+            db.execute("UPDATE tasks SET retry_after=? WHERE id=?", (time.time()-1, task))
+        third = self.ledger.lease_next("worker-third", ("echo",))
+        self.assertEqual(third["id"], task)
+        self.assertEqual(third["attempts"], second["attempts"] + 1)
 
     def test_capability_filter(self):
         self.ledger.enqueue("echo", "task", "u", {})
