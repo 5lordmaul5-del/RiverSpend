@@ -111,11 +111,22 @@ test('API rejects excess parallel database subprocesses and releases slots after
     await rm(root, { recursive: true, force: true });
   });
 
-  await waitFor(async () => {
-    if (api.exitCode !== null || api.signalCode !== null) throw new Error('API exited: ' + stderr);
-    const response = await fetch('http://127.0.0.1:' + apiPort + '/health', { signal: AbortSignal.timeout(500) });
-    return response.status === 200;
-  });
+  const healthDeadline = Date.now() + 5000;
+  let healthFailure = 'no response';
+  while (Date.now() < healthDeadline) {
+    if (api.exitCode !== null || api.signalCode !== null) {
+      throw new Error('API exited before health check; stderr=' + stderr);
+    }
+    try {
+      const response = await fetch('http://127.0.0.1:' + apiPort + '/health', { signal: AbortSignal.timeout(500) });
+      if (response.status === 200) break;
+      healthFailure = 'HTTP ' + response.status;
+    } catch (error) {
+      healthFailure = error.message;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 25));
+  }
+  if (Date.now() >= healthDeadline) throw new Error('API health timeout; last=' + healthFailure + '; stderr=' + stderr);
 
   const request = () => fetch('http://127.0.0.1:' + apiPort + '/v1/me', {
     headers: { authorization: 'Bearer test-token' },
