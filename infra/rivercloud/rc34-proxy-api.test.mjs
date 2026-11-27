@@ -96,6 +96,18 @@ test("RC-37 admin may read the job queue", async () => {
   });
 });
 
+test("RC-34 rejects duplicate JSON object keys before planning", async () => {
+  await withServer({ trustedProxyAddress: "127.0.0.1", groupRoleMap }, async url => {
+    const operator = headers("operator-1", "operator");
+    const raw = '{"projectId":"riverspend","branch":"main","branch":"main","target":"staging","commit":"' + "b".repeat(40) + '"}';
+    const response = await fetch(url + "/api/plan", { method: "POST", headers: { ...operator, "content-type": "application/json" }, body: raw });
+    assert.equal(response.status, 400);
+    assert.equal((await response.json()).error, "invalid_json");
+    const jobs = await fetch(url + "/api/jobs", { headers: operator });
+    assert.deepEqual((await jobs.json()).jobs, []);
+  });
+});
+
 test("RC-34 missing identity fails and unmapped groups are denied", async () => {
   await withServer({ trustedProxyAddress: "127.0.0.1", groupRoleMap }, async url => {
     assert.equal((await fetch(url + "/api/jobs")).status, 401);
