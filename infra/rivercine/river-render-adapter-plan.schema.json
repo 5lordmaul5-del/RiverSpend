@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RiverRender adapter plan",
+  "type": "object",
+  "required": [
+    "schema",
+    "jobs"
+  ],
+  "properties": {
+    "schema": {
+      "const": "river-render-adapter-plan-v1"
+    },
+    "jobs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "adapter",
+          "profile",
+          "status"
+        ],
+        "properties": {
+          "adapter": {
+            "enum": [
+              "ffmpeg",
+              "blender",
+              "external"
+            ]
+          },
+          "profile": {
+            "enum": [
+              "Preview",
+              "Review",
+              "Final"
+            ]
+          },
+          "inputReference": {
+            "type": "string"
+          },
+          "outputReference": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          },
+          "status": {
+            "const": "planned"
+          }
+        }
+      }
+    }
+  }
+}
