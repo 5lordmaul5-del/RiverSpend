@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RiverRender delivery plan",
+  "type": "object",
+  "required": [
+    "schema",
+    "plans"
+  ],
+  "properties": {
+    "schema": {
+      "const": "river-render-delivery-plan-v1"
+    },
+    "plans": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "format",
+          "manualReview"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "format": {
+            "enum": [
+              "Video master",
+              "Audio master",
+              "Image sequence",
+              "Project package",
+              "Proxy package"
+            ]
+          },
+          "formatDetail": {
+            "type": "string"
+          },
+          "manualReview": {
+            "enum": [
+              "Not reviewed",
+              "Checklist manually reviewed",
+              "Requires remediation"
+            ]
+          },
+          "destinationReference": {
+            "type": "string"
+          },
+          "planningOnly": {
+            "const": true
+          }
+        }
+      }
+    }
+  }
+}
