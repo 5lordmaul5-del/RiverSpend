@@ -124,4 +124,9 @@ jobs:
       - name: Stop database without deleting its persistent volume
         if: always()
         working-directory: infra/river-cloud
+        env:
+          RIVER_CLOUD_DB_PASSWORD: ci-only-db-password
+          RIVER_CLOUD_API_DB_PASSWORD: ci-only-api-password
+          RIVERAUTH_ISSUER_URL: https://example.supabase.co
+          RIVERAUTH_PUBLISHABLE_KEY: sb_publishable_ci_placeholder
         run: docker compose down
