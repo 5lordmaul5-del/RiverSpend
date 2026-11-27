@@ -25,7 +25,7 @@ class Tests(unittest.TestCase):
         self.assertTrue(r.claim(i))
         self.assertFalse(r.claim(i))
 
-    def test_success(self):
+    def test_fail_requires_running_state(self):\n        r = RecoveryCoordinator()\n        i = r.enqueue("k")\n        self.assertFalse(r.fail(i, "premature"))\n        self.assertEqual(r.get(i)[3], "queued")\n        self.assertTrue(r.claim(i))\n        self.assertTrue(r.fail(i, "after claim"))\n        self.assertEqual(r.get(i)[3], "queued")\n\n    def test_success(self):
         r = RecoveryCoordinator()
         i = r.enqueue("k")
         r.claim(i)
