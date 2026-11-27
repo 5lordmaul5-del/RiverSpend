@@ -1,0 +1,2016 @@
+{
+  "release": "RC264",
+  "date": "2026-11-27",
+  "count": 247,
+  "sections": {
+    "Drum Kits": [
+      "Acoustic drum kit — Rock",
+      "Acoustic drum kit — Heavy Metal",
+      "Acoustic drum kit — Hard Rock",
+      "Acoustic drum kit — Jazz",
+      "Acoustic drum kit — Fusion",
+      "Acoustic drum kit — Blues",
+      "Acoustic drum kit — Funk",
+      "Acoustic drum kit — Punk",
+      "Acoustic drum kit — Pop",
+      "Acoustic drum kit — Prog Rock",
+      "Acoustic drum kit — Thrash Metal",
+      "Acoustic drum kit — Death Metal",
+      "Acoustic drum kit — Black Metal",
+      "Acoustic drum kit — Doom Metal",
+      "Acoustic drum kit — Power Metal",
+      "Acoustic drum kit — Industrial",
+      "Acoustic drum kit — Country",
+      "Acoustic drum kit — Gospel",
+      "Acoustic drum kit — Latin",
+      "Acoustic drum kit — World",
+      "Electronic drum kit — mesh pads",
+      "Electronic drum kit — rubber pads",
+      "Hybrid acoustic/electronic kit",
+      "Compact club kit",
+      "Double-bass metal kit",
+      "Extended tom kit",
+      "Vintage kit",
+      "Studio kit",
+      "Arena kit"
+    ],
+    "Drum Components & Accessories": [
+      "Kick drum",
+      "Double kick pedal",
+      "Single kick pedal",
+      "Snare drum",
+      "Metal snare",
+      "Wood snare",
+      "Piccolo snare",
+      "Rack tom",
+      "Floor tom",
+      "Rototom",
+      "Hi-hat",
+      "Ride cymbal",
+      "Crash cymbal",
+      "China cymbal",
+      "Splash cymbal",
+      "Bell cymbal",
+      "Electronic cymbal pad",
+      "Drum trigger",
+      "Trigger module",
+      "Drum rack",
+      "Drum throne",
+      "Drum dampening",
+      "Drum tuning tools"
+    ],
+    "Professional Drum Microphones": [
+      "Kick drum microphone",
+      "Kick in microphone",
+      "Kick out microphone",
+      "Snare top microphone",
+      "Snare bottom microphone",
+      "Hi-hat microphone",
+      "Rack tom microphone",
+      "Floor tom microphone",
+      "Overhead pair",
+      "Mono overhead",
+      "Room microphone",
+      "Stereo room pair",
+      "Drum boundary microphone",
+      "Drum measurement microphone",
+      "Drum mic kit",
+      "Clip-on drum microphone"
+    ],
+    "Professional Vocal & Recording Microphones": [
+      "Studio condenser microphone",
+      "Large diaphragm condenser",
+      "Small diaphragm condenser",
+      "Dynamic vocal microphone",
+      "Broadcast vocal microphone",
+      "Ribbon microphone",
+      "Tube microphone",
+      "Wireless vocal microphone",
+      "Handheld stage vocal microphone",
+      "Shotgun microphone",
+      "Stereo microphone",
+      "Podcast microphone",
+      "Vocal booth microphone",
+      "Pop filter",
+      "Shock mount",
+      "Mic preamp"
+    ],
+    "Studio Monitors & Speakers": [
+      "Nearfield monitor",
+      "Midfield monitor",
+      "Farfield monitor",
+      "Active studio monitor",
+      "Passive studio monitor",
+      "Subwoofer",
+      "Portable reference monitor",
+      "Surround monitor",
+      "Dolby Atmos monitor",
+      "Headphone reference system"
+    ],
+    "Amplifiers — Guitar": [
+      "Tube guitar amp",
+      "Solid-state guitar amp",
+      "Hybrid guitar amp",
+      "Modeling guitar amp",
+      "Combo guitar amp",
+      "Guitar head",
+      "Guitar cabinet 1x12",
+      "Guitar cabinet 2x12",
+      "Guitar cabinet 4x12",
+      "Open-back cabinet",
+      "Closed-back cabinet",
+      "Vintage guitar amplifier",
+      "High-gain metal amplifier",
+      "Clean amplifier",
+      "Acoustic guitar amplifier"
+    ],
+    "Amplifiers — Bass": [
+      "Bass amp head",
+      "Bass combo amplifier",
+      "Bass cabinet 1x10",
+      "Bass cabinet 2x10",
+      "Bass cabinet 4x10",
+      "Bass cabinet 1x12",
+      "Bass cabinet 2x12",
+      "Bass cabinet 1x15",
+      "Bass cabinet 8x10",
+      "Bass preamp",
+      "Bass power amp",
+      "Bass modeling amplifier"
+    ],
+    "Acoustic & Electric Guitars": [
+      "Classical nylon guitar",
+      "Steel-string acoustic guitar",
+      "Acoustic-electric guitar",
+      "Electro-acoustic guitar",
+      "Semi-acoustic guitar",
+      "Semi-hollow electric guitar",
+      "Hollow-body electric guitar",
+      "Solid-body electric guitar",
+      "12-string acoustic guitar",
+      "12-string electric guitar",
+      "Baritone guitar",
+      "Resonator guitar",
+      "Dreadnought",
+      "Jumbo acoustic",
+      "Concert acoustic",
+      "Parlor acoustic",
+      "Travel guitar",
+      "Archtop guitar",
+      "Bass guitar",
+      "5-string bass guitar",
+      "6-string bass guitar",
+      "Fretless bass guitar"
+    ],
+    "Brand Families — Drums": [
+      "Pearl",
+      "Yamaha",
+      "Roland",
+      "Alesis",
+      "Ludwig",
+      "Gretsch",
+      "Tama",
+      "DW / Drum Workshop",
+      "Mapex",
+      "Sonor",
+      "Zildjian",
+      "Sabian",
+      "Paiste",
+      "Meinl",
+      "Vic Firth",
+      "Remo",
+      "Evans",
+      "Aquarian"
+    ],
+    "Brand Families — Microphones": [
+      "Shure",
+      "Neumann",
+      "Sennheiser",
+      "AKG",
+      "Audio-Technica",
+      "Rode",
+      "Electro-Voice",
+      "Beyerdynamic",
+      "Lewitt",
+      "DPA",
+      "Earthworks",
+      "Telefunken",
+      "Warm Audio",
+      "Audix",
+      "sE Electronics",
+      "MXL",
+      "Blue"
+    ],
+    "Brand Families — Monitors & Audio": [
+      "Bowers & Wilkins (B&W)",
+      "Yamaha",
+      "Genelec",
+      "Neumann",
+      "Adam Audio",
+      "KRK",
+      "JBL",
+      "Focal",
+      "Dynaudio",
+      "Mackie",
+      "PreSonus",
+      "PMC",
+      "ATC",
+      "KEF",
+      "Auratone",
+      "Tannoy",
+      "Behringer"
+    ],
+    "Brand Families — Guitar & Bass Amps": [
+      "Marshall",
+      "Ampeg",
+      "Fender",
+      "Mesa/Boogie",
+      "Orange",
+      "Vox",
+      "Peavey",
+      "Laney",
+      "Blackstar",
+      "PRS",
+      "EVH",
+      "Bogner",
+      "Soldano",
+      "Victory",
+      "Engl",
+      "Diezel",
+      "Randall",
+      "Supro",
+      "Hiwatt",
+      "Gallien-Krueger",
+      "Markbass",
+      "Ashdown",
+      "Hartke",
+      "Trace Elliot",
+      "Aguilar",
+      "Darkglass",
+      "Friedman"
+    ],
+    "Brand Families — Guitars": [
+      "Takamine",
+      "Yamaha",
+      "Rickenbacker",
+      "Fender",
+      "Gibson",
+      "Epiphone",
+      "Ibanez",
+      "PRS",
+      "Martin",
+      "Taylor",
+      "Guild",
+      "Gretsch",
+      "ESP / LTD",
+      "Jackson",
+      "Charvel",
+      "Schecter",
+      "Cort",
+      "Alvarez",
+      "Seagull",
+      "Ovation",
+      "Washburn",
+      "B.C. Rich",
+      "Warwick",
+      "Music Man",
+      "Squier"
+    ]
+  },
+  "entries": [
+    {
+      "id": "rc264-0000",
+      "category": "Drum Kits",
+      "name": "Acoustic drum kit — Rock",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0001",
+      "category": "Drum Kits",
+      "name": "Acoustic drum kit — Heavy Metal",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0002",
+      "category": "Drum Kits",
+      "name": "Acoustic drum kit — Hard Rock",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0003",
+      "category": "Drum Kits",
+      "name": "Acoustic drum kit — Jazz",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0004",
+      "category": "Drum Kits",
+      "name": "Acoustic drum kit — Fusion",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0005",
+      "category": "Drum Kits",
+      "name": "Acoustic drum kit — Blues",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0006",
+      "category": "Drum Kits",
+      "name": "Acoustic drum kit — Funk",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0007",
+      "category": "Drum Kits",
+      "name": "Acoustic drum kit — Punk",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0008",
+      "category": "Drum Kits",
+      "name": "Acoustic drum kit — Pop",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0009",
+      "category": "Drum Kits",
+      "name": "Acoustic drum kit — Prog Rock",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0010",
+      "category": "Drum Kits",
+      "name": "Acoustic drum kit — Thrash Metal",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0011",
+      "category": "Drum Kits",
+      "name": "Acoustic drum kit — Death Metal",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0012",
+      "category": "Drum Kits",
+      "name": "Acoustic drum kit — Black Metal",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0013",
+      "category": "Drum Kits",
+      "name": "Acoustic drum kit — Doom Metal",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0014",
+      "category": "Drum Kits",
+      "name": "Acoustic drum kit — Power Metal",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0015",
+      "category": "Drum Kits",
+      "name": "Acoustic drum kit — Industrial",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0016",
+      "category": "Drum Kits",
+      "name": "Acoustic drum kit — Country",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0017",
+      "category": "Drum Kits",
+      "name": "Acoustic drum kit — Gospel",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0018",
+      "category": "Drum Kits",
+      "name": "Acoustic drum kit — Latin",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0019",
+      "category": "Drum Kits",
+      "name": "Acoustic drum kit — World",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0020",
+      "category": "Drum Kits",
+      "name": "Electronic drum kit — mesh pads",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0021",
+      "category": "Drum Kits",
+      "name": "Electronic drum kit — rubber pads",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0022",
+      "category": "Drum Kits",
+      "name": "Hybrid acoustic/electronic kit",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0023",
+      "category": "Drum Kits",
+      "name": "Compact club kit",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0024",
+      "category": "Drum Kits",
+      "name": "Double-bass metal kit",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0025",
+      "category": "Drum Kits",
+      "name": "Extended tom kit",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0026",
+      "category": "Drum Kits",
+      "name": "Vintage kit",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0027",
+      "category": "Drum Kits",
+      "name": "Studio kit",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0028",
+      "category": "Drum Kits",
+      "name": "Arena kit",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0029",
+      "category": "Drum Components & Accessories",
+      "name": "Kick drum",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0030",
+      "category": "Drum Components & Accessories",
+      "name": "Double kick pedal",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0031",
+      "category": "Drum Components & Accessories",
+      "name": "Single kick pedal",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0032",
+      "category": "Drum Components & Accessories",
+      "name": "Snare drum",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0033",
+      "category": "Drum Components & Accessories",
+      "name": "Metal snare",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0034",
+      "category": "Drum Components & Accessories",
+      "name": "Wood snare",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0035",
+      "category": "Drum Components & Accessories",
+      "name": "Piccolo snare",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0036",
+      "category": "Drum Components & Accessories",
+      "name": "Rack tom",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0037",
+      "category": "Drum Components & Accessories",
+      "name": "Floor tom",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0038",
+      "category": "Drum Components & Accessories",
+      "name": "Rototom",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0039",
+      "category": "Drum Components & Accessories",
+      "name": "Hi-hat",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0040",
+      "category": "Drum Components & Accessories",
+      "name": "Ride cymbal",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0041",
+      "category": "Drum Components & Accessories",
+      "name": "Crash cymbal",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0042",
+      "category": "Drum Components & Accessories",
+      "name": "China cymbal",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0043",
+      "category": "Drum Components & Accessories",
+      "name": "Splash cymbal",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0044",
+      "category": "Drum Components & Accessories",
+      "name": "Bell cymbal",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0045",
+      "category": "Drum Components & Accessories",
+      "name": "Electronic cymbal pad",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0046",
+      "category": "Drum Components & Accessories",
+      "name": "Drum trigger",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0047",
+      "category": "Drum Components & Accessories",
+      "name": "Trigger module",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0048",
+      "category": "Drum Components & Accessories",
+      "name": "Drum rack",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0049",
+      "category": "Drum Components & Accessories",
+      "name": "Drum throne",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0050",
+      "category": "Drum Components & Accessories",
+      "name": "Drum dampening",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0051",
+      "category": "Drum Components & Accessories",
+      "name": "Drum tuning tools",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0052",
+      "category": "Professional Drum Microphones",
+      "name": "Kick drum microphone",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0053",
+      "category": "Professional Drum Microphones",
+      "name": "Kick in microphone",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0054",
+      "category": "Professional Drum Microphones",
+      "name": "Kick out microphone",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0055",
+      "category": "Professional Drum Microphones",
+      "name": "Snare top microphone",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0056",
+      "category": "Professional Drum Microphones",
+      "name": "Snare bottom microphone",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0057",
+      "category": "Professional Drum Microphones",
+      "name": "Hi-hat microphone",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0058",
+      "category": "Professional Drum Microphones",
+      "name": "Rack tom microphone",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0059",
+      "category": "Professional Drum Microphones",
+      "name": "Floor tom microphone",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0060",
+      "category": "Professional Drum Microphones",
+      "name": "Overhead pair",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0061",
+      "category": "Professional Drum Microphones",
+      "name": "Mono overhead",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0062",
+      "category": "Professional Drum Microphones",
+      "name": "Room microphone",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0063",
+      "category": "Professional Drum Microphones",
+      "name": "Stereo room pair",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0064",
+      "category": "Professional Drum Microphones",
+      "name": "Drum boundary microphone",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0065",
+      "category": "Professional Drum Microphones",
+      "name": "Drum measurement microphone",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0066",
+      "category": "Professional Drum Microphones",
+      "name": "Drum mic kit",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0067",
+      "category": "Professional Drum Microphones",
+      "name": "Clip-on drum microphone",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0068",
+      "category": "Professional Vocal & Recording Microphones",
+      "name": "Studio condenser microphone",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0069",
+      "category": "Professional Vocal & Recording Microphones",
+      "name": "Large diaphragm condenser",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0070",
+      "category": "Professional Vocal & Recording Microphones",
+      "name": "Small diaphragm condenser",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0071",
+      "category": "Professional Vocal & Recording Microphones",
+      "name": "Dynamic vocal microphone",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0072",
+      "category": "Professional Vocal & Recording Microphones",
+      "name": "Broadcast vocal microphone",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0073",
+      "category": "Professional Vocal & Recording Microphones",
+      "name": "Ribbon microphone",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0074",
+      "category": "Professional Vocal & Recording Microphones",
+      "name": "Tube microphone",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0075",
+      "category": "Professional Vocal & Recording Microphones",
+      "name": "Wireless vocal microphone",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0076",
+      "category": "Professional Vocal & Recording Microphones",
+      "name": "Handheld stage vocal microphone",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0077",
+      "category": "Professional Vocal & Recording Microphones",
+      "name": "Shotgun microphone",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0078",
+      "category": "Professional Vocal & Recording Microphones",
+      "name": "Stereo microphone",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0079",
+      "category": "Professional Vocal & Recording Microphones",
+      "name": "Podcast microphone",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0080",
+      "category": "Professional Vocal & Recording Microphones",
+      "name": "Vocal booth microphone",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0081",
+      "category": "Professional Vocal & Recording Microphones",
+      "name": "Pop filter",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0082",
+      "category": "Professional Vocal & Recording Microphones",
+      "name": "Shock mount",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0083",
+      "category": "Professional Vocal & Recording Microphones",
+      "name": "Mic preamp",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0084",
+      "category": "Studio Monitors & Speakers",
+      "name": "Nearfield monitor",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0085",
+      "category": "Studio Monitors & Speakers",
+      "name": "Midfield monitor",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0086",
+      "category": "Studio Monitors & Speakers",
+      "name": "Farfield monitor",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0087",
+      "category": "Studio Monitors & Speakers",
+      "name": "Active studio monitor",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0088",
+      "category": "Studio Monitors & Speakers",
+      "name": "Passive studio monitor",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0089",
+      "category": "Studio Monitors & Speakers",
+      "name": "Subwoofer",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0090",
+      "category": "Studio Monitors & Speakers",
+      "name": "Portable reference monitor",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0091",
+      "category": "Studio Monitors & Speakers",
+      "name": "Surround monitor",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0092",
+      "category": "Studio Monitors & Speakers",
+      "name": "Dolby Atmos monitor",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0093",
+      "category": "Studio Monitors & Speakers",
+      "name": "Headphone reference system",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0094",
+      "category": "Amplifiers — Guitar",
+      "name": "Tube guitar amp",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0095",
+      "category": "Amplifiers — Guitar",
+      "name": "Solid-state guitar amp",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0096",
+      "category": "Amplifiers — Guitar",
+      "name": "Hybrid guitar amp",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0097",
+      "category": "Amplifiers — Guitar",
+      "name": "Modeling guitar amp",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0098",
+      "category": "Amplifiers — Guitar",
+      "name": "Combo guitar amp",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0099",
+      "category": "Amplifiers — Guitar",
+      "name": "Guitar head",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0100",
+      "category": "Amplifiers — Guitar",
+      "name": "Guitar cabinet 1x12",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0101",
+      "category": "Amplifiers — Guitar",
+      "name": "Guitar cabinet 2x12",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0102",
+      "category": "Amplifiers — Guitar",
+      "name": "Guitar cabinet 4x12",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0103",
+      "category": "Amplifiers — Guitar",
+      "name": "Open-back cabinet",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0104",
+      "category": "Amplifiers — Guitar",
+      "name": "Closed-back cabinet",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0105",
+      "category": "Amplifiers — Guitar",
+      "name": "Vintage guitar amplifier",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0106",
+      "category": "Amplifiers — Guitar",
+      "name": "High-gain metal amplifier",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0107",
+      "category": "Amplifiers — Guitar",
+      "name": "Clean amplifier",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0108",
+      "category": "Amplifiers — Guitar",
+      "name": "Acoustic guitar amplifier",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0109",
+      "category": "Amplifiers — Bass",
+      "name": "Bass amp head",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0110",
+      "category": "Amplifiers — Bass",
+      "name": "Bass combo amplifier",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0111",
+      "category": "Amplifiers — Bass",
+      "name": "Bass cabinet 1x10",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0112",
+      "category": "Amplifiers — Bass",
+      "name": "Bass cabinet 2x10",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0113",
+      "category": "Amplifiers — Bass",
+      "name": "Bass cabinet 4x10",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0114",
+      "category": "Amplifiers — Bass",
+      "name": "Bass cabinet 1x12",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0115",
+      "category": "Amplifiers — Bass",
+      "name": "Bass cabinet 2x12",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0116",
+      "category": "Amplifiers — Bass",
+      "name": "Bass cabinet 1x15",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0117",
+      "category": "Amplifiers — Bass",
+      "name": "Bass cabinet 8x10",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0118",
+      "category": "Amplifiers — Bass",
+      "name": "Bass preamp",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0119",
+      "category": "Amplifiers — Bass",
+      "name": "Bass power amp",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0120",
+      "category": "Amplifiers — Bass",
+      "name": "Bass modeling amplifier",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0121",
+      "category": "Acoustic & Electric Guitars",
+      "name": "Classical nylon guitar",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0122",
+      "category": "Acoustic & Electric Guitars",
+      "name": "Steel-string acoustic guitar",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0123",
+      "category": "Acoustic & Electric Guitars",
+      "name": "Acoustic-electric guitar",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0124",
+      "category": "Acoustic & Electric Guitars",
+      "name": "Electro-acoustic guitar",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0125",
+      "category": "Acoustic & Electric Guitars",
+      "name": "Semi-acoustic guitar",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0126",
+      "category": "Acoustic & Electric Guitars",
+      "name": "Semi-hollow electric guitar",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0127",
+      "category": "Acoustic & Electric Guitars",
+      "name": "Hollow-body electric guitar",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0128",
+      "category": "Acoustic & Electric Guitars",
+      "name": "Solid-body electric guitar",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0129",
+      "category": "Acoustic & Electric Guitars",
+      "name": "12-string acoustic guitar",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0130",
+      "category": "Acoustic & Electric Guitars",
+      "name": "12-string electric guitar",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0131",
+      "category": "Acoustic & Electric Guitars",
+      "name": "Baritone guitar",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0132",
+      "category": "Acoustic & Electric Guitars",
+      "name": "Resonator guitar",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0133",
+      "category": "Acoustic & Electric Guitars",
+      "name": "Dreadnought",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0134",
+      "category": "Acoustic & Electric Guitars",
+      "name": "Jumbo acoustic",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0135",
+      "category": "Acoustic & Electric Guitars",
+      "name": "Concert acoustic",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0136",
+      "category": "Acoustic & Electric Guitars",
+      "name": "Parlor acoustic",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0137",
+      "category": "Acoustic & Electric Guitars",
+      "name": "Travel guitar",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0138",
+      "category": "Acoustic & Electric Guitars",
+      "name": "Archtop guitar",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0139",
+      "category": "Acoustic & Electric Guitars",
+      "name": "Bass guitar",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0140",
+      "category": "Acoustic & Electric Guitars",
+      "name": "5-string bass guitar",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0141",
+      "category": "Acoustic & Electric Guitars",
+      "name": "6-string bass guitar",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0142",
+      "category": "Acoustic & Electric Guitars",
+      "name": "Fretless bass guitar",
+      "entryType": "equipment type",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0143",
+      "category": "Brand Families — Drums",
+      "name": "Pearl",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0144",
+      "category": "Brand Families — Drums",
+      "name": "Yamaha",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0145",
+      "category": "Brand Families — Drums",
+      "name": "Roland",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0146",
+      "category": "Brand Families — Drums",
+      "name": "Alesis",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0147",
+      "category": "Brand Families — Drums",
+      "name": "Ludwig",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0148",
+      "category": "Brand Families — Drums",
+      "name": "Gretsch",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0149",
+      "category": "Brand Families — Drums",
+      "name": "Tama",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0150",
+      "category": "Brand Families — Drums",
+      "name": "DW / Drum Workshop",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0151",
+      "category": "Brand Families — Drums",
+      "name": "Mapex",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0152",
+      "category": "Brand Families — Drums",
+      "name": "Sonor",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0153",
+      "category": "Brand Families — Drums",
+      "name": "Zildjian",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0154",
+      "category": "Brand Families — Drums",
+      "name": "Sabian",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0155",
+      "category": "Brand Families — Drums",
+      "name": "Paiste",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0156",
+      "category": "Brand Families — Drums",
+      "name": "Meinl",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0157",
+      "category": "Brand Families — Drums",
+      "name": "Vic Firth",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0158",
+      "category": "Brand Families — Drums",
+      "name": "Remo",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0159",
+      "category": "Brand Families — Drums",
+      "name": "Evans",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0160",
+      "category": "Brand Families — Drums",
+      "name": "Aquarian",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0161",
+      "category": "Brand Families — Microphones",
+      "name": "Shure",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0162",
+      "category": "Brand Families — Microphones",
+      "name": "Neumann",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0163",
+      "category": "Brand Families — Microphones",
+      "name": "Sennheiser",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0164",
+      "category": "Brand Families — Microphones",
+      "name": "AKG",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0165",
+      "category": "Brand Families — Microphones",
+      "name": "Audio-Technica",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0166",
+      "category": "Brand Families — Microphones",
+      "name": "Rode",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0167",
+      "category": "Brand Families — Microphones",
+      "name": "Electro-Voice",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0168",
+      "category": "Brand Families — Microphones",
+      "name": "Beyerdynamic",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0169",
+      "category": "Brand Families — Microphones",
+      "name": "Lewitt",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0170",
+      "category": "Brand Families — Microphones",
+      "name": "DPA",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0171",
+      "category": "Brand Families — Microphones",
+      "name": "Earthworks",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0172",
+      "category": "Brand Families — Microphones",
+      "name": "Telefunken",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0173",
+      "category": "Brand Families — Microphones",
+      "name": "Warm Audio",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0174",
+      "category": "Brand Families — Microphones",
+      "name": "Audix",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0175",
+      "category": "Brand Families — Microphones",
+      "name": "sE Electronics",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0176",
+      "category": "Brand Families — Microphones",
+      "name": "MXL",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0177",
+      "category": "Brand Families — Microphones",
+      "name": "Blue",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0178",
+      "category": "Brand Families — Monitors & Audio",
+      "name": "Bowers & Wilkins (B&W)",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0179",
+      "category": "Brand Families — Monitors & Audio",
+      "name": "Yamaha",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0180",
+      "category": "Brand Families — Monitors & Audio",
+      "name": "Genelec",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0181",
+      "category": "Brand Families — Monitors & Audio",
+      "name": "Neumann",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0182",
+      "category": "Brand Families — Monitors & Audio",
+      "name": "Adam Audio",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0183",
+      "category": "Brand Families — Monitors & Audio",
+      "name": "KRK",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0184",
+      "category": "Brand Families — Monitors & Audio",
+      "name": "JBL",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0185",
+      "category": "Brand Families — Monitors & Audio",
+      "name": "Focal",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0186",
+      "category": "Brand Families — Monitors & Audio",
+      "name": "Dynaudio",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0187",
+      "category": "Brand Families — Monitors & Audio",
+      "name": "Mackie",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0188",
+      "category": "Brand Families — Monitors & Audio",
+      "name": "PreSonus",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0189",
+      "category": "Brand Families — Monitors & Audio",
+      "name": "PMC",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0190",
+      "category": "Brand Families — Monitors & Audio",
+      "name": "ATC",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0191",
+      "category": "Brand Families — Monitors & Audio",
+      "name": "KEF",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0192",
+      "category": "Brand Families — Monitors & Audio",
+      "name": "Auratone",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0193",
+      "category": "Brand Families — Monitors & Audio",
+      "name": "Tannoy",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0194",
+      "category": "Brand Families — Monitors & Audio",
+      "name": "Behringer",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0195",
+      "category": "Brand Families — Guitar & Bass Amps",
+      "name": "Marshall",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0196",
+      "category": "Brand Families — Guitar & Bass Amps",
+      "name": "Ampeg",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0197",
+      "category": "Brand Families — Guitar & Bass Amps",
+      "name": "Fender",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0198",
+      "category": "Brand Families — Guitar & Bass Amps",
+      "name": "Mesa/Boogie",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0199",
+      "category": "Brand Families — Guitar & Bass Amps",
+      "name": "Orange",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0200",
+      "category": "Brand Families — Guitar & Bass Amps",
+      "name": "Vox",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0201",
+      "category": "Brand Families — Guitar & Bass Amps",
+      "name": "Peavey",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0202",
+      "category": "Brand Families — Guitar & Bass Amps",
+      "name": "Laney",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0203",
+      "category": "Brand Families — Guitar & Bass Amps",
+      "name": "Blackstar",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0204",
+      "category": "Brand Families — Guitar & Bass Amps",
+      "name": "PRS",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0205",
+      "category": "Brand Families — Guitar & Bass Amps",
+      "name": "EVH",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0206",
+      "category": "Brand Families — Guitar & Bass Amps",
+      "name": "Bogner",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0207",
+      "category": "Brand Families — Guitar & Bass Amps",
+      "name": "Soldano",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0208",
+      "category": "Brand Families — Guitar & Bass Amps",
+      "name": "Victory",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0209",
+      "category": "Brand Families — Guitar & Bass Amps",
+      "name": "Engl",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0210",
+      "category": "Brand Families — Guitar & Bass Amps",
+      "name": "Diezel",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0211",
+      "category": "Brand Families — Guitar & Bass Amps",
+      "name": "Randall",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0212",
+      "category": "Brand Families — Guitar & Bass Amps",
+      "name": "Supro",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0213",
+      "category": "Brand Families — Guitar & Bass Amps",
+      "name": "Hiwatt",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0214",
+      "category": "Brand Families — Guitar & Bass Amps",
+      "name": "Gallien-Krueger",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0215",
+      "category": "Brand Families — Guitar & Bass Amps",
+      "name": "Markbass",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0216",
+      "category": "Brand Families — Guitar & Bass Amps",
+      "name": "Ashdown",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0217",
+      "category": "Brand Families — Guitar & Bass Amps",
+      "name": "Hartke",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0218",
+      "category": "Brand Families — Guitar & Bass Amps",
+      "name": "Trace Elliot",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0219",
+      "category": "Brand Families — Guitar & Bass Amps",
+      "name": "Aguilar",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0220",
+      "category": "Brand Families — Guitar & Bass Amps",
+      "name": "Darkglass",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0221",
+      "category": "Brand Families — Guitar & Bass Amps",
+      "name": "Friedman",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0222",
+      "category": "Brand Families — Guitars",
+      "name": "Takamine",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0223",
+      "category": "Brand Families — Guitars",
+      "name": "Yamaha",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0224",
+      "category": "Brand Families — Guitars",
+      "name": "Rickenbacker",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0225",
+      "category": "Brand Families — Guitars",
+      "name": "Fender",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0226",
+      "category": "Brand Families — Guitars",
+      "name": "Gibson",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0227",
+      "category": "Brand Families — Guitars",
+      "name": "Epiphone",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0228",
+      "category": "Brand Families — Guitars",
+      "name": "Ibanez",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0229",
+      "category": "Brand Families — Guitars",
+      "name": "PRS",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0230",
+      "category": "Brand Families — Guitars",
+      "name": "Martin",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0231",
+      "category": "Brand Families — Guitars",
+      "name": "Taylor",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0232",
+      "category": "Brand Families — Guitars",
+      "name": "Guild",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0233",
+      "category": "Brand Families — Guitars",
+      "name": "Gretsch",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0234",
+      "category": "Brand Families — Guitars",
+      "name": "ESP / LTD",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0235",
+      "category": "Brand Families — Guitars",
+      "name": "Jackson",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0236",
+      "category": "Brand Families — Guitars",
+      "name": "Charvel",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0237",
+      "category": "Brand Families — Guitars",
+      "name": "Schecter",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0238",
+      "category": "Brand Families — Guitars",
+      "name": "Cort",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0239",
+      "category": "Brand Families — Guitars",
+      "name": "Alvarez",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0240",
+      "category": "Brand Families — Guitars",
+      "name": "Seagull",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0241",
+      "category": "Brand Families — Guitars",
+      "name": "Ovation",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0242",
+      "category": "Brand Families — Guitars",
+      "name": "Washburn",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0243",
+      "category": "Brand Families — Guitars",
+      "name": "B.C. Rich",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0244",
+      "category": "Brand Families — Guitars",
+      "name": "Warwick",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0245",
+      "category": "Brand Families — Guitars",
+      "name": "Music Man",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    },
+    {
+      "id": "rc264-0246",
+      "category": "Brand Families — Guitars",
+      "name": "Squier",
+      "entryType": "brand reference",
+      "verification": "reference catalog; individual models and compatibility to be verified"
+    }
+  ],
+  "notes": [
+    "Brand names are manufacturer reference categories, not exhaustive current model inventories.",
+    "The catalogue does not imply partnerships, endorsement, device support or audio-engine integration.",
+    "Brand entries refer to families; model-specific presets, simulations, drivers and compatibility require further work."
+  ]
+}
