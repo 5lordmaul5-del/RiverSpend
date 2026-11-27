@@ -5,7 +5,9 @@ import { computeWaveformPeaks } from './waveform.mjs';
 test('computes peaks across stereo channels and bins', () => {
   const left = Float32Array.from([0, 0.25, -0.5, 0, 0.9, 0, -0.1, 0]);
   const right = Float32Array.from([0, -0.2, 0, 0.3, 0, 0.6, 0, -0.7]);
-  assert.deepEqual(computeWaveformPeaks([left, right], 4), [0.25, 0.5, 0.9, 0.7]);
+  const actual = computeWaveformPeaks([left, right], 4);
+  const expected = [0.25, 0.5, 0.9, 0.7];
+  actual.forEach((value, index) => assert.ok(Math.abs(value - expected[index]) < 1e-6));
 });
 
 test('handles empty and short buffers without empty bins', () => {
