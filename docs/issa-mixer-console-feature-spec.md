@@ -120,3 +120,13 @@ This section is a design backlog informed by publicly described contemporary wor
 - Milestone F — game authoring prototype: scene/asset browser, simple 2D scene, visual event graph, trigger/audio wiring and playable local preview.
 - Milestone G — advanced simulation and integrations: particle/VFX, multi-camera capture, sensor integrations, live virtual production and plugin/integration evaluation.
 - Each milestone requires: design/spec, isolated branch, implementation, static/unit tests, documented manual test steps, sample project, review; no merge or production deploy without explicit approval.
+
+
+## Shared Creative Project Schema v1
+- Initial versioned JSON schema is stored at `docs/creative-project-schema-v1.json`.
+- Defines project identity/version, timestamps, frame-rate and resolution metadata, typed assets, tracks/clips, markers and optional takes.
+- Asset records intentionally describe metadata rather than embedding binary media; storage adapters can remain local or later connect to RiverCloud.
+- Importers must validate schema/version, reject unsupported or malformed records gracefully, and preserve unknown metadata where feasible.
+- Project saves should use atomic/recoverable writes, autosave snapshots, quota warnings, and exportable backups.
+- Privacy defaults: local-first storage; explicit consent before uploading media, motion capture, face/voice data or project assets. Provide delete/export controls and avoid sending capture data to external services by default.
+- This schema is a foundation document, not a runtime feature; implementation and validation tests remain outstanding.
