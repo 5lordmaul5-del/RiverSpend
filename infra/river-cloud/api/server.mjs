@@ -128,17 +128,18 @@ function runProfileSql(sql, variables) {
     let stdout = '';
     const MAX_OUTPUT_BYTES = 16_384;
     let outputExceeded = false;
+    let timedOut = false;
     child.stdout.setEncoding('utf8');
     child.stderr.resume(); // Drain stderr without retaining potentially sensitive database details.
     child.stdout.on('data', (chunk) => {
-      if (stdout.length + chunk.length > MAX_OUTPUT_BYTES) {
+      if (Buffer.byteLength(stdout, 'utf8') + Buffer.byteLength(chunk, 'utf8') > MAX_OUTPUT_BYTES) {
         outputExceeded = true;
         child.kill('SIGKILL');
         return;
       }
       stdout += chunk;
     });
-    const timeout = setTimeout(() => child.kill('SIGKILL'), 8000);
+    const timeout = setTimeout(() => { timedOut = true; child.kill('SIGKILL'); }, 8000);
     child.on('error', (error) => {
       clearTimeout(timeout);
       releaseSlot();
@@ -147,6 +148,12 @@ function runProfileSql(sql, variables) {
     child.on('close', (code) => {
       clearTimeout(timeout);
       releaseSlot();
+      if (timedOut) {
+        const error = new Error('RiverCloud database operation timed out');
+        error.status = 503;
+        reject(error);
+        return;
+      }
       if (outputExceeded) {
         const error = new Error('RiverCloud database output exceeded limit');
         error.status = 503;
@@ -170,6 +177,10 @@ function runProfileSql(sql, variables) {
       } catch {
         reject(new Error('RiverCloud database returned invalid JSON'));
       }
+    });
+    child.stdin.on('error', () => {
+      child.kill('SIGKILL');
+      reject(Object.assign(new Error('RiverCloud database input failed'), { status: 503 }));
     });
     child.stdin.end(sql);
   });
