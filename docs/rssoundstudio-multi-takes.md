@@ -1,0 +1,1 @@
+# RiverSoundStudio — multiple recording takes\n\nRecording stop now preserves each recording as a separate take instead of replacing the previous recording. The mixer channel shows take count and offers per-take download and removal. Object URLs are released when a take is removed or its channel is deleted. Runtime/browser testing pending.\n
