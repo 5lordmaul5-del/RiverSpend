@@ -1,0 +1,1 @@
+# RiverSoundStudio — timeline zoom\n\nAdds a global timeline zoom factor from 1× to 8×. This prototype scales the shared transport slider's range; full visual viewport scrolling and clip-based timeline rendering are still planned. Waveform displays remain individually rendered. Browser validation pending.\n
