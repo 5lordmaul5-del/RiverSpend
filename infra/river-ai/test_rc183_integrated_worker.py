@@ -163,6 +163,25 @@ class WorkerCoreIntegrationTests(unittest.TestCase):
         self.assertEqual(self.ledger.status()["cancelled"],1)
         self.assertEqual(self.executor.keys,[])
 
+    def test_rc180_contract_bridge_rejects_invalid_owner_and_recovers(self):
+        task=self.ledger.enqueue("echo","summary","user-1",{"text":"bridge"})
+        class InvalidOwnerLedger:
+            db_path=self.ledger.db_path
+            lease_seconds=self.ledger.lease_seconds
+            def lease_next(inner,worker,caps):
+                lease=self.ledger.lease_next(worker,caps)
+                if lease: lease["owner"]=""
+                return lease
+        core=WorkerCore(InvalidOwnerLedger(),self.path,self.verify,self.policy,self.executor)
+        out=core.run_once("worker-token")
+        self.assertEqual(out["status"],"rejected")
+        self.assertEqual(out["recovery"],"retry")
+        self.assertEqual(self.ledger.status()["queued"],1)
+        self.assertEqual(self.executor.keys,[])
+        event=core.events(task)[-1]
+        self.assertEqual(event["action"],"retry_scheduled")
+        self.assertEqual(event["error_code"],"lease_contract_invalid")
+
     def test_mismatched_database_path_is_rejected(self):
         other=os.path.join(self.tmp.name,"other.sqlite")
         with self.assertRaises(ValueError):
