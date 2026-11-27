@@ -1,0 +1,27 @@
+{
+  "title": "Live pitch event",
+  "type": "object",
+  "properties": {
+    "timestamp": {
+      "type": "string"
+    },
+    "note": {
+      "type": "string"
+    },
+    "frequency_hz": {
+      "type": "number"
+    },
+    "midi": {
+      "type": "integer"
+    },
+    "confidence": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "timestamp",
+    "note",
+    "frequency_hz",
+    "midi"
+  ]
+}
