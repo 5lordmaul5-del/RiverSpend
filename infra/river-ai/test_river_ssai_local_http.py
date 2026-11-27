@@ -1,3 +1,6 @@
+import base64
+import hashlib
+import hmac
 import json
 import os
 import tempfile
@@ -10,6 +13,32 @@ from rc181_payload_ledger import PayloadPersistentTaskLedger
 from rc181_authenticated_intake import AuthenticatedTaskIntake
 from rc183_integrated_worker import WorkerCore
 from river_ssai_local_service import create_server
+from river_ssai_jwt import HS256JWTVerifier
+
+
+KEY = b"local-test-key-not-for-production-0123456789"
+ISSUER = "riverspend-test"
+AUDIENCE = "river-ssai-test"
+NOW = 1700000000
+
+
+def b64(data):
+    return base64.urlsafe_b64encode(data).rstrip(b"=").decode("ascii")
+
+
+def sign(claims):
+    header={"alg":"HS256","typ":"JWT"}
+    a=b64(json.dumps(header,separators=(",",":"),sort_keys=True).encode())
+    b=b64(json.dumps(claims,separators=(",",":"),sort_keys=True).encode())
+    message=a+"."+b
+    return message+"."+b64(hmac.new(KEY,message.encode("ascii"),hashlib.sha256).digest())
+
+
+def claims(subject, capabilities=None):
+    c={"iss":ISSUER,"aud":AUDIENCE,"sub":subject,"iat":NOW,"exp":NOW+60}
+    if capabilities is not None:
+        c["capabilities"]=capabilities
+    return c
 
 
 class Policy:
@@ -31,19 +60,16 @@ class LocalHTTPIntegrationTests(unittest.TestCase):
         self.tmp = tempfile.TemporaryDirectory()
         self.path = os.path.join(self.tmp.name, "core.sqlite")
         self.ledger = PayloadPersistentTaskLedger(self.path, queue_limit=10, lease_seconds=10)
-        def user_verify(token):
-            if token not in ("alice-token", "bob-token"):
-                raise ValueError("invalid user")
-            return {"subject": token.split("-")[0]}
+        self.jwt = HS256JWTVerifier(KEY, ISSUER, AUDIENCE, clock=lambda: NOW)
+        self.alice = sign(claims("alice"))
+        self.bob = sign(claims("bob"))
+        self.worker_token = sign(claims("worker-a", ["echo"]))
+        self.user_verify = self.jwt.verify_user
         def intake_policy(subject, capability, summary, payload):
             return subject == "alice" and capability == "echo"
-        self.intake = AuthenticatedTaskIntake(self.ledger, user_verify, intake_policy)
-        def worker_verify(token):
-            if token != "worker-token":
-                raise ValueError("invalid worker")
-            return {"subject": "worker-a", "capabilities": ["echo"]}
-        self.worker = WorkerCore(self.ledger, self.path, worker_verify, Policy(), EchoExecutor())
-        self.server = create_server(self.intake, self.worker, user_verify, host="127.0.0.1", port=0)
+        self.intake = AuthenticatedTaskIntake(self.ledger, self.user_verify, intake_policy)
+        self.worker = WorkerCore(self.ledger, self.path, self.jwt.verify_worker, Policy(), EchoExecutor())
+        self.server = create_server(self.intake, self.worker, self.user_verify, host="127.0.0.1", port=0)
         self.thread = threading.Thread(target=self.server.serve_forever, daemon=True)
         self.thread.start()
         self.url = "http://127.0.0.1:%s" % self.server.server_address[1]
@@ -70,29 +96,29 @@ class LocalHTTPIntegrationTests(unittest.TestCase):
 
     def test_intake_worker_result_and_owner_scope_end_to_end(self):
         body = {"capability":"echo","summary":"hello","payload":{"text":"hello"},"request_key":"request-1"}
-        status, intake = self.request("/v1/tasks", "POST", "alice-token", body)
+        status, intake = self.request("/v1/tasks", "POST", self.alice, body)
         self.assertEqual(status, 201)
         task_id = intake["task_id"]
-        status, run = self.request("/v1/worker/run", "POST", "worker-token")
+        status, run = self.request("/v1/worker/run", "POST", self.worker_token)
         self.assertEqual(status, 200)
         self.assertEqual(run["status"], "completed")
-        status, result = self.request("/v1/tasks/%s/result" % task_id, token="alice-token")
+        status, result = self.request("/v1/tasks/%s/result" % task_id, token=self.alice)
         self.assertEqual(status, 200)
         self.assertEqual(result["result"]["echo"], "hello")
         self.assertEqual(result["result"]["key"], task_id)
-        status, _ = self.request("/v1/tasks/%s/result" % task_id, token="bob-token")
+        status, _ = self.request("/v1/tasks/%s/result" % task_id, token=self.bob)
         self.assertEqual(status, 404)
 
     def test_replay_after_completion_returns_same_task_and_idle_worker(self):
         body = {"capability":"echo","summary":"hello","payload":{"text":"hello"},"request_key":"request-2"}
-        first_status, first = self.request("/v1/tasks", "POST", "alice-token", body)
+        first_status, first = self.request("/v1/tasks", "POST", self.alice, body)
         self.assertEqual(first_status, 201)
-        self.request("/v1/worker/run", "POST", "worker-token")
-        replay_status, replay = self.request("/v1/tasks", "POST", "alice-token", body)
+        self.request("/v1/worker/run", "POST", self.worker_token)
+        replay_status, replay = self.request("/v1/tasks", "POST", self.alice, body)
         self.assertEqual(replay_status, 200)
         self.assertEqual(replay["status"], "replayed")
         self.assertEqual(replay["task_id"], first["task_id"])
-        _, run = self.request("/v1/worker/run", "POST", "worker-token")
+        _, run = self.request("/v1/worker/run", "POST", self.worker_token)
         self.assertEqual(run["status"], "idle")
 
     def test_auth_and_request_shape_fail_closed(self):
@@ -100,7 +126,7 @@ class LocalHTTPIntegrationTests(unittest.TestCase):
         status, _ = self.request("/v1/tasks", "POST", "bad-token", body)
         self.assertEqual(status, 401)
         body["owner"] = "attacker"
-        status, _ = self.request("/v1/tasks", "POST", "alice-token", body)
+        status, _ = self.request("/v1/tasks", "POST", self.alice, body)
         self.assertEqual(status, 400)
         status, _ = self.request("/v1/worker/run", "POST", "bad-worker")
         self.assertEqual(status, 401)
@@ -108,7 +134,7 @@ class LocalHTTPIntegrationTests(unittest.TestCase):
 
     def test_loopback_binding_and_health(self):
         with self.assertRaises(ValueError):
-            create_server(self.intake, self.worker, self.intake.identity_verifier, host="0.0.0.0")
+            create_server(self.intake, self.worker, self.user_verify, host="0.0.0.0")
         status, health = self.request("/v1/health")
         self.assertEqual(status, 200)
         self.assertEqual(health["status"], "ok")
