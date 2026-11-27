@@ -53,16 +53,16 @@ function rejectDuplicateObjectKeys(raw) {
   const stack = [];
   for (let i = 0; i < raw.length;) {
     const ch = raw[i];
-    if (ch === "\\\"") {
+    if (ch === '"') {
       const start = i++;
       while (i < raw.length) {
-        if (raw[i] === "\\\\") { i += 2; continue; }
-        if (raw[i] === "\\\"") { i++; break; }
+        if (raw[i] === "\\") { i += 2; continue; }
+        if (raw[i] === '"') { i++; break; }
         i++;
       }
       const token = raw.slice(start, i);
       let next = i;
-      while (next < raw.length && /\\s/.test(raw[next])) next++;
+      while (next < raw.length && /\s/.test(raw[next])) next++;
       const frame = stack[stack.length - 1];
       if (frame && frame.type === "object" && raw[next] === ":") {
         const key = JSON.parse(token);
@@ -77,7 +77,6 @@ function rejectDuplicateObjectKeys(raw) {
     i++;
   }
 }
-
 async function readBody(req) {
   const contentType = String(req.headers["content-type"] || "").toLowerCase();
   if (contentType.split(";")[0].trim() !== "application/json") throw Object.assign(new Error("json_required"), { status: 415 });
