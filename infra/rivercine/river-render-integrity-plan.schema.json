@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RiverRender media integrity plan",
+  "type": "object",
+  "required": [
+    "schema",
+    "entries"
+  ],
+  "properties": {
+    "schema": {
+      "const": "river-render-integrity-plan-v1"
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "type",
+          "validationState"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "fileReference": {
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "Video",
+              "Audio",
+              "Image",
+              "Sequence",
+              "Project",
+              "Unknown"
+            ]
+          },
+          "expectedSizeBytes": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "fingerprint": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "validationState": {
+            "enum": [
+              "Not checked",
+              "Reference supplied",
+              "Missing (manual report)",
+              "Suspected corruption (manual report)",
+              "Verified (manual assertion)"
+            ]
+          },
+          "plannedOnly": {
+            "const": true
+          }
+        }
+      }
+    }
+  }
+}
