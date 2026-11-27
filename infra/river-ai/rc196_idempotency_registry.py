@@ -34,7 +34,7 @@ class IdempotencyRegistry:
                     ).fetchall()
                     self.db.executemany(
                         "INSERT INTO idempotency_v2(owner,key,payload_hash,state,created,updated,result,error) VALUES(?,?,?,?,?,?,?,?)",
-                        [("legacy", *item) for item in legacy],
+                        [("__legacy_migration__", *item) for item in legacy],
                     )
                     self.db.execute("DROP TABLE idempotency")
                     self.db.execute("ALTER TABLE idempotency_v2 RENAME TO idempotency")
@@ -73,7 +73,7 @@ class IdempotencyRegistry:
 
     @staticmethod
     def _validate(owner, key):
-        if type(owner) is not str or not owner.strip() or len(owner) > MAX_OWNER_LENGTH:
+        if type(owner) is not str or not owner.strip() or len(owner) > MAX_OWNER_LENGTH or owner == "__legacy_migration__":
             raise ValueError("invalid owner")
         if type(key) is not str or not key.strip() or len(key) > MAX_KEY_LENGTH:
             raise ValueError("invalid idempotency key")
