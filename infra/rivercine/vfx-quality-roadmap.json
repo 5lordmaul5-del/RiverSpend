@@ -1,0 +1,16 @@
+{
+  "qualityPolicyVersion":"1.0",
+  "effectFamilies":[
+    {"id":"volumetric-atmosphere","label":"Volumetric Atmosphere","priority":"high","status":"roadmap"},
+    {"id":"particles","label":"Particles and Emitter Systems","priority":"high","status":"roadmap"},
+    {"id":"fluid-surface","label":"Fluid and Surface Effects","priority":"medium","status":"roadmap"},
+    {"id":"fire-smoke","label":"Fire and Smoke Simulation","priority":"medium","status":"roadmap"},
+    {"id":"destruction-environment","label":"Environment and Destruction Effects","priority":"medium","status":"roadmap"},
+    {"id":"optical-camera","label":"Optical and Camera Effects","priority":"medium","status":"roadmap"},
+    {"id":"scifi-fantasy","label":"Sci-Fi and Fantasy Effects","priority":"medium","status":"roadmap"},
+    {"id":"compositing-cleanup","label":"Compositing and Cleanup","priority":"high","status":"roadmap"},
+    {"id":"motion-graphics","label":"Motion Graphics","priority":"medium","status":"roadmap"}
+  ],
+  "principles":["shot-first","physically-informed","art-directed","temporal-stability","layer-discipline","interoperability","performance-scalability","professional-review"],
+  "status":"roadmap-only"
+}
