@@ -142,3 +142,19 @@ This section is a design backlog informed by publicly described contemporary wor
 - Cross-links: storyboard shots can reference animation, mocap takes, video clips, VFX layers, game cutscenes, audio tracks and timeline markers; preserve IDs and project schema linkage.
 - Implementation stages: (1) editable script/outline/character/scene documents and autosave; (2) storyboard cards and shot list linked to scenes; (3) export/print and schedule/breakdown tools; (4) timeline and media links.
 - Acceptance checks: recover unsaved work after simulated interruption; validate document export; reorder and relink shots without ID loss; verify accessible keyboard controls; test autosave/revision rollback.
+
+
+## RiverSSAI + RiverCloud integration across all I.S.S.A. audio/video creative programs
+- Unified, optional assistant entry point ("Ask RiverSSAI") in every audio/video creative workspace: Mixer, SoundStudio, Video Studio, media analyzer/catalog, script/storyboard, animation, mocap, VFX, game cinematics and virtual production.
+- Assistant capability registry with workspace-specific permissions and context adapters; RiverSSAI must not receive project/media data unless the user explicitly enables that context for the task.
+- Audio assistance: project/track summaries, loudness/peak/spectral checks, clipping/noise/masking detection, mix suggestions, automation proposals, dialog cleanup workflow guidance, metadata/transcript assistance and reversible actions previewed before application.
+- Video assistance: clip/transcript/frame analysis where supported, scene/shot summaries, rough-cut suggestions, caption drafts, continuity/shot-list matching, VFX planning, storyboard-to-timeline linking and export preset guidance.
+- Story/script/animation assistance: idea-to-outline, screenplay formatting, character/scene/shot suggestions, storyboard text and animatic planning; all generated text remains editable and user-approved.
+- MOCAP assistance: take summaries, data-quality indicators, retargeting/cleanup suggestions and capture troubleshooting; biometric/face/voice/motion data is sensitive and stays local unless explicitly consented to a selected processing route.
+- RiverCloud integration adapter: project save/load/sync, asset metadata, versioning, recovery snapshots, permission-aware sharing and optional collaboration; distinguish local/offline mode from cloud-connected status and never silently upload binary media.
+- Resilience: local-first mode when Cloud/AI/network/quota unavailable; queued sync with conflict handling, explicit upload/download status, retry controls and integrity checks. Avoid oversized duplicate transfers and provide bandwidth/storage controls.
+- AI service architecture: RiverSSAI core, tool adapters and policy/permission layer separated from media processing engines; no assumption that all models run locally or that cloud AI is free/unlimited.
+- UX: consistent AI panel, task-specific tools, context preview, data sent indicator, editable proposals, apply/undo, audit history, disable/reset controls and plain-language limitations.
+- Implementation stages: (1) shared assistant interface + permissions/context contract; (2) local audio/video utility tools and mock adapters; (3) RiverCloud project/metadata sync adapter with offline/recovery tests; (4) transcript/shot/storyboard assistance; (5) expanded media analysis and optional model-provider integrations.
+- Acceptance checks: tests for context consent, least-privilege tools, no upload on local-only mode, offline degradation, quota/transfer handling, sync conflicts, undo/reversible suggestions and data deletion/export.
+- Roadmap/spec only: these integrations are not represented as deployed or functional until code, tests and manual verification exist.
