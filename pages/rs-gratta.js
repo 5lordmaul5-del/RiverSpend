@@ -15,7 +15,6 @@ export default function RsGrattaPage() {
   const canvasRef = useRef(null);
   const [revealed, setRevealed] = useState(false);
   const [prize, setPrize] = useState(null);
-  const [scratching, setScratching] = useState(false);
   const [demoTicket, setDemoTicket] = useState(1);
 
   useEffect(() => {
@@ -38,13 +37,12 @@ export default function RsGrattaPage() {
       const x = (e.clientX-bounds.left), y = (e.clientY-bounds.top);
       ctx.beginPath(); ctx.arc(x,y,24,0,Math.PI*2); ctx.fill();
     };
-    const down = (e) => { setScratching(true); canvas.setPointerCapture?.(e.pointerId); scratch(e); };
-    const move = (e) => { if (e.buttons || scratching) scratch(e); };
-    const up = () => { setScratching(false); };
+    const down = (e) => { canvas.setPointerCapture?.(e.pointerId); scratch(e); };
+    const move = (e) => { if (e.buttons) scratch(e); };
     canvas.addEventListener("pointerdown",down); canvas.addEventListener("pointermove",move);
     canvas.addEventListener("pointerup",up); canvas.addEventListener("pointercancel",up);
     return () => { canvas.removeEventListener("pointerdown",down); canvas.removeEventListener("pointermove",move); canvas.removeEventListener("pointerup",up); canvas.removeEventListener("pointercancel",up); };
-  }, [revealed, scratching]);
+  }, [revealed]);
 
   function revealDemo() {
     if (revealed) return;
