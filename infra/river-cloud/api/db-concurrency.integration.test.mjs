@@ -54,7 +54,10 @@ test('API rejects excess parallel database subprocesses and releases slots after
     '#!/usr/bin/env node',
     "const fs = require('node:fs');",
     "const path = require('node:path');",
-    "const marker = path.join(process.env.RIVER_TEST_PSQL_MARKERS, process.pid + '.active');",
+    "const forbidden = ['RIVERAUTH_ISSUER_URL', 'RIVERAUTH_PUBLISHABLE_KEY', 'RIVER_CLOUD_API_DB_PASSWORD', 'RIVER_TEST_PSQL_MARKERS', 'RIVER_TEST_PSQL_DELAY_MS'];",
+    "if (forbidden.some((name) => Object.hasOwn(process.env, name))) { process.stderr.write('unexpected inherited environment\\n'); process.exit(1); }",
+    "if (process.env.PGPASSWORD !== 'integration-test-password' || process.env.PGOPTIONS !== '-c statement_timeout=5000' || !process.env.PATH) { process.stderr.write('required psql environment missing\\n'); process.exit(1); }",
+    `const marker = path.join(${JSON.stringify(markers)}, process.pid + '.active');`,
     "fs.writeFileSync(marker, 'active');",
     'process.stdin.resume();',
     'process.stdin.on("end", () => {',
@@ -62,7 +65,7 @@ test('API rejects excess parallel database subprocesses and releases slots after
     '    try { fs.unlinkSync(marker); } catch {}',
     "    process.stdout.write('null\\n');",
     '    process.exit(0);',
-    '  }, Number(process.env.RIVER_TEST_PSQL_DELAY_MS || 900));',
+    '  }, 900);',
     '});',
   ].join('\n');
   await writeFile(fakePsql, fakePsqlSource);
