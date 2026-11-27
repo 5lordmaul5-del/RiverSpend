@@ -198,3 +198,38 @@ class LocalHTTPIntegrationTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class HTTPResourceBoundsTests(unittest.TestCase):
+    def test_invalid_resource_limits_are_rejected(self):
+        for kwargs in ({"max_workers": 0}, {"max_workers": 65}, {"request_timeout": 0}, {"request_timeout": 11}):
+            with self.subTest(kwargs=kwargs), self.assertRaises(ValueError):
+                create_server(None, None, lambda token: None, **kwargs)
+
+    def test_server_rejects_over_capacity_connection_and_releases_slot(self):
+        server = create_server(None, None, lambda token: None, max_workers=1, request_timeout=0.25)
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        first = second = None
+        try:
+            address = server.server_address
+            first = socket.create_connection(address, timeout=2)
+            first.sendall(b"GET /v1/health HTTP/1.1\\r\\nHost: localhost\\r\\n")
+            second = socket.create_connection(address, timeout=2)
+            second.sendall(b"GET /v1/health HTTP/1.0\\r\\nHost: localhost\\r\\n\\r\\n")
+            overloaded = second.recv(1024).decode("latin-1")
+            self.assertIn(" 503 ", overloaded.splitlines()[0])
+            first.settimeout(2)
+            self.assertEqual(first.recv(1), b"")  # partial headers time out and release the slot
+            with socket.create_connection(address, timeout=2) as healthy:
+                healthy.sendall(b"GET /v1/health HTTP/1.0\\r\\nHost: localhost\\r\\n\\r\\n")
+                response = healthy.recv(1024).decode("latin-1")
+            self.assertIn(" 200 ", response.splitlines()[0])
+        finally:
+            if first is not None:
+                first.close()
+            if second is not None:
+                second.close()
+            server.shutdown()
+            server.server_close()
+            thread.join(timeout=2)
