@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RiverRender lifecycle snapshot",
+  "type": "object",
+  "required": [
+    "schema",
+    "state",
+    "events"
+  ],
+  "properties": {
+    "schema": {
+      "const": "river-render-state-snapshot-v1"
+    },
+    "state": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "state",
+          "time",
+          "simulation"
+        ],
+        "properties": {
+          "state": {
+            "type": "string"
+          },
+          "time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "simulation": {
+            "const": true
+          }
+        }
+      }
+    }
+  }
+}
