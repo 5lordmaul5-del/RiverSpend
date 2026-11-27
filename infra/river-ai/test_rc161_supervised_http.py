@@ -127,6 +127,10 @@ class SupervisedHTTPIntegrationTests(unittest.TestCase):
         self.assertEqual(first["status"], "retry")
         self.assertEqual(self.ledger.status()["queued"], 1)
 
+        _, early = self.request("/v1/worker/run", "POST", self.worker_token)
+        self.assertEqual(early["status"], "idle")
+        with sqlite3.connect(self.db_path) as db:
+            db.execute("UPDATE tasks SET retry_after=? WHERE id=?", (time.time()-1, task_id))
         _, second = self.request("/v1/worker/run", "POST", self.worker_token)
         self.assertEqual(second["status"], "exhausted")
         self.assertEqual(self.ledger.status()["cancelled"], 1)
