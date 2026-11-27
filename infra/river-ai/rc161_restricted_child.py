@@ -3,6 +3,19 @@ import json
 import sys
 
 
+def _unique_pairs(pairs):
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError("duplicate JSON key")
+        result[key] = value
+    return result
+
+
+def _reject_constant(value):
+    raise ValueError("non-finite JSON constant")
+
+
 def execute(kind, payload):
     if type(payload) is not dict:
         raise ValueError("payload must be an object")
@@ -12,7 +25,7 @@ def execute(kind, payload):
         value = payload.get("json")
         if type(value) is not str:
             raise ValueError("invalid json input")
-        json.loads(value)
+        json.loads(value, object_pairs_hook=_unique_pairs, parse_constant=_reject_constant)
         return {"valid": True}
     if kind == "metrics_report":
         keys = ("total", "success", "failed")
@@ -26,7 +39,7 @@ def execute(kind, payload):
 
 if __name__ == "__main__":
     try:
-        request = json.loads(sys.stdin.read())
+        request = json.loads(sys.stdin.read(), object_pairs_hook=_unique_pairs, parse_constant=_reject_constant)
         result = execute(request["type"], request["payload"])
         print(json.dumps({"ok": True, "result": result}, separators=(",", ":")))
     except Exception:
