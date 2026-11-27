@@ -182,8 +182,8 @@ class WorkerCore:
         with self._db() as db:
             db.execute("BEGIN IMMEDIATE")
             cur = db.execute(
-                "UPDATE tasks SET state='completed',leased=NULL,lease_owner=NULL WHERE id=? AND state='leased' AND lease_owner=? AND leased>=?",
-                (task_id, worker, now - self.ledger.lease_seconds),
+                "UPDATE tasks SET state='completed',leased=NULL,lease_owner=NULL WHERE id=? AND state='leased' AND lease_owner=? AND attempts=? AND leased>=?",
+                (task_id, worker, attempt, now - self.ledger.lease_seconds),
             )
             if cur.rowcount != 1:
                 db.rollback()
@@ -207,8 +207,8 @@ class WorkerCore:
         with self._db() as db:
             db.execute("BEGIN IMMEDIATE")
             row = db.execute(
-                "SELECT attempts,leased FROM tasks WHERE id=? AND state='leased' AND lease_owner=?",
-                (task_id, worker),
+                "SELECT attempts,leased FROM tasks WHERE id=? AND state='leased' AND lease_owner=? AND attempts=?",
+                (task_id, worker, attempt),
             ).fetchone()
             if row is None or row[1] is None or row[1] < now - self.ledger.lease_seconds:
                 db.rollback()
@@ -220,8 +220,8 @@ class WorkerCore:
             target = "queued" if retry else "cancelled"
             action = "retry_scheduled" if retry else "attempts_exhausted"
             cur = db.execute(
-                "UPDATE tasks SET state=?,leased=NULL,lease_owner=NULL WHERE id=? AND state='leased' AND lease_owner=? AND leased>=?",
-                (target, task_id, worker, now - self.ledger.lease_seconds),
+                "UPDATE tasks SET state=?,leased=NULL,lease_owner=NULL WHERE id=? AND state='leased' AND lease_owner=? AND attempts=? AND leased>=?",
+                (target, task_id, worker, persisted_attempt, now - self.ledger.lease_seconds),
             )
             if cur.rowcount != 1:
                 db.rollback()
