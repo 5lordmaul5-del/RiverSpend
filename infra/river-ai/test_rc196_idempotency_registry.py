@@ -66,7 +66,7 @@ class Tests(unittest.TestCase):
             db.commit()
             db.close()
             r = IdempotencyRegistry(db_path)
-            self.assertEqual(r.get("legacy", "k")[6], "saved")
+            db = sqlite3.connect(db_path)\n            self.assertEqual(db.execute("SELECT result FROM idempotency WHERE owner=?", ("__legacy_migration__",)).fetchone()[0], "saved")\n            db.close()\n            with self.assertRaises(ValueError): r.get("__legacy_migration__", "k")
             self.assertEqual(r.begin("alice", "k", "new")["status"], "accepted")
             r.close()
 
