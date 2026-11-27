@@ -94,8 +94,18 @@ test('API rejects excess parallel database subprocesses and releases slots after
   api.stderr.on('data', (chunk) => { stderr += chunk; });
   t.after(async () => {
     if (api.exitCode === null && api.signalCode === null) {
-      api.kill('SIGTERM');
-      await Promise.race([once(api, 'exit'), new Promise((resolve) => setTimeout(resolve, 3000))]);
+      await new Promise((resolve) => {
+        let finished = false;
+        const finish = () => {
+          if (finished) return;
+          finished = true;
+          clearTimeout(timer);
+          resolve();
+        };
+        const timer = setTimeout(finish, 3000);
+        api.once('exit', finish);
+        api.kill('SIGTERM');
+      });
     }
     await new Promise((resolve) => issuer.close(resolve));
     await rm(root, { recursive: true, force: true });
