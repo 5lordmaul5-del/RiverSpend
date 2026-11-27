@@ -278,6 +278,6 @@ class PayloadPersistentTaskLedger(PersistentTaskLedger):
             db.commit()
             return {
                 "id": row[0], "capability": row[1], "summary": row[2],
-                "attempts": row[3] + 1, "lease_owner": worker_id,
+                "attempts": row[3] + 1, "lease_owner": worker_id, "leased_at": now,
                 "owner": row[4], "payload": json.loads(row[5]) if row[5] is not None else None,
             }
