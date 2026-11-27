@@ -1,0 +1,7 @@
+import {useEffect,useState} from 'react';
+import {listAssets,deleteAsset} from '../../lib/issa-media-store';
+export default function ISSASavedAssets(){const [items,setItems]=useState([]),[error,setError]=useState('');
+async function refresh(){try{setItems(await listAssets());setError('');}catch(e){setError(e?.message||'Archivio non disponibile');}}
+useEffect(()=>{refresh();},[]);
+async function remove(id){if(!confirm('Eliminare questa risorsa dal catalogo locale?'))return;try{await deleteAsset(id);refresh();}catch(e){setError(e?.message||'Eliminazione fallita');}}
+return <section style={{marginTop:18,padding:16,background:'#0b1726',border:'1px solid #155e75',borderRadius:16,color:'#e0f2fe'}}><h2>🗃️ Archivio salvato su questo dispositivo</h2><button onClick={refresh} style={{padding:8}}>Aggiorna archivio</button><p style={{fontSize:12,color:'#94a3b8'}}>Asset salvati: {items.length}. La libreria è locale al browser e non sincronizza tra dispositivi.</p>{error&&<p style={{color:'#fca5a5'}}>{error}</p>}{items.map(a=><article key={a.id} style={{padding:12,margin:'10px 0',border:'1px solid #164e63',borderRadius:10}}><strong>{a.name}</strong><div style={{fontSize:12,color:'#67e8f9'}}>{a.category} · {a.tag} · {a.mediaType}</div><div style={{fontSize:12}}>Licenza: {a.license||'non indicata'}</div>{a.blob&&<audio controls src={URL.createObjectURL(a.blob)} style={{width:'100%',marginTop:8}}/>}<button onClick={()=>remove(a.id)} style={{marginTop:8,padding:8,background:'#7f1d1d',color:'white',border:0,borderRadius:8}}>Elimina asset</button></article>)}</section>}
