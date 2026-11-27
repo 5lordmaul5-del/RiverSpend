@@ -1,0 +1,7 @@
+import {useEffect,useState} from 'react';
+import {listAssets} from '../../lib/issa-media-store';
+function Preview({blob,type}){const [url,setUrl]=useState('');useEffect(()=>{if(!blob)return;const u=URL.createObjectURL(blob);setUrl(u);return()=>URL.revokeObjectURL(u);},[blob]);return url?(type==='video'?<video controls src={url} style={{width:'100%'}}/>:<audio controls src={url} style={{width:'100%'}}/>):null;}
+export default function ISSASavedAssets({onSelect}){const [items,setItems]=useState([]),[error,setError]=useState('');
+async function refresh(){try{setItems(await listAssets());setError('');}catch(e){setError(e?.message||'Archivio non disponibile');}}
+useEffect(()=>{refresh();},[]);
+return <section style={{padding:12,background:'#0b1726',border:'1px solid #155e75',borderRadius:12,color:'#e0f2fe',margin:'10px 0'}}><h3>🗃️ Asset audio salvati</h3><button onClick={refresh}>Aggiorna</button><p style={{fontSize:12,color:'#94a3b8'}}>Archivio locale su questo browser/dispositivo.</p>{error&&<p>{error}</p>}{items.filter(a=>a.mediaType==='audio'||a.blob?.type?.startsWith('audio/')).map(a=><article key={a.id} style={{padding:10,border:'1px solid #164e63',borderRadius:9,marginTop:8}}><strong>{a.name}</strong><div style={{fontSize:12}}>{a.category||'Audio'} · {a.tag||''}</div><Preview blob={a.blob} type='audio'/><button onClick={()=>onSelect?.(a)} style={{marginTop:8,padding:8,background:'#0e7490',color:'white',border:0,borderRadius:8}}>➕ Inserisci come traccia</button></article>)}{!items.length&&<p>Nessun asset salvato.</p>}</section>}
