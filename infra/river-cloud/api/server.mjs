@@ -254,11 +254,17 @@ server.listen(PORT, '0.0.0.0', () => {
   console.log(`RiverCloud private API listening on internal port ${PORT}`);
 });
 
-async function shutdown() {
-  server.close(async () => {
+let shutdownStarted = false;
+function shutdown() {
+  if (shutdownStarted) return;
+  shutdownStarted = true;
+  const forcedExit = setTimeout(() => process.exit(1), 10_000);
+  server.close(() => {
+    clearTimeout(forcedExit);
     process.exit(0);
   });
-  setTimeout(() => process.exit(1), 10_000).unref();
+  // Close idle keep-alive connections promptly while active requests drain.
+  server.closeIdleConnections?.();
 }
 process.on('SIGTERM', shutdown);
 process.on('SIGINT', shutdown);
