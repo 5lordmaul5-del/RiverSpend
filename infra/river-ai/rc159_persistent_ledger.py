@@ -57,7 +57,7 @@ class PersistentTaskLedger:
             now=time.time()
             db.execute("UPDATE tasks SET state='leased',leased=?,lease_owner=?,attempts=attempts+1 WHERE id=? AND state='queued'",(now,worker_id,row[0]))
             db.commit()
-            return {"id":row[0],"capability":row[1],"summary":row[2],"attempts":row[3]+1,"lease_owner":worker_id}
+            return {"id":row[0],"capability":row[1],"summary":row[2],"attempts":row[3]+1,"lease_owner":worker_id,"leased_at":now}
 
     def complete(self, task_id: str, worker_id: str) -> bool:
         with self._db() as db:
