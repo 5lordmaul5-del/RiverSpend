@@ -43,8 +43,7 @@ class IdempotencyRegistry:
             self.db.execute("ROLLBACK")
             raise
 
-    @staticmethod
-    def _create_table(name):
+    def _create_table(self, name):
         if name not in ("idempotency", "idempotency_v2"):
             raise ValueError("invalid table name")
         # Composite key prevents replay/result leakage across owners.
