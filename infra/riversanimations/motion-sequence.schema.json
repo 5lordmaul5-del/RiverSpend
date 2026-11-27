@@ -1,0 +1,7 @@
+{
+ "$schema":"https://json-schema.org/draft/2020-12/schema",
+ "title":"RiverSAnimationS Motion Sequence",
+ "type":"object",
+ "required":["format","character","motionPreset","keyframes"],
+ "properties":{"format":{"const":"RiverSAnimationS-Motion-v1"},"character":{"type":"string"},"motionPreset":{"enum":["idle","walk","run","jump","wave","dance"]},"speed":{"type":"number","minimum":0.1},"keyframes":{"type":"array","items":{"type":"object","required":["frame","description","durationMs"],"properties":{"frame":{"type":"integer","minimum":0},"description":{"type":"string"},"durationMs":{"type":"integer","minimum":1},"motion":{"type":"string"},"color":{"type":"string"}}}}}
+}
