@@ -1,0 +1,16 @@
+{
+  "name": "RiverSpaceSignals",
+  "short_name": "RiverSpaceSignals",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#e8fbff",
+  "theme_color": "#05a9c6",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
