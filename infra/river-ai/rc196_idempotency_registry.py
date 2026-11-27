@@ -1,6 +1,7 @@
 """Owner-scoped local idempotency registry (prototype; not an external side-effect transaction)."""
 import hashlib
 import sqlite3
+import threading
 import time
 
 
@@ -13,7 +14,9 @@ MAX_VALUE_BYTES = 8192
 class IdempotencyRegistry:
     def __init__(self, path=":memory:", clock=time.time):
         self.clock = clock
-        self.db = sqlite3.connect(path, isolation_level=None, timeout=5)
+        # A bridge may share one connection/registry across worker request threads.
+        self._lock = threading.RLock()
+        self.db = sqlite3.connect(path, isolation_level=None, timeout=5, check_same_thread=False)
         self.db.execute("PRAGMA busy_timeout=5000")
         self._migrate()
 
@@ -40,13 +43,13 @@ class IdempotencyRegistry:
                     self.db.execute("ALTER TABLE idempotency_v2 RENAME TO idempotency")
             self.db.execute("COMMIT")
         except Exception:
-            self.db.execute("ROLLBACK")
+            if self.db.in_transaction:
+                self.db.execute("ROLLBACK")
             raise
 
     def _create_table(self, name):
         if name not in ("idempotency", "idempotency_v2"):
             raise ValueError("invalid table name")
-        # Composite key prevents replay/result leakage across owners.
         self.db.execute(
             f"""CREATE TABLE {name}(
                 owner TEXT NOT NULL,
@@ -82,56 +85,62 @@ class IdempotencyRegistry:
         self._validate(owner, key)
         h = self.digest(payload)
         n = self.clock()
-        self.db.execute("BEGIN IMMEDIATE")
-        try:
-            row = self.db.execute(
-                "SELECT payload_hash,state,result,error FROM idempotency WHERE owner=? AND key=?",
-                (owner, key),
-            ).fetchone()
-            if row:
-                if row[0] != h:
-                    self.db.execute("ROLLBACK")
-                    return {"status": "conflict", "reason": "key reused with different payload"}
+        with self._lock:
+            self.db.execute("BEGIN IMMEDIATE")
+            try:
+                row = self.db.execute(
+                    "SELECT payload_hash,state,result,error FROM idempotency WHERE owner=? AND key=?",
+                    (owner, key),
+                ).fetchone()
+                if row:
+                    if row[0] != h:
+                        self.db.execute("ROLLBACK")
+                        return {"status": "conflict", "reason": "key reused with different payload"}
+                    self.db.execute("COMMIT")
+                    return {"status": "duplicate", "state": row[1], "result": row[2], "error": row[3]}
+                self.db.execute(
+                    "INSERT INTO idempotency(owner,key,payload_hash,state,created,updated,result,error) VALUES(?,?,?,?,?,?,?,?)",
+                    (owner, key, h, "processing", n, n, None, None),
+                )
                 self.db.execute("COMMIT")
-                return {"status": "duplicate", "state": row[1], "result": row[2], "error": row[3]}
-            self.db.execute(
-                "INSERT INTO idempotency(owner,key,payload_hash,state,created,updated,result,error) VALUES(?,?,?,?,?,?,?,?)",
-                (owner, key, h, "processing", n, n, None, None),
-            )
-            self.db.execute("COMMIT")
-            return {"status": "accepted", "key": key}
-        except Exception:
-            self.db.execute("ROLLBACK")
-            raise
+                return {"status": "accepted", "key": key}
+            except Exception:
+                if self.db.in_transaction:
+                    self.db.execute("ROLLBACK")
+                raise
 
     def complete(self, owner, key, result):
         self._validate(owner, key)
         if type(result) is not str or len(result.encode("utf-8")) > MAX_VALUE_BYTES:
             raise ValueError("result too large or invalid")
         n = self.clock()
-        cur = self.db.execute(
-            "UPDATE idempotency SET state='completed',result=?,error=NULL,updated=? WHERE owner=? AND key=? AND state='processing'",
-            (result, n, owner, key),
-        )
-        return cur.rowcount == 1
+        with self._lock:
+            cur = self.db.execute(
+                "UPDATE idempotency SET state='completed',result=?,error=NULL,updated=? WHERE owner=? AND key=? AND state='processing'",
+                (result, n, owner, key),
+            )
+            return cur.rowcount == 1
 
     def fail(self, owner, key, error):
         self._validate(owner, key)
         if type(error) is not str or len(error.encode("utf-8")) > MAX_VALUE_BYTES:
             raise ValueError("error too large or invalid")
         n = self.clock()
-        cur = self.db.execute(
-            "UPDATE idempotency SET state='failed',error=?,updated=? WHERE owner=? AND key=? AND state='processing'",
-            (error, n, owner, key),
-        )
-        return cur.rowcount == 1
+        with self._lock:
+            cur = self.db.execute(
+                "UPDATE idempotency SET state='failed',error=?,updated=? WHERE owner=? AND key=? AND state='processing'",
+                (error, n, owner, key),
+            )
+            return cur.rowcount == 1
 
     def get(self, owner, key):
         self._validate(owner, key)
-        return self.db.execute(
-            "SELECT owner,key,payload_hash,state,created,updated,result,error FROM idempotency WHERE owner=? AND key=?",
-            (owner, key),
-        ).fetchone()
+        with self._lock:
+            return self.db.execute(
+                "SELECT owner,key,payload_hash,state,created,updated,result,error FROM idempotency WHERE owner=? AND key=?",
+                (owner, key),
+            ).fetchone()
 
     def close(self):
-        self.db.close()
+        with self._lock:
+            self.db.close()

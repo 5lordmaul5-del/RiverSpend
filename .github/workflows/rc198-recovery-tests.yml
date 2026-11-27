@@ -1,0 +1,27 @@
+name: RC198 owner-scoped recovery tests
+on:
+  push:
+    branches:
+      - feat/rc198-owner-scoped-recovery-2026-11-27
+    paths:
+      - "infra/river-ai/rc196_idempotency_registry.py"
+      - "infra/river-ai/test_rc196_idempotency_registry.py"
+      - "infra/river-ai/rc197_execution_bridge.py"
+      - "infra/river-ai/test_rc197_execution_bridge.py"
+      - "infra/river-ai/rc198_state_recovery.py"
+      - "infra/river-ai/test_rc198_state_recovery.py"
+      - ".github/workflows/rc198-recovery-tests.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  recovery-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Run RC196 registry tests
+        run: python3 -m unittest discover -s infra/river-ai -p 'test_rc196_idempotency_registry.py'
+      - name: Run RC197 bridge tests
+        run: python3 -m unittest discover -s infra/river-ai -p 'test_rc197_execution_bridge.py'
+      - name: Run RC198 recovery tests
+        run: python3 -m unittest discover -s infra/river-ai -p 'test_rc198_state_recovery.py'

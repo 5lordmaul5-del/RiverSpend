@@ -96,6 +96,30 @@ class Tests(unittest.TestCase):
             self.assertEqual(results.count("accepted"), 1)
             self.assertEqual(results.count("duplicate"), 5)
 
+    def test_concurrent_duplicate_requests_on_shared_instance(self):
+        reg = IdempotencyRegistry()
+        barrier = threading.Barrier(8)
+        results = []
+        errors = []
+
+        def run():
+            try:
+                barrier.wait(timeout=3)
+                results.append(reg.begin("alice", "shared-key", "payload")["status"])
+            except Exception as exc:
+                errors.append(exc)
+
+        threads = [threading.Thread(target=run) for _ in range(8)]
+        for thread in threads:
+            thread.start()
+        for thread in threads:
+            thread.join(timeout=5)
+        self.assertFalse(any(thread.is_alive() for thread in threads), "threads did not finish")
+        self.assertFalse(errors, errors)
+        self.assertEqual(results.count("accepted"), 1)
+        self.assertEqual(results.count("duplicate"), 7)
+        reg.close()
+
 
 if __name__ == "__main__":
     unittest.main()
