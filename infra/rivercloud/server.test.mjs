@@ -3,10 +3,23 @@ import assert from "node:assert/strict";
 import { mkdtemp, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
+import net from "node:net";
 import { createServer } from "./server.mjs";
 import { transactState } from "./rc11-state.mjs";
 
 const token = "t".repeat(40), base = { projectId: "riverspend", branch: "main", target: "staging", commit: "b".repeat(40) };
+function rawRequest(port, request) {
+  return new Promise((resolve, reject) => {
+    const socket = net.createConnection({ host: "127.0.0.1", port });
+    let response = "";
+    socket.setTimeout(3000, () => { socket.destroy(); reject(new Error("raw request timeout")); });
+    socket.on("data", chunk => { response += chunk.toString("latin-1"); });
+    socket.on("end", () => resolve(response));
+    socket.on("error", reject);
+    socket.on("connect", () => socket.end(request));
+  });
+}
+
 
 test("server enforces bounded timeout settings and token, queue-only health", async () => {
   const root = await mkdtemp(path.join(os.tmpdir(), "rcs-"));
@@ -93,4 +106,41 @@ test("server maps queue capacity to 503", async () => {
     const r = await fetch(url + "/deploy", { method: "POST", headers: { authorization: "Bearer " + token, "content-type": "application/json" }, body: JSON.stringify(base) });
     assert.equal(r.status, 503); assert.equal((await r.json()).error, "queue_capacity_exceeded");
   } finally { await new Promise(resolve => server.close(resolve)); await rm(root, { recursive: true, force: true }); }
+});
+
+
+test("server rejects duplicate Authorization headers", async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), "rcs-auth-dup-"));
+  const file = path.join(root, "state.json");
+  const server = createServer({ port: 0, token, storeFile: file });
+  try {
+    await new Promise((resolve, reject) => { server.once("error", reject); server.listen(0, "127.0.0.1", resolve); });
+    const request = "GET /jobs HTTP/1.1\\r\\nHost: localhost\\r\\nAuthorization: Bearer " + token +
+      "\\r\\nAuthorization: Bearer " + token + "\\r\\nConnection: close\\r\\n\\r\\n";
+    const response = await rawRequest(server.address().port, request);
+    assert.match(response.splitlines?.[0] || response.split("\\r\\n")[0], / 401 /);
+    assert.deepEqual(await import("./queue.mjs").then(m => m.listQueue(file)), []);
+  } finally {
+    await new Promise(resolve => server.close(resolve));
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test("server rejects duplicate Content-Type headers before queueing", async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), "rcs-ct-dup-"));
+  const file = path.join(root, "state.json");
+  const server = createServer({ port: 0, token, storeFile: file });
+  try {
+    await new Promise((resolve, reject) => { server.once("error", reject); server.listen(0, "127.0.0.1", resolve); });
+    const body = JSON.stringify(base);
+    const request = "POST /deploy HTTP/1.1\\r\\nHost: localhost\\r\\nAuthorization: Bearer " + token +
+      "\\r\\nContent-Type: application/json\\r\\nContent-Type: application/json\\r\\nContent-Length: " +
+      Buffer.byteLength(body) + "\\r\\nConnection: close\\r\\n\\r\\n" + body;
+    const response = await rawRequest(server.address().port, request);
+    assert.match(response.split("\\r\\n")[0], / 400 /);
+    assert.deepEqual(await import("./queue.mjs").then(m => m.listQueue(file)), []);
+  } finally {
+    await new Promise(resolve => server.close(resolve));
+    await rm(root, { recursive: true, force: true });
+  }
 });

@@ -9,7 +9,18 @@ const MAX_BODY = 8192;
 const POLICY_ERRORS = new Set(["invalid_request", "project_not_allowlisted", "target_not_allowed", "immutable_commit_sha_required", "branch_not_allowlisted"]);
 const CAPACITY_ERRORS = new Set(["queue_capacity_exceeded", "state_file_too_large"]);
 
+function rawHeaderCount(req, name) {
+  const raw = req.rawHeaders;
+  if (!Array.isArray(raw)) return 0;
+  let count = 0;
+  for (let i = 0; i < raw.length; i += 2) {
+    if (typeof raw[i] === "string" && raw[i].toLowerCase() === name) count++;
+  }
+  return count;
+}
+
 function authorized(req, token) {
+  if (rawHeaderCount(req, "authorization") !== 1) return false;
   const header = req.headers.authorization;
   const supplied = typeof header === "string" && header.startsWith("Bearer ") ? header.slice(7) : "";
   const a = Buffer.from(supplied), b = Buffer.from(token);
@@ -17,6 +28,13 @@ function authorized(req, token) {
 }
 
 async function readBody(req) {
+  const contentLengthCount = rawHeaderCount(req, "content-length");
+  const transferEncodingCount = rawHeaderCount(req, "transfer-encoding");
+  if (rawHeaderCount(req, "content-type") !== 1 ||
+      contentLengthCount > 1 || transferEncodingCount > 1 ||
+      (contentLengthCount && transferEncodingCount)) {
+    throw Object.assign(new Error("request_headers_ambiguous"), { status: 400 });
+  }
   const ct = String(req.headers["content-type"] || "").toLowerCase();
   if (ct.split(";")[0].trim() !== "application/json") throw Object.assign(new Error("json_required"), { status: 415 });
   let size = 0, chunks = [];
