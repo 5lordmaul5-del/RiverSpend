@@ -94,3 +94,17 @@ This section is a design backlog informed by publicly described contemporary wor
 - Film/game scene compositor: combine live-action, animated elements, 3D objects and audio with tracking and timing; node graph and timeline integration.
 - Safety and technical guardrails: effects simulation and rendering are creative-media features; implement generic fictional visual effects and safe assets, avoid real-world weapon construction guidance; report rendering/platform limitations and use staged, testable modules.
 - Unified media project: video, animation, game cinematics and audio timelines can exchange markers, assets, stems, scene metadata and timecode through documented formats where feasible.
+
+
+## Motion capture (MOCAP), performance capture and virtual production
+- Mocap studio workflow: capture-session setup, calibration, take management, actor/performer metadata, camera/sensor status, sync/timecode and marker-quality checks.
+- Capture options to explore: marker-based optical systems, markerless multi-camera pose capture, depth cameras, IMU/wearable sensors, webcam-based capture and compatible motion-capture imports; capability and hardware requirements must be explicit.
+- Body motion, facial performance, hand/finger tracking, gaze, expression and voice capture, with separate streams and timecode alignment where supported.
+- Retarget captured motion to user-imported or user-created character rigs, bone mapping, proportions correction, foot locking, smoothing, cleanup, interpolation and editing curves.
+- Performance capture workflow: record body + face + hands + voice, take review, synchronization, selectable takes, cleanup and export to animation/game/film pipeline.
+- Virtual production: green-screen and blue-screen workflow, spill suppression, key edge refinement, masks, foreground/background compositing, camera tracking, lens calibration, virtual backgrounds, live preview and scene lighting match.
+- Costume/props/marker preparation guidance: capture suit/marker placement and calibration checklists, lighting and camera setup, safe studio workflow, and reference assets; no proprietary costume or movie assets are included.
+- Film-inspired FX and creature/character pipeline: original creature design, digital doubles, fantasy/sci-fi environments, motion retargeting, facial animation, compositing, particle/simulation FX and virtual cameras, inspired by broad workflows used in major productions (not copying protected characters, designs or assets).
+- Export/interchange roadmap: investigate formats and pipelines such as FBX, glTF, BVH, USD and supported image/video/audio formats; validate compatibility and licensing per integration.
+- Integration: Motion data and scene markers can flow to Cartoon Studio, 3D Animation, Game Studio, VFX compositor, video timeline and I.S.S.A. audio sessions; linked voice, footsteps, Foley, ambience and music tracks.
+- Phased build: (1) file import and rig mapping/editing; (2) webcam/markerless capture prototype with clear limitations; (3) hardware/sensor integrations; (4) synchronized multi-modal performance capture and virtual production.
