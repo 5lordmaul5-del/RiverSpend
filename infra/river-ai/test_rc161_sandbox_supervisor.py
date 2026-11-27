@@ -36,7 +36,7 @@ class SupervisorTests(unittest.TestCase):
         with self.assertRaises(SupervisorError):
             self.supervisor.run("echo", {"x": "a" * 20000})
 
-    def test_invalid_json_task_fails):
+    def test_invalid_json_task_fails(self):
         with self.assertRaises(SupervisorError):
             self.supervisor.run("json_validate", {"json": "bad"})
 
