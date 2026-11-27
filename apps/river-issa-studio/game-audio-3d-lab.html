@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="it"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>River ISSA — Game Audio 3D Lab</title>
+<style>
+body{font-family:system-ui;background:#071b25;color:#e9f5f7;margin:0;padding:24px}main{max-width:850px;margin:auto}section{background:#102d3a;padding:18px;border-radius:16px;margin:16px 0}label{display:block;margin:12px 0}input{width:100%}button{padding:12px;border-radius:10px;border:0;background:#48d6c3;font-weight:700}canvas{width:100%;height:220px;background:#04121a;border-radius:12px}
+</style>
+<main><h1>River ISSA · Game Audio 3D Lab</h1><p>Prototipo browser per simulare posizione, movimento e attenuazione delle sorgenti sonore.</p>
+<section><button id="start">Avvia audio demo</button><button id="stop">Stop</button>
+<label>Posizione X <input id="x" type="range" min="-10" max="10" step=".1" value="-5"></label>
+<label>Posizione Y <input id="y" type="range" min="-10" max="10" step=".1" value="0"></label>
+<label>Posizione Z <input id="z" type="range" min="-10" max="10" step=".1" value="0"></label>
+<label>Ambiente <select id="env"><option value="1">Outdoor / neutro</option><option value="0.7">Foresta</option><option value="0.55">Grotta</option><option value="0.8">Interno</option><option value="1.2">Sci-fi</option></select></label>
+<p id="status">Demo inattiva</p></section>
+<section><canvas id="map" width="800" height="220"></canvas><p>Listener al centro · sorgente rappresentata dalla posizione XY (Z simulata nell'attenuazione).</p></section>
+<section><h2>API demo</h2><pre>RiverISSA3D.setSource({x,y,z})
+RiverISSA3D.setListener({x,y,z,yaw})
+RiverISSA3D.setEnvironment('forest')
+RiverISSA3D.start()</pre></section></main>
+<script>
+(()=>{let ctx=null,osc=null,gain=null,pan=null,listener={x:0,y:0,z:0,yaw:0},source={x:-5,y:0,z:0},env=1;const $=id=>document.getElementById(id);
+function update(){if(!ctx)return;const dx=source.x-listener.x,dy=source.y-listener.y,dz=source.z-listener.z;const d=Math.sqrt(dx*dx+dy*dy+dz*dz);const panv=Math.max(-1,Math.min(1,dx/Math.max(1,d)));pan.pan.setTargetAtTime(panv,ctx.currentTime,.04);gain.gain.setTargetAtTime(env/(1+d*.18),ctx.currentTime,.04);$('status').textContent='Distanza: '+d.toFixed(2)+' · Pan: '+panv.toFixed(2)+' · Attenuazione attiva';draw();}
+function draw(){const c=$('map'),g=c.getContext('2d');g.clearRect(0,0,c.width,c.height);g.strokeStyle='#244b5b';g.lineWidth=1;for(let i=0;i<c.width;i+=40){g.beginPath();g.moveTo(i,0);g.lineTo(i,c.height);g.stroke()}for(let j=0;j<c.height;j+=40){g.beginPath();g.moveTo(0,j);g.lineTo(c.width,j);g.stroke()}const cx=c.width/2,cy=c.height/2;g.fillStyle='#48d6c3';g.beginPath();g.arc(cx,cy,9,0,Math.PI*2);g.fill();let sx=cx+source.x*25,sy=cy-source.y*15;g.fillStyle='#ffbe55';g.beginPath();g.arc(sx,sy,9,0,Math.PI*2);g.fill();g.strokeStyle='#ffbe55';g.beginPath();g.moveTo(cx,cy);g.lineTo(sx,sy);g.stroke();}
+$('start').onclick=async()=>{if(!ctx){ctx=new AudioContext();osc=ctx.createOscillator();gain=ctx.createGain();pan=ctx.createStereoPanner();osc.type='sine';osc.frequency.value=220;gain.gain.value=0;osc.connect(gain).connect(pan).connect(ctx.destination);osc.start()}await ctx.resume();update()};
+$('stop').onclick=()=>{if(ctx){gain.gain.setTargetAtTime(0,ctx.currentTime,.05);$('status').textContent='Audio silenziato'}};
+['x','y','z'].forEach(id=>$(id).oninput=()=>{source[id]=Number($(id).value);update()});
+$('env').onchange=()=>{env=Number($('env').value);update()};
+window.RiverISSA3D={setSource(v){source={...source,...v};update()},setListener(v){listener={...listener,...v};update()},setEnvironment(v){env=({forest:.7,cave:.55,indoor:.8,scifi:1.2,neutral:1})[v]||1;update()},start(){ $('start').click() }};draw();})();
+</script></html>

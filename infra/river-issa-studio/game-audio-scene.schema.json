@@ -1,0 +1,11 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "title":"River ISSA 3D Audio Scene",
+  "type":"object",
+  "required":["listener","sources","environment"],
+  "properties":{
+    "environment":{"enum":["neutral","forest","cave","indoor","scifi","urban"]},
+    "listener":{"type":"object","required":["x","y","z","yaw"],"properties":{"x":{"type":"number"},"y":{"type":"number"},"z":{"type":"number"},"yaw":{"type":"number"}}},
+    "sources":{"type":"array","items":{"type":"object","required":["id","x","y","z"],"properties":{"id":{"type":"string"},"x":{"type":"number"},"y":{"type":"number"},"z":{"type":"number"},"gain":{"type":"number","minimum":0,"maximum":2},"loop":{"type":"boolean"}}}}
+  }
+}
