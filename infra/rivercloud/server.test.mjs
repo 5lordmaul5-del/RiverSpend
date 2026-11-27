@@ -13,7 +13,7 @@ function rawRequest(port, request) {
     const socket = net.createConnection({ host: "127.0.0.1", port });
     let response = "";
     socket.setTimeout(3000, () => { socket.destroy(); reject(new Error("raw request timeout")); });
-    socket.on("data", chunk => { response += chunk.toString("latin-1"); });
+    socket.on("data", chunk => { response += chunk.toString("latin1"); });
     socket.on("end", () => resolve(response));
     socket.on("error", reject);
     socket.on("connect", () => socket.end(request));
