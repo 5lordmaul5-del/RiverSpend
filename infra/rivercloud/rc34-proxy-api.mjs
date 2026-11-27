@@ -42,7 +42,7 @@ function validateGroupRoleMap(input) {
   if (!entries || entries.length > 100) throw new Error("invalid_group_role_map");
   const map = new Map();
   for (const [group, role] of entries) {
-    if (typeof group !== "string" || !group.trim() || group.length > MAX_GROUP_LENGTH || /[\\r\\n\\0]/.test(group) || !KNOWN_ROLES.has(role)) throw new Error("invalid_group_role_map");
+    if (typeof group !== "string" || !group.trim() || group.length > MAX_GROUP_LENGTH || /[\r\n\0]/.test(group) || !KNOWN_ROLES.has(role)) throw new Error("invalid_group_role_map");
     map.set(group, role);
   }
   return map;
@@ -53,10 +53,10 @@ function actorFromHeaders(req, groupRoleMap) {
   if (rawHeaderCount(req, "x-forwarded-user") !== 1 || rawHeaderCount(req, "x-forwarded-groups") !== 1) return null;
   const user = req.headers["x-forwarded-user"];
   const rawGroups = req.headers["x-forwarded-groups"];
-  if (typeof user !== "string" || !user.trim() || user.length > MAX_USER_LENGTH || /[\\r\\n\\0,]/.test(user)) return null;
-  if (typeof rawGroups !== "string" || !rawGroups.trim() || rawGroups.length > MAX_GROUP_HEADER || /[\\r\\n\\0]/.test(rawGroups)) return null;
+  if (typeof user !== "string" || !user.trim() || user.length > MAX_USER_LENGTH || /[\r\n\0,]/.test(user)) return null;
+  if (typeof rawGroups !== "string" || !rawGroups.trim() || rawGroups.length > MAX_GROUP_HEADER || /[\r\n\0]/.test(rawGroups)) return null;
   const groups = rawGroups.split(",").map(g => g.trim()).filter(Boolean);
-  if (!groups.length || groups.length > MAX_GROUPS || groups.some(g => g.length > MAX_GROUP_LENGTH || /[\\r\\n\\0]/.test(g))) return null;
+  if (!groups.length || groups.length > MAX_GROUPS || groups.some(g => g.length > MAX_GROUP_LENGTH || /[\r\n\0]/.test(g))) return null;
   const roles = [...new Set(groups.map(g => groupRoleMap.get(g)).filter(Boolean))];
   return { subject: user.trim(), roles, groups };
 }
@@ -141,7 +141,7 @@ export function createProxyApiServer({
       }
       if (route.method === "POST" && url.pathname === "/api/plan") {
         const input = await readBody(req);
-        const actorRef = createHmac("sha256", actorPseudonymSecret).update("rivercloud-actor-v1\\0").update(actor.subject).digest("hex");
+        const actorRef = createHmac("sha256", actorPseudonymSecret).update("rivercloud-actor-v1\0").update(actor.subject).digest("hex");
         const result = await queuePlan(storeFile, input, { actorRef, roles: actor.roles });
         const responseJob = result.duplicate
           ? { id: result.job.id, digest: result.job.digest, state: result.job.state }
