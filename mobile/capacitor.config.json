@@ -1,0 +1,6 @@
+{
+  "appId": "com.riverspend.mobile",
+  "appName": "RiverSpend",
+  "webDir": "dist",
+  "bundledWebRuntime": false
+}
