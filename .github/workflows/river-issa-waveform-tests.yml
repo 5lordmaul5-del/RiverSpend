@@ -1,0 +1,43 @@
+name: River ISSA Waveform Tests
+
+on:
+  push:
+    branches:
+      - feat/river-issa-multitrack-plugin-engine-rc224-2026-11-27
+    paths:
+      - "apps/river-issa-studio/multitrack.html"
+      - "infra/river-issa-studio/**"
+      - ".github/workflows/river-issa-waveform-tests.yml"
+  pull_request:
+    paths:
+      - "apps/river-issa-studio/multitrack.html"
+      - "infra/river-issa-studio/**"
+      - ".github/workflows/river-issa-waveform-tests.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  waveform:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Run waveform peak tests
+        run: node --test infra/river-issa-studio/waveform.test.mjs
+      - name: Check helper syntax
+        run: node --check infra/river-issa-studio/waveform.mjs
+      - name: Extract and check multitrack module
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          page = Path("apps/river-issa-studio/multitrack.html").read_text(encoding="utf-8")
+          marker = '<script type="module>'
+          start = page.index(marker) + len(marker)
+          end = page.index('</script>', start)
+          Path('/tmp/issa-multitrack.mjs').write_text(page[start:end], encoding='utf-8')
+          PY
+          node --check /tmp/issa-multitrack.mjs
