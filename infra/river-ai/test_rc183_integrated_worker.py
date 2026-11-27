@@ -158,4 +158,14 @@ class WorkerCoreIntegrationTests(unittest.TestCase):
             columns={row[1] for row in db.execute("PRAGMA table_info(task_results)")}
         self.assertIn("owner",columns)
 
+    def test_missing_payload_recovers_leased_task_instead_of_stranding_it(self):
+        task=self.ledger.enqueue("echo","summary","user-1",{"text":"valid"})
+        with sqlite3.connect(self.path) as db:
+            db.execute("UPDATE tasks SET payload_json=NULL WHERE id=?",(task,))
+        out=self.core.run_once("worker-token")
+        self.assertEqual(out["status"],"retry")
+        self.assertEqual(self.ledger.status()["queued"],1)
+        self.assertEqual(self.executor.keys,[])
+        self.assertIn("retry_scheduled",[e["action"] for e in self.core.events(task)])
+
 if __name__=="__main__": unittest.main()
