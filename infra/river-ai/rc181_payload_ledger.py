@@ -122,6 +122,18 @@ class PayloadPersistentTaskLedger(PersistentTaskLedger):
                 created REAL NOT NULL
             )""")
             db.execute("CREATE INDEX IF NOT EXISTS intake_audit_task ON intake_audit_events(task_id,event_id)")
+            db.execute("""CREATE TABLE IF NOT EXISTS task_events (
+                event_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                task_id TEXT NOT NULL,
+                attempt INTEGER NOT NULL,
+                worker_subject TEXT NOT NULL,
+                action TEXT NOT NULL,
+                payload_sha256 TEXT,
+                result_sha256 TEXT,
+                error_code TEXT,
+                created REAL NOT NULL
+            )""")
+            db.execute("CREATE INDEX IF NOT EXISTS task_events_task ON task_events(task_id,event_id)")
 
     @staticmethod
     def _audit_insert(db, task_id, actor, action, key_digest, request_digest):
@@ -258,10 +270,25 @@ class PayloadPersistentTaskLedger(PersistentTaskLedger):
             return None
         with self._db() as db:
             db.execute("BEGIN IMMEDIATE")
+            cutoff = time.time() - self.lease_seconds
+            expired = db.execute(
+                "SELECT id,attempts,lease_owner,leased FROM tasks WHERE state='leased' AND leased < ?",
+                (cutoff,),
+            ).fetchall()
             db.execute(
                 "UPDATE tasks SET state='queued',leased=NULL,lease_owner=NULL WHERE state='leased' AND leased < ?",
-                (time.time() - self.lease_seconds,),
+                (cutoff,),
             )
+            # Record recovery atomically with the requeue so a reclaimed lease
+            # cannot disappear from the durable worker audit trail.
+            for task_id, attempt, old_worker, old_lease_at in expired:
+                db.execute(
+                    "INSERT INTO task_events(task_id,attempt,worker_subject,action,error_code,created) "
+                    "VALUES(?,?,?,?,?,?)",
+                    (task_id, attempt if type(attempt) is int and attempt >= 0 else 0,
+                     old_worker if type(old_worker) is str and old_worker else "unknown",
+                     "lease_expired_requeued", "lease_expired", time.time()),
+                )
             placeholders = ",".join("?" for _ in allowed_capabilities)
             row = db.execute(
                 f"SELECT id,capability,summary,attempts,owner,payload_json FROM tasks WHERE state='queued' AND capability IN ({placeholders}) ORDER BY created LIMIT 1",
