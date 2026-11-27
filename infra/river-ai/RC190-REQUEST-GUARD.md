@@ -1,10 +1,12 @@
-# RC-190 — Request guard
+# RC-190 — Request guard hardening
 
-Prototype implements per-subject request windows, temporary blocking on limit exhaustion, concurrency ceiling, and explicit release. SQLite transaction serialization is local/single-host only.
+This iteration tightens input handling for the single-host SQLite request guard.
 
-## Integration/safety boundaries
-- Subject IDs must come from trusted authentication (RC-189 trust boundary), not user input.
-- Must integrate acquire/release with service lifecycle; crashes can leave active counts stuck (requires leases/expiry in future iteration).
-- Does not provide distributed enforcement, IP protections, bot detection, adaptive limits, or observability.
-- SQLite journal is not an enterprise rate-limit backend.
-- Tests authored, not run in CI; draft PR only, no merge/deployment.
+- Config values must be integers and within sensible positive bounds.
+- Subject identifiers must be trimmed strings, non-empty, and at most 256 characters.
+- Explicit clock overrides must be integers.
+- Invalid release/state subjects are handled safely.
+- Expanded tests cover malformed subjects, invalid config/time, rate limiting, concurrency, window reset, and block/window boundaries.
+
+## Scope and limits
+Still a local prototype. Active counters can remain stale after process crashes because lease expiry/recovery is not implemented. Authentication must provide trusted subject identifiers. No distributed rate limiting or production readiness implied.
