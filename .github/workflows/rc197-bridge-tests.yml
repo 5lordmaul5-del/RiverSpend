@@ -1,0 +1,20 @@
+name: RC197 owner-scoped bridge tests
+on:
+  push:
+    branches:
+      - feat/rc197-transactional-execution-bridge-2026-11-27
+    paths:
+      - "infra/river-ai/rc196_idempotency_registry.py"
+      - "infra/river-ai/rc197_execution_bridge.py"
+      - "infra/river-ai/test_rc197_execution_bridge.py"
+      - ".github/workflows/rc197-bridge-tests.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  bridge-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Run owner-scoped bridge tests
+        run: python3 -m unittest discover -s infra/river-ai -p 'test_rc197_execution_bridge.py'
