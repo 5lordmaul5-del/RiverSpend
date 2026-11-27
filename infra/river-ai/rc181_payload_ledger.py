@@ -17,6 +17,8 @@ MAX_CAPABILITY_CHARS = 128
 MAX_SUMMARY_CHARS = 500
 MAX_REQUEST_KEY_CHARS = 128
 _FORBIDDEN_KEYS = {"__proto__", "prototype", "constructor"}
+RETRY_BACKOFF_BASE_SECONDS = 1.0
+RETRY_BACKOFF_MAX_SECONDS = 60.0
 
 
 class PayloadLedgerError(ValueError):
@@ -108,6 +110,8 @@ class PayloadPersistentTaskLedger(PersistentTaskLedger):
                 db.execute("ALTER TABLE tasks ADD COLUMN request_key TEXT")
             if "request_sha256" not in columns:
                 db.execute("ALTER TABLE tasks ADD COLUMN request_sha256 TEXT")
+            if "retry_after" not in columns:
+                db.execute("ALTER TABLE tasks ADD COLUMN retry_after REAL")
             db.execute(
                 "CREATE UNIQUE INDEX IF NOT EXISTS tasks_owner_request_key "
                 "ON tasks(owner,request_key) WHERE request_key IS NOT NULL"
@@ -290,16 +294,16 @@ class PayloadPersistentTaskLedger(PersistentTaskLedger):
                      "lease_expired_requeued", "lease_expired", time.time()),
                 )
             placeholders = ",".join("?" for _ in allowed_capabilities)
+            now = time.time()
             row = db.execute(
-                f"SELECT id,capability,summary,attempts,owner,payload_json FROM tasks WHERE state='queued' AND capability IN ({placeholders}) ORDER BY created LIMIT 1",
-                allowed_capabilities,
+                f"SELECT id,capability,summary,attempts,owner,payload_json FROM tasks WHERE state='queued' AND capability IN ({placeholders}) AND (retry_after IS NULL OR retry_after <= ?) ORDER BY created LIMIT 1",
+                allowed_capabilities + (now,),
             ).fetchone()
             if not row:
                 db.commit()
                 return None
-            now = time.time()
             db.execute(
-                "UPDATE tasks SET state='leased',leased=?,lease_owner=?,attempts=attempts+1 WHERE id=? AND state='queued'",
+                "UPDATE tasks SET state='leased',leased=?,lease_owner=?,attempts=attempts+1,retry_after=NULL WHERE id=? AND state='queued'",
                 (now, worker_id, row[0]),
             )
             db.commit()
