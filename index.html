@@ -311,7 +311,17 @@ body {
 .rs-park-card small{font-size:11px;color:#67818a}
 @media(min-width:700px){.rs-project-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.rs-park-cards{grid-template-columns:repeat(4,minmax(0,1fr))}}
 
-  </style>
+  
+/* RIVERSPEND APP HUB — installabili (starter PWA) */
+.rs-app-hub{padding:24px 16px;background:linear-gradient(180deg,#e9fbff,#fff);border-block:1px solid #d4edf3}
+.rs-app-hub h2{margin:0 0 8px;font-size:26px;color:#12343b}.rs-app-hub-intro{color:#567781;line-height:1.55;margin:0 0 18px}
+.rs-app-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.rs-app-card{border:1px solid #d4e8ed;border-radius:18px;background:#fff;padding:15px;box-shadow:0 5px 18px rgba(10,85,115,.07);display:flex;flex-direction:column;gap:8px}
+.rs-app-icon{font-size:30px}.rs-app-card h3{margin:0;color:#123b50;font-size:17px}.rs-app-card p{margin:0;color:#607c85;font-size:13px;line-height:1.45;flex:1}
+.rs-app-link{display:block;text-align:center;padding:11px 12px;border-radius:12px;background:#087f9e;color:white;text-decoration:none;font-weight:800;font-size:14px}
+.rs-app-note{margin-top:14px;padding:12px;border-radius:12px;background:#fff7e8;color:#775b1c;font-size:12px;line-height:1.5}
+@media(min-width:700px){.rs-app-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+</style>
 </head>
 
 <body>
@@ -548,6 +558,22 @@ body {
     </div>
   </section>
 
+
+<section class="rs-app-hub" id="rs-app-hub" aria-labelledby="rs-app-hub-title">
+<h2 id="rs-app-hub-title">📲 RiverSpend — App Hub</h2>
+<p class="rs-app-hub-intro">Apri i nostri app starter e, quando il sito è ospitato su HTTPS, installali sul dispositivo dal browser. Questa raccolta è in fase di test.</p>
+<div class="rs-app-grid">
+<article class="rs-app-card"><div class="rs-app-icon">🛍️</div><h3>RiverSpendShop</h3><p>Marketplace e vetrina shopping.</p><a class="rs-app-link" href="./mobile/downloadable/shop/">Apri app</a></article>
+<article class="rs-app-card"><div class="rs-app-icon">💬</div><h3>RiverSpaceSignals</h3><p>Comunicazione e Signals (starter).</p><a class="rs-app-link" href="./mobile/downloadable/signals/">Apri app</a></article>
+<article class="rs-app-card"><div class="rs-app-icon">🧠</div><h3>RiverSSAI</h3><p>Interfaccia iniziale RiverSSAI.</p><a class="rs-app-link" href="./mobile/downloadable/riverai/">Apri app</a></article>
+<article class="rs-app-card"><div class="rs-app-icon">🎬</div><h3>RiverCine</h3><p>Area cinema e contenuti.</p><a class="rs-app-link" href="./mobile/downloadable/rivercine/">Apri app</a></article>
+<article class="rs-app-card"><div class="rs-app-icon">📺</div><h3>RiverStreaming</h3><p>Interfaccia streaming starter.</p><a class="rs-app-link" href="./mobile/downloadable/streaming/">Apri app</a></article>
+<article class="rs-app-card"><div class="rs-app-icon">🎢</div><h3>RiverSpendPark</h3><p>Esperienza Park e attrazioni.</p><a class="rs-app-link" href="./mobile/downloadable/park/">Apri app</a></article>
+<article class="rs-app-card"><div class="rs-app-icon">🎧</div><h3>ISSA Sound</h3><p>ISSA Immersive Sound Space.</p><a class="rs-app-link" href="./mobile/downloadable/issa/">Apri app</a></article>
+<article class="rs-app-card"><div class="rs-app-icon">🎮</div><h3>RiverSpaceGalaxyGames</h3><p>Hub giochi: in progettazione.</p><span class="rs-app-link" style="opacity:.6">In sviluppo</span></article>
+<article class="rs-app-card"><div class="rs-app-icon">🛠️</div><h3>RS Panel Control</h3><p>Pannello di controllo: in progettazione.</p><span class="rs-app-link" style="opacity:.6">In sviluppo</span></article>
+</div><div class="rs-app-note"><strong>Nota:</strong> questi sono starter PWA, non app native APK/IPA. Le funzionalità reali (account, chat, AI, pagamenti, cataloghi e streaming) richiedono backend, collegamenti, sicurezza e test. Nessun pagamento o pubblicazione automatica è attivato da questa pagina.</div>
+</section>
 </main>
 
   <script>

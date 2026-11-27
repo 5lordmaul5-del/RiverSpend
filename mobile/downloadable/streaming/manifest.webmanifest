@@ -1,0 +1,15 @@
+{
+  "name": "RiverStreaming",
+  "short_name": "RiverStreaming",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#e8faff",
+  "theme_color": "#05a9c6",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
