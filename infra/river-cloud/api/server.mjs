@@ -2,6 +2,7 @@ import http from 'node:http';
 import { createRiverAuth } from './river-auth.mjs';
 import { spawn } from 'node:child_process';
 import { createRateLimiter } from './rate-limit.mjs';
+import { createDbConcurrencyGate } from './db-concurrency.mjs';
 
 const PORT = Number(process.env.PORT || 8080);
 const SUPABASE_URL = process.env.RIVERAUTH_ISSUER_URL;
@@ -20,7 +21,7 @@ const riverAuth = createRiverAuth({
 const rateLimitedByKey = createRateLimiter({ windowMs: 60_000, limit: 60, maxKeys: 10_000 });
 const MAX_BODY_BYTES = 4096;
 const MAX_DB_OPERATIONS = 8;
-let activeDbOperations = 0;
+const dbConcurrencyGate = createDbConcurrencyGate(MAX_DB_OPERATIONS);
 
 function send(res, status, payload) {
   res.writeHead(status, {
@@ -69,12 +70,12 @@ async function authenticatedUser(req) {
 }
 
 function runProfileSql(sql, variables) {
-  if (activeDbOperations >= MAX_DB_OPERATIONS) {
+  const releaseSlot = dbConcurrencyGate.tryAcquire();
+  if (!releaseSlot) {
     const error = new Error('database_busy');
     error.status = 503;
     return Promise.reject(error);
   }
-  activeDbOperations += 1;
   return new Promise((resolve, reject) => {
     const args = [
       '-X', '-qAt', '-v', 'ON_ERROR_STOP=1',
@@ -86,12 +87,7 @@ function runProfileSql(sql, variables) {
     }
 
     let child;
-    let released = false;
-    const releaseSlot = () => {
-      if (released) return;
-      released = true;
-      activeDbOperations = Math.max(0, activeDbOperations - 1);
-    };
+
     try {
       child = spawn('psql', args, {
         env: { ...process.env, PGPASSWORD: DATABASE_PASSWORD, PGOPTIONS: '-c statement_timeout=5000' },
