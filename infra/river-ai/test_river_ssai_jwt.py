@@ -34,7 +34,7 @@ def sign_raw(header_json, payload_json, key=KEY):
 
 
 def base_claims(**extra):
-    claims={"iss":ISSUER,"aud":AUDIENCE,"sub":"alice","iat":NOW,"exp":NOW+60}
+    claims={"iss":ISSUER,"aud":AUDIENCE,"sub":"alice","iat":NOW,"exp":NOW+60,"token_use":"user"}
     claims.update(extra)
     return claims
 
@@ -46,8 +46,16 @@ class JWTVerifierTests(unittest.TestCase):
     def test_user_and_worker_claims_are_normalized(self):
         user=self.verifier.verify_user(sign(base_claims()))
         self.assertEqual(user,{"subject":"alice"})
-        worker=self.verifier.verify_worker(sign(base_claims(sub="worker-a",capabilities=["echo"])))
+        worker=self.verifier.verify_worker(sign(base_claims(sub="worker-a",token_use="worker",capabilities=["echo"])))
         self.assertEqual(worker,{"subject":"worker-a","capabilities":["echo"]})
+
+    def test_user_and_worker_tokens_are_not_interchangeable(self):
+        user_token = sign(base_claims())
+        worker_token = sign(base_claims(sub="worker-a",token_use="worker",capabilities=["echo"]))
+        with self.assertRaises(JWTVerificationError):
+            self.verifier.verify_worker(user_token)
+        with self.assertRaises(JWTVerificationError):
+            self.verifier.verify_user(worker_token)
 
     def test_bad_signature_rejected(self):
         token=sign(base_claims())
