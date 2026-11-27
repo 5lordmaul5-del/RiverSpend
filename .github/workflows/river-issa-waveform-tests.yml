@@ -35,7 +35,7 @@ jobs:
           python3 - <<'PY'
           from pathlib import Path
           page = Path("apps/river-issa-studio/multitrack.html").read_text(encoding="utf-8")
-          marker = '<script type="module>'
+          marker = '<script type="module">'
           start = page.index(marker) + len(marker)
           end = page.index('</script>', start)
           Path('/tmp/issa-multitrack.mjs').write_text(page[start:end], encoding='utf-8')
