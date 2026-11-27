@@ -253,6 +253,11 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
+server.requestTimeout = 15_000; // Bound time spent receiving complete requests.
+server.headersTimeout = 10_000; // Reject slow header delivery.
+server.keepAliveTimeout = 5_000; // Avoid holding idle connections indefinitely.
+server.maxConnections = 256; // Bound connection pressure on this service.
+
 server.listen(PORT, '0.0.0.0', () => {
   console.log(`RiverCloud private API listening on internal port ${PORT}`);
 });
