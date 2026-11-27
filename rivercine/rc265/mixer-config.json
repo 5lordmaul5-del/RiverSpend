@@ -1,0 +1,141 @@
+{
+  "version": "RC265-prototype-1",
+  "channels": [
+    {
+      "id": "drums",
+      "label": "Drums",
+      "input": "Drum kit",
+      "bus": "rock-bus",
+      "gainDb": 0,
+      "pan": 0,
+      "muted": false,
+      "solo": false,
+      "fx": [
+        "EQ",
+        "Compressor",
+        "Room Reverb"
+      ]
+    },
+    {
+      "id": "bass",
+      "label": "Bass",
+      "input": "Bass DI / Amp",
+      "bus": "rock-bus",
+      "gainDb": 0,
+      "pan": 0,
+      "muted": false,
+      "solo": false,
+      "fx": [
+        "EQ",
+        "Compressor"
+      ]
+    },
+    {
+      "id": "guitarL",
+      "label": "Guitar L",
+      "input": "Guitar / Amp",
+      "bus": "rock-bus",
+      "gainDb": 0,
+      "pan": -0.55,
+      "muted": false,
+      "solo": false,
+      "fx": [
+        "EQ",
+        "Distortion",
+        "Cabinet"
+      ]
+    },
+    {
+      "id": "guitarR",
+      "label": "Guitar R",
+      "input": "Guitar / Amp",
+      "bus": "rock-bus",
+      "gainDb": 0,
+      "pan": 0.55,
+      "muted": false,
+      "solo": false,
+      "fx": [
+        "EQ",
+        "Distortion",
+        "Cabinet"
+      ]
+    },
+    {
+      "id": "vocals",
+      "label": "Vocals",
+      "input": "Mic",
+      "bus": "vocal-bus",
+      "gainDb": 0,
+      "pan": 0,
+      "muted": false,
+      "solo": false,
+      "fx": [
+        "EQ",
+        "Compressor",
+        "De-esser",
+        "Reverb"
+      ]
+    },
+    {
+      "id": "keys",
+      "label": "Keys",
+      "input": "Keyboard / MIDI",
+      "bus": "music-bus",
+      "gainDb": 0,
+      "pan": 0,
+      "muted": false,
+      "solo": false,
+      "fx": [
+        "EQ",
+        "Chorus"
+      ]
+    },
+    {
+      "id": "ambience",
+      "label": "Ambience",
+      "input": "Room / FX",
+      "bus": "music-bus",
+      "gainDb": -12,
+      "pan": 0,
+      "muted": false,
+      "solo": false,
+      "fx": [
+        "Reverb"
+      ]
+    }
+  ],
+  "buses": [
+    {
+      "id": "rock-bus",
+      "label": "Rock Bus"
+    },
+    {
+      "id": "vocal-bus",
+      "label": "Vocal Bus"
+    },
+    {
+      "id": "music-bus",
+      "label": "Music Bus"
+    },
+    {
+      "id": "master",
+      "label": "Master"
+    }
+  ],
+  "signalFlow": [
+    "Input",
+    "Gain",
+    "EQ",
+    "Dynamics",
+    "FX Sends",
+    "Bus",
+    "Master"
+  ],
+  "presets": [
+    "Rock",
+    "Heavy Metal",
+    "Acoustic",
+    "Vocal",
+    "Immersive"
+  ]
+}
