@@ -19,7 +19,7 @@ const riverAuth = createRiverAuth({
 const windows = new Map();
 const RATE_WINDOW_MS = 60_000;
 const RATE_LIMIT = 60;
-const MAX_BODY_BYTES = 4096;
+const MAX_BODY_BYTES = 4096;\nconst MAX_DB_OPERATIONS = 8;\nlet activeDbOperations = 0;
 
 function send(res, status, payload) {
   res.writeHead(status, {
