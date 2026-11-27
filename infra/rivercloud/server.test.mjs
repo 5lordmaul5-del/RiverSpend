@@ -115,10 +115,10 @@ test("server rejects duplicate Authorization headers", async () => {
   const server = createServer({ port: 0, token, storeFile: file });
   try {
     await new Promise((resolve, reject) => { server.once("error", reject); server.listen(0, "127.0.0.1", resolve); });
-    const request = "GET /jobs HTTP/1.1\\r\\nHost: localhost\\r\\nAuthorization: Bearer " + token +
-      "\\r\\nAuthorization: Bearer " + token + "\\r\\nConnection: close\\r\\n\\r\\n";
+    const request = "GET /jobs HTTP/1.1\r\nHost: localhost\r\nAuthorization: Bearer " + token +
+      "\r\nAuthorization: Bearer " + token + "\r\nConnection: close\r\n\r\n";
     const response = await rawRequest(server.address().port, request);
-    assert.match(response.splitlines?.[0] || response.split("\\r\\n")[0], / 401 /);
+    assert.match(response.split("\r\n")[0], / 401 /);
     assert.deepEqual(await import("./queue.mjs").then(m => m.listQueue(file)), []);
   } finally {
     await new Promise(resolve => server.close(resolve));
@@ -133,11 +133,11 @@ test("server rejects duplicate Content-Type headers before queueing", async () =
   try {
     await new Promise((resolve, reject) => { server.once("error", reject); server.listen(0, "127.0.0.1", resolve); });
     const body = JSON.stringify(base);
-    const request = "POST /deploy HTTP/1.1\\r\\nHost: localhost\\r\\nAuthorization: Bearer " + token +
-      "\\r\\nContent-Type: application/json\\r\\nContent-Type: application/json\\r\\nContent-Length: " +
-      Buffer.byteLength(body) + "\\r\\nConnection: close\\r\\n\\r\\n" + body;
+    const request = "POST /deploy HTTP/1.1\r\nHost: localhost\r\nAuthorization: Bearer " + token +
+      "\r\nContent-Type: application/json\r\nContent-Type: application/json\r\nContent-Length: " +
+      Buffer.byteLength(body) + "\r\nConnection: close\r\n\r\n" + body;
     const response = await rawRequest(server.address().port, request);
-    assert.match(response.split("\\r\\n")[0], / 400 /);
+    assert.match(response.split("\r\n")[0], / 400 /);
     assert.deepEqual(await import("./queue.mjs").then(m => m.listQueue(file)), []);
   } finally {
     await new Promise(resolve => server.close(resolve));
