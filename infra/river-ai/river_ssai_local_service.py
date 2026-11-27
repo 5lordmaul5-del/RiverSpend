@@ -36,7 +36,10 @@ def create_server(intake, worker_core, user_verifier, host="127.0.0.1", port=0):
             self.wfile.write(raw)
 
         def _bearer(self):
-            header = self.headers.get("Authorization", "")
+            values = self.headers.get_all("Authorization", [])
+            if len(values) != 1:
+                return None
+            header = values[0]
             if not header.startswith("Bearer "):
                 return None
             token = header[7:]
@@ -45,7 +48,10 @@ def create_server(intake, worker_core, user_verifier, host="127.0.0.1", port=0):
             return token
 
         def _body(self):
-            length = self.headers.get("Content-Length")
+            lengths = self.headers.get_all("Content-Length", [])
+            if len(lengths) != 1 or self.headers.get_all("Transfer-Encoding", []):
+                return None
+            length = lengths[0]
             if type(length) is not str or not length.isdigit():
                 return None
             size = int(length)
@@ -71,7 +77,7 @@ def create_server(intake, worker_core, user_verifier, host="127.0.0.1", port=0):
                     object_pairs_hook=unique_pairs,
                     parse_constant=reject_constant,
                 )
-            except (UnicodeDecodeError, ValueError):
+            except (UnicodeDecodeError, ValueError, RecursionError):
                 return None
 
         def do_GET(self):
@@ -100,6 +106,13 @@ def create_server(intake, worker_core, user_verifier, host="127.0.0.1", port=0):
 
         def do_POST(self):
             path = urlsplit(self.path).path
+            if self.headers.get_all("Transfer-Encoding", []) or len(self.headers.get_all("Content-Length", [])) > 1:
+                self._send(400, {"error": "request_framing_invalid"})
+                return
+            lengths = self.headers.get_all("Content-Length", [])
+            if path == "/v1/worker/run" and lengths and lengths[0] != "0":
+                self._send(400, {"error": "request_body_not_allowed"})
+                return
             token = self._bearer()
             if path == "/v1/tasks":
                 if token is None:
