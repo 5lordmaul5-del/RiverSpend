@@ -3,13 +3,9 @@ import assert from 'node:assert/strict';
 import http from 'node:http';
 import { spawn } from 'node:child_process';
 import { once } from 'node:events';
-import { chmod, mkdir, readdir, rm, writeFile, mkdtemp } from 'node:fs/promises';
+import { chmod, copyFile, mkdir, readdir, rm, writeFile, mkdtemp } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-
-const API_SCRIPT = fileURLToPath(new URL('./server.mjs', import.meta.url));
-const USER_ID = '00000000-0000-4000-8000-000000000001';
 
 async function freePorts() {
   const probes = [http.createServer(), http.createServer()];
@@ -41,6 +37,14 @@ async function activeMarkers(markerDir) {
 
 test('API rejects excess parallel database subprocesses and releases slots after close', async (t) => {
   const root = await mkdtemp(path.join(os.tmpdir(), 'rivercloud-gate-'));
+  const runtime = path.join(root, 'runtime');
+  await mkdir(runtime, { recursive: true });
+  await Promise.all([
+    copyFile(new URL('./server.mjs', import.meta.url), path.join(runtime, 'server.mjs')),
+    copyFile(new URL('./rate-limit.mjs', import.meta.url), path.join(runtime, 'rate-limit.mjs')),
+    copyFile(new URL('./db-concurrency.mjs', import.meta.url), path.join(runtime, 'db-concurrency.mjs')),
+    copyFile(new URL('../auth/river-auth.mjs', import.meta.url), path.join(runtime, 'river-auth.mjs')),
+  ]);
   const fakeBin = path.join(root, 'bin');
   const markers = path.join(root, 'markers');
   await mkdir(fakeBin, { recursive: true });
@@ -71,12 +75,12 @@ test('API rejects excess parallel database subprocesses and releases slots after
       return res.end('{}');
     }
     res.writeHead(200, { 'content-type': 'application/json' });
-    res.end(JSON.stringify({ id: USER_ID }));
+    res.end(JSON.stringify({ id: '00000000-0000-4000-8000-000000000001' }));
   });
   issuer.listen(authPort, '127.0.0.1');
   await once(issuer, 'listening');
 
-  const api = spawn(process.execPath, [API_SCRIPT], {
+  const api = spawn(process.execPath, [path.join(runtime, 'server.mjs')], {
     env: {
       ...process.env,
       PORT: String(apiPort),
