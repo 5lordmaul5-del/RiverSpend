@@ -55,14 +55,20 @@ function rateLimited(req) {
 async function readJson(req) {
   const chunks = [];
   let size = 0;
+  let tooLarge = false;
   for await (const chunk of req) {
     size += chunk.length;
     if (size > MAX_BODY_BYTES) {
-      const error = new Error('Request body too large');
-      error.status = 413;
-      throw error;
+      tooLarge = true;
+      chunks.length = 0;
+      continue; // Drain the request while retaining no further body data.
     }
-    chunks.push(chunk);
+    if (!tooLarge) chunks.push(chunk);
+  }
+  if (tooLarge) {
+    const error = new Error('Request body too large');
+    error.status = 413;
+    throw error;
   }
   try {
     return JSON.parse(Buffer.concat(chunks).toString('utf8'));
