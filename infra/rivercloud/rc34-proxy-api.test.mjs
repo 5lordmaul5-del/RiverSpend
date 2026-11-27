@@ -63,6 +63,25 @@ test("RC-41 rejects duplicate and comma-ambiguous forwarded identity headers", a
   });
 });
 
+test("RC-41 rejects ambiguous plan-body framing headers", async () => {
+  await withServer({ trustedProxyAddress: "127.0.0.1", groupRoleMap }, async url => {
+    const port = Number(new URL(url).port);
+    const common = "POST /api/plan HTTP/1.1\\r\\nHost: localhost\\r\\nX-Forwarded-User: operator-1\\r\\nX-Forwarded-Groups: operator\\r\\n";
+    const requests = [
+      common + "Content-Type: application/json\\r\\nContent-Type: application/json\\r\\nContent-Length: 0\\r\\nConnection: close\\r\\n\\r\\n",
+      common + "Content-Type: application/json\\r\\nContent-Length: 0\\r\\nContent-Length: 0\\r\\nConnection: close\\r\\n\\r\\n",
+      common + "Content-Type: application/json\\r\\nTransfer-Encoding: chunked\\r\\nTransfer-Encoding: chunked\\r\\nConnection: close\\r\\n\\r\\n0\\r\\n\\r\\n",
+      common + "Content-Type: application/json\\r\\nContent-Length: 0\\r\\nTransfer-Encoding: chunked\\r\\nConnection: close\\r\\n\\r\\n0\\r\\n\\r\\n"
+    ];
+    for (const raw of requests) {
+      const response = await rawRequest(port, raw);
+      assert.match(response.split("\\r\\n")[0], / 400 /, response);
+    }
+    const jobs = await fetch(url + "/api/jobs", { headers: headers("operator-1", "operator") });
+    assert.deepEqual((await jobs.json()).jobs, []);
+  });
+});
+
 test("RC-37 viewer and auditor may read status but cannot read job details", async () => {
   await withServer({ trustedProxyAddress: "127.0.0.1", groupRoleMap }, async url => {
     const viewer = headers("viewer-1", "viewer");
