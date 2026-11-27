@@ -91,7 +91,10 @@ class LocalHTTPIntegrationTests(unittest.TestCase):
             with urlopen(req, timeout=3) as response:
                 return response.status, json.loads(response.read().decode("utf-8"))
         except HTTPError as err:
-            return err.code, json.loads(err.read().decode("utf-8"))
+            try:
+                return err.code, json.loads(err.read().decode("utf-8"))
+            finally:
+                err.close()
 
     def request(self, path, method="GET", token=None, body=None):
         data = None if body is None else json.dumps(body).encode("utf-8")
@@ -105,7 +108,10 @@ class LocalHTTPIntegrationTests(unittest.TestCase):
             with urlopen(req, timeout=3) as response:
                 return response.status, json.loads(response.read().decode("utf-8"))
         except HTTPError as err:
-            return err.code, json.loads(err.read().decode("utf-8"))
+            try:
+                return err.code, json.loads(err.read().decode("utf-8"))
+            finally:
+                err.close()
 
     def test_intake_worker_result_and_owner_scope_end_to_end(self):
         body = {"capability":"echo","summary":"hello","payload":{"text":"hello"},"request_key":"request-1"}
