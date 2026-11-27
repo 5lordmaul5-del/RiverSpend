@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RiverRender scheduler plan",
+  "type": "object",
+  "required": [
+    "schema",
+    "jobs"
+  ],
+  "properties": {
+    "schema": {
+      "const": "river-render-scheduler-plan-v1"
+    },
+    "jobs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "priority",
+          "profile",
+          "resourceClass"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "priority": {
+            "enum": [
+              "High",
+              "Normal",
+              "Low"
+            ]
+          },
+          "profile": {
+            "enum": [
+              "Conservative",
+              "Balanced",
+              "High capacity (planning)"
+            ]
+          },
+          "resourceClass": {
+            "enum": [
+              "Light",
+              "Medium",
+              "Heavy"
+            ]
+          },
+          "state": {
+            "type": "string"
+          },
+          "simulatedPosition": {
+            "type": "integer"
+          },
+          "assignment": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
