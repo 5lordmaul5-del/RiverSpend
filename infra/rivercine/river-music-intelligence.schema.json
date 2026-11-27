@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RiverSSAI Music Intelligence Plan",
+  "type": "object",
+  "properties": {
+    "request": {
+      "type": "string"
+    },
+    "output": {
+      "type": "string"
+    },
+    "emotion": {
+      "type": "string"
+    },
+    "duration": {
+      "type": "string"
+    },
+    "tempo": {
+      "type": "string"
+    },
+    "styleDescription": {
+      "type": "string"
+    },
+    "constraints": {
+      "type": "string"
+    },
+    "pipeline": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "step": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "planned",
+              "review",
+              "ready",
+              "blocked"
+            ]
+          }
+        },
+        "required": [
+          "step",
+          "name",
+          "description",
+          "status"
+        ]
+      }
+    },
+    "humanReviewRequired": {
+      "type": "boolean"
+    },
+    "aiRuntimeConnected": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "request",
+    "output",
+    "pipeline",
+    "humanReviewRequired",
+    "aiRuntimeConnected"
+  ]
+}
