@@ -26,6 +26,13 @@ def sign(claims, header=None, key=KEY):
     return message + "." + sig
 
 
+def sign_raw(header_json, payload_json, key=KEY):
+    a=b64(header_json.encode("utf-8"))
+    b=b64(payload_json.encode("utf-8"))
+    message=a+"."+b
+    return message+"."+b64(hmac.new(key,message.encode("ascii"),hashlib.sha256).digest())
+
+
 def base_claims(**extra):
     claims={"iss":ISSUER,"aud":AUDIENCE,"sub":"alice","iat":NOW,"exp":NOW+60}
     claims.update(extra)
@@ -54,6 +61,9 @@ class JWTVerifierTests(unittest.TestCase):
     def test_wrong_audience_rejected(self):
         with self.assertRaises(JWTVerificationError): self.verifier.verify_user(sign(base_claims(aud="wrong")))
 
+    def test_audience_array_is_supported(self):
+        self.assertEqual(self.verifier.verify_user(sign(base_claims(aud=[AUDIENCE,"other"]))),{"subject":"alice"})
+
     def test_expired_rejected(self):
         with self.assertRaises(JWTVerificationError): self.verifier.verify_user(sign(base_claims(exp=NOW-1)))
 
@@ -78,6 +88,19 @@ class JWTVerifierTests(unittest.TestCase):
         for token in ("", "a.b.c", "x"*8193, "a..b", "%%%.a.b"):
             with self.subTest(token=token), self.assertRaises(JWTVerificationError):
                 self.verifier.verify_user(token)
+
+    def test_duplicate_header_or_claim_keys_rejected(self):
+        valid_header='{"alg":"HS256","typ":"JWT"}'
+        duplicate_header='{"alg":"HS256","alg":"none","typ":"JWT"}'
+        payload='{"iss":"%s","aud":"%s","sub":"alice","iat":%d,"exp":%d}'%(ISSUER,AUDIENCE,NOW,NOW+60)
+        duplicate_payload='{"iss":"%s","aud":"%s","sub":"alice","iat":%d,"exp":%d,"sub":"bob"}'%(ISSUER,AUDIENCE,NOW,NOW+60)
+        with self.assertRaises(JWTVerificationError): self.verifier.verify_user(sign_raw(duplicate_header,payload))
+        with self.assertRaises(JWTVerificationError): self.verifier.verify_user(sign_raw(valid_header,duplicate_payload))
+
+    def test_non_finite_json_constant_rejected(self):
+        header='{"alg":"HS256","typ":"JWT"}'
+        payload='{"iss":"%s","aud":"%s","sub":"alice","iat":%d,"exp":NaN}'%(ISSUER,AUDIENCE,NOW)
+        with self.assertRaises(JWTVerificationError): self.verifier.verify_user(sign_raw(header,payload))
 
     def test_configuration_requires_strong_key_and_bounded_skew(self):
         with self.assertRaises(ValueError): HS256JWTVerifier(b"short",ISSUER,AUDIENCE)
