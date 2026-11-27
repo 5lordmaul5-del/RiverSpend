@@ -1,0 +1,15 @@
+{
+ "$schema":"https://json-schema.org/draft/2020-12/schema",
+ "title":"RiverCine Entitlement Catalog Prototype",
+ "type":"object",
+ "properties":{
+   "catalogVersion":{"type":"string"},
+   "items":{"type":"array","items":{"type":"object","required":["id","name","kind","status"],"properties":{
+     "id":{"type":"string"},"name":{"type":"string"},"kind":{"enum":["module","bundle","asset-pack","subscription","license"]},
+     "status":{"enum":["planned","preview","available","retired"]},"price":{"type":["number","null"],"minimum":0},
+     "currency":{"type":"string","default":"EUR"},"features":{"type":"array","items":{"type":"string"}},
+     "requires":{"type":"array","items":{"type":"string"}},"platforms":{"type":"array","items":{"enum":["web","pwa","windows","macos","mobile"]}}
+   }}}
+ },
+ "required":["catalogVersion","items"]
+}
