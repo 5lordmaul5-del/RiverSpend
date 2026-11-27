@@ -106,7 +106,7 @@ jobs:
             "- SHA-256: " + digest,
             "- SBOM generated on this runner; not uploaded or retained as an artifact.",
             ""
-          ].join("\\n");
+          ].join("\n");
           fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, summary);
           console.log(summary);
           NODE
