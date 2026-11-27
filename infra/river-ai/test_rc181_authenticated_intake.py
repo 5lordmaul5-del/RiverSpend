@@ -1,4 +1,5 @@
 import os
+import sqlite3
 import tempfile
 import unittest
 from concurrent.futures import ThreadPoolExecutor
@@ -32,12 +33,26 @@ class AuthenticatedIntakeTests(unittest.TestCase):
     def test_verified_subject_is_owner_and_audit_is_atomic_with_acceptance(self):
         out = self.submit()
         self.assertEqual(out["status"], "accepted")
+        with sqlite3.connect(self.path) as db:
+            owner = db.execute("SELECT owner FROM tasks WHERE id=?", (out["task_id"],)).fetchone()[0]
+        self.assertEqual(owner, "alice")
         rows = self.ledger.intake_events(out["task_id"])
         self.assertEqual(len(rows), 1)
         self.assertEqual(rows[0]["actor"], "alice")
         self.assertEqual(rows[0]["action"], "intake_accepted")
         self.assertIsNotNone(rows[0]["request_key_sha256"])
         self.assertIsNotNone(rows[0]["request_sha256"])
+
+    def test_task_and_acceptance_audit_rollback_together(self):
+        original = self.ledger._audit_insert
+        def failing(db, task_id, actor, action, key_digest, request_digest):
+            original(db, task_id, actor, action, key_digest, request_digest)
+            raise RuntimeError("simulated audit failure")
+        self.ledger._audit_insert = failing
+        out = self.submit(key="atomic")
+        self.assertEqual(out["status"], "error")
+        self.assertEqual(self.ledger.status()["queued"], 0)
+        self.assertEqual(self.ledger.intake_events(), [])
 
     def test_replay_returns_same_task_and_audits_replay(self):
         first = self.submit()
