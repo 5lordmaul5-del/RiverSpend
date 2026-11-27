@@ -36,10 +36,10 @@ class RecoveryCoordinator:
         self.db.execute("BEGIN IMMEDIATE")
         try:
             row = self.db.execute("SELECT attempts,max_attempts,state FROM recovery_jobs WHERE id=?", (jid,)).fetchone()
-            if not row or row[2] not in ("queued", "running"):
+            if not row or row[2] != "running":
                 self.db.execute("ROLLBACK")
                 return False
-            attempts = row[0] + 1
+            sample = self.random_fn()\n            if not 0 <= sample <= 1:\n                self.db.execute("ROLLBACK")\n                raise ValueError("random_fn must return a value in [0,1]")\n            attempts = row[0] + 1
             if attempts >= row[1]:
                 self.db.execute("UPDATE recovery_jobs SET attempts=?,state='dead_letter',last_error=? WHERE id=?",
                                 (attempts, str(error), jid))
