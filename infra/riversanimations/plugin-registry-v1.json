@@ -1,0 +1,15 @@
+{
+ "version":"1.0.0",
+ "plugins":[
+ {"id":"character-creator","name":"Character Creator","status":"prototype"},
+ {"id":"storyboard-builder","name":"Storyboard Builder","status":"prototype"},
+ {"id":"motion-lab","name":"Motion Lab","status":"planned"},
+ {"id":"camera-cinematic","name":"Camera & Cinematic","status":"planned"},
+ {"id":"world-builder","name":"World Builder","status":"planned"},
+ {"id":"fx-lab","name":"FX Lab","status":"planned"},
+ {"id":"voice-dialogue","name":"Voice & Dialogue","status":"planned"},
+ {"id":"issa-sound-bridge","name":"River ISSA Sound Bridge","status":"planned"},
+ {"id":"game-export-bridge","name":"Game Export Bridge","status":"planned"},
+ {"id":"render-queue","name":"Render Queue","status":"planned"}
+ ]
+}
