@@ -186,7 +186,8 @@ class WorkerCore:
 
     def get_result(self, task_id, owner):
         """Return a result only when the requested owner matches its persisted owner."""
-        if type(owner) is not str or not owner.strip():
+        if (type(task_id) is not str or not task_id.strip() or len(task_id) > 128
+                or type(owner) is not str or not owner.strip() or len(owner) > 128):
             return None
         with self._db() as db:
             row = db.execute(
@@ -198,6 +199,8 @@ class WorkerCore:
         return {"result": json.loads(row[0]), "sha256": row[1]}
 
     def events(self, task_id):
+        if type(task_id) is not str or not task_id.strip() or len(task_id) > 128:
+            return []
         with self._db() as db:
             rows = db.execute("SELECT attempt,worker_subject,action,payload_sha256,result_sha256,error_code,created FROM task_events WHERE task_id=? ORDER BY event_id", (task_id,)).fetchall()
         return [{"attempt":r[0],"worker":r[1],"action":r[2],"payload_sha256":r[3],"result_sha256":r[4],"error_code":r[5],"created":r[6]} for r in rows]

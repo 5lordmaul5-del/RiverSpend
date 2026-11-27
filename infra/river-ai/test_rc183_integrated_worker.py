@@ -158,4 +158,11 @@ class WorkerCoreIntegrationTests(unittest.TestCase):
             columns={row[1] for row in db.execute("PRAGMA table_info(task_results)")}
         self.assertIn("owner",columns)
 
+    def test_result_and_event_queries_reject_invalid_identifiers(self):
+        self.assertIsNone(self.core.get_result([], "user-1"))
+        self.assertIsNone(self.core.get_result("x"*129, "user-1"))
+        self.assertIsNone(self.core.get_result("valid", " "*1))
+        self.assertEqual(self.core.events(None), [])
+        self.assertEqual(self.core.events("x"*129), [])
+
 if __name__=="__main__": unittest.main()
