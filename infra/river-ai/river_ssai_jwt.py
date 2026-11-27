@@ -50,8 +50,23 @@ class HS256JWTVerifier:
 
     @classmethod
     def _json_segment(cls, segment):
+        def unique_pairs(pairs):
+            result = {}
+            for key, value in pairs:
+                if key in result:
+                    raise JWTVerificationError("duplicate JSON key")
+                result[key] = value
+            return result
+
+        def reject_constant(value):
+            raise JWTVerificationError("non-finite JSON constant")
+
         try:
-            value = json.loads(cls._decode_segment(segment).decode("utf-8"))
+            value = json.loads(
+                cls._decode_segment(segment).decode("utf-8"),
+                object_pairs_hook=unique_pairs,
+                parse_constant=reject_constant,
+            )
         except (UnicodeDecodeError, json.JSONDecodeError):
             raise JWTVerificationError("invalid JSON segment") from None
         if type(value) is not dict:
@@ -96,6 +111,8 @@ class HS256JWTVerifier:
         if not self._number(exp) or not self._number(iat) or exp <= iat:
             raise JWTVerificationError("time claims invalid")
         now = self.clock()
+        if not self._number(now):
+            raise JWTVerificationError("clock invalid")
         if exp <= now - self.clock_skew:
             raise JWTVerificationError("token expired")
         if iat > now + self.clock_skew or exp - iat > self.max_lifetime:
