@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RiverRender Recovery Plan",
+  "type": "object",
+  "required": [
+    "schema",
+    "failureClass",
+    "decision",
+    "simulationOnly"
+  ],
+  "properties": {
+    "schema": {
+      "const": "river-render-recovery-plan-v1"
+    },
+    "jobName": {
+      "type": "string"
+    },
+    "failureClass": {
+      "enum": [
+        "Transient",
+        "Resource exhaustion",
+        "Worker lost",
+        "Invalid input",
+        "Unknown"
+      ]
+    },
+    "attemptsUsed": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "retryLimit": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 5
+    },
+    "decision": {
+      "type": "string"
+    },
+    "plannedDelaySeconds": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 3600
+    },
+    "simulationOnly": {
+      "const": true
+    }
+  }
+}
