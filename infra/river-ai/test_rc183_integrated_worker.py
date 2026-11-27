@@ -276,13 +276,20 @@ class WorkerCoreIntegrationTests(unittest.TestCase):
             with self.subTest(key=key), self.assertRaises(PayloadLedgerError):
                 self.ledger.enqueue("echo","summary","user-1",{},request_key=key)
 
+    def _reclaim_expired_lease_after_cooldown(self, worker, capability, task_id):
+        # First poll performs durable expiry recovery and schedules cooldown.
+        self.assertIsNone(self.ledger.lease_next(worker, (capability,)))
+        with sqlite3.connect(self.path) as db:
+            db.execute("UPDATE tasks SET retry_after=? WHERE id=?", (time.time()-1, task_id))
+        return self.ledger.lease_next(worker, (capability,))
+
     def test_stale_attempt_cannot_complete_after_same_worker_releases_and_releases_again(self):
         task = self.ledger.enqueue("echo", "summary", "user-1", {"text": "fence"})
         first = self.ledger.lease_next("worker-a", ("echo",))
         self.assertEqual(first["attempts"], 1)
         with sqlite3.connect(self.path) as db:
             db.execute("UPDATE tasks SET leased=? WHERE id=?", (time.time() - self.ledger.lease_seconds - 1, task))
-        second = self.ledger.lease_next("worker-a", ("echo",))
+        second = self._reclaim_expired_lease_after_cooldown("worker-a", "echo", task)
         self.assertEqual(second["attempts"], 2)
         result_json = '{"ok":true}'
         result_digest = __import__("hashlib").sha256(result_json.encode()).hexdigest()
@@ -299,7 +306,7 @@ class WorkerCoreIntegrationTests(unittest.TestCase):
         self.assertEqual(first["attempts"], 1)
         with sqlite3.connect(self.path) as db:
             db.execute("UPDATE tasks SET leased=? WHERE id=?", (time.time() - self.ledger.lease_seconds - 1, task))
-        second = self.ledger.lease_next("worker-a", ("echo",))
+        second = self._reclaim_expired_lease_after_cooldown("worker-a", "echo", task)
         self.assertEqual(second["attempts"], 2)
         self.assertEqual(self.core._persist_failure(task, "worker-a", first["attempts"], first["leased_at"], "payload-digest"), "lease_lost")
         with sqlite3.connect(self.path) as db:
@@ -313,7 +320,7 @@ class WorkerCoreIntegrationTests(unittest.TestCase):
         first = self.ledger.lease_next("worker-a", ("echo",))
         with sqlite3.connect(self.path) as db:
             db.execute("UPDATE tasks SET leased=? WHERE id=?", (time.time() - self.ledger.lease_seconds - 1, task))
-        second = self.ledger.lease_next("worker-a", ("echo",))
+        second = self._reclaim_expired_lease_after_cooldown("worker-a", "echo", task)
         self.assertNotEqual(first["leased_at"], second["leased_at"])
         self.assertEqual(
             self.core._persist_failure(task, "worker-a", None, first["leased_at"], None, error_code="lease_contract_invalid"),
