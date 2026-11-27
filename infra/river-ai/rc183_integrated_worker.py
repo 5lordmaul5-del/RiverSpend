@@ -220,7 +220,8 @@ class WorkerCore:
             ).fetchone()
             if row is None or row[1] is None or row[1] < now - self.ledger.lease_seconds:
                 db.rollback()
-                self._event(task_id, attempt, worker, "lease_lost", payload_digest, error_code="stale_failure")
+                event_attempt = attempt if type(attempt) is int and attempt >= 1 else 0
+                self._event(task_id, event_attempt, worker, "lease_lost", payload_digest, error_code="stale_failure")
                 return "lease_lost"
             # Retry budget is based on the persisted counter, not the lease envelope.
             persisted_attempt = row[0]
