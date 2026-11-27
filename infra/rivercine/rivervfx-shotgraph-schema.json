@@ -1,0 +1,21 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "title":"RiverVFX Shot Graph",
+  "type":"object",
+  "required":["schemaVersion","product","shots"],
+  "properties":{
+    "schemaVersion":{"type":"string"},
+    "product":{"const":"RiverVFX"},
+    "projectName":{"type":"string"},
+    "shots":{"type":"array","items":{
+      "type":"object","required":["id","name","stage","layers","review"],
+      "properties":{
+        "id":{"type":"string"},"name":{"type":"string"},"plate":{"type":"string"},
+        "stage":{"type":"string","enum":["Ingest & Prep","Tracking","Roto / Matte","FX Elements","Compositing","Color & Review","Final"]},
+        "notes":{"type":"string"},
+        "layers":{"type":"array","items":{"type":"object","required":["name","kind","enabled"],"properties":{"name":{"type":"string"},"kind":{"type":"string"},"enabled":{"type":"boolean"},"source":{"type":["string","null"]}}}},
+        "review":{"type":"object","required":["temporalStability","compositingReview","colorReview"],"properties":{"temporalStability":{"type":"boolean"},"compositingReview":{"type":"boolean"},"colorReview":{"type":"boolean"}}}
+      }
+    }}
+  }
+}
