@@ -1,6 +1,7 @@
 FROM node:22.23.5-alpine3.23@sha256:6868d4695b947ee120bffaa463fecd68cde370d7bfec92955e7c8ac576b4f475
 WORKDIR /app
 COPY --chown=node:node infra/rivercloud/rc34-proxy-api.mjs /app/infra/rivercloud/rc34-proxy-api.mjs
+COPY --chown=node:node infra/rivercloud/json-duplicate-keys.mjs /app/infra/rivercloud/json-duplicate-keys.mjs
 COPY --chown=node:node infra/rivercloud/queue.mjs /app/infra/rivercloud/queue.mjs
 COPY --chown=node:node infra/rivercloud/engine.mjs /app/infra/rivercloud/engine.mjs
 COPY --chown=node:node infra/rivercloud/rc11-state.mjs /app/infra/rivercloud/rc11-state.mjs
