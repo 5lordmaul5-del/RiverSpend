@@ -23,5 +23,6 @@ jobs:
           python3 -m unittest discover -s infra/river-ai -p 'test_river_ssai_local_http.py'
           python3 -m unittest discover -s infra/river-ai -p 'test_river_ssai_jwt.py'
           python3 -m unittest discover -s infra/river-ai -p 'test_rc181_authenticated_intake.py'
+          python3 -m unittest discover -s infra/river-ai -p 'test_rc181_payload_ledger.py'
           python3 -m unittest discover -s infra/river-ai -p 'test_rc183_integrated_worker.py'
           python3 -m unittest discover -s infra/river-ai -p 'test_rc180_contract_bridge.py'
