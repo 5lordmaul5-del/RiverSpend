@@ -80,6 +80,17 @@ class LocalHTTPIntegrationTests(unittest.TestCase):
         self.thread.join(timeout=2)
         self.tmp.cleanup()
 
+    def request_raw(self, path, raw, token=None):
+        headers = {"Content-Type": "application/json"}
+        if token is not None:
+            headers["Authorization"] = "Bearer " + token
+        req = Request(self.url + path, data=raw, headers=headers, method="POST")
+        try:
+            with urlopen(req, timeout=3) as response:
+                return response.status, json.loads(response.read().decode("utf-8"))
+        except HTTPError as err:
+            return err.code, json.loads(err.read().decode("utf-8"))
+
     def request(self, path, method="GET", token=None, body=None):
         data = None if body is None else json.dumps(body).encode("utf-8")
         headers = {}
@@ -130,6 +141,20 @@ class LocalHTTPIntegrationTests(unittest.TestCase):
         self.assertEqual(status, 400)
         status, _ = self.request("/v1/worker/run", "POST", "bad-worker")
         self.assertEqual(status, 401)
+        self.assertEqual(self.ledger.status()["queued"], 0)
+
+    def test_duplicate_json_keys_rejected_before_intake(self):
+        raw = b'{"capability":"echo","capability":"other","summary":"hello","payload":{"text":"hello"},"request_key":"dup-1"}'
+        status, response = self.request_raw("/v1/tasks", raw, self.alice)
+        self.assertEqual(status, 400)
+        self.assertEqual(response["error"], "request_shape_invalid")
+        self.assertEqual(self.ledger.status()["queued"], 0)
+
+    def test_nonfinite_json_constant_rejected_before_intake(self):
+        raw = b'{"capability":"echo","summary":"hello","payload":{"text":NaN},"request_key":"nan-1"}'
+        status, response = self.request_raw("/v1/tasks", raw, self.alice)
+        self.assertEqual(status, 400)
+        self.assertEqual(response["error"], "request_shape_invalid")
         self.assertEqual(self.ledger.status()["queued"], 0)
 
     def test_loopback_binding_and_health(self):
