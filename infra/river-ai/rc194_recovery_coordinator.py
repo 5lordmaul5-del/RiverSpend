@@ -9,12 +9,12 @@ class RecoveryCoordinator:
    attempts INTEGER NOT NULL, due REAL NOT NULL, max_attempts INTEGER NOT NULL,
    last_error TEXT, created REAL NOT NULL)""")
  def enqueue(self,task_key,payload=None,max_attempts=5,delay=0):
-  if not task_key or max_attempts<1 or delay<0: raise ValueError("invalid job parameters")
+  if not isinstance(task_key,str) or not task_key.strip() or not isinstance(max_attempts,int) or max_attempts<1 or delay<0: raise ValueError("invalid job parameters")
   jid=str(uuid.uuid4()); now=self.clock()
   self.db.execute("INSERT INTO recovery_jobs VALUES(?,?,?,?,?,?,?,?,?)",
    (jid,task_key,payload,"queued",0,now+delay,max_attempts,None,now));return jid
  def fail(self,jid,error,base_delay=1,max_delay=300,jitter=0.2):
-  if base_delay<0 or max_delay<0 or not 0<=jitter<=1: raise ValueError("invalid retry policy")
+  if base_delay<0 or max_delay<0 or not 0<=jitter<=1: raise ValueError("invalid retry policy")\n  if base_delay>max_delay: base_delay=max_delay\n  sample=self.random_fn()\n  if not 0<=sample<=1: raise ValueError("random_fn must return a value in [0,1]")
   self.db.execute("BEGIN IMMEDIATE")
   try:
    row=self.db.execute("SELECT attempts,max_attempts,state FROM recovery_jobs WHERE id=?",(jid,)).fetchone()
