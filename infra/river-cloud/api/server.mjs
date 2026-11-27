@@ -1,6 +1,7 @@
 import http from 'node:http';
 import { createRiverAuth } from './river-auth.mjs';
 import { spawn } from 'node:child_process';
+import { createRateLimiter } from './rate-limit.mjs';
 
 const PORT = Number(process.env.PORT || 8080);
 const SUPABASE_URL = process.env.RIVERAUTH_ISSUER_URL;
@@ -16,10 +17,7 @@ const riverAuth = createRiverAuth({
   publishableKey: SUPABASE_PUBLISHABLE_KEY,
 });
 
-const windows = new Map();
-const RATE_WINDOW_MS = 60_000;
-const RATE_LIMIT = 60;
-let rateCleanupCounter = 0;
+const rateLimitedByKey = createRateLimiter({ windowMs: 60_000, limit: 60, maxKeys: 10_000 });
 const MAX_BODY_BYTES = 4096;
 const MAX_DB_OPERATIONS = 8;
 let activeDbOperations = 0;
@@ -35,28 +33,7 @@ function send(res, status, payload) {
 }
 
 function rateLimited(req) {
-  const key = req.socket.remoteAddress || 'unknown';
-  const now = Date.now();
-  const entry = windows.get(key);
-  rateCleanupCounter += 1;
-  if (rateCleanupCounter % 256 === 0) {
-    for (const [storedKey, storedEntry] of windows) {
-      if (now - storedEntry.start >= RATE_WINDOW_MS) windows.delete(storedKey);
-    }
-  }
-  if (!entry || now - entry.start >= RATE_WINDOW_MS) {
-    if (windows.size >= 10_000) {
-      for (const [storedKey, storedEntry] of windows) {
-        if (now - storedEntry.start >= RATE_WINDOW_MS) windows.delete(storedKey);
-        if (windows.size < 8_000) break;
-      }
-      if (windows.size >= 10_000) windows.delete(windows.keys().next().value);
-    }
-    windows.set(key, { start: now, count: 1 });
-    return false;
-  }
-  entry.count += 1;
-  return entry.count > RATE_LIMIT;
+  return rateLimitedByKey(req.socket.remoteAddress || 'unknown');
 }
 
 async function readJson(req) {
