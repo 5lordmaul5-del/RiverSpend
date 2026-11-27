@@ -1,0 +1,232 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://riverspend.com/schemas/creative-project-v1.json",
+  "title": "RiverSpend Creative Project",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "projectId",
+    "title",
+    "createdAt",
+    "updatedAt",
+    "assets",
+    "tracks",
+    "markers"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0"
+    },
+    "projectId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "frameRate": {
+      "type": "number",
+      "minimum": 1
+    },
+    "resolution": {
+      "type": "object",
+      "properties": {
+        "width": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "width",
+        "height"
+      ]
+    },
+    "assets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "assetId",
+          "kind",
+          "name"
+        ],
+        "properties": {
+          "assetId": {
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "audio",
+              "video",
+              "image",
+              "model3d",
+              "motion",
+              "project",
+              "other"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "mimeType": {
+            "type": "string"
+          },
+          "durationSeconds": {
+            "type": "number",
+            "minimum": 0
+          },
+          "source": {
+            "enum": [
+              "local",
+              "import",
+              "generated",
+              "linked"
+            ]
+          },
+          "metadata": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "tracks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "trackId",
+          "kind",
+          "name",
+          "clips"
+        ],
+        "properties": {
+          "trackId": {
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "audio",
+              "video",
+              "animation",
+              "motion",
+              "vfx",
+              "game",
+              "other"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "muted": {
+            "type": "boolean"
+          },
+          "locked": {
+            "type": "boolean"
+          },
+          "clips": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "clipId",
+                "assetId",
+                "start"
+              ],
+              "properties": {
+                "clipId": {
+                  "type": "string"
+                },
+                "assetId": {
+                  "type": "string"
+                },
+                "start": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "duration": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "inPoint": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "metadata": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "markers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "markerId",
+          "position",
+          "label"
+        ],
+        "properties": {
+          "markerId": {
+            "type": "string"
+          },
+          "position": {
+            "type": "number",
+            "minimum": 0
+          },
+          "label": {
+            "type": "string"
+          },
+          "color": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "takes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "takeId": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "metadata": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object"
+    }
+  }
+}
