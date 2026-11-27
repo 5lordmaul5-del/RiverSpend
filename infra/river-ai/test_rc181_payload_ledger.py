@@ -1,5 +1,7 @@
 import os
+import sqlite3
 import tempfile
+import time
 import unittest
 
 from rc159_persistent_ledger import PersistentTaskLedger
@@ -21,6 +23,27 @@ class PayloadLedgerTests(unittest.TestCase):
         self.assertEqual(lease["id"], tid)
         self.assertEqual(lease["owner"], "user-1")
         self.assertEqual(lease["payload"], {"text": "hi"})
+
+    def test_expired_lease_reclaim_is_durably_audited(self):
+        task = self.ledger.enqueue("echo", "task", "user-1", {"text": "recover"})
+        first = self.ledger.lease_next("worker-old", ("echo",))
+        with sqlite3.connect(self.path) as db:
+            db.execute(
+                "UPDATE tasks SET leased=? WHERE id=?",
+                (time.time() - self.ledger.lease_seconds - 1, task),
+            )
+        second = self.ledger.lease_next("worker-new", ("echo",))
+        self.assertEqual(second["id"], task)
+        self.assertEqual(second["attempts"], first["attempts"] + 1)
+        with sqlite3.connect(self.path) as db:
+            row = db.execute(
+                "SELECT task_id,attempt,worker_subject,action,error_code "
+                "FROM task_events WHERE task_id=? ORDER BY event_id LIMIT 1",
+                (task,),
+            ).fetchone()
+        self.assertEqual(
+            row, (task, first["attempts"], "worker-old", "lease_expired_requeued", "lease_expired")
+        )
 
     def test_capability_filter(self):
         self.ledger.enqueue("echo", "task", "u", {})
