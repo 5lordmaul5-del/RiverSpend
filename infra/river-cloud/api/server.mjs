@@ -19,6 +19,7 @@ const riverAuth = createRiverAuth({
 const windows = new Map();
 const RATE_WINDOW_MS = 60_000;
 const RATE_LIMIT = 60;
+let rateCleanupCounter = 0;
 const MAX_BODY_BYTES = 4096;
 const MAX_DB_OPERATIONS = 8;
 let activeDbOperations = 0;
@@ -37,6 +38,12 @@ function rateLimited(req) {
   const key = req.socket.remoteAddress || 'unknown';
   const now = Date.now();
   const entry = windows.get(key);
+  rateCleanupCounter += 1;
+  if (rateCleanupCounter % 256 === 0) {
+    for (const [storedKey, storedEntry] of windows) {
+      if (now - storedEntry.start >= RATE_WINDOW_MS) windows.delete(storedKey);
+    }
+  }
   if (!entry || now - entry.start >= RATE_WINDOW_MS) {
     if (windows.size >= 10_000) {
       for (const [storedKey, storedEntry] of windows) {
@@ -55,8 +62,9 @@ function rateLimited(req) {
 async function readJson(req) {
   const chunks = [];
   let size = 0;
-  let tooLarge = false;
+  let tooLarge = Number(req.headers['content-length']) > MAX_BODY_BYTES;
   for await (const chunk of req) {
+    if (tooLarge) continue;
     size += chunk.length;
     if (size > MAX_BODY_BYTES) {
       tooLarge = true;
