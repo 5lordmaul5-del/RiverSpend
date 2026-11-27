@@ -1,12 +1,12 @@
-# RC-190 — Request guard hardening
+# RC-190 — Request guard with expiring leases
 
-This iteration tightens input handling for the single-host SQLite request guard.
+Follow-up adds expiring SQLite leases to the single-host request guard.
 
-- Config values must be integers and within sensible positive bounds.
-- Subject identifiers must be trimmed strings, non-empty, and at most 256 characters.
-- Explicit clock overrides must be integers.
-- Invalid release/state subjects are handled safely.
-- Expanded tests cover malformed subjects, invalid config/time, rate limiting, concurrency, window reset, and block/window boundaries.
+- Each accepted acquire returns a unique lease token.
+- Active concurrency is counted from leases, not a stale counter.
+- Leases expire automatically during subsequent acquire calls; explicit reaper is also available.
+- Release is token-based and idempotent for unknown/expired tokens.
+- Tests cover expired lease recovery, reaper, concurrency, rate windows and edge cases.
 
-## Scope and limits
-Still a local prototype. Active counters can remain stale after process crashes because lease expiry/recovery is not implemented. Authentication must provide trusted subject identifiers. No distributed rate limiting or production readiness implied.
+## Scope and limitations
+Local SQLite/single-host prototype. A lease expiry can allow a new request while the old process is still running; this does not fence external side effects. Production integration needs trusted caller identity, fencing/idempotency at downstream operations, observability, and multi-host coordination. No merge or deployment.
