@@ -2,13 +2,14 @@ name: RiverCloud isolated tests
 
 on:
   pull_request:
-    branches: [main]
+    branches: [main, feat/rivercloud-core-2026-11-25]
     paths:
       - "infra/rivercloud/**"
       - ".github/workflows/rivercloud-tests.yml"
   push:
     branches:
       - "feat/rivercloud-core-2026-11-25"
+      - "feat/rc41-proxy-header-ambiguity-2026-11-27"
     paths:
       - "infra/rivercloud/**"
       - ".github/workflows/rivercloud-tests.yml"
@@ -22,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babce0c15c1 # v7.1.0
         with:
           node-version: "22"
       - name: Run RiverCloud Node tests
@@ -105,7 +106,7 @@ jobs:
             "- SHA-256: " + digest,
             "- SBOM generated on this runner; not uploaded or retained as an artifact.",
             ""
-          ].join("\n");
+          ].join("\\n");
           fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, summary);
           console.log(summary);
           NODE
