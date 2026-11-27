@@ -16,7 +16,7 @@ test("RC-35 API container uses an immutable Node base and a non-root entrypoint"
  assert.match(dockerfile,/USER node/);
  assert.match(dockerfile,/CMD \["node", "\/app\/infra\/rivercloud\/rc34-proxy-api\.mjs"\]/);
  assert.doesNotMatch(dockerfile,/COPY\s+\.\s+/);
- for(const name of ["rc34-proxy-api.mjs","queue.mjs","engine.mjs","rc11-state.mjs","rc13-identity.mjs"]) assert.match(dockerfile,new RegExp(name));
+ for(const name of ["rc34-proxy-api.mjs","json-duplicate-keys.mjs","queue.mjs","engine.mjs","rc11-state.mjs","rc13-identity.mjs"]) assert.match(dockerfile,new RegExp(name));
 });
 
 test("RC-35 API is reachable only through the internal path-mapped proxy",()=>{
