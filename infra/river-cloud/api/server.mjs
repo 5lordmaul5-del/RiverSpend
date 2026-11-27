@@ -240,9 +240,9 @@ const server = http.createServer(async (req, res) => {
     if (!body || typeof body.display_name !== 'string') {
       return send(res, 400, { error: 'display_name_required' });
     }
-    const displayName = body.display_name.trim();
-    if (displayName.length < 1 || displayName.length > 80) {
-      return send(res, 400, { error: 'display_name_must_be_1_to_80_characters' });
+    const displayName = body.display_name.normalize('NFC').trim();
+    if (displayName.length < 1 || displayName.length > 80 || /[\\u0000-\\u001f\\u007f]/.test(displayName)) {
+      return send(res, 400, { error: 'display_name_must_be_1_to_80_characters_without_control_chars' });
     }
 
     const profile = await runProfileSql(
