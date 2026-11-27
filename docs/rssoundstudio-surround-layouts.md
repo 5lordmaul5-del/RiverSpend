@@ -17,3 +17,7 @@ The mixer initializes its selected surround preset to `10.2.4` and wires the sel
 
 ## I.S.S.A. Soundbar 10.2.4.1
 Selectable proprietary preset: 10 main channels, 2 subwoofers, 4 height channels, and one ISSA Immersion channel reserved for tactile/ambient immersive effects. UI/model representation only; actual hardware routing remains future work.
+
+
+## Speaker test tone prototype
+Each listed speaker role has a test-tone button. The browser generates a brief low-level tone and approximates left/right direction with StereoPanner; this is a safe preliminary check, not discrete physical speaker routing or a calibrated speaker test.
