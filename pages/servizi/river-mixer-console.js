@@ -1,7 +1,16 @@
 import Head from 'next/head';
 import { useEffect, useRef, useState } from 'react';
 
-const SURROUND_PRESETS={\n '2.1':{label:'2.1',bed:['Front L','Front R'],subs:1,heights:0,description:'Stereo frontale + subwoofer'},\n '4.1':{label:'4.1',bed:['Front L','Front R','Rear L','Rear R'],subs:1,heights:0,description:'4 speaker: frontali e posteriori + sub'},\n '6.2':{label:'6.2',bed:['Front L','Front R','Center','Side L','Side R','Rear Center'],subs:2,heights:0,description:'6 canali principali + 2 subwoofer'},\n '8.1':{label:'8.1',bed:['Front L','Front R','Center','Side L','Side R','Rear L','Rear R','Rear Center'],subs:1,heights:0,description:'8 canali surround + sub'},\n '10.1':{label:'10.1',bed:['Front L','Front R','Center','Front Wide L','Front Wide R','Side L','Side R','Rear L','Rear R','Rear Center'],subs:1,heights:0,description:'10 canali principali + sub'},\n '10.2.4':{label:'10.2.4',bed:['Front L','Front R','Center','Front Wide L','Front Wide R','Side L','Side R','Rear L','Rear R','Rear Center'],subs:2,heights:4,immersion:0,description:'10 speaker principali + 2 subwoofer + 4 speaker alte (front/rear L/R)'},\n '10.2.4.1':{label:'I.S.S.A. Soundbar 10.2.4.1',bed:['Front L','Front R','Center','Front Wide L','Front Wide R','Side L','Side R','Rear L','Rear R','Rear Center'],subs:2,heights:4,immersion:1,description:'Sistema I.S.S.A. proprietario: 10 speaker principali + 2 subwoofer + 4 speaker Height + 1 canale Immersion dedicato (tactile/ambient effects)'}\n};\nfunction Waveform({src,position,duration,onSeek}){
+const SURROUND_PRESETS={
+ '2.1':{label:'2.1',bed:['Front L','Front R'],subs:1,heights:0,description:'Stereo frontale + subwoofer'},
+ '4.1':{label:'4.1',bed:['Front L','Front R','Rear L','Rear R'],subs:1,heights:0,description:'4 speaker: frontali e posteriori + sub'},
+ '6.2':{label:'6.2',bed:['Front L','Front R','Center','Side L','Side R','Rear Center'],subs:2,heights:0,description:'6 canali principali + 2 subwoofer'},
+ '8.1':{label:'8.1',bed:['Front L','Front R','Center','Side L','Side R','Rear L','Rear R','Rear Center'],subs:1,heights:0,description:'8 canali surround + sub'},
+ '10.1':{label:'10.1',bed:['Front L','Front R','Center','Front Wide L','Front Wide R','Side L','Side R','Rear L','Rear R','Rear Center'],subs:1,heights:0,description:'10 canali principali + sub'},
+ '10.2.4':{label:'10.2.4',bed:['Front L','Front R','Center','Front Wide L','Front Wide R','Side L','Side R','Rear L','Rear R','Rear Center'],subs:2,heights:4,immersion:0,description:'10 speaker principali + 2 subwoofer + 4 speaker alte (front/rear L/R)'},
+ '10.2.4.1':{label:'I.S.S.A. Soundbar 10.2.4.1',bed:['Front L','Front R','Center','Front Wide L','Front Wide R','Side L','Side R','Rear L','Rear R','Rear Center'],subs:2,heights:4,immersion:1,description:'Sistema I.S.S.A. proprietario: 10 speaker principali + 2 subwoofer + 4 speaker Height + 1 canale Immersion dedicato (tactile/ambient effects)'}
+};
+function Waveform({src,position,duration,onSeek}){
  const canvasRef=useRef(null), peaksRef=useRef(null), [status,setStatus]=useState('Analisi waveform…');
  useEffect(()=>{let cancelled=false;peaksRef.current=null;setStatus('Analisi waveform…');
   (async()=>{try{const response=await fetch(src);const blob=await response.blob();const bytes=await blob.arrayBuffer();const AC=window.AudioContext||window.webkitAudioContext;if(!AC)throw new Error('AudioContext non disponibile');const ac=new AC();let decoded;try{decoded=await ac.decodeAudioData(bytes);}finally{await ac.close();}if(cancelled)return;
@@ -15,7 +24,8 @@ const SURROUND_PRESETS={\n '2.1':{label:'2.1',bed:['Front L','Front R'],subs:1,h
  useEffect(()=>{draw();},[position,duration,status]);
  return <div style={{height:92,position:'relative',background:'#020617',borderRadius:8,overflow:'hidden',border:'1px solid #334155'}}><canvas ref={canvasRef} onClick={e=>{const r=e.currentTarget.getBoundingClientRect();onSeek(Math.max(0,Math.min(duration,(e.clientX-r.left)/r.width*duration)));}} style={{width:'100%',height:'100%',display:'block',cursor:'pointer'}} aria-label='Waveform audio: clicca per spostare la timeline'/>{status&&<div style={{position:'absolute',inset:0,display:'grid',placeItems:'center',color:'#94a3b8',fontSize:11,pointerEvents:'none'}}>{status}</div>}</div>;
 }
-\nexport default function RiverMixerConsole(){
+
+export default function RiverMixerConsole(){
  const [tracks,setTracks]=useState([]), [surround,setSurround]=useState('10.2.4'), [master,setMaster]=useState(85), [playing,setPlaying]=useState(false), [position,setPosition]=useState(0), [duration,setDuration]=useState(0), [zoom,setZoom]=useState(1), [markers,setMarkers]=useState([]);
  const refs=useRef({}), graphs=useRef({}), ctx=useRef(null), recorders=useRef({}), masterNodes=useRef(null);
  const solo=tracks.some(t=>t.solo);
