@@ -1,0 +1,1 @@
+{"$schema":"https://json-schema.org/draft/2020-12/schema","title":"River ISSA spatial audio settings","type":"object","properties":{"layout":{"enum":["stereo-2.0","quad-4.0","surround-5.1","surround-7.1","binaural"]},"pan":{"type":"number","minimum":-1,"maximum":1},"gain":{"type":"number","minimum":0,"maximum":2},"width":{"type":"number","minimum":0,"maximum":2}}}
