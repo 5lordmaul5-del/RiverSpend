@@ -91,7 +91,10 @@ class SupervisedHTTPIntegrationTests(unittest.TestCase):
             with urlopen(req, timeout=3) as response:
                 return response.status, json.loads(response.read().decode("utf-8"))
         except HTTPError as err:
-            return err.code, json.loads(err.read().decode("utf-8"))
+            try:
+                return err.code, json.loads(err.read().decode("utf-8"))
+            finally:
+                err.close()
 
     def test_http_intake_worker_subprocess_result_and_owner_scope(self):
         task_body = {"capability": "echo", "summary": "bounded echo", "payload": {"text": "hello"}, "request_key": "supervised-1"}
