@@ -1,0 +1,42 @@
+{
+  "title": "RiverCine external I/O capabilities",
+  "type": "object",
+  "properties": {
+    "audioCapture": {
+      "type": "boolean"
+    },
+    "audioRecording": {
+      "type": "boolean"
+    },
+    "midiInput": {
+      "type": "boolean"
+    },
+    "pitchDetection": {
+      "type": "boolean"
+    },
+    "liveMonitoring": {
+      "type": "boolean"
+    },
+    "platforms": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "audioCapture",
+    "audioRecording",
+    "midiInput",
+    "pitchDetection",
+    "liveMonitoring",
+    "platforms",
+    "limitations"
+  ]
+}
