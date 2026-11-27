@@ -67,7 +67,7 @@ class HS256JWTVerifier:
                 object_pairs_hook=unique_pairs,
                 parse_constant=reject_constant,
             )
-        except (UnicodeDecodeError, json.JSONDecodeError):
+        except (UnicodeDecodeError, json.JSONDecodeError, RecursionError):
             raise JWTVerificationError("invalid JSON segment") from None
         if type(value) is not dict:
             raise JWTVerificationError("JWT segment must be an object")
