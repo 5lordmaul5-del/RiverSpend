@@ -19,7 +19,9 @@ const riverAuth = createRiverAuth({
 const windows = new Map();
 const RATE_WINDOW_MS = 60_000;
 const RATE_LIMIT = 60;
-const MAX_BODY_BYTES = 4096;\nconst MAX_DB_OPERATIONS = 8;\nlet activeDbOperations = 0;
+const MAX_BODY_BYTES = 4096;
+const MAX_DB_OPERATIONS = 8;
+let activeDbOperations = 0;
 
 function send(res, status, payload) {
   res.writeHead(status, {
@@ -76,6 +78,12 @@ async function authenticatedUser(req) {
 }
 
 function runProfileSql(sql, variables) {
+  if (activeDbOperations >= MAX_DB_OPERATIONS) {
+    const error = new Error('database_busy');
+    error.status = 503;
+    return Promise.reject(error);
+  }
+  activeDbOperations += 1;
   return new Promise((resolve, reject) => {
     const args = [
       '-X', '-qAt', '-v', 'ON_ERROR_STOP=1',
@@ -99,10 +107,12 @@ function runProfileSql(sql, variables) {
     const timeout = setTimeout(() => child.kill('SIGKILL'), 8000);
     child.on('error', (error) => {
       clearTimeout(timeout);
+      activeDbOperations = Math.max(0, activeDbOperations - 1);
       reject(error);
     });
     child.on('close', (code) => {
       clearTimeout(timeout);
+      activeDbOperations = Math.max(0, activeDbOperations - 1);
       if (code !== 0) {
         const error = new Error('RiverCloud database operation failed');
         error.status = 503;
