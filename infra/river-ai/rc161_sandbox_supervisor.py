@@ -4,6 +4,7 @@ from __future__ import annotations
 import json
 import math
 import os
+import signal
 import subprocess
 import sys
 import tempfile
@@ -42,29 +43,52 @@ class SandboxSupervisor:
 
         child = Path(__file__).with_name("rc161_restricted_child.py")
         # The child receives only a minimal environment and a fresh working directory.
+        # Redirect to files instead of pipes so communicate() cannot buffer unlimited output.
         env = {"PATH": os.defpath, "PYTHONIOENCODING": "utf-8"}
         with tempfile.TemporaryDirectory(prefix="rsworker-") as cwd:
+            stdout_path = Path(cwd) / "stdout.bin"
+            stderr_path = Path(cwd) / "stderr.bin"
             try:
-                cp = subprocess.run(
-                    [sys.executable, "-I", str(child)],
-                    input=encoded,
-                    capture_output=True,
-                    cwd=cwd,
-                    env=env,
-                    timeout=self.timeout,
-                    check=False,
-                    close_fds=True,
-                )
-            except subprocess.TimeoutExpired as exc:
-                raise SupervisorError("timeout") from exc
+                with stdout_path.open("wb") as stdout_file, stderr_path.open("wb") as stderr_file:
+                    proc = subprocess.Popen(
+                        [sys.executable, "-I", str(child)],
+                        stdin=subprocess.PIPE,
+                        stdout=stdout_file,
+                        stderr=stderr_file,
+                        cwd=cwd,
+                        env=env,
+                        start_new_session=True,
+                        check=False,
+                        close_fds=True,
+                    )
+                    try:
+                        proc.communicate(encoded, timeout=self.timeout)
+                    except subprocess.TimeoutExpired:
+                        # Kill the complete process group, not just the direct child.
+                        try:
+                            os.killpg(proc.pid, signal.SIGKILL)
+                        except ProcessLookupError:
+                            pass
+                        except OSError:
+                            # Fall back to killing the direct child if group termination fails.
+                            try:
+                                proc.kill()
+                            except OSError:
+                                pass
+                        proc.communicate()
+                        raise SupervisorError("timeout") from None
             except OSError:
                 raise SupervisorError("child unavailable") from None
-            if len(cp.stdout) > MAX_OUTPUT_BYTES or len(cp.stderr) > MAX_OUTPUT_BYTES:
+
+            # Child RLIMIT_FSIZE also constrains the files; this parent-side check
+            # rejects any unexpected oversized file before reading it into memory.
+            if stdout_path.stat().st_size > MAX_OUTPUT_BYTES or stderr_path.stat().st_size > MAX_OUTPUT_BYTES:
                 raise SupervisorError("child output too large")
-            if cp.returncode != 0:
+            stdout = stdout_path.read_bytes()
+            if proc.returncode != 0:
                 raise SupervisorError("child failed")
             try:
-                out = json.loads(cp.stdout.decode("utf-8"))
+                out = json.loads(stdout.decode("utf-8"))
             except (UnicodeDecodeError, ValueError):
                 raise SupervisorError("invalid child response") from None
             if type(out) is not dict or set(out) != {"ok", "result"} or out.get("ok") is not True:
