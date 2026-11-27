@@ -61,14 +61,20 @@ docker run --detach \
 
 READY=0
 for _ in $(seq 1 60); do
-  if docker exec "$CONTAINER_NAME" pg_isready -U postgres -d rivercloud_restore >/dev/null 2>&1; then
+  # pg_isready can report that the server accepts connections before the target
+  # database is available. Probe with an actual SQL connection instead.
+  if docker exec "$CONTAINER_NAME" psql -U postgres -d rivercloud_restore \
+      -v ON_ERROR_STOP=1 -Atc "SELECT 1" >/dev/null 2>&1; then
     READY=1
     break
   fi
   sleep 1
 done
-[[ "$READY" -eq 1 ]] || { echo "Disposable PostgreSQL did not become ready." >&2; exit 1; }
-
+[[ "$READY" -eq 1 ]] || {
+  echo "Disposable PostgreSQL database did not become queryable." >&2
+  docker logs --tail 50 "$CONTAINER_NAME" >&2 || true
+  exit 1
+}
 # The restored RLS policies reference this role. Create a restricted placeholder
 # role in the disposable database before pg_restore; it is not used for login.
 docker exec "$CONTAINER_NAME" psql -U postgres -d rivercloud_restore -v ON_ERROR_STOP=1 \
