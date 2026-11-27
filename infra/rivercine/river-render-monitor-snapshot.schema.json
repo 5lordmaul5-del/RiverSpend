@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RiverRender monitor snapshot",
+  "type": "object",
+  "required": [
+    "schema",
+    "jobs"
+  ],
+  "properties": {
+    "schema": {
+      "const": "river-render-monitor-v1"
+    },
+    "jobs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "status"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "Queued",
+              "Simulated",
+              "Completed (manual)",
+              "Failed (manual)"
+            ]
+          },
+          "recordedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    }
+  }
+}
