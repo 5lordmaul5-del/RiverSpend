@@ -3,8 +3,9 @@ import sqlite3
 import tempfile
 import time
 import unittest
+from concurrent.futures import ThreadPoolExecutor
 
-from rc181_payload_ledger import PayloadPersistentTaskLedger
+from rc181_payload_ledger import PayloadPersistentTaskLedger, PayloadLedgerError
 from rc183_integrated_worker import WorkerCore
 
 
@@ -209,5 +210,45 @@ class WorkerCoreIntegrationTests(unittest.TestCase):
         with sqlite3.connect(legacy_path) as db:
             columns={row[1] for row in db.execute("PRAGMA table_info(task_results)")}
         self.assertIn("owner",columns)
+
+    def test_request_key_replay_through_completed_worker(self):
+        first=self.ledger.enqueue("echo","summary","user-1",{"text":"same","n":1},request_key="req-1")
+        repeat=self.ledger.enqueue("echo","summary","user-1",{"n":1,"text":"same"},request_key="req-1")
+        self.assertEqual(first,repeat)
+        out=self.core.run_once("worker-token")
+        self.assertEqual(out["status"],"completed")
+        self.assertEqual(self.ledger.enqueue("echo","summary","user-1",{"text":"same","n":1},request_key="req-1"),first)
+        self.assertEqual(self.ledger.status()["completed"],1)
+        self.assertEqual(self.core.get_result(first,"user-1")["result"]["echo"],"same")
+
+    def test_request_key_changed_content_rejected_and_owner_scoped(self):
+        first=self.ledger.enqueue("echo","summary","user-1",{"x":1},request_key="same")
+        with self.assertRaises(PayloadLedgerError):
+            self.ledger.enqueue("echo","summary","user-1",{"x":2},request_key="same")
+        with self.assertRaises(PayloadLedgerError):
+            self.ledger.enqueue("other","summary","user-1",{"x":1},request_key="same")
+        second=self.ledger.enqueue("echo","summary","user-2",{"x":1},request_key="same")
+        self.assertNotEqual(first,second)
+
+    def test_request_key_replay_bypasses_queue_capacity(self):
+        path=os.path.join(self.tmp.name,"limited.sqlite")
+        limited=PayloadPersistentTaskLedger(path,queue_limit=1,lease_seconds=10)
+        first=limited.enqueue("echo","summary","user-1",{"x":1},request_key="key")
+        repeated=limited.enqueue("echo","summary","user-1",{"x":1},request_key="key")
+        self.assertEqual(first,repeated)
+        self.assertEqual(limited.status()["queued"],1)
+
+    def test_concurrent_request_key_replays_create_one_task(self):
+        def submit():
+            return self.ledger.enqueue("echo","summary","user-1",{"x":1},request_key="race")
+        with ThreadPoolExecutor(max_workers=6) as pool:
+            ids=list(pool.map(lambda _:submit(),range(6)))
+        self.assertEqual(len(set(ids)),1)
+        self.assertEqual(self.ledger.status()["queued"],1)
+
+    def test_request_key_validation(self):
+        for key in ("", " ", "x"*129, 1):
+            with self.subTest(key=key), self.assertRaises(PayloadLedgerError):
+                self.ledger.enqueue("echo","summary","user-1",{},request_key=key)
 
 if __name__=="__main__": unittest.main()
