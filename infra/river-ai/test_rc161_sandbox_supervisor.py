@@ -1,4 +1,8 @@
 import unittest
+import resource
+from unittest.mock import call, patch
+
+from rc161_restricted_child import apply_resource_limits, RESOURCE_LIMITS
 from rc161_sandbox_supervisor import SandboxSupervisor, SupervisorError
 
 
@@ -35,6 +39,16 @@ class SupervisorTests(unittest.TestCase):
             self.supervisor.run("echo", {"value": float("nan")})
         with self.assertRaises(SupervisorError):
             self.supervisor.run("echo", {"value": object()})
+
+    def test_child_resource_limits_are_applied(self):
+        expected = [call(name, bounds) for name, bounds in RESOURCE_LIMITS]
+        with patch("resource.setrlimit") as setrlimit:
+            apply_resource_limits()
+        self.assertEqual(setrlimit.call_args_list, expected)
+        self.assertEqual(
+            {name for name, _ in RESOURCE_LIMITS},
+            {resource.RLIMIT_CPU, resource.RLIMIT_AS, resource.RLIMIT_FSIZE, resource.RLIMIT_NOFILE, resource.RLIMIT_CORE},
+        )
 
 
 if __name__ == "__main__":
