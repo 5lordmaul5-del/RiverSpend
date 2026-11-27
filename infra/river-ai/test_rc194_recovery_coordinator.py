@@ -11,7 +11,7 @@ class Tests(unittest.TestCase):
   r=RecoveryCoordinator();i=r.enqueue("k");self.assertTrue(r.claim(i));self.assertFalse(r.claim(i))
  def test_success(self):
   r=RecoveryCoordinator();i=r.enqueue("k");r.claim(i);self.assertTrue(r.succeed(i));self.assertEqual(r.get(i)[3],"completed")
- def test_invalid(self):
+ def test_retry_delay_capped_and_random_validated(self):\n  r=RecoveryCoordinator(clock=lambda:10,random_fn=lambda:0.5);i=r.enqueue("k",max_attempts=5);r.claim(i)\n  r.fail(i,"x",base_delay=1000,max_delay=3,jitter=0);self.assertEqual(r.get(i)[5],13)\n  r2=RecoveryCoordinator(random_fn=lambda:2);j=r2.enqueue("k");r2.claim(j)\n  with self.assertRaises(ValueError):r2.fail(j,"x")\n def test_invalid(self):
   r=RecoveryCoordinator()
   with self.assertRaises(ValueError):r.enqueue("",max_attempts=0)
 if __name__=="__main__":unittest.main()
