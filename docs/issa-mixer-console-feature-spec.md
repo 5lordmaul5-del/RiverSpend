@@ -130,3 +130,15 @@ This section is a design backlog informed by publicly described contemporary wor
 - Project saves should use atomic/recoverable writes, autosave snapshots, quota warnings, and exportable backups.
 - Privacy defaults: local-first storage; explicit consent before uploading media, motion capture, face/voice data or project assets. Provide delete/export controls and avoid sending capture data to external services by default.
 - This schema is a foundation document, not a runtime feature; implementation and validation tests remain outstanding.
+
+
+## Storyboard, scriptwriting and pre-production workspace
+- A dedicated writing workspace inside the shared creative project: screenplay/script editor, story outline, synopsis, logline, treatments, character sheets, dialogue, scene descriptions, shot lists, storyboard panels, shot notes and revision history.
+- Structured screenplay support: scene headings (INT./EXT., location, time), action, character cue, dialogue, parentheticals, transitions, sequence/scene numbering and page breaks; keyboard-friendly editing and autosave.
+- Storyboard: scene/shot cards with editable descriptions, sketch/image reference slots, framing (wide/medium/close-up etc.), camera angle/movement, lens notes, duration, dialogue/audio cues, lighting, props, continuity notes and status.
+- Storyboard board and timeline views; reorder shots, duplicate, link script paragraphs to storyboard panels, annotate, export printable PDF/image/contact-sheet or structured project data where implemented.
+- Pre-production tools: cast/character/locations/props lists, costume/production notes, shooting schedule, shot checklist, budget fields, scene breakdown, revisions and approvals.
+- AI-assisted brainstorming and draft generation can be optional, with editable output and explicit user acceptance; do not silently replace original writing. Keep user drafts local by default and require consent for external processing.
+- Cross-links: storyboard shots can reference animation, mocap takes, video clips, VFX layers, game cutscenes, audio tracks and timeline markers; preserve IDs and project schema linkage.
+- Implementation stages: (1) editable script/outline/character/scene documents and autosave; (2) storyboard cards and shot list linked to scenes; (3) export/print and schedule/breakdown tools; (4) timeline and media links.
+- Acceptance checks: recover unsaved work after simulated interruption; validate document export; reorder and relink shots without ID loss; verify accessible keyboard controls; test autosave/revision rollback.
