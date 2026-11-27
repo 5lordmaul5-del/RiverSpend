@@ -1,0 +1,5 @@
+import test from 'node:test'; import assert from 'node:assert/strict'; import {createReleaseRecord,canAdvanceRelease} from '../../lib/riverband/creative-release-pipeline.js';
+test('missing fields keep record in draft',()=>{const r=createReleaseRecord({});assert.equal(r.record.stage,'draft');assert.ok(r.issues.length);});
+test('known rights type begins metadata review, never distribution automatically',()=>{const r=createReleaseRecord({title:'Song',creator:'Artist',rightsType:'original'});assert.equal(r.record.stage,'metadata_review');assert.equal(canAdvanceRelease(r.record,'ready_for_distribution'),false);});
+test('release gate requires explicit approvals and provider setup',()=>{const r={stage:'rights_review',rightsReviewStatus:'approved',metadataReviewStatus:'approved',distributionProviderStatus:'configured'};assert.equal(canAdvanceRelease(r,'ready_for_distribution'),true);});
+test('publish gate requires confirmation',()=>{assert.equal(canAdvanceRelease({stage:'ready_for_distribution',distributionStatus:'confirmed'},'published'),true);assert.equal(canAdvanceRelease({stage:'ready_for_distribution'},'published'),false);});
