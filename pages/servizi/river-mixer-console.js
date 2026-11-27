@@ -1,7 +1,21 @@
 import Head from 'next/head';
 import { useEffect, useRef, useState } from 'react';
 
-export default function RiverMixerConsole(){
+function Waveform({src,position,duration,onSeek}) {
+ const canvasRef=useRef(null), peaksRef=useRef(null), [status,setStatus]=useState('Analisi waveform…');
+ useEffect(()=>{let cancelled=false;peaksRef.current=null;setStatus('Analisi waveform…');
+  (async()=>{try{const response=await fetch(src);const blob=await response.blob();const bytes=await blob.arrayBuffer();const AC=window.AudioContext||window.webkitAudioContext;if(!AC)throw new Error('AudioContext non disponibile');const ac=new AC();let decoded;try{decoded=await ac.decodeAudioData(bytes);}finally{await ac.close();}if(cancelled)return;
+   const channels=decoded.numberOfChannels,length=decoded.length,rate=decoded.sampleRate,seconds=length/rate,buckets=Math.min(1600,Math.max(180,Math.ceil(seconds*35))),step=Math.max(1,Math.floor(length/buckets)),data=[];
+   for(let b=0;b<buckets;b++){let lo=1,hi=-1;const start=b*step,end=Math.min(length,start+step);for(let n=start;n<end;n++){let sample=0;for(let c=0;c<channels;c++)sample+=decoded.getChannelData(c)[n];sample/=channels;if(sample<lo)lo=sample;if(sample>hi)hi=sample;}data.push([lo,hi]);}
+   peaksRef.current={data,seconds};setStatus('');draw();
+  }catch(e){if(!cancelled)setStatus('Waveform non disponibile');}})();
+  return()=>{cancelled=true;};
+ },[src]);
+ function draw(){const canvas=canvasRef.current,peaks=peaksRef.current;if(!canvas||!peaks)return;const rect=canvas.getBoundingClientRect(),dpr=Math.min(window.devicePixelRatio||1,2),w=Math.max(1,rect.width),h=Math.max(1,rect.height);canvas.width=w*dpr;canvas.height=h*dpr;const c=canvas.getContext('2d');c.scale(dpr,dpr);c.fillStyle='#020617';c.fillRect(0,0,w,h);const mid=h/2,scale=mid*.92;c.strokeStyle='#34d399';c.lineWidth=Math.max(1,w/peaks.data.length*.65);c.beginPath();peaks.data.forEach((p,i)=>{const x=i*w/peaks.data.length;c.moveTo(x,mid+p[0]*scale);c.lineTo(x,mid+p[1]*scale);});c.stroke();const ratio=duration>0?Math.min(1,position/duration):0;c.strokeStyle='#fbbf24';c.lineWidth=2;c.beginPath();c.moveTo(ratio*w,0);c.lineTo(ratio*w,h);c.stroke();}
+ useEffect(()=>{draw();},[position,duration,status]);
+ return <div style={{height:92,position:'relative',background:'#020617',borderRadius:8,overflow:'hidden',border:'1px solid #334155'}}><canvas ref={canvasRef} onClick={e=>{const r=e.currentTarget.getBoundingClientRect();onSeek(Math.max(0,Math.min(duration,(e.clientX-r.left)/r.width*duration)));}} style={{width:'100%',height:'100%',display:'block',cursor:'pointer'}} aria-label='Waveform audio: clicca per spostare la timeline'/>{status&&<div style={{position:'absolute',inset:0,display:'grid',placeItems:'center',color:'#94a3b8',fontSize:11,pointerEvents:'none'}}>{status}</div>}</div>;
+}
+\nexport default function RiverMixerConsole(){
  const [tracks,setTracks]=useState([]), [master,setMaster]=useState(85), [playing,setPlaying]=useState(false), [position,setPosition]=useState(0), [duration,setDuration]=useState(0);
  const refs=useRef({}), graphs=useRef({}), ctx=useRef(null), recorders=useRef({});
  const solo=tracks.some(t=>t.solo);
