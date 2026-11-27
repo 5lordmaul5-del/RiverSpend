@@ -10,7 +10,7 @@ import json
 
 from rc181_payload_ledger import (
     MAX_CAPABILITY_CHARS, MAX_OWNER_CHARS, MAX_REQUEST_KEY_CHARS,
-    MAX_SUMMARY_CHARS, PayloadLedgerError, _canonical_payload,
+    MAX_SUMMARY_CHARS, PayloadLedgerError, RequestKeyConflict, _canonical_payload,
 )
 
 
@@ -53,7 +53,6 @@ class AuthenticatedTaskIntake:
                 actor, action, request_key_sha256=self._key_digest(request_key)
             )
         except Exception:
-            # Fail closed if the audit record for a denied/invalid submission cannot be written.
             return False
         return True
 
@@ -97,10 +96,9 @@ class AuthenticatedTaskIntake:
             )
         except OverflowError:
             return {"status": "queue_full"}
-        except PayloadLedgerError as exc:
-            # Request-key conflicts are already durably recorded by the ledger transaction.
-            if "request key reused with different request" in str(exc):
-                return {"status": "conflict", "error": "request_key_conflict"}
+        except RequestKeyConflict:
+            return {"status": "conflict", "error": "request_key_conflict"}
+        except PayloadLedgerError:
             if not self._audit(subject, "request_invalid", request_key):
                 return {"status": "audit_failed"}
             return {"status": "invalid", "error": "request_invalid"}
