@@ -86,6 +86,9 @@ class WorkerCoreIntegrationTests(unittest.TestCase):
         core=WorkerCore(self.ledger,self.path,self.verify,self.policy,executor,max_attempts=3)
         self.assertEqual(core.run_once("worker-token")["status"],"retry")
         self.assertEqual(self.ledger.status()["queued"],1)
+        self.assertEqual(core.run_once("worker-token")["status"],"idle")
+        with sqlite3.connect(self.path) as db:
+            db.execute("UPDATE tasks SET retry_after=? WHERE id=?", (time.time()-1, task))
         self.assertEqual(core.run_once("worker-token")["status"],"completed")
         self.assertEqual(executor.keys,[task,task])
         self.assertEqual(core.get_result(task,"user-1")["result"],{"ok":"retry"})
@@ -99,6 +102,9 @@ class WorkerCoreIntegrationTests(unittest.TestCase):
             def execute(self,kind,payload,idempotency_key): raise RuntimeError()
         core=WorkerCore(self.ledger,self.path,self.verify,self.policy,Broken(),max_attempts=2)
         self.assertEqual(core.run_once("worker-token")["status"],"retry")
+        self.assertEqual(core.run_once("worker-token")["status"],"idle")
+        with sqlite3.connect(self.path) as db:
+            db.execute("UPDATE tasks SET retry_after=? WHERE id=?", (time.time()-1, task))
         self.assertEqual(core.run_once("worker-token")["status"],"exhausted")
         self.assertEqual(self.ledger.status()["cancelled"],1)
         self.assertIn("attempts_exhausted",[e["action"] for e in core.events(task)])
