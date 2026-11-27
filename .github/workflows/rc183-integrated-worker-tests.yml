@@ -5,12 +5,12 @@ on:
     branches:
       - feat/rc183-integrated-worker-core-2026-11-26
       - feat/rc183-lease-recovery-hardening-2026-11-26
-      - feat/rc183-lease-recovery-hardening-2026-11-26
       - feat/rc183-intake-recovery-2026-11-27
   pull_request:
     branches:
       - feat/rc182-strict-payload-validation-2026-11-26
       - feat/rc183-integrated-worker-core-2026-11-26
+      - feat/rc183-lease-recovery-hardening-2026-11-26
 
 permissions:
   contents: read
