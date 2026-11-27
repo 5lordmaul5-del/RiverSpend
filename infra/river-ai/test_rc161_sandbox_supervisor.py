@@ -16,6 +16,16 @@ class SupervisorTests(unittest.TestCase):
     def test_json(self):
         self.assertEqual(self.supervisor.run("json_validate", {"json": "[]"}), {"valid": True})
 
+    def test_json_validate_rejects_duplicate_keys_nested(self):
+        for raw in ('{"x":1,"x":2}', '{"outer":{"x":1,"x":2}'):
+            with self.subTest(raw=raw), self.assertRaises(SupervisorError):
+                self.supervisor.run("json_validate", {"json": raw})
+
+    def test_json_validate_rejects_nonfinite_constants(self):
+        for raw in ("NaN", "Infinity", "-Infinity", '{"value":NaN}'):
+            with self.subTest(raw=raw), self.assertRaises(SupervisorError):
+                self.supervisor.run("json_validate", {"json": raw})
+
     def test_metrics(self):
         self.assertEqual(
             self.supervisor.run("metrics_report", {"total": 3, "success": 2, "failed": 1}),
