@@ -279,19 +279,31 @@ class PayloadPersistentTaskLedger(PersistentTaskLedger):
                 "SELECT id,attempts,lease_owner,leased FROM tasks WHERE state='leased' AND leased < ?",
                 (cutoff,),
             ).fetchall()
-            db.execute(
-                "UPDATE tasks SET state='queued',leased=NULL,lease_owner=NULL WHERE state='leased' AND leased < ?",
-                (cutoff,),
-            )
-            # Record recovery atomically with the requeue so a reclaimed lease
-            # cannot disappear from the durable worker audit trail.
+            # Recover each lease with a persisted cooldown. A worker crash must
+            # not create a hot requeue/lease loop across polling requests.
+            recovery_now = time.time()
             for task_id, attempt, old_worker, old_lease_at in expired:
+                safe_attempt = attempt if type(attempt) is int and attempt >= 1 else 1
+                delay = min(
+                    RETRY_BACKOFF_MAX_SECONDS,
+                    RETRY_BACKOFF_BASE_SECONDS * (2 ** min(safe_attempt - 1, 6)),
+                )
+                retry_after = recovery_now + delay
+                requeued = db.execute(
+                    "UPDATE tasks SET state='queued',leased=NULL,lease_owner=NULL,retry_after=? "
+                    "WHERE id=? AND state='leased' AND leased=?",
+                    (retry_after, task_id, old_lease_at),
+                )
+                if requeued.rowcount != 1:
+                    continue
+                # Audit atomically with the requeue so a reclaimed lease cannot
+                # disappear from the durable worker audit trail.
                 db.execute(
                     "INSERT INTO task_events(task_id,attempt,worker_subject,action,error_code,created) "
                     "VALUES(?,?,?,?,?,?)",
-                    (task_id, attempt if type(attempt) is int and attempt >= 0 else 0,
+                    (task_id, safe_attempt,
                      old_worker if type(old_worker) is str and old_worker else "unknown",
-                     "lease_expired_requeued", "lease_expired", time.time()),
+                     "lease_expired_requeued", "lease_expired", recovery_now),
                 )
             placeholders = ",".join("?" for _ in allowed_capabilities)
             now = time.time()
