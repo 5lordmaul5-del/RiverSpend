@@ -1,0 +1,47 @@
+{
+  "title": "RiverSSAI Motif and Harmony project",
+  "type": "object",
+  "properties": {
+    "brief": {
+      "type": "string"
+    },
+    "mood": {
+      "type": "string"
+    },
+    "key": {
+      "type": "string"
+    },
+    "mode": {
+      "type": "string"
+    },
+    "bpm": {
+      "type": "integer"
+    },
+    "bars": {
+      "type": "integer"
+    },
+    "form": {
+      "type": "array"
+    },
+    "motif": {
+      "type": "array"
+    },
+    "harmony": {
+      "type": "array"
+    },
+    "limitations": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "brief",
+    "mood",
+    "key",
+    "mode",
+    "bpm",
+    "bars",
+    "form",
+    "motif",
+    "harmony"
+  ]
+}
