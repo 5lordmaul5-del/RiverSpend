@@ -232,6 +232,7 @@ const server = http.createServer(async (req, res) => {
 
     const contentType = String(req.headers['content-type'] || '').split(';')[0].trim().toLowerCase();
     if (contentType !== 'application/json') {
+      req.resume(); // Drain rejected payloads to avoid retaining unread request data.
       return send(res, 415, { error: 'content_type_must_be_application_json' });
     }
 
