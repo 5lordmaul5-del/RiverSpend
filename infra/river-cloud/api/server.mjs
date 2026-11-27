@@ -90,7 +90,12 @@ function runProfileSql(sql, variables) {
 
     try {
       child = spawn('psql', args, {
-        env: { ...process.env, PGPASSWORD: DATABASE_PASSWORD, PGOPTIONS: '-c statement_timeout=5000' },
+        env: {
+        // Give psql only the variables it needs; do not inherit API/auth/test secrets.
+        PATH: process.env.PATH || '/usr/bin:/bin',
+        PGPASSWORD: DATABASE_PASSWORD,
+        PGOPTIONS: '-c statement_timeout=5000',
+      },
         stdio: ['pipe', 'pipe', 'pipe'],
       });
     } catch (error) {
