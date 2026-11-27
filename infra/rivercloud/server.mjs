@@ -3,6 +3,7 @@ import { timingSafeEqual } from "node:crypto";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { queuePlan, listQueue } from "./queue.mjs";
+import { rejectDuplicateObjectKeys } from "./json-duplicate-keys.mjs";
 
 const MAX_BODY = 8192;
 const POLICY_ERRORS = new Set(["invalid_request", "project_not_allowlisted", "target_not_allowed", "immutable_commit_sha_required", "branch_not_allowlisted"]);
@@ -24,7 +25,11 @@ async function readBody(req) {
     if (size > MAX_BODY) throw Object.assign(new Error("body_too_large"), { status: 413 });
     chunks.push(chunk);
   }
-  try { return JSON.parse(Buffer.concat(chunks).toString("utf8")); }
+  try {
+    const raw = Buffer.concat(chunks).toString("utf8");
+    rejectDuplicateObjectKeys(raw);
+    return JSON.parse(raw);
+  }
   catch { throw Object.assign(new Error("invalid_json"), { status: 400 }); }
 }
 
