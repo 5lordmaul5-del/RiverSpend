@@ -283,4 +283,22 @@ class WorkerCoreIntegrationTests(unittest.TestCase):
         self.assertEqual(self.core._persist_failure(task, "worker-a", second["attempts"], second["leased_at"], "payload-digest"), "retry")
         self.assertEqual(self.ledger.status()["queued"], 1)
 
+    def test_stale_malformed_recovery_is_fenced_and_audited(self):
+        task = self.ledger.enqueue("echo", "summary", "user-1", {"text": "malformed-fence"})
+        first = self.ledger.lease_next("worker-a", ("echo",))
+        with sqlite3.connect(self.path) as db:
+            db.execute("UPDATE tasks SET leased=? WHERE id=?", (time.time() - self.ledger.lease_seconds - 1, task))
+        second = self.ledger.lease_next("worker-a", ("echo",))
+        self.assertNotEqual(first["leased_at"], second["leased_at"])
+        self.assertEqual(
+            self.core._persist_failure(task, "worker-a", None, first["leased_at"], None, error_code="lease_contract_invalid"),
+            "lease_lost",
+        )
+        with sqlite3.connect(self.path) as db:
+            state, attempts = db.execute("SELECT state,attempts FROM tasks WHERE id=?", (task,)).fetchone()
+        self.assertEqual((state, attempts), ("leased", 2))
+        event = self.core.events(task)[-1]
+        self.assertEqual(event["action"], "lease_lost")
+        self.assertEqual(event["attempt"], 0)
+
 if __name__=="__main__": unittest.main()
