@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - feat/rc161-supervised-http-integration-2026-11-27
+      - feat/rc161-strict-json-validation-2026-11-27
   pull_request:
     branches:
       - feat/river-ssai-local-http-core-2026-11-27
+      - feat/rc161-supervised-http-integration-2026-11-27
 
 permissions:
   contents: read
