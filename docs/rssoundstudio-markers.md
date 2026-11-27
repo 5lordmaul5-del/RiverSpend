@@ -1,0 +1,1 @@
+# RiverSoundStudio — timeline markers\n\nAdds timeline marker buttons at the current shared playhead position, with jump-to-marker and marker removal. Marker labels and times are simple local component state and are not yet persisted in a project file. Browser runtime tests pending.\n
