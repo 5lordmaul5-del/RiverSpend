@@ -25,3 +25,25 @@ test('rate limiter bounds key storage', () => {
   limiter('a'); limiter('b'); limiter('c'); limiter('d');
   assert.equal(limiter('d'), true);
 });
+
+test('rate limiter boundary is inclusive at window expiration', () => {
+  let now = 50;
+  const limiter = createRateLimiter({ limit: 1, windowMs: 20, clock: () => now });
+  assert.equal(limiter('boundary'), false);
+  assert.equal(limiter('boundary'), true);
+  now = 70;
+  assert.equal(limiter('boundary'), false);
+});
+
+test('rate limiter independently tracks keys', () => {
+  const limiter = createRateLimiter({ limit: 1, windowMs: 100 });
+  assert.equal(limiter('one'), false);
+  assert.equal(limiter('one'), true);
+  assert.equal(limiter('two'), false);
+  assert.equal(limiter('two'), true);
+});
+
+test('rate limiter supports zero limit as immediate rejection after first request', () => {
+  const limiter = createRateLimiter({ limit: 0, windowMs: 100 });
+  assert.equal(limiter('zero'), true);
+});
