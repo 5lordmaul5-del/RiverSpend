@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>RiverCine RC267 · FX Suite</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#07131b;color:#eaf5f7;font:16px system-ui;padding:20px}main{max-width:1000px;margin:auto}h1{color:#7ee7e2}section{background:#10232e;border:1px solid #24404b;border-radius:14px;padding:16px;margin:14px 0}button,select{background:#163a48;color:#fff;border:1px solid #438091;border-radius:9px;padding:10px;margin:4px}label{display:block;margin:10px 0}input[type=range]{width:min(100%,400px)}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}.meter{height:14px;background:#22343b;border-radius:10px;overflow:hidden}.meter i{display:block;height:100%;width:0;background:#75e5b3}.small{color:#a7c3cb;font-size:.9rem}fieldset{border:1px solid #31515c;border-radius:12px;margin:10px 0} 
+</style></head><body><main><h1>RiverCine · RC267 FX Suite</h1><p>Prototipo browser: equalizzatore, gate, drive, delay, reverb e modulazione. Scegli effetti e ordine della catena.</p>
+<section><button id="mic">🎙️ Attiva microfono</button><button id="tone">▶ Test tone</button><button id="stop">■ Stop</button><p class="small">Microfono solo dopo autorizzazione. Usa volume basso: test tone ed effetti possono risultare forti.</p><div class="meter"><i id="meter"></i></div></section>
+<section><h2>Catena FX (ordine)</h2><div class="grid">
+<label><input type="checkbox" id="eq" checked> EQ 3 bande</label>
+<label><input type="checkbox" id="gate"> Noise Gate</label>
+<label><input type="checkbox" id="drive"> Distortion / Overdrive</label>
+<label><input type="checkbox" id="delay"> Delay</label>
+<label><input type="checkbox" id="reverb"> Reverb</label>
+<label><input type="checkbox" id="chorus"> Chorus (modulazione simulata)</label>
+</div><label>Ordine preset <select id="preset"><option value="custom">Custom / selezione</option><option value="clean">Clean</option><option value="rock">Rock Drive</option><option value="ambient">Ambient</option><option value="vocal">Vocal</option></select></label></section>
+<section><h2>Controlli</h2><div class="grid">
+<fieldset><legend>EQ</legend><label>Low: <span id="lowv">0</span> dB<input id="low" type="range" min="-18" max="18" value="0"></label><label>Mid: <span id="midv">0</span> dB<input id="mid" type="range" min="-18" max="18" value="0"></label><label>High: <span id="highv">0</span> dB<input id="high" type="range" min="-18" max="18" value="0"></label></fieldset>
+<fieldset><legend>Gate / Drive</legend><label>Gate threshold <span id="gatev">-55</span> dB<input id="threshold" type="range" min="-80" max="-20" value="-55"></label><label>Drive <span id="drivev">0</span>%<input id="amount" type="range" min="0" max="100" value="0"></label></fieldset>
+<fieldset><legend>Time / Modulation</legend><label>Delay <span id="delayv">220</span> ms<input id="delaytime" type="range" min="40" max="900" value="220"></label><label>Feedback <span id="fbv">20</span>%<input id="feedback" type="range" min="0" max="80" value="20"></label><label>Reverb mix <span id="revv">20</span>%<input id="revMix" type="range" min="0" max="100" value="20"></label><label>Chorus depth <span id="chorv">15</span>%<input id="chorusMix" type="range" min="0" max="100" value="15"></label></fieldset>
+</div></section><section><h2>Stato</h2><p id="status">Motore fermo. Avvia microfono o test tone.</p><p class="small">RC267 è un prototipo Web Audio. Gate semplice; chorus simulato; non è un DAW e non controlla hardware esterno.</p></section></main>
+<script>
+(()=>{let ctx,src,osc,analyser,master,gateGain,gateAnalyser,raf,feedbackNode,delayNode,revNode,revWet,chorusNode;const $=id=>document.getElementById(id),status=s=>$('status').textContent=s;
+function impulse(c){const n=c.sampleRate*2,b=c.createBuffer(2,n,c.sampleRate);for(let ch=0;ch<2;ch++){let d=b.getChannelData(ch);for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/n,2.5)}return b}
+function init(){if(ctx)return;ctx=new AudioContext();master=ctx.createGain();master.gain.value=.65;analyser=ctx.createAnalyser();analyser.fftSize=512;gateAnalyser=ctx.createAnalyser();gateAnalyser.fftSize=256;gateGain=ctx.createGain();gateGain.gain.value=1;master.connect(analyser);analyser.connect(ctx.destination);revNode=ctx.createConvolver();revNode.buffer=impulse(ctx);revWet=ctx.createGain();delayNode=ctx.createDelay(1);feedbackNode=ctx.createGain();chorusNode=ctx.createGain();rebuild();meterLoop()}
+function rebuild(){if(!ctx)return;try{if(src)src.disconnect()}catch{};let chain=src||ctx.createGain();let active=[];if($('eq').checked){let l=ctx.createBiquadFilter();l.type='lowshelf';l.frequency.value=120;l.gain.value=+$('low').value;let m=ctx.createBiquadFilter();m.type='peaking';m.frequency.value=1000;m.Q.value=1;m.gain.value=+$('mid').value;let h=ctx.createBiquadFilter();h.type='highshelf';h.frequency.value=5000;h.gain.value=+$('high').value;active.push(l,m,h)}
+if($('gate').checked)active.push(gateGain);
+if($('drive').checked){let w=ctx.createWaveShaper();w.curve=curve(+$('amount').value);w.oversample='2x';active.push(w)}
+if($('delay').checked){delayNode.delayTime.value=+$('delaytime').value/1000;feedbackNode.gain.value=+$('feedback').value/100;active.push(delayNode)}
+if($('reverb').checked){revWet.gain.value=+$('revMix').value/100;active.push(revNode,revWet)}
+if($('chorus').checked){chorusNode.gain.value=1+Math.min(.3, +$('chorusMix').value/300);active.push(chorusNode)}
+let prev=chain;for(const n of active){prev.connect(n);prev=n}prev.connect(master);
+if($('delay').checked){delayNode.connect(feedbackNode);feedbackNode.connect(delayNode)}
+if($('reverb').checked){revNode.connect(revWet);revWet.connect(master)}
+}
+function curve(v){let c=new Float32Array(44100);let k=v*8;for(let i=0;i<c.length;i++){let x=i*2/c.length-1;c[i]=k?((1+k)*x)/(1+k*Math.abs(x)):x}return c}
+function meterLoop(){if(!ctx)return;let a=new Uint8Array(analyser.frequencyBinCount);analyser.getByteTimeDomainData(a);let rms=0;for(const x of a){let z=(x-128)/128;rms+=z*z}rms=Math.sqrt(rms/a.length);$('meter').style.width=Math.min(100,rms*300)+'%';if($('gate').checked){gateAnalyser.getByteTimeDomainData(a);let g=0;for(const x of a){let z=(x-128)/128;g+=z*z}g=Math.sqrt(g/a.length);let db=20*Math.log10(g||1e-7);gateGain.gain.setTargetAtTime(db>+$('threshold').value?1:0,ctx.currentTime,.025)}raf=requestAnimationFrame(meterLoop)}
+async function mic(){init();await ctx.resume();try{let stream=await navigator.mediaDevices.getUserMedia({audio:true});src=ctx.createMediaStreamSource(stream);src.connect(gateAnalyser);rebuild();status('Microfono attivo · catena FX pronta')}catch(e){status('Accesso microfono non riuscito: '+e.message)}}
+function tone(){init();ctx.resume();stopSource();osc=ctx.createOscillator();osc.type='sawtooth';osc.frequency.value=220;src=osc;src.connect(gateAnalyser);rebuild();osc.start();status('Test tone attivo · abbassa volume se necessario')}
+function stopSource(){if(osc){try{osc.stop()}catch{};osc=null}}
+$('mic').onclick=mic;$('tone').onclick=tone;$('stop').onclick=()=>{stopSource();status('Test tone fermato. Se il microfono è attivo, la sua sessione resta aperta.');};
+['eq','gate','drive','delay','reverb','chorus','low','mid','high','amount','delaytime','feedback','revMix','chorusMix','threshold'].forEach(id=>$(id).addEventListener('input',()=>{['low','mid','high','amount','delaytime','feedback','revMix','chorusMix','threshold'].forEach(k=>{let out={low:'lowv',mid:'midv',high:'highv',amount:'drivev',delaytime:'delayv',feedback:'fbv',revMix:'revv',chorusMix:'chorv',threshold:'gatev'}[k];if(out)$(out).textContent=$(k).value});if(ctx)rebuild()}));
+$('preset').onchange=()=>{let p=$('preset').value;if(p==='clean'){['eq','gate'].forEach(k=>$(k).checked=true);['drive','delay','reverb','chorus'].forEach(k=>$(k).checked=false);$('low').value=0;$('mid').value=0;$('high').value=0;$('threshold').value=-60}
+if(p==='rock'){['eq','drive'].forEach(k=>$(k).checked=true);['gate','delay','reverb','chorus'].forEach(k=>$(k).checked=false);$('low').value=3;$('mid').value=1;$('high').value=2;$('amount').value=28}
+if(p==='ambient'){['delay','reverb','chorus','eq'].forEach(k=>$(k).checked=true);$('gate').checked=false;$('drive').checked=false;$('revMix').value=55;$('feedback').value=35}
+if(p==='vocal'){['eq','gate','reverb'].forEach(k=>$(k).checked=true);['drive','delay','chorus'].forEach(k=>$(k).checked=false);$('low').value=-2;$('mid').value=2;$('high').value=3;$('threshold').value=-60;$('revMix').value=18}
+document.querySelectorAll('input').forEach(i=>i.dispatchEvent(new Event('input')));if(ctx)rebuild()};
+})();
+</script></body></html>
