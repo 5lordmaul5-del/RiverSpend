@@ -58,7 +58,8 @@ class PayloadLedgerTests(unittest.TestCase):
             db.execute("UPDATE tasks SET retry_after=? WHERE id=?", (time.time() - 1, task))
         lease = self.ledger.lease_next("w", ("echo",))
         self.assertEqual(lease["id"], task)
-        self.assertIsNone(lease.get("retry_after"))
+        with sqlite3.connect(self.path) as db:
+            self.assertIsNone(db.execute("SELECT retry_after FROM tasks WHERE id=?", (task,)).fetchone()[0])
 
     def test_invalid_owner_and_capability(self):
         with self.assertRaises(PayloadLedgerError):
