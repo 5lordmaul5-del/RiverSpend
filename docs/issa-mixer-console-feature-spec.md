@@ -82,3 +82,15 @@ This section is a design backlog informed by publicly described contemporary wor
 3. Mixer monitoring, metering, calibration/bass-management design and export/format conversions.
 4. Video switcher/timeline/audio-follow-video integration and ISO recording workflows.
 5. Plugin host exploration, assistive analysis and AI Automix proposals, always previewable and reversible.
+
+
+## Animation, game creation, and cinematic Hollywood-style VFX
+- Cartoon/animation workspace: storyboard, scene/shot planning, 2D frame-by-frame animation, timeline/layers, onion skin, rigs/bones, character libraries, lip-sync, voice recording, motion capture import, camera moves, backgrounds and animatic export.
+- 3D animation pipeline: modeling/scene import, materials, lights, cameras, rigging, animation curves, particles, render queue and compositing; capabilities should be staged rather than implied to be fully implemented.
+- Game creation workspace: visual scripting/node graph, scene editor, 2D/3D assets, character and object animation, physics/collision, UI/HUD, sound triggers, dialogue, level editor, testing/simulation and build/export pipeline for supported targets.
+- Game audio: adaptive music, spatial sound, footsteps/ambience, trigger zones, dialogue mixing, buses and per-game mix snapshots.
+- Cinematic VFX toolkit inspired by film workflows: compositing layers/nodes, green/blue screen chroma key, masks, rotoscoping, motion tracking, camera tracking, stabilization, lens distortion, particles, explosions/fire/smoke/water/lightning simulations or procedural equivalents, debris, sparks, muzzle-flash-style fictional effects, magic/fantasy effects, holograms, volumetric fog, depth effects, lens flares, motion blur, optical flow, time remapping, morphing, titles and color grading.
+- VFX asset library: reusable presets, materials, particles, templates, transitions and user-authored effects; preview, render settings, GPU/load status, and project-relative assets.
+- Film/game scene compositor: combine live-action, animated elements, 3D objects and audio with tracking and timing; node graph and timeline integration.
+- Safety and technical guardrails: effects simulation and rendering are creative-media features; implement generic fictional visual effects and safe assets, avoid real-world weapon construction guidance; report rendering/platform limitations and use staged, testable modules.
+- Unified media project: video, animation, game cinematics and audio timelines can exchange markers, assets, stems, scene metadata and timecode through documented formats where feasible.
