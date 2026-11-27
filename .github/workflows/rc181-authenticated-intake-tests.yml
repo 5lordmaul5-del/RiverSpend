@@ -1,0 +1,22 @@
+name: RC-181 authenticated intake tests
+
+on:
+  push:
+    branches:
+      - feat/rc181-authenticated-intake-2026-11-27
+  pull_request:
+    branches:
+      - feat/rc183-intake-recovery-2026-11-27
+
+permissions:
+  contents: read
+
+jobs:
+  intake:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Run intake and worker regression tests
+        run: |
+          python3 -m unittest discover -s infra/river-ai -p 'test_rc181_authenticated_intake.py'
+          python3 -m unittest discover -s infra/river-ai -p 'test_rc183_integrated_worker.py'
