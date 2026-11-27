@@ -124,10 +124,14 @@ class HS256JWTVerifier:
 
     def verify_user(self, token):
         claims = self._verify(token)
+        if claims.get("token_use") != "user":
+            raise JWTVerificationError("user token purpose invalid")
         return {"subject": claims["sub"]}
 
     def verify_worker(self, token):
         claims = self._verify(token)
+        if claims.get("token_use") != "worker":
+            raise JWTVerificationError("worker token purpose invalid")
         capabilities = claims.get("capabilities")
         if type(capabilities) is not list or len(capabilities) > 128:
             raise JWTVerificationError("worker capabilities invalid")
