@@ -1,6 +1,7 @@
 import unittest
 import resource
 from unittest.mock import call, patch
+import subprocess
 
 from rc161_restricted_child import apply_resource_limits, RESOURCE_LIMITS
 from rc161_sandbox_supervisor import SandboxSupervisor, SupervisorError
@@ -49,6 +50,21 @@ class SupervisorTests(unittest.TestCase):
             self.supervisor.run("echo", {"value": float("nan")})
         with self.assertRaises(SupervisorError):
             self.supervisor.run("echo", {"value": object()})
+
+    def test_timeout_kills_entire_child_process_group(self):
+        fake = __import__("unittest").mock.Mock()
+        fake.pid = 4242
+        fake.returncode = -9
+        fake.communicate.side_effect = [
+            subprocess.TimeoutExpired(["child"], 0.1),
+            (b"", b""),
+        ]
+        with patch("subprocess.Popen", return_value=fake) as popen, patch("os.killpg") as killpg:
+            with self.assertRaises(SupervisorError):
+                SandboxSupervisor(timeout=0.1).run("echo", {"x": 1})
+        self.assertTrue(popen.call_args.kwargs["start_new_session"])
+        killpg.assert_called_once_with(4242, __import__("signal").SIGKILL)
+        self.assertEqual(fake.communicate.call_count, 2)
 
     def test_child_resource_limits_are_applied(self):
         expected = [call(name, bounds) for name, bounds in RESOURCE_LIMITS]
