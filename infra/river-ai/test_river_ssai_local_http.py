@@ -214,15 +214,15 @@ class HTTPResourceBoundsTests(unittest.TestCase):
         try:
             address = server.server_address
             first = socket.create_connection(address, timeout=2)
-            first.sendall(b"GET /v1/health HTTP/1.1\\r\\nHost: localhost\\r\\n")
+            first.sendall(b"GET /v1/health HTTP/1.1\r\nHost: localhost\r\n")
             second = socket.create_connection(address, timeout=2)
-            second.sendall(b"GET /v1/health HTTP/1.0\\r\\nHost: localhost\\r\\n\\r\\n")
+            second.sendall(b"GET /v1/health HTTP/1.0\r\nHost: localhost\r\n\r\n")
             overloaded = second.recv(1024).decode("latin-1")
             self.assertIn(" 503 ", overloaded.splitlines()[0])
             first.settimeout(2)
             self.assertEqual(first.recv(1), b"")  # partial headers time out and release the slot
             with socket.create_connection(address, timeout=2) as healthy:
-                healthy.sendall(b"GET /v1/health HTTP/1.0\\r\\nHost: localhost\\r\\n\\r\\n")
+                healthy.sendall(b"GET /v1/health HTTP/1.0\r\nHost: localhost\r\n\r\n")
                 response = healthy.recv(1024).decode("latin-1")
             self.assertIn(" 200 ", response.splitlines()[0])
         finally:
