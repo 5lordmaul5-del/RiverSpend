@@ -37,7 +37,7 @@ jobs:
         run: python3 infra/rivercloud/scripts/restore-safe-race-test.py
       - name: Validate Compose configuration without starting services
         run: docker compose -f infra/rivercloud/docker-compose.yml --env-file infra/rivercloud/.env.example config
-      - name: Build the isolated RiverCloud API image (no services started)
+      - name: Build the isolated RiverCloud API image
         run: docker build --file infra/rivercloud/Dockerfile --tag rivercloud-api:ci .
       - name: Confirm API image build result
         run: docker image inspect rivercloud-api:ci --format '{{.Id}}'
@@ -48,6 +48,37 @@ jobs:
             echo "Unexpected package manager present in runtime image"
             exit 1
           fi
+      - name: Run isolated container smoke test (loopback only)
+        run: |
+          set -eu
+          name="rivercloud-api-smoke-${GITHUB_RUN_ID}"
+          docker run -d --name "$name" --network host --read-only \
+            --tmpfs /tmp:rw,noexec,nosuid,size=16m,mode=700,uid=1000,gid=1000 \
+            --tmpfs /data:rw,noexec,nosuid,size=16m,mode=700,uid=1000,gid=1000 \
+            --cap-drop=ALL --security-opt=no-new-privileges --memory=256m --cpus=0.5 \
+            -e RIVERCLOUD_API_HOST=127.0.0.1 \
+            -e RIVERCLOUD_API_PORT=8788 \
+            -e RIVERCLOUD_TRUSTED_PROXY_IP=127.0.0.1 \
+            -e RIVERCLOUD_ACTOR_PSEUDONYM_SECRET=rivercloud-smoke-actor-secret-32-bytes \
+            -e RIVERCLOUD_QUEUE_DIR=/data/state.json \
+            rivercloud-api:ci
+          cleanup() {
+            docker logs "$name" || true
+            docker rm -f "$name" >/dev/null 2>&1 || true
+          }
+          trap cleanup EXIT
+          health=""
+          for attempt in $(seq 1 30); do
+            health=$(curl -fsS --max-time 2 -H "X-Forwarded-User: smoke-operator" -H "X-Forwarded-Groups: RiverCloudOperators" http://127.0.0.1:8788/api/health 2>/dev/null) && break
+            sleep 1
+          done
+          if [ -z "$health" ]; then
+            echo "API loopback health smoke failed"
+            exit 1
+          fi
+          node -e 'const h=JSON.parse(process.argv[1]);if(h.status!=="proxy_identity_api_prototype"||h.executionEnabled!==false)process.exit(1)' "$health"
+          jobs=$(curl -fsS --max-time 3 -H "X-Forwarded-User: smoke-operator" -H "X-Forwarded-Groups: RiverCloudOperators" http://127.0.0.1:8788/api/jobs)
+          node -e 'const j=JSON.parse(process.argv[1]);if(!Array.isArray(j.jobs)||j.jobs.length!==0)process.exit(1)' "$jobs"
       - name: Install pinned Trivy scanner
         uses: aquasecurity/setup-trivy@e07451d2e059ed86c2870430ea286b3a9e0bf241 # pinned installer
         with:
