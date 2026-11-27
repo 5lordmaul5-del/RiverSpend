@@ -1247,6 +1247,16 @@ export default function Home() {
               </div>
             </section>
 
+            <a href="/rs-gratta" aria-label="Apri RS GRATTA, prototipo promozionale" className="rs-feature-card relative flex shrink-0 w-[220px] snap-start flex-col items-center justify-end overflow-hidden rounded-2xl border-2 border-amber-300 bg-gradient-to-br from-teal-950 via-slate-900 to-amber-950 p-3 text-center shadow-lg shadow-amber-950/30">
+              <span aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(251,191,36,.25),transparent_45%),radial-gradient(circle_at_80%_75%,rgba(45,212,191,.2),transparent_45%)]" />
+              <span className="relative z-10 mt-4 text-3xl">🎟️✨</span>
+              <p className="relative z-10 mt-2 text-[10px] font-black uppercase tracking-[.22em] text-amber-200">RiverSpend · Promo</p>
+              <h2 className="relative z-10 mt-1 text-2xl font-black text-white">RS GRATTA!</h2>
+              <p className="relative z-10 mt-2 text-xs font-semibold leading-4 text-teal-100">Acquista · Scopri · Raccogli premi</p>
+              <span className="relative z-10 mt-4 inline-flex rounded-full border border-amber-200 bg-gradient-to-b from-amber-300 to-amber-500 px-4 py-2 text-[10px] font-black text-slate-950">SCOPRI IL PROTOTIPO →</span>
+              <p className="relative z-10 mt-2 text-[9px] text-amber-100">Demo · Non attivo</p>
+            </a>
+
             <section className="rs-feature-card shrink-0 w-[220px] snap-start rounded-2xl border border-violet-300/60 bg-gradient-to-br from-[#160b2c] via-violet-950 to-slate-950 p-2 text-center shadow-lg shadow-violet-950/30">
               <a
                 href="/rs-lottery"
