@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RiverSSAI Studio Coordination Plan",
+  "type": "object",
+  "properties": {
+    "project": {
+      "type": "string"
+    },
+    "format": {
+      "type": "string"
+    },
+    "creativeBrief": {
+      "type": "string"
+    },
+    "modules": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "workflowPlan": {
+      "type": "string"
+    },
+    "integrationMode": {
+      "enum": [
+        "planning-prototype",
+        "connected-runtime"
+      ]
+    }
+  },
+  "required": [
+    "project",
+    "format",
+    "creativeBrief",
+    "modules",
+    "integrationMode"
+  ]
+}
