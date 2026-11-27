@@ -1,0 +1,34 @@
+{
+  "title": "RiverSSAI Tuner Settings",
+  "type": "object",
+  "properties": {
+    "instrumentPreset": {
+      "type": "string",
+      "enum": [
+        "guitar",
+        "bass",
+        "ukulele",
+        "violin",
+        "chromatic"
+      ]
+    },
+    "referenceA4Hz": {
+      "type": "number",
+      "minimum": 400,
+      "maximum": 480
+    },
+    "detectedFrequencyHz": {
+      "type": "number"
+    },
+    "detectedNote": {
+      "type": "string"
+    },
+    "centsDeviation": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "instrumentPreset",
+    "referenceA4Hz"
+  ]
+}
