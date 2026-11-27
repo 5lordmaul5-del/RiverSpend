@@ -75,8 +75,21 @@ jobs:
           RIVERAUTH_ISSUER_URL: https://example.supabase.co
           RIVERAUTH_PUBLISHABLE_KEY: sb_publishable_ci_placeholder
         run: |
+          set -euo pipefail
           docker compose up -d --wait
-          docker compose exec -T rivercloud-db pg_isready -U rivercloud -d rivercloud
+          READY=0
+          for _ in $(seq 1 60); do
+            if docker compose exec -T rivercloud-db psql -U rivercloud -d rivercloud -v ON_ERROR_STOP=1 -Atc "SELECT 1" 2>/dev/null | grep -qx "1"; then
+              READY=1
+              break
+            fi
+            sleep 1
+          done
+          if [[ "$READY" -ne 1 ]]; then
+            echo "RiverCloud database did not become queryable." >&2
+            docker compose logs --tail 50 rivercloud-db >&2 || true
+            exit 1
+          fi
           docker compose exec -T rivercloud-db psql -U rivercloud -d rivercloud -v ON_ERROR_STOP=1 -c "CREATE TABLE IF NOT EXISTS public.restore_probe (id integer PRIMARY KEY, marker text NOT NULL);"
           docker compose exec -T rivercloud-db psql -U rivercloud -d rivercloud -v ON_ERROR_STOP=1 -c "INSERT INTO public.restore_probe VALUES (1, 'rivercloud-ci') ON CONFLICT (id) DO UPDATE SET marker = EXCLUDED.marker;"
 
