@@ -88,9 +88,11 @@ class WorkerCore:
         task_id, kind, owner, payload = lease["id"], lease["capability"], lease["owner"], lease["payload"]
         attempt = lease["attempts"]
         if (type(task_id) is not str or type(kind) is not str or kind not in capabilities
-                or type(owner) is not str or type(payload) is not dict
-                or type(attempt) is not int or attempt < 1):
+                or type(owner) is not str or type(attempt) is not int or attempt < 1):
             return {"status": "rejected", "error": "lease_contract_invalid"}
+        if type(payload) is not dict:
+            state = self._persist_failure(task_id, worker, attempt, None)
+            return {"status": state, "task_id": task_id, "error": "payload_invalid"}
         if attempt > self.max_attempts:
             self._persist_failure(task_id, worker, attempt, None)
             return {"status": "exhausted", "task_id": task_id}
