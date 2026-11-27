@@ -70,3 +70,23 @@ test('RiverAuth treats malformed issuer JSON as service unavailable', async (t) 
     (error) => error.status === 503 && error.message === 'identity_provider_unavailable',
   );
 });
+
+test('RiverAuth rejects malformed authorization schemes without contacting issuer', async (t) => {
+  const originalFetch = globalThis.fetch;
+  t.after(() => { globalThis.fetch = originalFetch; });
+  let calls = 0;
+  globalThis.fetch = async () => { calls += 1; return new Response(JSON.stringify({ id: validId }), { status: 200 }); };
+  const auth = createRiverAuth({ issuerUrl, publishableKey });
+  for (const header of ['Basic abc', 'Bearer token/with/slash', 'Bearer token with spaces', 'bearer test-access-token']) {
+    assert.equal(await auth.verifyBearerToken(header), null);
+  }
+  assert.equal(calls, 0);
+});
+
+test('RiverAuth rejects issuer user IDs that are not UUIDs', async (t) => {
+  const originalFetch = globalThis.fetch;
+  t.after(() => { globalThis.fetch = originalFetch; });
+  globalThis.fetch = async () => new Response(JSON.stringify({ id: 'admin', role: 'admin' }), { status: 200 });
+  const auth = createRiverAuth({ issuerUrl, publishableKey });
+  assert.equal(await auth.verifyBearerToken('Bearer test-access-token'), null);
+});
