@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RiverRender pipeline plan",
+  "type": "object",
+  "required": [
+    "schema",
+    "plans"
+  ],
+  "properties": {
+    "schema": {
+      "const": "river-render-pipeline-plan-v1"
+    },
+    "plans": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "profile",
+          "sequence",
+          "status"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "profile": {
+            "enum": [
+              "Preview",
+              "Review",
+              "Final"
+            ]
+          },
+          "scope": {
+            "type": "string"
+          },
+          "sequence": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "status": {
+            "const": "planning-only"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    }
+  }
+}
