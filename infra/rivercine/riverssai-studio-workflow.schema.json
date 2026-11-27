@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RiverSSAI Studio Orchestrator Workflow",
+  "type": "object",
+  "properties": {
+    "project": {
+      "type": "string"
+    },
+    "goal": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "workflow": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "module": {
+            "type": "string"
+          },
+          "task": {
+            "type": "string"
+          },
+          "dependencies": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "priority": {
+            "enum": [
+              "Normal",
+              "High",
+              "Critical"
+            ]
+          },
+          "status": {
+            "enum": [
+              "Planned",
+              "Review",
+              "Ready",
+              "Blocked"
+            ]
+          },
+          "humanReviewRequired": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "module",
+          "task",
+          "dependencies",
+          "priority",
+          "status",
+          "humanReviewRequired"
+        ]
+      }
+    },
+    "executionEnabled": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "project",
+    "goal",
+    "workflow",
+    "executionEnabled"
+  ]
+}
