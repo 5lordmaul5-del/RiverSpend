@@ -13,3 +13,7 @@ The mixer now shows a selectable configuration and speaker-role list. This is pr
 
 ## State initialization fix
 The mixer initializes its selected surround preset to `10.2.4` and wires the selector to React state, preventing a render-time undefined-variable failure.
+
+
+## I.S.S.A. Soundbar 10.2.4.1
+Selectable proprietary preset: 10 main channels, 2 subwoofers, 4 height channels, and one ISSA Immersion channel reserved for tactile/ambient immersive effects. UI/model representation only; actual hardware routing remains future work.
