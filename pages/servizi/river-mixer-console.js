@@ -27,7 +27,7 @@ function Waveform({src,position,duration,onSeek}){
 }
 
 export default function RiverMixerConsole(){
- const [tracks,setTracks]=useState([]), [surround,setSurround]=useState('10.2.4'), [master,setMaster]=useState(85), [playing,setPlaying]=useState(false), [position,setPosition]=useState(0), [duration,setDuration]=useState(0), [zoom,setZoom]=useState(1), [markers,setMarkers]=useState([]);
+ const [tracks,setTracks]=useState([]), [savedAssets,setSavedAssets]=useState([]), [assetError,setAssetError]=useState(''), [surround,setSurround]=useState('10.2.4'), [master,setMaster]=useState(85), [playing,setPlaying]=useState(false), [position,setPosition]=useState(0), [duration,setDuration]=useState(0), [zoom,setZoom]=useState(1), [markers,setMarkers]=useState([]);
  const refs=useRef({}), graphs=useRef({}), ctx=useRef(null), recorders=useRef({}), masterNodes=useRef(null);
  const solo=tracks.some(t=>t.solo);
  useEffect(()=>{listAssets().then(setSavedAssets).catch(e=>setAssetError(e?.message||'Libreria locale non disponibile'));},[]);
