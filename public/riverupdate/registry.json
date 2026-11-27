@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "service": "RiverUpdate",
+  "updated_at": "2026-11-27",
+  "apps": [
+    {"id":"riverspace-signals","name":"RiverSpaceSignals","stable":{"version":"1.0.0","url":"/riverspace-signals"},"beta":null,"alpha":null,"notes":[]},
+    {"id":"rivermail","name":"RiverMail","stable":{"version":"0.1.0-demo","url":"/rivermail/"},"beta":null,"alpha":null,"notes":["Prototype: local demo only; no real mail transport yet."]}
+  ]
+}
