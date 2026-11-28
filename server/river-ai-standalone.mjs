@@ -261,15 +261,27 @@ const server = http.createServer(async (req, res) => {
       const content = String(body.content || "").slice(0, 4000).trim();
       const category = String(body.category || "note").slice(0, 40);
       if (!title || !content) return send(res, 400, { error: "Titolo e contenuto sono obbligatori." });
-      const result = await pool.query(
-        "INSERT INTO river_ai_memories(title,content,category) VALUES($1,$2,$3) RETURNING id,created_at",
-        [title, content, category]
-      );
-      await pool.query(
-        "INSERT INTO river_ai_audit(action,status,details) VALUES($1,$2,$3)",
-        ["memory.write", "success", { id: result.rows[0].id }]
-      );
-      return send(res, 201, { memory: result.rows[0] });
+      const client = await pool.connect();
+      let memory;
+      try {
+        await client.query("BEGIN");
+        const result = await client.query(
+          "INSERT INTO river_ai_memories(title,content,category) VALUES($1,$2,$3) RETURNING id,created_at",
+          [title, content, category]
+        );
+        memory = result.rows[0];
+        await client.query(
+          "INSERT INTO river_ai_audit(action,status,details) VALUES($1,$2,$3)",
+          ["memory.write", "success", { id: memory.id }]
+        );
+        await client.query("COMMIT");
+      } catch (transactionError) {
+        await client.query("ROLLBACK").catch(() => {});
+        throw transactionError;
+      } finally {
+        client.release();
+      }
+      return send(res, 201, { memory });
     }
 
     const messages = Array.isArray(body.messages) ? body.messages.slice(-MAX_HISTORY) : [];
