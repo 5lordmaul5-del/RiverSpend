@@ -26,3 +26,13 @@ test('gate rejects invalid limits', () => {
     assert.throws(() => createDbConcurrencyGate(value), TypeError);
   }
 });
+
+test('gate statistics record bounded pressure without exposing identities', () => {
+  const gate = createDbConcurrencyGate(1);
+  const release = gate.tryAcquire();
+  assert.deepEqual(gate.stats(), { limit: 1, active: 1, acquired: 1, rejected: 0 });
+  assert.equal(gate.tryAcquire(), null);
+  assert.deepEqual(gate.stats(), { limit: 1, active: 1, acquired: 1, rejected: 1 });
+  release();
+  assert.deepEqual(gate.stats(), { limit: 1, active: 0, acquired: 1, rejected: 1 });
+});
