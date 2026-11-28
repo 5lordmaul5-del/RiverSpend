@@ -168,7 +168,7 @@ class SupervisorTests(unittest.TestCase):
             timeout=3,
         )
         self.assertEqual(result.returncode, 2)
-        self.assertEqual(result.stdout, b'{"ok":false,"error":"task_failed"}\\n')
+        self.assertEqual(result.stdout, b'{"ok":false,"error":"task_failed"}\n')
         self.assertEqual(result.stderr, b"")
 
     def test_child_resource_limits_are_applied(self):
