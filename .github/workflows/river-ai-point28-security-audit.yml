@@ -1,0 +1,13 @@
+name: RiverSSAI Point 28 checklist
+on:
+  pull_request:
+    paths:
+      - 'infra/river-ai/POINT-28-SECURITY-AUDIT.md'
+      - '.github/workflows/river-ai-point28-security-audit.yml'
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: grep -F 'Completion criteria' infra/river-ai/POINT-28-SECURITY-AUDIT.md
+      - run: grep -F 'isolated, non-production' infra/river-ai/POINT-28-SECURITY-AUDIT.md
