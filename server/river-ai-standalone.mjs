@@ -317,3 +317,32 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(PORT, "0.0.0.0", () => console.log("RiverSSAI Independent Core listening on " + PORT));
+
+// Graceful shutdown: stop accepting requests and release PostgreSQL connections.
+let shuttingDown = false;
+async function shutdown(signal) {
+  if (shuttingDown) return;
+  shuttingDown = true;
+  console.log("RiverSSAI shutdown requested: " + signal);
+  const forced = setTimeout(() => {
+    console.error("Shutdown timeout; exiting.");
+    process.exit(1);
+  }, 10000);
+  forced.unref();
+  server.close(async (err) => {
+    try {
+      await pool.end();
+      clearTimeout(forced);
+      if (err) {
+        console.error("HTTP server shutdown error:", err.message);
+        process.exitCode = 1;
+      }
+      process.exit();
+    } catch (error) {
+      console.error("Database shutdown error:", error.message);
+      process.exit(1);
+    }
+  });
+}
+process.on("SIGTERM", () => shutdown("SIGTERM"));
+process.on("SIGINT", () => shutdown("SIGINT"));
