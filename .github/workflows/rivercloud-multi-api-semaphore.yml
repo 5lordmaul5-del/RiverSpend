@@ -2,7 +2,7 @@ name: RiverCloud multi-API semaphore
 
 on:
   push:
-    branches: [feat/rivercloud-multi-api-semaphore-test-2026-11-28]
+    branches: [feat/rivercloud-multi-api-semaphore-test-2026-11-28, feat/rivercloud-multi-api-reconciled-2026-11-28]
     paths:
       - "infra/river-cloud/**"
       - ".github/workflows/rivercloud-multi-api-semaphore.yml"
