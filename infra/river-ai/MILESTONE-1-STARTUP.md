@@ -20,3 +20,7 @@ Questo script avvia solo i servizi. Il download del modello e la prova di conver
 
 ## Smoke test request/response (milestones 3–4)
 Install `jq`, ensure services are running and the model is available, then run `./test-riverssai-request.sh`. It checks health, readiness, submits an authenticated chat request and validates the returned answer/provider/memory fields. This is a test script; it has not yet been run against a live local runtime in this workspace.
+
+
+## Milestone 5 — Persistent memory restart check
+Install `jq`, start the runtime, then run `./test-memory-restart.sh`. The script writes a unique marker using the authenticated memory endpoint, restarts only the RiverSSAI API service (not volumes or database), then asks Nova to retrieve the marker and validates the response. This is an automated verification procedure; it must be run on a host to confirm the result. Never use `docker compose down -v` for this check.
