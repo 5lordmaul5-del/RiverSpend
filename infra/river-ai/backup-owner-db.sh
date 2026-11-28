@@ -18,5 +18,8 @@ docker compose --env-file "$ENV_FILE" -f infra/river-ai/docker-compose.yml exec 
 chmod 600 "$dest"
 sha256sum "$dest" > "$dest.sha256"
 chmod 600 "$dest.sha256"
+hmac="$(openssl dgst -sha256 -hmac "$RIVERBACKUP_PASSPHRASE" "$dest" | awk '{print $NF}')"
+printf '%s\n' "$hmac" > "$dest.hmac"
+chmod 600 "$dest.hmac"
 echo "Encrypted backup created: $dest"
 echo "Checksum created. Copy both files to separate, protected storage."
