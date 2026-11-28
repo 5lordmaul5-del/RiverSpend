@@ -34,4 +34,14 @@ if bash "$SCRIPT" >"$TMP/out" 2>"$TMP/err"; then
   echo "Unexpected restore success without backup files" >&2; exit 1
 fi
 grep -q "Backup, checksum, and HMAC files are required" "$TMP/err"
-echo "Restore target guard tests passed."
+# Verify an intact checksum but deliberately invalid HMAC is rejected before Docker.
+printf 'synthetic encrypted-backup bytes\n' > "$TMP/backup.enc"
+(cd "$TMP" && sha256sum backup.enc > backup.enc.sha256)
+printf 'invalid-hmac\n' > "$TMP/backup.enc.hmac"
+export RIVERBACKUP_FILE="$TMP/backup.enc" RIVERBACKUP_TARGET_DB=rivercore_restore_test
+if bash "$SCRIPT" >"$TMP/out" 2>"$TMP/err"; then
+  echo "Expected HMAC verification failure" >&2; exit 1
+fi
+grep -q "Backup HMAC verification failed" "$TMP/err"
+! grep -q docker-called "$TMP/err"
+echo "Restore target guard and HMAC rejection tests passed."
