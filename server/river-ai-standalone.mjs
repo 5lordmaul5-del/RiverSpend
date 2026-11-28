@@ -7,7 +7,7 @@ import { AGENTS_REGISTRY, AGENT_SQUADS, getAgentPrompt } from "../lib/riverSSAI/
 import { selectTeam } from "../lib/riverSSAI/router.mjs";
 
 const { Pool } = pg;
-const PORT = Number(process.env.PORT || 8787);
+const PORT = boundedInteger(process.env.PORT, 8787, 1, 65535);
 const DATABASE_URL = process.env.DATABASE_URL;
 const ADMIN_TOKEN = process.env.RIVER_AI_ADMIN_TOKEN || "";
 const MODEL_URL = process.env.RIVER_AI_LOCAL_URL || "http://127.0.0.1:11434/v1/chat/completions";
@@ -354,7 +354,7 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-server.listen(PORT, "0.0.0.0", () => console.log("RiverSSAI Independent Core listening on " + PORT));
+// Bound slow headers/body delivery and idle keep-alive connections.\nserver.requestTimeout = 30000;\nserver.headersTimeout = 10000;\nserver.keepAliveTimeout = 5000;\nserver.maxHeadersCount = 100;\n\nserver.listen(PORT, "0.0.0.0", () => console.log("RiverSSAI Independent Core listening on " + PORT));
 
 // Graceful shutdown: stop accepting requests and release PostgreSQL connections.
 let shuttingDown = false;
