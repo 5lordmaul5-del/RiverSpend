@@ -324,7 +324,7 @@ const server = http.createServer(async (req, res) => {
         .slice(0, MAX_TEAM_SPECIALISTS);
       if (!team.length) {
         answer = await callLocalModel([
-          { role: "system", content: SYSTEM + memoryContext + "\nRUOLO: " + getAgentPrompt("nova") },
+          { role: "system", content: SYSTEM + MASTER_KNOWLEDGE_CONTEXT + memoryContext + "\nRUOLO: " + getAgentPrompt("nova") },
           ...safe
         ], 1100);
         agentsUsed = ["nova"];
