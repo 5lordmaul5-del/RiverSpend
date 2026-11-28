@@ -16,6 +16,9 @@ jobs:
         run: |
           grep -q 'RIVERBACKUP_PASSPHRASE' infra/river-ai/backup-owner-db.sh
           grep -q 'sha256sum' infra/river-ai/backup-owner-db.sh
+          grep -q 'openssl dgst -sha256 -hmac' infra/river-ai/backup-owner-db.sh
+          grep -q 'RIVERBACKUP_FILE.hmac' infra/river-ai/restore-owner-db.sh
+          grep -q 'expected_hmac' infra/river-ai/restore-owner-db.sh
           grep -q 'RIVERBACKUP_TARGET_DB' infra/river-ai/restore-owner-db.sh
           ! grep -q -- '--clean' infra/river-ai/restore-owner-db.sh
           ! grep -q -- 'DROP DATABASE' infra/river-ai/restore-owner-db.sh
