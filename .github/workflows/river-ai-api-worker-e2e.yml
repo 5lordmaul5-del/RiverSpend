@@ -13,6 +13,8 @@ on:
       - 'infra/river-ai/tests/worker-active-shutdown-drain.sh'
       - 'infra/river-ai/tests/worker-crash-recovery-e2e.sh'
       - 'infra/river-ai/tests/job-idempotency-guards.mjs'
+      - 'infra/river-ai/tests/owner-bootstrap-guards.sh'
+      - 'infra/river-ai/start-owner-host.sh'
       - '.github/workflows/river-ai-api-worker-e2e.yml'
 jobs:
   api-worker-e2e:
@@ -44,6 +46,8 @@ jobs:
         run: node infra/river-ai/tests/worker-shutdown-guards.mjs
       - name: Verify idempotent job enqueue guard
         run: node infra/river-ai/tests/job-idempotency-guards.mjs
+      - name: Verify owner bootstrap env guard
+        run: bash infra/river-ai/tests/owner-bootstrap-guards.sh
       - name: Run API-worker E2E
         env:
           PGHOST: localhost
