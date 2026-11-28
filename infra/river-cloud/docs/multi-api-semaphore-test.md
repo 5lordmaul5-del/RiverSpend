@@ -4,6 +4,8 @@ The CI fixture launches a disposable PostgreSQL database, a deterministic RiverA
 
 The test occupies all eight reserved PostgreSQL advisory slots from separate holder sessions, then sends authenticated profile requests to both API instances. Each must return HTTP 503 with `database_busy`. After the holder sessions exit and the locks are released, both APIs must return HTTP 200.
 
+While all eight slots are still held, the test also sends a 32-request concurrent burst split evenly across both APIs and requires every request to return the bounded HTTP 503 `database_busy` response. After releasing the holders, it sends a second burst to exercise recovered availability.
+
 It then sends a 32-request concurrent burst split evenly across the two API instances. Each response must be either a valid profile read (HTTP 200) or the expected bounded-capacity response (HTTP 503 `database_busy`), and at least one read must succeed. Both APIs are checked again after the burst.
 
 The fixture binds HTTP test ports only to loopback (18080 and 18081), uses synthetic identity and credentials, and tears down the project including its disposable volume.
