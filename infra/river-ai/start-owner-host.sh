@@ -22,19 +22,19 @@ RIVER_AI_MAX_PARALLEL=1
 EOF
 chmod 600 "$ENV_FILE"
 echo "Created private runtime environment."
-docker compose -f infra/river-ai/docker-compose.yml up -d --build riverdb ollama river-ai
+docker compose --env-file "$ENV_FILE" -f infra/river-ai/docker-compose.yml up -d --build riverdb ollama river-ai
 echo "Waiting for Ollama..."
 ollama_ready=0
 for i in {1..120}; do
-  if docker compose -f infra/river-ai/docker-compose.yml exec -T ollama ollama list >/dev/null 2>&1; then ollama_ready=1; break; fi
+  if docker compose --env-file "$ENV_FILE" -f infra/river-ai/docker-compose.yml exec -T ollama ollama list >/dev/null 2>&1; then ollama_ready=1; break; fi
   sleep 2
 done
 if [[ "$ollama_ready" != "1" ]]; then
   echo "Ollama did not become available within 240 seconds. Inspect Docker logs; environment file was retained." >&2
   exit 1
 fi
-docker compose -f infra/river-ai/docker-compose.yml exec -T ollama ollama pull "$MODEL"
-docker compose -f infra/river-ai/docker-compose.yml up -d river-ai-worker
+docker compose --env-file "$ENV_FILE" -f infra/river-ai/docker-compose.yml exec -T ollama ollama pull "$MODEL"
+docker compose --env-file "$ENV_FILE" -f infra/river-ai/docker-compose.yml up -d river-ai-worker
 API="http://127.0.0.1:8787"
 echo "Waiting for readiness..."
 ready=0
@@ -50,5 +50,5 @@ curl --silent --show-error --fail -H "Authorization: Bearer $ADMIN_TOKEN" -H "Co
 if ! grep -q '"provider":"local"' "$SMOKE_FILE"; then echo "Local-provider smoke-test confirmation missing." >&2; exit 1; fi
 echo "RiverSSAI ready; local-model smoke test passed. API bound to localhost."
 echo "Secret is stored in infra/river-ai/.env (mode 0600); do not share."
-echo "Stop: docker compose -f infra/river-ai/docker-compose.yml down"
-echo "Restart: docker compose -f infra/river-ai/docker-compose.yml up -d"
+echo "Stop: docker compose --env-file "$ENV_FILE" -f infra/river-ai/docker-compose.yml down"
+echo "Restart: docker compose --env-file "$ENV_FILE" -f infra/river-ai/docker-compose.yml up -d"
