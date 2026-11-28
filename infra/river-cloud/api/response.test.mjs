@@ -95,3 +95,10 @@ test('response helper preserves valid JSON normalization for non-finite numbers'
   assert.equal(sendJsonResponse(res, 200, { value: NaN }), true);
   assert.equal(res.calls[1][1], '{"value":null}');
 });
+
+
+test('response helper serializes BigInt failure without writing', () => {
+  const res = mockResponse();
+  assert.equal(sendJsonResponse(res, 200, { value: 1n }), false);
+  assert.equal(res.calls.length, 0);
+});
