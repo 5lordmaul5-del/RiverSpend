@@ -1,0 +1,13 @@
+name: RiverSSAI Point 24 checklist
+on:
+  pull_request:
+    paths:
+      - 'infra/river-ai/POINT-24-AUTH-BOUNDARIES.md'
+      - '.github/workflows/river-ai-point24-auth-boundaries.yml'
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: grep -F 'Completion criteria' infra/river-ai/POINT-24-AUTH-BOUNDARIES.md
+      - run: grep -F 'isolated environment' infra/river-ai/POINT-24-AUTH-BOUNDARIES.md
