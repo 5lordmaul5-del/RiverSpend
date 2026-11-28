@@ -6,6 +6,7 @@ on:
       - 'infra/river-ai/restore-drill.sh'
       - 'infra/river-ai/verify-encrypted-backup.sh'
       - 'infra/river-ai/test-backup-integrity.sh'
+      - 'infra/river-ai/hmac_sha256.py'
       - 'infra/river-ai/POINT-2-ENCRYPTED-BACKUP.md'
       - '.github/workflows/river-ai-backup-validation.yml'
       - '.gitignore'

@@ -6,10 +6,10 @@
    `export RIVER_AI_BACKUP_PASSPHRASE='a-long-unique-secret'`
 3. Run: `bash infra/river-ai/backup-encrypted.sh`
 
-The script streams a PostgreSQL custom-format dump, encrypts it using OpenSSL AES-256-CBC with PBKDF2 and 250,000 iterations, creates a hash-only SHA-256 checksum sidecar and a keyed HMAC-SHA256 integrity sidecar, and writes private files in the ignored local backup directory. Files are staged temporarily before final names are published. Keep the passphrase separate and secure.
+The script streams a PostgreSQL custom-format dump, encrypts it using OpenSSL AES-256-CBC with PBKDF2 and 250,000 iterations, creates a hash-only SHA-256 checksum sidecar and a keyed HMAC-SHA256 integrity sidecar, and writes private files in the ignored local backup directory. HMAC uses a domain-separated PBKDF2-derived key and a Python helper reads the passphrase from the environment; the passphrase is not passed as an HMAC command-line argument. Files are staged temporarily before final names are published. Keep the passphrase separate and secure.
 
 ## Verify integrity without restoring
-Run `bash infra/river-ai/verify-encrypted-backup.sh <backup-file.dump.enc>` to check SHA-256 and HMAC. This performs no decryption and no database operations.
+Run `bash infra/river-ai/verify-encrypted-backup.sh <backup-file.dump.enc>` to check SHA-256 and HMAC. Python 3 is required for HMAC verification. This performs no decryption or database operations.
 
 ## Restore drill
 Run `bash infra/river-ai/restore-drill.sh <backup-file.dump.enc>` using the backup path. The script requires both sidecars, compares the hash-only SHA-256 digest and verifies the HMAC with the passphrase before decrypting. It restores into a uniquely named disposable database and drops that database on exit. It does not target the production/runtime database.
