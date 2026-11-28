@@ -7,7 +7,7 @@ function mockResponse(overrides = {}) {
   return {
     calls,
     destroyed: false,
-    writableEnded: false,
+    writableEnded: false,\n    headersSent: false,
     writeHead(status, headers) { calls.push(['writeHead', status, headers]); },
     end(body) { calls.push(['end', body]); },
     ...overrides,
@@ -23,7 +23,7 @@ test('response helper sends JSON with defensive headers', () => {
 });
 
 test('does not write to already closed responses', () => {
-  for (const overrides of [{ destroyed: true }, { writableEnded: true }]) {
+  for (const overrides of [{ destroyed: true }, { writableEnded: true }, { headersSent: true }]) {
     const res = mockResponse(overrides);
     assert.equal(sendJsonResponse(res, 200, {}), false);
     assert.equal(res.calls.length, 0);
@@ -41,5 +41,17 @@ test('serialization errors do not partially write headers', () => {
   const payload = {};
   payload.self = payload;
   assert.equal(sendJsonResponse(res, 200, payload), false);
+  assert.equal(res.calls.length, 0);
+});
+
+
+test('response end failures are contained', () => {
+  const res = mockResponse({ end() { throw new Error('socket closed during end'); } });
+  assert.equal(sendJsonResponse(res, 200, { ok: true }), false);
+});
+
+test('refuses responses whose headers have already been sent', () => {
+  const res = mockResponse({ headersSent: true });
+  assert.equal(sendJsonResponse(res, 500, { error: 'internal_error' }), false);
   assert.equal(res.calls.length, 0);
 });
