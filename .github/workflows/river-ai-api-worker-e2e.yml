@@ -7,6 +7,7 @@ on:
       - 'infra/river-ai/schema.sql'
       - 'infra/river-ai/worker-queue.sql'
       - 'infra/river-ai/tests/api-worker-e2e.sh'
+      - 'infra/river-ai/tests/lease-recovery.sh'
       - 'infra/river-ai/tests/mock-model.mjs'
       - '.github/workflows/river-ai-api-worker-e2e.yml'
 jobs:
@@ -43,3 +44,11 @@ jobs:
           PGUSER: rivercore
           PGPASSWORD: rivercore-test
         run: bash infra/river-ai/tests/api-worker-e2e.sh
+      - name: Verify worker lease recovery and stale fencing
+        env:
+          PGHOST: localhost
+          PGPORT: 5432
+          PGDATABASE: rivercore
+          PGUSER: rivercore
+          PGPASSWORD: rivercore-test
+        run: bash infra/river-ai/tests/lease-recovery.sh
