@@ -1,0 +1,20 @@
+name: RiverSSAI Point 8 bootstrap validation
+on:
+  pull_request:
+    paths:
+      - 'infra/river-ai/bootstrap-owner.sh'
+      - 'infra/river-ai/POINT-8-OWNER-BOOTSTRAP.md'
+      - '.github/workflows/river-ai-point8-bootstrap.yml'
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Bash syntax
+        run: bash -n infra/river-ai/bootstrap-owner.sh
+      - name: Check secret generation and safety guards
+        run: |
+          grep -F 'openssl rand -hex' infra/river-ai/bootstrap-owner.sh
+          grep -F 'Refusing to overwrite existing' infra/river-ai/bootstrap-owner.sh
+          grep -F 'chmod 600' infra/river-ai/bootstrap-owner.sh
+          grep -F 'No services were started' infra/river-ai/bootstrap-owner.sh
