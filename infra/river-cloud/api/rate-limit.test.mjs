@@ -47,3 +47,10 @@ test('rate limiter supports zero limit as immediate rejection after first reques
   const limiter = createRateLimiter({ limit: 0, windowMs: 100 });
   assert.equal(limiter('zero'), true);
 });
+
+
+test('rate limiter rejects invalid configuration at construction', () => {
+  for (const options of [{ windowMs: 0 }, { windowMs: -1 }, { limit: -1 }, { limit: 1.5 }, { maxKeys: 0 }, { maxKeys: 2.5 }]) {
+    assert.throws(() => createRateLimiter(options), TypeError);
+  }
+});
