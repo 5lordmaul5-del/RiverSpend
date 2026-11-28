@@ -473,4 +473,19 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
+let shutdownPromise;
+async function shutdown(signal) {
+  if (shutdownPromise) return shutdownPromise;
+  shutdownPromise = (async () => {
+    console.log("RiverSSAI API shutting down:", signal);
+    await new Promise((resolve, reject) => {
+      server.close((error) => error ? reject(error) : resolve());
+    });
+    await pool.end();
+    console.log("RiverSSAI API shutdown complete.");
+  })();
+  return shutdownPromise;
+}
+process.on("SIGTERM", () => { void shutdown("SIGTERM").catch((error) => { console.error("Shutdown failed:", error.message); process.exitCode = 1; }); });
+process.on("SIGINT", () => { void shutdown("SIGINT").catch((error) => { console.error("Shutdown failed:", error.message); process.exitCode = 1; }); });
 server.listen(PORT, "0.0.0.0", () => console.log("RiverSSAI Independent Core listening on " + PORT));
