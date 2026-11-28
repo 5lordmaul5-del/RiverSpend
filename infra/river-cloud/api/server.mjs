@@ -119,6 +119,9 @@ function runProfileSql(sql, variables) {
       settled = true;
       clearTimeout(timeout);
       releaseSlot();
+      // Child-process infrastructure failures are temporary service failures,
+      // not internal application errors exposed as generic 500 responses.
+      if (!Number.isInteger(error?.status)) error.status = 503;
       reject(error);
     };
     child.on('error', (error) => {
