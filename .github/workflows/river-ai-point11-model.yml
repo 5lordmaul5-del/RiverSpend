@@ -1,0 +1,16 @@
+name: RiverSSAI Point 11 model inventory safety
+on:
+  pull_request:
+    paths:
+      - 'infra/river-ai/model-inventory-owner.sh'
+      - 'infra/river-ai/POINT-11-MODEL-PLAN.md'
+      - '.github/workflows/river-ai-point11-model.yml'
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash -n infra/river-ai/model-inventory-owner.sh
+      - run: |
+          grep -F 'ollama list' infra/river-ai/model-inventory-owner.sh
+          ! grep -E 'ollama pull|ollama delete|docker compose .* up|rm -rf' infra/river-ai/model-inventory-owner.sh
