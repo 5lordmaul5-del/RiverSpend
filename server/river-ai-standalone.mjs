@@ -218,6 +218,7 @@ const server = http.createServer(async (req, res) => {
   try {
     const body = await readBody(req);
     if (url.pathname === "/v1/memories") {
+      if (!body || typeof body !== "object" || Array.isArray(body)) return send(res, 400, { error: "Formato memoria non valido." });
       const title = String(body.title || "").slice(0, 160).trim();
       const content = String(body.content || "").slice(0, 4000).trim();
       const category = String(body.category || "note").slice(0, 40);
