@@ -24,6 +24,7 @@ export default function RiverAI() {
   const [artifactDraft, setArtifactDraft] = useState("");
   const endRef = useRef(null);
   const sendLock = useRef(false);
+  const skipNextPersistence = useRef(false);
 
   useEffect(() => {
     if ("serviceWorker" in navigator) navigator.serviceWorker.register("/river-ai/sw.js", { scope: "/river-ai" }).catch(() => {});
@@ -91,7 +92,9 @@ export default function RiverAI() {
   }, []);
 
   useEffect(() => {
-    if (storageKey) {
+    if (skipNextPersistence.current) {
+      skipNextPersistence.current = false;
+    } else if (storageKey && !temporaryChat) {
       try { localStorage.setItem(storageKey, JSON.stringify(messages.slice(-40))); } catch {}
     }
     endRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -118,6 +121,18 @@ export default function RiverAI() {
     }
   }
 
+  function toggleTemporaryChat() {
+    if (temporaryChat) {
+      skipNextPersistence.current = true;
+      setMessages([]);
+      setTemporaryChat(false);
+    } else {
+      setMessages([]);
+      setTemporaryChat(true);
+    }
+    setError("");
+  }
+
   async function send(event) {
     event?.preventDefault();
     const text = input.trim();
@@ -132,7 +147,7 @@ export default function RiverAI() {
       const response = await fetch("/api/river-ai/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ messages: next, agent: selectedAgent, teamSize })
+        body: JSON.stringify({ messages: next, agent: selectedAgent, teamSize, temporaryChat })
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "River AI non disponibile.");
@@ -189,11 +204,12 @@ export default function RiverAI() {
          access === "error" ? <div role="alert" style={{padding:24}}><h2>Verifica temporaneamente non disponibile</h2><p>Non posso confermare i permessi in questo momento. Riprova tra poco.</p></div> :
          <>
           <div style={{padding:"12px 18px",display:"flex",gap:8,flexWrap:"wrap",borderBottom:"1px solid #dceeee",background:"#f8ffff"}}>
-            <button type="button" onClick={()=>{setTemporaryChat(v=>!v);if(!temporaryChat)setMessages([]);}} style={{border:"1px solid #b9d8da",borderRadius:12,padding:"9px 12px",background:temporaryChat?"#dff8f1":"white",color:"#164e56",fontWeight:700}}>🕶️ {temporaryChat?"Chat temporanea attiva":"Chat temporanea"}</button>
+            <button type="button" onClick={toggleTemporaryChat} style={{border:"1px solid #b9d8da",borderRadius:12,padding:"9px 12px",background:temporaryChat?"#dff8f1":"white",color:"#164e56",fontWeight:700}}>🕶️ {temporaryChat?"Chat temporanea attiva":"Chat temporanea"}</button>
             <button type="button" onClick={()=>setWorkbenchPanel(workbenchPanel==="artifacts"?"":"artifacts")} style={{border:"1px solid #b9d8da",borderRadius:12,padding:"9px 12px",background:"white",color:"#164e56",fontWeight:700}}>🗂️ Artefatti</button>
             <button type="button" onClick={()=>setWorkbenchPanel(workbenchPanel==="schedule"?"":"schedule")} style={{border:"1px solid #b9d8da",borderRadius:12,padding:"9px 12px",background:"white",color:"#164e56",fontWeight:700}}>🗓️ Programmazione</button>
             <button type="button" onClick={()=>setWorkbenchPanel(workbenchPanel==="tools"?"":"tools")} style={{border:"1px solid #b9d8da",borderRadius:12,padding:"9px 12px",background:"white",color:"#164e56",fontWeight:700}}>🧰 Strumenti</button>
           </div>
+          {temporaryChat && <div role="status" style={{padding:"10px 18px",background:"#fff8df",color:"#72510a",fontSize:12,lineHeight:1.5}}>Chat temporanea: i messaggi non vengono salvati nella cronologia locale né nella memoria River AI. Il provider AI esterno può comunque applicare proprie regole di conservazione; questa modalità non equivale ad anonimato o cancellazione.</div>}
           {workbenchPanel && <div style={{margin:"12px 18px",padding:14,border:"1px solid #c7dfe1",borderRadius:16,background:"#f5fbff",color:"#173b42"}}>
             <button type="button" onClick={()=>setWorkbenchPanel("")} style={{float:"right",border:0,background:"transparent",fontSize:18}}>✕</button>
             {workbenchPanel==="artifacts" && <><strong>Artefatti RiverSSAI</strong><p style={{fontSize:13}}>Area di lavoro per bozze, documenti, piani e codice. In questa versione puoi preparare una nota; archivio condiviso e export automatico saranno collegati in un passaggio successivo.</p><textarea value={artifactDraft} onChange={e=>setArtifactDraft(e.target.value)} placeholder="Scrivi o incolla qui una bozza da trasformare in artefatto…" rows={4} style={{width:"100%",padding:10,border:"1px solid #b9d8da",borderRadius:12}}/><button type="button" onClick={()=>{setInput(prev=>prev+(prev?"\n\n":"")+"Trasforma questa bozza in un artefatto strutturato:\n"+artifactDraft);setWorkbenchPanel("");}} disabled={!artifactDraft.trim()} style={{marginTop:8,padding:10,border:0,borderRadius:10,background:"#087f89",color:"white"}}>Invia a Nova per elaborazione</button></>}
