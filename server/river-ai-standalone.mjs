@@ -183,6 +183,19 @@ const server = http.createServer(async (req, res) => {
       allowedTeamSizes: ALLOWED_TEAM_SIZES
     });
   }
+  if (req.method === "GET" && url.pathname === "/v1/memories") {
+    const limit = Math.max(1, Math.min(50, Number(url.searchParams.get("limit") || 10)));
+    const result = await pool.query(
+      "SELECT id,title,content,category,created_at FROM river_ai_memories WHERE owner_id='owner' ORDER BY created_at DESC LIMIT $1",
+      [limit]
+    );
+    await pool.query(
+      "INSERT INTO river_ai_audit(action,status,details) VALUES($1,$2,$3)",
+      ["memory.read", "success", { limit, returned: result.rows.length }]
+    );
+    return send(res, 200, { memories: result.rows, count: result.rows.length });
+  }
+
   if (req.method !== "POST") return send(res, 405, { error: "Metodo non consentito." });
 
   try {
