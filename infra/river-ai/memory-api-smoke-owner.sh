@@ -24,6 +24,11 @@ for endpoint in /v1/memories /v1/memories/export /v1/agents /v1/jobs; do
   status="$(curl "${curl_opts[@]}" -sS -o "$tmp/wrong-token" -w '%{http_code}' -H "Authorization: Bearer invalid-smoke-token" "$BASE_URL$endpoint")"
   [[ "$status" == 401 ]] || { echo "Expected invalid-token 401 for $endpoint, got $status" >&2; exit 1; }
 done
+# Regex-matched job-status and memory mutation routes must be protected too.
+for endpoint in /v1/jobs/00000000-0000-4000-8000-000000000001 /v1/memories/999999999; do
+  status="$(curl "${curl_opts[@]}" -sS -o "$tmp/wrong-token-route" -w '%{http_code}' -H "Authorization: Bearer invalid-smoke-token" "$BASE_URL$endpoint")"
+  [[ "$status" == 401 ]] || { echo "Expected invalid-token 401 for regex route $endpoint, got $status" >&2; exit 1; }
+done
 # POST endpoints must also reject requests without credentials before processing payloads.
 for endpoint in /v1/chat /v1/memories/import /v1/jobs; do
   status="$(curl "${curl_opts[@]}" -sS -o "$tmp/unauth-post" -w '%{http_code}' -X POST "$BASE_URL$endpoint")"
