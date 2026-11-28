@@ -202,7 +202,8 @@ const server = http.createServer(async (req, res) => {
   }
 
   const jobStatusMatch = /^\/v1\/jobs\/([0-9a-f-]{36})$/i.exec(url.pathname);
-  const memoryDeleteMatch = /^\\/v1\\/memories\\/(\\d+)$/.exec(url.pathname);\n  if (!["POST", "GET", "DELETE"].includes(req.method) || !["/v1/chat", "/v1/memories", "/v1/agents", "/v1/jobs"].includes(url.pathname) && !jobStatusMatch && !(req.method === "DELETE" && memoryDeleteMatch)) {
+  const memoryDeleteMatch = /^\/v1\/memories\/(\d+)$/.exec(url.pathname);
+  if (!["POST", "GET", "DELETE"].includes(req.method) || !["/v1/chat", "/v1/memories", "/v1/agents", "/v1/jobs"].includes(url.pathname) && !jobStatusMatch && !(req.method === "DELETE" && memoryDeleteMatch)) {
     return send(res, 404, { error: "Not found" });
   }
   // Rate-limit before token validation to slow down bearer-token guessing.
