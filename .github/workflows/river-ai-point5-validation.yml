@@ -19,4 +19,4 @@ jobs:
           grep -F 'docker compose ps' infra/river-ai/diagnose-owner-host.sh
           grep -F 'df -h' infra/river-ai/diagnose-owner-host.sh
           grep -F 'output /dev/null' infra/river-ai/diagnose-owner-host.sh
-          grep -F 'No credential values' infra/river-ai/diagnose-owner-host.sh
+          grep -F 'Diagnostics completed.' infra/river-ai/diagnose-owner-host.sh
