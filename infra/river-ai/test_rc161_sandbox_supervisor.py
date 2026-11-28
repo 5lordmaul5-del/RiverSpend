@@ -132,5 +132,38 @@ class SupervisorTests(unittest.TestCase):
         )
 
 
+    def test_child_launch_uses_minimal_environment_isolated_mode_and_temp_cwd(self):
+        captured = {}
+        fake = Mock()
+        fake.returncode = 0
+        fake.communicate.return_value = (None, None)
+
+        def fake_popen(argv, **kwargs):
+            captured["argv"] = argv
+            captured["kwargs"] = kwargs
+            kwargs["stdout"].write(b'{"ok":true,"result":{"echo":{"x":1}}}\\n')
+            kwargs["stdout"].flush()
+            return fake
+
+        with patch("subprocess.Popen", side_effect=fake_popen):
+            self.assertEqual(self.supervisor.run("echo", {"x": 1}), {"echo": {"x": 1}})
+
+        kwargs = captured["kwargs"]
+        self.assertEqual(kwargs["env"], {"PATH": os.defpath, "PYTHONIOENCODING": "utf-8"})
+        self.assertTrue(kwargs["cwd"].startswith(tempfile.gettempdir()))
+        self.assertIn("rsworker-", kwargs["cwd"])
+        self.assertTrue(kwargs["start_new_session"])
+        self.assertTrue(kwargs["close_fds"])
+        self.assertEqual(captured["argv"][1], "-I")
+        self.assertNotIn("HOME", kwargs["env"])
+        self.assertNotIn("RIVERAUTH_ISSUER_URL", kwargs["env"])
+        self.assertNotIn("RIVER_CLOUD_API_DB_PASSWORD", kwargs["env"])
+
+    def test_supervisor_timeout_bounds(self):
+        for value in (0, 0.01, 10.01, float("nan"), float("inf"), "1"):
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                SandboxSupervisor(timeout=value)
+
+
 if __name__ == "__main__":
     unittest.main()
