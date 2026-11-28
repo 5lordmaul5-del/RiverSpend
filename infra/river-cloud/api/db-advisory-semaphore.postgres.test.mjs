@@ -62,7 +62,8 @@ test('PostgreSQL advisory semaphore denies a ninth session and releases slots on
 
   await waitForLocks(8);
   const full = await psql(buildDbAdvisorySemaphoreScript(8));
-  assert.equal(full.code, 77, 'all eight session slots should be held; stdout=' + full.stdout + ' stderr=' + full.stderr);
+  assert.equal(full.code, 0, 'psql should exit cleanly after the busy marker; stderr=' + full.stderr);
+  assert.equal(full.stdout.trim(), 'RIVERCLOUD_SEMAPHORE_FULL', 'all eight slots should emit the busy marker; stdout=' + full.stdout + ' stderr=' + full.stderr);
 
   await Promise.all(holders.map(child => new Promise(resolve => {
     if (child.exitCode !== null || child.signalCode !== null) return resolve();
