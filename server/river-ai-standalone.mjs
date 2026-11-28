@@ -303,27 +303,48 @@ const server = http.createServer(async (req, res) => {
       if (!Object.prototype.hasOwnProperty.call(AGENTS_REGISTRY, agentKey)) return send(res, 400, { error: "Specialista non riconosciuto." });
       if (!task) return send(res, 400, { error: "Il campo task è obbligatorio." });
       const priority = Number.isInteger(body.priority) ? Math.max(0, Math.min(1000, body.priority)) : 100;
+      const idempotencyKey = req.headers["idempotency-key"];
+      if (idempotencyKey !== undefined && (typeof idempotencyKey !== "string" || idempotencyKey.length < 8 || idempotencyKey.length > 128 || !/^[A-Za-z0-9._:-]+$/.test(idempotencyKey))) return send(res, 400, { error: "Idempotency-Key non valido (8-128 caratteri alfanumerici o . _ : -)." });
+      const requestHash = crypto.createHash("sha256").update(JSON.stringify({ agentKey, task, priority })).digest("hex");
       const client = await pool.connect();
-      let inserted;
+      let inserted, replayed = false;
       try {
         await client.query("BEGIN");
-        const result = await client.query(
-          "INSERT INTO river_ai_jobs(agent_key,payload,priority) VALUES($1,$2::jsonb,$3) RETURNING id,status,created_at",
-          [agentKey, JSON.stringify({ task }), priority]
-        );
-        inserted = result.rows[0];
-        await client.query(
-          "INSERT INTO river_ai_audit(action,status,details) VALUES($1,$2,$3)",
-          ["worker.job.enqueue", "success", { jobId: inserted.id, agentKey }]
-        );
-        await client.query("COMMIT");
+        if (idempotencyKey) {
+          const prior = await client.query("SELECT id,status,created_at,request_hash FROM river_ai_jobs WHERE idempotency_key=$1 FOR UPDATE", [idempotencyKey]);
+          if (prior.rows[0]) {
+            if (prior.rows[0].request_hash !== requestHash) {
+              await client.query("ROLLBACK");
+              return send(res, 409, { error: "Idempotency-Key già utilizzato per una richiesta differente." });
+            }
+            inserted = { id: prior.rows[0].id, status: prior.rows[0].status, created_at: prior.rows[0].created_at };
+            replayed = true;
+            await client.query("COMMIT");
+          } else {
+            const result = await client.query(
+              "INSERT INTO river_ai_jobs(agent_key,payload,priority,idempotency_key,request_hash) VALUES($1,$2::jsonb,$3,$4,$5) RETURNING id,status,created_at",
+              [agentKey, JSON.stringify({ task }), priority, idempotencyKey, requestHash]
+            );
+            inserted = result.rows[0];
+            await client.query("INSERT INTO river_ai_audit(action,status,details) VALUES($1,$2,$3)", ["worker.job.enqueue", "success", { jobId: inserted.id, agentKey, idempotent: true }]);
+            await client.query("COMMIT");
+          }
+        } else {
+          const result = await client.query(
+            "INSERT INTO river_ai_jobs(agent_key,payload,priority) VALUES($1,$2::jsonb,$3) RETURNING id,status,created_at",
+            [agentKey, JSON.stringify({ task }), priority]
+          );
+          inserted = result.rows[0];
+          await client.query("INSERT INTO river_ai_audit(action,status,details) VALUES($1,$2,$3)", ["worker.job.enqueue", "success", { jobId: inserted.id, agentKey }]);
+          await client.query("COMMIT");
+        }
       } catch (transactionError) {
         await client.query("ROLLBACK").catch(() => {});
         throw transactionError;
       } finally {
         client.release();
       }
-      return send(res, 202, { job: inserted, message: "Compito accodato per RiverSSAI." });
+      return send(res, replayed ? 200 : 202, { job: inserted, replayed, message: replayed ? "Richiesta già accodata: restituito il job esistente." : "Compito accodato per RiverSSAI." });
     } catch (error) {
       if (error.message === "BODY_TOO_LARGE") return send(res, 413, { error: "Richiesta troppo grande." });
       if (error instanceof SyntaxError) return send(res, 400, { error: "JSON non valido." });
