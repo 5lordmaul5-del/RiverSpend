@@ -203,13 +203,40 @@ const server = http.createServer(async (req, res) => {
 
   const jobStatusMatch = /^\/v1\/jobs\/([0-9a-f-]{36})$/i.exec(url.pathname);
   const memoryIdMatch = /^\/v1\/memories\/(\d+)$/.exec(url.pathname);
-  if (!["POST", "GET", "DELETE", "PUT"].includes(req.method) || !["/v1/chat", "/v1/memories", "/v1/memories/export", "/v1/agents", "/v1/jobs"].includes(url.pathname) && !jobStatusMatch && !(["DELETE", "PUT"].includes(req.method) && memoryIdMatch)) {
+  if (!["POST", "GET", "DELETE", "PUT"].includes(req.method) || !["/v1/chat", "/v1/memories", "/v1/memories/export", "/v1/memories/import", "/v1/agents", "/v1/jobs"].includes(url.pathname) && !jobStatusMatch && !(["DELETE", "PUT"].includes(req.method) && memoryIdMatch)) {
     return send(res, 404, { error: "Not found" });
   }
   // Rate-limit before token validation to slow down bearer-token guessing.
   if (rateLimited(req)) return send(res, 429, { error: "Limite temporaneo raggiunto. Riprova tra un minuto." });
   if (!authorized(req)) return send(res, 401, { error: "Accesso amministratore non valido." });
 
+  if (req.method === "POST" && url.pathname === "/v1/memories/import") {
+    let body;
+    try { body = await readBody(req); } catch { return send(res, 400, { error: "JSON non valido." }); }
+    if (!Array.isArray(body.memories) || body.memories.length < 1 || body.memories.length > 100) {
+      return send(res, 400, { error: "L'importazione richiede da 1 a 100 memorie." });
+    }
+    const entries = body.memories.map((item) => ({
+      title: typeof item?.title === "string" ? item.title.trim().slice(0,160) : "",
+      content: typeof item?.content === "string" ? item.content.trim().slice(0,4000) : "",
+      category: typeof item?.category === "string" ? item.category.trim().slice(0,40) : "note",
+      source: typeof item?.source === "string" ? item.source.trim().slice(0,80) : "memory-import"
+    }));
+    if (entries.some((item) => !item.title || !item.content)) return send(res, 400, { error: "Ogni memoria deve avere titolo e contenuto." });
+    const client = await pool.connect();
+    try {
+      await client.query("BEGIN");
+      for (const item of entries) {
+        await client.query("INSERT INTO river_ai_memories(owner_id,title,content,category,source) VALUES('owner',$1,$2,$3,$4)", [item.title,item.content,item.category,item.source]);
+      }
+      await client.query("INSERT INTO river_ai_audit(action,status,details) VALUES($1,$2,$3)", ["memory.import", "success", { count: entries.length }]);
+      await client.query("COMMIT");
+      return send(res, 201, { imported: entries.length });
+    } catch {
+      await client.query("ROLLBACK").catch(()=>{});
+      return send(res, 503, { error: "Importazione memoria non riuscita; nessun elemento importato." });
+    } finally { client.release(); }
+  }
   if (req.method === "GET" && url.pathname === "/v1/memories/export") {
     try {
       const result = await pool.query("SELECT id,title,content,category,source,created_at FROM river_ai_memories WHERE owner_id='owner' ORDER BY created_at ASC LIMIT 1000");
