@@ -1,0 +1,28 @@
+name: RiverSSAI temporary chat privacy
+
+on:
+  push:
+    branches: [fix/river-ssai-temporary-chat-privacy-2026-11-28]
+    paths:
+      - "pages/river-ai.js"
+      - "pages/api/river-ai/chat.js"
+      - "lib/river-ai-chat-policy.mjs"
+      - "lib/river-ai-chat-policy.test.mjs"
+      - ".github/workflows/river-ssai-temporary-chat-privacy.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  privacy-policy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Check JavaScript syntax
+        run: |
+          node --check pages/api/river-ai/chat.js
+          node --check lib/river-ai-chat-policy.mjs
+          node --check lib/river-ai-chat-policy.test.mjs
+      - name: Verify temporary-chat policy and source guards
+        run: node --test lib/river-ai-chat-policy.test.mjs
