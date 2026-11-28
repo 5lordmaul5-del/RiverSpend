@@ -4,6 +4,7 @@ on:
     paths:
       - 'infra/river-ai/backup-owner-db.sh'
       - 'infra/river-ai/restore-owner-db.sh'
+      - 'infra/river-ai/tests/restore-target-guard-test.sh'
       - '.github/workflows/river-ai-backup-script-validation.yml'
 jobs:
   validate-backup-scripts:
