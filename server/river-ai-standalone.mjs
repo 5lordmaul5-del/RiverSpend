@@ -95,7 +95,12 @@ async function readBody(req) {
     data += chunk;
     if (Buffer.byteLength(data) > MAX_BODY) throw new Error("BODY_TOO_LARGE");
   }
-  return data ? JSON.parse(data) : {};
+  const parsed = data ? JSON.parse(data) : {};
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+    const error = new SyntaxError("JSON_OBJECT_REQUIRED");
+    throw error;
+  }
+  return parsed;
 }
 async function callLocalModel(messages, maxTokens = 900) {
   const response = await fetch(MODEL_URL, {
