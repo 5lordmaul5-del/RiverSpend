@@ -3,7 +3,8 @@ on:
   pull_request:
     paths:
       - 'infra/river-ai/backup-encrypted.sh'
-      - 'infra/river-ai/restore-drill.sh\n      - 'infra/river-ai/verify-encrypted-backup.sh''
+      - 'infra/river-ai/restore-drill.sh'
+      - 'infra/river-ai/verify-encrypted-backup.sh'
       - 'infra/river-ai/POINT-2-ENCRYPTED-BACKUP.md'
       - '.github/workflows/river-ai-backup-validation.yml'
       - '.gitignore'
@@ -13,11 +14,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Bash syntax
-        run: bash -n infra/river-ai/backup-encrypted.sh infra/river-ai/restore-drill.sh infra/river-ai/verify-encrypted-backup.sh infra/river-ai/verify-encrypted-backup.sh
+        run: bash -n infra/river-ai/backup-encrypted.sh infra/river-ai/restore-drill.sh infra/river-ai/verify-encrypted-backup.sh
       - name: Ensure scripts do not contain obvious unsafe flags
         run: |
-          ! grep -E 'down[[:space:]]+-v|rm[[:space:]]+-rf' infra/river-ai/backup-encrypted.sh infra/river-ai/restore-drill.sh
-
+          ! grep -E 'down[[:space:]]+-v|rm[[:space:]]+-rf' infra/river-ai/backup-encrypted.sh infra/river-ai/restore-drill.sh infra/river-ai/verify-encrypted-backup.sh
       - name: Verify backup artifacts are ignored
         run: |
           grep -F 'infra/river-ai/.env' .gitignore
