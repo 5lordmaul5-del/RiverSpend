@@ -9,7 +9,7 @@ echo "== Gate 0: static configuration safety audit =="\n"$HERE/audit-riverssai-c
 node "$ROOT/lib/riverSSAI/testToolPolicy.mjs"
 echo "== Gate B: startup and local model readiness =="
 "$HERE/start-riverssai.sh"
-echo "== Gate C: authenticated request-response and memory write =="
+echo "== Gate B2: endpoint authentication and bounded memory listing =="\n"$HERE/test-api-guards.sh"\necho "== Gate C: authenticated request-response and memory write =="
 "$HERE/test-riverssai-request.sh"
 echo "== Gate D: full-stack restart and durable memory recovery =="
 "$HERE/test-full-recovery.sh"
