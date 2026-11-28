@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+set -x
 : "${PGHOST:=localhost}"
 : "${PGPORT:=5432}"
 : "${PGDATABASE:=rivercore}"
