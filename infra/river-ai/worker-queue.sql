@@ -48,6 +48,8 @@ DECLARE
 BEGIN
   UPDATE river_ai_jobs
      SET status = CASE WHEN attempts >= max_attempts THEN 'dead_letter' ELSE 'retry_wait' END,
+         run_after = CASE WHEN attempts >= max_attempts THEN run_after
+                          ELSE NOW() + make_interval(secs => LEAST(900, 15 * (2 ^ LEAST(attempts, 6))::INTEGER)) END,
          locked_by = NULL, lock_token = NULL, locked_until = NULL,
          last_error = COALESCE(last_error, 'Worker lease expired'),
          updated_at = NOW(),
