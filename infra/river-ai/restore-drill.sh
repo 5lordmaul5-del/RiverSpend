@@ -17,7 +17,13 @@ ACTUAL_SHA="$(sha256sum "$BACKUP" | awk '{print $1}')"
 if [[ -z "$EXPECTED_SHA" || "$EXPECTED_SHA" != "$ACTUAL_SHA" ]]; then echo "Checksum failed; refusing restore." >&2; exit 1; fi
 EXPECTED="$(awk '{print $NF}' "$BACKUP.hmac")"
 ACTUAL="$(python3 infra/river-ai/hmac_sha256.py "$BACKUP")"
-if [[ -z "$EXPECTED" || "$EXPECTED" != "$ACTUAL" ]]; then echo "HMAC authentication failed; refusing restore." >&2; exit 1; fi
+if [[ ! "$EXPECTED" =~ ^[[:xdigit:]]{64}$ ]]; then echo "Malformed HMAC sidecar; refusing restore." >&2; exit 1; fi
+if ! python3 - "$EXPECTED" "$ACTUAL" <<'PY'
+import hmac, sys
+expected, actual = sys.argv[1], sys.argv[2]
+sys.exit(0 if hmac.compare_digest(expected.lower(), actual.lower()) else 1)
+PY
+then echo "HMAC authentication failed; refusing restore." >&2; exit 1; fi
 TMP="$(mktemp)"
 NAME="river_restore_drill_$(date -u +%Y%m%d%H%M%S)_$$"
 CREATED=0

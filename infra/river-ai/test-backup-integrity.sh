@@ -18,6 +18,9 @@ printf 'synthetic encrypted backup fixture\n' > "$B"
 sha256sum "$B" | awk '{print $1}' > "$B.sha256"
 printf 'bad-hmac\n' > "$B.hmac"
 if bash "$SCRIPT" "$B" >/dev/null 2>&1; then echo 'Bad HMAC unexpectedly passed.' >&2; exit 1; fi
+# Malformed HMAC metadata must fail closed.
+printf 'not-a-valid-digest\n' > "$B.hmac"
+if bash "$SCRIPT" "$B" >/dev/null 2>&1; then echo 'Malformed HMAC unexpectedly passed.' >&2; exit 1; fi
 # Missing integrity metadata must fail closed.
 rm -f "$B.hmac"
 if bash "$SCRIPT" "$B" >/dev/null 2>&1; then echo 'Missing HMAC unexpectedly passed.' >&2; exit 1; fi
