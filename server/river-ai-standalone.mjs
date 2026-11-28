@@ -197,15 +197,20 @@ const server = http.createServer(async (req, res) => {
   if (req.method === "GET" && url.pathname === "/v1/memories") {
     const requestedLimit = Number.parseInt(url.searchParams.get("limit") || "10", 10);
     const limit = Number.isFinite(requestedLimit) ? Math.max(1, Math.min(50, requestedLimit)) : 10;
-    const result = await pool.query(
-      "SELECT id,title,content,category,created_at FROM river_ai_memories WHERE owner_id='owner' ORDER BY created_at DESC LIMIT $1",
-      [limit]
-    );
-    await pool.query(
-      "INSERT INTO river_ai_audit(action,status,details) VALUES($1,$2,$3)",
-      ["memory.read", "success", { limit, returned: result.rows.length }]
-    );
-    return send(res, 200, { memories: result.rows, count: result.rows.length });
+    try {
+      const result = await pool.query(
+        "SELECT id,title,content,category,created_at FROM river_ai_memories WHERE owner_id='owner' ORDER BY created_at DESC LIMIT $1",
+        [limit]
+      );
+      await pool.query(
+        "INSERT INTO river_ai_audit(action,status,details) VALUES($1,$2,$3)",
+        ["memory.read", "success", { limit, returned: result.rows.length }]
+      );
+      return send(res, 200, { memories: result.rows, count: result.rows.length });
+    } catch (error) {
+      console.error("RiverSSAI memory read error:", error.message);
+      return send(res, 503, { error: "Memoria temporaneamente non disponibile." });
+    }
   }
 
   if (req.method !== "POST") return send(res, 405, { error: "Metodo non consentito." });
