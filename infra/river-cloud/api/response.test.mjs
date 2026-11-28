@@ -56,3 +56,13 @@ test('refuses responses whose headers have already been sent', () => {
   assert.equal(sendJsonResponse(res, 500, { error: 'internal_error' }), false);
   assert.equal(res.calls.length, 0);
 });
+
+
+test('response helper sets content safety headers', () => {
+  const res = mockResponse();
+  assert.equal(sendJsonResponse(res, 200, { ok: true }), true);
+  const headers = res.calls[0][2];
+  assert.equal(headers['content-type'], 'application/json; charset=utf-8');
+  assert.equal(headers['x-content-type-options'], 'nosniff');
+  assert.equal(headers['referrer-policy'], 'no-referrer');
+});
