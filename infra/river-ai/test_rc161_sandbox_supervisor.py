@@ -8,7 +8,7 @@ import time
 from unittest.mock import Mock, call, patch
 import subprocess
 
-from rc161_restricted_child import apply_resource_limits, RESOURCE_LIMITS
+from rc161_restricted_child import apply_resource_limits, RESOURCE_LIMITS, MAX_CHILD_FILE_BYTES
 from rc161_sandbox_supervisor import SandboxSupervisor, SupervisorError, MAX_OUTPUT_BYTES
 
 
@@ -121,6 +121,24 @@ class SupervisorTests(unittest.TestCase):
             with self.assertRaisesRegex(SupervisorError, "output too large"):
                 self.supervisor.run("echo", {"x": 1})
 
+    def test_stderr_file_limit_rejected_before_read(self):
+        valid_response = b'{"ok":true,"result":{"echo":{"x":1}}}\n'
+
+        def fake_popen(*args, **kwargs):
+            kwargs["stdout"].write(valid_response)
+            kwargs["stdout"].flush()
+            kwargs["stderr"].write(b"x" * (MAX_CHILD_FILE_BYTES + 1))
+            kwargs["stderr"].flush()
+            process = Mock()
+            process.pid = 1
+            process.returncode = 0
+            process.communicate.return_value = (None, None)
+            return process
+
+        with patch("subprocess.Popen", side_effect=fake_popen):
+            with self.assertRaisesRegex(SupervisorError, "child output too large"):
+                self.supervisor.run("echo", {"x": 1})
+
     def test_child_resource_limits_are_applied(self):
         expected = [call(name, bounds) for name, bounds in RESOURCE_LIMITS]
         with patch("resource.setrlimit") as setrlimit:
@@ -130,7 +148,6 @@ class SupervisorTests(unittest.TestCase):
             {name for name, _ in RESOURCE_LIMITS},
             {resource.RLIMIT_CPU, resource.RLIMIT_AS, resource.RLIMIT_FSIZE, resource.RLIMIT_NOFILE, resource.RLIMIT_CORE},
         )
-
 
     def test_child_launch_uses_minimal_environment_isolated_mode_and_temp_cwd(self):
         captured = {}
