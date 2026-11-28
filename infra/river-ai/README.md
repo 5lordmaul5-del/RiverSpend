@@ -135,3 +135,20 @@ Two helper scripts provide a basic encrypted backup and a non-destructive restor
 - Restore drill: create an empty disposable database first, then set `RIVERBACKUP_PASSPHRASE`, `RIVERBACKUP_FILE` (path to the encrypted dump), and `RIVERBACKUP_TARGET_DB` (the disposable database name). Run `bash infra/river-ai/restore-owner-db.sh`.
 - The restore helper verifies the checksum and archive readability, and does not use `--clean` or drop database objects. Restore into an empty test database; never point a drill at live data.
 - These scripts have not yet been validated on the owner host. CI/shell syntax validation is required, followed by a controlled disposable-database restore drill.
+
+
+## Controlled shutdown and restart (owner-host drill)
+
+The standalone API handles SIGTERM and SIGINT by stopping its HTTP listener, allowing server close/drain to complete, and then closing the PostgreSQL pool. The worker has its own shutdown handling and waits for active work before closing its pool. CI validation exists around the runtime, but a real owner-host shutdown drill remains required.
+
+On a disposable owner installation only:
+
+1. Confirm /ready is HTTP 200 and record docker compose ps.
+2. Stop services gracefully with docker compose stop (do **not** use down -v; never delete volumes during this drill).
+3. Confirm containers are stopped with docker compose ps.
+4. Restart with docker compose up -d.
+5. Wait for /health and then /ready to return HTTP 200.
+6. Verify a synthetic memory and queue test record persist; check the worker processes a new synthetic job.
+7. Record timestamps, versions, logs, and outcomes. Do not use production/customer data.
+
+If shutdown hangs or readiness fails, preserve logs and stop the drill; do not delete volumes or attempt destructive repair. CI success is not a substitute for this physical-host acceptance test.
