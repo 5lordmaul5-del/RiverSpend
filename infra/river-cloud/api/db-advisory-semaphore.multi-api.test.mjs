@@ -21,7 +21,7 @@ function psql(query) {
 }
 
 function holdSlot(slot) {
-  const query = `SELECT pg_try_advisory_lock(${namespace}, ${slot}); SELECT pg_sleep(15);`;
+  const query = `SELECT pg_try_advisory_lock(${namespace}, ${slot}); SELECT pg_sleep(30);`;
   const child = spawn('docker', [...compose, 'exec', '-T', 'rivercloud-db', 'psql', '-X', '-qAt', '-U', 'rivercloud', '-d', 'rivercloud', '-c', query], { stdio: ['ignore', 'pipe', 'pipe'] });
   child.stdout.resume();
   child.stderr.resume();
@@ -64,6 +64,14 @@ test('two RiverCloud API instances share the PostgreSQL semaphore', async t => {
     const busy = await requestProfile(port);
     assert.equal(busy.status, 503, `API ${port} should reject when the shared slots are held`);
     assert.deepEqual(busy.body, { error: 'database_busy' });
+  }
+
+  const blockedBurst = await Promise.all(Array.from({ length: 32 }, (_, i) =>
+    requestProfile(i % 2 === 0 ? 18080 : 18081)
+  ));
+  for (const result of blockedBurst) {
+    assert.equal(result.status, 503, 'every burst request should be denied while all shared slots are held');
+    assert.deepEqual(result.body, { error: 'database_busy' });
   }
 
   await Promise.all(holders.map(child => new Promise(resolve => {
