@@ -10,8 +10,8 @@ export function buildDbAdvisorySemaphoreScript(slots = 8) {
   }
   return [
     "SELECT CASE WHEN EXISTS (",
-    "  SELECT 1 FROM generate_series(1, " + slots + ") AS slot",
-    "  WHERE pg_try_advisory_lock(" + RIVERCLOUD_SEMAPHORE_NAMESPACE + ", slot)",
+    "  SELECT 1 FROM generate_series(1, " + slots + ") AS slots(slot)",
+    "  WHERE pg_try_advisory_lock(" + RIVERCLOUD_SEMAPHORE_NAMESPACE + ", slots.slot)",
     ") THEN 'true' ELSE 'false' END AS acquired \\gset",
     "\\if :acquired",
     "\\else",
