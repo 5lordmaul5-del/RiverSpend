@@ -16,3 +16,7 @@
 - `docker compose down -v` (ATTENZIONE: elimina i volumi e i dati persistenti)
 
 Questo script avvia solo i servizi. Il download del modello e la prova di conversazione sono traguardi successivi. Non fa deploy né tocca servizi o dati live.
+
+
+## Smoke test request/response (milestones 3–4)
+Install `jq`, ensure services are running and the model is available, then run `./test-riverssai-request.sh`. It checks health, readiness, submits an authenticated chat request and validates the returned answer/provider/memory fields. This is a test script; it has not yet been run against a live local runtime in this workspace.
