@@ -99,7 +99,8 @@ BEGIN
          locked_by=NULL, lock_token=NULL, locked_until=NULL,
          last_error=NULL, updated_at=NOW(), finished_at=NOW()
    WHERE id=p_job_id AND status='running'
-     AND locked_by=p_worker_id AND lock_token=p_lock_token;
+     AND locked_by=p_worker_id AND lock_token=p_lock_token
+     AND locked_until > NOW();
   GET DIAGNOSTICS changed = ROW_COUNT;
   IF changed=1 THEN
     INSERT INTO river_ai_worker_events(job_id,worker_id,event)
@@ -121,6 +122,7 @@ BEGIN
   SELECT * INTO current_job FROM river_ai_jobs
    WHERE id=p_job_id AND status='running'
      AND locked_by=p_worker_id AND lock_token=p_lock_token
+     AND locked_until > NOW()
    FOR UPDATE;
   IF NOT FOUND THEN RETURN FALSE; END IF;
 
