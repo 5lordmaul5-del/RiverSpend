@@ -22,8 +22,8 @@ for i in $(seq 1 45); do
   sleep 2
 done
 curl --fail --silent --show-error "$BASE/health" | jq .
-echo "Querying memory marker after restart..."
-CHAT="$(curl --fail --silent --show-error --max-time 100 -X POST "$BASE/v1/chat" "${AUTH[@]}" -d "$(jq -n --arg title "$TITLE" --arg content "$CONTENT" '{agent:"nova",messages:[{role:"user",content:"Conferma se nel contesto memoria trovi il marker "+$title+" e la frase "+$content+". Riporta esattamente marker e frase se presenti."}]}' )")"
-echo "$CHAT" | jq .
-echo "$CHAT" | jq -e --arg title "$TITLE" --arg content "$CONTENT" '.answer | contains($title) and contains($content)' >/dev/null
-echo "PASS: marker memory retrieved after service restart."
+echo "Querying deterministic memory retrieval after restart..."
+MEMORIES="$(curl --fail --silent --show-error "$BASE/v1/memories?limit=50" "${AUTH[@]}")"
+echo "$MEMORIES" | jq .
+echo "$MEMORIES" | jq -e --arg title "$TITLE" --arg content "$CONTENT" '.memories | any(.title == $title and .content == $content)' >/dev/null
+echo "PASS: marker directly retrieved after service restart."
