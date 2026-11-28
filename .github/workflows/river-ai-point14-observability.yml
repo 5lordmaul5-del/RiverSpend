@@ -1,0 +1,17 @@
+name: RiverSSAI Point 14 runtime summary validation
+on:
+  pull_request:
+    paths:
+      - 'infra/river-ai/runtime-summary-owner.sh'
+      - 'infra/river-ai/POINT-14-RUNTIME-SUMMARY.md'
+      - '.github/workflows/river-ai-point14-observability.yml'
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash -n infra/river-ai/runtime-summary-owner.sh
+      - run: |
+          grep -F 'output /dev/null' infra/river-ai/runtime-summary-owner.sh
+          grep -F 'no logs, response bodies' infra/river-ai/runtime-summary-owner.sh
+          ! grep -E 'docker compose .* up|docker compose .* down|rm -rf' infra/river-ai/runtime-summary-owner.sh
