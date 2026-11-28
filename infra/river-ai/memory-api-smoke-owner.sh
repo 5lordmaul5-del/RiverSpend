@@ -19,9 +19,16 @@ json=(-H "Content-Type: application/json")
 # Authentication negative test.
 status="$(curl "${curl_opts[@]}" -sS -o "$tmp/unauth" -w '%{http_code}' "$BASE_URL/v1/memories")"
 [[ "$status" == 401 ]] || { echo "Expected unauthenticated 401, got $status" >&2; exit 1; }
-# Wrong-token rejection must be indistinguishable from unauthenticated access.
-status="$(curl "${curl_opts[@]}" -sS -o "$tmp/wrong-token" -w '%{http_code}' -H "Authorization: Bearer invalid-smoke-token" "$BASE_URL/v1/memories")"
-[[ "$status" == 401 ]] || { echo "Expected invalid-token 401, got $status" >&2; exit 1; }
+# Validate the authentication boundary across the protected API surface.
+for endpoint in /v1/memories /v1/memories/export /v1/agents /v1/jobs; do
+  status="$(curl "${curl_opts[@]}" -sS -o "$tmp/wrong-token" -w '%{http_code}' -H "Authorization: Bearer invalid-smoke-token" "$BASE_URL$endpoint")"
+  [[ "$status" == 401 ]] || { echo "Expected invalid-token 401 for $endpoint, got $status" >&2; exit 1; }
+done
+# POST endpoints must also reject requests without credentials before processing payloads.
+for endpoint in /v1/chat /v1/memories/import /v1/jobs; do
+  status="$(curl "${curl_opts[@]}" -sS -o "$tmp/unauth-post" -w '%{http_code}' -X POST "$BASE_URL$endpoint")"
+  [[ "$status" == 401 ]] || { echo "Expected unauthenticated POST 401 for $endpoint, got $status" >&2; exit 1; }
+done
 # Validation checks must reject malformed import requests before inserting records.
 for invalid in '{"memories":[]}' '{"memories":[{"title":"missing content"}]}' '{"memories":[{"content":"missing title"}]}'; do
   status="$(curl "${curl_opts[@]}" -sS "${auth[@]}" "${json[@]}" -o "$tmp/invalid" -w '%{http_code}' -X POST --data "$invalid" "$BASE_URL/v1/memories/import")"
@@ -45,4 +52,4 @@ jq -e --arg t "$tag" '.memories[] | select(.title==$t)' "$tmp/export" >/dev/null
 status="$(curl "${curl_opts[@]}" -sS "${auth[@]}" -o "$tmp/delete" -w '%{http_code}' -X DELETE "$BASE_URL/v1/memories/$id")"
 id=""
 [[ "$status" == 200 ]] && jq -e '.deleted==true' "$tmp/delete" >/dev/null
-echo "PASS: auth rejection, import validation (empty/missing/>100), synthetic import, list, export and cleanup."
+echo "PASS: protected API auth (wrong token and unauthenticated POST), import validation (empty/missing/>100), synthetic import, list, export and cleanup."
