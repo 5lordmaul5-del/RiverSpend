@@ -1,0 +1,19 @@
+name: RiverSSAI Point 3 recovery documentation validation
+on:
+  pull_request:
+    paths:
+      - 'infra/river-ai/POINT-3-RECOVERY-READINESS.md'
+      - '.github/workflows/river-ai-point3-validation.yml'
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate runbook references
+        run: |
+          test -f infra/river-ai/backup-encrypted.sh
+          test -f infra/river-ai/verify-encrypted-backup.sh
+          test -f infra/river-ai/restore-drill.sh
+          grep -F 'verify-encrypted-backup.sh' infra/river-ai/POINT-3-RECOVERY-READINESS.md
+          grep -F 'restore-drill.sh' infra/river-ai/POINT-3-RECOVERY-READINESS.md
+          grep -F 'No host is provisioned' infra/river-ai/POINT-3-RECOVERY-READINESS.md
