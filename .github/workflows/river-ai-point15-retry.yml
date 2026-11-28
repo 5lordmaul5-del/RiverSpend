@@ -1,0 +1,17 @@
+name: RiverSSAI Point 15 retry guard validation
+on:
+  pull_request:
+    paths:
+      - 'infra/river-ai/retry-guard.sh'
+      - 'infra/river-ai/POINT-15-RETRY-GUARD.md'
+      - '.github/workflows/river-ai-point15-retry.yml'
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash -n infra/river-ai/retry-guard.sh
+      - run: |
+          grep -F 'attempts must be' infra/river-ai/retry-guard.sh || true
+          grep -F 'Retry budget exhausted' infra/river-ai/retry-guard.sh
+          ! grep -E 'while true|until |docker compose .* up|rm -rf' infra/river-ai/retry-guard.sh
