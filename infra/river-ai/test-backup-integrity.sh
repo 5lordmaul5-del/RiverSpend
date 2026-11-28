@@ -2,7 +2,7 @@
 set -Eeuo pipefail
 SCRIPT="$(cd "$(dirname "$0")" && pwd)/verify-encrypted-backup.sh"
 TMP="$(mktemp -d)"
-trap 'rm -rf "$TMP"' EXIT
+trap 'rm -f "$TMP/test.dump.enc" "$TMP/test.dump.enc.sha256" "$TMP/test.dump.enc.hmac"; rmdir "$TMP"' EXIT
 export RIVER_AI_BACKUP_PASSPHRASE='ci-test-passphrase'
 B="$TMP/test.dump.enc"
 printf 'synthetic encrypted backup fixture\n' > "$B"
