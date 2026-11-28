@@ -25,6 +25,8 @@ This integration branch brings the self-hostable PostgreSQL + Ollama runtime, 90
 The 90 entries are registered specialist roles, not 90 always-running independent models. A request can invoke up to 30 specialists; the default concurrency is 1 to protect machines with limited RAM/compute. Raise it to 2 only after measuring the host.
 
 ## Run the self-hosted prototype on Linux
+
+Before installation, run `bash infra/river-ai/owner-host-preflight.sh` to check Docker, Compose and prerequisite availability without exposing secrets. Then use `bash infra/river-ai/start-owner-host.sh` for the guided bootstrap; it creates the private environment file and performs readiness plus a local inference smoke test. The bootstrap is intended for an owner-controlled Linux host.
 1. Install Docker Engine and the Docker Compose plugin.
 2. Copy this repository to the host.
 3. In infra/river-ai, create a private .env file with:
