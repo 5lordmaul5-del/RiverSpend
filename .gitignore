@@ -8,3 +8,11 @@ node_modules/
 !.env.example
 infra/river-cloud/.env
 infra/river-cloud/backups/
+
+# Local RiverSSAI runtime secrets and backup artifacts
+infra/river-ai/.env
+infra/river-ai/backups/
+infra/river-ai/*.dump.enc
+infra/river-ai/*.dump.enc.sha256
+infra/river-ai/*.dump.enc.hmac
+infra/river-ai/*.tmp
