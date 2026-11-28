@@ -31,6 +31,7 @@ grep -Fq 'Formato memoria non valido.' "$SERVER" || fail "memory payload validat
 grep -Fq 'Math.min(50' "$SERVER" || fail "memory listing limit missing"
 grep -Fq 'AbortSignal.timeout(90000)' "$SERVER" || fail "model request timeout missing"\ngrep -Fq 'MAX_ACTIVE_CHAT_REQUESTS' "$SERVER" || fail "global chat concurrency guard missing"\ngrep -Fq 'RIVER_AI_MAX_ACTIVE_CHAT_REQUESTS' "$COMPOSE" || fail "chat concurrency configuration wiring missing"\ngrep -Fq 'finally' "$SERVER" || fail "chat slot release finally block missing"
 grep -Fq 'timingSafeEqual' "$SERVER" || fail "timing-safe token comparison missing"
+grep -Fq 'Math.min(1000' "$SERVER" || fail "rate limit ceiling missing"\ngrep -Fq 'const limited = recent.length >= RATE_LIMIT' "$SERVER" || fail "rate limiter bounded behavior missing"
 grep -Fq 'npm install --omit=dev pg@' "$DOCKERFILE" || fail "production dependency install missing"
 pass "server input, request timeout, authentication comparison and runtime dependency checks present"
 
