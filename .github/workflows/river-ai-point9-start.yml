@@ -1,0 +1,20 @@
+name: RiverSSAI Point 9 controlled runtime scripts
+on:
+  pull_request:
+    paths:
+      - 'infra/river-ai/start-owner-runtime.sh'
+      - 'infra/river-ai/stop-owner-runtime.sh'
+      - 'infra/river-ai/POINT-9-CONTROLLED-START.md'
+      - '.github/workflows/river-ai-point9-start.yml'
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash -n infra/river-ai/start-owner-runtime.sh infra/river-ai/stop-owner-runtime.sh
+      - name: Safety guards
+        run: |
+          grep -F 'chmod' infra/river-ai/start-owner-runtime.sh || true
+          grep -F 'config >/dev/null' infra/river-ai/start-owner-runtime.sh
+          grep -F 'stop river-ai river-ai-worker ollama riverdb' infra/river-ai/stop-owner-runtime.sh
+          ! grep -E 'down -v|volume rm|rm -rf' infra/river-ai/stop-owner-runtime.sh
