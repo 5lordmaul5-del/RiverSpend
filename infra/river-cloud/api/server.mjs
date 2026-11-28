@@ -3,6 +3,7 @@ import { createRiverAuth } from './river-auth.mjs';
 import { spawn } from 'node:child_process';
 import { createRateLimiter } from './rate-limit.mjs';
 import { createDbConcurrencyGate } from './db-concurrency.mjs';
+import { buildDbAdvisorySemaphoreScript } from './db-advisory-semaphore.mjs';
 
 const PORT = Number(process.env.PORT || 8080);
 const SUPABASE_URL = process.env.RIVERAUTH_ISSUER_URL;
@@ -22,6 +23,7 @@ const rateLimitedByKey = createRateLimiter({ windowMs: 60_000, limit: 60, maxKey
 const MAX_BODY_BYTES = 4096;
 const MAX_DB_OPERATIONS = 8;
 const dbConcurrencyGate = createDbConcurrencyGate(MAX_DB_OPERATIONS);
+const DB_SEMAPHORE_SCRIPT = buildDbAdvisorySemaphoreScript(MAX_DB_OPERATIONS);
 
 function send(res, status, payload) {
   res.writeHead(status, {
@@ -147,6 +149,12 @@ function runProfileSql(sql, variables) {
         reject(error);
         return;
       }
+      if (code === 77) {
+        const error = new Error('database_busy');
+        error.status = 503;
+        reject(error);
+        return;
+      }
       if (code !== 0) {
         const error = new Error('RiverCloud database operation failed');
         error.status = 503;
@@ -169,7 +177,7 @@ function runProfileSql(sql, variables) {
       child.kill('SIGKILL');
       // close handler performs final rejection and releases the concurrency slot.
     });
-    child.stdin.end(sql);
+    child.stdin.end(DB_SEMAPHORE_SCRIPT + sql);
   });
 }
 
