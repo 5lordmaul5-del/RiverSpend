@@ -1,4 +1,7 @@
 export function createRateLimiter({ windowMs = 60_000, limit = 60, maxKeys = 10_000, clock = Date.now } = {}) {
+  if (!Number.isFinite(windowMs) || windowMs <= 0 || !Number.isInteger(limit) || limit < 0 || !Number.isInteger(maxKeys) || maxKeys < 1) {
+    throw new TypeError('rate limiter configuration is invalid');
+  }
   const windows = new Map();
   let cleanupCounter = 0;
 
