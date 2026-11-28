@@ -1,0 +1,14 @@
+const TERMINAL=new Set(['passed','failed','timeout','blocked','cancelled']);
+const MAX_LOG=12000;
+function clean(record){return {buildId:String(record.buildId),project:String(record.project),kind:String(record.kind),status:record.status,startedAt:record.startedAt,endedAt:record.endedAt,durationMs:Number(record.durationMs),exitCode:record.exitCode??null,executionVerified:record.executionVerified===true,stdout:String(record.stdout||'').slice(0,MAX_LOG),stderr:String(record.stderr||'').slice(0,MAX_LOG),notes:Array.isArray(record.notes)?record.notes.slice(0,20).map(x=>String(x).slice(0,500)):[],createdAt:record.createdAt};}
+/** Bounded build-report history. Persistence is optional and must be explicitly injected. */
+export class RiverBuildHistory{
+ #records=[];#adapter;
+ constructor({maxRecords=200,adapter=null}={}){if(!Number.isInteger(maxRecords)||maxRecords<1)throw Error('maxRecords must be positive');if(adapter!==null&&typeof adapter.save!=='function')throw Error('adapter.save required');this.maxRecords=maxRecords;this.#adapter=adapter;}
+ async add(report){if(!report||!TERMINAL.has(report.status))throw Error('Terminal build report required');if(report.status==='passed'&&report.executionVerified!==true)throw Error('Unverified pass cannot be recorded');const r=clean(report);if(this.#records.some(x=>x.buildId===r.buildId))throw Error('Duplicate buildId');this.#records.unshift(r);this.#records=this.#records.slice(0,this.maxRecords);if(this.#adapter)await this.#adapter.save(this.export());return {...r};}
+ list({project,status,limit=Math.min(50,this.maxRecords)}={}){if(!Number.isInteger(limit)||limit<1||limit>this.maxRecords)throw Error('limit out of range');return this.#records.filter(r=>(!project||r.project===project)&&(!status||r.status===status)).slice(0,limit).map(r=>({...r}));}
+ get(buildId){const r=this.#records.find(x=>x.buildId===buildId);return r?({...r}):null;}
+ summary(){const counts={total:this.#records.length};for(const s of ['passed','failed','timeout','blocked','cancelled'])counts[s]=this.#records.filter(r=>r.status===s).length;counts.verifiedPassed=this.#records.filter(r=>r.status==='passed'&&r.executionVerified).length;return counts;}
+ export(){return {version:1,records:this.#records.map(r=>({...r}))};}
+ async import(snapshot){if(!snapshot||snapshot.version!==1||!Array.isArray(snapshot.records))throw Error('Invalid history snapshot');if(snapshot.records.length>this.maxRecords)throw Error('Snapshot exceeds history limit');const ids=new Set();const rows=snapshot.records.map(x=>{if(!x||!TERMINAL.has(x.status)||typeof x.buildId!=='string'||!x.buildId)throw Error('Invalid record in snapshot');if(x.status==='passed'&&x.executionVerified!==true)throw Error('Unverified pass in snapshot');if(ids.has(x.buildId))throw Error('Duplicate buildId in snapshot');ids.add(x.buildId);return clean(x)});this.#records=rows;if(this.#adapter)await this.#adapter.save(this.export());return this.summary();}
+}

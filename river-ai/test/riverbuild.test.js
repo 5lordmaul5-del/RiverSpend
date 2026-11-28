@@ -1,0 +1,3 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {buildPlan,validateBuildRequest,riverBuildStatus} from '../src/riverbuild.js';
+test('validates build requests and confines paths',()=>{const p=buildPlan({project:'demo',kind:'node-test',entry:'test/main.test.js'},{workspaceRoot:'/tmp/riverbuild'});assert.equal(p.executionEnabled,false);assert.equal(p.networkAccess,false);assert.throws(()=>validateBuildRequest({project:'../bad',kind:'node-test',entry:'x'}));assert.throws(()=>buildPlan({project:'demo',kind:'node-test',entry:'../../escape'},{workspaceRoot:'/tmp/riverbuild'}));});
+test('status is plan only',()=>assert.equal(riverBuildStatus().executionEnabled,false));

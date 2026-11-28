@@ -1,0 +1,10 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import {ROLES,PERMISSIONS,permissionsFor,authorize,roleCanManageIdentity,roleCanManagePolicy} from "../src/identity.js";
+test("roles and permissions registry",()=>{assert.deepEqual(ROLES,["Owner","Admin","Operator","Viewer"]);assert.ok(PERMISSIONS.includes("core.read"));});
+test("unknown role and permission fail closed",()=>{assert.equal(authorize("root","core.read").allowed,false);assert.equal(authorize("Viewer","unknown").allowed,false);});
+test("viewer is read only",()=>{assert.equal(authorize("Viewer","core.read").allowed,true);assert.equal(authorize("Viewer","memory.write").allowed,false);});
+test("operator may plan but cannot write or manage",()=>{assert.equal(authorize("Operator","tasks.plan").allowed,true);assert.equal(authorize("Operator","knowledge.write").allowed,false);assert.equal(roleCanManageIdentity("Operator"),false);});
+test("admin operational permissions but no policy authority",()=>{assert.equal(authorize("Admin","memory.write").allowed,true);assert.equal(roleCanManagePolicy("Admin"),false);});
+test("only owner manages identity and policy",()=>{assert.equal(roleCanManageIdentity("Owner"),true);assert.equal(roleCanManagePolicy("Owner"),true);assert.equal(roleCanManageIdentity("Viewer"),false);});
+test("permissions list is defensive",()=>{const p=permissionsFor("Owner");p.pop();assert.equal(permissionsFor("Owner").length,PERMISSIONS.length);});
