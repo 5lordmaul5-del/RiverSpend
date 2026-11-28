@@ -1,0 +1,17 @@
+name: RC408 RiverSSAI regression preflight
+on:
+  push:
+    branches:
+      - feat/rc408-regression-gate-preflight-2026-11-28
+  pull_request:
+    branches:
+      - feat/river-ssai-local-http-core-2026-11-27
+permissions:
+  contents: read
+jobs:
+  regression-preflight:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Run RC-408 preflight and suites
+        run: bash infra/river-ai/rc408-integrated-regression.sh
