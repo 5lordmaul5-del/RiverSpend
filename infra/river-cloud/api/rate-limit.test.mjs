@@ -65,3 +65,18 @@ test('rate limiter periodically removes expired keys to keep storage bounded', (
   // After 256 calls, stale entries should have been pruned; fresh keys remain usable.
   assert.equal(limiter('fresh-55'), false);
 });
+
+
+test('rate limiter evicts an oldest key safely when capacity is full', () => {
+  let now = 1;
+  const limiter = createRateLimiter({ limit: 1, windowMs: 100, maxKeys: 2, clock: () => now });
+  assert.equal(limiter('first'), false);
+  now = 2;
+  assert.equal(limiter('second'), false);
+  now = 3;
+  // Capacity pressure removes the oldest entry rather than growing the map.
+  assert.equal(limiter('third'), false);
+  assert.equal(limiter('third'), true);
+  // The evicted key can re-enter with a fresh window.
+  assert.equal(limiter('first'), false);
+});
