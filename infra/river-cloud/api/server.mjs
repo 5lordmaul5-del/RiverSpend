@@ -149,7 +149,7 @@ function runProfileSql(sql, variables) {
         reject(error);
         return;
       }
-      if (stdout.split(/\\r?\\n/).some((line) => line.trim() === 'RIVERCLOUD_SEMAPHORE_FULL')) {
+      if (stdout.includes('RIVERCLOUD_SEMAPHORE_FULL')) {
         const error = new Error('database_busy');
         error.status = 503;
         reject(error);
