@@ -3,7 +3,13 @@ set -Eeuo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 SCRIPT="$ROOT/infra/river-ai/restore-owner-db.sh"
 TMP="$(mktemp -d)"
-ENV_CREATED=0\nif [[ ! -e "$ROOT/infra/river-ai/.env" ]]; then ENV_CREATED=1; fi\ncleanup() { rm -rf "$TMP"; if [[ "$ENV_CREATED" == 1 ]]; then rm -f "$ROOT/infra/river-ai/.env"; fi; }\ntrap cleanup EXIT
+ENV_CREATED=0
+if [[ ! -e "$ROOT/infra/river-ai/.env" ]]; then ENV_CREATED=1; fi
+cleanup() {
+  rm -rf "$TMP"
+  if [[ "$ENV_CREATED" == 1 ]]; then rm -f "$ROOT/infra/river-ai/.env"; fi
+}
+trap cleanup EXIT
 mkdir -p "$TMP/bin" "$ROOT/infra/river-ai"
 # Isolate docker and crypto/checksum commands; guard must fail before any of these run.
 cat > "$TMP/bin/docker" <<'EOF'
