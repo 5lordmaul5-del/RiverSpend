@@ -95,6 +95,7 @@ function runProfileSql(sql, variables) {
       });
     } catch (error) {
       releaseSlot();
+      if (!Number.isInteger(error?.status)) error.status = 503;
       reject(error);
       return;
     }
