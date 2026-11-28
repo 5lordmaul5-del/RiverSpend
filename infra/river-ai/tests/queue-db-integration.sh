@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 set -euo pipefail
-set -x
 : "${PGHOST:=localhost}"
 : "${PGPORT:=5432}"
 : "${PGDATABASE:=rivercore}"
@@ -30,6 +29,10 @@ lease_id="$(psql -qAt -c "INSERT INTO river_ai_jobs(payload,max_attempts) VALUES
 psql -v ON_ERROR_STOP=1 -c "SELECT lock_token FROM river_ai_claim_job('lease-worker',30)" >/dev/null
 psql -v ON_ERROR_STOP=1 -c "UPDATE river_ai_jobs SET locked_until=NOW()-INTERVAL '1 second' WHERE id='$lease_id'"
 psql -v ON_ERROR_STOP=1 -c "SELECT * FROM river_ai_claim_job('lease-recovery',30)" >/dev/null
+[[ "$(psql -qAt -c "SELECT status FROM river_ai_jobs WHERE id='$lease_id'")" == "retry_wait" ]]
+# Recovery applies backoff; make this isolated test deterministic and immediately eligible.
+psql -q -v ON_ERROR_STOP=1 -c "UPDATE river_ai_jobs SET run_after=NOW() WHERE id='$lease_id'"
+psql -q -v ON_ERROR_STOP=1 -c "SELECT * FROM river_ai_claim_job('lease-recovery-2',30)" >/dev/null
 [[ "$(psql -qAt -c "SELECT status FROM river_ai_jobs WHERE id='$lease_id'")" == "running" ]]
 psql -v ON_ERROR_STOP=1 -c "UPDATE river_ai_jobs SET locked_until=NOW()-INTERVAL '1 second' WHERE id='$lease_id'"
 psql -v ON_ERROR_STOP=1 -c "SELECT * FROM river_ai_claim_job('lease-exhaustion-check',30)" >/dev/null
