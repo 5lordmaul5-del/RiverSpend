@@ -77,4 +77,26 @@ test('two RiverCloud API instances share the PostgreSQL semaphore', async t => {
     assert.equal(result.status, 200);
     assert.deepEqual(result.body, { profile: null });
   }
+
+  const burst = await Promise.all(Array.from({ length: 32 }, (_, i) =>
+    requestProfile(i % 2 === 0 ? 18080 : 18081)
+  ));
+  let successes = 0;
+  for (const result of burst) {
+    if (result.status === 200) {
+      successes += 1;
+      assert.deepEqual(result.body, { profile: null });
+    } else {
+      assert.equal(result.status, 503);
+      assert.deepEqual(result.body, { error: 'database_busy' });
+    }
+  }
+  assert.ok(successes > 0, 'concurrent burst should allow at least one successful profile read');
+  await waitForLocks(0);
+
+  const finalRecovery = await Promise.all([requestProfile(18080), requestProfile(18081)]);
+  for (const result of finalRecovery) {
+    assert.equal(result.status, 200);
+    assert.deepEqual(result.body, { profile: null });
+  }
 });
