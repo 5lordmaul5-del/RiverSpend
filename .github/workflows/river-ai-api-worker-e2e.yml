@@ -9,6 +9,7 @@ on:
       - 'infra/river-ai/tests/api-worker-e2e.sh'
       - 'infra/river-ai/tests/lease-recovery.sh'
       - 'infra/river-ai/tests/mock-model.mjs'
+      - 'infra/river-ai/tests/worker-shutdown-guards.mjs'
       - '.github/workflows/river-ai-api-worker-e2e.yml'
 jobs:
   api-worker-e2e:
@@ -36,6 +37,8 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y postgresql-client
       - name: Install isolated runtime dependency
         run: npm install --no-save pg@8.16.3
+      - name: Verify worker graceful-shutdown guard
+        run: node infra/river-ai/tests/worker-shutdown-guards.mjs
       - name: Run API-worker E2E
         env:
           PGHOST: localhost
