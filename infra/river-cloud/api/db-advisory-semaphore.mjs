@@ -15,7 +15,8 @@ export function buildDbAdvisorySemaphoreScript(slots = 8) {
     ") THEN 'true' ELSE 'false' END AS acquired \\gset",
     "\\if :acquired",
     "\\else",
-    "\\quit 77",
+    "\\echo RIVERCLOUD_SEMAPHORE_FULL",
+    "\\quit",
     "\\endif",
     ""
   ].join("\n");
