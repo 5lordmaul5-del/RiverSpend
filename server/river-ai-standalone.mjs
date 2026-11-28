@@ -202,8 +202,8 @@ const server = http.createServer(async (req, res) => {
   }
 
   const jobStatusMatch = /^\/v1\/jobs\/([0-9a-f-]{36})$/i.exec(url.pathname);
-  const memoryDeleteMatch = /^\/v1\/memories\/(\d+)$/.exec(url.pathname);
-  if (!["POST", "GET", "DELETE"].includes(req.method) || !["/v1/chat", "/v1/memories", "/v1/agents", "/v1/jobs"].includes(url.pathname) && !jobStatusMatch && !(req.method === "DELETE" && memoryDeleteMatch)) {
+  const memoryIdMatch = /^\/v1\/memories\/(\d+)$/.exec(url.pathname);
+  if (!["POST", "GET", "DELETE", "PUT"].includes(req.method) || !["/v1/chat", "/v1/memories", "/v1/agents", "/v1/jobs"].includes(url.pathname) && !jobStatusMatch && !(["DELETE", "PUT"].includes(req.method) && memoryIdMatch)) {
     return send(res, 404, { error: "Not found" });
   }
   // Rate-limit before token validation to slow down bearer-token guessing.
@@ -214,17 +214,40 @@ const server = http.createServer(async (req, res) => {
     const result = await pool.query("SELECT id,title,content,category,source,created_at FROM river_ai_memories WHERE owner_id='owner' ORDER BY created_at DESC LIMIT 100");
     return send(res, 200, { memories: result.rows });
   }
-  if (req.method === "DELETE" && memoryDeleteMatch) {
+  if (req.method === "DELETE" && memoryIdMatch) {
     const client = await pool.connect();
     let removed;
     try {
       await client.query("BEGIN");
-      const result = await client.query("DELETE FROM river_ai_memories WHERE id=$1 AND owner_id='owner' RETURNING id", [memoryDeleteMatch[1]]);
+      const result = await client.query("DELETE FROM river_ai_memories WHERE id=$1 AND owner_id='owner' RETURNING id", [memoryIdMatch[1]]);
       removed = result.rows[0];
       if (removed) await client.query("INSERT INTO river_ai_audit(action,status,details) VALUES($1,$2,$3)", ["memory.delete", "success", { id: removed.id }]);
       await client.query("COMMIT");
     } catch (error) { await client.query("ROLLBACK").catch(()=>{}); throw error; } finally { client.release(); }
     return send(res, removed ? 200 : 404, removed ? { deleted: true, id: removed.id } : { error: "Memoria non trovata." });
+  }
+  if (req.method === "PUT" && memoryIdMatch) {
+    try {
+      const body = await readBody(req);
+      const title = typeof body.title === "string" ? body.title.trim().slice(0, 160) : "";
+      const content = typeof body.content === "string" ? body.content.trim().slice(0, 4000) : "";
+      const category = typeof body.category === "string" ? body.category.trim().slice(0, 40) : "note";
+      if (!title || !content) return send(res, 400, { error: "Titolo e contenuto sono obbligatori." });
+      const client = await pool.connect();
+      let updated;
+      try {
+        await client.query("BEGIN");
+        const result = await client.query("UPDATE river_ai_memories SET title=$1,content=$2,category=$3 WHERE id=$4 AND owner_id='owner' RETURNING id,title,content,category,source,created_at", [title, content, category || "note", memoryIdMatch[1]]);
+        updated = result.rows[0];
+        if (updated) await client.query("INSERT INTO river_ai_audit(action,status,details) VALUES($1,$2,$3)", ["memory.update", "success", { id: updated.id }]);
+        await client.query("COMMIT");
+      } catch (error) { await client.query("ROLLBACK").catch(()=>{}); throw error; } finally { client.release(); }
+      return send(res, updated ? 200 : 404, updated ? { memory: updated } : { error: "Memoria non trovata." });
+    } catch (error) {
+      if (error.message === "BODY_TOO_LARGE") return send(res, 413, { error: "Richiesta troppo grande." });
+      if (error instanceof SyntaxError) return send(res, 400, { error: "JSON non valido." });
+      return send(res, 500, { error: "Impossibile aggiornare la memoria." });
+    }
   }
   if (req.method === "POST" && url.pathname === "/v1/jobs") {
     try {
