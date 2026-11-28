@@ -37,7 +37,7 @@ psql -q -v ON_ERROR_STOP=1 -c "SELECT river_ai_claim_job('crash-recovery-sweep',
 DATABASE_URL="postgres://$PGUSER:$PGPASSWORD@$PGHOST:$PGPORT/$PGDATABASE" RIVER_AI_LOCAL_URL="http://127.0.0.1:11434/v1/chat/completions" RIVER_AI_LOCAL_MODEL="$MODEL" RIVER_AI_WORKER_POLL_MS=500 node server/river-ai-worker.mjs &
 WORKER_PID=$!
 for i in {1..40}; do
-  state="$(psql -Atq -v ON_ERROR_STOP=1 -c "SELECT status||'|'||(result->>'answer') FROM river_ai_jobs WHERE id='$job_id")"
+  state="$(psql -Atq -v ON_ERROR_STOP=1 -c "SELECT status||'|'||(result->>'answer') FROM river_ai_jobs WHERE id='$job_id'")
   if [[ "$state" == "succeeded|"*WORKER_CRASH_RECOVERY_SYNTHETIC* ]]; then break; fi
   sleep .5
 done
