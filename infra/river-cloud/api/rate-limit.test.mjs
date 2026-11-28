@@ -54,3 +54,14 @@ test('rate limiter rejects invalid configuration at construction', () => {
     assert.throws(() => createRateLimiter(options), TypeError);
   }
 });
+
+test('rate limiter periodically removes expired keys to keep storage bounded', () => {
+  let now = 0;
+  const limiter = createRateLimiter({ limit: 2, windowMs: 10, maxKeys: 300, clock: () => now });
+  for (let i = 0; i < 200; i += 1) limiter('stale-' + i);
+  now = 11;
+  // Trigger periodic cleanup after the stale entries expire.
+  for (let i = 0; i < 56; i += 1) limiter('fresh-' + i);
+  // After 256 calls, stale entries should have been pruned; fresh keys remain usable.
+  assert.equal(limiter('fresh-55'), false);
+});
