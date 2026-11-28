@@ -66,3 +66,9 @@ test('response helper sets content safety headers', () => {
   assert.equal(headers['x-content-type-options'], 'nosniff');
   assert.equal(headers['referrer-policy'], 'no-referrer');
 });
+
+
+test('response helper never emits a partial body when end throws', () => {
+  const res = mockResponse({ end() { throw new Error('client vanished'); } });
+  assert.equal(sendJsonResponse(res, 200, { safe: true }), false);
+});
