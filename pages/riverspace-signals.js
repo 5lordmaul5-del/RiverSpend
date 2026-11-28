@@ -185,7 +185,7 @@ export default function RiverSpaceSingals() {
       try {
         setError('');
         await Promise.all([loadPeople(user.id), loadConversations(user.id), loadStatuses()]);
-      } catch (e) { if (alive) setError(e.message || 'Errore nel caricamento di Signals.'); }
+      } catch (e) { if (alive) setError(e.message || 'Errore nel caricamento di RiverSpaceSingals.'); }
     })();
     return () => { alive = false; };
   }, [user, loadPeople, loadConversations, loadStatuses]);
@@ -237,7 +237,7 @@ export default function RiverSpaceSingals() {
     });
     setBusy(false);
     if (e1) setError(e1.message);
-    else setNotice('Link di accesso inviato. Controlla la tua email e aprilo per entrare in Signals.');
+    else setNotice('Link di accesso inviato. Controlla la tua email e aprilo per entrare in RiverSpaceSingals.');
   }
 
   async function startChat(person) {
@@ -467,7 +467,7 @@ export default function RiverSpaceSingals() {
           <img src="/icons/riverspace-signals-app.jpg" alt="RiverSpaceSingals" className="h-8 w-8 shrink-0 rounded-full bg-white p-1 md:h-10 md:w-10" />
           <div className="min-w-0"><div className="truncate text-base font-bold tracking-wide md:text-lg">RiverSpaceSingals</div><div className="truncate text-[10px] text-teal-100 md:text-xs">YOUR SPACE · YOUR SIGNAL</div></div>
         </div>
-        <nav className="mt-2 flex items-center gap-2 overflow-x-auto whitespace-nowrap pb-0.5 md:justify-end"><Link href="/riverworld-live" className="shrink-0 rounded-full bg-emerald-300 px-3 py-1.5 text-xs font-bold text-slate-900 hover:bg-emerald-200">🌍 Mondo in diretta</Link><button type="button" onClick={installApp} className="shrink-0 rounded-full bg-amber-300 px-3 py-1.5 text-xs font-bold text-slate-900 hover:bg-amber-200">📲 Installa Signals</button><Link href="/" className="shrink-0 rounded-full border border-white/40 px-3 py-1.5 text-xs hover:bg-white/10">RiverSpendShop</Link><Link href="/riverspend-social-network" className="shrink-0 rounded-full border border-white/40 px-3 py-1.5 text-xs hover:bg-white/10">Comunità</Link></nav>
+        <nav className="mt-2 flex items-center gap-2 overflow-x-auto whitespace-nowrap pb-0.5 md:justify-end"><Link href="/riverworld-live" className="shrink-0 rounded-full bg-emerald-300 px-3 py-1.5 text-xs font-bold text-slate-900 hover:bg-emerald-200">🌍 Mondo in diretta</Link><button type="button" onClick={installApp} className="shrink-0 rounded-full bg-amber-300 px-3 py-1.5 text-xs font-bold text-slate-900 hover:bg-amber-200">📲 Installa RiverSpaceSingals</button><Link href="/" className="shrink-0 rounded-full border border-white/40 px-3 py-1.5 text-xs hover:bg-white/10">RiverSpendShop</Link><Link href="/riverspend-social-network" className="shrink-0 rounded-full border border-white/40 px-3 py-1.5 text-xs hover:bg-white/10">Comunità</Link></nav>
       </header>
 
       {installMessage && <div role="status" className="mx-auto mt-3 max-w-6xl rounded-xl bg-amber-100 px-4 py-3 text-sm text-amber-900">{installMessage}</div>}
@@ -476,7 +476,7 @@ export default function RiverSpaceSingals() {
 
       {!user ? <section className="mx-auto mt-12 max-w-md rounded-3xl bg-white p-7 shadow-lg">
         <div className="mb-5 text-center text-5xl">💬</div>
-        <h1 className="text-center text-2xl font-bold text-[#073b4c]">Entra in Signals</h1>
+        <h1 className="text-center text-2xl font-bold text-[#073b4c]">Entra in RiverSpaceSingals</h1>
         <p className="mt-2 text-center text-sm text-slate-600">Accedi con la tua email per inviare e ricevere messaggi privati.</p>
         <form onSubmit={sendLogin} className="mt-6 space-y-3">
           <label className="block text-sm font-semibold">La tua email</label>
