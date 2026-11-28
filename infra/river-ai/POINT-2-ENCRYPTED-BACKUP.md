@@ -8,7 +8,7 @@
 
 The script streams a PostgreSQL custom-format dump, encrypts it using OpenSSL AES-256-CBC with PBKDF2 and 250,000 iterations, creates a hash-only SHA-256 checksum sidecar and a keyed HMAC-SHA256 integrity sidecar, and writes private files in the ignored local backup directory. Files are staged temporarily before final names are published. Keep the passphrase separate and secure.
 
-## Restore drill
+## Verify integrity without restoring\nRun `bash infra/river-ai/verify-encrypted-backup.sh <backup-file.dump.enc>` to check SHA-256 and HMAC. This performs no decryption and no database operations.\n\n## Restore drill
 Run `bash infra/river-ai/restore-drill.sh <backup-file.dump.enc>` using the backup path. The script requires both sidecars, compares the hash-only SHA-256 digest and verifies the HMAC with the passphrase before decrypting. It restores into a uniquely named disposable database and drops that database on exit. It does not target the production/runtime database.
 
 ## Limitations
