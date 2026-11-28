@@ -5,7 +5,7 @@ import { buildDbAdvisorySemaphoreScript, RIVERCLOUD_SEMAPHORE_NAMESPACE } from '
 test('advisory semaphore script checks bounded slot locks and exits distinctly when full', () => {
   const script = buildDbAdvisorySemaphoreScript(8);
   assert.match(script, /generate_series\(1, 8\)/);
-  assert.match(script, new RegExp('pg_try_advisory_lock\\(' + RIVERCLOUD_SEMAPHORE_NAMESPACE + ', slot\\)'));
+  assert.match(script, new RegExp('pg_try_advisory_lock\\(' + RIVERCLOUD_SEMAPHORE_NAMESPACE + ', slots\\.slot\\)'));
   assert.match(script, /\\if :acquired/);
   assert.match(script, /\\quit 77/);
   assert.match(script, /\\endif/);
