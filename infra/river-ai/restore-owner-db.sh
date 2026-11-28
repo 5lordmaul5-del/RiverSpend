@@ -7,6 +7,9 @@ ENV_FILE="infra/river-ai/.env"
 : "${RIVERBACKUP_PASSPHRASE:?Set RIVERBACKUP_PASSPHRASE in the shell; never store it in repository files}"
 : "${RIVERBACKUP_FILE:?Set RIVERBACKUP_FILE to the encrypted dump path}"
 : "${RIVERBACKUP_TARGET_DB:?Set RIVERBACKUP_TARGET_DB to an existing, disposable/empty restore database}"
+# Hard safety guard: never restore into the runtime's primary database.
+[[ "$RIVERBACKUP_TARGET_DB" != "rivercore" ]] || { echo "Refusing restore into primary database rivercore." >&2; exit 1; }
+[[ "$RIVERBACKUP_TARGET_DB" == rivercore_restore_* ]] || { echo "Restore target must use the rivercore_restore_ prefix." >&2; exit 1; }
 [[ ${#RIVERBACKUP_PASSPHRASE} -ge 32 ]] || { echo "Passphrase must be at least 32 characters." >&2; exit 1; }
 [[ -f "$RIVERBACKUP_FILE" && -f "$RIVERBACKUP_FILE.sha256" && -f "$RIVERBACKUP_FILE.hmac" ]] || { echo "Backup, checksum, and HMAC files are required." >&2; exit 1; }
 sha256sum -c "$RIVERBACKUP_FILE.sha256"
