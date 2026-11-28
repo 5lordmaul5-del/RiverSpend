@@ -12,5 +12,5 @@ This stacked draft corrects the temporary-chat prototype in PR #322.
 ## Limitations
 - Temporary mode is not anonymous and does not guarantee provider-side retention/deletion behavior.
 - This does not audit all logs, analytics, caches, backups or external provider policies.
-- No browser, end-to-end or GitHub Actions test has been run yet for this stacked correction.
+- A focused push-only GitHub Actions workflow checks the policy module, API syntax and source-level persistence/memory guards; it does not replace browser, end-to-end or server integration testing.
 - No merge or deployment.
