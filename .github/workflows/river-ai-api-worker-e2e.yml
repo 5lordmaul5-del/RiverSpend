@@ -1,0 +1,45 @@
+name: RiverSSAI API-worker end-to-end
+on:
+  pull_request:
+    paths:
+      - 'server/river-ai-standalone.mjs'
+      - 'server/river-ai-worker.mjs'
+      - 'infra/river-ai/schema.sql'
+      - 'infra/river-ai/worker-queue.sql'
+      - 'infra/river-ai/tests/api-worker-e2e.sh'
+      - 'infra/river-ai/tests/mock-model.mjs'
+      - '.github/workflows/river-ai-api-worker-e2e.yml'
+jobs:
+  api-worker-e2e:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: rivercore
+          POSTGRES_USER: rivercore
+          POSTGRES_PASSWORD: rivercore-test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U rivercore -d rivercore"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install PostgreSQL client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+      - name: Install isolated runtime dependency
+        run: npm install --no-save pg@8.16.3
+      - name: Run API-worker E2E
+        env:
+          PGHOST: localhost
+          PGPORT: 5432
+          PGDATABASE: rivercore
+          PGUSER: rivercore
+          PGPASSWORD: rivercore-test
+        run: bash infra/river-ai/tests/api-worker-e2e.sh
