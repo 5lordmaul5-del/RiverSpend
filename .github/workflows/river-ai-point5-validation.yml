@@ -1,0 +1,22 @@
+name: RiverSSAI Point 5 diagnostics validation
+on:
+  pull_request:
+    paths:
+      - 'infra/river-ai/diagnose-owner-host.sh'
+      - 'infra/river-ai/POINT-5-DIAGNOSTICS.md'
+      - '.github/workflows/river-ai-point5-validation.yml'
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate shell syntax
+        run: bash -n infra/river-ai/diagnose-owner-host.sh
+      - name: Validate safe diagnostics design
+        run: |
+          grep -F 'HTTP status only' infra/river-ai/POINT-5-DIAGNOSTICS.md
+          grep -F 'does not print environment values' infra/river-ai/POINT-5-DIAGNOSTICS.md
+          grep -F 'docker compose ps' infra/river-ai/diagnose-owner-host.sh
+          grep -F 'df -h' infra/river-ai/diagnose-owner-host.sh
+          grep -F 'output /dev/null' infra/river-ai/diagnose-owner-host.sh
+          grep -F 'No credential values' infra/river-ai/diagnose-owner-host.sh
