@@ -17,7 +17,7 @@ const MAX_MESSAGE = 4000;
 const MAX_HISTORY = 12;
 const MAX_TEAM_SPECIALISTS = 30;
 const MAX_PARALLEL = Math.max(1, Math.min(2, Number(process.env.RIVER_AI_MAX_PARALLEL || 1)));
-const RATE_LIMIT = Math.max(1, Number(process.env.RIVER_AI_MAX_REQUESTS_PER_MINUTE || 20));
+const RATE_LIMIT = Math.max(1, Math.min(1000, Number(process.env.RIVER_AI_MAX_REQUESTS_PER_MINUTE || 20)));
 const ALLOWED_TEAM_SIZES = [2, 4, 8, 10, 20, 30];
 const hits = new Map();\nconst MAX_ACTIVE_CHAT_REQUESTS = Math.max(1, Math.min(2, Number(process.env.RIVER_AI_MAX_ACTIVE_CHAT_REQUESTS || 1)));\nlet activeChatRequests = 0;
 
@@ -58,16 +58,18 @@ function rateLimited(req) {
   const ip = req.socket.remoteAddress || "unknown";
   const now = Date.now();
   const recent = (hits.get(ip) || []).filter((t) => now - t < 60000);
-  recent.push(now);
+  const limited = recent.length >= RATE_LIMIT;
+  // Store at most RATE_LIMIT timestamps plus one; do not grow state on rejected requests.
+  if (!limited) recent.push(now);
   hits.set(ip, recent);
-  // Hard bound limiter state: prune expired entries, then evict oldest keys.
+  // Bound limiter state by both key count and per-key entries.
   if (hits.size > 5000) {
     for (const [key, timestamps] of hits) {
       if (!timestamps.some((t) => now - t < 60000)) hits.delete(key);
     }
     while (hits.size > 5000) hits.delete(hits.keys().next().value);
   }
-  return recent.length > RATE_LIMIT;
+  return limited;
 }
 async function readBody(req) {
   const chunks = [];
