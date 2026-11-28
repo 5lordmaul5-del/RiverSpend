@@ -60,20 +60,25 @@ function rateLimited(req) {
   const recent = (hits.get(ip) || []).filter((t) => now - t < 60000);
   recent.push(now);
   hits.set(ip, recent);
-  // Bound limiter state against address churn; prune expired entries only.
+  // Hard bound limiter state: prune expired entries, then evict oldest keys.
   if (hits.size > 5000) {
     for (const [key, timestamps] of hits) {
       if (!timestamps.some((t) => now - t < 60000)) hits.delete(key);
     }
+    while (hits.size > 5000) hits.delete(hits.keys().next().value);
   }
   return recent.length > RATE_LIMIT;
 }
 async function readBody(req) {
-  let data = "";
+  const chunks = [];
+  let totalBytes = 0;
   for await (const chunk of req) {
-    data += chunk;
-    if (Buffer.byteLength(data) > MAX_BODY) throw new Error("BODY_TOO_LARGE");
+    const buffer = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
+    totalBytes += buffer.length;
+    if (totalBytes > MAX_BODY) throw new Error("BODY_TOO_LARGE");
+    chunks.push(buffer);
   }
+  const data = Buffer.concat(chunks, totalBytes).toString("utf8");
   return data ? JSON.parse(data) : {};
 }
 async function callLocalModel(messages, maxTokens = 900) {
