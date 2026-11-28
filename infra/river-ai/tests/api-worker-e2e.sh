@@ -36,10 +36,10 @@ node -e 'const j=JSON.parse(process.argv[1]).job; if(j.status!=="succeeded" || !
 # Verify SIGTERM exits the idle worker promptly and cleanly.
 kill -TERM "$WORKER_PID"
 for i in {1..15}; do
-  if ! kill -0 "$WORKER_PID" 2>/dev/null; then break; fi
+  if ! kill -0 "$WORKER_PID" 2>/dev/null || ps -o stat= -p "$WORKER_PID" 2>/dev/null | grep -q '^Z'; then break; fi
   sleep 1
 done
-if kill -0 "$WORKER_PID" 2>/dev/null; then
+if kill -0 "$WORKER_PID" 2>/dev/null && ! ps -o stat= -p "$WORKER_PID" 2>/dev/null | grep -q '^Z'; then
   echo "Worker failed to exit after SIGTERM within 15 seconds" >&2
   exit 1
 fi
