@@ -31,3 +31,18 @@ API_PID=$!
 for i in {1..40}; do if curl -fsS http://127.0.0.1:8787/health >/dev/null; then break; fi; sleep 1; done
 persisted="$(curl -fsS http://127.0.0.1:8787/v1/jobs/$job_id -H "Authorization: Bearer $TOKEN")"
 node -e 'const j=JSON.parse(process.argv[1]).job; if(j.status!=="succeeded" || !j.result?.answer?.includes("TEST_E2E_RIVERSSAI")) process.exit(1); console.log("API process restart -> persisted job/result retrieval: PASS")' "$persisted"
+
+
+# Verify SIGTERM exits the idle worker promptly and cleanly.
+kill -TERM "$WORKER_PID"
+for i in {1..15}; do
+  if ! kill -0 "$WORKER_PID" 2>/dev/null || ps -o stat= -p "$WORKER_PID" 2>/dev/null | awk '$1 ~ /^Z/ {found=1} END {exit !found}'; then break; fi
+  sleep 1
+done
+if kill -0 "$WORKER_PID" 2>/dev/null && ! ps -o stat= -p "$WORKER_PID" 2>/dev/null | awk '$1 ~ /^Z/ {found=1} END {exit !found}'; then
+  echo "Worker failed to exit after SIGTERM within 15 seconds" >&2
+  exit 1
+fi
+wait "$WORKER_PID"
+WORKER_PID=""
+echo "Idle worker SIGTERM -> clean process exit: PASS"
