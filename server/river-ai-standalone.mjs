@@ -212,12 +212,27 @@ const server = http.createServer(async (req, res) => {
       if (!Object.prototype.hasOwnProperty.call(AGENTS_REGISTRY, agentKey)) return send(res, 400, { error: "Specialista non riconosciuto." });
       if (!task) return send(res, 400, { error: "Il campo task è obbligatorio." });
       const priority = Number.isInteger(body.priority) ? Math.max(0, Math.min(1000, body.priority)) : 100;
-      const inserted = await pool.query(
-        "INSERT INTO river_ai_jobs(agent_key,payload,priority) VALUES($1,$2::jsonb,$3) RETURNING id,status,created_at",
-        [agentKey, JSON.stringify({ task }), priority]
-      );
-      await pool.query("INSERT INTO river_ai_audit(action,status,details) VALUES($1,$2,$3)", ["worker.job.enqueue", "success", { jobId: inserted.rows[0].id, agentKey }]);
-      return send(res, 202, { job: inserted.rows[0], message: "Compito accodato per RiverSSAI." });
+      const client = await pool.connect();
+      let inserted;
+      try {
+        await client.query("BEGIN");
+        const result = await client.query(
+          "INSERT INTO river_ai_jobs(agent_key,payload,priority) VALUES($1,$2::jsonb,$3) RETURNING id,status,created_at",
+          [agentKey, JSON.stringify({ task }), priority]
+        );
+        inserted = result.rows[0];
+        await client.query(
+          "INSERT INTO river_ai_audit(action,status,details) VALUES($1,$2,$3)",
+          ["worker.job.enqueue", "success", { jobId: inserted.id, agentKey }]
+        );
+        await client.query("COMMIT");
+      } catch (transactionError) {
+        await client.query("ROLLBACK").catch(() => {});
+        throw transactionError;
+      } finally {
+        client.release();
+      }
+      return send(res, 202, { job: inserted, message: "Compito accodato per RiverSSAI." });
     } catch (error) {
       if (error.message === "BODY_TOO_LARGE") return send(res, 413, { error: "Richiesta troppo grande." });
       if (error instanceof SyntaxError) return send(res, 400, { error: "JSON non valido." });
