@@ -1,0 +1,17 @@
+name: RiverSSAI Point 7 read-only contract validation
+on:
+  pull_request:
+    paths:
+      - 'infra/river-ai/read-only-contract-smoke.sh'
+      - 'infra/river-ai/POINT-7-READONLY-CONTRACT.md'
+      - '.github/workflows/river-ai-point7-contract.yml'
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate shell syntax
+        run: bash -n infra/river-ai/read-only-contract-smoke.sh
+      - name: Guard against mutating HTTP methods
+        run: |
+          ! grep -E 'curl .*-(X|request) (POST|PUT|PATCH|DELETE)|--request (POST|PUT|PATCH|DELETE)' infra/river-ai/read-only-contract-smoke.sh
