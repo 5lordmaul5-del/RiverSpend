@@ -158,6 +158,21 @@ test('API rejects excess parallel database subprocesses and releases slots after
   const oversized = await fetch(endpoint, { method: 'PUT', headers: { authorization: 'Bearer test-token', 'content-type': 'application/json' }, body: JSON.stringify({ display_name: 'x'.repeat(5000) }) });
   assert.equal(oversized.status, 413);
 
+  for (const invalidName of ['', '   ', 'x'.repeat(81), 'name\\u0000bad']) {
+    const invalid = await fetch(endpoint, {
+      method: 'PUT',
+      headers: { authorization: 'Bearer test-token', 'content-type': 'application/json' },
+      body: JSON.stringify({ display_name: invalidName }),
+    });
+    assert.equal(invalid.status, 400);
+  }
+  const missingName = await fetch(endpoint, {
+    method: 'PUT',
+    headers: { authorization: 'Bearer test-token', 'content-type': 'application/json' },
+    body: JSON.stringify({ other: 'field' }),
+  });
+  assert.equal(missingName.status, 400);
+
   const parallelPromise = Promise.all(Array.from({ length: 9 }, request));
   await waitFor(async () => (await activeMarkers(markers)) === 8, 2000);
   const saturationProbe = await request();
