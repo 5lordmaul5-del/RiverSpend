@@ -13,7 +13,9 @@ jobs:
       - uses: actions/checkout@v4
       - name: Validate shell syntax
         run: bash -n infra/river-ai/backup-owner-db.sh infra/river-ai/restore-owner-db.sh
-      - name: Test restore target guard\n        run: bash infra/river-ai/tests/restore-target-guard-test.sh\n      - name: Check script safety markers
+      - name: Test restore target guard
+        run: bash infra/river-ai/tests/restore-target-guard-test.sh
+      - name: Check script safety markers
         run: |
           grep -q 'RIVERBACKUP_PASSPHRASE' infra/river-ai/backup-owner-db.sh
           grep -q 'sha256sum' infra/river-ai/backup-owner-db.sh
