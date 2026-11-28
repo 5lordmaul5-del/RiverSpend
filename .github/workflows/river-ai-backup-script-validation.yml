@@ -1,0 +1,21 @@
+name: RiverSSAI backup script validation
+on:
+  pull_request:
+    paths:
+      - 'infra/river-ai/backup-owner-db.sh'
+      - 'infra/river-ai/restore-owner-db.sh'
+      - '.github/workflows/river-ai-backup-script-validation.yml'
+jobs:
+  validate-backup-scripts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate shell syntax
+        run: bash -n infra/river-ai/backup-owner-db.sh infra/river-ai/restore-owner-db.sh
+      - name: Check script safety markers
+        run: |
+          grep -q 'RIVERBACKUP_PASSPHRASE' infra/river-ai/backup-owner-db.sh
+          grep -q 'sha256sum' infra/river-ai/backup-owner-db.sh
+          grep -q 'RIVERBACKUP_TARGET_DB' infra/river-ai/restore-owner-db.sh
+          ! grep -q -- '--clean' infra/river-ai/restore-owner-db.sh
+          ! grep -q -- 'DROP DATABASE' infra/river-ai/restore-owner-db.sh
