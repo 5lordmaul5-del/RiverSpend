@@ -13,7 +13,7 @@ jobs:
         run: |
           grep -F 'infra/river-ai/.env' infra/river-ai/POINT-4-SECRET-BOUNDARY.md
           grep -F '0600' infra/river-ai/POINT-4-SECRET-BOUNDARY.md
-          grep -F 'backup passphrase' infra/river-ai/POINT-4-SECRET-BOUNDARY.md
+          grep -iF 'backup passphrase' infra/river-ai/POINT-4-SECRET-BOUNDARY.md
           grep -F 'TLS' infra/river-ai/POINT-4-SECRET-BOUNDARY.md
           grep -F 'Limitations / acceptance' infra/river-ai/POINT-4-SECRET-BOUNDARY.md
       - name: Ensure local env is ignored in Point 1 branch snapshot
