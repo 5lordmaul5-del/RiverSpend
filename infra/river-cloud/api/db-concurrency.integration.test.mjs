@@ -136,7 +136,7 @@ test('API rejects excess parallel database subprocesses and releases slots after
   }
   if (Date.now() >= healthDeadline) throw new Error('API health timeout; last=' + healthFailure + '; stderr=' + stderr);
 
-  const request = () => fetch('http://127.0.0.1:' + apiPort + '/v1/me', {
+  // Health probes remain available independently of the ordinary client rate limit.\n  for (let i = 0; i < 65; i += 1) {\n    const probe = await fetch('http://127.0.0.1:' + apiPort + '/health');\n    assert.equal(probe.status, 200);\n  }\n\n  const request = () => fetch('http://127.0.0.1:' + apiPort + '/v1/me', {
     headers: { authorization: 'Bearer test-token' },
     signal: AbortSignal.timeout(5000),
   });
