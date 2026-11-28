@@ -9,6 +9,7 @@ if [[ -z "${RIVER_AI_BACKUP_PASSPHRASE:-}" ]]; then echo "Set RIVER_AI_BACKUP_PA
 command -v openssl >/dev/null || { echo "openssl required." >&2; exit 1; }
 command -v docker >/dev/null || { echo "docker required." >&2; exit 1; }
 command -v sha256sum >/dev/null || { echo "sha256sum required." >&2; exit 1; }
+command -v python3 >/dev/null || { echo "python3 required for backup HMAC." >&2; exit 1; }
 mkdir -p "$BACKUP_DIR"
 chmod 700 "$BACKUP_DIR"
 STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
@@ -22,7 +23,7 @@ openssl enc -aes-256-cbc -pbkdf2 -salt -iter 250000 -in "$TMP" -out "$ENC_TMP" -
 [[ -s "$ENC_TMP" ]] || { echo "Empty encrypted output." >&2; exit 1; }
 chmod 600 "$ENC_TMP"
 sha256sum "$ENC_TMP" | awk '{print $1}' > "$ENC_TMP.sha256"
-openssl dgst -sha256 -hmac "$RIVER_AI_BACKUP_PASSPHRASE" "$ENC_TMP" > "$ENC_TMP.hmac"
+python3 infra/river-ai/hmac_sha256.py "$ENC_TMP" > "$ENC_TMP.hmac"
 mv "$ENC_TMP" "$OUT"
 mv "$ENC_TMP.sha256" "$OUT.sha256"
 mv "$ENC_TMP.hmac" "$OUT.hmac"

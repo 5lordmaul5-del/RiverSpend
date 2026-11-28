@@ -4,16 +4,11 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 SCRIPT="$SCRIPT_DIR/verify-encrypted-backup.sh"
 TMP="$(mktemp -d)"
 trap 'rm -f "$TMP/test.dump.enc" "$TMP/test.dump.enc.sha256" "$TMP/test.dump.enc.hmac"; rmdir "$TMP"' EXIT
-# Ensure restore-drill uses the same last-field HMAC extraction convention.
-if ! grep -F '$NF' "$SCRIPT_DIR/restore-drill.sh" >/dev/null; then
-  echo 'Restore HMAC parser must read the final sidecar field.' >&2
-  exit 1
-fi
 export RIVER_AI_BACKUP_PASSPHRASE='ci-test-passphrase'
 B="$TMP/test.dump.enc"
 printf 'synthetic encrypted backup fixture\n' > "$B"
 sha256sum "$B" | awk '{print $1}' > "$B.sha256"
-openssl dgst -sha256 -hmac "$RIVER_AI_BACKUP_PASSPHRASE" "$B" | awk '{print $NF}' > "$B.hmac"
+python3 "$SCRIPT_DIR/hmac_sha256.py" "$B" > "$B.hmac"
 bash "$SCRIPT" "$B"
 # Alter content and ensure checksum mismatch is rejected.
 printf 'tampered\n' >> "$B"

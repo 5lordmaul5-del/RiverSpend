@@ -10,14 +10,13 @@ if [[ -z "${RIVER_AI_BACKUP_PASSPHRASE:-}" ]]; then echo "Set RIVER_AI_BACKUP_PA
 command -v openssl >/dev/null || exit 1
 command -v docker >/dev/null || exit 1
 command -v sha256sum >/dev/null || exit 1
+command -v python3 >/dev/null || { echo "python3 required for backup HMAC." >&2; exit 1; }
 if [[ ! -f "$BACKUP.sha256" || ! -f "$BACKUP.hmac" ]]; then echo "Integrity sidecars missing; refusing restore." >&2; exit 1; fi
-CHECK_DIR="$(dirname "$BACKUP")"
-CHECK_FILE="$(basename "$BACKUP")"
 EXPECTED_SHA="$(awk '{print $1}' "$BACKUP.sha256")"
 ACTUAL_SHA="$(sha256sum "$BACKUP" | awk '{print $1}')"
 if [[ -z "$EXPECTED_SHA" || "$EXPECTED_SHA" != "$ACTUAL_SHA" ]]; then echo "Checksum failed; refusing restore." >&2; exit 1; fi
 EXPECTED="$(awk '{print $NF}' "$BACKUP.hmac")"
-ACTUAL="$(openssl dgst -sha256 -hmac "$RIVER_AI_BACKUP_PASSPHRASE" "$BACKUP" | awk '{print $NF}')"
+ACTUAL="$(python3 infra/river-ai/hmac_sha256.py "$BACKUP")"
 if [[ -z "$EXPECTED" || "$EXPECTED" != "$ACTUAL" ]]; then echo "HMAC authentication failed; refusing restore." >&2; exit 1; fi
 TMP="$(mktemp)"
 NAME="river_restore_drill_$(date -u +%Y%m%d%H%M%S)_$$"
