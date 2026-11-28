@@ -34,3 +34,12 @@ test('response write failures are contained', () => {
   const res = mockResponse({ writeHead() { throw new Error('socket failure'); } });
   assert.equal(sendJsonResponse(res, 200, {}), false);
 });
+
+
+test('serialization errors do not partially write headers', () => {
+  const res = mockResponse();
+  const payload = {};
+  payload.self = payload;
+  assert.equal(sendJsonResponse(res, 200, payload), false);
+  assert.equal(res.calls.length, 0);
+});
