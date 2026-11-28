@@ -19,6 +19,9 @@ json=(-H "Content-Type: application/json")
 # Authentication negative test.
 status="$(curl "${curl_opts[@]}" -sS -o "$tmp/unauth" -w '%{http_code}' "$BASE_URL/v1/memories")"
 [[ "$status" == 401 ]] || { echo "Expected unauthenticated 401, got $status" >&2; exit 1; }
+# Wrong-token rejection must be indistinguishable from unauthenticated access.
+status="$(curl "${curl_opts[@]}" -sS -o "$tmp/wrong-token" -w '%{http_code}' -H "Authorization: Bearer invalid-smoke-token" "$BASE_URL/v1/memories")"
+[[ "$status" == 401 ]] || { echo "Expected invalid-token 401, got $status" >&2; exit 1; }
 # Validation checks must reject malformed import requests before inserting records.
 for invalid in '{"memories":[]}' '{"memories":[{"title":"missing content"}]}' '{"memories":[{"content":"missing title"}]}'; do
   status="$(curl "${curl_opts[@]}" -sS "${auth[@]}" "${json[@]}" -o "$tmp/invalid" -w '%{http_code}' -X POST --data "$invalid" "$BASE_URL/v1/memories/import")"
