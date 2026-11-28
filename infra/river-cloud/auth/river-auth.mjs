@@ -36,7 +36,14 @@ export function createRiverAuth({ issuerUrl, publishableKey }) {
         throw error;
       }
 
-      const user = await response.json();
+      let user;
+      try {
+        user = await response.json();
+      } catch {
+        const error = new Error('identity_provider_unavailable');
+        error.status = 503;
+        throw error;
+      }
       if (typeof user?.id !== 'string' || !USER_ID_PATTERN.test(user.id)) return null;
 
       // Only the identity issuer's verified user ID becomes the RiverCloud subject.

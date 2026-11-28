@@ -29,11 +29,27 @@ jobs:
           sudo apt-get update
           sudo apt-get install --yes age
 
-      - name: Check RiverAuth and API JavaScript syntax
+      - name: Check RiverAuth and API JavaScript syntax and tests
         run: |
           node --check infra/river-cloud/auth/river-auth.mjs
           node --check infra/river-cloud/api/server.mjs
+          node --check infra/river-cloud/api/rate-limit.mjs
+          node --check infra/river-cloud/api/db-concurrency.mjs
+          node --check infra/river-cloud/api/response.mjs
+          node --check infra/river-cloud/api/db-concurrency.integration.test.mjs
+          node --test infra/river-cloud/api/rate-limit.test.mjs infra/river-cloud/api/db-concurrency.test.mjs infra/river-cloud/api/db-concurrency.integration.test.mjs infra/river-cloud/api/response.test.mjs
           node --test infra/river-cloud/auth/river-auth.test.mjs
+
+      - name: Audit Docker image includes API runtime imports
+        run: |
+          set -eu
+          dockerfile=infra/river-cloud/api/Dockerfile
+          for module in server.mjs river-auth.mjs rate-limit.mjs db-concurrency.mjs response.mjs; do
+            grep -F "COPY " "$dockerfile" | grep -F "$module" >/dev/null || {
+              echo "Docker image is missing runtime module: $module"
+              exit 1
+            }
+          done
 
       - name: Validate Compose configuration
         working-directory: infra/river-cloud
@@ -134,4 +150,9 @@ jobs:
       - name: Stop database without deleting its persistent volume
         if: always()
         working-directory: infra/river-cloud
+        env:
+          RIVER_CLOUD_DB_PASSWORD: ci-only-db-password
+          RIVER_CLOUD_API_DB_PASSWORD: ci-only-api-password
+          RIVERAUTH_ISSUER_URL: https://example.supabase.co
+          RIVERAUTH_PUBLISHABLE_KEY: sb_publishable_ci_placeholder
         run: docker compose down
