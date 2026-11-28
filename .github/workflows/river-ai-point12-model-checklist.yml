@@ -1,0 +1,14 @@
+name: RiverSSAI Point 12 model compatibility checklist
+on:
+  pull_request:
+    paths:
+      - 'infra/river-ai/POINT-12-MODEL-COMPATIBILITY.md'
+      - '.github/workflows/river-ai-point12-model-checklist.yml'
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          grep -F 'does not automate downloads' infra/river-ai/POINT-12-MODEL-COMPATIBILITY.md
+          grep -F 'Review license' infra/river-ai/POINT-12-MODEL-COMPATIBILITY.md
