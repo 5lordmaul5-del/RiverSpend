@@ -141,7 +141,7 @@ class SupervisorTests(unittest.TestCase):
         def fake_popen(argv, **kwargs):
             captured["argv"] = argv
             captured["kwargs"] = kwargs
-            kwargs["stdout"].write(b'{"ok":true,"result":{"echo":{"x":1}}}\\n')
+            kwargs["stdout"].write(b'{"ok":true,"result":{"echo":{"x":1}}}\n')
             kwargs["stdout"].flush()
             return fake
 
