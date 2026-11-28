@@ -211,8 +211,12 @@ const server = http.createServer(async (req, res) => {
   if (!authorized(req)) return send(res, 401, { error: "Accesso amministratore non valido." });
 
   if (req.method === "GET" && url.pathname === "/v1/memories") {
-    const result = await pool.query("SELECT id,title,content,category,source,created_at FROM river_ai_memories WHERE owner_id='owner' ORDER BY created_at DESC LIMIT 100");
-    return send(res, 200, { memories: result.rows });
+    try {
+      const result = await pool.query("SELECT id,title,content,category,source,created_at FROM river_ai_memories WHERE owner_id='owner' ORDER BY created_at DESC LIMIT 100");
+      return send(res, 200, { memories: result.rows });
+    } catch {
+      return send(res, 503, { error: "Memoria temporaneamente non disponibile." });
+    }
   }
   if (req.method === "DELETE" && memoryIdMatch) {
     const client = await pool.connect();
@@ -223,7 +227,10 @@ const server = http.createServer(async (req, res) => {
       removed = result.rows[0];
       if (removed) await client.query("INSERT INTO river_ai_audit(action,status,details) VALUES($1,$2,$3)", ["memory.delete", "success", { id: removed.id }]);
       await client.query("COMMIT");
-    } catch (error) { await client.query("ROLLBACK").catch(()=>{}); throw error; } finally { client.release(); }
+    } catch {
+      await client.query("ROLLBACK").catch(()=>{});
+      return send(res, 503, { error: "Impossibile eliminare la memoria in questo momento." });
+    } finally { client.release(); }
     return send(res, removed ? 200 : 404, removed ? { deleted: true, id: removed.id } : { error: "Memoria non trovata." });
   }
   if (req.method === "PUT" && memoryIdMatch) {
