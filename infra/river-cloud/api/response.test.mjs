@@ -7,7 +7,8 @@ function mockResponse(overrides = {}) {
   return {
     calls,
     destroyed: false,
-    writableEnded: false,\n    headersSent: false,
+    writableEnded: false,
+    headersSent: false,
     writeHead(status, headers) { calls.push(['writeHead', status, headers]); },
     end(body) { calls.push(['end', body]); },
     ...overrides,
