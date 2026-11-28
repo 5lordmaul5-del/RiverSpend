@@ -288,7 +288,7 @@ const server = http.createServer(async (req, res) => {
           return { specialist, report };
         });
         answer = await callLocalModel([
-          { role: "system", content: SYSTEM + MASTER_KNOWLEDGE_CONTEXT + "\nSei NOVA, coordinatrice. Integra i contributi, segnala divergenze e restituisci decisione, piano, rischi e verifiche." },
+          { role: "system", content: SYSTEM + MASTER_KNOWLEDGE_CONTEXT + memoryContext + "\nSei NOVA, coordinatrice. Integra i contributi, segnala divergenze e restituisci decisione, piano, rischi e verifiche." },
           { role: "user", content: "RICHIESTA:\n" + latestPrompt + "\n\nCONTRIBUTI SPECIALISTI:\n" + reports.map((item) => item.specialist + ":\n" + item.report).join("\n\n") }
         ], 1200);
         agentsUsed = ["nova", ...team];
