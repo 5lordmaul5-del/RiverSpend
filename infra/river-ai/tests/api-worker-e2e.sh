@@ -17,6 +17,14 @@ DATABASE_URL="postgres://$PGUSER:$PGPASSWORD@$PGHOST:$PGPORT/$PGDATABASE" RIVER_
 WORKER_PID=$!
 for i in {1..40}; do if curl -fsS http://127.0.0.1:8787/health >/dev/null && curl -fsS http://127.0.0.1:11434/api/tags >/dev/null; then break; fi; sleep 1; done
 curl -fsS http://127.0.0.1:8787/ready >/dev/null
+
+# Verify optional idempotency key replays the same durable job and rejects key reuse with different payload.
+idem1="$(curl -fsS -X POST http://127.0.0.1:8787/v1/jobs -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -H "Idempotency-Key: e2e-idempotency-key-001" -d '{"agentKey":"nova","task":"TEST_IDEMPOTENCY_REPLAY"}')"
+idem2="$(curl -fsS -X POST http://127.0.0.1:8787/v1/jobs -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -H "Idempotency-Key: e2e-idempotency-key-001" -d '{"agentKey":"nova","task":"TEST_IDEMPOTENCY_REPLAY"}')"
+node -e 'const a=JSON.parse(process.argv[1]),b=JSON.parse(process.argv[2]);if(a.job.id!==b.job.id||b.replayed!==true){console.error("Idempotent replay mismatch",a,b);process.exit(1)}console.log("Same idempotency key -> existing job replay: PASS")' "$idem1" "$idem2"
+conflict_code="$(curl -sS -o /tmp/river-idem-conflict.json -w '%{http_code}' -X POST http://127.0.0.1:8787/v1/jobs -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -H "Idempotency-Key: e2e-idempotency-key-001" -d '{"agentKey":"nova","task":"DIFFERENT_TASK"}')"
+if [[ "$conflict_code" != "409" ]]; then echo "Expected idempotency key conflict HTTP 409, got $conflict_code" >&2; exit 1; fi
+echo "Same key with different request -> HTTP 409: PASS"
 response="$(curl -fsS -X POST http://127.0.0.1:8787/v1/jobs -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -d '{"agentKey":"nova","task":"TEST_E2E_RIVERSSAI"}')"
 job_id="$(node -e 'const x=JSON.parse(process.argv[1]); console.log(x.job.id)' "$response")"
 for i in {1..60}; do status="$(curl -fsS http://127.0.0.1:8787/v1/jobs/$job_id -H "Authorization: Bearer $TOKEN" | node -e 'let x="";process.stdin.on("data",d=>x+=d).on("end",()=>console.log(JSON.parse(x).job.status))')"; if [[ "$status" == "succeeded" ]]; then break; fi; sleep 1; done

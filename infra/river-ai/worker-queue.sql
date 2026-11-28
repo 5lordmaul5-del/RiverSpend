@@ -146,3 +146,8 @@ $$;
 REVOKE ALL ON FUNCTION river_ai_claim_job(TEXT,INTEGER) FROM PUBLIC;
 REVOKE ALL ON FUNCTION river_ai_finish_job(UUID,TEXT,UUID,JSONB) FROM PUBLIC;
 REVOKE ALL ON FUNCTION river_ai_fail_job(UUID,TEXT,UUID,TEXT) FROM PUBLIC;
+
+-- Request-level idempotency for durable enqueue. Null keys preserve legacy behavior.
+ALTER TABLE river_ai_jobs ADD COLUMN IF NOT EXISTS idempotency_key TEXT;
+ALTER TABLE river_ai_jobs ADD COLUMN IF NOT EXISTS request_hash TEXT;
+CREATE UNIQUE INDEX IF NOT EXISTS river_ai_jobs_idempotency_key_idx ON river_ai_jobs(idempotency_key) WHERE idempotency_key IS NOT NULL;
