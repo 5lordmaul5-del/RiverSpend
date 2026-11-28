@@ -4,6 +4,16 @@ import resource
 import sys
 
 MAX_CHILD_FILE_BYTES = 32768
+MAX_CHILD_INPUT_BYTES = 16384
+
+
+def read_bounded_input(stream=None):
+    """Read at most the child protocol limit plus one sentinel byte."""
+    source = sys.stdin.buffer if stream is None else stream
+    raw = source.read(MAX_CHILD_INPUT_BYTES + 1)
+    if len(raw) > MAX_CHILD_INPUT_BYTES:
+        raise ValueError("input too large")
+    return raw.decode("utf-8")
 
 
 def _unique_pairs(pairs):
@@ -56,7 +66,7 @@ def execute(kind, payload):
 if __name__ == "__main__":
     try:
         apply_resource_limits()
-        request = json.loads(sys.stdin.read(), object_pairs_hook=_unique_pairs, parse_constant=_reject_constant)
+        request = json.loads(read_bounded_input(), object_pairs_hook=_unique_pairs, parse_constant=_reject_constant)
         result = execute(request["type"], request["payload"])
         print(json.dumps({"ok": True, "result": result}, separators=(",", ":")))
     except Exception:
