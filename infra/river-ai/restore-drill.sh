@@ -13,7 +13,9 @@ command -v sha256sum >/dev/null || exit 1
 if [[ ! -f "$BACKUP.sha256" || ! -f "$BACKUP.hmac" ]]; then echo "Integrity sidecars missing; refusing restore." >&2; exit 1; fi
 CHECK_DIR="$(dirname "$BACKUP")"
 CHECK_FILE="$(basename "$BACKUP")"
-(cd "$CHECK_DIR" && sha256sum -c "$CHECK_FILE.sha256") || { echo "Checksum failed; refusing restore." >&2; exit 1; }
+EXPECTED_SHA="$(awk '{print $1}' "$BACKUP.sha256")"
+ACTUAL_SHA="$(sha256sum "$BACKUP" | awk '{print $1}')"
+if [[ -z "$EXPECTED_SHA" || "$EXPECTED_SHA" != "$ACTUAL_SHA" ]]; then echo "Checksum failed; refusing restore." >&2; exit 1; fi
 EXPECTED="$(awk '{print $1}' "$BACKUP.hmac")"
 ACTUAL="$(openssl dgst -sha256 -hmac "$RIVER_AI_BACKUP_PASSPHRASE" "$BACKUP" | awk '{print $NF}')"
 if [[ -z "$EXPECTED" || "$EXPECTED" != "$ACTUAL" ]]; then echo "HMAC authentication failed; refusing restore." >&2; exit 1; fi
