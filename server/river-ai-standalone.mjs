@@ -184,7 +184,7 @@ const server = http.createServer(async (req, res) => {
     });
   }
   if (req.method === "GET" && url.pathname === "/v1/memories") {
-    const limit = Math.max(1, Math.min(50, Number(url.searchParams.get("limit") || 10)));
+    const requestedLimit = Number.parseInt(url.searchParams.get("limit") || "10", 10);\n    const limit = Number.isFinite(requestedLimit) ? Math.max(1, Math.min(50, requestedLimit)) : 10;
     const result = await pool.query(
       "SELECT id,title,content,category,created_at FROM river_ai_memories WHERE owner_id='owner' ORDER BY created_at DESC LIMIT $1",
       [limit]
