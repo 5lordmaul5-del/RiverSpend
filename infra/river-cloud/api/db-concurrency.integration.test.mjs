@@ -147,6 +147,17 @@ test('API rejects excess parallel database subprocesses and releases slots after
     signal: AbortSignal.timeout(5000),
   });
 
+  // Verify malformed and oversized input is rejected before database work.
+  const endpoint = 'http://127.0.0.1:' + apiPort + '/v1/me';
+  const unauth = await fetch(endpoint);
+  assert.equal(unauth.status, 401);
+  const wrongType = await fetch(endpoint, { method: 'PUT', headers: { authorization: 'Bearer test-token', 'content-type': 'text/plain' }, body: 'ignored' });
+  assert.equal(wrongType.status, 415);
+  const malformed = await fetch(endpoint, { method: 'PUT', headers: { authorization: 'Bearer test-token', 'content-type': 'application/json' }, body: '{broken' });
+  assert.equal(malformed.status, 400);
+  const oversized = await fetch(endpoint, { method: 'PUT', headers: { authorization: 'Bearer test-token', 'content-type': 'application/json' }, body: JSON.stringify({ display_name: 'x'.repeat(5000) }) });
+  assert.equal(oversized.status, 413);
+
   const parallelPromise = Promise.all(Array.from({ length: 9 }, request));
   await waitFor(async () => (await activeMarkers(markers)) === 8, 2000);
   const saturationProbe = await request();
