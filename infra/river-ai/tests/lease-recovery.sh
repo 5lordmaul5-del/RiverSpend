@@ -23,6 +23,6 @@ if [[ "$stale" != "f" ]]; then echo "Stale worker fencing failed"; exit 1; fi
 # The recovered worker's fresh token must still be able to finish the job.
 fresh="$(psql -Atq -v ON_ERROR_STOP=1 -c "SELECT river_ai_finish_job('$job_id','worker-recovered','$new_token',jsonb_build_object('test','LEASE_RECOVERY_OK'))")"
 if [[ "$fresh" != "t" ]]; then echo "Recovered worker completion failed"; exit 1; fi
-state="$(psql -Atq -v ON_ERROR_STOP=1 -c "SELECT status||'|'||attempts||'|'||result->>'test' FROM river_ai_jobs WHERE id='$job_id'")"
+state="$(psql -Atq -v ON_ERROR_STOP=1 -c "SELECT status||'|'||attempts||'|'||(result->>'test') FROM river_ai_jobs WHERE id='$job_id'")"
 if [[ "$state" != "succeeded|2|LEASE_RECOVERY_OK" ]]; then echo "Recovered job final state mismatch: $state"; exit 1; fi
 echo "Expired lease recovery + token rotation + stale fencing + recovered completion: PASS"
