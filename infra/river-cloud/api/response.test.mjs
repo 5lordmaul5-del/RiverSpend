@@ -72,3 +72,11 @@ test('response helper never emits a partial body when end throws', () => {
   const res = mockResponse({ end() { throw new Error('client vanished'); } });
   assert.equal(sendJsonResponse(res, 200, { safe: true }), false);
 });
+
+
+test('response helper returns false when serialization fails before write', () => {
+  const res = mockResponse();
+  const bad = { toJSON() { throw new Error('serialization failure'); } };
+  assert.equal(sendJsonResponse(res, 200, bad), false);
+  assert.equal(res.calls.length, 0);
+});
