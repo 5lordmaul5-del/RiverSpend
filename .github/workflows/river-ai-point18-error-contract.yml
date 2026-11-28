@@ -1,0 +1,14 @@
+name: RiverSSAI Point 18 checklist validation
+on:
+  pull_request:
+    paths:
+      - 'infra/river-ai/POINT-18-ERROR-CONTRACT.md'
+      - '.github/workflows/river-ai-point18-error-contract.yml'
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          grep -F 'Completion criteria' infra/river-ai/POINT-18-ERROR-CONTRACT.md
+          grep -F 'isolated, non-production' infra/river-ai/POINT-18-ERROR-CONTRACT.md
