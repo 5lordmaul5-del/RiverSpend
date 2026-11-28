@@ -34,6 +34,7 @@ grep -Fq 'MAX_ACTIVE_CHAT_REQUESTS' "$SERVER" || fail "global chat concurrency g
 grep -Fq 'RIVER_AI_MAX_ACTIVE_CHAT_REQUESTS' "$COMPOSE" || fail "chat concurrency configuration wiring missing"
 grep -Fq 'finally' "$SERVER" || fail "chat slot release finally block missing"
 grep -Fq 'timingSafeEqual' "$SERVER" || fail "timing-safe token comparison missing"
+grep -Fq 'boundedInteger' "$SERVER" || fail "safe numeric environment parser missing"
 grep -Fq 'Math.min(1000' "$SERVER" || fail "rate limit ceiling missing"
 grep -Fq 'const limited = recent.length >= RATE_LIMIT' "$SERVER" || fail "rate limiter bounded behavior missing"
 grep -Fq 'npm install --omit=dev pg@' "$DOCKERFILE" || fail "production dependency install missing"
