@@ -1,7 +1,7 @@
 {
   "id": "/riverspace-signals",
   "name": "RiverSpaceSingals",
-  "short_name": "Singals",
+  "short_name": "RiverSpaceSingals",
   "description": "Messaggi privati RiverSpaceSingals",
   "start_url": "/riverspace-signals",
   "scope": "/",
