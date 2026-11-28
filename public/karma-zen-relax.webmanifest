@@ -1,8 +1,8 @@
 {
   "id": "/karma-zen-relax.html",
-  "name": "Karma Zen Relax · RiverSpaceSignals",
+  "name": "Karma Zen Relax · RiverSpaceSingals",
   "short_name": "Karma Zen",
-  "description": "RiverSpaceSignals · Immersive Sound Space Ambient",
+  "description": "RiverSpaceSingals · Immersive Sound Space Ambient",
   "start_url": "/karma-zen-relax.html",
   "scope": "/",
   "display": "standalone",
