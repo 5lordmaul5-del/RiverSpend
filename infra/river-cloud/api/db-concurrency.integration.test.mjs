@@ -43,6 +43,7 @@ test('API rejects excess parallel database subprocesses and releases slots after
     copyFile(new URL('./server.mjs', import.meta.url), path.join(runtime, 'server.mjs')),
     copyFile(new URL('./rate-limit.mjs', import.meta.url), path.join(runtime, 'rate-limit.mjs')),
     copyFile(new URL('./db-concurrency.mjs', import.meta.url), path.join(runtime, 'db-concurrency.mjs')),
+    copyFile(new URL('./response.mjs', import.meta.url), path.join(runtime, 'response.mjs')),
     copyFile(new URL('../auth/river-auth.mjs', import.meta.url), path.join(runtime, 'river-auth.mjs')),
   ]);
   const fakeBin = path.join(root, 'bin');
