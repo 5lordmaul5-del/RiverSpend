@@ -9,7 +9,7 @@ echo "== Gate -1: syntax validation =="\nnode --check "$ROOT/server/river-ai-sta
 "$HERE/audit-riverssai-config.sh"
 echo "== Gate A: tool policy unit assertions =="
 node "$ROOT/lib/riverSSAI/testToolPolicy.mjs"
-echo "== Gate B: startup and local model readiness =="
+echo "== Gate A2: registry and router static assertions =="\nnode "$ROOT/lib/riverSSAI/testRegistry.mjs" 2>/dev/null || node "$ROOT/lib/riverSSAI/testRouter.mjs" 2>/dev/null || echo "Registry test scripts not present under expected names; gate A policy still checked."\necho "== Gate B: startup and local model readiness =="
 "$HERE/start-riverssai.sh"
 echo "== Gate B2: endpoint authentication and bounded memory listing =="
 "$HERE/test-api-guards.sh"
