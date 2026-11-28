@@ -110,6 +110,14 @@ class JWTVerifierTests(unittest.TestCase):
         payload='{"iss":"%s","aud":"%s","sub":"alice","iat":%d,"exp":NaN}'%(ISSUER,AUDIENCE,NOW)
         with self.assertRaises(JWTVerificationError): self.verifier.verify_user(sign_raw(header,payload))
 
+    def test_deeply_nested_claims_fail_closed(self):
+        header='{"alg":"HS256","typ":"JWT"}'
+        nested='['*1100+'0'+']'*1100
+        payload='{"iss":"%s","aud":"%s","sub":"alice","iat":%d,"exp":%d,"extra":%s}'%(ISSUER,AUDIENCE,NOW,NOW+60,nested)
+        token=sign_raw(header,payload)
+        with self.assertRaises(JWTVerificationError):
+            self.verifier.verify_user(token)
+
     def test_configuration_requires_strong_key_and_bounded_skew(self):
         with self.assertRaises(ValueError): HS256JWTVerifier(b"short",ISSUER,AUDIENCE)
         with self.assertRaises(ValueError): HS256JWTVerifier(KEY,ISSUER,AUDIENCE,clock_skew=61)

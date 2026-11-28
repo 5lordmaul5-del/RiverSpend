@@ -1,0 +1,17 @@
+name: RC407 RiverSSAI integrated regression gate
+on:
+  push:
+    branches:
+      - feat/rc407-integrated-regression-gate-2026-11-28
+  pull_request:
+    branches:
+      - feat/river-ssai-local-http-core-2026-11-27
+permissions:
+  contents: read
+jobs:
+  integrated-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Run consolidated RC-161/180/181/183 gate
+        run: bash infra/river-ai/rc407-integrated-regression.sh

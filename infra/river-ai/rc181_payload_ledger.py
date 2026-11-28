@@ -17,6 +17,8 @@ MAX_CAPABILITY_CHARS = 128
 MAX_SUMMARY_CHARS = 500
 MAX_REQUEST_KEY_CHARS = 128
 _FORBIDDEN_KEYS = {"__proto__", "prototype", "constructor"}
+RETRY_BACKOFF_BASE_SECONDS = 1.0
+RETRY_BACKOFF_MAX_SECONDS = 60.0
 
 
 class PayloadLedgerError(ValueError):
@@ -108,6 +110,8 @@ class PayloadPersistentTaskLedger(PersistentTaskLedger):
                 db.execute("ALTER TABLE tasks ADD COLUMN request_key TEXT")
             if "request_sha256" not in columns:
                 db.execute("ALTER TABLE tasks ADD COLUMN request_sha256 TEXT")
+            if "retry_after" not in columns:
+                db.execute("ALTER TABLE tasks ADD COLUMN retry_after REAL")
             db.execute(
                 "CREATE UNIQUE INDEX IF NOT EXISTS tasks_owner_request_key "
                 "ON tasks(owner,request_key) WHERE request_key IS NOT NULL"
@@ -122,6 +126,18 @@ class PayloadPersistentTaskLedger(PersistentTaskLedger):
                 created REAL NOT NULL
             )""")
             db.execute("CREATE INDEX IF NOT EXISTS intake_audit_task ON intake_audit_events(task_id,event_id)")
+            db.execute("""CREATE TABLE IF NOT EXISTS task_events (
+                event_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                task_id TEXT NOT NULL,
+                attempt INTEGER NOT NULL,
+                worker_subject TEXT NOT NULL,
+                action TEXT NOT NULL,
+                payload_sha256 TEXT,
+                result_sha256 TEXT,
+                error_code TEXT,
+                created REAL NOT NULL
+            )""")
+            db.execute("CREATE INDEX IF NOT EXISTS task_events_task ON task_events(task_id,event_id)")
 
     @staticmethod
     def _audit_insert(db, task_id, actor, action, key_digest, request_digest):
@@ -258,26 +274,53 @@ class PayloadPersistentTaskLedger(PersistentTaskLedger):
             return None
         with self._db() as db:
             db.execute("BEGIN IMMEDIATE")
-            db.execute(
-                "UPDATE tasks SET state='queued',leased=NULL,lease_owner=NULL WHERE state='leased' AND leased < ?",
-                (time.time() - self.lease_seconds,),
-            )
+            cutoff = time.time() - self.lease_seconds
+            expired = db.execute(
+                "SELECT id,attempts,lease_owner,leased FROM tasks WHERE state='leased' AND leased < ?",
+                (cutoff,),
+            ).fetchall()
+            # Recover each lease with a persisted cooldown. A worker crash must
+            # not create a hot requeue/lease loop across polling requests.
+            recovery_now = time.time()
+            for task_id, attempt, old_worker, old_lease_at in expired:
+                safe_attempt = attempt if type(attempt) is int and attempt >= 1 else 1
+                delay = min(
+                    RETRY_BACKOFF_MAX_SECONDS,
+                    RETRY_BACKOFF_BASE_SECONDS * (2 ** min(safe_attempt - 1, 6)),
+                )
+                retry_after = recovery_now + delay
+                requeued = db.execute(
+                    "UPDATE tasks SET state='queued',leased=NULL,lease_owner=NULL,retry_after=? "
+                    "WHERE id=? AND state='leased' AND leased=?",
+                    (retry_after, task_id, old_lease_at),
+                )
+                if requeued.rowcount != 1:
+                    continue
+                # Audit atomically with the requeue so a reclaimed lease cannot
+                # disappear from the durable worker audit trail.
+                db.execute(
+                    "INSERT INTO task_events(task_id,attempt,worker_subject,action,error_code,created) "
+                    "VALUES(?,?,?,?,?,?)",
+                    (task_id, safe_attempt,
+                     old_worker if type(old_worker) is str and old_worker else "unknown",
+                     "lease_expired_requeued", "lease_expired", recovery_now),
+                )
             placeholders = ",".join("?" for _ in allowed_capabilities)
+            now = time.time()
             row = db.execute(
-                f"SELECT id,capability,summary,attempts,owner,payload_json FROM tasks WHERE state='queued' AND capability IN ({placeholders}) ORDER BY created LIMIT 1",
-                allowed_capabilities,
+                f"SELECT id,capability,summary,attempts,owner,payload_json FROM tasks WHERE state='queued' AND capability IN ({placeholders}) AND (retry_after IS NULL OR retry_after <= ?) ORDER BY created LIMIT 1",
+                allowed_capabilities + (now,),
             ).fetchone()
             if not row:
                 db.commit()
                 return None
-            now = time.time()
             db.execute(
-                "UPDATE tasks SET state='leased',leased=?,lease_owner=?,attempts=attempts+1 WHERE id=? AND state='queued'",
+                "UPDATE tasks SET state='leased',leased=?,lease_owner=?,attempts=attempts+1,retry_after=NULL WHERE id=? AND state='queued'",
                 (now, worker_id, row[0]),
             )
             db.commit()
             return {
                 "id": row[0], "capability": row[1], "summary": row[2],
-                "attempts": row[3] + 1, "lease_owner": worker_id,
+                "attempts": row[3] + 1, "lease_owner": worker_id, "leased_at": now,
                 "owner": row[4], "payload": json.loads(row[5]) if row[5] is not None else None,
             }
