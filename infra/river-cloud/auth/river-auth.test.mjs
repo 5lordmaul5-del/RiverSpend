@@ -133,3 +133,18 @@ test('RiverAuth configuration rejects missing issuer or key', () => {
   assert.throws(() => createRiverAuth({ issuerUrl: '', publishableKey }), /issuer URL and publishable key/);
   assert.throws(() => createRiverAuth({ issuerUrl, publishableKey: '' }), /issuer URL and publishable key/);
 });
+
+
+test('RiverAuth treats upstream abort and timeout as unavailable without leaking errors', async (t) => {
+  const originalFetch = globalThis.fetch;
+  t.after(() => { globalThis.fetch = originalFetch; });
+  globalThis.fetch = async (_url, options) => {
+    assert.ok(options.signal instanceof AbortSignal);
+    throw new Error('simulated timeout with internal details');
+  };
+  const auth = createRiverAuth({ issuerUrl, publishableKey });
+  await assert.rejects(
+    auth.verifyBearerToken('Bearer timeout-token'),
+    (error) => error.status === 503 && error.message === 'identity_provider_unavailable',
+  );
+});
