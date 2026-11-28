@@ -33,7 +33,7 @@ WORKER_PID=""
 # Simulate lease expiry without waiting for the production lease duration.
 psql -q -v ON_ERROR_STOP=1 -c "UPDATE river_ai_jobs SET locked_until=NOW()-INTERVAL '1 second' WHERE id='$job_id' AND status='running';"
 # Force recovery eligibility for the deterministic synthetic CI scenario.
-psql -q -v ON_ERROR_STOP=1 -c "SELECT river_ai_claim_job('crash-recovery-sweep',60); UPDATE river_ai_jobs SET run_after=NOW() WHERE id='$job_id' AND status='retry_wait';"
+psql -q -v ON_ERROR_STOP=1 -c "SELECT * FROM river_ai_claim_job('crash-recovery-sweep',60); UPDATE river_ai_jobs SET run_after=NOW() WHERE id='$job_id' AND status='retry_wait';"
 DATABASE_URL="postgres://$PGUSER:$PGPASSWORD@$PGHOST:$PGPORT/$PGDATABASE" RIVER_AI_LOCAL_URL="http://127.0.0.1:11434/v1/chat/completions" RIVER_AI_LOCAL_MODEL="$MODEL" RIVER_AI_WORKER_POLL_MS=500 node server/river-ai-worker.mjs &
 WORKER_PID=$!
 for i in {1..40}; do
@@ -41,6 +41,6 @@ for i in {1..40}; do
   if [[ "$state" == "succeeded|"*WORKER_CRASH_RECOVERY_SYNTHETIC* ]]; then break; fi
   sleep .5
 done
-state="$(psql -Atq -v ON_ERROR_STOP=1 -c "SELECT status||'|'||attempts||'|'||(result->>'answer') FROM river_ai_jobs WHERE id='$job_id")"
+state="$(psql -Atq -v ON_ERROR_STOP=1 -c "SELECT status||'|'||attempts||'|'||(result->>'answer') FROM river_ai_jobs WHERE id='$job_id'")"
 if [[ "$state" != "succeeded|2|"*WORKER_CRASH_RECOVERY_SYNTHETIC* ]]; then echo "Crash recovery result mismatch: $state" >&2; exit 1; fi
 echo "Abrupt worker death -> expired lease recovery -> second worker completion: PASS"
