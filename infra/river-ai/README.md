@@ -120,3 +120,7 @@ Run this only against a disposable installation/database with no production or p
 9. Keep evidence (test output, runtime versions, host specs) in a private test report. Do not commit secrets or personal memory exports.
 
 This sequence is a manual acceptance plan, not evidence that these host tests have already run.
+
+
+## Disposable memory API smoke test
+After starting the isolated owner runtime, run `RIVER_AI_ADMIN_TOKEN=... bash infra/river-ai/memory-api-smoke-owner.sh` (or set the token in your private shell environment). Optionally set `RIVER_AI_BASE_URL`. This script requires curl and jq and checks unauthorized access rejection, imports a uniquely tagged synthetic memory, verifies list/export, then deletes only its own synthetic record. It does not test model inference or database outage rollback. Run only against a disposable owner runtime, not production data.
