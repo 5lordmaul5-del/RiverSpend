@@ -1,0 +1,82 @@
+name: RiverSSAI PostgreSQL backup restore integration
+on:
+  pull_request:
+    paths:
+      - 'infra/river-ai/backup-owner-db.sh'
+      - 'infra/river-ai/restore-owner-db.sh'
+      - 'infra/river-ai/tests/**'
+      - '.github/workflows/river-ai-backup-postgres-integration.yml'
+  workflow_dispatch:
+jobs:
+  roundtrip:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: rivercore
+          POSTGRES_PASSWORD: integration_password
+          POSTGRES_DB: rivercore
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U rivercore -d rivercore"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install PostgreSQL client and OpenSSL
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client openssl
+      - name: Prepare synthetic data and restore target
+        env:
+          PGPASSWORD: integration_password
+        run: |
+          psql -h localhost -U rivercore -d rivercore -v ON_ERROR_STOP=1 <<'SQL'
+          CREATE TABLE restore_probe(id integer PRIMARY KEY, payload text NOT NULL);
+          INSERT INTO restore_probe VALUES (1, 'RiverSSAI synthetic recovery probe');
+          SQL
+          createdb -h localhost -U rivercore rivercore_restore_ci
+      - name: Run encrypted backup and actual PostgreSQL restore
+        env:
+          PGPASSWORD: integration_password
+          RIVERBACKUP_PASSPHRASE: 'synthetic-only-passphrase-for-ci-32chars'
+        run: |
+          set -Eeuo pipefail
+          cleanup() { rm -rf infra/river-ai/backups infra/river-ai/.env; }
+          trap cleanup EXIT
+          mkdir -p infra/river-ai/backups infra/river-ai
+          touch infra/river-ai/.env
+          chmod 600 infra/river-ai/.env
+          cat > /tmp/docker <<'SH'
+          #!/usr/bin/env bash
+          set -Eeuo pipefail
+          args="$*"
+          if [[ "$args" == *"pg_dump"* ]]; then
+            exec pg_dump -h localhost -U rivercore -d rivercore --format=custom
+          elif [[ "$args" == *"pg_restore"* && "$args" == *"--list"* ]]; then
+            exec pg_restore --list
+          elif [[ "$args" == *"pg_restore"* ]]; then
+            db=''
+            prev=''
+            for arg in "$@"; do
+              if [[ "$prev" == "-d" ]]; then db="$arg"; fi
+              prev="$arg"
+            done
+            [[ "$db" == rivercore_restore_ci ]] || { echo "Unexpected restore target" >&2; exit 1; }
+            exec pg_restore -h localhost -U rivercore -d "$db" --no-owner --no-acl --exit-on-error
+          else
+            echo "Unexpected Docker shim call" >&2
+            exit 90
+          fi
+          SH
+          chmod +x /tmp/docker
+          export PATH="/tmp:$PATH"
+          bash infra/river-ai/backup-owner-db.sh
+          backup="$(find infra/river-ai/backups -name '*.dump.enc' -type f | head -n1)"
+          export RIVERBACKUP_FILE="$backup" RIVERBACKUP_TARGET_DB=rivercore_restore_ci
+          bash infra/river-ai/restore-owner-db.sh
+          restored="$(psql -h localhost -U rivercore -d rivercore_restore_ci -Atc "SELECT payload FROM restore_probe WHERE id=1")"
+          [[ "$restored" == "RiverSSAI synthetic recovery probe" ]]
+          echo "Real PostgreSQL synthetic encrypted backup/restore roundtrip verified."
+          rm -rf infra/river-ai/backups infra/river-ai/.env
