@@ -172,13 +172,13 @@ export default function RiverAI() {
 
         <section aria-label="Canva Creative Studio" style={{padding:"14px 16px",background:"#eefcfc",borderBottom:"1px solid #c8e8e9"}}>
           <div style={{display:"flex",flexWrap:"wrap",alignItems:"center",gap:12}}>
-            <a href="https://canva.link/kalxc6nz5eazi81" target="_blank" rel="noopener noreferrer" style={{display:"block",flex:"1 1 260px",textDecoration:"none"}}>
+            <a href="https://www.canva.com/d/wX-LB8ESiGa3E4l" target="_blank" rel="noopener noreferrer" style={{display:"block",flex:"1 1 260px",textDecoration:"none"}}>
               <img src="https://media.canva.com/v2/document-image/hash:1492826913/height:316/id:DAHcMb-yxWU/type:B/width:632?brand=BAHV8p8TkkY&csig=AAAAAAAAAAAAAAAAAAAAAEfKodD0JYs8pQbUIxJq5aBx9aEpJuCJRQmjjfS9O6kN&exp=1795864095&fallback=https%3A%2F%2Fs3.amazonaws.com%2Fdocument-export.canva.com%2F-yxWU%2FDAHcMb-yxWU%2F1%2Fthumbnail%2F0001.png%3FX-Amz-Algorithm%3DAWS4-HMAC-SHA256%26X-Amz-Credential%3DAKIAQYCGKMUH3WCXKVGU%252F20261127%252Fus-east-1%252Fs3%252Faws4_request%26X-Amz-Date%3D20261127T104842Z%26X-Amz-Expires%3D87984%26X-Amz-Signature%3D48911302ac545767102dde0e97127b4ce42f26d215e6c99c9a88148fb4a29570%26X-Amz-SignedHeaders%3Dhost%26response-expires%3DSat%252C%252028%2520Nov%25202026%252011%253A15%3A06%2520GMT&fallbackstale=T&osig=AAAAAAAAAAAAAAAAAAAAAC7vwt8JYdrg481YSOJJDwYvAjtDLbZt_LAgYs-krbn9&page=1&signed=brand%2Cfallback%2Cfallbackstale%2Cpage%2Cversion&signer=document-rpc&version=3" alt="Prima grafica RiverSpend generata in Canva" style={{width:"100%",maxWidth:520,display:"block",borderRadius:14,border:"1px solid #b8e3e5"}}/>
             </a>
             <div style={{flex:"1 1 220px"}}>
               <div style={{fontSize:17,fontWeight:900,color:"#075766"}}>Canva · RiverSpend Creative</div>
               <p style={{fontSize:13,lineHeight:1.5,margin:"6px 0",color:"#244c54"}}>Prima grafica RiverSpend: banner aqua, fiume e dettagli oro. Apri il progetto Canva per modificarlo.</p>
-              <a href="https://canva.link/kalxc6nz5eazi81" target="_blank" rel="noopener noreferrer" style={{display:"inline-block",background:"#087f89",color:"#fff",fontWeight:800,padding:"10px 14px",borderRadius:11,textDecoration:"none"}}>Apri / modifica in Canva</a>
+              <a href="https://www.canva.com/d/wX-LB8ESiGa3E4l" target="_blank" rel="noopener noreferrer" style={{display:"inline-block",background:"#087f89",color:"#fff",fontWeight:800,padding:"10px 14px",borderRadius:11,textDecoration:"none"}}>Apri / modifica in Canva</a>
             </div>
           </div>
           <div style={{fontSize:11,color:"#58777d",marginTop:8}}>Anteprima temporanea Canva: per renderla permanente nel sito sarà necessario esportare e archiviare l'immagine in RiverSpend.</div>
