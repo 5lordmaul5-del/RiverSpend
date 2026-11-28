@@ -36,7 +36,9 @@ jobs:
           node --check infra/river-cloud/api/rate-limit.mjs
           node --check infra/river-cloud/api/db-concurrency.mjs
           node --check infra/river-cloud/api/db-concurrency.integration.test.mjs
-          node --test infra/river-cloud/api/rate-limit.test.mjs infra/river-cloud/api/db-concurrency.test.mjs infra/river-cloud/api/db-concurrency.integration.test.mjs
+          node --check infra/river-cloud/api/db-advisory-semaphore.mjs
+          node --check infra/river-cloud/api/db-advisory-semaphore.postgres.test.mjs
+          node --test infra/river-cloud/api/rate-limit.test.mjs infra/river-cloud/api/db-concurrency.test.mjs infra/river-cloud/api/db-advisory-semaphore.test.mjs infra/river-cloud/api/db-concurrency.integration.test.mjs
           node --test infra/river-cloud/auth/river-auth.test.mjs
 
       - name: Validate Compose configuration
@@ -83,6 +85,10 @@ jobs:
           docker compose exec -T rivercloud-db pg_isready -U rivercloud -d rivercloud
           docker compose exec -T rivercloud-db psql -U rivercloud -d rivercloud -v ON_ERROR_STOP=1 -c "CREATE TABLE IF NOT EXISTS public.restore_probe (id integer PRIMARY KEY, marker text NOT NULL);"
           docker compose exec -T rivercloud-db psql -U rivercloud -d rivercloud -v ON_ERROR_STOP=1 -c "INSERT INTO public.restore_probe VALUES (1, 'rivercloud-ci') ON CONFLICT (id) DO UPDATE SET marker = EXCLUDED.marker;"
+
+      - name: Verify global advisory semaphore against PostgreSQL
+        working-directory: infra/river-cloud
+        run: node --test api/db-advisory-semaphore.postgres.test.mjs
 
       - name: Verify row-level ownership isolation
         working-directory: infra/river-cloud
