@@ -16,11 +16,16 @@ const MAX_BODY = 24 * 1024;
 const MAX_MESSAGE = 4000;
 const MAX_HISTORY = 12;
 const MAX_TEAM_SPECIALISTS = 30;
-const MAX_PARALLEL = Math.max(1, Math.min(2, Number(process.env.RIVER_AI_MAX_PARALLEL || 1)));
-const RATE_LIMIT = Math.max(1, Math.min(1000, Number(process.env.RIVER_AI_MAX_REQUESTS_PER_MINUTE || 20)));
+// Reject malformed environment numbers safely by falling back to conservative defaults.
+function boundedInteger(value, fallback, min, max) {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? Math.max(min, Math.min(max, Math.trunc(parsed))) : fallback;
+}
+const MAX_PARALLEL = boundedInteger(process.env.RIVER_AI_MAX_PARALLEL, 1, 1, 2);
+const RATE_LIMIT = boundedInteger(process.env.RIVER_AI_MAX_REQUESTS_PER_MINUTE, 20, 1, 1000);
 const ALLOWED_TEAM_SIZES = [2, 4, 8, 10, 20, 30];
 const hits = new Map();
-const MAX_ACTIVE_CHAT_REQUESTS = Math.max(1, Math.min(2, Number(process.env.RIVER_AI_MAX_ACTIVE_CHAT_REQUESTS || 1)));
+const MAX_ACTIVE_CHAT_REQUESTS = boundedInteger(process.env.RIVER_AI_MAX_ACTIVE_CHAT_REQUESTS, 1, 1, 2);
 let activeChatRequests = 0;
 
 if (!DATABASE_URL || ADMIN_TOKEN.length < 32) {
