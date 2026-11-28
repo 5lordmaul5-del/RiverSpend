@@ -112,3 +112,24 @@ test('RiverAuth does not accept arbitrary issuer claims as a subject', async (t)
   assert.equal(Object.hasOwn(principal, 'role'), false);
   assert.equal(Object.hasOwn(principal, 'app_metadata'), false);
 });
+
+
+test('RiverAuth sends bounded upstream requests and minimal headers', async (t) => {
+  const originalFetch = globalThis.fetch;
+  t.after(() => { globalThis.fetch = originalFetch; });
+  globalThis.fetch = async (_url, options) => {
+    assert.equal(options.method, 'GET');
+    assert.equal(options.headers.accept, 'application/json');
+    assert.equal(options.headers.apikey, publishableKey);
+    assert.ok(options.signal instanceof AbortSignal);
+    assert.equal(options.signal.aborted, false);
+    return new Response(JSON.stringify({ id: validId }), { status: 200 });
+  };
+  const auth = createRiverAuth({ issuerUrl, publishableKey });
+  assert.equal((await auth.verifyBearerToken('Bearer bounded-token')).subject, validId);
+});
+
+test('RiverAuth configuration rejects missing issuer or key', () => {
+  assert.throws(() => createRiverAuth({ issuerUrl: '', publishableKey }), /issuer URL and publishable key/);
+  assert.throws(() => createRiverAuth({ issuerUrl, publishableKey: '' }), /issuer URL and publishable key/);
+});
