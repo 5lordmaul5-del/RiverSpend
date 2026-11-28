@@ -202,13 +202,30 @@ const server = http.createServer(async (req, res) => {
   }
 
   const jobStatusMatch = /^\/v1\/jobs\/([0-9a-f-]{36})$/i.exec(url.pathname);
-  if (!["POST", "GET"].includes(req.method) || !["/v1/chat", "/v1/memories", "/v1/agents", "/v1/jobs"].includes(url.pathname) && !jobStatusMatch) {
+  const memoryDeleteMatch = /^\/v1\/memories\/(\d+)$/.exec(url.pathname);
+  if (!["POST", "GET", "DELETE"].includes(req.method) || !["/v1/chat", "/v1/memories", "/v1/agents", "/v1/jobs"].includes(url.pathname) && !jobStatusMatch && !(req.method === "DELETE" && memoryDeleteMatch)) {
     return send(res, 404, { error: "Not found" });
   }
   // Rate-limit before token validation to slow down bearer-token guessing.
   if (rateLimited(req)) return send(res, 429, { error: "Limite temporaneo raggiunto. Riprova tra un minuto." });
   if (!authorized(req)) return send(res, 401, { error: "Accesso amministratore non valido." });
 
+  if (req.method === "GET" && url.pathname === "/v1/memories") {
+    const result = await pool.query("SELECT id,title,content,category,source,created_at FROM river_ai_memories WHERE owner_id='owner' ORDER BY created_at DESC LIMIT 100");
+    return send(res, 200, { memories: result.rows });
+  }
+  if (req.method === "DELETE" && memoryDeleteMatch) {
+    const client = await pool.connect();
+    let removed;
+    try {
+      await client.query("BEGIN");
+      const result = await client.query("DELETE FROM river_ai_memories WHERE id=$1 AND owner_id='owner' RETURNING id", [memoryDeleteMatch[1]]);
+      removed = result.rows[0];
+      if (removed) await client.query("INSERT INTO river_ai_audit(action,status,details) VALUES($1,$2,$3)", ["memory.delete", "success", { id: removed.id }]);
+      await client.query("COMMIT");
+    } catch (error) { await client.query("ROLLBACK").catch(()=>{}); throw error; } finally { client.release(); }
+    return send(res, removed ? 200 : 404, removed ? { deleted: true, id: removed.id } : { error: "Memoria non trovata." });
+  }
   if (req.method === "POST" && url.pathname === "/v1/jobs") {
     try {
       const body = await readBody(req);
