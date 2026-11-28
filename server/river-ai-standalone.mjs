@@ -203,13 +203,25 @@ const server = http.createServer(async (req, res) => {
 
   const jobStatusMatch = /^\/v1\/jobs\/([0-9a-f-]{36})$/i.exec(url.pathname);
   const memoryIdMatch = /^\/v1\/memories\/(\d+)$/.exec(url.pathname);
-  if (!["POST", "GET", "DELETE", "PUT"].includes(req.method) || !["/v1/chat", "/v1/memories", "/v1/agents", "/v1/jobs"].includes(url.pathname) && !jobStatusMatch && !(["DELETE", "PUT"].includes(req.method) && memoryIdMatch)) {
+  if (!["POST", "GET", "DELETE", "PUT"].includes(req.method) || !["/v1/chat", "/v1/memories", "/v1/memories/export", "/v1/agents", "/v1/jobs"].includes(url.pathname) && !jobStatusMatch && !(["DELETE", "PUT"].includes(req.method) && memoryIdMatch)) {
     return send(res, 404, { error: "Not found" });
   }
   // Rate-limit before token validation to slow down bearer-token guessing.
   if (rateLimited(req)) return send(res, 429, { error: "Limite temporaneo raggiunto. Riprova tra un minuto." });
   if (!authorized(req)) return send(res, 401, { error: "Accesso amministratore non valido." });
 
+  if (req.method === "GET" && url.pathname === "/v1/memories/export") {
+    try {
+      const result = await pool.query("SELECT id,title,content,category,source,created_at FROM river_ai_memories WHERE owner_id='owner' ORDER BY created_at ASC LIMIT 1000");
+      const client = await pool.connect();
+      try {
+        await client.query("INSERT INTO river_ai_audit(action,status,details) VALUES($1,$2,$3)", ["memory.export", "success", { count: result.rows.length }]);
+      } finally { client.release(); }
+      return send(res, 200, { exported_at: new Date().toISOString(), count: result.rows.length, memories: result.rows });
+    } catch {
+      return send(res, 503, { error: "Esportazione memoria temporaneamente non disponibile." });
+    }
+  }
   if (req.method === "GET" && url.pathname === "/v1/memories") {
     try {
       const result = await pool.query("SELECT id,title,content,category,source,created_at FROM river_ai_memories WHERE owner_id='owner' ORDER BY created_at DESC LIMIT 100");
