@@ -5,7 +5,7 @@ HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$HERE"
 
 fail() { printf 'ERRORE: %s\n' "$*" >&2; exit 1; }
-command -v docker >/dev/null 2>&1 || fail "Docker non installato."
+command -v docker >/dev/null 2>&1 || fail "Docker non installato."\ncommand -v curl >/dev/null 2>&1 || fail "curl non installato."
 docker compose version >/dev/null 2>&1 || fail "Docker Compose plugin non disponibile."
 [[ -f .env ]] || fail "File .env mancante. Copia .env.example in .env e imposta i segreti."
 set -a; source .env; set +a
