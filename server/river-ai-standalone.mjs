@@ -60,6 +60,12 @@ function rateLimited(req) {
   const recent = (hits.get(ip) || []).filter((t) => now - t < 60000);
   recent.push(now);
   hits.set(ip, recent);
+  // Bound limiter state against address churn; prune expired entries only.
+  if (hits.size > 5000) {
+    for (const [key, timestamps] of hits) {
+      if (!timestamps.some((t) => now - t < 60000)) hits.delete(key);
+    }
+  }
   return recent.length > RATE_LIMIT;
 }
 async function readBody(req) {
