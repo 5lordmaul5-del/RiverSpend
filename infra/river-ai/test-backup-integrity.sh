@@ -1,8 +1,14 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
-SCRIPT="$(cd "$(dirname "$0")" && pwd)/verify-encrypted-backup.sh"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+SCRIPT="$SCRIPT_DIR/verify-encrypted-backup.sh"
 TMP="$(mktemp -d)"
 trap 'rm -f "$TMP/test.dump.enc" "$TMP/test.dump.enc.sha256" "$TMP/test.dump.enc.hmac"; rmdir "$TMP"' EXIT
+# Ensure restore-drill uses the same last-field HMAC extraction convention.
+if ! grep -F '$NF' "$SCRIPT_DIR/restore-drill.sh" >/dev/null; then
+  echo 'Restore HMAC parser must read the final sidecar field.' >&2
+  exit 1
+fi
 export RIVER_AI_BACKUP_PASSPHRASE='ci-test-passphrase'
 B="$TMP/test.dump.enc"
 printf 'synthetic encrypted backup fixture\n' > "$B"
