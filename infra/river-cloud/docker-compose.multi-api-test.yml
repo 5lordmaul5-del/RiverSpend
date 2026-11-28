@@ -1,0 +1,44 @@
+services:
+  rivercloud-auth-stub:
+    image: node:22-alpine
+    command: ["node", "/stub/auth-stub.mjs"]
+    volumes:
+      - ./tests/auth-stub.mjs:/stub/auth-stub.mjs:ro
+    networks:
+      - rivercloud-private
+
+  rivercloud-api:
+    environment:
+      RIVERAUTH_ISSUER_URL: http://rivercloud-auth-stub:8081
+      RIVERAUTH_PUBLISHABLE_KEY: ci-stub-key
+    ports:
+      - "127.0.0.1:18080:8080"
+    depends_on:
+      rivercloud-auth-stub:
+        condition: service_started
+
+  rivercloud-api-2:
+    build:
+      context: ../..
+      dockerfile: infra/river-cloud/api/Dockerfile
+    restart: "no"
+    environment:
+      PORT: "8080"
+      RIVERAUTH_ISSUER_URL: http://rivercloud-auth-stub:8081
+      RIVERAUTH_PUBLISHABLE_KEY: ci-stub-key
+      RIVER_CLOUD_API_DB_PASSWORD: ${RIVER_CLOUD_API_DB_PASSWORD:?Set RIVER_CLOUD_API_DB_PASSWORD}
+    depends_on:
+      rivercloud-db:
+        condition: service_healthy
+      rivercloud-auth-stub:
+        condition: service_started
+    ports:
+      - "127.0.0.1:18081:8080"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8080/health').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    networks:
+      - rivercloud-private
+      - rivercloud-egress
