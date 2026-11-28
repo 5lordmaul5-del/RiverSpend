@@ -48,6 +48,7 @@ test('API rejects excess parallel database subprocesses and releases slots after
   ]);
   const fakeBin = path.join(root, 'bin');
   const markers = path.join(root, 'markers');
+  const busyFlag = path.join(root, 'busy.flag');
   await mkdir(fakeBin, { recursive: true });
   await mkdir(markers, { recursive: true });
   const fakePsql = path.join(fakeBin, 'psql');
@@ -57,6 +58,7 @@ test('API rejects excess parallel database subprocesses and releases slots after
     "const path = require('node:path');",
     "const forbidden = ['RIVERAUTH_ISSUER_URL', 'RIVERAUTH_PUBLISHABLE_KEY', 'RIVER_CLOUD_API_DB_PASSWORD', 'RIVER_TEST_PSQL_MARKERS', 'RIVER_TEST_PSQL_DELAY_MS'];",
     "if (forbidden.some((name) => Object.hasOwn(process.env, name))) { process.stderr.write('unexpected inherited environment\\n'); process.exit(1); }",
+    `if (fs.existsSync(${JSON.stringify(busyFlag)})) { process.stdout.write('RIVERCLOUD_SEMAPHORE_FULL\\n'); process.exit(0); }`,
     "if (process.env.PGPASSWORD !== 'integration-test-password' || process.env.PGOPTIONS !== '-c statement_timeout=5000' || !process.env.PATH) { process.stderr.write('required psql environment missing\\n'); process.exit(1); }",
     `const marker = path.join(${JSON.stringify(markers)}, process.pid + '.active');`,
     "fs.writeFileSync(marker, 'active');",
@@ -156,6 +158,11 @@ test('API rejects excess parallel database subprocesses and releases slots after
   }
 
   await waitFor(async () => (await activeMarkers(markers)) === 0, 3000);
+  await writeFile(busyFlag, 'busy');
+  const semaphoreBusy = await request();
+  assert.equal(semaphoreBusy.status, 503);
+  assert.deepEqual(await semaphoreBusy.json(), { error: 'database_busy' });
+  await rm(busyFlag, { force: true });
   const afterRelease = await request();
   assert.equal(afterRelease.status, 200);
   assert.deepEqual(await afterRelease.json(), { profile: null });
