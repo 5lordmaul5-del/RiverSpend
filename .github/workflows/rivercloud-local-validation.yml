@@ -93,6 +93,7 @@ jobs:
         run: |
           docker compose up -d --wait
           docker compose exec -T rivercloud-db pg_isready -U rivercloud -d rivercloud
+          docker compose exec -T rivercloud-api node -e "fetch('http://127.0.0.1:8080/health').then(async r => { const b = await r.json(); if (!r.ok || b.status !== 'ok' || b.service !== 'rivercloud-private-api') process.exit(1; console.log('RiverCloud API health verified'); }).catch(() => process.exit(1))"
           docker compose exec -T rivercloud-db psql -U rivercloud -d rivercloud -v ON_ERROR_STOP=1 -c "CREATE TABLE IF NOT EXISTS public.restore_probe (id integer PRIMARY KEY, marker text NOT NULL);"
           docker compose exec -T rivercloud-db psql -U rivercloud -d rivercloud -v ON_ERROR_STOP=1 -c "INSERT INTO public.restore_probe VALUES (1, 'rivercloud-ci') ON CONFLICT (id) DO UPDATE SET marker = EXCLUDED.marker;"
 
