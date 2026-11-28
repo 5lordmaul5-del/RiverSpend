@@ -19,7 +19,9 @@ const MAX_TEAM_SPECIALISTS = 30;
 const MAX_PARALLEL = Math.max(1, Math.min(2, Number(process.env.RIVER_AI_MAX_PARALLEL || 1)));
 const RATE_LIMIT = Math.max(1, Math.min(1000, Number(process.env.RIVER_AI_MAX_REQUESTS_PER_MINUTE || 20)));
 const ALLOWED_TEAM_SIZES = [2, 4, 8, 10, 20, 30];
-const hits = new Map();const MAX_ACTIVE_CHAT_REQUESTS = Math.max(1, Math.min(2, Number(process.env.RIVER_AI_MAX_ACTIVE_CHAT_REQUESTS || 1)));let activeChatRequests = 0;
+const hits = new Map();
+const MAX_ACTIVE_CHAT_REQUESTS = Math.max(1, Math.min(2, Number(process.env.RIVER_AI_MAX_ACTIVE_CHAT_REQUESTS || 1)));
+let activeChatRequests = 0;
 
 if (!DATABASE_URL || ADMIN_TOKEN.length < 32) {
   throw new Error("DATABASE_URL and a RIVER_AI_ADMIN_TOKEN of at least 32 characters are required.");
