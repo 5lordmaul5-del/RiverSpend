@@ -36,7 +36,7 @@ async function callModel(agentKey, payload) {
   const client = await pool.connect();
   let memories = "";
   try {
-    const recent = await client.query("SELECT title,content,category FROM river_ai_memories ORDER BY created_at DESC LIMIT 8");
+    const recent = await client.query("SELECT title,content,category FROM river_ai_memories WHERE owner_id='owner' ORDER BY created_at DESC LIMIT 8");
     memories = recent.rows.map((row) => "\n[" + row.category + "] " + row.title + ": " + String(row.content).slice(0,300)).join("").slice(0,1800);
   } catch (error) { console.warn("Worker memory context unavailable:", error.message); }
   finally { client.release(); }
