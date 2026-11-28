@@ -1,0 +1,22 @@
+name: RiverSSAI Point 4 secret boundary static validation
+on:
+  pull_request:
+    paths:
+      - 'infra/river-ai/POINT-4-SECRET-BOUNDARY.md'
+      - '.github/workflows/river-ai-point4-validation.yml'
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check documentation guardrails
+        run: |
+          grep -F 'infra/river-ai/.env' infra/river-ai/POINT-4-SECRET-BOUNDARY.md
+          grep -F '0600' infra/river-ai/POINT-4-SECRET-BOUNDARY.md
+          grep -iF 'backup passphrase' infra/river-ai/POINT-4-SECRET-BOUNDARY.md
+          grep -F 'TLS' infra/river-ai/POINT-4-SECRET-BOUNDARY.md
+          grep -F 'Limitations / acceptance' infra/river-ai/POINT-4-SECRET-BOUNDARY.md
+      - name: Ensure local env is ignored in Point 1 branch snapshot
+        run: |
+          test -f infra/river-ai/.gitignore
+          grep -F '.env' infra/river-ai/.gitignore || grep -F 'infra/river-ai/.env' .gitignore
