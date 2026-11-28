@@ -3,7 +3,7 @@ set -Eeuo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 SCRIPT="$ROOT/infra/river-ai/restore-owner-db.sh"
 TMP="$(mktemp -d)"
-trap 'rm -rf "$TMP"' EXIT
+ENV_CREATED=0\nif [[ ! -e "$ROOT/infra/river-ai/.env" ]]; then ENV_CREATED=1; fi\ncleanup() { rm -rf "$TMP"; if [[ "$ENV_CREATED" == 1 ]]; then rm -f "$ROOT/infra/river-ai/.env"; fi; }\ntrap cleanup EXIT
 mkdir -p "$TMP/bin" "$ROOT/infra/river-ai"
 # Isolate docker and crypto/checksum commands; guard must fail before any of these run.
 cat > "$TMP/bin/docker" <<'EOF'
@@ -12,7 +12,7 @@ echo docker-called >&2
 exit 99
 EOF
 chmod +x "$TMP/bin/docker"
-touch "$ROOT/infra/river-ai/.env"
+if [[ ! -e "$ROOT/infra/ai/.env" ]]; then touch "$ROOT/infra/river-ai/.env"; fi
 export PATH="$TMP/bin:$PATH" RIVERBACKUP_PASSPHRASE="01234567890123456789012345678901" RIVERBACKUP_FILE="$TMP/no-file" 
 for target in rivercore wrongname; do
   export RIVERBACKUP_TARGET_DB="$target"
