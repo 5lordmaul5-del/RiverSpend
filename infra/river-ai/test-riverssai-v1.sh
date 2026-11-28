@@ -5,7 +5,7 @@ set -Eeuo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$HERE"
 ROOT="$(cd "$HERE/../.." && pwd)"
-echo "== Gate A: tool policy unit assertions =="
+echo "== Gate 0: static configuration safety audit =="\n"$HERE/audit-riverssai-config.sh"\necho "== Gate A: tool policy unit assertions =="
 node "$ROOT/lib/riverSSAI/testToolPolicy.mjs"
 echo "== Gate B: startup and local model readiness =="
 "$HERE/start-riverssai.sh"
