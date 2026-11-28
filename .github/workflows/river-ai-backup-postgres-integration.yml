@@ -43,6 +43,8 @@ jobs:
           RIVERBACKUP_PASSPHRASE: 'synthetic-only-passphrase-for-ci-32chars'
         run: |
           set -Eeuo pipefail
+          cleanup() { rm -rf infra/river-ai/backups infra/river-ai/.env; }
+          trap cleanup EXIT
           mkdir -p infra/river-ai/backups infra/river-ai
           touch infra/river-ai/.env
           chmod 600 infra/river-ai/.env
@@ -56,6 +58,7 @@ jobs:
             exec pg_restore --list
           elif [[ "$args" == *"pg_restore"* ]]; then
             db=''
+            prev=''
             for arg in "$@"; do
               if [[ "$prev" == "-d" ]]; then db="$arg"; fi
               prev="$arg"
