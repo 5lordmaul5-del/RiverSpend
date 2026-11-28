@@ -1,0 +1,13 @@
+name: RiverSSAI Point 21 checklist
+on:
+  pull_request:
+    paths:
+      - 'infra/river-ai/POINT-21-DB-INTEGRITY.md'
+      - '.github/workflows/river-ai-point21-db-integrity.yml'
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: grep -F 'Completion criteria' infra/river-ai/POINT-21-DB-INTEGRITY.md
+      - run: grep -F 'isolated environment' infra/river-ai/POINT-21-DB-INTEGRITY.md
