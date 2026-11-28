@@ -1,0 +1,17 @@
+name: RiverSSAI Point 6 compose validation
+on:
+  pull_request:
+    paths:
+      - 'infra/river-ai/docker-compose.yml'
+      - 'infra/river-ai/validate-compose.sh'
+      - 'infra/river-ai/POINT-6-COMPOSE-VALIDATION.md'
+      - '.github/workflows/river-ai-point6-validation.yml'
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate script syntax
+        run: bash -n infra/river-ai/validate-compose.sh
+      - name: Validate compose configuration
+        run: bash infra/river-ai/validate-compose.sh
