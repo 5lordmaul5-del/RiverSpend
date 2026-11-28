@@ -7,6 +7,7 @@ MODEL="${RIVER_AI_LOCAL_MODEL:-qwen2.5:7b}"
 command -v docker >/dev/null 2>&1 || { echo "Docker is required." >&2; exit 1; }
 command -v curl >/dev/null 2>&1 || { echo "curl is required." >&2; exit 1; }
 command -v openssl >/dev/null 2>&1 || { echo "openssl is required." >&2; exit 1; }
+command -v grep >/dev/null 2>&1 || { echo "grep is required." >&2; exit 1; }
 docker compose version >/dev/null 2>&1 || { echo "Docker Compose plugin is required." >&2; exit 1; }
 if [[ -f "$ENV_FILE" ]]; then echo "Refusing to overwrite existing $ENV_FILE." >&2; exit 1; fi
 umask 077
@@ -23,10 +24,15 @@ chmod 600 "$ENV_FILE"
 echo "Created private runtime environment."
 docker compose -f infra/river-ai/docker-compose.yml up -d --build riverdb ollama river-ai
 echo "Waiting for Ollama..."
+ollama_ready=0
 for i in {1..120}; do
-  if docker compose -f infra/river-ai/docker-compose.yml exec -T ollama ollama list >/dev/null 2>&1; then break; fi
+  if docker compose -f infra/river-ai/docker-compose.yml exec -T ollama ollama list >/dev/null 2>&1; then ollama_ready=1; break; fi
   sleep 2
 done
+if [[ "$ollama_ready" != "1" ]]; then
+  echo "Ollama did not become available within 240 seconds. Inspect Docker logs; environment file was retained." >&2
+  exit 1
+fi
 docker compose -f infra/river-ai/docker-compose.yml exec -T ollama ollama pull "$MODEL"
 docker compose -f infra/river-ai/docker-compose.yml up -d river-ai-worker
 API="http://127.0.0.1:8787"
@@ -36,7 +42,7 @@ for i in {1..90}; do
   if curl --silent --fail "$API/ready" >/dev/null; then ready=1; break; fi
   sleep 2
 done
-if [[ "$ready" != "1" ]]; then echo "Readiness failed. Inspect Docker logs." >&2; exit 1; fi
+if [[ "$ready" != "1" ]]; then echo "Readiness failed after 180 seconds. Inspect Docker logs; environment file was retained." >&2; exit 1; fi
 echo "Running local authenticated smoke test..."
 SMOKE_FILE="$(mktemp)"
 trap 'rm -f "$SMOKE_FILE"' EXIT
