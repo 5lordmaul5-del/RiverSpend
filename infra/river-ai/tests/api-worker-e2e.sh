@@ -13,7 +13,7 @@ RIVER_AI_LOCAL_MODEL="$MODEL" node infra/river-ai/tests/mock-model.mjs &
 MOCK_PID=$!
 DATABASE_URL="postgres://$PGUSER:$PGPASSWORD@$PGHOST:$PGPORT/$PGDATABASE" RIVER_AI_ADMIN_TOKEN="$TOKEN" RIVER_AI_LOCAL_URL="http://127.0.0.1:11434/v1/chat/completions" RIVER_AI_LOCAL_MODEL="$MODEL" PORT=8787 node server/river-ai-standalone.mjs &
 API_PID=$!
-DATABASE_URL="postgres://$PGUSER:$PGPASSWORD@$PGHOST:$PGPORT/$PGDATABASE" RIVER_AI_LOCAL_URL="http://127.0.0.1:11434/v1/chat/completions" RIVER_AI_LOCAL_MODEL="$MODEL" RIVER_AI_WORKER_POLL_MS=500 node server/river-ai-worker.mjs &
+DATABASE_URL="postgres://$PGUSER:$PGPASSWORD@$PGHOST:$PGPORT/$PGDATABASE" RIVER_AI_LOCAL_URL="http://127.0.0.1:11434/v1/chat/completions" RIVER_AI_LOCAL_MODEL="$MODEL" RIVER_AI_WORKER_POLL_MS=500 exec node server/river-ai-worker.mjs &
 WORKER_PID=$!
 for i in {1..40}; do if curl -fsS http://127.0.0.1:8787/health >/dev/null && curl -fsS http://127.0.0.1:11434/api/tags >/dev/null; then break; fi; sleep 1; done
 curl -fsS http://127.0.0.1:8787/ready >/dev/null
