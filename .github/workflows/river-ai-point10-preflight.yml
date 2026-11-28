@@ -1,0 +1,17 @@
+name: RiverSSAI Point 10 preflight validation
+on:
+  pull_request:
+    paths:
+      - 'infra/river-ai/preflight-owner-host.sh'
+      - 'infra/river-ai/POINT-10-PREFLIGHT.md'
+      - '.github/workflows/river-ai-point10-preflight.yml'
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash -n infra/river-ai/preflight-owner-host.sh
+      - name: Guard read-only intent
+        run: |
+          grep -F 'Preflight only: no downloads, startup, writes' infra/river-ai/preflight-owner-host.sh
+          ! grep -E 'docker compose .* up|curl .*-(X|request) (POST|PUT|PATCH|DELETE)|rm -rf' infra/river-ai/preflight-owner-host.sh
