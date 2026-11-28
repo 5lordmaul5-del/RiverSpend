@@ -19,6 +19,9 @@ export default function RiverAI() {
   const [installMessage, setInstallMessage] = useState("");
   const [selectedAgent, setSelectedAgent] = useState("nova");
   const [teamSize, setTeamSize] = useState(4);
+  const [temporaryChat, setTemporaryChat] = useState(false);
+  const [workbenchPanel, setWorkbenchPanel] = useState("");
+  const [artifactDraft, setArtifactDraft] = useState("");
   const endRef = useRef(null);
   const sendLock = useRef(false);
 
@@ -92,7 +95,7 @@ export default function RiverAI() {
       try { localStorage.setItem(storageKey, JSON.stringify(messages.slice(-40))); } catch {}
     }
     endRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, busy, storageKey]);
+  }, [messages, busy, storageKey, temporaryChat]);
 
   async function requestLogin(event) {
     event?.preventDefault();
@@ -185,6 +188,18 @@ export default function RiverAI() {
          access === "denied" ? <div style={{padding:24}}><h2>Accesso non autorizzato</h2><p>Questa assistente è riservata esclusivamente al proprietario RiverSpend.</p></div> :
          access === "error" ? <div role="alert" style={{padding:24}}><h2>Verifica temporaneamente non disponibile</h2><p>Non posso confermare i permessi in questo momento. Riprova tra poco.</p></div> :
          <>
+          <div style={{padding:"12px 18px",display:"flex",gap:8,flexWrap:"wrap",borderBottom:"1px solid #dceeee",background:"#f8ffff"}}>
+            <button type="button" onClick={()=>{setTemporaryChat(v=>!v);if(!temporaryChat)setMessages([]);}} style={{border:"1px solid #b9d8da",borderRadius:12,padding:"9px 12px",background:temporaryChat?"#dff8f1":"white",color:"#164e56",fontWeight:700}}>🕶️ {temporaryChat?"Chat temporanea attiva":"Chat temporanea"}</button>
+            <button type="button" onClick={()=>setWorkbenchPanel(workbenchPanel==="artifacts"?"":"artifacts")} style={{border:"1px solid #b9d8da",borderRadius:12,padding:"9px 12px",background:"white",color:"#164e56",fontWeight:700}}>🗂️ Artefatti</button>
+            <button type="button" onClick={()=>setWorkbenchPanel(workbenchPanel==="schedule"?"":"schedule")} style={{border:"1px solid #b9d8da",borderRadius:12,padding:"9px 12px",background:"white",color:"#164e56",fontWeight:700}}>🗓️ Programmazione</button>
+            <button type="button" onClick={()=>setWorkbenchPanel(workbenchPanel==="tools"?"":"tools")} style={{border:"1px solid #b9d8da",borderRadius:12,padding:"9px 12px",background:"white",color:"#164e56",fontWeight:700}}>🧰 Strumenti</button>
+          </div>
+          {workbenchPanel && <div style={{margin:"12px 18px",padding:14,border:"1px solid #c7dfe1",borderRadius:16,background:"#f5fbff",color:"#173b42"}}>
+            <button type="button" onClick={()=>setWorkbenchPanel("")} style={{float:"right",border:0,background:"transparent",fontSize:18}}>✕</button>
+            {workbenchPanel==="artifacts" && <><strong>Artefatti RiverSSAI</strong><p style={{fontSize:13}}>Area di lavoro per bozze, documenti, piani e codice. In questa versione puoi preparare una nota; archivio condiviso e export automatico saranno collegati in un passaggio successivo.</p><textarea value={artifactDraft} onChange={e=>setArtifactDraft(e.target.value)} placeholder="Scrivi o incolla qui una bozza da trasformare in artefatto…" rows={4} style={{width:"100%",padding:10,border:"1px solid #b9d8da",borderRadius:12}}/><button type="button" onClick={()=>{setInput(prev=>prev+(prev?"\n\n":"")+"Trasforma questa bozza in un artefatto strutturato:\n"+artifactDraft);setWorkbenchPanel("");}} disabled={!artifactDraft.trim()} style={{marginTop:8,padding:10,border:0,borderRadius:10,background:"#087f89",color:"white"}}>Invia a Nova per elaborazione</button></>}
+            {workbenchPanel==="schedule" && <><strong>Programmazione / attività pianificate</strong><p style={{fontSize:13}}>Interfaccia preparatoria: attività ricorrenti, promemoria e controlli condizionali dovranno essere collegati a RiverAutoma e a un servizio di schedulazione verificato. Qui non viene ancora creato un task reale.</p></>}
+            {workbenchPanel==="tools" && <><strong>Strumenti e workflow</strong><p style={{fontSize:13}}>Nova può aiutarti a pianificare workflow multi-passaggio, analisi, ricerca, revisione e produzione. Accesso a file, immagini, web, dispositivi e integrazioni reali dipende dagli strumenti collegati e dai permessi.</p><ul style={{fontSize:13,lineHeight:1.6}}><li>Workflow multi-passaggio</li><li>Analisi e ricerca</li><li>Produzione di artefatti</li><li>Verifica e approvazione prima di azioni esterne</li></ul></>}
+          </div>}
           <div style={{padding:"12px 18px",background:"#f0fbfa",borderBottom:"1px solid #dceeee",fontSize:12,lineHeight:1.5,color:"#42636a"}}>
             Scegli il collaboratore specializzato. Gli agenti condividono la regia di Nova e la memoria privata. La rete dispone di 30 specialisti. Quando scegli la Squadra Ultra, Nova seleziona prima le competenze più pertinenti alla tua richiesta e coordina gruppi da 2, 4, 8, 10, 20 o 30 specialisti; il sistema li elabora a piccoli gruppi e Nova integra i risultati. La capacità effettiva dipende dai limiti del servizio e dalle risorse disponibili. Le azioni esterne restano protette da approvazione.
           </div>
