@@ -26,7 +26,12 @@ if (!process.env.DATABASE_URL && ![process.env.PGHOST,process.env.PGDATABASE,pro
 }
 let stopping = false;
 const active = new Set();
-const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+const sleepWakeups = new Set();
+const sleep = (ms) => new Promise(resolve => {
+  const timer = setTimeout(() => { sleepWakeups.delete(wake); resolve(); }, ms);
+  const wake = () => { clearTimeout(timer); sleepWakeups.delete(wake); resolve(); };
+  sleepWakeups.add(wake);
+});
 
 async function callModel(agentKey, payload) {
   const agent = AGENTS_REGISTRY[agentKey];
@@ -113,6 +118,7 @@ let shutdownPromise;
 async function shutdown(signal) {
   if (shutdownPromise) return shutdownPromise;
   stopping = true;
+  for (const wake of [...sleepWakeups]) wake();
   shutdownPromise = (async () => {
     console.log("Worker stopping:", signal, "- waiting for", active.size, "active job(s)");
     await Promise.allSettled([...active]);
