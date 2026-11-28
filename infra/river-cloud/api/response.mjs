@@ -1,7 +1,7 @@
 /** Safely attempt to deliver a JSON response without crashing on disconnects. */
 export function sendJsonResponse(res, status, payload) {
   // A client may disconnect while authentication or database work is in flight.
-  if (res.destroyed || res.writableEnded) return false;
+  if (res.destroyed || res.writableEnded || res.headersSent) return false;
   let body;
   try {
     // Serialize before headers are sent to avoid partial responses on serialization errors.
