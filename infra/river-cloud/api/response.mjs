@@ -6,6 +6,7 @@ export function sendJsonResponse(res, status, payload) {
   try {
     // Serialize before headers are sent to avoid partial responses on serialization errors.
     body = JSON.stringify(payload);
+    if (typeof body !== 'string') return false;
   } catch {
     return false;
   }
