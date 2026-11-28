@@ -1,0 +1,17 @@
+name: RiverSSAI Point 13 inference smoke script validation
+on:
+  pull_request:
+    paths:
+      - 'infra/river-ai/inference-smoke-owner.sh'
+      - 'infra/river-ai/POINT-13-INFERENCE-SMOKE.md'
+      - '.github/workflows/river-ai-point13-inference.yml'
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash -n infra/river-ai/inference-smoke-owner.sh
+      - run: |
+          grep -F 'RIVERAI_SMOKE_MODEL' infra/river-ai/inference-smoke-owner.sh
+          grep -F 'timeout' infra/river-ai/inference-smoke-owner.sh
+          ! grep -E 'ollama pull|docker compose .* up|rm -rf' infra/river-ai/inference-smoke-owner.sh
