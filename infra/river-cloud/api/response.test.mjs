@@ -80,3 +80,10 @@ test('response helper returns false when serialization fails before write', () =
   assert.equal(sendJsonResponse(res, 200, bad), false);
   assert.equal(res.calls.length, 0);
 });
+
+
+test('response helper rejects payloads that JSON.stringify cannot produce a body for', () => {
+  const res = mockResponse();
+  assert.equal(sendJsonResponse(res, 200, undefined), false);
+  assert.equal(res.calls.length, 0);
+});
