@@ -354,7 +354,10 @@ const server = http.createServer(async (req, res) => {
     await pool.query(
       "INSERT INTO river_ai_audit(action,status,details) VALUES($1,$2,$3)",
       ["chat", "success", { model: MODEL, agentsUsed }]
-    );
+    ).catch((auditError) => {
+      // Inference has already completed; audit failure must not turn a valid answer into a failed request.
+      console.error("Chat success audit could not be persisted:", auditError.message);
+    });
     return send(res, 200, {
       answer,
       provider: "local",
