@@ -1,0 +1,14 @@
+name: RiverSSAI Point 19 checklist validation
+on:
+  pull_request:
+    paths:
+      - 'infra/river-ai/POINT-19-SAFE-LOGGING.md'
+      - '.github/workflows/river-ai-point19-safe-logging.yml'
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          grep -F 'Completion criteria' infra/river-ai/POINT-19-SAFE-LOGGING.md
+          grep -F 'isolated, non-production' infra/river-ai/POINT-19-SAFE-LOGGING.md
