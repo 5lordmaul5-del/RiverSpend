@@ -16,7 +16,14 @@ set -a; source .env; set +a
 docker compose config >/dev/null || fail "Configurazione Compose non valida."
 docker compose up -d --build riverdb ollama river-ai
 
-printf 'Attendo RiverSSAI healthcheck...\n'
+MODEL="${RIVER_AI_LOCAL_MODEL:-qwen2.5:7b}"
+printf "Verifico modello Ollama: %s\\n" "$MODEL"
+if ! docker compose exec -T ollama ollama list 2>/dev/null | awk 'NR>1 {print $1}' | grep -Fxq "$MODEL"; then
+  printf "Modello assente: avvio download %s (può richiedere tempo e spazio).\\n" "$MODEL"
+  docker compose exec -T ollama ollama pull "$MODEL" || fail "Download modello fallito."
+fi
+
+printf 'Attendo RiverSSAI healthcheck...\\n'
 for i in $(seq 1 60); do
   if curl --silent --show-error --fail http://127.0.0.1:8787/health >/dev/null 2>&1; then
     printf 'RiverSSAI avviata. Health: '
