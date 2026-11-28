@@ -93,3 +93,14 @@ The standalone RiverCloud runtime includes a durable PostgreSQL queue and a sepa
 
 ### Start and validate
 Run `docker compose up -d --build`, then check `docker compose ps`, `curl http://127.0.0.1:8787/health`, and `curl http://127.0.0.1:8787/ready`. Submit a test job only after readiness is green. Check its status using the returned UUID. Keep concurrency at 1 for the first host test. This worker stack remains separate from production Supabase and the live RiverSpendShop until a separate migration, security review, restore test, and explicit production rollout.
+
+
+## Owner memory management
+All memory management endpoints require the private owner Bearer token. Keep it out of browser code, logs, and shared screenshots.
+- `GET /v1/memories`: list the latest 100 owner memories.
+- `PUT /v1/memories/:id`: edit one memory.
+- `DELETE /v1/memories/:id`: delete one memory.
+- `GET /v1/memories/export`: export up to 1000 owner memories as JSON. Store exports securely.
+- `POST /v1/memories/import`: restore/import 1–100 validated memory records per request from JSON payload `{ "memories": [{ "title": "...", "content": "...", "category": "note", "source": "backup" }] }`. Import is transactional; on failure, it rolls back. Larger exports should be imported in batches of 100 or fewer. Import adds records; it does not overwrite or deduplicate existing records.
+
+Memory backup and restore have not yet been verified against a live owner-host installation. Exercise export/import on a disposable test database before relying on them for disaster recovery.
