@@ -9,6 +9,7 @@ COPY infra/river-cloud/api/server.mjs ./server.mjs
 COPY infra/river-cloud/auth/river-auth.mjs ./river-auth.mjs
 COPY infra/river-cloud/api/rate-limit.mjs ./rate-limit.mjs
 COPY infra/river-cloud/api/db-concurrency.mjs ./db-concurrency.mjs
+COPY infra/river-cloud/api/response.mjs ./response.mjs
 
 USER node
 EXPOSE 8080
