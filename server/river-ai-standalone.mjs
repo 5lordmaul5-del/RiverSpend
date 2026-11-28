@@ -311,6 +311,7 @@ const server = http.createServer(async (req, res) => {
       try {
         await client.query("BEGIN");
         if (idempotencyKey) {
+          await client.query("SELECT pg_advisory_xact_lock(hashtextextended($1,0))", [idempotencyKey]);
           const prior = await client.query("SELECT id,status,created_at,request_hash FROM river_ai_jobs WHERE idempotency_key=$1 FOR UPDATE", [idempotencyKey]);
           if (prior.rows[0]) {
             if (prior.rows[0].request_hash !== requestHash) {
