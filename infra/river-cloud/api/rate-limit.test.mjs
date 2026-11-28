@@ -80,3 +80,16 @@ test('rate limiter evicts an oldest key safely when capacity is full', () => {
   // The evicted key can re-enter with a fresh window.
   assert.equal(limiter('first'), false);
 });
+
+
+test('rate limiter handles a zero-sized cleanup target without exceeding capacity', () => {
+  let now = 0;
+  const limiter = createRateLimiter({ limit: 1, windowMs: 10, maxKeys: 1, clock: () => now });
+  assert.equal(limiter('a'), false);
+  now = 1;
+  assert.equal(limiter('b'), false);
+  assert.equal(limiter('b'), true);
+  now = 11;
+  assert.equal(limiter('c'), false);
+  assert.equal(limiter('c'), true);
+});
