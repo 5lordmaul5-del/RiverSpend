@@ -185,7 +185,7 @@ export default function RiverSpendSocialNetwork() {
   return (
     <>
     <Head>
-      <title>RiverSpaceSignals · RiverSpend</title>
+      <title>RiverSpaceSingals · RiverSpend</title>
       <meta name="theme-color" content="#082f45" />
       <link rel="icon" href="/icons/riverspend-social.svg" type="image/svg+xml" />
       <link rel="apple-touch-icon" href="/icons/riverspend-social.svg" />
