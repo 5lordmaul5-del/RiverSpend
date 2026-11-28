@@ -223,6 +223,10 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (req.method !== "POST") return send(res, 405, { error: "Metodo non consentito." });
+  if (activeChatRequests >= MAX_ACTIVE_CHAT_REQUESTS) {
+    return send(res, 503, { error: "RiverSSAI è occupata. Riprova tra poco." });
+  }
+  activeChatRequests += 1;
 
   try {
     const body = await readBody(req);
@@ -345,6 +349,8 @@ const server = http.createServer(async (req, res) => {
     }
     console.error("RiverSSAI standalone error:", error.message);
     return send(res, 500, { error: "Errore interno RiverSSAI." });
+  } finally {
+    activeChatRequests = Math.max(0, activeChatRequests - 1);
   }
 });
 
