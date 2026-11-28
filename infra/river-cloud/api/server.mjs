@@ -178,12 +178,12 @@ function runProfileSql(sql, variables) {
 
 const server = http.createServer(async (req, res) => {
   try {
-    if (rateLimited(req)) return send(res, 429, { error: 'rate_limited' });
-
     const url = new URL(req.url || '/', 'http://rivercloud.internal');
+    // Keep health probes available even when ordinary client traffic is rate-limited.
     if (req.method === 'GET' && url.pathname === '/health') {
       return send(res, 200, { status: 'ok', service: 'rivercloud-private-api' });
     }
+    if (rateLimited(req)) return send(res, 429, { error: 'rate_limited' });
 
     if (url.pathname !== '/v1/me' || !['GET', 'PUT'].includes(req.method || '')) {
       return send(res, 404, { error: 'not_found' });
