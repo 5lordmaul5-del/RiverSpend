@@ -301,7 +301,7 @@ const server = http.createServer(async (req, res) => {
       agentsUsed = [requestedAgent];
     }
 
-    if (chatSlotReserved) { activeChatRequests--; chatSlotReserved = false; }\n    const last = safe[safe.length - 1].content;
+    const last = safe[safe.length - 1].content;
     await pool.query(
       "INSERT INTO river_ai_memories(title,content,category,source) VALUES($1,$2,$3,$4),($5,$6,$7,$8)",
       ["Messaggio utente", last, "conversation", "river-ai-chat", "Risposta Nova", answer.slice(0, 4000), "conversation", "river-ai-chat"]
