@@ -1,0 +1,36 @@
+name: RiverSSAI queue SQL integration
+on:
+  pull_request:
+    paths:
+      - 'infra/river-ai/worker-queue.sql'
+      - 'infra/river-ai/tests/queue-db-integration.sh'
+      - '.github/workflows/river-ai-queue-db-integration.yml'
+jobs:
+  queue-db-integration:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: rivercore
+          POSTGRES_USER: rivercore
+          POSTGRES_PASSWORD: rivercore-test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U rivercore -d rivercore"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install PostgreSQL client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+      - name: Run queue integration test
+        env:
+          PGHOST: localhost
+          PGPORT: 5432
+          PGDATABASE: rivercore
+          PGUSER: rivercore
+          PGPASSWORD: rivercore-test
+        run: bash infra/river-ai/tests/queue-db-integration.sh
