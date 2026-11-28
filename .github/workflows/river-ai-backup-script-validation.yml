@@ -5,6 +5,7 @@ on:
       - 'infra/river-ai/backup-owner-db.sh'
       - 'infra/river-ai/restore-owner-db.sh'
       - 'infra/river-ai/tests/restore-target-guard-test.sh'
+      - 'infra/river-ai/tests/backup-restore-roundtrip-test.sh'
       - '.github/workflows/river-ai-backup-script-validation.yml'
 jobs:
   validate-backup-scripts:
@@ -15,6 +16,8 @@ jobs:
         run: bash -n infra/river-ai/backup-owner-db.sh infra/river-ai/restore-owner-db.sh
       - name: Test restore target guard
         run: bash infra/river-ai/tests/restore-target-guard-test.sh
+      - name: Test synthetic backup/restore round trip
+        run: bash infra/river-ai/tests/backup-restore-roundtrip-test.sh
       - name: Check script safety markers
         run: |
           grep -q 'RIVERBACKUP_PASSPHRASE' infra/river-ai/backup-owner-db.sh
