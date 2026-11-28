@@ -12,7 +12,7 @@ echo docker-called >&2
 exit 99
 EOF
 chmod +x "$TMP/bin/docker"
-if [[ ! -e "$ROOT/infra/ai/.env" ]]; then touch "$ROOT/infra/river-ai/.env"; fi
+if [[ "$ENV_CREATED" == 1 ]]; then touch "$ROOT/infra/river-ai/.env"; fi
 export PATH="$TMP/bin:$PATH" RIVERBACKUP_PASSPHRASE="01234567890123456789012345678901" RIVERBACKUP_FILE="$TMP/no-file" 
 for target in rivercore wrongname; do
   export RIVERBACKUP_TARGET_DB="$target"
