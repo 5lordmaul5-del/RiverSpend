@@ -21,7 +21,7 @@ OUT="$BACKUP_DIR/rivercore-$STAMP.dump.enc"
 openssl enc -aes-256-cbc -pbkdf2 -salt -iter 250000 -in "$TMP" -out "$ENC_TMP" -pass env:RIVER_AI_BACKUP_PASSPHRASE
 [[ -s "$ENC_TMP" ]] || { echo "Empty encrypted output." >&2; exit 1; }
 chmod 600 "$ENC_TMP"
-openssl dgst -sha256 "$ENC_TMP" > "$ENC_TMP.sha256"
+sha256sum "$ENC_TMP" | awk '{print $1}' > "$ENC_TMP.sha256"
 openssl dgst -sha256 -hmac "$RIVER_AI_BACKUP_PASSPHRASE" "$ENC_TMP" > "$ENC_TMP.hmac"
 mv "$ENC_TMP" "$OUT"
 mv "$ENC_TMP.sha256" "$OUT.sha256"
