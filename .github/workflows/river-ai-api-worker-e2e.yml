@@ -11,6 +11,7 @@ on:
       - 'infra/river-ai/tests/mock-model.mjs'
       - 'infra/river-ai/tests/worker-shutdown-guards.mjs'
       - 'infra/river-ai/tests/worker-active-shutdown-drain.sh'
+      - 'infra/river-ai/tests/worker-crash-recovery-e2e.sh'
       - '.github/workflows/river-ai-api-worker-e2e.yml'
 jobs:
   api-worker-e2e:
@@ -56,6 +57,14 @@ jobs:
           PGUSER: rivercore
           PGPASSWORD: rivercore-test
         run: bash infra/river-ai/tests/worker-active-shutdown-drain.sh
+      - name: Verify recovery after abrupt worker death
+        env:
+          PGHOST: localhost
+          PGPORT: 5432
+          PGDATABASE: rivercore
+          PGUSER: rivercore
+          PGPASSWORD: rivercore-test
+        run: bash infra/river-ai/tests/worker-crash-recovery-e2e.sh
       - name: Verify worker lease recovery and stale fencing
         env:
           PGHOST: localhost
