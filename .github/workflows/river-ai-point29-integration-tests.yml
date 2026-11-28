@@ -1,0 +1,13 @@
+name: RiverSSAI Point 29 checklist
+on:
+  pull_request:
+    paths:
+      - 'infra/river-ai/POINT-29-INTEGRATION-TESTS.md'
+      - '.github/workflows/river-ai-point29-integration-tests.yml'
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: grep -F 'Completion criteria' infra/river-ai/POINT-29-INTEGRATION-TESTS.md
+      - run: grep -F 'isolated, non-production' infra/river-ai/POINT-29-INTEGRATION-TESTS.md
