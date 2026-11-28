@@ -154,13 +154,17 @@ function runProfileSql(sql, variables) {
       const jsonLine = stdout.split(/\r?\n/).map((line) => line.trim())
         .filter((line) => line === 'null' || line.startsWith('{')).at(-1);
       if (!jsonLine) {
-        reject(new Error('RiverCloud database returned no profile result'));
+        const error = new Error('RiverCloud database returned no profile result');
+        error.status = 503;
+        reject(error);
         return;
       }
       try {
         resolve(JSON.parse(jsonLine));
       } catch {
-        reject(new Error('RiverCloud database returned invalid JSON'));
+        const error = new Error('RiverCloud database returned invalid JSON');
+        error.status = 503;
+        reject(error);
       }
     });
     child.stdin.on('error', () => {
