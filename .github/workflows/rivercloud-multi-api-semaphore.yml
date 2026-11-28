@@ -1,0 +1,46 @@
+name: RiverCloud multi-API semaphore
+
+on:
+  push:
+    branches: [feat/rivercloud-multi-api-semaphore-test-2026-11-28]
+    paths:
+      - "infra/river-cloud/**"
+      - ".github/workflows/rivercloud-multi-api-semaphore.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  multi-api-semaphore:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Write isolated test environment
+        working-directory: infra/river-cloud
+        run: |
+          cat > .env <<EOF
+          RIVER_CLOUD_DB_PASSWORD=ci-only-db-password
+          RIVER_CLOUD_API_DB_PASSWORD=ci-only-api-password
+          RIVERAUTH_ISSUER_URL=http://rivercloud-auth-stub:8081
+          RIVERAUTH_PUBLISHABLE_KEY=ci-stub-key
+          EOF
+          chmod 600 .env
+
+      - name: Validate multi-API Compose fixture
+        working-directory: infra/river-cloud
+        run: docker compose -p rivercloud-multi-api-test -f docker-compose.yml -f docker-compose.multi-api-test.yml config --quiet
+
+      - name: Start isolated database, auth stub and two API instances
+        working-directory: infra/river-cloud
+        run: docker compose -p rivercloud-multi-api-test -f docker-compose.yml -f docker-compose.multi-api-test.yml up -d --wait
+
+      - name: Verify shared semaphore through both APIs
+        working-directory: infra/river-cloud
+        run: node --test api/db-advisory-semaphore.multi-api.test.mjs
+
+      - name: Tear down isolated test project
+        if: always()
+        working-directory: infra/river-cloud
+        run: docker compose -p rivercloud-multi-api-test -f docker-compose.yml -f docker-compose.multi-api-test.yml down --volumes --remove-orphans
