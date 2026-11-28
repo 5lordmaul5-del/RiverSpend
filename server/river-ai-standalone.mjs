@@ -262,9 +262,9 @@ const server = http.createServer(async (req, res) => {
   try {
     const body = await readBody(req);
     if (url.pathname === "/v1/memories") {
-      const title = String(body.title || "").slice(0, 160).trim();
-      const content = String(body.content || "").slice(0, 4000).trim();
-      const category = String(body.category || "note").slice(0, 40);
+      const title = typeof body.title === "string" ? body.title.trim().slice(0, 160) : "";
+      const content = typeof body.content === "string" ? body.content.trim().slice(0, 4000) : "";
+      const category = typeof body.category === "string" ? body.category.trim().slice(0, 40) : "note";
       if (!title || !content) return send(res, 400, { error: "Titolo e contenuto sono obbligatori." });
       const client = await pool.connect();
       let memory;
