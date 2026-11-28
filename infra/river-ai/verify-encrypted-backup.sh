@@ -10,6 +10,12 @@ EXPECTED_SHA="$(awk '{print $1}' "$BACKUP.sha256")"
 ACTUAL_SHA="$(sha256sum "$BACKUP" | awk '{print $1}')"
 if [[ -z "$EXPECTED_SHA" || "$EXPECTED_SHA" != "$ACTUAL_SHA" ]]; then echo "Checksum failed." >&2; exit 1; fi
 EXPECTED_HMAC="$(awk '{print $NF}' "$BACKUP.hmac")"
+if [[ ! "$EXPECTED_HMAC" =~ ^[[:xdigit:]]{64}$ ]]; then echo "Malformed HMAC sidecar." >&2; exit 1; fi
 ACTUAL_HMAC="$(python3 "$(dirname "$0")/hmac_sha256.py" "$BACKUP")"
-if [[ -z "$EXPECTED_HMAC" || "$EXPECTED_HMAC" != "$ACTUAL_HMAC" ]]; then echo "HMAC authentication failed." >&2; exit 1; fi
+if ! python3 - "$EXPECTED_HMAC" "$ACTUAL_HMAC" <<'PY'
+import hmac, sys
+expected, actual = sys.argv[1], sys.argv[2]
+sys.exit(0 if hmac.compare_digest(expected.lower(), actual.lower()) else 1)
+PY
+then echo "HMAC authentication failed." >&2; exit 1; fi
 echo "Backup integrity verified (SHA-256 and HMAC). No decryption or restore performed."
