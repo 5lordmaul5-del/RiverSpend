@@ -236,15 +236,25 @@ const server = http.createServer(async (req, res) => {
       const content = String(body.content || "").slice(0, 4000).trim();
       const category = String(body.category || "note").slice(0, 40);
       if (!title || !content) return send(res, 400, { error: "Titolo e contenuto sono obbligatori." });
-      const result = await pool.query(
-        "INSERT INTO river_ai_memories(title,content,category) VALUES($1,$2,$3) RETURNING id,created_at",
-        [title, content, category]
-      );
-      await pool.query(
-        "INSERT INTO river_ai_audit(action,status,details) VALUES($1,$2,$3)",
-        ["memory.write", "success", { id: result.rows[0].id }]
-      );
-      return send(res, 201, { memory: result.rows[0] });
+      const client = await pool.connect();
+      try {
+        await client.query("BEGIN");
+        const result = await client.query(
+          "INSERT INTO river_ai_memories(title,content,category) VALUES($1,$2,$3) RETURNING id,created_at",
+          [title, content, category]
+        );
+        await client.query(
+          "INSERT INTO river_ai_audit(action,status,details) VALUES($1,$2,$3)",
+          ["memory.write", "success", { id: result.rows[0].id }]
+        );
+        await client.query("COMMIT");
+        return send(res, 201, { memory: result.rows[0] });
+      } catch (error) {
+        await client.query("ROLLBACK").catch(() => {});
+        throw error;
+      } finally {
+        client.release();
+      }
     }
 
     if (!body || typeof body !== "object" || Array.isArray(body)) {
@@ -316,14 +326,24 @@ const server = http.createServer(async (req, res) => {
     }
 
     const last = safe[safe.length - 1].content;
-    await pool.query(
-      "INSERT INTO river_ai_memories(title,content,category,source) VALUES($1,$2,$3,$4),($5,$6,$7,$8)",
-      ["Messaggio utente", last, "conversation", "river-ai-chat", "Risposta Nova", answer.slice(0, 4000), "conversation", "river-ai-chat"]
-    );
-    await pool.query(
-      "INSERT INTO river_ai_audit(action,status,details) VALUES($1,$2,$3)",
-      ["chat", "success", { model: MODEL, agentsUsed }]
-    );
+    const client = await pool.connect();
+    try {
+      await client.query("BEGIN");
+      await client.query(
+        "INSERT INTO river_ai_memories(title,content,category,source) VALUES($1,$2,$3,$4),($5,$6,$7,$8)",
+        ["Messaggio utente", last, "conversation", "river-ai-chat", "Risposta Nova", answer.slice(0, 4000), "conversation", "river-ai-chat"]
+      );
+      await client.query(
+        "INSERT INTO river_ai_audit(action,status,details) VALUES($1,$2,$3)",
+        ["chat", "success", { model: MODEL, agentsUsed }]
+      );
+      await client.query("COMMIT");
+    } catch (error) {
+      await client.query("ROLLBACK").catch(() => {});
+      throw error;
+    } finally {
+      client.release();
+    }
     return send(res, 200, {
       answer,
       provider: "local",
