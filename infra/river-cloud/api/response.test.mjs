@@ -89,7 +89,7 @@ test('response helper rejects payloads that JSON.stringify cannot produce a body
 });
 
 
-test('response helper rejects non-finite serialization output such as NaN only through valid JSON serialization', () => {
+test('response helper preserves valid JSON normalization for non-finite numbers', () => {
   const res = mockResponse();
   // JSON.stringify maps NaN to null; this remains a valid JSON body.
   assert.equal(sendJsonResponse(res, 200, { value: NaN }), true);
