@@ -7,7 +7,6 @@ import { AGENTS_REGISTRY, AGENT_SQUADS, getAgentPrompt } from "../lib/riverSSAI/
 import { selectTeam } from "../lib/riverSSAI/router.mjs";
 
 const { Pool } = pg;
-const PORT = boundedInteger(process.env.PORT, 8787, 1, 65535);
 const DATABASE_URL = process.env.DATABASE_URL;
 const ADMIN_TOKEN = process.env.RIVER_AI_ADMIN_TOKEN || "";
 const MODEL_URL = process.env.RIVER_AI_LOCAL_URL || "http://127.0.0.1:11434/v1/chat/completions";
@@ -21,6 +20,7 @@ function boundedInteger(value, fallback, min, max) {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? Math.max(min, Math.min(max, Math.trunc(parsed))) : fallback;
 }
+const PORT = boundedInteger(process.env.PORT, 8787, 1, 65535);
 const MAX_PARALLEL = boundedInteger(process.env.RIVER_AI_MAX_PARALLEL, 1, 1, 2);
 const RATE_LIMIT = boundedInteger(process.env.RIVER_AI_MAX_REQUESTS_PER_MINUTE, 20, 1, 1000);
 const ALLOWED_TEAM_SIZES = [2, 4, 8, 10, 20, 30];
@@ -354,7 +354,13 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-// Bound slow headers/body delivery and idle keep-alive connections.\nserver.requestTimeout = 30000;\nserver.headersTimeout = 10000;\nserver.keepAliveTimeout = 5000;\nserver.maxHeadersCount = 100;\n\nserver.listen(PORT, "0.0.0.0", () => console.log("RiverSSAI Independent Core listening on " + PORT));
+// Bound slow headers/body delivery and idle keep-alive connections.
+server.requestTimeout = 30000;
+server.headersTimeout = 10000;
+server.keepAliveTimeout = 5000;
+server.maxHeadersCount = 100;
+
+server.listen(PORT, "0.0.0.0", () => console.log("RiverSSAI Independent Core listening on " + PORT));
 
 // Graceful shutdown: stop accepting requests and release PostgreSQL connections.
 let shuttingDown = false;
