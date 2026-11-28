@@ -11,13 +11,13 @@ const apps = [
     action: 'Apri RiverSpendShop'
   },
   {
-    name: 'RiverSpaceSignals',
+    name: 'RiverSpaceSingals',
     subtitle: 'Messaggistica RiverSpend · ISSA',
     description: 'La messaggistica integrata in RiverSpendShop, installabile anche come app. Chat, contenuti, emoji e Karma Zen Relax; le funzioni avanzate saranno attivate progressivamente e verificate.',
     logo: '/icons/riverspace-signals-app.jpg',
     href: '/riverspace-signals',
     color: '#0891b2',
-    action: 'Apri RiverSpaceSignals'
+    action: 'Apri RiverSpaceSingals'
   },
   {
     name: 'RiverSSAI 10.0 · Pure Power',
