@@ -331,14 +331,13 @@ const server = http.createServer(async (req, res) => {
       } else {
         const reports = await runWithLimit(team, MAX_PARALLEL, async (specialist) => {
           const report = await callLocalModel([
-            { role: "system", content: SYSTEM + "\nRUOLO SPECIALISTA: " + getAgentPrompt(specialist) + "\nFornisci un contributo breve: analisi, un rischio e una verifica." },
-            ...(memoryContext ? [{ role: "system", content: memoryContext }] : []),
+            { role: "system", content: SYSTEM + MASTER_KNOWLEDGE_CONTEXT + memoryContext + "\nRUOLO SPECIALISTA: " + getAgentPrompt(specialist) + "\nFornisci un contributo breve: analisi, un rischio e una verifica." },
             { role: "user", content: latestPrompt }
           ], 280);
           return { specialist, report };
         });
         answer = await callLocalModel([
-          { role: "system", content: SYSTEM + MASTER_KNOWLEDGE_CONTEXT + "\nSei NOVA, coordinatrice. Integra i contributi, segnala divergenze e restituisci decisione, piano, rischi e verifiche." },
+          { role: "system", content: SYSTEM + MASTER_KNOWLEDGE_CONTEXT + memoryContext + "\nSei NOVA, coordinatrice. Integra i contributi, segnala divergenze e restituisci decisione, piano, rischi e verifiche." },
           { role: "user", content: "RICHIESTA:\n" + latestPrompt + "\n\nCONTRIBUTI SPECIALISTI:\n" + reports.map((item) => item.specialist + ":\n" + item.report).join("\n\n") }
         ], 1200);
         agentsUsed = ["nova", ...team];
