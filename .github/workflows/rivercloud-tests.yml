@@ -1,0 +1,115 @@
+name: RiverCloud isolated tests
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "infra/rivercloud/**"
+      - ".github/workflows/rivercloud-tests.yml"
+  push:
+    branches:
+      - "feat/rivercloud-core-2026-11-25"
+    paths:
+      - "infra/rivercloud/**"
+      - ".github/workflows/rivercloud-tests.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  rivercloud-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "22"
+      - name: Run RiverCloud Node tests
+        run: node --test infra/rivercloud/*.test.mjs
+      - name: Validate bootstrap shell syntax
+        run: sh -n infra/rivercloud/bootstrap.sh
+      - name: Validate backup/restore and Python extractor syntax
+        run: |
+          sh -n infra/rivercloud/scripts/backup.sh infra/rivercloud/scripts/restore.sh
+          python3 -m py_compile infra/rivercloud/scripts/restore-safe.py infra/rivercloud/scripts/restore-safe-race-test.py
+      - name: Test restore extraction against directory replacement race
+        run: python3 infra/rivercloud/scripts/restore-safe-race-test.py
+      - name: Validate Compose configuration without starting services
+        run: docker compose -f infra/rivercloud/docker-compose.yml --env-file infra/rivercloud/.env.example config
+      - name: Build the isolated RiverCloud API image
+        run: docker build --file infra/rivercloud/Dockerfile --tag rivercloud-api:ci .
+      - name: Confirm API image build result
+        run: docker image inspect rivercloud-api:ci --format '{{.Id}}'
+      - name: Confirm API image has Node but no package manager
+        run: |
+          docker run --rm rivercloud-api:ci node --version
+          if docker run --rm rivercloud-api:ci sh -c 'test -e /opt/yarn-v1.22.22 || command -v npm || command -v npx || command -v corepack || command -v yarn || command -v pnpm'; then
+            echo "Unexpected package manager present in runtime image"
+            exit 1
+          fi
+      - name: Run isolated container smoke test (loopback only)
+        run: |
+          set -eu
+          name="rivercloud-api-smoke-${GITHUB_RUN_ID}"
+          docker run -d --name "$name" --network host --read-only \
+            --tmpfs /tmp:rw,noexec,nosuid,size=16m,mode=700,uid=1000,gid=1000 \
+            --tmpfs /data:rw,noexec,nosuid,size=16m,mode=700,uid=1000,gid=1000 \
+            --cap-drop=ALL --security-opt=no-new-privileges --memory=256m --cpus=0.5 \
+            -e RIVERCLOUD_API_HOST=127.0.0.1 \
+            -e RIVERCLOUD_API_PORT=8788 \
+            -e RIVERCLOUD_TRUSTED_PROXY_IP=127.0.0.1 \
+            -e RIVERCLOUD_ACTOR_PSEUDONYM_SECRET=rivercloud-smoke-actor-secret-32-bytes \
+            -e RIVERCLOUD_QUEUE_DIR=/data/state.json \
+            rivercloud-api:ci
+          cleanup() {
+            docker logs "$name" || true
+            docker rm -f "$name" >/dev/null 2>&1 || true
+          }
+          trap cleanup EXIT
+          health=""
+          for attempt in $(seq 1 30); do
+            health=$(curl -fsS --max-time 2 -H "X-Forwarded-User: smoke-operator" -H "X-Forwarded-Groups: RiverCloudOperators" http://127.0.0.1:8788/api/health 2>/dev/null) && break
+            sleep 1
+          done
+          if [ -z "$health" ]; then
+            echo "API loopback health smoke failed"
+            exit 1
+          fi
+          node -e 'const h=JSON.parse(process.argv[1]);if(h.status!=="proxy_identity_api_prototype"||h.executionEnabled!==false)process.exit(1)' "$health"
+          jobs=$(curl -fsS --max-time 3 -H "X-Forwarded-User: smoke-operator" -H "X-Forwarded-Groups: RiverCloudOperators" http://127.0.0.1:8788/api/jobs)
+          node -e 'const j=JSON.parse(process.argv[1]);if(!Array.isArray(j.jobs)||j.jobs.length!==0)process.exit(1)' "$jobs"
+      - name: Install pinned Trivy scanner
+        uses: aquasecurity/setup-trivy@e07451d2e059ed86c2870430ea286b3a9e0bf241 # pinned installer
+        with:
+          version: v0.76.2
+      - name: Generate CycloneDX SBOM for API image
+        run: trivy image --scanners vuln --format cyclonedx --output rivercloud-api-sbom.cdx.json rivercloud-api:ci
+      - name: Validate and summarize generated SBOM
+        run: |
+          node <<'NODE'
+          const fs = require("node:fs");
+          const crypto = require("node:crypto");
+          const file = "rivercloud-api-sbom.cdx.json";
+          const raw = fs.readFileSync(file);
+          const sbom = JSON.parse(raw.toString("utf8"));
+          const components = Array.isArray(sbom.components) ? sbom.components.length : 0;
+          const vulnerabilities = Array.isArray(sbom.vulnerabilities) ? sbom.vulnerabilities.length : 0;
+          const digest = crypto.createHash("sha256").update(raw).digest("hex");
+          const summary = [
+            "## RiverCloud API image SBOM",
+            "",
+            "- Format: CycloneDX",
+            "- Components listed: " + components,
+            "- Vulnerability entries in SBOM: " + vulnerabilities,
+            "- SHA-256: " + digest,
+            "- SBOM generated on this runner; not uploaded or retained as an artifact.",
+            ""
+          ].join("\n");
+          fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, summary);
+          console.log(summary);
+          NODE
+      - name: Scan API image for fixed HIGH and CRITICAL vulnerabilities
+        run: trivy image --scanners vuln --pkg-types os,library --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 rivercloud-api:ci
+      - name: Validate Caddyfile with pinned Caddy image
+        run: docker run --rm -e RIVERCLOUD_DOMAIN=cloud.example.com -v "$PWD/infra/rivercloud/Caddyfile:/etc/caddy/Caddyfile:ro" caddy:2.11.9@sha256:4851e54a46b206517c574821bb5cc67f170d2156041e9fbc4c9193b45e84a75b caddy validate --config /etc/caddy/Caddyfile

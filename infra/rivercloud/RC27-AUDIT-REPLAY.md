@@ -1,0 +1,28 @@
+# RC-27 — replay guard contract for signed audit delivery
+
+Signed audit-delivery descriptors now include a random 128-bit nonce. The HMAC covers the timestamp, nonce and exact serialized body.
+
+Verification is asynchronous and **fails closed** unless the caller supplies `consumeReplay`. The callback must atomically persist/reject the nonce in a durable receiver-side replay store; a false result is treated as replay rejection, and callback errors are treated as storage failure.
+
+This increment does not implement the replay database, receiver, network delivery or retention policy. It is a contract and testable prototype, not an external immutable audit service.
+
+## Reproducible test
+
+```sh
+node --test infra/rivercloud/rc14-audit-sink.test.mjs
+```
+
+
+## CI closeout
+
+- GitHub Actions run **45708327208 (#247) — SUCCESS: 122/122 Node tests**, and PR run **45708344831 (#248) — SUCCESS: 122/122** verify code commit `92cadbb4218cb37f730c00c72dfb5b54c16084e3`. Both also passed bootstrap, backup/restore/Python syntax, Compose validation and Caddy validation. No network delivery or services were started.
+
+
+### RC-27 report-only CI closeout
+
+- Report/doc commit `09cbd6bccc8e6dd7581a8b923f58f4769c3a7dbe` was verified by **45708424593 (#249) and 45708437672 (#250) — SUCCESS: 122/122 tests** each, plus bootstrap, backup/restore and Python syntax, Compose configuration, and Caddy validation. The source code is unchanged from the verified RC-27 code commit.
+
+
+### RC-27 report-only commit verification
+
+- The report-only commit `63a30d6da170a301df0a29fad5241bd5c2dbc07c` was verified by GitHub Actions **45708543769 (#251) and 45708555561 (#252) — SUCCESS: 122/122 tests** each, plus bootstrap, backup/restore/Python, Compose configuration and Caddy validation. The code was unchanged from RC-27's verified source commit.

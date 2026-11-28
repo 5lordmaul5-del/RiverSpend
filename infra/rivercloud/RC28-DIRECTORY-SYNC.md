@@ -1,0 +1,30 @@
+# RC-28 — directory sync failure visibility\n\nThe RC-11 state store previously swallowed directory-sync failures after the atomic rename. It now throws `state_commit_durability_uncertain` with `commitApplied=true` and the original cause. The rename may already have committed; callers must read/reconcile state before retrying.\n\nA deterministic test injects a directory-sync failure after rename, confirms the state is visible, and confirms the lock is released for a subsequent transaction. This does not prove crash durability on every target filesystem.\n\n## Reproducible test\n\n```sh\nnode --test infra/rivercloud/rc11-state.test.mjs\n```\n
+
+## CI closeout
+
+- GitHub Actions **45708818257 (#257) — SUCCESS: 123/123 Node tests** and PR run **45708830490 (#258) — SUCCESS: 123/123** verify corrected commit `22a20c1e18ec8f497ce0ea2db77707d810743231`, plus shell/Python, Compose and Caddy validation. The first commit failed due syntax errors and is documented in the audit report.
+
+
+### RC-28 report-only CI closeout
+
+- The report-only commit `3230670d04de6620c464baefaf7f3cf18ab15fe6` was verified by **45708935211 (#259) and 45708941875 (#260) — SUCCESS: 123/123 Node tests** each, plus bootstrap, backup/restore and Python syntax, Compose configuration and Caddy validation. Code is unchanged from the verified RC-28 source commit.
+
+
+### RC-28 report-only CI closeout
+
+- Report/doc commit `8fe5ca2c8af182d8876758c61934d32c400b6f16` was verified by **45709047882 (#261) and 45709056422 (#262) — SUCCESS: 123/123 Node tests** each, plus bootstrap, backup/restore and Python syntax, Compose configuration and Caddy validation. Code is unchanged from the corrected RC-28 source commit.
+
+
+### RC-28 report-only CI closeout
+
+- Report-only commit `2b98632c5c587ac58c18c224e1a8be62ca97f8d8` was verified by **45709159040 (#263) and 45709171430 (#264) — SUCCESS: 123/123 Node tests** each, plus bootstrap, backup/restore and Python syntax, Compose configuration and Caddy validation. Code is unchanged from the corrected RC-28 source commit.
+
+
+### RC-28 report-only CI closeout
+
+- Report-only commit `d3c629bca31253f059da2c95f2c0ab2644490b41` was verified by **45709253095 (#265) and 45709259403 (#266) — SUCCESS: 123/123 Node tests** each, plus bootstrap, backup/restore and Python syntax, Compose configuration and Caddy validation. Code is unchanged from the corrected RC-28 source commit.
+
+
+### RC-28 report-only CI closeout
+
+- Report-only commit `c0902aef1d22b92fe5ef4906a775841d26c59ba0` was verified by **45709331820 (#267) and 45709342429 (#268) — SUCCESS: 123/123 Node tests** each, plus bootstrap, backup/restore and Python syntax, Compose configuration and Caddy validation. Code is unchanged from the corrected RC-28 source commit.
