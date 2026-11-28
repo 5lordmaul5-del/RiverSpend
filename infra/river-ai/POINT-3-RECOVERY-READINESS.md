@@ -16,7 +16,7 @@ This point makes the owner-operated runtime recoverable by documenting the prere
 3. Run `bash infra/river-ai/verify-encrypted-backup.sh <backup-file.dump.enc>` first.
 4. Provision Docker Engine and Compose on a clean owner-controlled host; verify versions and basic health.
 5. Follow Point 1 bootstrap only for a fresh runtime. Do not run it over an existing runtime or overwrite its environment.
-6. For an existing runtime recovery, follow Point 2 restore drill. It creates a disposable database; it is not a production cutover.
+6. For an existing runtime recovery, run `bash infra/river-ai/restore-drill.sh <backup-file.dump.enc>` as the Point 2 restore drill. It creates a disposable database; it is not a production cutover.
 7. Review the table count and logs, and manually compare expected application state using non-sensitive test data.
 8. A real recovery acceptance requires a human owner to confirm the recovered database, application behavior, backup timestamp and data-loss window.
 9. Keep the original host/data untouched until acceptance and a separately approved cutover plan.
