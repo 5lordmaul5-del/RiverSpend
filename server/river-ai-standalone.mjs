@@ -233,9 +233,15 @@ const server = http.createServer(async (req, res) => {
       return send(res, 201, { memory: result.rows[0] });
     }
 
+    if (!body || typeof body !== "object" || Array.isArray(body)) {
+      return send(res, 400, { error: "Formato richiesta non valido." });
+    }
+    if (body.messages !== undefined && !Array.isArray(body.messages)) {
+      return send(res, 400, { error: "La cronologia deve essere un array." });
+    }
     const messages = Array.isArray(body.messages) ? body.messages.slice(-MAX_HISTORY) : [];
     const safe = messages
-      .filter((m) => m && ["user", "assistant"].includes(m.role) && typeof m.content === "string")
+      .filter((m) => m && typeof m === "object" && !Array.isArray(m) && ["user", "assistant"].includes(m.role) && typeof m.content === "string")
       .map((m) => ({ role: m.role, content: m.content.slice(0, MAX_MESSAGE) }));
     if (!safe.length || safe[safe.length - 1].role !== "user") {
       return send(res, 400, { error: "Inserisci un messaggio." });
