@@ -6,7 +6,7 @@ COPY server/river-ai-worker.mjs ./server/river-ai-worker.mjs
 COPY infra/river-ai/schema.sql ./infra/river-ai/schema.sql
 COPY infra/river-ai/worker-queue.sql ./infra/river-ai/worker-queue.sql
 COPY lib/riverSSAI/agentsRegistry.mjs ./lib/riverSSAI/agentsRegistry.mjs
-COPY lib/riverSSAI/router.mjs ./lib/riverSSAI/router.mjs
+COPY lib/riverSSAI/router.mjs ./lib/riverSSAI/router.mjs\nCOPY docs/RIVERSPEND_MASTER_KNOWLEDGE.md ./docs/RIVERSPEND_MASTER_KNOWLEDGE.md
 ENV NODE_ENV=production
 USER node
 EXPOSE 8787
