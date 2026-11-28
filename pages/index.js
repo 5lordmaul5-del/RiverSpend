@@ -186,7 +186,7 @@ export default function Home() {
     ['Profilo','/profilo'],
     ['RiverSpendShop','/'],
     ['✨ RiverSpend Electronics · Nuovi dispositivi','/electronics'],
-    ['💬 RiverSpaceSignals · Apri la chat','/riverspace-signals'],
+    ['💬 RiverSpaceSingals · Apri la chat','/riverspace-signals'],
     ['🌍 RiverWorld Live · Meteo, notizie e sport','/riverworld-live'],
     ['📲 Scarica le app RiverSpend','/app'],
     ['📲 QR · Scarica le app RiverSpend','/app'],
@@ -1133,9 +1133,9 @@ export default function Home() {
                 <img src="/icons/riverspendshop-app.jpg" alt="RSShop" className="h-24 w-24 rounded-2xl object-cover shadow-md ring-2 ring-cyan-200 sm:h-28 sm:w-28" loading="lazy" />
                 <span className="w-full break-words text-xs font-extrabold leading-tight text-slate-900">RSShop</span>
               </a>
-              <a href="/riverspace-signals" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RiverSpaceSignals">
-                <img src="/icons/riverspace-signals-app.jpg" alt="RiverSpaceSignals" className="h-24 w-24 rounded-2xl object-contain shadow-md ring-2 ring-cyan-200 sm:h-28 sm:w-28" loading="lazy" />
-                <span className="w-full break-words text-xs font-extrabold leading-tight text-slate-900">RiverSpaceSignals</span>
+              <a href="/riverspace-signals" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RiverSpaceSingals">
+                <img src="/icons/riverspace-signals-app.jpg" alt="RiverSpaceSingals" className="h-24 w-24 rounded-2xl object-contain shadow-md ring-2 ring-cyan-200 sm:h-28 sm:w-28" loading="lazy" />
+                <span className="w-full break-words text-xs font-extrabold leading-tight text-slate-900">RiverSpaceSingals</span>
               </a>
               <a href="/rs-sound-studio" className="flex min-w-0 flex-col items-center gap-1 text-center" aria-label="RSSoundStudio System ISSA">
                 <img src="/rssoundstudio-issa-banner.jpg" alt="RSSoundStudio System ISSA" className="h-24 w-24 rounded-2xl object-cover shadow-md ring-2 ring-cyan-200 sm:h-28 sm:w-28" loading="lazy" />
