@@ -3,6 +3,7 @@ import { createRiverAuth } from './river-auth.mjs';
 import { spawn } from 'node:child_process';
 import { createRateLimiter } from './rate-limit.mjs';
 import { createDbConcurrencyGate } from './db-concurrency.mjs';
+import { sendJsonResponse } from './response.mjs';
 
 const PORT = Number(process.env.PORT || 8080);
 const SUPABASE_URL = process.env.RIVERAUTH_ISSUER_URL;
@@ -24,21 +25,7 @@ const MAX_DB_OPERATIONS = 8;
 const dbConcurrencyGate = createDbConcurrencyGate(MAX_DB_OPERATIONS);
 
 function send(res, status, payload) {
-  // A client may disconnect while authentication or database work is in flight.
-  if (res.destroyed || res.writableEnded) return false;
-  try {
-    res.writeHead(status, {
-      'content-type': 'application/json; charset=utf-8',
-      'cache-control': 'no-store',
-      'x-content-type-options': 'nosniff',
-      'referrer-policy': 'no-referrer',
-    });
-    res.end(JSON.stringify(payload));
-    return true;
-  } catch {
-    // Response delivery failures must not crash the API process.
-    return false;
-  }
+  return sendJsonResponse(res, status, payload);
 }
 
 function rateLimited(req) {
