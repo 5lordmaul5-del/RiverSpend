@@ -104,3 +104,19 @@ All memory management endpoints require the private owner Bearer token. Keep it 
 - `POST /v1/memories/import`: restore/import 1–100 validated memory records per request from JSON payload `{ "memories": [{ "title": "...", "content": "...", "category": "note", "source": "backup" }] }`. Import is transactional; on failure, it rolls back. Larger exports should be imported in batches of 100 or fewer. Import adds records; it does not overwrite or deduplicate existing records.
 
 Memory backup and restore have not yet been verified against a live owner-host installation. Exercise export/import on a disposable test database before relying on them for disaster recovery.
+
+
+## Verification sequence before relying on the runtime
+Run this only against a disposable installation/database with no production or personal records. Do not use a production owner token for tests.
+
+1. Start the owner-host runtime and wait until `/ready` returns HTTP 200.
+2. Verify missing/incorrect Bearer tokens are rejected on all `/v1` endpoints (HTTP 401; rate limiting may return 429 after repeated probes).
+3. With a disposable owner token, add one test memory via `POST /v1/memories`; verify list retrieval and correct owner scope.
+4. Export via `GET /v1/memories/export`; save the JSON outside the repository and verify it contains the test record.
+5. Import the exported record in a separate disposable DB or clear test namespace. Confirm the count and record contents. Import adds entries, so repeated imports intentionally create duplicates.
+6. Send malformed JSON, missing title/content, an empty array, and more than 100 entries; expect validation errors and no partial inserts.
+7. Simulate DB interruption during import in the disposable environment; verify transaction rollback leaves no partial records.
+8. Restart API/worker and database containers; verify readiness and that memory persists. Check worker jobs separately for queue persistence and lease recovery.
+9. Keep evidence (test output, runtime versions, host specs) in a private test report. Do not commit secrets or personal memory exports.
+
+This sequence is a manual acceptance plan, not evidence that these host tests have already run.
