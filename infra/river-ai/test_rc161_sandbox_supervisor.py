@@ -157,6 +157,20 @@ class SupervisorTests(unittest.TestCase):
             read_bounded_input(oversized)
         self.assertEqual(oversized.requested_size, MAX_CHILD_INPUT_BYTES + 1)
 
+    def test_restricted_child_rejects_oversized_stdin_in_real_process(self):
+        child_path = os.path.join(os.path.dirname(__file__), "rc161_restricted_child.py")
+        result = subprocess.run(
+            [sys.executable, "-I", child_path],
+            input=b"x" * (MAX_CHILD_INPUT_BYTES + 1),
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            env={"PATH": os.defpath, "PYTHONIOENCODING": "utf-8"},
+            timeout=3,
+        )
+        self.assertEqual(result.returncode, 2)
+        self.assertEqual(result.stdout, b'{"ok":false,"error":"task_failed"}\\n')
+        self.assertEqual(result.stderr, b"")
+
     def test_child_resource_limits_are_applied(self):
         expected = [call(name, bounds) for name, bounds in RESOURCE_LIMITS]
         with patch("resource.setrlimit") as setrlimit:
