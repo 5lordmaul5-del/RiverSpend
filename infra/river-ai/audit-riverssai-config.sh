@@ -21,4 +21,16 @@ grep -Fq 'RIVERDB_PASSWORD' "$COMPOSE" || fail "database password wiring missing
 pass "secret variables referenced (values are not checked by this static audit)"
 grep -Fq 'health' "$COMPOSE" || fail "healthcheck missing"
 pass "service healthcheck declaration present"
+
+SERVER="$ROOT/server/river-ai-standalone.mjs"
+DOCKERFILE="$HERE/Dockerfile"
+[[ -f "$SERVER" ]] || fail "standalone server missing"
+[[ -f "$DOCKERFILE" ]] || fail "Dockerfile missing"
+grep -Fq 'MAX_BODY = 24 * 1024' "$SERVER" || fail "request body bound missing"
+grep -Fq 'Math.min(50' "$SERVER" || fail "memory listing limit missing"
+grep -Fq 'AbortSignal.timeout(90000)' "$SERVER" || fail "model request timeout missing"
+grep -Fq 'timingSafeEqual' "$SERVER" || fail "timing-safe token comparison missing"
+grep -Fq 'npm install --omit=dev pg@' "$DOCKERFILE" || fail "production dependency install missing"
+pass "server input, request timeout, authentication comparison and runtime dependency checks present"
+
 echo "STATIC CONFIG AUDIT PASS"
