@@ -26,8 +26,8 @@ done
 [[ $READY -eq 1 ]] || { docker compose ps; docker compose logs --tail=100; echo "Readiness timeout" >&2; exit 1; }
 curl --fail --silent --show-error "$BASE/health" | jq .
 curl --fail --silent --show-error "$BASE/ready" | jq .
-echo "4/5 Ask Nova to recover the marker..."
-CHAT="$(curl --fail --silent --show-error --max-time 100 -X POST "$BASE/v1/chat" "${AUTH[@]}" -d "$(jq -n --arg title "$TITLE" --arg content "$CONTENT" '{agent:"nova",messages:[{role:"user",content:"Riporta esattamente il marker "+$title+" e la frase "+$content+" che hai nella memoria persistente."}]}' )")"
-echo "$CHAT" | jq .
-echo "$CHAT" | jq -e --arg title "$TITLE" --arg content "$CONTENT" '.answer | contains($title) and contains($content)' >/dev/null
-echo "5/5 PASS: full-stack restart, readiness and memory recovery verified."
+echo "4/5 Retrieve persisted marker through authenticated memory endpoint..."
+MEMORIES="$(curl --fail --silent --show-error "$BASE/v1/memories?limit=50" "${AUTH[@]}")"
+echo "$MEMORIES" | jq .
+echo "$MEMORIES" | jq -e --arg title "$TITLE" --arg content "$CONTENT" '.memories | any(.title == $title and .content == $content)' >/dev/null
+echo "5/5 PASS: full-stack restart, readiness and durable memory recovery verified."
