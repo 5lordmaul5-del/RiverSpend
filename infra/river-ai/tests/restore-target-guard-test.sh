@@ -36,7 +36,7 @@ fi
 grep -q "Backup, checksum, and HMAC files are required" "$TMP/err"
 # Verify an intact checksum but deliberately invalid HMAC is rejected before Docker.
 printf 'synthetic encrypted-backup bytes\n' > "$TMP/backup.enc"
-(cd "$TMP" && sha256sum backup.enc > backup.enc.sha256)
+sha256sum "$TMP/backup.enc" > "$TMP/backup.enc.sha256"
 printf 'invalid-hmac\n' > "$TMP/backup.enc.hmac"
 export RIVERBACKUP_FILE="$TMP/backup.enc" RIVERBACKUP_TARGET_DB=rivercore_restore_test
 if bash "$SCRIPT" >"$TMP/out" 2>"$TMP/err"; then
