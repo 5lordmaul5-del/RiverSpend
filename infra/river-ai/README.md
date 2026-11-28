@@ -124,3 +124,14 @@ This sequence is a manual acceptance plan, not evidence that these host tests ha
 
 ## Disposable memory API smoke test
 After starting the isolated owner runtime, run `RIVER_AI_ADMIN_TOKEN=... bash infra/river-ai/memory-api-smoke-owner.sh` (or set the token in your private shell environment). Optionally set `RIVER_AI_BASE_URL`. This script requires curl and jq and checks unauthorized access rejection, imports a uniquely tagged synthetic memory, verifies list/export, then deletes only its own synthetic record. It does not test model inference or database outage rollback. Run only against a disposable owner runtime, not production data.
+
+
+## Encrypted owner database backups
+
+Two helper scripts provide a basic encrypted backup and a non-destructive restore path. They are not a substitute for an off-host backup policy or a tested recovery drill.
+
+- Backup: set `RIVERBACKUP_PASSPHRASE` in your shell (at least 32 characters; do not commit it), then run `bash infra/river-ai/backup-owner-db.sh`. The encrypted custom-format dump and checksum are written under `infra/river-ai/backups/`, excluded from Git.
+- Copy the encrypted backup **and checksum** to a separate protected storage location. Keep the passphrase separately.
+- Restore drill: create an empty disposable database first, then set `RIVERBACKUP_PASSPHRASE`, `RIVERBACKUP_FILE` (path to the encrypted dump), and `RIVERBACKUP_TARGET_DB` (the disposable database name). Run `bash infra/river-ai/restore-owner-db.sh`.
+- The restore helper verifies the checksum and archive readability, and does not use `--clean` or drop database objects. Restore into an empty test database; never point a drill at live data.
+- These scripts have not yet been validated on the owner host. CI/shell syntax validation is required, followed by a controlled disposable-database restore drill.
