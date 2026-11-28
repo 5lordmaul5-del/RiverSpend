@@ -59,7 +59,7 @@ test('PostgreSQL advisory semaphore denies a ninth session and releases slots on
     }
   });
 
-  for (let slot = 1; slot <= 8; slot++) holders.push(await holdSlot(slot));
+  holders.push(...await Promise.all(Array.from({ length: 8 }, (_, index) => holdSlot(index + 1))));
   const full = await psql('', buildDbAdvisorySemaphoreScript(8));
   assert.equal(full.code, 77, 'all eight session slots should be held; stderr=' + full.stderr);
 
