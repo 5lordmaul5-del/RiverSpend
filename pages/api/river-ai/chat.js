@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { chatMemoryPolicy } from "../../../lib/river-ai-chat-policy.mjs";
 
 const MODEL_DEFAULT = "openai/gpt-oss-20b";
 const MAX_AGENTS = 30;
@@ -187,6 +188,7 @@ export default async function handler(req, res) {
   }
 
   const body = req.body || {};
+  const memoryPolicy = chatMemoryPolicy(body);
   const messages = Array.isArray(body.messages) ? body.messages.slice(-MAX_HISTORY) : [];
   const safeMessages = messages
     .filter((item) => item && ["user", "assistant"].includes(item.role) && typeof item.content === "string")
@@ -200,17 +202,20 @@ export default async function handler(req, res) {
   const model = process.env.RIVER_AI_MODEL || MODEL_DEFAULT;
 
   try {
-    const { data: memories, error: memoryReadError } = await adminClient
-      .from("river_ai_memories")
-      .select("title,content,category,created_at")
-      .eq("user_id", user.id)
-      .order("created_at", { ascending: false })
-      .limit(12);
-    if (memoryReadError) console.error("River AI memory read failed:", memoryReadError.message);
-    const memoryContext = (memories || [])
-      .map((item) => "[" + (item.category || "nota") + "] " + (item.title || "") + ": " + (item.content || "").slice(0, 350))
-      .join("\n")
-      .slice(0, 2600);
+    let memoryContext = "";
+    if (memoryPolicy.readMemory) {
+      const { data: memories, error: memoryReadError } = await adminClient
+        .from("river_ai_memories")
+        .select("title,content,category,created_at")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(12);
+      if (memoryReadError) console.error("River AI memory read failed:", memoryReadError.message);
+      memoryContext = (memories || [])
+        .map((item) => "[" + (item.category || "nota") + "] " + (item.title || "") + ": " + (item.content || "").slice(0, 350))
+        .join("\n")
+        .slice(0, 2600);
+    }
 
     const latestPrompt = safeMessages[safeMessages.length - 1].content;
     let answer;
@@ -242,12 +247,16 @@ export default async function handler(req, res) {
       ], 1500);
     }
 
-    const memoryRows = [
-      { user_id: user.id, title: "Messaggio utente", content: latestPrompt, category: "conversation", source: "river-ai-chat", importance: 3 },
-      { user_id: user.id, title: "Risposta River AI", content: answer.slice(0, 6000), category: "conversation", source: "river-ai-chat", importance: 2 }
-    ];
-    const { error: memoryWriteError } = await adminClient.from("river_ai_memories").insert(memoryRows);
-    if (memoryWriteError) console.error("River AI memory write failed:", memoryWriteError.message);
+    let memorySaved = false;
+    if (memoryPolicy.writeMemory) {
+      const memoryRows = [
+        { user_id: user.id, title: "Messaggio utente", content: latestPrompt, category: "conversation", source: "river-ai-chat", importance: 3 },
+        { user_id: user.id, title: "Risposta River AI", content: answer.slice(0, 6000), category: "conversation", source: "river-ai-chat", importance: 2 }
+      ];
+      const { error: memoryWriteError } = await adminClient.from("river_ai_memories").insert(memoryRows);
+      if (memoryWriteError) console.error("River AI memory write failed:", memoryWriteError.message);
+      memorySaved = !memoryWriteError;
+    }
 
     return json(res, 200, {
       answer,
@@ -255,7 +264,8 @@ export default async function handler(req, res) {
       agent,
       agentsUsed,
       teamSize: agent === "team" ? team.length : 1,
-      memorySaved: !memoryWriteError,
+      memorySaved,
+      temporaryChat: memoryPolicy.temporary,
       limits: { maxAgents: MAX_AGENTS, maxParallel: MAX_PARALLEL }
     });
   } catch (error) {
