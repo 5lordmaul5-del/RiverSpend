@@ -86,6 +86,9 @@ class WorkerCoreIntegrationTests(unittest.TestCase):
         core=WorkerCore(self.ledger,self.path,self.verify,self.policy,executor,max_attempts=3)
         self.assertEqual(core.run_once("worker-token")["status"],"retry")
         self.assertEqual(self.ledger.status()["queued"],1)
+        self.assertEqual(core.run_once("worker-token")["status"],"idle")
+        with sqlite3.connect(self.path) as db:
+            db.execute("UPDATE tasks SET retry_after=? WHERE id=?", (time.time()-1, task))
         self.assertEqual(core.run_once("worker-token")["status"],"completed")
         self.assertEqual(executor.keys,[task,task])
         self.assertEqual(core.get_result(task,"user-1")["result"],{"ok":"retry"})
@@ -99,6 +102,9 @@ class WorkerCoreIntegrationTests(unittest.TestCase):
             def execute(self,kind,payload,idempotency_key): raise RuntimeError()
         core=WorkerCore(self.ledger,self.path,self.verify,self.policy,Broken(),max_attempts=2)
         self.assertEqual(core.run_once("worker-token")["status"],"retry")
+        self.assertEqual(core.run_once("worker-token")["status"],"idle")
+        with sqlite3.connect(self.path) as db:
+            db.execute("UPDATE tasks SET retry_after=? WHERE id=?", (time.time()-1, task))
         self.assertEqual(core.run_once("worker-token")["status"],"exhausted")
         self.assertEqual(self.ledger.status()["cancelled"],1)
         self.assertIn("attempts_exhausted",[e["action"] for e in core.events(task)])
@@ -162,6 +168,25 @@ class WorkerCoreIntegrationTests(unittest.TestCase):
         self.assertEqual(out["recovery"],"exhausted")
         self.assertEqual(self.ledger.status()["cancelled"],1)
         self.assertEqual(self.executor.keys,[])
+
+    def test_rc180_contract_bridge_rejects_invalid_owner_and_recovers(self):
+        task=self.ledger.enqueue("echo","summary","user-1",{"text":"bridge"})
+        class InvalidOwnerLedger:
+            db_path=self.ledger.db_path
+            lease_seconds=self.ledger.lease_seconds
+            def lease_next(inner,worker,caps):
+                lease=self.ledger.lease_next(worker,caps)
+                if lease: lease["owner"]=""
+                return lease
+        core=WorkerCore(InvalidOwnerLedger(),self.path,self.verify,self.policy,self.executor)
+        out=core.run_once("worker-token")
+        self.assertEqual(out["status"],"rejected")
+        self.assertEqual(out["recovery"],"retry")
+        self.assertEqual(self.ledger.status()["queued"],1)
+        self.assertEqual(self.executor.keys,[])
+        event=core.events(task)[-1]
+        self.assertEqual(event["action"],"retry_scheduled")
+        self.assertEqual(event["error_code"],"lease_contract_invalid")
 
     def test_mismatched_database_path_is_rejected(self):
         other=os.path.join(self.tmp.name,"other.sqlite")
@@ -250,5 +275,62 @@ class WorkerCoreIntegrationTests(unittest.TestCase):
         for key in ("", " ", "x"*129, 1):
             with self.subTest(key=key), self.assertRaises(PayloadLedgerError):
                 self.ledger.enqueue("echo","summary","user-1",{},request_key=key)
+
+    def _reclaim_expired_lease_after_cooldown(self, worker, capability, task_id):
+        # First poll performs durable expiry recovery and schedules cooldown.
+        self.assertIsNone(self.ledger.lease_next(worker, (capability,)))
+        with sqlite3.connect(self.path) as db:
+            db.execute("UPDATE tasks SET retry_after=? WHERE id=?", (time.time()-1, task_id))
+        return self.ledger.lease_next(worker, (capability,))
+
+    def test_stale_attempt_cannot_complete_after_same_worker_releases_and_releases_again(self):
+        task = self.ledger.enqueue("echo", "summary", "user-1", {"text": "fence"})
+        first = self.ledger.lease_next("worker-a", ("echo",))
+        self.assertEqual(first["attempts"], 1)
+        with sqlite3.connect(self.path) as db:
+            db.execute("UPDATE tasks SET leased=? WHERE id=?", (time.time() - self.ledger.lease_seconds - 1, task))
+        second = self._reclaim_expired_lease_after_cooldown("worker-a", "echo", task)
+        self.assertEqual(second["attempts"], 2)
+        result_json = '{"ok":true}'
+        result_digest = __import__("hashlib").sha256(result_json.encode()).hexdigest()
+        self.assertFalse(self.core._persist_success(task, "worker-a", first["attempts"], first["leased_at"], "payload-digest", result_json, result_digest))
+        with sqlite3.connect(self.path) as db:
+            state, attempts = db.execute("SELECT state,attempts FROM tasks WHERE id=?", (task,)).fetchone()
+        self.assertEqual((state, attempts), ("leased", 2))
+        self.assertTrue(self.core._persist_success(task, "worker-a", second["attempts"], second["leased_at"], "payload-digest", result_json, result_digest))
+        self.assertEqual(self.core.get_result(task, "user-1")["result"], {"ok": True})
+
+    def test_stale_attempt_cannot_fail_newer_lease(self):
+        task = self.ledger.enqueue("echo", "summary", "user-1", {"text": "fence-failure"})
+        first = self.ledger.lease_next("worker-a", ("echo",))
+        self.assertEqual(first["attempts"], 1)
+        with sqlite3.connect(self.path) as db:
+            db.execute("UPDATE tasks SET leased=? WHERE id=?", (time.time() - self.ledger.lease_seconds - 1, task))
+        second = self._reclaim_expired_lease_after_cooldown("worker-a", "echo", task)
+        self.assertEqual(second["attempts"], 2)
+        self.assertEqual(self.core._persist_failure(task, "worker-a", first["attempts"], first["leased_at"], "payload-digest"), "lease_lost")
+        with sqlite3.connect(self.path) as db:
+            state, attempts = db.execute("SELECT state,attempts FROM tasks WHERE id=?", (task,)).fetchone()
+        self.assertEqual((state, attempts), ("leased", 2))
+        self.assertEqual(self.core._persist_failure(task, "worker-a", second["attempts"], second["leased_at"], "payload-digest"), "retry")
+        self.assertEqual(self.ledger.status()["queued"], 1)
+
+    def test_stale_malformed_recovery_is_fenced_and_audited(self):
+        task = self.ledger.enqueue("echo", "summary", "user-1", {"text": "malformed-fence"})
+        first = self.ledger.lease_next("worker-a", ("echo",))
+        with sqlite3.connect(self.path) as db:
+            db.execute("UPDATE tasks SET leased=? WHERE id=?", (time.time() - self.ledger.lease_seconds - 1, task))
+        second = self._reclaim_expired_lease_after_cooldown("worker-a", "echo", task)
+        self.assertNotEqual(first["leased_at"], second["leased_at"])
+        self.assertEqual(
+            self.core._persist_failure(task, "worker-a", None, first["leased_at"], None, error_code="lease_contract_invalid"),
+            "lease_lost",
+        )
+        with sqlite3.connect(self.path) as db:
+            state, attempts = db.execute("SELECT state,attempts FROM tasks WHERE id=?", (task,)).fetchone()
+        self.assertEqual((state, attempts), ("leased", 2))
+        event = self.core.events(task)[-1]
+        self.assertEqual(event["action"], "lease_lost")
+        self.assertEqual(event["attempt"], 0)
 
 if __name__=="__main__": unittest.main()

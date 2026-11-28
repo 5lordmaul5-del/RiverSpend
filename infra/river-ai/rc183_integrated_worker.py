@@ -7,12 +7,16 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import sqlite3
 import time
 from contextlib import contextmanager
 from pathlib import Path
 
-from rc181_payload_ledger import _canonical_payload
+from rc181_payload_ledger import (
+    _canonical_payload, RETRY_BACKOFF_BASE_SECONDS, RETRY_BACKOFF_MAX_SECONDS,
+)
+from rc180_contract_bridge import ContractError, bind_lease
 
 
 class WorkerCore:
@@ -95,14 +99,25 @@ class WorkerCore:
             return {"status": "idle"}
         if type(lease) is not dict or lease.get("lease_owner") != worker:
             return {"status": "rejected", "error": "lease_contract_invalid"}
-        required = {"id", "capability", "summary", "attempts", "lease_owner", "owner", "payload"}
+        required = {"id", "capability", "summary", "attempts", "lease_owner", "owner", "payload", "leased_at"}
         if not required.issubset(lease):
             recovery = self._recover_invalid_lease(lease, worker)
             return {"status": "rejected", "error": "lease_contract_invalid", "recovery": recovery}
+        try:
+            bound = bind_lease(lease, {
+                "worker_id": worker,
+                "kind": lease["capability"],
+                "owner": lease["owner"],
+                "payload": lease["payload"],
+            })
+        except ContractError:
+            recovery = self._recover_invalid_lease(lease, worker)
+            return {"status": "rejected", "error": "lease_contract_invalid", "recovery": recovery}
         task_id, kind, summary, owner, payload = (
-            lease["id"], lease["capability"], lease["summary"], lease["owner"], lease["payload"]
+            bound["task_id"], bound["kind"], bound["summary"], bound["owner"], bound["payload"]
         )
         attempt = lease["attempts"]
+        lease_at = lease["leased_at"]
         valid = (
             type(task_id) is str and bool(task_id.strip()) and len(task_id) <= 128
             and type(kind) is str and bool(kind.strip()) and len(kind) <= 128
@@ -111,17 +126,18 @@ class WorkerCore:
             and type(owner) is str and bool(owner.strip()) and len(owner) <= 128
             and type(payload) is dict
             and type(attempt) is int and attempt >= 1
+            and type(lease_at) in (int, float) and math.isfinite(lease_at)
         )
         if not valid:
             recovery = self._recover_invalid_lease(lease, worker)
             return {"status": "rejected", "error": "lease_contract_invalid", "recovery": recovery}
         if attempt > self.max_attempts:
-            state = self._persist_failure(task_id, worker, attempt, None, error_code="attempts_exhausted")
+            state = self._persist_failure(task_id, worker, attempt, lease_at, None, error_code="attempts_exhausted")
             return {"status": "exhausted" if state == "exhausted" else state, "task_id": task_id}
         try:
             payload_json = _canonical_payload(payload)
         except Exception:
-            state = self._persist_failure(task_id, worker, attempt, None, error_code="payload_invalid")
+            state = self._persist_failure(task_id, worker, attempt, lease_at, None, error_code="payload_invalid")
             return {"status": state, "task_id": task_id, "error": "payload_invalid"}
         payload_digest = hashlib.sha256(payload_json.encode("utf-8")).hexdigest()
         self._event(task_id, attempt, worker, "leased", payload_digest)
@@ -138,7 +154,7 @@ class WorkerCore:
             result_digest = hashlib.sha256(result_json.encode("utf-8")).hexdigest()
             if self.policy.finish(authorization, True) is not True:
                 raise RuntimeError("policy_settlement_failed")
-            if not self._persist_success(task_id, worker, attempt, payload_digest, result_json, result_digest):
+            if not self._persist_success(task_id, worker, attempt, lease_at, payload_digest, result_json, result_digest):
                 try:
                     self.policy.refund(authorization)
                 except Exception:
@@ -151,20 +167,23 @@ class WorkerCore:
                     self.policy.refund(authorization)
                 except Exception:
                     pass
-            state = self._persist_failure(task_id, worker, attempt, payload_digest)
+            state = self._persist_failure(task_id, worker, attempt, lease_at, payload_digest)
             return {"status": state, "task_id": task_id, "error": "worker_failed"}
 
     def _recover_invalid_lease(self, lease, worker):
         """Requeue only when the returned envelope contains a safe lease binding."""
         if type(lease) is not dict or lease.get("lease_owner") != worker:
             return None
-        task_id, attempt = lease.get("id"), lease.get("attempts")
+        task_id, attempt, lease_at = lease.get("id"), lease.get("attempts"), lease.get("leased_at")
         if type(task_id) is not str or not task_id.strip() or len(task_id) > 128:
             return None
         if type(attempt) is not int or attempt < 1:
             return None
+        if type(lease_at) not in (int, float) or not math.isfinite(lease_at):
+            return None
+        # Use the persisted attempt budget but bind recovery to the exact lease timestamp.
         return self._persist_failure(
-            task_id, worker, attempt, None, error_code="lease_contract_invalid"
+            task_id, worker, None, lease_at, None, error_code="lease_contract_invalid"
         )
 
     def _event(self, task_id, attempt, worker, action, payload_digest=None,
@@ -177,13 +196,13 @@ class WorkerCore:
             with self._db() as conn:
                 conn.execute(sql, values)
 
-    def _persist_success(self, task_id, worker, attempt, payload_digest, result_json, result_digest):
+    def _persist_success(self, task_id, worker, attempt, lease_at, payload_digest, result_json, result_digest):
         now = time.time()
         with self._db() as db:
             db.execute("BEGIN IMMEDIATE")
             cur = db.execute(
-                "UPDATE tasks SET state='completed',leased=NULL,lease_owner=NULL WHERE id=? AND state='leased' AND lease_owner=? AND leased>=?",
-                (task_id, worker, now - self.ledger.lease_seconds),
+                "UPDATE tasks SET state='completed',leased=NULL,lease_owner=NULL WHERE id=? AND state='leased' AND lease_owner=? AND attempts=? AND leased=? AND leased>=?",
+                (task_id, worker, attempt, lease_at, now - self.ledger.lease_seconds),
             )
             if cur.rowcount != 1:
                 db.rollback()
@@ -202,26 +221,34 @@ class WorkerCore:
             db.commit()
             return True
 
-    def _persist_failure(self, task_id, worker, attempt, payload_digest, error_code="worker_failed"):
+    def _persist_failure(self, task_id, worker, attempt, lease_at, payload_digest, error_code="worker_failed"):
         now = time.time()
         with self._db() as db:
             db.execute("BEGIN IMMEDIATE")
             row = db.execute(
-                "SELECT attempts,leased FROM tasks WHERE id=? AND state='leased' AND lease_owner=?",
-                (task_id, worker),
+                "SELECT attempts,leased FROM tasks WHERE id=? AND state='leased' AND lease_owner=? AND leased=?"
+                if attempt is None else
+                "SELECT attempts,leased FROM tasks WHERE id=? AND state='leased' AND lease_owner=? AND attempts=? AND leased=?",
+                (task_id, worker, lease_at) if attempt is None else (task_id, worker, attempt, lease_at),
             ).fetchone()
             if row is None or row[1] is None or row[1] < now - self.ledger.lease_seconds:
                 db.rollback()
-                self._event(task_id, attempt, worker, "lease_lost", payload_digest, error_code="stale_failure")
+                event_attempt = attempt if type(attempt) is int and attempt >= 1 else 0
+                self._event(task_id, event_attempt, worker, "lease_lost", payload_digest, error_code="stale_failure")
                 return "lease_lost"
             # Retry budget is based on the persisted counter, not the lease envelope.
             persisted_attempt = row[0]
             retry = persisted_attempt < self.max_attempts
             target = "queued" if retry else "cancelled"
             action = "retry_scheduled" if retry else "attempts_exhausted"
+            delay = min(
+                RETRY_BACKOFF_MAX_SECONDS,
+                RETRY_BACKOFF_BASE_SECONDS * (2 ** min(max(persisted_attempt - 1, 0), 6)),
+            ) if retry else None
+            retry_after = now + delay if retry else None
             cur = db.execute(
-                "UPDATE tasks SET state=?,leased=NULL,lease_owner=NULL WHERE id=? AND state='leased' AND lease_owner=? AND leased>=?",
-                (target, task_id, worker, now - self.ledger.lease_seconds),
+                "UPDATE tasks SET state=?,leased=NULL,lease_owner=NULL,retry_after=? WHERE id=? AND state='leased' AND lease_owner=? AND attempts=? AND leased=? AND leased>=?",
+                (target, retry_after, task_id, worker, persisted_attempt, lease_at, now - self.ledger.lease_seconds),
             )
             if cur.rowcount != 1:
                 db.rollback()
