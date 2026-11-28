@@ -103,6 +103,41 @@ jobs:
         working-directory: infra/river-cloud
         run: node --test api/db-advisory-semaphore.postgres.test.mjs
 
+      - name: Save lifecycle environment for multi-API fixture
+        working-directory: infra/river-cloud
+        run: cp .env "$RUNNER_TEMP/rivercloud-lifecycle-env"
+
+      - name: Write isolated multi-API test environment
+        working-directory: infra/river-cloud
+        run: |
+          cat > .env <<EOF
+          RIVER_CLOUD_DB_PASSWORD=ci-only-db-password
+          RIVER_CLOUD_API_DB_PASSWORD=ci-only-api-password
+          RIVERAUTH_ISSUER_URL=http://rivercloud-auth-stub:8081
+          RIVERAUTH_PUBLISHABLE_KEY=ci-stub-key
+          EOF
+          chmod 600 .env
+
+      - name: Validate multi-API Compose fixture
+        working-directory: infra/river-cloud
+        run: docker compose -p rivercloud-multi-api-test -f docker-compose.yml -f docker-compose.multi-api-test.yml config --quiet
+
+      - name: Start isolated database, auth stub and two API instances
+        working-directory: infra/river-cloud
+        run: docker compose -p rivercloud-multi-api-test -f docker-compose.yml -f docker-compose.multi-api-test.yml up -d --wait
+
+      - name: Verify shared semaphore through both APIs
+        working-directory: infra/river-cloud
+        run: node --test api/db-advisory-semaphore.multi-api.test.mjs
+
+      - name: Teardown multi-API fixture and restore lifecycle environment
+        if: always()
+        working-directory: infra/river-cloud
+        run: |
+          docker compose -p rivercloud-multi-api-test -f docker-compose.yml -f docker-compose.multi-api-test.yml down --volumes --remove-orphans || true
+          if [ -f "$RUNNER_TEMP/rivercloud-lifecycle-env" ]; then cp "$RUNNER_TEMP/rivercloud-lifecycle-env" .env; fi
+
+
       - name: Verify row-level ownership isolation
         working-directory: infra/river-cloud
         run: |
