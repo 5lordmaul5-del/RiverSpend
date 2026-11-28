@@ -1,4 +1,5 @@
 import unittest
+import io
 import os
 import resource
 import signal
@@ -8,7 +9,7 @@ import time
 from unittest.mock import Mock, call, patch
 import subprocess
 
-from rc161_restricted_child import apply_resource_limits, RESOURCE_LIMITS, MAX_CHILD_FILE_BYTES
+from rc161_restricted_child import apply_resource_limits, RESOURCE_LIMITS, MAX_CHILD_FILE_BYTES, MAX_CHILD_INPUT_BYTES, read_bounded_input
 from rc161_sandbox_supervisor import SandboxSupervisor, SupervisorError, MAX_OUTPUT_BYTES
 
 
@@ -138,6 +139,23 @@ class SupervisorTests(unittest.TestCase):
         with patch("subprocess.Popen", side_effect=fake_popen):
             with self.assertRaisesRegex(SupervisorError, "child output too large"):
                 self.supervisor.run("echo", {"x": 1})
+
+    def test_child_stdin_is_independently_bounded(self):
+        class ReadProbe(io.BytesIO):
+            requested_size = None
+
+            def read(self, size=-1):
+                self.requested_size = size
+                return super().read(size)
+
+        exact = ReadProbe(b"x" * MAX_CHILD_INPUT_BYTES)
+        self.assertEqual(len(read_bounded_input(exact)), MAX_CHILD_INPUT_BYTES)
+        self.assertEqual(exact.requested_size, MAX_CHILD_INPUT_BYTES + 1)
+
+        oversized = ReadProbe(b"x" * (MAX_CHILD_INPUT_BYTES + 1))
+        with self.assertRaisesRegex(ValueError, "input too large"):
+            read_bounded_input(oversized)
+        self.assertEqual(oversized.requested_size, MAX_CHILD_INPUT_BYTES + 1)
 
     def test_child_resource_limits_are_applied(self):
         expected = [call(name, bounds) for name, bounds in RESOURCE_LIMITS]
