@@ -158,7 +158,7 @@ test('API rejects excess parallel database subprocesses and releases slots after
   const oversized = await fetch(endpoint, { method: 'PUT', headers: { authorization: 'Bearer test-token', 'content-type': 'application/json' }, body: JSON.stringify({ display_name: 'x'.repeat(5000) }) });
   assert.equal(oversized.status, 413);
 
-  for (const invalidName of ['', '   ', 'x'.repeat(81), 'name\\u0000bad']) {
+  for (const invalidName of ['', '   ', 'x'.repeat(81), 'name\u0000bad']) {
     const invalid = await fetch(endpoint, {
       method: 'PUT',
       headers: { authorization: 'Bearer test-token', 'content-type': 'application/json' },
